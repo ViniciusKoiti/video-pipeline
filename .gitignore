@@ -1,0 +1,26 @@
+# Segredos e preferências locais
+.env
+CLAUDE.local.md
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Dados gerados (fixtures aprovadas vão em tests/fixtures/)
+data/episodes/*
+!data/episodes/.gitkeep
+data/cache/*
+!data/cache/.gitkeep
+
+# Mídia pesada
+*.mp4
+*.wav
+*.mp3
+
+# Node (somente se Remotion for escolhido)
+node_modules/
