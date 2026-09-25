@@ -1,0 +1,160 @@
+{
+  "episode_id": "engine-test",
+  "language": "en",
+  "scenes": [
+    {
+      "id": "S01",
+      "narration": "On July 7th, 1881, the steamer Proteus sailed from St. John's, Newfoundland, and turned north toward Greenland. On board was Lieutenant Adolphus Greely's expedition.",
+      "claims": [
+        {
+          "text": "The Proteus sailed from St. John's on 7 July 1881, heading toward Greenland",
+          "source_ids": [
+            "source-01"
+          ],
+          "excerpt_ids": [
+            "source-01#E1"
+          ]
+        },
+        {
+          "text": "The expedition was led by Lieutenant A. W. Greely",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E4"
+          ]
+        }
+      ],
+      "visual_need": "historical_exact",
+      "search_query": "Proteus steamer 1881 Greely expedition",
+      "chosen_asset_id": "commons-rice-proteus-godhavn-1881",
+      "duration_ms": 13425,
+      "review_status": "approved"
+    },
+    {
+      "id": "S02",
+      "narration": "On August 11th, she anchored in Discovery Harbor, on Lady Franklin Bay. Eight days later, the Proteus left. Twenty-five men stayed behind.",
+      "claims": [
+        {
+          "text": "The Proteus anchored in Discovery Harbor, Lady Franklin Bay, on 11 August 1881",
+          "source_ids": [
+            "source-01"
+          ],
+          "excerpt_ids": [
+            "source-01#E2"
+          ]
+        },
+        {
+          "text": "The Proteus left her anchorage on the morning of 19 August 1881",
+          "source_ids": [
+            "source-01"
+          ],
+          "excerpt_ids": [
+            "source-01#E3"
+          ]
+        },
+        {
+          "text": "The expedition had twenty-five members",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E4"
+          ]
+        }
+      ],
+      "visual_need": "historical_exact",
+      "search_query": "Proteus Discovery Harbor Fort Conger 1881",
+      "chosen_asset_id": "commons-lc-usz62-136192",
+      "duration_ms": 10600,
+      "review_status": "approved"
+    },
+    {
+      "id": "S03",
+      "narration": "A relief ship was sent in 1882. The Neptune never reached them.",
+      "claims": [
+        {
+          "text": "The 1882 relief expedition, the Neptune, did not reach Lady Franklin Bay",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E1"
+          ]
+        }
+      ],
+      "visual_need": "map_or_graphic",
+      "search_query": "relief attempts timeline 1882 1883",
+      "chosen_asset_id": "original-timeline-1882-1883",
+      "duration_ms": 5425,
+      "review_status": "approved"
+    },
+    {
+      "id": "S04",
+      "narration": "In 1883, a second relief expedition went north on the Proteus. On July 23rd, she was crushed in the pack ice and sank.",
+      "claims": [
+        {
+          "text": "The 1883 relief expedition sailed on the Proteus",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E2"
+          ]
+        },
+        {
+          "text": "The Proteus was crushed in the pack and sank on 23 July 1883",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E3"
+          ]
+        }
+      ],
+      "visual_need": "historical_exact",
+      "search_query": "Proteus crushed ice July 1883",
+      "chosen_asset_id": "commons-111-sc-91135",
+      "duration_ms": 10050,
+      "review_status": "approved"
+    },
+    {
+      "id": "S05",
+      "narration": "On June 22nd, 1884, the ships Thetis and Bear found seven men alive near Cape Sabine. Seventeen had starved, and one had drowned. Only six came home.",
+      "claims": [
+        {
+          "text": "Thetis and Bear rescued seven survivors near Cape Sabine on 22 June 1884",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E4"
+          ]
+        },
+        {
+          "text": "Seventeen of the twenty-five died of starvation and one drowned",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E4"
+          ]
+        },
+        {
+          "text": "Six survivors returned; Sergeant Elison died at Godhavn on 8 July 1884",
+          "source_ids": [
+            "source-02"
+          ],
+          "excerpt_ids": [
+            "source-02#E4"
+          ]
+        }
+      ],
+      "visual_need": "historical_exact",
+      "search_query": "Greely survivors aboard Thetis 1884",
+      "chosen_asset_id": "commons-111-sc-96236",
+      "duration_ms": 13025,
+      "review_status": "approved"
+    }
+  ]
+}

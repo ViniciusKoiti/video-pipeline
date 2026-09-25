@@ -17,10 +17,11 @@ data/episodes/*
 data/cache/*
 !data/cache/.gitkeep
 
-# Mídia pesada
+# Mídia pesada (exceto fixtures pequenas e revisadas)
 *.mp4
 *.wav
 *.mp3
+!tests/fixtures/episodes/*/voice/*.wav
 
 # Node (somente se Remotion for escolhido)
 node_modules/

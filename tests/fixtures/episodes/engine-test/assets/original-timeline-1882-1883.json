@@ -1,0 +1,15 @@
+{
+  "id": "original-timeline-1882-1883",
+  "provider": "original",
+  "provider_id": "timeline-v1",
+  "author": "video-pipeline",
+  "license_id": "Original",
+  "attribution_text": "",
+  "usage_notes": "Tela gráfica feita pelo projeto com ffmpeg (fonte DejaVu Serif, licença Bitstream Vera, livre). Resume source-02#E1 a #E3.",
+  "retrieved_at": "2026-09-25T11:15:41-03:00",
+  "sha256": "19a468847d7e685f1e53ec9c588e8b9c3df1369fe4749e481db8f09ebd904189",
+  "review_status": "approved",
+  "used_in_scenes": [
+    "S03"
+  ]
+}

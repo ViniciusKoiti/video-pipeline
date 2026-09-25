@@ -1,0 +1,23 @@
+{
+  "episode_id": "engine-test",
+  "sources": [
+    {
+      "id": "source-01",
+      "title": "Three Years of Arctic Service, vol. 1 (A. W. Greely, 1886)",
+      "url": "https://archive.org/details/threeyearsofarct01gree",
+      "kind": "primary",
+      "retrieved_at": "2026-09-25T11:15:41-03:00",
+      "local_path": "sources/source-01.txt",
+      "notes": "Relato do comandante da expedição. Domínio público (1886). Trechos do OCR do Internet Archive."
+    },
+    {
+      "id": "source-02",
+      "title": "The Rescue of Greely (W. S. Schley and J. R. Soley, 1885)",
+      "url": "https://archive.org/details/rescueofgreely00schl",
+      "kind": "primary",
+      "retrieved_at": "2026-09-25T11:15:41-03:00",
+      "local_path": "sources/source-02.txt",
+      "notes": "Relato do comandante do resgate, com telegramas oficiais de 1883 e 1884. Autor independente de source-01. Domínio público (1885); LoC: 'unaware of any copyright restrictions'."
+    }
+  ]
+}
