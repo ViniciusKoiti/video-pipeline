@@ -1,0 +1,145 @@
+"""Raiz de composição: único módulo que conhece os adapters concretos (ADR 006).
+
+O registro é explícito (sem descoberta de plugins). Cada fábrica importa seu adapter dentro da
+função, então `vp status` não carrega Kokoro/PyTorch. Um adapter ainda não implementado aparece com
+a etapa do roadmap que vai entregá-lo.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass
+from functools import cached_property
+from pathlib import Path
+from typing import Any
+
+from app.pipeline.ports import ManifestStore, ReviewGate
+from app.providers.alignment.base import SubtitleAligner
+from app.providers.archives.base import ArchiveProvider
+from app.providers.base import ProviderInfo
+from app.providers.errors import PaidApiBlocked
+from app.providers.image_gen.base import ImageGenProvider
+from app.providers.text.base import TextProvider
+from app.providers.tts.base import TTSProvider
+from app.render.base import RenderEngine
+from app.settings import Budget, Settings, load_settings
+
+Factory = Callable[[Settings], Any]
+
+
+@dataclass(frozen=True)
+class Registration:
+    step: int  # etapa do roadmap que implementa o adapter
+    factory: Factory | None = None  # None = ainda não implementado
+
+
+Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
+
+DEFAULT_REGISTRY: Registry = {
+    "text": {"ollama": Registration(27), "groq": Registration(29), "gemini": Registration(29)},
+    "tts": {"kokoro": Registration(15)},
+    "image_gen": {"workers_ai": Registration(24)},
+    "archives": {
+        "wikimedia_commons": Registration(20),
+        "library_of_congress": Registration(20),
+        "flickr_commons": Registration(20),
+        "pexels": Registration(21),
+    },
+    "aligner": {"ffprobe": Registration(17)},
+    "render": {"ffmpeg": Registration(7), "moneyprinterturbo": Registration(8), "remotion": Registration(8)},
+    "store": {"json_files": Registration(10)},
+    "review": {"json_files": Registration(12)},
+}
+
+
+class ConfigurationError(ValueError):
+    pass
+
+
+def ensure_free(info: ProviderInfo, budget: Budget) -> None:
+    """§2.1: custo > 0 só com ALLOW_PAID_API=true e teto de gasto > 0."""
+    if info.usd_per_call > 0 and not (budget.allow_paid_api and budget.max_api_spend_usd > 0):
+        raise PaidApiBlocked(
+            info.name, f"custa US$ {info.usd_per_call} por chamada e ALLOW_PAID_API=false (§2.1)"
+        )
+
+
+def _choices(settings: Settings) -> dict[str, list[str]]:
+    chosen = settings.providers.model_dump()
+    return {port: names if isinstance(names, list) else [names] for port, names in chosen.items()}
+
+
+class LazyContext:
+    """Implementa `app.pipeline.ports.Context`; cada porta é montada no primeiro uso."""
+
+    def __init__(self, settings: Settings, registry: Registry = DEFAULT_REGISTRY) -> None:
+        self._settings = settings
+        self._registry = registry
+
+    @property
+    def settings(self) -> Settings:
+        return self._settings
+
+    @cached_property
+    def store(self) -> ManifestStore:
+        return self._build("store", self._settings.providers.store)
+
+    @cached_property
+    def review(self) -> ReviewGate:
+        return self._build("review", self._settings.providers.review)
+
+    @cached_property
+    def text(self) -> TextProvider:
+        return self._build("text", self._settings.providers.text)
+
+    @cached_property
+    def tts(self) -> TTSProvider:
+        return self._build("tts", self._settings.providers.tts)
+
+    @cached_property
+    def image_gen(self) -> ImageGenProvider:
+        return self._build("image_gen", self._settings.providers.image_gen)
+
+    @cached_property
+    def archives(self) -> tuple[ArchiveProvider, ...]:
+        return tuple(self._build("archives", name) for name in self._settings.providers.archives)
+
+    @cached_property
+    def aligner(self) -> SubtitleAligner:
+        return self._build("aligner", self._settings.providers.aligner)
+
+    @cached_property
+    def render(self) -> RenderEngine:
+        return self._build("render", self._settings.providers.render)
+
+    def _build(self, port: str, name: str) -> Any:
+        registration = self._registry[port][name]  # nomes já conferidos em build_context
+        if registration.factory is None:
+            raise ConfigurationError(f"{port} = {name!r} ainda não implementado (etapa #{registration.step})")
+        provider = registration.factory(self._settings)
+        info = getattr(provider, "info", None)
+        if isinstance(info, ProviderInfo):
+            ensure_free(info, self._settings.budget)
+        return provider
+
+
+def unknown_choices(settings: Settings, registry: Registry) -> list[str]:
+    problems = []
+    for port, names in _choices(settings).items():
+        options = registry.get(port, {})
+        problems += [
+            f"{port} = {name!r} não existe (opções: {', '.join(sorted(options)) or 'nenhuma'})"
+            for name in names
+            if name not in options
+        ]
+    return problems
+
+
+def build_context(
+    root: Path, environ: Mapping[str, str] | None = None, registry: Registry = DEFAULT_REGISTRY
+) -> LazyContext:
+    settings = load_settings(root, environ)
+    problems = unknown_choices(settings, registry)
+    if problems:
+        raise ConfigurationError("config/providers.toml: " + "; ".join(problems))
+    return LazyContext(settings, registry)

@@ -1,0 +1,34 @@
+# Escolha de implementação por função (ADR 006). Trocar de abordagem = mudar uma linha aqui.
+# Sem segredos: chaves e tokens ficam só no .env (§2.7). As variáveis do .env listadas no
+# CLAUDE.md §3 têm prioridade sobre os valores deste arquivo.
+
+[providers]
+text = "ollama"
+tts = "kokoro"
+image_gen = "workers_ai"
+archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels"]  # ordem da cascata (§8)
+aligner = "ffprobe"
+render = "ffmpeg"  # provisório até a ADR 001 (etapa 9)
+store = "json_files"
+review = "json_files"
+
+[ollama]
+base_url = "http://127.0.0.1:11434"
+model = "qwen3.5:9b"  # provisório até o benchmark (etapa 5)
+num_thread = 8        # núcleos físicos; 12 threads derruba o desempenho (ADR 004)
+
+[kokoro]
+voice = "am_michael"
+num_threads = 8
+
+[workers_ai]
+model = "@cf/black-forest-labs/flux-1-schnell"
+
+[limits]
+max_generated_images_per_episode = 12
+max_candidates_per_scene = 2
+max_cloud_requests_per_episode = 40
+
+[budget]
+max_api_spend_usd = 0
+allow_paid_api = false

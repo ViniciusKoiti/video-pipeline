@@ -1,7 +1,8 @@
-"""CLI `vp` (CLAUDE.md §10).
+"""CLI `vp` (CLAUDE.md §10): ponto de entrada que monta o contexto e chama as etapas do pipeline.
 
 Cada comando declara a etapa do roadmap que o implementa. Enquanto não houver handler registrado em
-`HANDLERS`, o comando responde com a etapa pendente e sai com `EXIT_NOT_IMPLEMENTED`.
+`HANDLERS`, o comando responde com a etapa pendente e sai com `EXIT_NOT_IMPLEMENTED`. O contexto só é
+montado quando existe handler, e cada porta só quando usada.
 """
 
 from __future__ import annotations
@@ -11,10 +12,15 @@ import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+
+from app.bootstrap import build_context
+from app.pipeline.ports import Context
+from app.settings import CONFIG_FILE
 
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
 
-Handler = Callable[[argparse.Namespace], int]
+Handler = Callable[[argparse.Namespace, Context], int]
 
 
 @dataclass(frozen=True)
@@ -81,11 +87,19 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def project_root(start: Path) -> Path:
+    """Primeira pasta, subindo a partir de `start`, que tem `config/providers.toml`."""
+    for folder in (start, *start.parents):
+        if (folder / CONFIG_FILE).is_file():
+            return folder
+    raise SystemExit(f"vp: {CONFIG_FILE} não encontrado a partir de {start}")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     handler = HANDLERS.get(args.command)
     if handler is not None:
-        return handler(args)
+        return handler(args, build_context(project_root(Path.cwd())))
     step = next(c.step for c in COMMANDS if c.name == args.command)
     print(f"vp {args.command}: ainda não implementado (etapa #{step} do roadmap).", file=sys.stderr)
     return EXIT_NOT_IMPLEMENTED
