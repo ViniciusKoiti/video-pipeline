@@ -28,7 +28,7 @@ uv pip install --python .venv/bin/python --index-url https://download.pytorch.or
 uv pip install --python .venv/bin/python kokoro soundfile
 
 # 3. Ollama em ~/.local (sem sudo, sem CUDA) como serviço de usuário, e os modelos
-#    ver ADR 004 para a extração; depois:
+#    ver ADR 004 para a extração e o serviço (OLLAMA_MAX_LOADED_MODELS=1); depois:
 systemctl --user enable --now ollama
 ollama pull qwen3.5:4b && ollama pull qwen3.5:9b
 

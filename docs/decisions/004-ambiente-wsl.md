@@ -36,7 +36,30 @@ Havia ainda três restrições descobertas na instalação:
 - Primeira medição do Kokoro com 4 CPUs: 9,7 s de áudio em 14,6 s (RTF 1,5, incluindo aquecimento).
   O benchmark formal é a etapa 5.
 - Evidência do limite antigo (8 GB / 4 CPUs): `qwen3.5:4b` gerou JSON válido com structured outputs, mas a
-  0,8 tok/s e 200 s de carga, com só 1,4 GB livres e 1,7 GB de swap em uso. Repetir após `wsl --shutdown`.
+  0,8 tok/s e 200 s de carga, com só 1,4 GB livres e 1,7 GB de swap em uso.
+
+## Medições após o reinício (2026-09-25, 12 GB / 12 CPUs)
+
+`scripts/check_env.sh` passa. Medições indicativas, com VS Code e outro projeto usando CPU ao mesmo tempo;
+o benchmark formal (etapa 5) deve rodar com a máquina ociosa.
+
+| Teste | Resultado |
+|---|---|
+| `qwen3.5:4b`, JSON com claims → trechos | correto; 4,1 tok/s gerando, 9,7 tok/s lendo o prompt |
+| `qwen3.5:9b`, mesmo teste | correto; 2,5 tok/s gerando, 5,0 tok/s lendo o prompt |
+| `qwen3.5:4b` por `num_thread` (4 / 6 / 8 / 12) | 1,7 / 2,7 / **3,7** / 0,7 tok/s |
+| Kokoro por `torch.set_num_threads` (4 / 6 / 8 / 12) | RTF 1,73 / 1,44 / **1,32** / 1,36 |
+
+Decisões derivadas:
+
+- **8 threads** para LLM e TTS (núcleos físicos do 5700U). Passar `num_thread=8` nas chamadas ao Ollama e
+  `torch.set_num_threads(8)` no adapter do Kokoro; 12 threads (com SMT) derruba o LLM.
+- Serviço do Ollama com `OLLAMA_MAX_LOADED_MODELS=1` e `OLLAMA_NUM_PARALLEL=1`: dois modelos carregados
+  ao mesmo tempo disputaram CPU e memória no teste.
+- `qwen3:4b` (denso, 2,5 GB) também baixado como referência para o benchmark, para separar "máquina
+  lenta" de "arquitetura híbrida do qwen3.5 lenta em CPU".
+- Risco aberto para a etapa 5 e a ADR 003: a 2,5–4 tok/s gerando e 5–10 tok/s lendo, um roteiro com
+  6–10 mil tokens de trechos-fonte pode levar de 20 a 40 min por chamada. Isso reforça a proposta do §13.2.
 - Atualizar o Ollama: baixar o novo `ollama-linux-amd64.tar.zst`, extrair sem as pastas `cuda_v*` em
   `~/.local` e `systemctl --user restart ollama`.
 - `scripts/check_env.sh` verifica tudo isso e sai com 1 se algo obrigatório faltar.
