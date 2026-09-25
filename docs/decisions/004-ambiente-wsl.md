@@ -35,6 +35,8 @@ Havia ainda três restrições descobertas na instalação:
   uso local, sem distribuição do pipeline.
 - Primeira medição do Kokoro com 4 CPUs: 9,7 s de áudio em 14,6 s (RTF 1,5, incluindo aquecimento).
   O benchmark formal é a etapa 5.
+- Evidência do limite antigo (8 GB / 4 CPUs): `qwen3.5:4b` gerou JSON válido com structured outputs, mas a
+  0,8 tok/s e 200 s de carga, com só 1,4 GB livres e 1,7 GB de swap em uso. Repetir após `wsl --shutdown`.
 - Atualizar o Ollama: baixar o novo `ollama-linux-amd64.tar.zst`, extrair sem as pastas `cuda_v*` em
   `~/.local` e `systemctl --user restart ollama`.
 - `scripts/check_env.sh` verifica tudo isso e sai com 1 se algo obrigatório faltar.
