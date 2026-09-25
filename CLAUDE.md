@@ -47,13 +47,17 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 
 ## 3. Ambiente
 
-- Windows + WSL2/Ubuntu. Python 3.11+ em `venv`. `ffmpeg`/`ffprobe`, Git, Ollama local.
+- Windows + WSL2/Ubuntu. Python 3.12 em `.venv` criado com `uv` (Kokoro exige < 3.13), PyTorch só-CPU.
+  `ffmpeg`/`ffprobe`, Git, `espeak-ng`, Ollama local (instalação de usuário em `~/.local`, serviço
+  `systemctl --user`, só `127.0.0.1`). Detalhes em `docs/decisions/004-ambiente-wsl.md`.
   Node.js LTS **apenas** se o Remotion for o motor escolhido na Fase 0.
+- `scripts/check_env.sh` valida o ambiente; rodar após qualquer mudança de máquina ou `.wslconfig`.
 - Projeto vive em `~/projetos/auto-play` (repo `video-pipeline`, filesystem Linux do WSL). **Nunca** rodar em `/mnt/c` ou `/mnt/e`.
   Exports frios opcionais em `/mnt/e/VideoPipeline/exports`, copiados após o render.
 - **`.wslconfig` obrigatório antes do benchmark:** o WSL2 limita a memória a 50% do host por padrão.
   Com 16 GB, configurar `memory=12GB` (ou o máximo que o Windows tolerar) para Ollama + Kokoro + ffmpeg
   coexistirem. Com 8 GB no host, usar modelo de texto menor ou provedor remoto gratuito.
+  Configurado nesta máquina (host 19,4 GB / 16 threads): `memory=12GB`, `processors=12`, `swap=8GB`.
 - Metas de planejamento (não requisitos rígidos): 16 GB RAM, 20 GB livres. GPU local **não** é pré-requisito.
 - Interfaces de teste (galeria, futura API) só em `127.0.0.1`.
 - Um render por vez. Registrar tempo e memória de cada etapa em `data/benchmarks/`.
