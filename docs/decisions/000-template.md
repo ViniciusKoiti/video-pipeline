@@ -30,5 +30,5 @@ O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui
 | 003 | Provedor de texto padrão (Ollama × Gemini/Groq gratuito) | #29 |
 | 004 | Ambiente local: `.wslconfig`, Python 3.12, Ollama de usuário — **aceito** | #1 |
 | 005 | Flickr Commons na cascata de acervos | #20 |
-| 006 | Arquitetura: portas (Protocols) e adaptadores trocáveis | #4 |
+| 006 | Arquitetura: portas (Protocols) e adaptadores trocáveis — **aceito** | #4 |
 | 007 | Contratos de dados e política de licenças — **aceito** | #3 |

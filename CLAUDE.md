@@ -72,12 +72,16 @@ video-pipeline/
     decisions/                # ADRs: NNN-titulo.md (motor, provedores, nicho)
     pipeline-flowchart.mermaid
   app/
-    pipeline/                 # CLI, etapas, estados, schemas (pydantic), revisões via arquivos
-    providers/                # um adapter por função: text/, tts/, image_gen/, archives/
+    cli.py                    # vp (argparse): monta o contexto e chama as etapas
+    bootstrap.py              # raiz de composição: único módulo que conhece adapters concretos
+    settings.py               # config/providers.toml + .env
+    pipeline/                 # etapas, estados, schemas (pydantic), ports.py, failures.py
+    providers/                # uma porta (base.py) + adapters por função: text/, tts/, image_gen/,
+                              # archives/, alignment/; errors.py comum
     media/                    # ffmpeg/ffprobe, preparação de ativos, checks automáticos
-    render/                   # motor escolhido na Fase 0 (ffmpeg | turbo_adapter | remotion_bridge)
+    render/                   # base.py (RenderEngine) + motor escolhido na Fase 0
   video/                      # SOMENTE se Remotion for escolhido (um template React, public/episodes/)
-  config/                     # presets e escolha de provedores, sem credenciais
+  config/providers.toml       # implementação por função + parâmetros, sem credenciais
   data/
     cache/                    # miniaturas, respostas de busca, hashes, fixtures
     benchmarks/               # resultados de comparação de provedores e da máquina
@@ -85,9 +89,19 @@ video-pipeline/
       episode.json            # contrato aprovado; entrada do motor de render
       sources.json  script.json  scenes.json  review.json
       assets/  voice/  renders/  credits.txt
-  tests/
-  .env.example  .env(gitignored)  pyproject.toml
+  tests/                      # fakes/ (uma por porta), test_contracts.py, test_architecture.py
+  .env.example  .env(gitignored)  pyproject.toml  uv.lock
 ```
+
+### Arquitetura (ADR 006, diagrama em `docs/arquitetura.md`)
+
+- Portas e adaptadores: cada função tem um `Protocol` em `app/providers/<função>/base.py` (ou
+  `app/render/base.py`); as etapas recebem um `Context` explícito e só conhecem portas.
+- Trocar de abordagem = novo adapter + registro em `app/bootstrap.py` + passar em
+  `tests/test_contracts.py` + **uma linha** em `config/providers.toml`.
+- Todo adapter declara `ProviderInfo(name, remote, usd_per_call)`; custo > 0 é recusado sem
+  `ALLOW_PAID_API=true` e `MAX_API_SPEND_USD > 0`. `ProviderError` vira `needs_review` só na cena.
+- `tests/test_architecture.py` falha se `app/pipeline/` importar adapter concreto ou biblioteca pesada.
 
 ### Variáveis de ambiente (`.env.example` lista nomes e exemplos não secretos)
 
@@ -218,8 +232,10 @@ se o motor for o Turbo, um adapter converte este arquivo para os parâmetros del
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
 | Roteador de modelos | Nenhum | OpenRouter com variante `:free` | Só se o candidato direto falhar. |
 
-- Um adapter por função expõe contratos simples: `generate_script()`, `generate_scenes()`,
-  `synthesize_speech()`, `generate_image()`, `search_assets()`. A configuração escolhe um padrão por função.
+- Um adapter por função expõe contratos simples: `generate_json()` (texto, só transporte),
+  `synthesize_speech()`, `estimate_cost()`/`generate_image()`, `search_assets()`, `align()`, `render()`.
+  `generate_script()` e `generate_scenes()` são funções do pipeline sobre `generate_json()`, para prompts
+  e validação de claims ficarem num lugar só (ADR 006). `config/providers.toml` escolhe um padrão por função.
 - Catálogos como free-llm-resources, free-ai-api-tiers e free-for-dev servem **só para descobrir** opções.
   Nunca copiar cotas ou claims de uso comercial deles para o código: registrar link oficial, data da
   consulta e resultado de um teste com a conta real em `data/benchmarks/`.
@@ -343,8 +359,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Commits pequenos e descritivos. Decisões de arquitetura viram `docs/decisions/NNN-titulo.md`.
 - Ao mudar uma decisão registrada aqui, atualizar este arquivo no mesmo commit.
 - Dependências só via `uv add` (com licença no comentário do `pyproject.toml`) e `uv.lock` versionado.
-  Kokoro/PyTorch ficam no extra `tts`; testes rodam sem ele. CLI em `argparse` (`app/pipeline/cli.py`):
-  um comando novo é um handler registrado em `HANDLERS`.
+  Kokoro/PyTorch ficam no extra `tts`; testes rodam sem ele. CLI em `argparse` (`app/cli.py`):
+  um comando novo é um handler `(args, context)` registrado em `HANDLERS`.
 - Convenções: Python 3.11+ (3.12 no `.venv`), tipagem completa, pydantic v2 para manifestos, `pathlib`, sem estado global,
   um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.

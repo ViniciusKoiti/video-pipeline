@@ -19,7 +19,7 @@ tts = [
 ]
 
 [project.scripts]
-vp = "app.pipeline.cli:main"
+vp = "app.cli:main"
 
 [dependency-groups]
 dev = [
@@ -57,3 +57,4 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]  # permite importar tests.fakes
