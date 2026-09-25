@@ -1,0 +1,17 @@
+{
+  "id": "commons-111-sc-96236",
+  "provider": "wikimedia_commons",
+  "provider_id": "File:111-SC-96236 (21832311119).jpg",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/1/18/111-SC-96236_%2821832311119%29.jpg",
+  "page_url": "https://commons.wikimedia.org/wiki/File:111-SC-96236_(21832311119).jpg",
+  "author": "U.S. Army Signal Corps",
+  "license_id": "PD-US",
+  "attribution_text": "U.S. Army Signal Corps, July 1884 (111-SC-96236), courtesy of the National Museum of the U.S. Navy. Public domain.",
+  "usage_notes": "Os seis sobreviventes a bordo do USS Thetis, julho de 1884 (National Archives 111-SC-96236). Obra do governo dos EUA e anterior a 1930: domínio público. Vertical; redimensionada para 2560 px de altura.",
+  "retrieved_at": "2026-09-25T11:15:41-03:00",
+  "sha256": "f45d73cfe16730a04a8f9d9d548c79fef0a7bf0bf417f971749ee6ed46627136",
+  "review_status": "approved",
+  "used_in_scenes": [
+    "S05"
+  ]
+}

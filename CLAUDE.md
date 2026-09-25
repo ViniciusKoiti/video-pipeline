@@ -277,6 +277,8 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
   gravadas + concat, sem Node), **MoneyPrinterTurbo** (MIT; desenhado para vídeos curtos com roteiro
   próprio — só serve se for domável por `episode.json`) e **Remotion** (um template React; licença
   gratuita para indivíduos e empresas até 3 pessoas). Registrar a escolha em `docs/decisions/001-render-engine.md`.
+  Entrada idêntica para os três: `tests/fixtures/episodes/engine-test/` (Greely, ~52 s, 5 cenas, fontes e
+  fotos reais aprovadas, duas fotos verticais, uma tela gráfica original).
 
 ## 10. CLI planejada (`vp`, console script em `pyproject.toml`)
 

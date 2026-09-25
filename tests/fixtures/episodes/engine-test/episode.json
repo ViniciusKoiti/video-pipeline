@@ -1,0 +1,59 @@
+{
+  "episode_id": "engine-test",
+  "title": "The Greely Expedition, 1881-1884 (engine test)",
+  "language": "en",
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "audio_sample_rate": 48000
+  },
+  "scenes": [
+    {
+      "id": "S01",
+      "start_ms": 0,
+      "duration_ms": 13425,
+      "narration": "On July 7th, 1881, the steamer Proteus sailed from St. John's, Newfoundland, and turned north toward Greenland. On board was Lieutenant Adolphus Greely's expedition.",
+      "asset_id": "commons-rice-proteus-godhavn-1881",
+      "image": "assets/commons-rice-proteus-godhavn-1881.jpg",
+      "audio": "voice/S01.wav"
+    },
+    {
+      "id": "S02",
+      "start_ms": 13425,
+      "duration_ms": 10600,
+      "narration": "On August 11th, she anchored in Discovery Harbor, on Lady Franklin Bay. Eight days later, the Proteus left. Twenty-five men stayed behind.",
+      "asset_id": "commons-lc-usz62-136192",
+      "image": "assets/commons-lc-usz62-136192.jpg",
+      "audio": "voice/S02.wav"
+    },
+    {
+      "id": "S03",
+      "start_ms": 24025,
+      "duration_ms": 5425,
+      "narration": "A relief ship was sent in 1882. The Neptune never reached them.",
+      "asset_id": "original-timeline-1882-1883",
+      "image": "assets/original-timeline-1882-1883.png",
+      "audio": "voice/S03.wav"
+    },
+    {
+      "id": "S04",
+      "start_ms": 29450,
+      "duration_ms": 10050,
+      "narration": "In 1883, a second relief expedition went north on the Proteus. On July 23rd, she was crushed in the pack ice and sank.",
+      "asset_id": "commons-111-sc-91135",
+      "image": "assets/commons-111-sc-91135.jpg",
+      "audio": "voice/S04.wav"
+    },
+    {
+      "id": "S05",
+      "start_ms": 39500,
+      "duration_ms": 13025,
+      "narration": "On June 22nd, 1884, the ships Thetis and Bear found seven men alive near Cape Sabine. Seventeen had starved, and one had drowned. Only six came home.",
+      "asset_id": "commons-111-sc-96236",
+      "image": "assets/commons-111-sc-96236.jpg",
+      "audio": "voice/S05.wav"
+    }
+  ],
+  "captions": "captions.srt"
+}

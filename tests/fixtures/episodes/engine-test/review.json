@@ -1,0 +1,66 @@
+{
+  "episode_id": "engine-test",
+  "entries": [
+    {
+      "step": "sources",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:d03f6faca840634d751b8a3f369bb0b860a1a8a821bed67663a22eea7ded14b3",
+      "notes": "Fixture de teste de motor: cada fato principal tem uma fonte; episódio real exigiria duas."
+    },
+    {
+      "step": "script",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:9073495ab60fd3fefbc630af38920bcb0d42379f19fdcd1bf7d3cb65b3a869e4",
+      "notes": ""
+    },
+    {
+      "step": "assets",
+      "asset_id": "commons-rice-proteus-godhavn-1881",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:6251680cc585ed2903d98bca43d02ac8e1a15ea7eca21a922e89a5985245b1b1",
+      "notes": ""
+    },
+    {
+      "step": "assets",
+      "asset_id": "commons-lc-usz62-136192",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:b64c1e5fc1bffd678fec7b7726f7e3fd01e5ad430af36dca8792a7097338811d",
+      "notes": ""
+    },
+    {
+      "step": "assets",
+      "asset_id": "commons-111-sc-91135",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:30b3f6244dc8aaec2223fd8b9b819e1eb57a359b9693518e9346c25a1c573ff4",
+      "notes": ""
+    },
+    {
+      "step": "assets",
+      "asset_id": "commons-111-sc-96236",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:f45d73cfe16730a04a8f9d9d548c79fef0a7bf0bf417f971749ee6ed46627136",
+      "notes": ""
+    },
+    {
+      "step": "assets",
+      "asset_id": "original-timeline-1882-1883",
+      "decision": "approved",
+      "reviewer": "Vinicius Koiti",
+      "at": "2026-09-25T11:15:41-03:00",
+      "input_hash": "sha256:19a468847d7e685f1e53ec9c588e8b9c3df1369fe4749e481db8f09ebd904189",
+      "notes": ""
+    }
+  ]
+}

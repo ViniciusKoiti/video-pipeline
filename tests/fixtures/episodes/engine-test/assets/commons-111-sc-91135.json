@@ -1,0 +1,17 @@
+{
+  "id": "commons-111-sc-91135",
+  "provider": "wikimedia_commons",
+  "provider_id": "File:111-SC-91135 (21831383598).jpg",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/99/111-SC-91135_%2821831383598%29.jpg",
+  "page_url": "https://commons.wikimedia.org/wiki/File:111-SC-91135_(21831383598).jpg",
+  "author": "U.S. Army Signal Corps",
+  "license_id": "PD-US",
+  "attribution_text": "U.S. Army Signal Corps, 23 July 1883 (111-SC-91135), courtesy of the National Museum of the U.S. Navy. Public domain.",
+  "usage_notes": "Proteus na manhã de 23/07/1883, horas antes do naufrágio (National Archives 111-SC-91135). Fotografia do Signal Corps: obra do governo dos EUA e anterior a 1930, domínio público. Vertical (1860x2308): exige recorte ou movimento no 16:9 sem cortar o navio. Reencodada (JPEG q5).",
+  "retrieved_at": "2026-09-25T11:15:41-03:00",
+  "sha256": "30b3f6244dc8aaec2223fd8b9b819e1eb57a359b9693518e9346c25a1c573ff4",
+  "review_status": "approved",
+  "used_in_scenes": [
+    "S04"
+  ]
+}

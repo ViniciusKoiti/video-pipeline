@@ -1,0 +1,17 @@
+{
+  "id": "commons-rice-proteus-godhavn-1881",
+  "provider": "wikimedia_commons",
+  "provider_id": "File:Lady Franklin Bay expedition.jpg",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/0/05/Lady_Franklin_Bay_expedition.jpg",
+  "page_url": "https://commons.wikimedia.org/wiki/File:Lady_Franklin_Bay_expedition.jpg",
+  "author": "George W. Rice",
+  "license_id": "PD-US",
+  "attribution_text": "George W. Rice, 1881. Library of Congress, via Wikimedia Commons. Public domain.",
+  "usage_notes": "Fotografia de 1881 da Lady Franklin Bay Expedition (Proteus no porto de Godhavn), acervo da Library of Congress. Publicada antes de 1930: domínio público nos EUA; o Commons a marca como domínio público. Redimensionada de 5583 para 2560 px de largura.",
+  "retrieved_at": "2026-09-25T11:15:41-03:00",
+  "sha256": "6251680cc585ed2903d98bca43d02ac8e1a15ea7eca21a922e89a5985245b1b1",
+  "review_status": "approved",
+  "used_in_scenes": [
+    "S01"
+  ]
+}
