@@ -69,6 +69,14 @@ def test_provider_failure_is_recorded_and_bench_continues(tmp_path: Path) -> Non
     assert any("FALHOU" in line for line in summary(report))
 
 
+def test_throttled_cpu_is_warned_even_with_low_load(tmp_path: Path) -> None:
+    report, _ = run_bench(
+        context(tmp_path, []), models=[], runs=1, now=lambda: NOW, include_tts=False,
+        proc=fake_proc(tmp_path, load="0.10"), probe=lambda: 2.5,
+    )
+    assert report.machine.busy and "sonda 2.5s" in report.warnings[0]
+
+
 def test_busy_machine_is_warned_not_blocked(tmp_path: Path) -> None:
     messages: list[str] = []
     report, _ = run_bench(
@@ -89,3 +97,16 @@ def test_cli_bench_runs_through_the_context(
     out = capsys.readouterr().out
     assert "LLM qwen3:4b #1" in out and "resultado:" in out
     assert ctx.text.requests[0].model == "qwen3:4b"
+
+
+def test_render_bench_measures_cold_cached_and_preview(tmp_path: Path) -> None:
+    fixture = Path(__file__).parent / "fixtures" / "episodes" / "engine-test"
+    report, _ = run_bench(
+        context(tmp_path, []), models=[], runs=1, now=lambda: NOW, include_tts=False,
+        render_dir=fixture, proc=fake_proc(tmp_path),
+    )
+    assert [(r.mode, r.ok, r.width) for r in report.render] == [
+        ("final-frio", True, 1920), ("final-cache", True, 1920), ("preview-frio", True, 1280),
+    ]
+    assert all(r.video_s == 52.52 and r.realtime_factor for r in report.render)
+    assert any(line.startswith("render fake-render final-frio") for line in summary(report))

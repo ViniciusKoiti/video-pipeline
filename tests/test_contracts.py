@@ -25,6 +25,7 @@ from app.providers.text.base import TextProvider, TextRequest
 from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
+from app.render.ffmpeg import FfmpegEngine
 from tests.fakes import (
     FIXED_TIME,
     FakeAligner,
@@ -39,7 +40,7 @@ from tests.fakes import (
     write_silence,
 )
 
-FIXTURE = Path(__file__).parent / "fixtures" / "episodes" / "pilot-example"
+FIXTURE = Path(__file__).parent / "fixtures" / "episodes" / "engine-test"  # entrada do experimento de motor
 
 
 class Reply(BaseModel):
@@ -72,7 +73,10 @@ TTS: list[Callable[[], TTSProvider]] = [
 IMAGE_GEN: list[Callable[[], ImageGenProvider]] = [pytest.param(FakeImageGen, id="fake")]
 ARCHIVES: list[Callable[[], ArchiveProvider]] = [pytest.param(FakeArchive, id="fake")]
 ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="fake")]
-RENDERERS: list[Callable[[], RenderEngine]] = [pytest.param(FakeRender, id="fake")]
+RENDERERS: list[Callable[[], RenderEngine]] = [
+    pytest.param(FakeRender, id="fake"),
+    pytest.param(FfmpegEngine, id="ffmpeg", marks=pytest.mark.slow),  # renderiza os 52 s da engine-test
+]
 STORES: list[Callable[[Path], ManifestStore]] = [pytest.param(InMemoryStore, id="in-memory")]
 REVIEW_GATES: list[Callable[[], ReviewGate]] = [pytest.param(InMemoryReviewGate, id="in-memory")]
 
@@ -177,7 +181,7 @@ def test_render_follows_episode_contract(
     result = make().render(episode(), FIXTURE, out, preview=preview)
     assert result.path == out and out.stat().st_size > 0
     assert (result.width, result.height) == size
-    assert result.duration_ms == episode().duration_ms
+    assert abs(result.duration_ms - episode().duration_ms) <= 50  # arredondamento de quadro e AAC
 
 
 # --- Portas internas ----------------------------------------------------------------------------

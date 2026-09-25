@@ -277,13 +277,14 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
   gravadas + concat, sem Node), **MoneyPrinterTurbo** (MIT; desenhado para vídeos curtos com roteiro
   próprio — só serve se for domável por `episode.json`) e **Remotion** (um template React; licença
   gratuita para indivíduos e empresas até 3 pessoas). Registrar a escolha em `docs/decisions/001-render-engine.md`.
-  Entrada idêntica para os três: `tests/fixtures/episodes/engine-test/` (Greely, ~52 s, 5 cenas, fontes e
+  Candidato zero implementado em `app/render/ffmpeg.py` (segmento por cena em cache, fundo desfocado para
+  imagens estreitas, legendas gravadas só na prévia). Entrada idêntica para os três: `tests/fixtures/episodes/engine-test/` (Greely, ~52 s, 5 cenas, fontes e
   fotos reais aprovadas, duas fotos verticais, uma tela gráfica original).
 
 ## 10. CLI planejada (`vp`, console script em `pyproject.toml`)
 
 ```
-vp bench [--models a,b] [--runs N]  # RAM, CPU, tok/s e TTS pelas portas -> data/benchmarks/
+vp bench [--models a,b] [--runs N] [--render DIR]  # máquina, LLM, TTS e render pelas portas -> data/benchmarks/
 vp new <id> --topic "..."     # cria data/episodes/<id>/ e manifesto inicial
 vp sources <id>               # busca, download, extração de texto -> sources.json
 vp script <id>                # roteiro com retrieval + validação de schema e de claims
