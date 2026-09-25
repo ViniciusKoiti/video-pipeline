@@ -28,6 +28,6 @@ O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui
 | 001 | Motor de render (ffmpeg puro × MoneyPrinterTurbo × Remotion) | #9 |
 | 002 | Recuperação de fontes com trechos numerados | #26 |
 | 003 | Provedor de texto padrão (Ollama × Gemini/Groq gratuito) | #29 |
-| 004 | `.wslconfig` com limite explícito de memória | #1 |
+| 004 | Ambiente local: `.wslconfig`, Python 3.12, Ollama de usuário — **aceito** | #1 |
 | 005 | Flickr Commons na cascata de acervos | #20 |
 | 006 | Arquitetura: portas (Protocols) e adaptadores trocáveis | #4 |
