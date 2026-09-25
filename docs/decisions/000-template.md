@@ -21,12 +21,13 @@ O que foi escolhido e por quê.
 
 O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui.
 
-## Decisões pendentes (CLAUDE.md §13)
+## Decisões pendentes (CLAUDE.md §13 + arquitetura)
 
 | ADR | Assunto | Etapa |
 |---|---|---|
-| 001 | Motor de render (ffmpeg puro × MoneyPrinterTurbo × Remotion) | #8 |
-| 002 | Recuperação de fontes com trechos numerados | #25 |
-| 003 | Provedor de texto padrão (Ollama × Gemini/Groq gratuito) | #28 |
+| 001 | Motor de render (ffmpeg puro × MoneyPrinterTurbo × Remotion) | #9 |
+| 002 | Recuperação de fontes com trechos numerados | #26 |
+| 003 | Provedor de texto padrão (Ollama × Gemini/Groq gratuito) | #29 |
 | 004 | `.wslconfig` com limite explícito de memória | #1 |
-| 005 | Flickr Commons na cascata de acervos | #19 |
+| 005 | Flickr Commons na cascata de acervos | #20 |
+| 006 | Arquitetura: portas (Protocols) e adaptadores trocáveis | #4 |

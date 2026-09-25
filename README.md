@@ -6,7 +6,7 @@ licença registrada. Publicação sempre manual, após revisão humana.
 
 - Contexto e regras: [CLAUDE.md](CLAUDE.md)
 - Fluxo: [docs/pipeline-flowchart.mermaid](docs/pipeline-flowchart.mermaid)
-- Plano de entregas (30 etapas): [docs/ROADMAP.md](docs/ROADMAP.md)
+- Plano de entregas (31 etapas): [docs/ROADMAP.md](docs/ROADMAP.md)
 - Questões abertas da análise inicial: [docs/ANALISE.md](docs/ANALISE.md)
 - Decisões de arquitetura: [docs/decisions/](docs/decisions/)
 
