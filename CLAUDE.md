@@ -332,7 +332,10 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Rodar `pytest` e `ruff check .` antes de encerrar qualquer tarefa. Testes novos para toda etapa nova.
 - Commits pequenos e descritivos. Decisões de arquitetura viram `docs/decisions/NNN-titulo.md`.
 - Ao mudar uma decisão registrada aqui, atualizar este arquivo no mesmo commit.
-- Convenções: Python 3.11+, tipagem completa, pydantic v2 para manifestos, `pathlib`, sem estado global,
+- Dependências só via `uv add` (com licença no comentário do `pyproject.toml`) e `uv.lock` versionado.
+  Kokoro/PyTorch ficam no extra `tts`; testes rodam sem ele. CLI em `argparse` (`app/pipeline/cli.py`):
+  um comando novo é um handler registrado em `HANDLERS`.
+- Convenções: Python 3.11+ (3.12 no `.venv`), tipagem completa, pydantic v2 para manifestos, `pathlib`, sem estado global,
   um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.
 - Não propor Docker, banco, fila, API web, multiagente ou provedor pago "para facilitar". A spec já

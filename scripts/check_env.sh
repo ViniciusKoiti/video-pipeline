@@ -37,11 +37,11 @@ if [[ -x "$PY" ]]; then
   pyver=$("$PY" -c 'import sys; print("%d.%d" % sys.version_info[:2])')
   [[ "$pyver" == 3.11 || "$pyver" == 3.12 ]] && ok "Python $pyver" || bad "Python $pyver (Kokoro exige 3.10–3.12)"
   "$PY" -c 'import kokoro, torch' 2>/dev/null \
-    && ok "kokoro + torch importam" || bad "kokoro/torch não importam no .venv"
+    && ok "kokoro + torch importam" || bad "kokoro/torch não importam no .venv (uv sync --extra tts)"
   "$PY" -c 'import en_core_web_sm' 2>/dev/null \
     && ok "modelo spaCy en_core_web_sm instalado" || bad "en_core_web_sm ausente (o misaki baixaria em tempo de execução)"
 else
-  bad ".venv ausente; criar com: uv venv --python 3.12 .venv"
+  bad ".venv ausente; criar com: uv sync --extra tts"
 fi
 [[ -d "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--hexgrad--Kokoro-82M" ]] \
   && ok "pesos do Kokoro-82M em cache" || warn "pesos do Kokoro-82M ainda não baixados"
