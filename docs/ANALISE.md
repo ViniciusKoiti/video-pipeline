@@ -8,7 +8,7 @@ Questões encontradas ao organizar o projeto a partir do `CLAUDE.md`, e o que fo
 | 2 | §3 dizia que o projeto vive em `~/video-pipeline`; ele está em `~/projetos/auto-play` (também no FS Linux, fora de `/mnt/c`). | Resolvida | Texto do §3 atualizado; repositório no GitHub chama-se `video-pipeline`. |
 | 3 | `docs/spec-v0.4.md` é a "fonte de verdade", mas não existia. | **Aberta** | Placeholder criado. O dono do projeto precisa colar a spec original. |
 | 4 | `mermaid.txt` estava vazio; o §4 aponta `docs/pipeline-flowchart.mermaid`. | Resolvida | Diagrama extraído do §4 para `docs/pipeline-flowchart.mermaid`; `mermaid.txt` removido. |
-| 5 | `app/pipeline/schemas.py` e `tests/fixtures/episodes/pilot-example/` são citados no §14 mas não existem. | Aberta | Etapa 3 do roadmap. |
+| 5 | `app/pipeline/schemas.py` e `tests/fixtures/episodes/pilot-example/` são citados no §14 mas não existem. | Resolvida | Etapa 3; decisões na ADR 007. |
 | 6 | Ambiente: Python 3.14 e ffmpeg presentes; **Ollama e Kokoro não instalados**; `.wslconfig` limitava o WSL a 8 GB / 4 CPUs. | Resolvida | Etapa 1: Ollama de usuário, Kokoro no `.venv`, `.wslconfig` 12 GB / 12 CPUs; ADR 004. |
 | 7 | Conflito §7 × §13.2: provedor de texto padrão é Ollama na spec, mas o §13 propõe Gemini/Groq gratuito. Cinco decisões do §13 não têm ADR. | Aberta | ADRs 001–005 mapeados em `docs/decisions/000-template.md`; etapas 1, 9, 20, 26, 29. |
 | 8 | A ordem do §11 (A→G) coloca pesquisa e roteiro (F) depois de render e ativos. Um episódio real precisa de F antes de D/E. | Aceita | O roadmap mantém a ordem da spec para o piloto técnico: um roteiro de teste fixo (etapa 6) alimenta as etapas B–E; F entra antes do piloto real (etapa 30). |

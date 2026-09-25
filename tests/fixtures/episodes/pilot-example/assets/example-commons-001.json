@@ -1,0 +1,16 @@
+{
+  "id": "example-commons-001",
+  "provider": "wikimedia_commons",
+  "provider_id": "File:Example_expedition_ship.jpg",
+  "original_url": "https://example.org/commons/Example_expedition_ship.jpg",
+  "page_url": "https://example.org/commons/File:Example_expedition_ship.jpg",
+  "author": "Unknown photographer",
+  "license_id": "PD-US",
+  "license_url": "https://example.org/commons/PD-US",
+  "attribution_text": "Unknown photographer, public domain, via Wikimedia Commons",
+  "usage_notes": "Fixture: publicada antes de 1930 nos EUA e em domínio público no país de origem.",
+  "retrieved_at": "2026-09-25T13:00:00Z",
+  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "review_status": "approved",
+  "used_in_scenes": ["S01"]
+}

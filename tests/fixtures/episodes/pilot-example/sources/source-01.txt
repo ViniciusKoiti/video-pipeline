@@ -1,0 +1,3 @@
+Fixture text — not a real source.
+[E1] The expedition ship left the harbor in early summer.
+[E2] The crew numbered twenty-five men.
