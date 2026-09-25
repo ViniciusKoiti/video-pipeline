@@ -43,6 +43,12 @@ def _ollama(settings: Settings) -> Any:
     return OllamaText(settings.ollama.base_url, settings.ollama.model, num_thread=settings.ollama.num_thread)
 
 
+def _ffmpeg(settings: Settings) -> Any:
+    from app.render.ffmpeg import FfmpegEngine
+
+    return FfmpegEngine(**settings.ffmpeg.model_dump())
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -62,7 +68,11 @@ DEFAULT_REGISTRY: Registry = {
         "pexels": Registration(21),
     },
     "aligner": {"ffprobe": Registration(17)},
-    "render": {"ffmpeg": Registration(7), "moneyprinterturbo": Registration(8), "remotion": Registration(8)},
+    "render": {
+        "ffmpeg": Registration(7, _ffmpeg),
+        "moneyprinterturbo": Registration(8),
+        "remotion": Registration(8),
+    },
     "store": {"json_files": Registration(10)},
     "review": {"json_files": Registration(12)},
 }

@@ -24,6 +24,15 @@ num_threads = 8
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"
 
+[ffmpeg]
+crf = 20
+preset_final = "medium"      # 1080p final
+preset_preview = "veryfast"  # prévia 720p
+zoom = 0.06                  # zoom lento de 1,00 a 1,06 por cena
+fade_s = 0.3                 # fade de entrada e saída dentro de cada cena
+burn_captions_preview = true
+burn_captions_final = false  # no final, captions.srt sobe separado no YouTube
+
 [limits]
 max_generated_images_per_episode = 12
 max_candidates_per_scene = 2

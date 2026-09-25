@@ -46,6 +46,16 @@ class WorkersAISettings(_Model):
     model: str
 
 
+class FfmpegSettings(_Model):
+    crf: int = Field(default=20, ge=0, le=51)
+    preset_final: str = "medium"
+    preset_preview: str = "veryfast"
+    zoom: float = Field(default=0.06, ge=0, le=0.3)
+    fade_s: float = Field(default=0.3, ge=0)
+    burn_captions_preview: bool = True
+    burn_captions_final: bool = False  # captions.srt sobe separado no YouTube
+
+
 class Limits(_Model):
     max_generated_images_per_episode: int = Field(default=12, ge=0)
     max_candidates_per_scene: int = Field(default=2, gt=0)
@@ -70,6 +80,7 @@ class Settings(_Model):
     ollama: OllamaSettings
     kokoro: KokoroSettings
     workers_ai: WorkersAISettings
+    ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()
     budget: Budget = Budget()
     data_dir: Path = Path("data")

@@ -6,7 +6,11 @@ Evidência para as decisões de motor e provedores (ADRs 001 e 003). Cada arquiv
   uma linha por execução de LLM (tokens/s lendo e gerando, tempo total, claims e citações inválidas)
   e de TTS (RTF = segundos de síntese por segundo de áudio). O prompt usa uma expedição **fictícia**
   (`app/pipeline/bench_data.py`), com ~1000 tokens de trechos numerados.
-- Rodar com a máquina ociosa; `warnings` registra se a CPU estava ocupada no início.
+- `vp bench --skip-llm --skip-tts --render tests/fixtures/episodes/engine-test` mede o motor configurado
+  em `config/providers.toml`: final sem cache, final com cache (só junta) e prévia. Vídeos ficam em
+  `data/benchmarks/renders/<motor>/` (fora do Git).
+- Rodar com a máquina ociosa **e sem jogos/apps pesados no Windows**; `warnings` registra carga alta ou
+  CPU limitada (`cpu_probe_s` > 0,3 s: sha256 de 64 MB). Resultado com aviso não vale como benchmark.
 - Resultados de provedores remotos (etapa 29) seguem o §7 do CLAUDE.md: link oficial, data, conta real.
 
 ## Resultados — 2026-09-25 (`machine-20260925-091013.json`)

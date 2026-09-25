@@ -6,9 +6,11 @@ Uma falha de provedor vira registro no relatório, não interrompe as outras med
 
 from __future__ import annotations
 
+import hashlib
 import os
 import platform
 import resource
+import shutil
 import tempfile
 import time
 from collections.abc import Callable, Sequence
@@ -20,11 +22,13 @@ from pydantic import BaseModel
 from app.media.probe import duration_ms
 from app.pipeline import bench_data
 from app.pipeline.ports import Context
+from app.pipeline.schemas import EpisodeManifest
 from app.providers.errors import ProviderError
 from app.providers.text.base import TextRequest
 from app.providers.tts.base import SpeechRequest
 
 BUSY_LOAD_PER_CPU = 0.25
+CPU_PROBE_SLOW_S = 0.3  # sha256 de 64 MB leva centésimos numa CPU livre; muito mais = CPU estrangulada
 MAX_OUTPUT_TOKENS = 600
 
 Progress = Callable[[str], None]
@@ -37,6 +41,7 @@ class Machine(BaseModel):
     mem_available_mb: int
     load_1m: float
     python: str
+    cpu_probe_s: float = 0.0  # tempo da sonda de CPU (sha256 de 64 MB)
     busy: bool
 
 
@@ -71,16 +76,39 @@ class TtsRun(BaseModel):
     seconds_per_audio_minute: float | None = None
 
 
+class RenderRun(BaseModel):
+    engine: str
+    mode: str  # final-frio | final-cache | preview-frio
+    ok: bool
+    error: str = ""
+    wall_s: float
+    video_s: float = 0.0
+    width: int = 0
+    height: int = 0
+    output_mb: float = 0.0
+    realtime_factor: float | None = None  # segundos de vídeo por segundo de render (> 1 = mais rápido)
+    peak_child_rss_mb: int = 0  # maior processo filho (ffmpeg) medido até aqui
+
+
 class BenchReport(BaseModel):
     created_at: datetime
     machine: Machine
     warnings: list[str]
     llm: list[LlmRun]
     tts: list[TtsRun]
+    render: list[RenderRun] = []
     peak_rss_mb: int  # deste processo (inclui o Kokoro); o Ollama roda em outro processo
 
 
-def read_machine(proc: Path = Path("/proc")) -> Machine:
+def cpu_probe() -> float:
+    """Carga fixa e curta: detecta CPU limitada (energia, temperatura) que a média de carga não mostra."""
+    data = bytes(64 * 1024 * 1024)
+    start = time.perf_counter()
+    hashlib.sha256(data).hexdigest()
+    return round(time.perf_counter() - start, 3)
+
+
+def read_machine(proc: Path = Path("/proc"), probe: Callable[[], float] = cpu_probe) -> Machine:
     meminfo = (proc / "meminfo").read_text().splitlines()
     total_kb = next(int(line.split()[1]) for line in meminfo if line.startswith("MemTotal:"))
     cpu_model = next(
@@ -93,6 +121,7 @@ def read_machine(proc: Path = Path("/proc")) -> Machine:
     )
     cpus = os.cpu_count() or 1
     load = float((proc / "loadavg").read_text().split()[0])
+    probe_s = probe()
     return Machine(
         cpu_model=cpu_model,
         cpus=cpus,
@@ -100,7 +129,8 @@ def read_machine(proc: Path = Path("/proc")) -> Machine:
         mem_available_mb=_available_mb(proc),
         load_1m=load,
         python=platform.python_version(),
-        busy=load / cpus > BUSY_LOAD_PER_CPU,
+        cpu_probe_s=probe_s,
+        busy=load / cpus > BUSY_LOAD_PER_CPU or probe_s > CPU_PROBE_SLOW_S,
     )
 
 
@@ -183,6 +213,43 @@ def bench_tts(context: Context, run: int, workdir: Path) -> TtsRun:
     )
 
 
+RENDER_MODES = (("final-frio", False, True), ("final-cache", False, False), ("preview-frio", True, True))
+
+
+def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
+    """Renderiza o episódio pela porta RenderEngine: final sem cache, final com cache e prévia."""
+    engine = context.render.info.name
+    episode = EpisodeManifest.model_validate_json((episode_dir / "episode.json").read_text())
+    out_dir = context.settings.data_dir / "benchmarks" / "renders" / engine
+    runs = []
+    for mode, preview, cold in RENDER_MODES:
+        out = out_dir / f"{episode.episode_id}-{'preview' if preview else 'final'}.mp4"
+        if cold:
+            shutil.rmtree(out_dir / f".segments-{'preview' if preview else 'final'}", ignore_errors=True)
+        start = time.perf_counter()
+        try:
+            result = context.render.render(episode, episode_dir, out, preview=preview)
+        except (ProviderError, RuntimeError) as error:
+            runs.append(RenderRun(engine=engine, mode=mode, ok=False, error=str(error)[:300],
+                                  wall_s=round(time.perf_counter() - start, 1)))
+            continue
+        wall = time.perf_counter() - start
+        video_s = result.duration_ms / 1000
+        runs.append(RenderRun(
+            engine=engine,
+            mode=mode,
+            ok=True,
+            wall_s=round(wall, 1),
+            video_s=round(video_s, 2),
+            width=result.width,
+            height=result.height,
+            output_mb=round(result.path.stat().st_size / 1e6, 1),
+            realtime_factor=round(video_s / wall, 2) if wall else None,
+            peak_child_rss_mb=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss // 1024,
+        ))
+    return runs
+
+
 def run_bench(
     context: Context,
     *,
@@ -191,15 +258,17 @@ def run_bench(
     now: Callable[[], datetime],
     include_llm: bool = True,
     include_tts: bool = True,
+    render_dir: Path | None = None,
     progress: Progress = lambda message: None,
     proc: Path = Path("/proc"),
+    probe: Callable[[], float] = cpu_probe,
 ) -> tuple[BenchReport, Path]:
-    machine = read_machine(proc)
+    machine = read_machine(proc, probe)
     warnings = []
     if machine.busy:
         warnings.append(
-            f"CPU ocupada no início (load {machine.load_1m} para {machine.cpus} CPUs): "
-            "os tempos podem sair piores que o normal"
+            f"CPU ocupada ou limitada no início (load {machine.load_1m} para {machine.cpus} CPUs, "
+            f"sonda {machine.cpu_probe_s}s): os tempos podem sair piores que o normal"
         )
         progress("aviso: " + warnings[-1])
     llm: list[LlmRun] = []
@@ -214,6 +283,10 @@ def run_bench(
             for run in range(1, runs + 1):
                 progress(f"TTS: execução {run}/{runs}")
                 tts.append(bench_tts(context, run, Path(tmp)))
+    render: list[RenderRun] = []
+    if render_dir is not None:
+        progress(f"render ({context.render.info.name}): final sem cache, final com cache e prévia")
+        render = bench_render(context, render_dir)
     created_at = now()
     report = BenchReport(
         created_at=created_at,
@@ -221,6 +294,7 @@ def run_bench(
         warnings=warnings,
         llm=llm,
         tts=tts,
+        render=render,
         peak_rss_mb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024,
     )
     out = context.settings.data_dir / "benchmarks" / f"machine-{created_at:%Y%m%d-%H%M%S}.json"
@@ -245,5 +319,12 @@ def summary(report: BenchReport) -> list[str]:
             f"TTS {t.provider} #{t.run}: RTF {t.rtf} · {t.seconds_per_audio_minute}s por minuto de áudio"
             if t.ok
             else f"TTS {t.provider} #{t.run}: FALHOU ({t.error})"
+        )
+    for r in report.render:
+        lines.append(
+            f"render {r.engine} {r.mode}: {r.wall_s}s para {r.video_s}s de vídeo ({r.realtime_factor}x) · "
+            f"{r.width}x{r.height} · {r.output_mb} MB · ffmpeg até {r.peak_child_rss_mb} MB"
+            if r.ok
+            else f"render {r.engine} {r.mode}: FALHOU ({r.error})"
         )
     return lines + [f"aviso: {w}" for w in report.warnings]

@@ -39,6 +39,9 @@ def _bench_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--runs", type=int, default=2, help="execuções por modelo (padrão: 2)")
     parser.add_argument("--skip-llm", action="store_true", help="não medir o LLM")
     parser.add_argument("--skip-tts", action="store_true", help="não medir o TTS")
+    parser.add_argument(
+        "--render", type=Path, metavar="DIR", help="pasta de episódio para medir o motor de render"
+    )
 
 
 def _new_arguments(parser: argparse.ArgumentParser) -> None:
@@ -81,11 +84,12 @@ def _bench(args: argparse.Namespace, context: Context) -> int:
         now=lambda: datetime.now().astimezone(),
         include_llm=not args.skip_llm,
         include_tts=not args.skip_tts,
+        render_dir=args.render,
         progress=lambda message: print(message, file=sys.stderr, flush=True),
     )
     print("\n".join(summary(report)))
     print(f"resultado: {path}")
-    return 1 if any(not r.ok for r in [*report.llm, *report.tts]) else 0
+    return 1 if any(not r.ok for r in [*report.llm, *report.tts, *report.render]) else 0
 
 
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
