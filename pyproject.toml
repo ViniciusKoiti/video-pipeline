@@ -58,3 +58,5 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]  # permite importar tests.fakes
+markers = ["slow: modelos locais pesados (Kokoro); rodar com `pytest -m slow`"]
+addopts = "-m 'not slow'"

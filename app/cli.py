@@ -11,10 +11,12 @@ import argparse
 import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
+from app.pipeline.bench import run_bench, summary
 from app.pipeline.ports import Context
 from app.settings import CONFIG_FILE
 
@@ -32,6 +34,13 @@ class Command:
     add_arguments: Callable[[argparse.ArgumentParser], None] | None = None
 
 
+def _bench_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--models", help="modelos de texto separados por vírgula (padrão: o configurado)")
+    parser.add_argument("--runs", type=int, default=2, help="execuções por modelo (padrão: 2)")
+    parser.add_argument("--skip-llm", action="store_true", help="não medir o LLM")
+    parser.add_argument("--skip-tts", action="store_true", help="não medir o TTS")
+
+
 def _new_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--topic", required=True, help="tema do episódio")
 
@@ -45,7 +54,10 @@ def _approve_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 COMMANDS: tuple[Command, ...] = (
-    Command("bench", "RAM, CPU, tok/s do modelo local, tempo de TTS", 5, takes_episode=False),
+    Command(
+        "bench", "RAM, CPU, tok/s do modelo local, tempo de TTS", 5, takes_episode=False,
+        add_arguments=_bench_arguments,
+    ),
     Command("new", "cria data/episodes/<id>/ e o manifesto inicial", 12, add_arguments=_new_arguments),
     Command("sources", "busca, download e extração de texto -> sources.json", 26),
     Command("script", "roteiro com retrieval + validação de schema e de claims", 27),
@@ -60,8 +72,24 @@ COMMANDS: tuple[Command, ...] = (
     Command("status", "estados por etapa e pendências", 12),
 )
 
+def _bench(args: argparse.Namespace, context: Context) -> int:
+    models = [m.strip() for m in args.models.split(",")] if args.models else [None]
+    report, path = run_bench(
+        context,
+        models=models,
+        runs=args.runs,
+        now=lambda: datetime.now().astimezone(),
+        include_llm=not args.skip_llm,
+        include_tts=not args.skip_tts,
+        progress=lambda message: print(message, file=sys.stderr, flush=True),
+    )
+    print("\n".join(summary(report)))
+    print(f"resultado: {path}")
+    return 1 if any(not r.ok for r in [*report.llm, *report.tts]) else 0
+
+
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
-HANDLERS: dict[str, Handler] = {}
+HANDLERS: dict[str, Handler] = {"bench": _bench}
 
 
 def _package_version() -> str:

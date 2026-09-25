@@ -33,11 +33,27 @@ class Registration:
     factory: Factory | None = None  # None = ainda não implementado
 
 
+class ConfigurationError(ValueError):
+    pass
+
+
+def _ollama(settings: Settings) -> Any:
+    from app.providers.text.ollama import OllamaText
+
+    return OllamaText(settings.ollama.base_url, settings.ollama.model, num_thread=settings.ollama.num_thread)
+
+
+def _kokoro(settings: Settings) -> Any:
+    from app.providers.tts.kokoro import KokoroTTS
+
+    return KokoroTTS(settings.kokoro.voice, num_threads=settings.kokoro.num_threads)
+
+
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
 
 DEFAULT_REGISTRY: Registry = {
-    "text": {"ollama": Registration(27), "groq": Registration(29), "gemini": Registration(29)},
-    "tts": {"kokoro": Registration(15)},
+    "text": {"ollama": Registration(5, _ollama), "groq": Registration(29), "gemini": Registration(29)},
+    "tts": {"kokoro": Registration(5, _kokoro)},
     "image_gen": {"workers_ai": Registration(24)},
     "archives": {
         "wikimedia_commons": Registration(20),
@@ -50,10 +66,6 @@ DEFAULT_REGISTRY: Registry = {
     "store": {"json_files": Registration(10)},
     "review": {"json_files": Registration(12)},
 }
-
-
-class ConfigurationError(ValueError):
-    pass
 
 
 def ensure_free(info: ProviderInfo, budget: Budget) -> None:

@@ -37,7 +37,6 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
 @pytest.mark.parametrize(
     ("argv", "step"),
     [
-        (["bench"], 5),
         (["new", "pilot-001", "--topic", "Greely expedition"], 12),
         (["script", "pilot-001"], 27),
         (["render", "pilot-001", "--preview"], 13),

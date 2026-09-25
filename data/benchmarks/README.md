@@ -1,0 +1,37 @@
+# Benchmarks
+
+Evidência para as decisões de motor e provedores (ADRs 001 e 003). Cada arquivo é versionado.
+
+- `machine-AAAAMMDD-HHMMSS.json` — saída do `vp bench` (etapa 5): máquina (CPU, RAM, carga no início),
+  uma linha por execução de LLM (tokens/s lendo e gerando, tempo total, claims e citações inválidas)
+  e de TTS (RTF = segundos de síntese por segundo de áudio). O prompt usa uma expedição **fictícia**
+  (`app/pipeline/bench_data.py`), com ~1000 tokens de trechos numerados.
+- Rodar com a máquina ociosa; `warnings` registra se a CPU estava ocupada no início.
+- Resultados de provedores remotos (etapa 29) seguem o §7 do CLAUDE.md: link oficial, data, conta real.
+
+## Resultados — 2026-09-25 (`machine-20260925-091013.json`)
+
+Ryzen 7 5700U, WSL com 12 GB / 12 CPUs, 8 threads, máquina ociosa (load 1,06). Prompt de 1010 tokens,
+saída limitada a 600 tokens, 2 execuções por modelo.
+
+| Modelo | Gera (tok/s) | Lê (tok/s) | Tempo/execução | JSON válido | Citações inválidas | Memória livre depois |
+|---|---|---|---|---|---|---|
+| qwen3.5:4b | 4,3–4,6 | 25–27 | 130 s | 2/2 | 0 | 5,4 GB |
+| qwen3.5:9b | 3,1–3,2 | 16 | 205–245 s | 2/2 | 0 | 2,4 GB |
+| qwen3:4b | 5,0–5,4 | 28–30 | 135–160 s | 2/2 | 0 | 6,1 GB |
+
+Kokoro (`am_michael`): RTF 1,52 na primeira execução (inclui carga) e **0,70** com o modelo carregado,
+ou seja, ~42 s de síntese por minuto de áudio. Pico de memória do processo: 1,5 GB.
+
+Leitura:
+
+- Projeção para um roteiro real (~8 mil tokens de trechos, ~2 mil de saída): ~11 min (`qwen3:4b`),
+  ~13 min (`qwen3.5:4b`) e ~19 min (`qwen3.5:9b`) por chamada. Viável, mas cada rodada de revisão do
+  roteiro custa isso. A estimativa anterior de 20–40 min (máquina ocupada) estava pessimista.
+- Narração de 6 min: ~4–5 min de síntese. TTS não é gargalo.
+- `qwen3:4b` ignorou o pedido de 4–6 claims (8–9) e chegou a 599 dos 600 tokens de saída: segue
+  instruções pior que o `qwen3.5`. Estrutura válida não prova fidelidade: a avaliação humana dos textos
+  (campo `output`, gravado a partir da próxima execução) fica para a etapa 29.
+- O `qwen3.5:9b` deixa só 2,4 GB livres; descarregar o LLM antes da etapa de voz (etapa 16).
+- O Ollama usa contexto de 4096 tokens por padrão: um prompt de roteiro real seria cortado. Ver
+  questão 13 da `docs/ANALISE.md`.

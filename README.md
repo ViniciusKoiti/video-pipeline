@@ -40,5 +40,7 @@ scripts/check_env.sh
 
 ```bash
 uv run vp --help           # comandos do CLAUDE.md §10; os ainda não implementados indicam a etapa
+uv run vp bench --models qwen3.5:4b,qwen3.5:9b --runs 2   # rodar com a máquina ociosa
 uv run pytest && uv run ruff check .
+uv run pytest -m slow      # contratos com modelos locais pesados (Kokoro)
 ```
