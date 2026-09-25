@@ -281,7 +281,7 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
 ## 10. CLI planejada (`vp`, console script em `pyproject.toml`)
 
 ```
-vp bench                      # RAM, CPU, tok/s do modelo local, tempo de TTS
+vp bench [--models a,b] [--runs N]  # RAM, CPU, tok/s e TTS pelas portas -> data/benchmarks/
 vp new <id> --topic "..."     # cria data/episodes/<id>/ e manifesto inicial
 vp sources <id>               # busca, download, extração de texto -> sources.json
 vp script <id>                # roteiro com retrieval + validação de schema e de claims
@@ -356,6 +356,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   parar e perguntar.
 - Em dúvida sobre licença de um ativo ou termos de um provedor, parar e perguntar; não decidir sozinho.
 - Rodar `pytest` e `ruff check .` antes de encerrar qualquer tarefa. Testes novos para toda etapa nova.
+  Testes com modelos locais pesados levam `@pytest.mark.slow` e ficam fora da rodada padrão
+  (`pytest -m slow` para rodá-los; usam `HF_HUB_OFFLINE=1`, sem rede).
 - Commits pequenos e descritivos. Decisões de arquitetura viram `docs/decisions/NNN-titulo.md`.
 - Ao mudar uma decisão registrada aqui, atualizar este arquivo no mesmo commit.
 - Dependências só via `uv add` (com licença no comentário do `pyproject.toml`) e `uv.lock` versionado.

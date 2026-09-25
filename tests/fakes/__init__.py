@@ -9,7 +9,7 @@ import hashlib
 import json
 import shutil
 import wave
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -23,6 +23,7 @@ from app.providers.alignment.base import Cue
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput
+from app.providers.http import JsonPost
 from app.providers.image_gen.base import CostEstimate, GeneratedImage, ImageRequest
 from app.providers.text.base import TextRequest, TextResult, Usage
 from app.providers.tts.base import SpeechRequest, SpeechResult
@@ -84,7 +85,7 @@ class FakeText:
         except ValidationError as error:
             raise InvalidOutput(self.info.name, str(error)) from error
         usage = Usage(input_tokens=len(request.prompt.split()), output_tokens=len(raw.split()), duration_ms=1)
-        return TextResult(data=data, model="fake", usage=usage)
+        return TextResult(data=data, model=request.model or "fake", usage=usage)
 
 
 class FakeTTS:
@@ -221,3 +222,27 @@ class FakeContext:
     archives: tuple[FakeArchive, ...] = (FakeArchive(),)
     aligner: FakeAligner = field(default_factory=FakeAligner)
     render: FakeRender = field(default_factory=FakeRender)
+
+
+def fake_ollama_post(contents: list[str], **overrides: Any) -> tuple[JsonPost, list[dict[str, Any]]]:
+    """Transporte falso no formato de resposta do /api/chat do Ollama (tempos em ns)."""
+    calls: list[dict[str, Any]] = []
+
+    def post(url: str, payload: Mapping[str, Any], timeout: float) -> dict[str, Any]:
+        calls.append({"url": url, "payload": dict(payload), "timeout": timeout})
+        return {
+            "model": payload["model"],
+            "message": {"role": "assistant", "content": contents.pop(0)},
+            "done": True,
+            "done_reason": "stop",
+            "total_duration": 3_000_000_000,
+            "load_duration": 1_000_000_000,
+            "prompt_eval_count": 120,
+            "prompt_eval_cached_count": 0,
+            "prompt_eval_duration": 1_500_000_000,
+            "eval_count": 30,
+            "eval_duration": 500_000_000,
+            **overrides,
+        }
+
+    return post, calls

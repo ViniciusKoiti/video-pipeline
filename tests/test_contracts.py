@@ -6,8 +6,10 @@ rede (transporte HTTP falso, fixtures em data/cache/). Adapters locais pesados l
 
 from __future__ import annotations
 
+import os
 import wave
 from collections.abc import Callable
+from importlib.util import find_spec
 from pathlib import Path
 
 import pytest
@@ -20,6 +22,7 @@ from app.providers.archives.base import ArchiveProvider, AssetQuery
 from app.providers.errors import InvalidOutput
 from app.providers.image_gen.base import ImageGenProvider, ImageRequest
 from app.providers.text.base import TextProvider, TextRequest
+from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
 from tests.fakes import (
@@ -32,6 +35,7 @@ from tests.fakes import (
     FakeTTS,
     InMemoryReviewGate,
     InMemoryStore,
+    fake_ollama_post,
     write_silence,
 )
 
@@ -43,9 +47,28 @@ class Reply(BaseModel):
     source_ids: list[str]
 
 
+def make_ollama(responses: list[str]) -> TextProvider:
+    return OllamaText("http://127.0.0.1:11434", "qwen3.5:4b", post=fake_ollama_post(responses)[0])
+
+
+def make_kokoro() -> TTSProvider:
+    os.environ.setdefault("HF_HUB_OFFLINE", "1")  # pesos já em cache: o teste não acessa a rede (§2.10)
+    from app.providers.tts.kokoro import KokoroTTS
+
+    return KokoroTTS("am_michael")
+
+
+NEEDS_TTS_EXTRA = pytest.mark.skipif(find_spec("kokoro") is None, reason="extra tts ausente")
+
 # Uma lista por porta. Etapas futuras acrescentam os adapters reais.
-TEXT: list[Callable[[list[str]], TextProvider]] = [pytest.param(FakeText, id="fake")]
-TTS: list[Callable[[], TTSProvider]] = [pytest.param(FakeTTS, id="fake")]
+TEXT: list[Callable[[list[str]], TextProvider]] = [
+    pytest.param(FakeText, id="fake"),
+    pytest.param(make_ollama, id="ollama"),
+]
+TTS: list[Callable[[], TTSProvider]] = [
+    pytest.param(FakeTTS, id="fake"),
+    pytest.param(make_kokoro, id="kokoro", marks=[pytest.mark.slow, NEEDS_TTS_EXTRA]),
+]
 IMAGE_GEN: list[Callable[[], ImageGenProvider]] = [pytest.param(FakeImageGen, id="fake")]
 ARCHIVES: list[Callable[[], ArchiveProvider]] = [pytest.param(FakeArchive, id="fake")]
 ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="fake")]

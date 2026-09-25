@@ -27,7 +27,7 @@ flowchart TD
         ERR["providers/errors.py"]
     end
 
-    subgraph ADAPT["adapters concretos (etapas 7+)"]
+    subgraph ADAPT["adapters concretos (ollama e kokoro desde a etapa 5)"]
         OLL["text/ollama.py"]
         KOK["tts/kokoro.py"]
         WAI["image_gen/workers_ai.py"]
