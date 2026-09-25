@@ -1,0 +1,12 @@
+{
+  "episode_id": "pilot-example",
+  "entries": [
+    { "step": "sources", "decision": "approved", "reviewer": "vinicius", "at": "2026-09-25T12:30:00Z", "input_hash": "sha256:sources-v1" },
+    { "step": "script", "decision": "changes_requested", "reviewer": "vinicius", "at": "2026-09-25T12:40:00Z", "input_hash": "sha256:script-v1", "notes": "Citar o trecho do jornal na cena 1." },
+    { "step": "script", "decision": "approved", "reviewer": "vinicius", "at": "2026-09-25T12:50:00Z", "input_hash": "sha256:script-v2" },
+    { "step": "assets", "asset_id": "example-commons-001", "decision": "approved", "reviewer": "vinicius", "at": "2026-09-25T13:30:00Z" },
+    { "step": "assets", "asset_id": "original-map-001", "decision": "approved", "reviewer": "vinicius", "at": "2026-09-25T13:31:00Z" },
+    { "step": "assets", "asset_id": "workers-ai-001", "decision": "approved", "reviewer": "vinicius", "at": "2026-09-25T13:32:00Z", "notes": "Escolhida entre 2 candidatas." },
+    { "step": "preview", "scene_id": "S03", "decision": "approved", "reviewer": "vinicius", "at": "2026-09-25T14:00:00Z" }
+  ]
+}

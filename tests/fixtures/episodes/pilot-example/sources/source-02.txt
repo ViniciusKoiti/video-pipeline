@@ -1,0 +1,3 @@
+Fixture text — not a real source.
+[E1] A newspaper reported the departure the following week.
+[E2] Relief attempts failed in the next two seasons.

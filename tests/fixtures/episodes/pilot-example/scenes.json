@@ -1,0 +1,41 @@
+{
+  "episode_id": "pilot-example",
+  "language": "en",
+  "scenes": [
+    {
+      "id": "S01",
+      "narration": "The expedition left port with one goal, and twenty-five men aboard.",
+      "claims": [
+        { "text": "Departure in early summer", "source_ids": ["source-01", "source-02"], "excerpt_ids": ["source-01#E1", "source-02#E1"] },
+        { "text": "Crew of twenty-five", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E2"] }
+      ],
+      "visual_need": "historical_exact",
+      "search_query": "expedition ship harbor historic photo",
+      "chosen_asset_id": "example-commons-001",
+      "duration_ms": 6200,
+      "review_status": "approved"
+    },
+    {
+      "id": "S02",
+      "narration": "Their route ran north, far beyond the last supply station.",
+      "claims": [],
+      "visual_need": "map_or_graphic",
+      "search_query": "arctic route map",
+      "chosen_asset_id": "original-map-001",
+      "duration_ms": 4800,
+      "review_status": "approved"
+    },
+    {
+      "id": "S03",
+      "narration": "For two seasons, no relief ship reached them.",
+      "claims": [
+        { "text": "Relief attempts failed for two seasons", "source_ids": ["source-02"], "excerpt_ids": ["source-02#E2"] }
+      ],
+      "visual_need": "illustrative_reconstruction",
+      "search_query": "ship blocked by pack ice illustration",
+      "chosen_asset_id": "workers-ai-001",
+      "duration_ms": 3900,
+      "review_status": "approved"
+    }
+  ]
+}

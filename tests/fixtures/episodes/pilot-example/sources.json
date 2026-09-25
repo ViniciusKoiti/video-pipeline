@@ -1,0 +1,23 @@
+{
+  "episode_id": "pilot-example",
+  "sources": [
+    {
+      "id": "source-01",
+      "title": "Example expedition memoir (fixture)",
+      "url": "https://example.org/sources/memoir",
+      "kind": "primary",
+      "retrieved_at": "2026-09-25T12:00:00Z",
+      "local_path": "sources/source-01.txt",
+      "notes": "Fixture de teste; não é fonte real."
+    },
+    {
+      "id": "source-02",
+      "title": "Example newspaper clipping (fixture)",
+      "url": "https://example.org/sources/newspaper",
+      "kind": "newspaper",
+      "retrieved_at": "2026-09-25T12:05:00Z",
+      "local_path": "sources/source-02.txt",
+      "notes": "Fixture de teste; não é fonte real."
+    }
+  ]
+}

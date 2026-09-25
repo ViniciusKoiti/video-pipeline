@@ -1,0 +1,12 @@
+{
+  "id": "original-map-001",
+  "provider": "original",
+  "provider_id": "route-map-v1",
+  "author": "video-pipeline",
+  "license_id": "Original",
+  "usage_notes": "Mapa feito pelo projeto a partir de dados geográficos do fixture.",
+  "retrieved_at": "2026-09-25T13:10:00Z",
+  "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "review_status": "approved",
+  "used_in_scenes": ["S02"]
+}

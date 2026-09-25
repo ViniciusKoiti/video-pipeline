@@ -161,7 +161,10 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
 - Aprovação humana é registrada por `vp approve <id> --step <step>` em `review.json`, nunca editando
   `review_status` à mão no manifesto principal.
 
-## 6. Contratos de dados (schemas pydantic em `app/pipeline/schemas.py`)
+## 6. Contratos de dados (schemas pydantic em `app/pipeline/schemas.py`, ADR 007)
+
+Uma cena = um bloco de narração = um WAV = um visual. Exemplo completo em
+`tests/fixtures/episodes/pilot-example/`.
 
 **`sources.json`** — por fonte: `id`, `title`, `url`, `kind` (`primary|secondary|newspaper|archive`),
 `retrieved_at`, `local_path` (texto extraído), `notes`. Mínimo de 2 fontes independentes para os
@@ -177,7 +180,7 @@ fatos principais.
     {
       "id": "S01",
       "narration": "The expedition left port with one goal...",
-      "claims": [{ "text": "Departure date", "source_ids": ["source-01"] }],
+      "claims": [{ "text": "Departure date", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E1"] }],
       "visual_need": "historical_exact",
       "search_query": "expedition ship harbor historic photo",
       "chosen_asset_id": null,
@@ -192,10 +195,17 @@ fatos principais.
 
 **Ativo** (`assets/<id>.json`): `provider`, `provider_id`, `original_url`, `page_url`, `author`,
 `license_id`, `license_url`, `attribution_text`, `usage_notes`, `retrieved_at`, `sha256`,
-`review_status`, `used_in_scene`. Para imagem gerada, também `prompt`, `model`, `seed`, `steps`.
+`review_status`, `used_in_scenes` (lista: um mapa pode voltar). Imagem gerada tem também
+`generation: {prompt, model, seed, steps}`. Só chega a `approved` com licença da lista fechada da ADR 007
+(PD, CC0, CC-BY, Flickr-NKCR, Pexels, Generated, Original — **sem** CC-BY-SA e NC), `sha256`, e
+`usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
 
-**`episode.json`** — contrato do render: cenas com `start_ms`/`duration_ms` medidos da voz real,
-texto, caminhos relativos de imagem/áudio, legendas. É a **única** entrada do motor de montagem;
+**`review.json`** — fonte única das decisões humanas: entradas só acrescentadas, por etapa, cena ou ativo,
+com `decision`, `reviewer`, `at` e `input_hash` do conteúdo revisado (mudou o conteúdo, a aprovação cai).
+
+**`episode.json`** — contrato do render: `video` (1920×1080, 30 fps, 48 kHz, 16:9 validado), cenas com
+`start_ms`/`duration_ms` medidos da voz real e sem sobreposição, texto, caminhos relativos de
+imagem/áudio, `captions`. É a **única** entrada do motor de montagem;
 se o motor for o Turbo, um adapter converte este arquivo para os parâmetros dele, nunca o contrário.
 
 ## 7. Provedores e política de escolha

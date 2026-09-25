@@ -1,0 +1,17 @@
+{
+  "id": "workers-ai-001",
+  "provider": "workers_ai",
+  "provider_id": "gen-2026-09-25-001",
+  "license_id": "Generated",
+  "usage_notes": "Ilustração; exige divulgação de conteúdo sintético (§2.4).",
+  "retrieved_at": "2026-09-25T13:20:00Z",
+  "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "review_status": "approved",
+  "used_in_scenes": ["S03"],
+  "generation": {
+    "prompt": "Nineteenth-century wooden ship trapped in arctic pack ice, muted engraving style, wide shot",
+    "model": "@cf/black-forest-labs/flux-1-schnell",
+    "seed": 42,
+    "steps": 4
+  }
+}
