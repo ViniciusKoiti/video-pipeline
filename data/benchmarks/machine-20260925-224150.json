@@ -1,0 +1,60 @@
+{
+  "created_at": "2026-09-25T22:41:50.908067-03:00",
+  "machine": {
+    "cpu_model": "AMD Ryzen 7 5700U with Radeon Graphics",
+    "cpus": 12,
+    "mem_total_mb": 11960,
+    "mem_available_mb": 7104,
+    "load_1m": 6.68,
+    "python": "3.12.13",
+    "cpu_probe_s": 0.104,
+    "busy": true
+  },
+  "warnings": [
+    "CPU ocupada ou limitada no início (load 6.68 para 12 CPUs, sonda 0.104s): os tempos podem sair piores que o normal"
+  ],
+  "llm": [],
+  "tts": [],
+  "render": [
+    {
+      "engine": "remotion",
+      "mode": "final-frio",
+      "ok": true,
+      "error": "",
+      "wall_s": 266.5,
+      "video_s": 52.59,
+      "width": 1920,
+      "height": 1080,
+      "output_mb": 46.5,
+      "realtime_factor": 0.2,
+      "peak_child_rss_mb": 854
+    },
+    {
+      "engine": "remotion",
+      "mode": "final-cache",
+      "ok": true,
+      "error": "",
+      "wall_s": 267.6,
+      "video_s": 52.59,
+      "width": 1920,
+      "height": 1080,
+      "output_mb": 46.5,
+      "realtime_factor": 0.2,
+      "peak_child_rss_mb": 854
+    },
+    {
+      "engine": "remotion",
+      "mode": "preview-frio",
+      "ok": true,
+      "error": "",
+      "wall_s": 177.4,
+      "video_s": 52.59,
+      "width": 1280,
+      "height": 720,
+      "output_mb": 20.4,
+      "realtime_factor": 0.3,
+      "peak_child_rss_mb": 854
+    }
+  ],
+  "peak_rss_mb": 32
+}
