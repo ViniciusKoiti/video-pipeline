@@ -24,7 +24,7 @@ from app.pipeline.schemas import EpisodeManifest, VideoSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 
-ENGINE_VERSION = "1"  # mudar invalida o cache de segmentos
+ENGINE_VERSION = "2"  # mudar invalida o cache de segmentos (v2: matriz e marcação bt709)
 FIT_MIN_ASPECT = 1.45
 SRT_TIME = re.compile(r"(\d+):(\d\d):(\d\d)[,.](\d\d\d)")
 
@@ -187,7 +187,11 @@ class FfmpegEngine:
         if srt is not None:
             style = f"FontName={self._font},FontSize=16,Outline=1.5,Shadow=0,MarginV=18"
             chain.append(f"subtitles=filename='{_escape_filter_path(srt)}':force_style='{style}'")
-        chain.append("scale=out_range=tv,format=yuv420p")  # JPEG vem em faixa cheia
+        # JPEG vem em faixa cheia: converte para bt709 limitado e marca os quadros (o encoder segue a marca)
+        chain.append(
+            "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p,"
+            "setparams=range=tv:colorspace=bt709:color_primaries=bt709:color_trc=bt709"
+        )
         return f"{base},{','.join(chain)}[v]"
 
     def _render_segment(
@@ -228,6 +232,12 @@ class FfmpegEngine:
                 "yuv420p",
                 "-color_range",
                 "tv",
+                "-colorspace",
+                "bt709",
+                "-color_primaries",
+                "bt709",
+                "-color_trc",
+                "bt709",
                 "-an",
                 str(tmp),
             ]

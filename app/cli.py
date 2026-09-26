@@ -18,6 +18,7 @@ from pathlib import Path
 from app.bootstrap import build_context
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.ports import Context
+from app.pipeline.schemas import EpisodeFormat
 from app.settings import CONFIG_FILE
 
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
@@ -46,6 +47,12 @@ def _bench_arguments(parser: argparse.ArgumentParser) -> None:
 
 def _new_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--topic", required=True, help="tema do episódio")
+    parser.add_argument(
+        "--format",
+        choices=[f.value for f in EpisodeFormat],
+        default=EpisodeFormat.ARCHIVAL_DOCUMENTARY.value,
+        help="formato do episódio; decide o motor de render (ADR 001)",
+    )
 
 
 def _render_arguments(parser: argparse.ArgumentParser) -> None:

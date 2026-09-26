@@ -12,7 +12,7 @@ from app.bootstrap import (
     Registry,
     build_context,
 )
-from app.pipeline.schemas import Provider
+from app.pipeline.schemas import EpisodeFormat, Provider
 from app.providers.errors import PaidApiBlocked
 from app.settings import CONFIG_FILE, load_settings
 from tests.fakes import REPO_ROOT, FakeArchive, FakeText, make_root
@@ -34,7 +34,8 @@ def registry_with(port: str, entries: dict[str, Registration]) -> Registry:
 
 def test_defaults_come_from_providers_toml(tmp_path: Path) -> None:
     settings = load_settings(make_root(tmp_path), environ={})
-    assert (settings.providers.text, settings.providers.render) == ("ollama", "ffmpeg")
+    assert settings.providers.text == "ollama"
+    assert settings.providers.render == {"archival_documentary": "ffmpeg", "explainer": "remotion"}
     assert settings.providers.archives[0] == "wikimedia_commons"
     assert settings.ollama.num_thread == 8
     assert (settings.budget.max_api_spend_usd, settings.budget.allow_paid_api) == (0, False)
@@ -135,3 +136,33 @@ def test_paid_provider_needs_both_flag_and_budget(tmp_path: Path) -> None:
         _ = paid_context(tmp_path / "a", environ={"ALLOW_PAID_API": "true"}).text
     allowed = paid_context(tmp_path / "b", environ={"ALLOW_PAID_API": "true", "MAX_API_SPEND_USD": "5"})
     assert allowed.text.info.name == "paid"
+
+
+# --- Motor por formato (ADR 001) ----------------------------------------------------------------
+
+
+def test_render_engine_follows_episode_format(tmp_path: Path) -> None:
+    context = build_context(make_root(tmp_path), environ={})
+    assert context.renderer(EpisodeFormat.ARCHIVAL_DOCUMENTARY).info.name == "ffmpeg"
+    assert context.renderer(EpisodeFormat.ARCHIVAL_DOCUMENTARY) is context.renderer("archival_documentary")
+    with pytest.raises(ConfigurationError, match=r"etapa #43"):  # explainer ainda fora do main
+        context.renderer(EpisodeFormat.EXPLAINER)
+
+
+def test_format_without_engine_is_a_clear_error(tmp_path: Path) -> None:
+    config = config_with(
+        'render = { archival_documentary = "ffmpeg", explainer = "remotion" }',
+        'render = { archival_documentary = "ffmpeg" }',
+    )
+    context = build_context(make_root(tmp_path, config), environ={})
+    with pytest.raises(ConfigurationError, match="nenhum motor de render para o formato explainer"):
+        context.renderer(EpisodeFormat.EXPLAINER)
+
+
+def test_documentary_engine_is_mandatory(tmp_path: Path) -> None:
+    config = config_with(
+        'render = { archival_documentary = "ffmpeg", explainer = "remotion" }',
+        'render = { explainer = "remotion" }',
+    )
+    with pytest.raises(ValueError, match="archival_documentary"):
+        load_settings(make_root(tmp_path, config), environ={})

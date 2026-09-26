@@ -221,7 +221,10 @@ class FakeContext:
     image_gen: FakeImageGen = field(default_factory=FakeImageGen)
     archives: tuple[FakeArchive, ...] = (FakeArchive(),)
     aligner: FakeAligner = field(default_factory=FakeAligner)
-    render: FakeRender = field(default_factory=FakeRender)
+    renderers: dict[str, FakeRender] = field(default_factory=dict)
+
+    def renderer(self, episode_format: str) -> FakeRender:
+        return self.renderers.setdefault(episode_format, FakeRender())
 
 
 def fake_ollama_post(contents: list[str], **overrides: Any) -> tuple[JsonPost, list[dict[str, Any]]]:

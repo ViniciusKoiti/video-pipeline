@@ -11,7 +11,9 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, SecretStr
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
+
+from app.pipeline.schemas import EpisodeFormat
 
 CONFIG_FILE = Path("config/providers.toml")
 
@@ -26,9 +28,16 @@ class ProviderChoice(_Model):
     image_gen: str
     archives: list[str] = Field(min_length=1)  # ordem da cascata (§8)
     aligner: str
-    render: str
+    render: dict[EpisodeFormat, str]  # motor por formato do episódio (ADR 001)
     store: str
     review: str
+
+    @field_validator("render")
+    @classmethod
+    def _documentary_has_engine(cls, value: dict[EpisodeFormat, str]) -> dict[EpisodeFormat, str]:
+        if EpisodeFormat.ARCHIVAL_DOCUMENTARY not in value:
+            raise ValueError("render precisa de um motor para archival_documentary")
+        return value
 
 
 class OllamaSettings(_Model):
