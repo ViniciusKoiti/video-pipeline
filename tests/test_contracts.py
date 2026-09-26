@@ -26,6 +26,8 @@ from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
 from app.render.ffmpeg import FfmpegEngine
+from app.render.remotion import PROJECT as REMOTION_PROJECT
+from app.render.remotion import RemotionEngine
 from tests.fakes import (
     FIXED_TIME,
     FakeAligner,
@@ -76,6 +78,11 @@ ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="f
 RENDERERS: list[Callable[[], RenderEngine]] = [
     pytest.param(FakeRender, id="fake"),
     pytest.param(FfmpegEngine, id="ffmpeg", marks=pytest.mark.slow),  # renderiza os 52 s da engine-test
+    pytest.param(  # experimento da etapa 8
+        RemotionEngine, id="remotion",
+        marks=[pytest.mark.slow, pytest.mark.skipif(not (REMOTION_PROJECT / "node_modules").exists(),
+                                                    reason="Remotion não instalado")],
+    ),
 ]
 STORES: list[Callable[[Path], ManifestStore]] = [pytest.param(InMemoryStore, id="in-memory")]
 REVIEW_GATES: list[Callable[[], ReviewGate]] = [pytest.param(InMemoryReviewGate, id="in-memory")]
@@ -181,7 +188,8 @@ def test_render_follows_episode_contract(
     result = make().render(episode(), FIXTURE, out, preview=preview)
     assert result.path == out and out.stat().st_size > 0
     assert (result.width, result.height) == size
-    assert abs(result.duration_ms - episode().duration_ms) <= 50  # arredondamento de quadro e AAC
+    # tolerância: um quadro de vídeo + um quadro AAC de enchimento
+    assert abs(result.duration_ms - episode().duration_ms) <= 80
 
 
 # --- Portas internas ----------------------------------------------------------------------------

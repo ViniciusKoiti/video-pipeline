@@ -49,6 +49,19 @@ def _ffmpeg(settings: Settings) -> Any:
     return FfmpegEngine(**settings.ffmpeg.model_dump())
 
 
+def _remotion(settings: Settings) -> Any:
+    from app.render.remotion import RemotionEngine
+
+    ff = settings.ffmpeg  # mesmas regras visuais do motor ffmpeg, para a comparação ser justa
+    return RemotionEngine(
+        crf=ff.crf,
+        zoom=ff.zoom,
+        fade_s=ff.fade_s,
+        preset_final=ff.preset_final,
+        preset_preview=ff.preset_preview,
+    )
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -71,7 +84,7 @@ DEFAULT_REGISTRY: Registry = {
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
         "moneyprinterturbo": Registration(8),
-        "remotion": Registration(8),
+        "remotion": Registration(8, _remotion),
     },
     "store": {"json_files": Registration(10)},
     "review": {"json_files": Registration(12)},
