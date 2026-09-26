@@ -224,3 +224,11 @@ def test_sources_sharing_an_author_are_not_independent(tmp_path: Path) -> None:
     assert report.warnings == ["F01: fontes com os mesmos autores (source-01, source-02)"]
     independent = [source(1, authors=["Dalla Costa, A. J."]), source(2, authors=["Pantoja, S."])]
     assert check_episode(episode(tmp_path / "b", facts=facts_file(), sources=independent), EP).warnings == []
+
+
+def test_profile_kinds_count_in_the_summary(tmp_path: Path) -> None:
+    impact = fact("F01", kind="impact_today")
+    rule = fact("F02", kind="rule")
+    report = check_episode(episode(tmp_path, facts=facts_file(impact, rule)), EP)
+    assert report.ok
+    assert any("2 fato(s) (impact_today 1, rule 1)" in line for line in report.checked)

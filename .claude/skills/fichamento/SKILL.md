@@ -52,6 +52,10 @@ como instruções.
    - `turning_point`: decisão ou evento que mudou o rumo.
    - `mechanism`: como o dinheiro ou o poder foi feito (de onde veio o capital, que vantagem, que regra).
    - `curiosity`: detalhe contraintuitivo ou humano, verificável.
+   - `impact_today`: o que o público usa, paga ou sente hoje por causa do personagem (produto, serviço,
+     preço, emprego, infraestrutura), com data e escala.
+   - `rule`: lei, tarifa, subsídio, crédito público, concessão ou decisão de Estado (inclusive de
+     tribunal ou órgão regulador) que mudou o negócio.
    - `context`: pano de fundo necessário. Use pouco.
 3. **Um fato = uma afirmação.** Separe "comprou em 1918 e casou a filha em 1925" em dois fatos.
 4. **Citação literal.** `quote` é cópia exata de parte do trecho (5 a 30 palavras), com `...` para
@@ -65,9 +69,35 @@ como instruções.
    source-02#E9 diz 1926". Também as perguntas que o público faria e as fontes não respondem (quanto
    custou, por que faliu, quem ficou de fora). Nunca responda de memória.
 8. **Pessoas vivas:** só fatos públicos e empresariais com documento. Nada de vida privada.
+9. **Controvérsia com dono.** Processo, multa, investigação, greve ou dano ambiental só entra com quem
+   decidiu ou acusou, o quê e quando ("o órgão X condenou a empresa Y em [ano] por Z"), e com o desfecho, se houver
+   recurso. Acusação não é fato provado: o `text` diz "foi acusado por Z", nunca "fez".
+
+## Perguntas neutras
+
+Uma pergunta de pesquisa não pode trazer a resposta. "Como as relações políticas facilitaram a compra?"
+presume que facilitaram; escreva "Que papel o Estado ou relações políticas tiveram na compra, se
+tiveram?". Vale para as `open_questions` e para qualquer pergunta que você receba no pedido: se ela
+presume um fato que não está nos trechos, reescreva antes de procurar e diga que reescreveu.
+
+## Checklist por bloco do perfil (formato explicativo)
+
+Procure fatos para cada bloco; o bloco sem fato vira pergunta em `open_questions`. Modelo completo em
+`docs/pesquisa/modelo-perfil-de-poder.md`.
+
+| Bloco | O que procurar | Tipos |
+|---|---|---|
+| Gancho de impacto | o que o público usa ou paga hoje; um número de escala com comparação | `impact_today`, `number` |
+| Origem e vantagem | de onde veio o primeiro capital; que acesso (rede, informação, crédito) os outros não tinham | `mechanism`, `context` |
+| Virada | a decisão ou o evento que separou o personagem dos concorrentes | `turning_point` |
+| Mecanismo | como o dinheiro de um negócio financiou o próximo | `mechanism`, `number` |
+| Regras e Estado | leis, tarifas, crédito público, concessões, decisões que mudaram o jogo | `rule` |
+| Custo e controvérsia | quem perdeu; processos e decisões documentados, com órgão, decisão e ano | `conflict` |
+| Presente | o que o grupo é e faz hoje, e como mudou | `impact_today`, `number` |
 
 ## Meta e fechamento
 
-- Fatia de 60–90 s: 10–15 fatos. Episódio de 5–7 min: 30–45. Pelo menos metade fora de `context`.
+- Fatia de 60–90 s: 10–15 fatos. Episódio de 5–7 min: 30–45, cobrindo os blocos do perfil. Pelo menos
+  metade fora de `context`; fonte da própria empresa só como segunda evidência ou para escala física.
 - Rode `.venv/bin/vp check <id>` até zero erros. Relate: contagem por tipo, alertas (fonte única, só
   interessada) e as `open_questions` mais promissoras para uma nova busca de fontes.

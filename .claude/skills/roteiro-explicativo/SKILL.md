@@ -38,13 +38,44 @@ que não está nas fichas, não escreva a frase: anote a lacuna no fim do `outli
 }
 ```
 
+## Estrutura do perfil de poder
+
+Episódio sobre uma pessoa ou família e o seu dinheiro (modelo em `docs/pesquisa/modelo-perfil-de-poder.md`).
+Os blocos são funções, não capítulos obrigatórios: bloco sem ficha fica de fora e vira lacuna no outline.
+
+| Bloco | Fatia | Pergunta que responde para quem assiste |
+|---|---|---|
+| Gancho de impacto | 0–10% | O que isso tem a ver comigo? (algo que eu uso ou pago, ou um número que assusta) |
+| Ponte com o espectador | dentro do 1º minuto | Por que eu deveria ver até o fim? (a pergunta central, dita em voz alta) |
+| Origem e vantagem | 10–20% | De onde veio o primeiro dinheiro, e que acesso os outros não tinham? |
+| Virada | 20–30% | Que decisão ou evento os separou dos concorrentes? |
+| Mecanismo | 30–50% | Como o dinheiro de um negócio virou o próximo? |
+| Regras e Estado | 50–65% | Que lei, tarifa, crédito ou decisão pública mudou o jogo? |
+| Custo e controvérsia | 65–80% | Quem perdeu? O que foi decidido contra ou a favor deles, por quem e quando? |
+| Presente e fecho | 80–100% | O que eles são hoje, e qual a resposta à pergunta central? |
+
+- **A espinha é a cadeia "como virou elite", não a cronologia.** Cada elo diz o tipo de vantagem
+  (capital, rede, informação, regra, timing, risco, escala) e se liga ao anterior por causa que a ficha
+  sustenta ("por isso", "graças a", "mas").
+- **Ponte com o espectador:** "você" só com fato de `impact_today` que o sustente, com escala e data ("o
+  produto X que você compra" exige ficha dizendo quanto do mercado de X é deles, e quando).
+- **Controvérsia atribuída:** "segundo o órgão X", "o órgão X acusou a empresa Y em [ano]; a empresa
+  recorreu". Nunca afirme crime, intenção ou caráter. Se houver contraponto documentado, dê a ele o
+  mesmo peso; não invente um "vamos ser justos" sem fato.
+- **Tom:** crítico e documentado, sem rótulo de herói nem de vilão, sem gíria de canal.
+
+### Abertura de 60–90 s (teste do modelo)
+
+Gancho de impacto → ponte (pergunta central em voz alta) → origem comprimida em 2 ou 3 viradas → promessa
+do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenção dos primeiros 30 s (§12).
+
 ## Método
 
 1. **Pergunta central.** Uma pergunta que o vídeo responde e que o público quer ver respondida
    ("como uma fábrica falida virou a semente de um dos maiores grupos do país?"). Tudo que não ajuda a
    responder sai.
-2. **Gancho.** Abra com o fato mais forte (`number`, `conflict` ou `curiosity`), mesmo fora da ordem
-   cronológica. Depois volte ao começo.
+2. **Gancho.** Abra com o fato mais forte, mesmo fora da ordem cronológica; num perfil, de preferência
+   `impact_today` ou um `number` de escala com comparação. Depois volte ao começo.
 3. **Espinha de viradas.** Três a cinco `turning_point` em ordem. Entre elas, ligue por causa: "mas"
    (um obstáculo) ou "por isso" / "então" (uma consequência). Se só couber "e depois", falta um fato de
    causa ou a cena sobra. Só escreva causa que a ficha sustenta.

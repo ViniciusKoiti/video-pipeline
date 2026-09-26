@@ -31,6 +31,13 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
    - texto na tela (`number`, `stamp`, `lower_third`, `quote`, `chart`, `timeline`, `family_tree`)
      igual à ficha, e `quote` literal da fonte.
 3. **Pessoas vivas:** nada de vida privada; só fato público com documento.
+4. **Controvérsia e acusação:**
+   - crime, fraude, cartel, intenção ou caráter afirmados diretamente pela narração → `SEM SUPORTE`,
+     mesmo que o trecho traga uma acusação: o roteiro precisa dizer quem acusou ou decidiu, o quê e quando;
+   - decisão citada sem o desfecho que o trecho dá (recurso, absolvição, acordo) → `DIVERGE`;
+   - pergunta retórica ou insinuação que sugere algo que as fichas não dizem ("coincidência?") → `EXAGERO`.
+5. **Ponte com o espectador:** frase em 2ª pessoa ("você usa", "você paga") precisa de ficha
+   `impact_today` com escala e data; sem ela → `SEM SUPORTE`.
 
 ## Relatório
 
