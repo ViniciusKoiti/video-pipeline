@@ -90,3 +90,13 @@ Ordem G do §11 e piloto aceito conforme critérios do §11.
 | # | Etapa | Depende de | Aceite principal |
 |---|---|---|---|
 | 31 | Publicação manual e validação de audiência | #30 | Critério anti-conteúdo-inautêntico (YPP) checado por episódio |
+
+## Etapas adicionais (decididas na ADR 001)
+
+Os números seguem os das issues: #32–#40 foram usados pelos PRs das etapas 1–8.
+
+| # | Etapa | Milestone | Depende de | Aceite principal |
+|---|---|---|---|---|
+| 41 | Motor ffmpeg: granulação, vinheta e movimento variado por cena (§12) | M6 (antes do piloto #30) | #9 | Render da engine-test com o novo visual e cache por cena preservado |
+| 42 | Gráfico como ativo: clipes Remotion + motion-kit para cenas `map_or_graphic` | M8 (antes do piloto, se precisar de mapa) | #9 | Clipe gráfico como ativo `Original` renderizado pelo ffmpeg |
+| 43 | Formato explainer: trazer Remotion + motion-kit para o `main` | M8 | #9, #42 | `render.explainer = "remotion"` funcionando pelo mapa formato → motor |

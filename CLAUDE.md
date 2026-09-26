@@ -40,7 +40,8 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
    nunca sobrescreve.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
-   multiagente, segundo motor de render, segundo editor visual, render em nuvem.
+   multiagente, segundo editor visual, render em nuvem. **Um motor de render por formato de episódio**
+   (ADR 001); o MVP produz só `archival_documentary` (ffmpeg).
 9. **Nenhuma dependência nova sem justificativa no commit e licença verificada.**
 10. **Testes não acessam rede.** Provedores externos são mockados; respostas reais aprovadas viram
     fixtures em `data/cache/`.
@@ -174,6 +175,9 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
 - Erros de rede, cota ou licença param a cena, não o episódio.
 - Aprovação humana é registrada por `vp approve <id> --step <step>` em `review.json`, nunca editando
   `review_status` à mão no manifesto principal.
+- **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
+  (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
+  (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
 
 ## 6. Contratos de dados (schemas pydantic em `app/pipeline/schemas.py`, ADR 007)
 
@@ -215,9 +219,12 @@ fatos principais.
 `usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
 
 **`review.json`** — fonte única das decisões humanas: entradas só acrescentadas, por etapa, cena ou ativo,
-com `decision`, `reviewer`, `at` e `input_hash` do conteúdo revisado (mudou o conteúdo, a aprovação cai).
+com `decision`, `reviewer`, `at`, `input_hash` do conteúdo revisado (mudou o conteúdo, a aprovação cai) e
+`choice` quando o humano troca a recomendação (ex.: formato).
 
-**`episode.json`** — contrato do render: `video` (1920×1080, 30 fps, 48 kHz, 16:9 validado), cenas com
+**`episode.json`** — contrato do render, **congelado na v1** (ADR 001; mudar exige nova ADR):
+`schema_version: 1`, `format` (`archival_documentary` | `explainer`, decide o motor),
+`video` (1920×1080, 30 fps, 48 kHz, 16:9 validado), cenas com
 `start_ms`/`duration_ms` medidos da voz real e sem sobreposição, texto, caminhos relativos de
 imagem/áudio, `captions`. É a **única** entrada do motor de montagem;
 se o motor for o Turbo, um adapter converte este arquivo para os parâmetros dele, nunca o contrário.
@@ -273,19 +280,19 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
 - Montagem: 20–35 entradas visuais para 5–7 min (fotos/filmes, mapas, textos curtos, ilustrações).
   Reutilizar um mapa quando o roteiro volta ao mesmo local. Movimento leve em fotos só se o recorte
   preservar o assunto. Música e efeitos só com licença registrada por faixa.
-- Motor de montagem: decidido na Fase 0 entre **ffmpeg puro** (candidato zero: `zoompan` + legendas
-  gravadas + concat, sem Node), **MoneyPrinterTurbo** (MIT; desenhado para vídeos curtos com roteiro
-  próprio — só serve se for domável por `episode.json`) e **Remotion** (um template React; licença
-  gratuita para indivíduos e empresas até 3 pessoas). Registrar a escolha em `docs/decisions/001-render-engine.md`.
-  Candidato zero implementado em `app/render/ffmpeg.py` (segmento por cena em cache, fundo desfocado para
-  imagens estreitas, legendas gravadas só na prévia). Entrada idêntica para os três: `tests/fixtures/episodes/engine-test/` (Greely, ~52 s, 5 cenas, fontes e
-  fotos reais aprovadas, duas fotos verticais, uma tela gráfica original).
+- Motor de montagem **por formato** (ADR 001, `render` em `config/providers.toml`):
+  `archival_documentary` → **ffmpeg puro** (`app/render/ffmpeg.py`: segmento por cena em cache, fundo
+  desfocado para imagens estreitas, legendas gravadas só na prévia, cor bt709); `explainer` →
+  **Remotion + @viniciusk/motion-kit**, que entra no `main` só no primeiro explicativo (etapa #43; base no
+  branch `experimento-remotion`). MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
+  Cena gráfica animada num documentário = clipe gerado pelo motion-kit como ativo `Original` (etapa #42).
+  Comparação em `data/benchmarks/README.md`; entrada de teste `tests/fixtures/episodes/engine-test/`.
 
 ## 10. CLI planejada (`vp`, console script em `pyproject.toml`)
 
 ```
 vp bench [--models a,b] [--runs N] [--render DIR]  # máquina, LLM, TTS e render pelas portas -> data/benchmarks/
-vp new <id> --topic "..."     # cria data/episodes/<id>/ e manifesto inicial
+vp new <id> --topic "..." [--format archival_documentary|explainer]  # formato decide o motor
 vp sources <id>               # busca, download, extração de texto -> sources.json
 vp script <id>                # roteiro com retrieval + validação de schema e de claims
 vp scenes <id>                # divisão em cenas + visual_need + search_query

@@ -11,7 +11,7 @@ from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
-from app.pipeline.schemas import ReviewEntry, ReviewLog
+from app.pipeline.schemas import EpisodeFormat, ReviewEntry, ReviewLog
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.image_gen.base import ImageGenProvider
@@ -66,5 +66,4 @@ class Context(Protocol):
     def archives(self) -> Sequence[ArchiveProvider]: ...  # na ordem da cascata
     @property
     def aligner(self) -> SubtitleAligner: ...
-    @property
-    def render(self) -> RenderEngine: ...
+    def renderer(self, episode_format: EpisodeFormat) -> RenderEngine: ...  # motor do formato (ADR 001)

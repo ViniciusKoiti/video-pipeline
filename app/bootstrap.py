@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from app.pipeline.ports import ManifestStore, ReviewGate
+from app.pipeline.schemas import EpisodeFormat
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.base import ProviderInfo
@@ -71,7 +72,7 @@ DEFAULT_REGISTRY: Registry = {
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
         "moneyprinterturbo": Registration(8),
-        "remotion": Registration(8),
+        "remotion": Registration(43),  # formato explainer; adapter no branch experimento-remotion
     },
     "store": {"json_files": Registration(10)},
     "review": {"json_files": Registration(12)},
@@ -88,7 +89,12 @@ def ensure_free(info: ProviderInfo, budget: Budget) -> None:
 
 def _choices(settings: Settings) -> dict[str, list[str]]:
     chosen = settings.providers.model_dump()
-    return {port: names if isinstance(names, list) else [names] for port, names in chosen.items()}
+    flat: dict[str, list[str]] = {}
+    for port, names in chosen.items():
+        if isinstance(names, dict):  # render: formato -> motor
+            names = list(names.values())
+        flat[port] = names if isinstance(names, list) else [names]
+    return flat
 
 
 class LazyContext:
@@ -97,6 +103,7 @@ class LazyContext:
     def __init__(self, settings: Settings, registry: Registry = DEFAULT_REGISTRY) -> None:
         self._settings = settings
         self._registry = registry
+        self._renderers: dict[EpisodeFormat, RenderEngine] = {}
 
     @property
     def settings(self) -> Settings:
@@ -130,9 +137,13 @@ class LazyContext:
     def aligner(self) -> SubtitleAligner:
         return self._build("aligner", self._settings.providers.aligner)
 
-    @cached_property
-    def render(self) -> RenderEngine:
-        return self._build("render", self._settings.providers.render)
+    def renderer(self, episode_format: EpisodeFormat) -> RenderEngine:
+        if episode_format not in self._renderers:
+            name = self._settings.providers.render.get(episode_format)
+            if name is None:
+                raise ConfigurationError(f"nenhum motor de render para o formato {episode_format}")
+            self._renderers[episode_format] = self._build("render", name)
+        return self._renderers[episode_format]
 
     def _build(self, port: str, name: str) -> Any:
         registration = self._registry[port][name]  # nomes já conferidos em build_context

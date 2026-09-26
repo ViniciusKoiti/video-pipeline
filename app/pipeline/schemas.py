@@ -225,6 +225,7 @@ class Asset(Model):
 
 
 class Step(StrEnum):
+    FORMAT = "format"  # modalidade do vídeo, recomendada por app.pipeline.format_decision (ADR 001)
     SOURCES = "sources"
     SCRIPT = "script"
     SCENES = "scenes"
@@ -249,6 +250,7 @@ class ReviewEntry(Model):
     reviewer: NonEmpty
     at: AwareDatetime
     input_hash: str | None = None  # hash do conteúdo revisado; mudou → a aprovação não vale (§5)
+    choice: str | None = None  # valor escolhido pelo humano quando difere da recomendação (ex.: formato)
     notes: str = ""
 
     @model_validator(mode="after")
@@ -289,6 +291,13 @@ class ReviewLog(Model):
 # --- episode.json (contrato do render) ----------------------------------------------------------
 
 
+class EpisodeFormat(StrEnum):
+    """Formato do episódio: decide o motor de render pelo mapa de config/providers.toml (ADR 001)."""
+
+    ARCHIVAL_DOCUMENTARY = "archival_documentary"  # fotos de arquivo + narração (motor ffmpeg)
+    EXPLAINER = "explainer"  # visual gerado a partir de dados (Remotion + motion-kit; etapa 43)
+
+
 class VideoSpec(Model):
     width: int = Field(default=1920, gt=0)
     height: int = Field(default=1080, gt=0)
@@ -317,11 +326,14 @@ class EpisodeScene(Model):
 
 
 class EpisodeManifest(Model):
-    """Única entrada do motor de montagem (§6). Timing vem da duração real dos WAVs."""
+    """Única entrada do motor de montagem (§6). Timing vem da duração real dos WAVs.
+    Contrato congelado na versão 1 (ADR 001): mudar campos exige nova ADR e nova versão."""
 
+    schema_version: Literal[1] = 1
     episode_id: EpisodeId
     title: NonEmpty
     language: Literal["en"]
+    format: EpisodeFormat = EpisodeFormat.ARCHIVAL_DOCUMENTARY
     video: VideoSpec = Field(default_factory=VideoSpec)
     scenes: list[EpisodeScene] = Field(min_length=1)
     captions: RelPath | None = None  # captions.srt editável

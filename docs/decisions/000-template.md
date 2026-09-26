@@ -25,7 +25,7 @@ O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui
 
 | ADR | Assunto | Etapa |
 |---|---|---|
-| 001 | Motor de render (ffmpeg puro × MoneyPrinterTurbo × Remotion) | #9 |
+| 001 | Motor de render por formato; `episode.json` congelado (v1) — **aceito** | #9 |
 | 002 | Recuperação de fontes com trechos numerados | #26 |
 | 003 | Provedor de texto padrão (Ollama × Gemini/Groq gratuito) | #29 |
 | 004 | Ambiente local: `.wslconfig`, Python 3.12, Ollama de usuário — **aceito** | #1 |

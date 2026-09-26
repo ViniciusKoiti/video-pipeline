@@ -82,3 +82,7 @@ experimentais nos branches `experimento-mpt` e `experimento-remotion` (não est�
 | Qualidade visual (avaliação humana) | pendente | pendente | pendente |
 
 Vídeos para a avaliação humana, fora do Git: `data/benchmarks/renders/<motor>/engine-test-{final,preview}.mp4`.
+
+**Decisão (ADR 001, 2026-09-26):** motor por formato do episódio. `archival_documentary` → ffmpeg puro
+(vídeos "extremamente próximos" do Remotion + motion-kit na avaliação humana, com 3–4× menos tempo);
+`explainer` → Remotion + motion-kit (etapa #43). MoneyPrinterTurbo reprovado.

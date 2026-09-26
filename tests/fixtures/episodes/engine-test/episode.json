@@ -1,7 +1,9 @@
 {
+  "schema_version": 1,
   "episode_id": "engine-test",
   "title": "The Greely Expedition, 1881-1884 (engine test)",
   "language": "en",
+  "format": "archival_documentary",
   "video": {
     "width": 1920,
     "height": 1080,

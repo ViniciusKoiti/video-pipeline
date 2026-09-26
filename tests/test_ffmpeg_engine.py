@@ -56,6 +56,11 @@ def test_output_is_h264_aac_16x9_in_limited_range(engine: FfmpegEngine, tmp_path
     video, audio = streams["video"], streams["audio"]
     assert (video["codec_name"], video["width"], video["height"]) == ("h264", 320, 180)
     assert video["pix_fmt"] == "yuv420p" and video.get("color_range") != "pc"  # nunca faixa cheia (yuvj)
+    assert (video.get("color_space"), video.get("color_primaries"), video.get("color_transfer")) == (
+        "bt709",
+        "bt709",
+        "bt709",
+    )
     assert video["r_frame_rate"] == "10/1"
     assert (audio["codec_name"], audio["sample_rate"], audio["channels"]) == ("aac", "48000", 2)
     assert abs(result.duration_ms - 1800) <= 120

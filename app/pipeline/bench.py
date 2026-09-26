@@ -218,8 +218,9 @@ RENDER_MODES = (("final-frio", False, True), ("final-cache", False, False), ("pr
 
 def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
     """Renderiza o episódio pela porta RenderEngine: final sem cache, final com cache e prévia."""
-    engine = context.render.info.name
     episode = EpisodeManifest.model_validate_json((episode_dir / "episode.json").read_text())
+    renderer = context.renderer(episode.format)
+    engine = renderer.info.name
     out_dir = context.settings.data_dir / "benchmarks" / "renders" / engine
     runs = []
     for mode, preview, cold in RENDER_MODES:
@@ -228,7 +229,7 @@ def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
             shutil.rmtree(out_dir / f".segments-{'preview' if preview else 'final'}", ignore_errors=True)
         start = time.perf_counter()
         try:
-            result = context.render.render(episode, episode_dir, out, preview=preview)
+            result = renderer.render(episode, episode_dir, out, preview=preview)
         except (ProviderError, RuntimeError) as error:
             runs.append(RenderRun(engine=engine, mode=mode, ok=False, error=str(error)[:300],
                                   wall_s=round(time.perf_counter() - start, 1)))
@@ -285,7 +286,7 @@ def run_bench(
                 tts.append(bench_tts(context, run, Path(tmp)))
     render: list[RenderRun] = []
     if render_dir is not None:
-        progress(f"render ({context.render.info.name}): final sem cache, final com cache e prévia")
+        progress("render pelo motor do formato do episódio: final sem cache, final com cache e prévia")
         render = bench_render(context, render_dir)
     created_at = now()
     report = BenchReport(
