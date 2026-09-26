@@ -39,3 +39,18 @@ Leitura:
 - O `qwen3.5:9b` deixa só 2,4 GB livres; descarregar o LLM antes da etapa de voz (etapa 16).
 - O Ollama usa contexto de 4096 tokens por padrão: um prompt de roteiro real seria cortado. Ver
   questão 13 da `docs/ANALISE.md`.
+
+## Render ffmpeg — 2026-09-25 (`machine-20260925-212240.json`)
+
+Máquina livre (sonda de CPU 0,06 s, load 0,36). Fixture `engine-test` (52,5 s, 5 cenas), motor
+`app/render/ffmpeg.py` com a configuração padrão (`crf 20`, final `medium`, prévia `veryfast`).
+
+| Render | Tempo | Velocidade | Tamanho |
+|---|---|---|---|
+| Final 1080p sem cache | 51,7 s | 1,0× tempo real | 30,2 MB |
+| Final com cache (só junta vídeo + codifica o áudio) | 2,9 s | 18× | 30,2 MB |
+| Prévia 720p sem cache | 21,3 s | 2,5× | 9,2 MB |
+
+Pico de memória do ffmpeg: 956 MB (zoom com superamostragem 2×, fonte 3840×2160 no 1080p).
+Projeção para 6 min: ~6 min o final sem cache, ~2,5 min a prévia, segundos para trocar uma cena de
+imagem (só aquele segmento + junção). Com a CPU limitada (questão 15 da ANALISE) o mesmo render levou 694 s.
