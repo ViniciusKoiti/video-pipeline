@@ -117,9 +117,16 @@ const NUMBER_RE = /^(\D*?)([\d.,]+)(.*)$/;
 const NumberCallout: React.FC<{spec: NumberSpec}> = ({spec}) => {
   const {height} = useVideoConfig();
   const match = NUMBER_RE.exec(spec.value);
-  const target = match ? Number(match[2].replace(/\./g, "").replace(",", ".")) : NaN;
-  const counted = useCountUp(3, 22, 0, Number.isFinite(target) ? target : 0);
-  const shown = match && Number.isFinite(target) ? `${match[1]}${counted.toLocaleString("pt-BR")}${match[3]}` : spec.value;
+  const digits = match?.[2] ?? "";
+  const target = match ? Number(digits.replace(/\./g, "").replace(",", ".")) : NaN;
+  // Conta com a forma escrita na ficha: milhar só se ela agrupa ("1.500" sim; "2025", "13" não) e as mesmas
+  // casas decimais ("29,4" sempre com uma), para ano não virar "2.025" nem o decimal tremer na contagem.
+  // useCountUp devolve inteiros: conta em décimos (ou centésimos) e divide.
+  const decimals = digits.includes(",") ? digits.split(",")[1].length : 0;
+  const scale = 10 ** decimals;
+  const counted = useCountUp(3, 22, 0, Number.isFinite(target) ? Math.round(target * scale) : 0) / scale;
+  const format = {useGrouping: /\d\.\d{3}/.test(digits), minimumFractionDigits: decimals, maximumFractionDigits: decimals};
+  const shown = match && Number.isFinite(target) ? `${match[1]}${counted.toLocaleString("pt-BR", format)}${match[3]}` : spec.value;
   const enter = useEnter();
   return (
     <Stage>
