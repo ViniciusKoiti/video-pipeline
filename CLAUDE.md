@@ -25,7 +25,8 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
 
 1. **Custo zero durante a validação.** `MAX_API_SPEND_USD=0` e `ALLOW_PAID_API=false`. Nunca migrar
-   para endpoint pago, comprar créditos ou trocar de modelo por conta própria. Em 429, cota esgotada,
+   para endpoint pago, comprar créditos ou trocar de modelo por conta própria. O plano do Claude do dono,
+   usado pelos agentes das etapas criativas, não conta como API paga (ADR 009). Em 429, cota esgotada,
    modelo ausente ou licença incompatível: registrar o motivo em `review.json`, marcar a etapa como
    `needs_review` e parar **aquela cena**, sem bloquear as demais.
 2. **Nenhuma fonte inventada.** O LLM escreve somente a partir de trechos extraídos de fontes reais já
@@ -41,7 +42,8 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
    nunca sobrescreve.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
-   multiagente, segundo editor visual, render em nuvem. **Um motor de render por formato de episódio**
+   multiagente **no código**, segundo editor visual, render em nuvem. Fichas, roteiro e checagem podem
+   ser feitos por agentes do Claude Code definidos no repo; o código só valida (`vp check`, ADR 009). **Um motor de render por formato de episódio**
    (ADR 001); o MVP produz só `archival_documentary` (ffmpeg).
 9. **Nenhuma dependência nova sem justificativa no commit e licença verificada.**
 10. **Testes não acessam rede.** Provedores externos são mockados; respostas reais aprovadas viram
@@ -85,6 +87,9 @@ video-pipeline/
     render/                   # base.py (RenderEngine) + motor por formato (ADR 001)
     storage/                  # JsonFileStore (ManifestStore em JSON, trava por episódio)
   video/                      # template Remotion do formato explainer (ADR 008): planos, tema, fonte Inter (OFL)
+  .claude/agents/             # pesquisador, roteirista, verificador (ADR 009): papel + ferramentas
+  .claude/skills/             # método de cada etapa criativa: fichamento, roteiro-explicativo, checagem,
+                              # humanizer-narracao (MIT, adaptado)
   config/providers.toml       # implementação por função + parâmetros, sem credenciais
   data/
     cache/                    # miniaturas, respostas de busca, hashes, fixtures
@@ -92,7 +97,8 @@ video-pipeline/
     episodes/<id>/
       manifest.json           # estado de cada etapa + input_hash (cache)
       episode.json            # contrato aprovado; entrada do motor de render
-      sources.json  script.json  scenes.json  review.json
+      sources.json  facts.json  outline.md  scenes.json  review.json
+      sources/  excerpts/     # texto extraído de cada fonte; versão com trechos numerados (vp excerpts)
       assets/  voice/  renders/  credits.txt
   tests/                      # fakes/ (uma por porta), test_contracts.py, test_architecture.py
   .env.example  .env(gitignored)  pyproject.toml  uv.lock
@@ -199,6 +205,12 @@ ancorado num trecho da narração; o tempo sai da posição da âncora sobre a d
 `retrieved_at`, `local_path` (texto extraído), `notes`. Mínimo de 2 fontes independentes para os
 fatos principais.
 
+**`facts.json`** (ADR 009) — fichas de fatos, a única base do roteiro: `text`, `kind` (`number`,
+`conflict`, `turning_point`, `mechanism`, `curiosity`, `context`), `why_it_matters` e `evidence` com
+`excerpt_id` + `quote` **literal** (conferida pelo `vp check`); `open_questions` para o que as fontes não
+respondem. Trecho = parágrafo do texto extraído (`source-01#E7`). `Source.interested` marca fonte
+interessada (fato só com ela gera alerta). Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
+
 **`scenes.json`** (exemplo simplificado da spec):
 
 ```json
@@ -245,7 +257,7 @@ se o motor for o Turbo, um adapter converte este arquivo para os parâmetros del
 
 | Função | Padrão do piloto (spec v0.4) | Candidato a teste | Critério de troca |
 |---|---|---|---|
-| Roteiro, cenas, consultas visuais | Ollama local + JSON Schema + validação Python | Groq e Gemini (nível gratuito), em separado | Melhor fidelidade ao texto-fonte sem custo e com cota suficiente. Ver proposta em §12. |
+| Fichas, roteiro, cenas, checagem | Agentes do Claude Code + skills + `vp check` (ADR 009; a spec previa Ollama) | Ollama local (#27); Groq e Gemini gratuitos; outro agente que leia as skills | Fidelidade ao texto-fonte e fatos que prendem, sem custo por chamada. |
 | Narração em inglês | Kokoro local, WAV por bloco | Gemini Flash TTS gratuito, se disponível na conta | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas. |
 | Alinhamento de áudio | ffprobe + revisão manual | Groq Whisper gratuito, quando necessário | Corrigir problema concreto de legenda; não transcrever episódio inteiro sem necessidade. |
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
@@ -317,6 +329,8 @@ vp export <id>                # final.mp4 + srt + description.txt + credits.txt
 vp approve <id> --step <s>    # registra aprovação humana em review.json
 vp status <id>                # estados por etapa e pendências
 vp reopen <id> --step <s> --reason "..."  # reabre etapa aprovada para refazer (§2.6)
+vp excerpts <id>              # trechos numerados de cada fonte -> excerpts/ (ADR 009)
+vp check <id>                 # valida fontes, fichas e cenas escritas por agente ou à mão (ADR 009)
 ```
 
 Cada comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
@@ -356,11 +370,11 @@ Piloto aceito quando:
 
 Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 
-1. **Etapa de recuperação de fontes (proposta forte).** A spec exige claims ligadas a fontes, mas não
+1. **Etapa de recuperação de fontes (proposta forte; numeração dos trechos e fichas decididas na ADR 009).** A spec exige claims ligadas a fontes, mas não
    descreve como o texto das fontes chega ao LLM. Proposta: `vp sources` baixa e extrai; `vp script`
    passa ao modelo **apenas** trechos numerados dessas fontes e exige que cada frase cite o trecho.
    Sem isso, o validador de schema aprova ficção bem formatada.
-2. **Provedor de texto padrão.** Spec: Ollama local. Proposta: Gemini/Groq gratuito para rascunho
+2. **Provedor de texto padrão** (para o modo sem agente; o padrão das etapas criativas é a ADR 009). Spec: Ollama local. Proposta: Gemini/Groq gratuito para rascunho
    (fidelidade ao texto-fonte muito maior que modelos 7–8B em CPU), Ollama como fallback. Roteiro de
    história pública não é dado confidencial. Decidir após o benchmark da máquina.
 3. **ffmpeg puro como candidato zero de montagem** (não estava na spec). Elimina Node/React do MVP se
@@ -389,8 +403,10 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Convenções: Python 3.11+ (3.12 no `.venv`), tipagem completa, pydantic v2 para manifestos, `pathlib`, sem estado global,
   um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.
-- Não propor Docker, banco, fila, API web, multiagente ou provedor pago "para facilitar". A spec já
-  decidiu que não, e o motivo está em §2.
+- Etapas criativas: `.claude/agents/` (pesquisador → roteirista → verificador) com o método nas skills
+  de `.claude/skills/`; o que eles escrevem passa pelo `vp check` e pelos gates humanos (ADR 009).
+- Não propor Docker, banco, fila, API web, framework multiagente no código ou provedor pago "para
+  facilitar". A spec já decidiu que não, e o motivo está em §2.
 
 ## Referências técnicas verificadas (23–24/09/2026)
 

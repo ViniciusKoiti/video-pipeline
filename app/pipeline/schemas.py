@@ -83,8 +83,9 @@ class Source(Model):
     url: HttpUrl
     kind: SourceKind
     retrieved_at: AwareDatetime
-    local_path: RelPath  # texto extraído
+    local_path: RelPath  # texto extraído; um parágrafo = um trecho numerado (ADR 009)
     notes: str = ""
+    interested: bool = False  # fonte interessada (a própria empresa ou família): nenhum fato só com ela
 
 
 class SourcesManifest(Model):
@@ -312,6 +313,55 @@ class ScenesManifest(Model):
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        return self
+
+
+# --- facts.json (ADR 009) ------------------------------------------------------------------------
+
+FactId = Annotated[str, Field(pattern=r"^F\d{2,}$")]
+
+
+class FactKind(StrEnum):
+    """O que o fato faz pela história. `context` explica; os outros prendem o público."""
+
+    NUMBER = "number"  # valor, preço, quantidade, escala
+    CONFLICT = "conflict"  # disputa, risco, quem perdeu
+    TURNING_POINT = "turning_point"  # decisão ou evento que mudou o rumo
+    MECHANISM = "mechanism"  # como o dinheiro ou o poder foi feito
+    CURIOSITY = "curiosity"  # detalhe contraintuitivo ou humano
+    CONTEXT = "context"  # pano de fundo necessário
+
+
+class Evidence(Model):
+    excerpt_id: ExcerptId
+    quote: NonEmpty  # cópia literal do trecho ("..." marca corte); `vp check` confere no texto da fonte
+
+
+class Fact(Model):
+    id: FactId
+    text: NonEmpty  # o fato com palavras próprias, no idioma do episódio
+    kind: FactKind
+    when: str | None = None  # como a fonte dá: "1918", "ago. 1925"
+    people: list[str] = []
+    why_it_matters: NonEmpty  # por que o público se importaria
+    evidence: list[Evidence] = Field(min_length=1)
+
+    @property
+    def source_ids(self) -> list[str]:
+        return sorted({e.excerpt_id.split("#")[0] for e in self.evidence})
+
+
+class FactsManifest(Model):
+    """Fichas de fatos: a única base do roteiro. Cada fato traz a citação literal que o sustenta."""
+
+    episode_id: EpisodeId
+    language: Language
+    facts: list[Fact] = Field(min_length=1)
+    open_questions: list[str] = []  # perguntas que prenderiam o público e que as fontes não respondem
+
+    @model_validator(mode="after")
+    def _unique_ids(self) -> Self:
+        _unique([f.id for f in self.facts], "ids de fato")
         return self
 
 
