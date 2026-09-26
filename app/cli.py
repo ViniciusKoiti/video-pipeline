@@ -17,8 +17,10 @@ from pathlib import Path
 
 from app.bootstrap import build_context
 from app.pipeline.bench import run_bench, summary
+from app.pipeline.check import check_episode
+from app.pipeline.excerpts import numbered_view
 from app.pipeline.ports import Context
-from app.pipeline.schemas import EpisodeFormat
+from app.pipeline.schemas import EpisodeFormat, SourcesManifest
 from app.settings import CONFIG_FILE
 
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
@@ -89,6 +91,8 @@ COMMANDS: tuple[Command, ...] = (
         "reopen", "reabre etapa aprovada para refazer (motivo no review.json)", 12,
         add_arguments=_reopen_arguments,
     ),
+    Command("excerpts", "trechos numerados de cada fonte -> excerpts/<fonte>.md (ADR 009)", 48),
+    Command("check", "valida fontes, fichas e cenas, escritas por agente ou à mão (ADR 009)", 48),
 )
 
 def _bench(args: argparse.Namespace, context: Context) -> int:
@@ -108,8 +112,32 @@ def _bench(args: argparse.Namespace, context: Context) -> int:
     return 1 if any(not r.ok for r in [*report.llm, *report.tts, *report.render]) else 0
 
 
+def _excerpts(args: argparse.Namespace, context: Context) -> int:
+    store = context.store
+    sources = store.read(args.episode_id, "sources.json", SourcesManifest)
+    for source in sources.sources:
+        text = store.path(args.episode_id, source.local_path).read_text(encoding="utf-8")
+        out = store.path(args.episode_id, f"excerpts/{source.id}.md")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(numbered_view(source, text), encoding="utf-8")
+        print(out)
+    return 0
+
+
+def _check(args: argparse.Namespace, context: Context) -> int:
+    report = check_episode(context.store, args.episode_id)
+    for line in report.checked:
+        print(f"ok      {line}")
+    for line in report.warnings:
+        print(f"alerta  {line}")
+    for line in report.errors:
+        print(f"erro    {line}")
+    print("resultado: " + ("sem erros" if report.ok else f"{len(report.errors)} erro(s)"))
+    return 0 if report.ok else 1
+
+
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
-HANDLERS: dict[str, Handler] = {"bench": _bench}
+HANDLERS: dict[str, Handler] = {"bench": _bench, "excerpts": _excerpts, "check": _check}
 
 
 def _package_version() -> str:
