@@ -119,6 +119,7 @@ def test_srt_parsing_and_scene_window() -> None:
     cues = parse_srt(SRT)
     assert cues == [Cue(0, 900, "The Proteus sailed."), Cue(1000, 1800, "Six came home.")]
     assert cues_between(cues, 1000, 1800) == [Cue(0, 800, "Six came home.")]
+    assert cues_between(cues, 890, 1800) == [Cue(110, 910, "Six came home.")]  # sobra de 10 ms descartada
     assert cues_between(cues, 800, 1200) == [
         Cue(0, 100, "The Proteus sailed."),
         Cue(200, 400, "Six came home."),

@@ -54,3 +54,31 @@ Máquina livre (sonda de CPU 0,06 s, load 0,36). Fixture `engine-test` (52,5 s, 
 Pico de memória do ffmpeg: 956 MB (zoom com superamostragem 2×, fonte 3840×2160 no 1080p).
 Projeção para 6 min: ~6 min o final sem cache, ~2,5 min a prévia, segundos para trocar uma cena de
 imagem (só aquele segmento + junção). Com a CPU limitada (questão 15 da ANALISE) o mesmo render levou 694 s.
+
+## Comparação dos motores — etapa 8 (2026-09-25)
+
+Mesma entrada (`engine-test`, 52,5 s, 5 cenas), mesmas regras visuais onde o motor permite. Adapters
+experimentais nos branches `experimento-mpt` e `experimento-remotion` (não estão no `main`).
+
+- **ffmpeg** e **Remotion** medidos em sequência pelo `vp bench --render`, nas mesmas condições (CI de
+  outro projeto rodando: load 3,4–6,7, por isso com aviso): `machine-20260925-222958.json` (ffmpeg) e
+  `machine-20260925-224150.json` (Remotion). Valem como comparação relativa.
+- **MoneyPrinterTurbo** medido com a máquina livre, um render final só, chamando o adapter direto
+  (cada render leva ~40 min; o `vp bench` faria três).
+
+| Critério | ffmpeg puro | MoneyPrinterTurbo 1.3.7 | Remotion 4.0.529 |
+|---|---|---|---|
+| Final 1080p, sem cache | **51,7 s** livre · 72 s com carga | 2433 s livre | 266 s com carga |
+| Trocar a imagem de uma cena | refaz só a cena (~5 s) | refaz tudo (~40 min) | refaz tudo (~4,5 min) |
+| Prévia 720p | 21 s livre · 35 s com carga | não tem (render completo + redução) | 177 s com carga |
+| Controle por cena pelo `episode.json` | total (segmento por cena) | só entregando um clipe pré-cortado por cena; arredonda durações (~0,1 s de desvio) | total (props) |
+| Imagem estreita (4:3, vertical) | inteira sobre fundo desfocado | barras pretas (`cover` cortaria) | inteira sobre fundo desfocado |
+| Movimento | zoom 6% por cena | zoom 3%/s fixo: ~40% numa cena de 13 s, corta o assunto (§9) | zoom 6% por cena |
+| Saída | H.264 yuv420p (tv), AAC 48 kHz, 30 MB | H.264, **AAC 44,1 kHz** (fora do contrato), 18 MB | H.264 bt709 (tv), AAC 48 kHz (+53 ms de enchimento), 46 MB |
+| Maior processo | 956 MB | ~0,5 GB (observado) | 854 MB |
+| Dependências | ffmpeg do sistema | app inteiro, ~1,4 GB (LiteLLM, Streamlit, Redis, SDKs de nuvem) | Node + 247 MB npm + 220 MB Chrome headless |
+| Licença | ffmpeg do sistema (uso local) | MIT | Remotion License (grátis para indivíduos, inclusive comercial) |
+| Auditoria | comandos ffmpeg determinísticos a partir do `episode.json` | app de terceiros com padrões aleatórios (ordem, música) | props derivadas do `episode.json` |
+| Qualidade visual (avaliação humana) | pendente | pendente | pendente |
+
+Vídeos para a avaliação humana, fora do Git: `data/benchmarks/renders/<motor>/engine-test-{final,preview}.mp4`.

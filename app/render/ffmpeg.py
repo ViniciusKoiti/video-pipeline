@@ -70,13 +70,15 @@ def frame_bounds(episode: EpisodeManifest, fps: int) -> list[int]:
     return [*starts, round(episode.scenes[-1].end_ms * fps / 1000)]
 
 
-def cues_between(cues: list[Cue], start_ms: int, end_ms: int) -> list[Cue]:
-    """Legendas que caem no trecho, com tempos relativos ao início dele."""
-    return [
+def cues_between(cues: list[Cue], start_ms: int, end_ms: int, min_ms: int = 40) -> list[Cue]:
+    """Legendas que caem no trecho, com tempos relativos ao início dele. Sobras menores que `min_ms`
+    (arredondamento na fronteira entre cenas) são descartadas para não piscar por um quadro."""
+    clipped = [
         Cue(max(c.start_ms, start_ms) - start_ms, min(c.end_ms, end_ms) - start_ms, c.text)
         for c in cues
         if c.end_ms > start_ms and c.start_ms < end_ms
     ]
+    return [c for c in clipped if c.end_ms - c.start_ms >= min_ms]
 
 
 def _escape_filter_path(path: Path) -> str:
