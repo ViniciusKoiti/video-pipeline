@@ -49,6 +49,13 @@ def _ffmpeg(settings: Settings) -> Any:
     return FfmpegEngine(**settings.ffmpeg.model_dump())
 
 
+def _moneyprinterturbo(settings: Settings) -> Any:
+    from app.render.moneyprinterturbo import MoneyPrinterTurboEngine
+
+    mpt = settings.moneyprinterturbo
+    return MoneyPrinterTurboEngine(mpt.root, threads=mpt.threads, fit_mode=mpt.fit_mode)
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -70,7 +77,7 @@ DEFAULT_REGISTRY: Registry = {
     "aligner": {"ffprobe": Registration(17)},
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
-        "moneyprinterturbo": Registration(8),
+        "moneyprinterturbo": Registration(8, _moneyprinterturbo),
         "remotion": Registration(8),
     },
     "store": {"json_files": Registration(10)},

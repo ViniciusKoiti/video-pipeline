@@ -56,6 +56,12 @@ class FfmpegSettings(_Model):
     burn_captions_final: bool = False  # captions.srt sobe separado no YouTube
 
 
+class MoneyPrinterTurboSettings(_Model):
+    root: Path = Path("~/projetos/vendor/MoneyPrinterTurbo")  # instalação isolada (experimento, etapa 8)
+    threads: int = Field(default=8, gt=0)
+    fit_mode: str = "contain"
+
+
 class Limits(_Model):
     max_generated_images_per_episode: int = Field(default=12, ge=0)
     max_candidates_per_scene: int = Field(default=2, gt=0)
@@ -81,6 +87,7 @@ class Settings(_Model):
     kokoro: KokoroSettings
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
+    moneyprinterturbo: MoneyPrinterTurboSettings = MoneyPrinterTurboSettings()
     limits: Limits = Limits()
     budget: Budget = Budget()
     data_dir: Path = Path("data")

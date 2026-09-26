@@ -26,6 +26,7 @@ from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
 from app.render.ffmpeg import FfmpegEngine
+from app.render.moneyprinterturbo import MoneyPrinterTurboEngine
 from tests.fakes import (
     FIXED_TIME,
     FakeAligner,
@@ -60,6 +61,8 @@ def make_kokoro() -> TTSProvider:
 
 
 NEEDS_TTS_EXTRA = pytest.mark.skipif(find_spec("kokoro") is None, reason="extra tts ausente")
+MPT_ROOT = Path("~/projetos/vendor/MoneyPrinterTurbo").expanduser()
+NEEDS_MPT = pytest.mark.skipif(not (MPT_ROOT / ".venv").exists(), reason="MoneyPrinterTurbo não instalado")
 
 # Uma lista por porta. Etapas futuras acrescentam os adapters reais.
 TEXT: list[Callable[[list[str]], TextProvider]] = [
@@ -76,6 +79,10 @@ ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="f
 RENDERERS: list[Callable[[], RenderEngine]] = [
     pytest.param(FakeRender, id="fake"),
     pytest.param(FfmpegEngine, id="ffmpeg", marks=pytest.mark.slow),  # renderiza os 52 s da engine-test
+    # Experimento da etapa 8: ~40 min por render (moviepy em uma thread).
+    pytest.param(
+        lambda: MoneyPrinterTurboEngine(MPT_ROOT), id="moneyprinterturbo", marks=[pytest.mark.slow, NEEDS_MPT]
+    ),
 ]
 STORES: list[Callable[[Path], ManifestStore]] = [pytest.param(InMemoryStore, id="in-memory")]
 REVIEW_GATES: list[Callable[[], ReviewGate]] = [pytest.param(InMemoryReviewGate, id="in-memory")]
