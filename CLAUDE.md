@@ -209,7 +209,7 @@ fatos principais.
 `conflict`, `turning_point`, `mechanism`, `curiosity`, `context`), `why_it_matters` e `evidence` com
 `excerpt_id` + `quote` **literal** (conferida pelo `vp check`); `open_questions` para o que as fontes não
 respondem. Trecho = parágrafo do texto extraído (`source-01#E7`). `Source.interested` marca fonte
-interessada (fato só com ela gera alerta). Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
+interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só. Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
 
 **`scenes.json`** (exemplo simplificado da spec):
 

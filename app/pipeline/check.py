@@ -70,10 +70,31 @@ def _check_sources(
     return excerpts
 
 
+def independence_groups(sources: SourcesManifest) -> dict[str, str]:
+    """Fonte -> grupo: fontes que compartilham um autor (mesmo por outra fonte) formam um grupo só."""
+    group = {s.id: s.id for s in sources.sources}
+
+    def root(source_id: str) -> str:
+        while group[source_id] != source_id:
+            source_id = group[source_id]
+        return source_id
+
+    by_author: dict[str, str] = {}
+    for source in sources.sources:
+        for author in source.authors:
+            key = " ".join(author.casefold().split())
+            if key in by_author:
+                group[root(source.id)] = root(by_author[key])
+            else:
+                by_author[key] = source.id
+    return {source_id: root(source_id) for source_id in group}
+
+
 def _check_facts(
     facts: FactsManifest, sources: SourcesManifest, excerpts: dict[str, str], report: CheckReport
 ) -> None:
     interested = {s.id for s in sources.sources if s.interested}
+    groups = independence_groups(sources)
     for fact in facts.facts:
         for evidence in fact.evidence:
             excerpt = excerpts.get(evidence.excerpt_id)
@@ -88,6 +109,8 @@ def _check_facts(
             report.warnings.append(f"{fact.id}: só fontes interessadas ({', '.join(fact.source_ids)})")
         elif len(fact.source_ids) < 2:
             report.warnings.append(f"{fact.id}: uma fonte só ({fact.source_ids[0]})")
+        elif len({groups[s] for s in independent}) < 2 and len(independent) > 1:
+            report.warnings.append(f"{fact.id}: fontes com os mesmos autores ({', '.join(independent)})")
     kinds = {kind: sum(f.kind is kind for f in facts.facts) for kind in FactKind}
     summary = ", ".join(f"{kind.value} {count}" for kind, count in kinds.items() if count)
     report.checked.append(f"facts.json: {len(facts.facts)} fato(s) ({summary})")
