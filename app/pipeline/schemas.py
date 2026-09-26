@@ -155,7 +155,7 @@ class Provider(StrEnum):
 # CC-BY-SA (compartilhamento pela mesma licença alcançaria o vídeo) e NC (canal monetizado) —
 # mantém o ativo fora de approved; a decisão vira revisão humana.
 PUBLIC_DOMAIN_LICENSES = frozenset({"PD-US", "PD-old"})
-ATTRIBUTION_LICENSES = frozenset({"CC-BY-2.0", "CC-BY-2.5", "CC-BY-3.0", "CC-BY-4.0"})
+ATTRIBUTION_LICENSES = frozenset({"CC-BY-2.0", "CC-BY-2.5", "CC-BY-3.0", "CC-BY-3.0-BR", "CC-BY-4.0"})
 ACCEPTED_LICENSES = (
     PUBLIC_DOMAIN_LICENSES
     | ATTRIBUTION_LICENSES

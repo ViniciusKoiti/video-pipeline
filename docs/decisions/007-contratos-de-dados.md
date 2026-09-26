@@ -39,3 +39,9 @@ aprovação humana é registrada, quais licenças podem chegar ao render e o for
   Pexels e Workers AI nunca como `historical_exact`).
 - `script.json` ainda não tem schema: nasce na etapa 27 com o formato que o LLM precisar produzir.
 - Ampliar a lista de licenças exige nova ADR.
+
+## Emenda — 2026-09-26
+
+`CC-BY-3.0-BR` (Creative Commons Atribuição 3.0 Brasil, mesmos termos do CC BY 3.0, usada pela Agência
+Brasil) entra na lista, com as mesmas exigências de `author` e `attribution_text`. Aprovado pelo dono do
+projeto na pesquisa da fatia Votorantim (`docs/pesquisa/votorantim-viabilidade.md`).

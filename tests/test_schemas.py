@@ -101,7 +101,10 @@ def test_unknown_source_is_reported() -> None:
 
 def test_visual_need_has_exactly_four_values() -> None:
     assert {v.value for v in VisualNeed} == {
-        "historical_exact", "contextual_stock", "map_or_graphic", "illustrative_reconstruction",
+        "historical_exact",
+        "contextual_stock",
+        "map_or_graphic",
+        "illustrative_reconstruction",
     }
     raw = load("scenes.json")
     raw["scenes"][0]["visual_need"] = "photo"
@@ -146,6 +149,19 @@ def test_licenses_outside_the_list_block_approval(license_id: str) -> None:
 def test_public_domain_requires_reasoning() -> None:
     with pytest.raises(ValidationError, match="usage_notes"):
         Asset.model_validate(commons_asset(usage_notes=" "))
+
+
+def test_cc_by_3_br_is_accepted_with_attribution() -> None:
+    asset = Asset.model_validate(
+        commons_asset(
+            license_id="CC-BY-3.0-BR",
+            author="Antônio Cruz/ABr",
+            attribution_text="Antônio Cruz/Agência Brasil, CC BY 3.0 BR",
+        )
+    )
+    assert asset.license_id == "CC-BY-3.0-BR"
+    with pytest.raises(ValidationError, match="attribution_text"):
+        Asset.model_validate(commons_asset(license_id="CC-BY-3.0-BR", attribution_text=""))
 
 
 def test_cc_by_requires_attribution() -> None:

@@ -221,7 +221,7 @@ fatos principais.
 `license_id`, `license_url`, `attribution_text`, `usage_notes`, `retrieved_at`, `sha256`,
 `review_status`, `used_in_scenes` (lista: um mapa pode voltar). Imagem gerada tem também
 `generation: {prompt, model, seed, steps}`. Só chega a `approved` com licença da lista fechada da ADR 007
-(PD, CC0, CC-BY, Flickr-NKCR, Pexels, Generated, Original — **sem** CC-BY-SA e NC), `sha256`, e
+(PD, CC0, CC-BY incl. 3.0 BR, Flickr-NKCR, Pexels, Generated, Original — **sem** CC-BY-SA e NC), `sha256`, e
 `usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
 
 **`review.json`** — fonte única das decisões humanas: entradas só acrescentadas, por etapa, cena ou ativo,
