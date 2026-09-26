@@ -59,7 +59,7 @@ def _json_store(settings: Settings) -> Any:
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
-    return KokoroTTS(settings.kokoro.voice, num_threads=settings.kokoro.num_threads)
+    return KokoroTTS(settings.kokoro.voices, num_threads=settings.kokoro.num_threads)
 
 
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro

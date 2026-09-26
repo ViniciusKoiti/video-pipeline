@@ -17,14 +17,17 @@ from typing import Literal
 from pydantic import AwareDatetime, Field
 
 from app.pipeline.schemas import (
+    GRAPHIC_SHOT_KINDS,
     Decision,
     EpisodeFormat,
     Model,
     ReviewLog,
     SceneId,
     ScenesManifest,
+    Shot,
     Step,
     VisualNeed,
+    effective_shots,
 )
 
 PUBLIC_DOMAIN_CUTOFF_YEAR = 1930  # publicado até 1930 = domínio público nos EUA (§8)
@@ -131,25 +134,35 @@ def decide_from_topic(topic: TopicAssessment, *, now: datetime) -> FormatDecisio
 
 
 def decide_from_scenes(scenes: ScenesManifest, *, now: datetime) -> FormatDecision:
-    """Revisão depois do `vp scenes`, com os `visual_need` reais."""
-    needs = [scene.visual_need for scene in scenes.scenes]
-    graphic = [s.id for s in scenes.scenes if s.visual_need in GRAPHIC_NEEDS]
-    photos = sum(need in PHOTO_NEEDS for need in needs)
-    share = len(graphic) / len(needs)
+    """Revisão depois do `vp scenes`, pelos planos reais (a forma v1 conta um plano de foto por cena)."""
+    kinds: list[str] = []
+    graphic_scenes: list[str] = []
+    for scene in scenes.scenes:
+        scene_kinds = [_shot_class(shot) for shot in effective_shots(scene)]
+        kinds += scene_kinds
+        if "graphic" in scene_kinds:
+            graphic_scenes.append(scene.id)
+    graphic, photos = kinds.count("graphic"), kinds.count("photo")
+    share = graphic / len(kinds)
     reasons = [
-        f"{photos} de {len(needs)} cenas pedem foto (historical_exact/contextual_stock)",
-        f"{len(graphic)} de {len(needs)} cenas pedem gráfico (map_or_graphic): {share:.0%}",
+        f"{photos} de {len(kinds)} planos pedem foto (historical_exact/contextual_stock)",
+        f"{graphic} de {len(kinds)} planos são gráficos (número, gráfico, mapa, citação...): {share:.0%}",
     ]
     if share >= EXPLAINER_GRAPHIC_SHARE:
-        reasons.append(f"≥ {EXPLAINER_GRAPHIC_SHARE:.0%} de cenas gráficas: o vídeo é um explicativo")
-        return _decision("scenes", 1 - share, reasons, [n.value for n in needs], now)
-    assets = graphic if graphic else None
-    if graphic:
+        reasons.append(f"≥ {EXPLAINER_GRAPHIC_SHARE:.0%} de planos gráficos: o vídeo é um explicativo")
+        return _decision("scenes", 1 - share, reasons, kinds, now)
+    if graphic_scenes:
         reasons.append(
-            "cenas gráficas minoritárias: gerar como clipe 'gráfico como ativo' (etapa #42), "
+            "planos gráficos minoritários: gerar como clipe 'gráfico como ativo' (etapa #42), "
             "sem trocar de formato"
         )
-    return _decision("scenes", min(1 - share, 0.95), reasons, [n.value for n in needs], now, assets)
+    return _decision("scenes", min(1 - share, 0.95), reasons, kinds, now, graphic_scenes or None)
+
+
+def _shot_class(shot: Shot) -> str:
+    if shot.kind in GRAPHIC_SHOT_KINDS or getattr(shot, "visual_need", None) in GRAPHIC_NEEDS:
+        return "graphic"
+    return "photo" if getattr(shot, "visual_need", None) in PHOTO_NEEDS else "other"
 
 
 def confirmed_format(decision: FormatDecision, review: ReviewLog) -> EpisodeFormat:

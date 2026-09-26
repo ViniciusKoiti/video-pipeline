@@ -66,8 +66,8 @@ def test_engine_test_is_a_documentary_with_one_graphic_as_asset() -> None:
     assert decision.stage == "scenes" and decision.recommended is DOC
     assert decision.graphic_scenes_as_assets == ["S03"]  # linha do tempo 1882–1883
     assert decision.reasons[:2] == [
-        "4 de 5 cenas pedem foto (historical_exact/contextual_stock)",
-        "1 de 5 cenas pedem gráfico (map_or_graphic): 20%",
+        "4 de 5 planos pedem foto (historical_exact/contextual_stock)",
+        "1 de 5 planos são gráficos (número, gráfico, mapa, citação...): 20%",
     ]
 
 

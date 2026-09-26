@@ -14,7 +14,8 @@ from app.providers.base import ProviderInfo
 class SpeechRequest:
     text: str
     out_path: Path  # WAV
-    voice: str | None = None  # None = voz padrão do adapter
+    language: str = "en"  # "en" | "pt-BR" (ADR 008); escolhe sotaque e voz padrão
+    voice: str | None = None  # None = voz configurada para o idioma
     lexicon: Mapping[str, str] = field(default_factory=dict)  # glossário: palavra -> fonemas (§9)
 
 

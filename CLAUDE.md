@@ -6,7 +6,8 @@
 
 ## 1. O que é este projeto
 
-Pipeline local, retomável e auditável para produzir vídeos narrados em inglês (5–7 min, 16:9,
+Pipeline local, retomável e auditável para produzir vídeos narrados em inglês ou em português (ADR 008;
+voz Kokoro por idioma) (5–7 min, 16:9,
 H.264/AAC, até 1080p) sobre histórias reais. Cada episódio nasce de fontes verificáveis, usa imagens
 de acervo com licença registrada, gera ilustrações apenas para lacunas, narra com TTS local e sai como
 `final.mp4` + `captions.srt` + `description.txt` + `credits.txt`.
@@ -28,8 +29,8 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
    modelo ausente ou licença incompatível: registrar o motivo em `review.json`, marcar a etapa como
    `needs_review` e parar **aquela cena**, sem bloquear as demais.
 2. **Nenhuma fonte inventada.** O LLM escreve somente a partir de trechos extraídos de fontes reais já
-   baixadas em `sources.json`. Toda `claim` tem `source_ids`. Roteiro com claim sem suporte não passa
-   da validação automática.
+   baixadas em `sources.json`. Toda `claim` tem `source_ids` — **inclusive o que aparece na tela**
+   (número, data, citação, cargo, gráfico; ADR 008). Roteiro com claim sem suporte não passa da validação.
 3. **Nenhum ativo sem licença registrada entra no render.** Campos obrigatórios em §6. Imagem sem
    licença identificável vai para `needs_review`.
 4. **Stock e imagem gerada são ilustração**, nunca "registro" do fato. `visual_need` correto sempre;
@@ -187,7 +188,10 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
 
 ## 6. Contratos de dados (schemas pydantic em `app/pipeline/schemas.py`, ADR 007)
 
-Uma cena = um bloco de narração = um WAV = um visual. Exemplo completo em
+Uma cena = um bloco de narração = um WAV, com uma **lista de planos tipados** (ADR 008): `photo`, `broll`,
+`number`, `chart`, `quote`, `map`, `stamp`, `lower_third`, `timeline`, `family_tree`. Cada plano fica
+ancorado num trecho da narração; o tempo sai da posição da âncora sobre a duração real do WAV
+(`app/pipeline/shots.py`). Cena sem planos = forma v1 (um plano de foto). Exemplo v1 completo em
 `tests/fixtures/episodes/pilot-example/`.
 
 **`sources.json`** — por fonte: `id`, `title`, `url`, `kind` (`primary|secondary|newspaper|archive`),
@@ -228,8 +232,9 @@ fatos principais.
 com `decision`, `reviewer`, `at`, `input_hash` do conteúdo revisado (mudou o conteúdo, a aprovação cai) e
 `choice` quando o humano troca a recomendação (ex.: formato).
 
-**`episode.json`** — contrato do render, **congelado na v1** (ADR 001; mudar exige nova ADR):
-`schema_version: 1`, `format` (`archival_documentary` | `explainer`, decide o motor),
+**`episode.json`** — contrato do render (mudar exige nova ADR): `schema_version` 1 (um visual por cena,
+ADR 001) ou 2 (planos contíguos por cena, ADR 008), `language` (`en` | `pt-BR`),
+`format` (`archival_documentary` | `explainer`, decide o motor),
 `video` (1920×1080, 30 fps, 48 kHz, 16:9 validado), cenas com
 `start_ms`/`duration_ms` medidos da voz real e sem sobreposição, texto, caminhos relativos de
 imagem/áudio, `captions`. É a **única** entrada do motor de montagem;

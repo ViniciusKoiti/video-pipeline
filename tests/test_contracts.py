@@ -57,7 +57,7 @@ def make_kokoro() -> TTSProvider:
     os.environ.setdefault("HF_HUB_OFFLINE", "1")  # pesos já em cache: o teste não acessa a rede (§2.10)
     from app.providers.tts.kokoro import KokoroTTS
 
-    return KokoroTTS("am_michael")
+    return KokoroTTS({"en": "am_michael"})
 
 
 NEEDS_TTS_EXTRA = pytest.mark.skipif(find_spec("kokoro") is None, reason="extra tts ausente")

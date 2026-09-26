@@ -47,7 +47,7 @@ class OllamaSettings(_Model):
 
 
 class KokoroSettings(_Model):
-    voice: str
+    voices: dict[str, str] = Field(min_length=1)  # idioma -> voz (ADR 008)
     num_threads: int = Field(default=8, gt=0)
 
 

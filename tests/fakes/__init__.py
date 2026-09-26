@@ -97,7 +97,8 @@ class FakeTTS:
 
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         write_silence(request.out_path, MS_PER_WORD * max(1, len(request.text.split())))
-        return SpeechResult(path=request.out_path, model="fake", voice=request.voice or "fake-voice")
+        voice = request.voice or f"fake-{request.language}"
+        return SpeechResult(path=request.out_path, model="fake", voice=voice)
 
 
 class FakeImageGen:

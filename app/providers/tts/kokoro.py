@@ -16,6 +16,7 @@ from app.providers.tts.base import SpeechRequest, SpeechResult
 
 REPO_ID = "hexgrad/Kokoro-82M"
 SAMPLE_RATE = 24_000
+LANG_CODES = {"en": "a", "pt-BR": "p"}  # códigos do KPipeline: inglês americano, português do Brasil
 
 
 def apply_lexicon(text: str, lexicon: Mapping[str, str]) -> str:
@@ -28,30 +29,37 @@ def apply_lexicon(text: str, lexicon: Mapping[str, str]) -> str:
 
 
 class KokoroTTS:
-    def __init__(self, voice: str, *, num_threads: int = 8, lang_code: str = "a") -> None:
+    def __init__(self, voices: Mapping[str, str], *, num_threads: int = 8) -> None:
         self.info = ProviderInfo("kokoro", remote=False)
-        self._voice = voice
+        self._voices = dict(voices)  # idioma -> voz (ex.: {"en": "am_michael", "pt-BR": "pm_alex"})
         self._num_threads = num_threads  # 8 = núcleos físicos (ADR 004)
-        self._lang_code = lang_code  # "a" = inglês americano
-        self._pipeline: Any = None
+        self._pipelines: dict[str, Any] = {}
 
-    def _load(self) -> Any:
-        if self._pipeline is None:
+    def voice_for(self, request: SpeechRequest) -> tuple[str, str]:
+        """(código do KPipeline, voz) do pedido; idioma sem voz configurada é erro do provedor."""
+        lang_code = LANG_CODES.get(request.language)
+        voice = request.voice or self._voices.get(request.language)
+        if lang_code is None or voice is None:
+            raise ModelUnavailable(self.info.name, f"sem voz configurada para o idioma {request.language!r}")
+        return lang_code, voice
+
+    def _load(self, lang_code: str) -> Any:
+        if lang_code not in self._pipelines:
             try:
                 import torch
                 from kokoro import KPipeline
             except ImportError as error:
                 raise ModelUnavailable(self.info.name, "extra 'tts' ausente (uv sync --extra tts)") from error
             torch.set_num_threads(self._num_threads)
-            self._pipeline = KPipeline(lang_code=self._lang_code, repo_id=REPO_ID)
-        return self._pipeline
+            self._pipelines[lang_code] = KPipeline(lang_code=lang_code, repo_id=REPO_ID)
+        return self._pipelines[lang_code]
 
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         import numpy as np
         import soundfile as sf
 
-        voice = request.voice or self._voice
-        pipeline = self._load()
+        lang_code, voice = self.voice_for(request)
+        pipeline = self._load(lang_code)
         text = apply_lexicon(request.text, request.lexicon)
         chunks = [audio for _, _, audio in pipeline(text, voice=voice)]
         if not chunks:

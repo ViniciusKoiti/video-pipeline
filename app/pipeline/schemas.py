@@ -115,22 +115,198 @@ class Claim(Model):
         return self
 
 
+# --- Planos (ADR 008) ----------------------------------------------------------------------------
+
+Language = Literal["en", "pt-BR"]
+Motion = Literal["push_in", "pull_out", "pan_left", "pan_right", "pan_up", "pan_down", "still"]
+
+
+class Crop(Model):
+    """Recorte normalizado (0–1) de uma foto: o detalhe que o plano mostra (um rosto, o nome no casco)."""
+
+    x: float = Field(ge=0, le=1)
+    y: float = Field(ge=0, le=1)
+    width: float = Field(gt=0, le=1)
+    height: float = Field(gt=0, le=1)
+
+    @model_validator(mode="after")
+    def _inside_image(self) -> Self:
+        if self.x + self.width > 1 or self.y + self.height > 1:
+            raise ValueError("recorte sai da imagem")
+        return self
+
+
+class _Shot(Model):
+    anchor: NonEmpty  # trecho da narração coberto pelo plano; precisa aparecer na narração, em ordem
+    claims: list[Claim] = []  # o que o plano afirma na tela também precisa de fonte (§2.2)
+
+
+class _FactualShot(_Shot):
+    claims: list[Claim] = Field(min_length=1)  # número, data, citação ou cargo na tela é afirmação
+
+
+class PhotoShot(_Shot):
+    kind: Literal["photo"] = "photo"
+    visual_need: VisualNeed
+    search_query: NonEmpty
+    asset_id: AssetId | None = None
+    crop: Crop | None = None
+    motion: Motion = "push_in"
+
+
+class BrollShot(_Shot):
+    kind: Literal["broll"] = "broll"  # vídeo em movimento (banco de imagens ou filme de arquivo)
+    visual_need: VisualNeed
+    search_query: NonEmpty
+    asset_id: AssetId | None = None
+
+
+class NumberShot(_FactualShot):
+    kind: Literal["number"] = "number"
+    value: NonEmpty  # como aparece na tela: "1.500", "US$ 4,2 bi"
+    label: NonEmpty
+
+
+class ChartPoint(Model):
+    label: NonEmpty
+    value: float
+
+
+class ChartShot(_FactualShot):
+    kind: Literal["chart"] = "chart"
+    title: NonEmpty
+    unit: str = ""
+    points: list[ChartPoint] = Field(min_length=2)
+
+
+class QuoteShot(_FactualShot):
+    kind: Literal["quote"] = "quote"  # citação ou manchete recriada como tipografia, nunca print (§8)
+    text: NonEmpty
+    attribution: NonEmpty
+    style: Literal["quote", "headline"] = "quote"
+
+
+class Place(Model):
+    name: NonEmpty
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+
+
+class MapShot(_Shot):
+    kind: Literal["map"] = "map"
+    places: list[Place] = Field(min_length=1)
+
+
+class StampShot(_FactualShot):
+    kind: Literal["stamp"] = "stamp"  # carimbo de data e lugar
+    date: NonEmpty
+    place: str = ""
+
+
+class LowerThirdShot(_FactualShot):
+    kind: Literal["lower_third"] = "lower_third"  # tarja de nome e cargo
+    name: NonEmpty
+    role: NonEmpty
+
+
+class TimelineEvent(Model):
+    date: NonEmpty
+    label: NonEmpty
+
+
+class TimelineShot(_FactualShot):
+    kind: Literal["timeline"] = "timeline"
+    events: list[TimelineEvent] = Field(min_length=2)
+
+
+class Person(Model):
+    id: Annotated[str, Field(pattern=r"^[a-z0-9-]+$")]
+    name: NonEmpty
+    role: str = ""
+    parent_ids: list[str] = []
+
+
+class FamilyTreeShot(_FactualShot):
+    kind: Literal["family_tree"] = "family_tree"
+    people: list[Person] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def _parents_exist(self) -> Self:
+        ids = {p.id for p in self.people}
+        _unique([p.id for p in self.people], "pessoas")
+        missing = sorted({pid for p in self.people for pid in p.parent_ids} - ids)
+        if missing:
+            raise ValueError(f"pais inexistentes na árvore: {', '.join(missing)}")
+        return self
+
+
+Shot = Annotated[
+    PhotoShot
+    | BrollShot
+    | NumberShot
+    | ChartShot
+    | QuoteShot
+    | MapShot
+    | StampShot
+    | LowerThirdShot
+    | TimelineShot
+    | FamilyTreeShot,
+    Field(discriminator="kind"),
+]
+MEDIA_SHOT_KINDS = frozenset({"photo", "broll"})  # visual vem de um ativo
+GRAPHIC_SHOT_KINDS = frozenset(
+    {"number", "chart", "quote", "map", "stamp", "lower_third", "timeline", "family_tree"}
+)
+
+
 class Scene(Model):
-    """Uma cena = um bloco de narração = um WAV = um visual (ADR 007)."""
+    """Uma cena = um bloco de narração = um WAV (ADR 007), com uma lista de planos (ADR 008).
+    Sem planos, vale a forma v1: um único plano de foto com os campos visuais da própria cena."""
 
     id: SceneId
     narration: NonEmpty
     claims: list[Claim] = []
-    visual_need: VisualNeed
-    search_query: NonEmpty
-    chosen_asset_id: AssetId | None = None
+    visual_need: VisualNeed | None = None  # forma v1
+    search_query: NonEmpty | None = None  # forma v1
+    chosen_asset_id: AssetId | None = None  # forma v1
+    shots: list[Shot] = []  # forma v2
     duration_ms: int | None = Field(default=None, gt=0)  # medido da voz real, nunca estimado (§9)
     review_status: Status = Status.PENDING  # reflexo de review.json, escrito pelo código (§5)
+
+    @model_validator(mode="after")
+    def _visual_plan(self) -> Self:
+        if not self.shots:
+            if self.visual_need is None or self.search_query is None:
+                raise ValueError(f"{self.id}: cena sem planos precisa de visual_need e search_query")
+            return self
+        cursor = 0
+        for shot in self.shots:
+            position = self.narration.find(shot.anchor, cursor)
+            if position < 0:
+                raise ValueError(
+                    f"{self.id}: âncora {shot.anchor!r} não aparece na narração depois do plano anterior"
+                )
+            cursor = position + 1
+        return self
+
+
+def effective_shots(scene: Scene) -> list[Shot]:
+    """Planos da cena; a forma v1 vira um único plano de foto sobre a narração inteira."""
+    if scene.shots:
+        return list(scene.shots)
+    return [
+        PhotoShot(
+            anchor=scene.narration,
+            visual_need=scene.visual_need,  # type: ignore[arg-type]  # garantido pelo validador da cena
+            search_query=scene.search_query,  # type: ignore[arg-type]
+            asset_id=scene.chosen_asset_id,
+        )
+    ]
 
 
 class ScenesManifest(Model):
     episode_id: EpisodeId
-    language: Literal["en"]
+    language: Language
     scenes: list[Scene] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -269,9 +445,7 @@ class ReviewLog(Model):
     def latest(
         self, step: Step, *, scene_id: str | None = None, asset_id: str | None = None
     ) -> ReviewEntry | None:
-        matches = [
-            e for e in self.entries if (e.step, e.scene_id, e.asset_id) == (step, scene_id, asset_id)
-        ]
+        matches = [e for e in self.entries if (e.step, e.scene_id, e.asset_id) == (step, scene_id, asset_id)]
         return max(matches, key=lambda e: e.at) if matches else None
 
     def is_approved(
@@ -311,28 +485,64 @@ class VideoSpec(Model):
         return self
 
 
-class EpisodeScene(Model):
-    id: SceneId
+class EpisodeShot(Model):
+    """Plano com tempo resolvido, relativo ao início da cena (ADR 008)."""
+
     start_ms: int = Field(ge=0)
     duration_ms: int = Field(gt=0)
-    narration: NonEmpty
-    asset_id: AssetId
-    image: RelPath
-    audio: RelPath
+    spec: Shot
+    media: RelPath | None = None  # arquivo do ativo, para foto e B-roll
 
     @property
     def end_ms(self) -> int:
         return self.start_ms + self.duration_ms
 
+    @model_validator(mode="after")
+    def _media_when_needed(self) -> Self:
+        if (self.spec.kind in MEDIA_SHOT_KINDS) != (self.media is not None):
+            raise ValueError(f"plano {self.spec.kind}: media é obrigatório para foto/B-roll e só para eles")
+        return self
+
+
+class EpisodeScene(Model):
+    id: SceneId
+    start_ms: int = Field(ge=0)
+    duration_ms: int = Field(gt=0)
+    narration: NonEmpty
+    audio: RelPath
+    asset_id: AssetId | None = None  # v1: um visual por cena
+    image: RelPath | None = None  # v1
+    shots: list[EpisodeShot] = []  # v2: planos cobrindo a cena inteira
+
+    @property
+    def end_ms(self) -> int:
+        return self.start_ms + self.duration_ms
+
+    @model_validator(mode="after")
+    def _one_visual_form(self) -> Self:
+        if self.shots:
+            if self.image is not None or self.asset_id is not None:
+                raise ValueError(f"{self.id}: use image/asset_id (v1) ou shots (v2), não os dois")
+            cursor = 0
+            for shot in self.shots:
+                if shot.start_ms != cursor:
+                    raise ValueError(f"{self.id}: planos com buraco ou sobreposição em {shot.start_ms} ms")
+                cursor = shot.end_ms
+            if cursor != self.duration_ms:
+                raise ValueError(f"{self.id}: planos somam {cursor} ms, a cena tem {self.duration_ms} ms")
+        elif self.image is None or self.asset_id is None:
+            raise ValueError(f"{self.id}: cena sem planos precisa de image e asset_id (v1)")
+        return self
+
 
 class EpisodeManifest(Model):
     """Única entrada do motor de montagem (§6). Timing vem da duração real dos WAVs.
-    Contrato congelado na versão 1 (ADR 001): mudar campos exige nova ADR e nova versão."""
+    Versões: 1 (ADR 001, um visual por cena) e 2 (ADR 008, lista de planos). Mudar exige nova ADR."""
 
-    schema_version: Literal[1] = 1
+    schema_version: Literal[1, 2] = 1
     episode_id: EpisodeId
     title: NonEmpty
-    language: Literal["en"]
+    language: Language
     format: EpisodeFormat = EpisodeFormat.ARCHIVAL_DOCUMENTARY
     video: VideoSpec = Field(default_factory=VideoSpec)
     scenes: list[EpisodeScene] = Field(min_length=1)
@@ -345,6 +555,11 @@ class EpisodeManifest(Model):
     @model_validator(mode="after")
     def _ordered_timeline(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        with_shots = [bool(s.shots) for s in self.scenes]
+        if self.schema_version == 1 and any(with_shots):
+            raise ValueError("schema_version 1 não tem planos; use 2 (ADR 008)")
+        if self.schema_version == 2 and not all(with_shots):
+            raise ValueError("schema_version 2 exige planos em todas as cenas")
         for previous, current in zip(self.scenes, self.scenes[1:], strict=False):
             if current.start_ms < previous.end_ms:
                 raise ValueError(f"cena {current.id} começa antes do fim de {previous.id}")
@@ -361,7 +576,7 @@ def unknown_source_refs(scenes: ScenesManifest, sources: SourcesManifest) -> lis
     known = {s.id for s in sources.sources}
     problems = []
     for scene in scenes.scenes:
-        for claim in scene.claims:
+        for claim in scene.claims + [c for shot in scene.shots for c in shot.claims]:
             refs = claim.source_ids + [_EXCERPT_RE.sub(r"\1", e) for e in claim.excerpt_ids]
             problems += [f"{scene.id}: fonte {r} não está em sources.json" for r in refs if r not in known]
     return sorted(set(problems))
@@ -372,14 +587,15 @@ _NOT_A_RECORD = frozenset({Provider.PEXELS, Provider.WORKERS_AI})
 
 
 def visual_need_violations(scenes: ScenesManifest, assets: dict[str, Asset]) -> list[str]:
-    """Cenas cujo ativo escolhido não existe ou não serve ao visual_need."""
+    """Planos de foto/B-roll cujo ativo escolhido não existe ou não serve ao visual_need."""
     problems = []
     for scene in scenes.scenes:
-        if scene.chosen_asset_id is None:
-            continue
-        asset = assets.get(scene.chosen_asset_id)
-        if asset is None:
-            problems.append(f"{scene.id}: ativo {scene.chosen_asset_id} não encontrado")
-        elif scene.visual_need is VisualNeed.HISTORICAL_EXACT and asset.provider in _NOT_A_RECORD:
-            problems.append(f"{scene.id}: historical_exact não pode usar {asset.provider.value}")
+        for shot in effective_shots(scene):
+            if not isinstance(shot, PhotoShot | BrollShot) or shot.asset_id is None:
+                continue
+            asset = assets.get(shot.asset_id)
+            if asset is None:
+                problems.append(f"{scene.id}: ativo {shot.asset_id} não encontrado")
+            elif shot.visual_need is VisualNeed.HISTORICAL_EXACT and asset.provider in _NOT_A_RECORD:
+                problems.append(f"{scene.id}: historical_exact não pode usar {asset.provider.value}")
     return problems
