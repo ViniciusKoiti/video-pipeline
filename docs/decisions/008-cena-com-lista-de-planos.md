@@ -43,3 +43,10 @@ nomes na tela. O dono aprovou mudar o modelo e produzir a fatia vertical em port
   componentes de documentário do template.
 - A etapa 27 (roteiro) precisa gerar a lista de planos em JSON validado, e a etapa 28 (cenas) deixa de ser
   "um visual por cena".
+
+## Emendas
+
+- **2026-09-26 (#48, passo 3):** uma `lower_third` logo depois de uma `photo` na mesma cena é desenhada
+  **sobre** essa foto, que continua em movimento por baixo. É regra do template Remotion; o contrato continua
+  uma lista de planos contíguos. O plano `map` ganhou contornos do Natural Earth (domínio público,
+  `video/src/geo/`) e uma câmera que abre no estado e fecha nos pinos.

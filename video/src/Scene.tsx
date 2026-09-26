@@ -2,7 +2,7 @@ import React from "react";
 import {AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
 import {ShotView} from "./ShotView";
 import {theme, u} from "./theme";
-import type {SceneProps} from "./types";
+import type {SceneProps, ShotProps} from "./types";
 
 // Uma cena = um bloco de narração (ADR 008): planos em sequência com corte seco; fade só nas bordas.
 const clamp = {extrapolateLeft: "clamp", extrapolateRight: "clamp"} as const;
@@ -17,6 +17,16 @@ const Caption: React.FC<{text: string}> = ({text}) => {
   );
 };
 
+// Tarja logo depois de uma foto na mesma cena é desenhada sobre essa foto: a foto segue em movimento por
+// baixo e a tarja entra por cima (regra do template, #48; o contrato continua uma lista de planos).
+const layout = (shots: ShotProps[]): ShotProps[] =>
+  shots.map((shot, i) => {
+    const next = shots[i + 1];
+    const underTag = shot.spec.kind === "photo" && next?.spec.kind === "lower_third";
+    const overlay = shot.spec.kind === "lower_third" && shots[i - 1]?.spec.kind === "photo";
+    return {...shot, frames: underTag ? shot.frames + next.frames : shot.frames, overlay};
+  });
+
 export const Scene: React.FC<SceneProps> = (props) => {
   const frame = useCurrentFrame();
   const fade = Math.min(props.fadeFrames, Math.floor(props.frames / 2));
@@ -30,7 +40,7 @@ export const Scene: React.FC<SceneProps> = (props) => {
   return (
     <AbsoluteFill style={{backgroundColor: theme.bg}}>
       <AbsoluteFill style={{opacity}}>
-        {props.shots.map((shot, i) => (
+        {layout(props.shots).map((shot, i) => (
           <Sequence key={i} from={shot.from} durationInFrames={shot.frames}>
             <ShotView {...shot} />
           </Sequence>

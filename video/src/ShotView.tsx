@@ -1,7 +1,8 @@
 import React from "react";
-import {AbsoluteFill, Img, OffthreadVideo, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import {AbsoluteFill, Easing, Img, OffthreadVideo, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
 import {FilmGrain} from "@viniciusk/motion-kit/fx";
 import {useCountUp, useSpringIn, useStagger} from "@viniciusk/motion-kit";
+import geo from "./geo/america-do-sul.json";
 import {media, theme, u} from "./theme";
 import type {
   ChartSpec, FamilyTreeSpec, LowerThirdSpec, MapSpec, NumberSpec, PhotoSpec, QuoteSpec, ShotProps, StampSpec,
@@ -167,22 +168,28 @@ const Stamp: React.FC<{spec: StampSpec}> = ({spec}) => {
   );
 };
 
-const LowerThird: React.FC<{spec: LowerThirdSpec}> = ({spec}) => {
+const LowerThird: React.FC<{spec: LowerThirdSpec; overlay?: boolean}> = ({spec, overlay = false}) => {
   const {height} = useVideoConfig();
   const frame = useCurrentFrame();
   const slide = interpolate(frame, [0, 12], [-40, 0], clamp);
   const opacity = interpolate(frame, [0, 10], [0, 1], clamp);
-  return (
-    <Stage align="left">
-      <div style={{position: "absolute", left: u(height, 160), bottom: u(height, 200), display: "flex",
-        alignItems: "stretch", gap: u(height, 26), opacity, transform: `translateX(${slide}px)`}}>
-        <div style={{width: u(height, 8), background: theme.accent, borderRadius: 2}} />
-        <div style={{display: "flex", flexDirection: "column", gap: u(height, 10)}}>
-          <div style={{fontSize: u(height, 76), fontWeight: 800, letterSpacing: -1}}>{spec.name}</div>
-          <div style={{fontSize: u(height, 36), color: theme.muted, fontWeight: 500}}>{spec.role}</div>
-        </div>
+  const scale = overlay ? 0.8 : 1; // sobre a foto, menor e num painel, para não cobrir o assunto
+  const tag = (
+    <div style={{position: "absolute", left: u(height, overlay ? 110 : 160), bottom: u(height, overlay ? 150 : 200),
+      display: "flex", alignItems: "stretch", gap: u(height, 26 * scale), opacity, transform: `translateX(${slide}px)`,
+      ...(overlay && {background: "rgba(14, 17, 22, 0.86)", padding: `${u(height, 22)}px ${u(height, 34)}px`,
+        borderRadius: u(height, 6), boxShadow: "0 16px 40px rgba(0,0,0,0.45)"})}}>
+      <div style={{width: u(height, 8 * scale), background: theme.accent, borderRadius: 2}} />
+      <div style={{display: "flex", flexDirection: "column", gap: u(height, 10 * scale)}}>
+        <div style={{fontSize: u(height, 76 * scale), fontWeight: 800, letterSpacing: -1}}>{spec.name}</div>
+        <div style={{fontSize: u(height, 36 * scale), color: theme.muted, fontWeight: 500}}>{spec.role}</div>
       </div>
-    </Stage>
+    </div>
+  );
+  return overlay ? (
+    <AbsoluteFill style={{color: theme.text, fontFamily: theme.font}}>{tag}</AbsoluteFill>
+  ) : (
+    <Stage align="left">{tag}</Stage>
   );
 };
 
@@ -303,49 +310,101 @@ const FamilyTree: React.FC<{spec: FamilyTreeSpec}> = ({spec}) => {
   );
 };
 
-const MapPins: React.FC<{spec: MapSpec}> = ({spec}) => {
+// Contornos do Natural Earth 1:50m (domínio público, src/geo/README.md), com a caixa de cada região.
+type Ring = number[][];
+type Region = {name: string; rings: Ring[]; box: [number, number, number, number]; label?: number[]; uf?: string};
+const boxOf = (rings: Ring[]): Region["box"] => {
+  const pts = rings.flat();
+  return [Math.min(...pts.map((p) => p[0])), Math.min(...pts.map((p) => p[1])),
+    Math.max(...pts.map((p) => p[0])), Math.max(...pts.map((p) => p[1]))];
+};
+const COUNTRIES: Region[] = geo.countries.map((c) => ({...c, box: boxOf(c.rings)}));
+const STATES: Region[] = geo.states.map((s) => ({...s, box: boxOf(s.rings)}));
+
+const insideRing = (lon: number, lat: number, ring: Ring) => {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+};
+
+// Câmera: abre no estado (~10° de latitude na tela) e fecha nos pinos; os pinos entram depois do zoom.
+const MapPins: React.FC<{spec: MapSpec; frames: number}> = ({spec, frames}) => {
   const {width, height} = useVideoConfig();
   const frame = useCurrentFrame();
   const lats = spec.places.map((p) => p.lat);
   const lons = spec.places.map((p) => p.lon);
-  // Enquadra os pontos com folga proporcional à distância entre eles (mínimo de 0,3°).
-  const pad = Math.max(0.3, 0.25 * Math.max(Math.max(...lats) - Math.min(...lats), Math.max(...lons) - Math.min(...lons)));
-  const [minLat, maxLat] = [Math.min(...lats) - pad, Math.max(...lats) + pad];
-  const [minLon, maxLon] = [Math.min(...lons) - pad, Math.max(...lons) + pad];
-  const project = (lat: number, lon: number) => ({
-    x: width * (0.15 + (0.7 * (lon - minLon)) / (maxLon - minLon)),
-    y: height * (0.15 + (0.7 * (maxLat - lat)) / (maxLat - minLat)),
+  const lat0 = (Math.min(...lats) + Math.max(...lats)) / 2;
+  const lon0 = (Math.min(...lons) + Math.max(...lons)) / 2;
+  const k = Math.cos((lat0 * Math.PI) / 180); // equirretangular: 1° de longitude encolhe com a latitude
+  const spanLat = Math.max(Math.max(...lats) - Math.min(...lats), 0.25);
+  const spanLon = Math.max((Math.max(...lons) - Math.min(...lons)) * k, 0.25);
+  // Fechado: os pinos em ~40% da tela e pelo menos 1,5° de latitude visível, para sobrar referência
+  // (litoral, divisa) em volta. Em px por grau.
+  const tight = Math.min((0.4 * height) / spanLat, (0.4 * width) / spanLon, height / 1.5);
+  const wide = Math.min(tight, height / 10);
+  const zoomEnd = Math.min(45, Math.round(frames * 0.45));
+  const t = interpolate(frame, [0, zoomEnd], [0, 1], {...clamp, easing: Easing.inOut(Easing.cubic)});
+  const scale = Math.exp(Math.log(wide) + (Math.log(tight) - Math.log(wide)) * t);
+  const at = (s: number) => (lon: number, lat: number) => ({
+    x: width / 2 + (lon - lon0) * k * s,
+    y: height / 2 - (lat - lat0) * s,
   });
-  const delays = useStagger(spec.places.length, 8, 6);
+  const project = at(scale);
+  const final = at(tight);
+  const [vx0, vx1] = [lon0 - width / (2 * k * scale), lon0 + width / (2 * k * scale)];
+  const [vy0, vy1] = [lat0 - height / (2 * scale), lat0 + height / (2 * scale)];
+  const visible = (r: Region) => r.box[2] >= vx0 && r.box[0] <= vx1 && r.box[3] >= vy0 && r.box[1] <= vy1;
+  const path = (r: Region) =>
+    r.rings.map((ring) => ring.map(([lon, lat], i) => {
+      const p = project(lon, lat);
+      return `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+    }).join("") + "Z").join("");
+  const home = STATES.find((st) => st.rings.some((ring) => insideRing(spec.places[0].lon, spec.places[0].lat, ring)));
+  const delays = useStagger(spec.places.length, 8, 6).map((d) => d + Math.max(0, zoomEnd - 8));
   return (
     <Stage>
       <svg width={width} height={height} style={{position: "absolute", inset: 0}}>
-        {Array.from({length: 9}, (_, i) => (
-          <React.Fragment key={i}>
-            <line x1={(width * i) / 8} y1={0} x2={(width * i) / 8} y2={height} stroke={theme.line} strokeWidth={1} />
-            <line x1={0} y1={(height * i) / 8} x2={width} y2={(height * i) / 8} stroke={theme.line} strokeWidth={1} />
-          </React.Fragment>
+        {COUNTRIES.filter(visible).map((c) => (
+          <path key={c.name} d={path(c)} fill="#141922" stroke="rgba(237, 237, 232, 0.22)" strokeWidth={1.5} />
+        ))}
+        {STATES.filter(visible).map((st) => (
+          <path key={st.uf} d={path(st)} fill={st === home ? "#1C2330" : "none"}
+            stroke={st === home ? "rgba(242, 177, 52, 0.45)" : "rgba(237, 237, 232, 0.12)"}
+            strokeWidth={st === home ? 2 : 1} />
         ))}
       </svg>
+      {STATES.filter(visible).map((st) => {
+        const p = project(st.label![0], st.label![1]);
+        return (
+          <div key={`label-${st.uf}`} style={{position: "absolute", left: p.x, top: p.y, transform: "translate(-50%, -50%)",
+            opacity: (st === home ? 0.9 : 0.45) * (1 - t), fontSize: u(height, 26), fontWeight: 600, letterSpacing: 4,
+            color: theme.muted, textTransform: "uppercase", whiteSpace: "nowrap"}}>{st.name}</div>
+        );
+      })}
       {spec.places.map((place, i) => {
-        const {x, y} = project(place.lat, place.lon);
-        // Vizinho próximo: o pino mais ao sul leva o rótulo para baixo (independe da ordem da lista).
+        const {x, y} = project(place.lon, place.lat);
+        // Vizinho próximo no enquadramento final: o pino mais ao sul leva o rótulo para baixo.
+        const f = final(place.lon, place.lat);
         const labelBelow = spec.places.some((other, j) => {
-          const q = project(other.lat, other.lon);
-          const close = j !== i && Math.abs(q.x - x) < u(height, 320) && Math.abs(q.y - y) < u(height, 90);
-          return close && (y > q.y || (y === q.y && i > j));
+          const q = final(other.lon, other.lat);
+          const close = j !== i && Math.abs(q.x - f.x) < u(height, 320) && Math.abs(q.y - f.y) < u(height, 90);
+          return close && (f.y > q.y || (f.y === q.y && i > j));
         });
-        const t = interpolate(frame, [delays[i], delays[i] + 10], [0, 1], clamp);
+        const shown = interpolate(frame, [delays[i], delays[i] + 10], [0, 1], clamp);
         const pulse = 1 + 0.35 * Math.sin((frame - delays[i]) / 6);
         return (
-          <div key={place.name} style={{position: "absolute", left: x, top: y, opacity: t}}>
+          <div key={place.name} style={{position: "absolute", left: x, top: y, opacity: shown}}>
             <div style={{position: "absolute", width: u(height, 26), height: u(height, 26), borderRadius: "50%",
               background: theme.accent, transform: "translate(-50%, -50%)"}} />
             <div style={{position: "absolute", width: u(height, 26), height: u(height, 26), borderRadius: "50%",
               border: `2px solid ${theme.accent}`, transform: `translate(-50%, -50%) scale(${pulse * 1.8})`, opacity: 0.5}} />
             <div style={{position: "absolute", left: u(height, 30), top: labelBelow ? u(height, 14) : -u(height, 54),
-              whiteSpace: "nowrap",
-              fontSize: u(height, 40), fontWeight: 700}}>{place.name}</div>
+              whiteSpace: "nowrap", fontSize: u(height, 40), fontWeight: 700,
+              textShadow: `0 0 12px ${theme.bg}`}}>{place.name}</div>
           </div>
         );
       })}
@@ -355,7 +414,7 @@ const MapPins: React.FC<{spec: MapSpec}> = ({spec}) => {
 
 // --- Despacho por tipo --------------------------------------------------------------------------
 
-export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit, aspect}) => {
+export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit, aspect, overlay}) => {
   switch (spec.kind) {
     case "photo":
       return <Photo spec={spec} src={media(path ?? "")} frames={frames} credit={credit} aspect={aspect} />;
@@ -368,7 +427,7 @@ export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit
     case "stamp":
       return <Stamp spec={spec} />;
     case "lower_third":
-      return <LowerThird spec={spec} />;
+      return <LowerThird spec={spec} overlay={overlay} />;
     case "chart":
       return <Chart spec={spec} />;
     case "timeline":
@@ -376,6 +435,6 @@ export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit
     case "family_tree":
       return <FamilyTree spec={spec} />;
     case "map":
-      return <MapPins spec={spec} />;
+      return <MapPins spec={spec} frames={frames} />;
   }
 };
