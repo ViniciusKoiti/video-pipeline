@@ -329,9 +329,11 @@ const MapPins: React.FC<{spec: MapSpec}> = ({spec}) => {
       </svg>
       {spec.places.map((place, i) => {
         const {x, y} = project(place.lat, place.lon);
-        const crowded = spec.places.slice(0, i).some((other) => {
+        // Vizinho próximo: o pino mais ao sul leva o rótulo para baixo (independe da ordem da lista).
+        const labelBelow = spec.places.some((other, j) => {
           const q = project(other.lat, other.lon);
-          return Math.abs(q.x - x) < u(height, 320) && Math.abs(q.y - y) < u(height, 90);
+          const close = j !== i && Math.abs(q.x - x) < u(height, 320) && Math.abs(q.y - y) < u(height, 90);
+          return close && (y > q.y || (y === q.y && i > j));
         });
         const t = interpolate(frame, [delays[i], delays[i] + 10], [0, 1], clamp);
         const pulse = 1 + 0.35 * Math.sin((frame - delays[i]) / 6);
@@ -341,7 +343,7 @@ const MapPins: React.FC<{spec: MapSpec}> = ({spec}) => {
               background: theme.accent, transform: "translate(-50%, -50%)"}} />
             <div style={{position: "absolute", width: u(height, 26), height: u(height, 26), borderRadius: "50%",
               border: `2px solid ${theme.accent}`, transform: `translate(-50%, -50%) scale(${pulse * 1.8})`, opacity: 0.5}} />
-            <div style={{position: "absolute", left: u(height, 30), top: crowded ? u(height, 14) : -u(height, 54),
+            <div style={{position: "absolute", left: u(height, 30), top: labelBelow ? u(height, 14) : -u(height, 54),
               whiteSpace: "nowrap",
               fontSize: u(height, 40), fontWeight: 700}}>{place.name}</div>
           </div>
