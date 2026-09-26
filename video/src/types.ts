@@ -29,6 +29,7 @@ export type ShotProps = {
   media?: string | null;
   credit?: string;
   aspect?: number; // largura/altura da imagem (foto), para o cartão seguir a proporção e o recorte ser exato
+  overlay?: boolean; // tarja sobre a foto anterior (calculado em Scene.tsx, não vem do contrato)
 };
 export type Cue = {from: number; to: number; text: string};
 

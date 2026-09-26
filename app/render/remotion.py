@@ -22,7 +22,9 @@ from app.render.base import RenderResult, target_spec
 from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, parse_srt
 
 PROJECT = Path(__file__).resolve().parents[2] / "video"
-TEMPLATE_GLOBS = ("src/*.ts", "src/*.tsx", "src/fonts/*", "render-scenes.mjs", "package-lock.json")
+TEMPLATE_GLOBS = (
+    "src/*.ts", "src/*.tsx", "src/fonts/*", "src/geo/*.json", "render-scenes.mjs", "package-lock.json"
+)
 
 
 class RemotionError(RuntimeError):
