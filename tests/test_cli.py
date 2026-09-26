@@ -10,7 +10,7 @@ from tests.fakes import make_root
 # Comandos do CLAUDE.md §10; um comando não pode sumir sem atualizar a spec.
 SPEC_COMMANDS = {
     "bench", "new", "sources", "script", "scenes", "assets", "gallery",
-    "voice", "subs", "render", "export", "approve", "status",
+    "voice", "subs", "render", "export", "approve", "status", "reopen",
 }
 
 

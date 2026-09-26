@@ -9,7 +9,8 @@ import hashlib
 import json
 import shutil
 import wave
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -17,7 +18,7 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
-from app.pipeline.ports import ManifestNotFound
+from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, is_approved_json
 from app.pipeline.schemas import Asset, EpisodeManifest, Generation, Provider, ReviewEntry, ReviewLog, Status
 from app.providers.alignment.base import Cue
 from app.providers.archives.base import AssetCandidate, AssetQuery
@@ -181,6 +182,7 @@ class InMemoryStore:
     def __init__(self, root: Path) -> None:
         self._root = root
         self._data: dict[tuple[str, str], str] = {}
+        self._locked: set[str] = set()
 
     def path(self, episode_id: str, name: str) -> Path:
         return self._root / episode_id / name
@@ -195,7 +197,20 @@ class InMemoryStore:
             raise ManifestNotFound(f"{episode_id}/{name}") from None
 
     def write(self, episode_id: str, name: str, manifest: BaseModel) -> None:
+        current = self._data.get((episode_id, name))
+        if current is not None and is_approved_json(current):
+            raise ImmutableManifest(f"{episode_id}/{name} está aprovado")
         self._data[(episode_id, name)] = manifest.model_dump_json()
+
+    @contextmanager
+    def lock(self, episode_id: str) -> Iterator[None]:
+        if episode_id in self._locked:
+            raise EpisodeLocked(episode_id)
+        self._locked.add(episode_id)
+        try:
+            yield
+        finally:
+            self._locked.discard(episode_id)
 
 
 class InMemoryReviewGate:

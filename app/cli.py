@@ -59,6 +59,11 @@ def _render_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--preview", action="store_true", help="prévia em 720p")
 
 
+def _reopen_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--step", required=True, help="etapa aprovada a reabrir")
+    parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
+
+
 def _approve_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--step", required=True, help="etapa a aprovar")
 
@@ -80,6 +85,10 @@ COMMANDS: tuple[Command, ...] = (
     Command("export", "final.mp4 + srt + description.txt + credits.txt", 18),
     Command("approve", "registra aprovação humana em review.json", 12, add_arguments=_approve_arguments),
     Command("status", "estados por etapa e pendências", 12),
+    Command(
+        "reopen", "reabre etapa aprovada para refazer (motivo no review.json)", 12,
+        add_arguments=_reopen_arguments,
+    ),
 )
 
 def _bench(args: argparse.Namespace, context: Context) -> int:

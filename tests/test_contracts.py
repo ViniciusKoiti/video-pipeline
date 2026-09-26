@@ -15,8 +15,8 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
-from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
-from app.pipeline.schemas import APPROVED_STATES, EpisodeManifest, ReviewEntry, VisualNeed
+from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate
+from app.pipeline.schemas import APPROVED_STATES, Asset, EpisodeManifest, ReviewEntry, Status, VisualNeed
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider, AssetQuery
 from app.providers.errors import InvalidOutput
@@ -26,6 +26,7 @@ from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
 from app.render.ffmpeg import FfmpegEngine
+from app.storage.json_files import JsonFileStore
 from tests.fakes import (
     FIXED_TIME,
     FakeAligner,
@@ -77,7 +78,10 @@ RENDERERS: list[Callable[[], RenderEngine]] = [
     pytest.param(FakeRender, id="fake"),
     pytest.param(FfmpegEngine, id="ffmpeg", marks=pytest.mark.slow),  # renderiza os 52 s da engine-test
 ]
-STORES: list[Callable[[Path], ManifestStore]] = [pytest.param(InMemoryStore, id="in-memory")]
+STORES: list[Callable[[Path], ManifestStore]] = [
+    pytest.param(InMemoryStore, id="in-memory"),
+    pytest.param(JsonFileStore, id="json-files"),
+]
 REVIEW_GATES: list[Callable[[], ReviewGate]] = [pytest.param(InMemoryReviewGate, id="in-memory")]
 
 
@@ -196,6 +200,33 @@ def test_store_round_trips_manifests(make: Callable[[Path], ManifestStore], tmp_
     store.write("pilot-example", "episode.json", episode())
     assert store.read("pilot-example", "episode.json", EpisodeManifest) == episode()
     assert store.path("pilot-example", "episode.json").is_relative_to(tmp_path)
+
+
+@pytest.mark.parametrize("make", STORES)
+def test_store_lock_is_exclusive_per_episode(make: Callable[[Path], ManifestStore], tmp_path: Path) -> None:
+    store = make(tmp_path)
+    with store.lock("pilot-example"):
+        with pytest.raises(EpisodeLocked), store.lock("pilot-example"):
+            pass
+        with store.lock("outro-episodio"):  # episódios diferentes não se bloqueiam
+            pass
+    with store.lock("pilot-example"):  # liberada ao sair
+        pass
+
+
+@pytest.mark.parametrize("make", STORES)
+def test_store_never_overwrites_an_approved_manifest(
+    make: Callable[[Path], ManifestStore], tmp_path: Path
+) -> None:
+    store = make(tmp_path)
+    asset = Asset.model_validate_json((FIXTURE / "assets" / "commons-111-sc-91135.json").read_text())
+    store.write(
+        "engine-test", "assets/a.json", asset.model_copy(update={"review_status": Status.NEEDS_REVIEW})
+    )
+    store.write("engine-test", "assets/a.json", asset)  # pendente → aprovado: permitido
+    with pytest.raises(ImmutableManifest):
+        store.write("engine-test", "assets/a.json", asset.model_copy(update={"usage_notes": "outra coisa"}))
+    assert store.read("engine-test", "assets/a.json", Asset) == asset
 
 
 @pytest.mark.parametrize("make", REVIEW_GATES)
