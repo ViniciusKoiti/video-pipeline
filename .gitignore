@@ -23,6 +23,8 @@ data/cache/*
 *.mp3
 !tests/fixtures/episodes/*/voice/*.wav
 data/benchmarks/renders/
+data/benchmarks/estilo/
+data/benchmarks/voz-pt/
 
 # Node (somente se Remotion for escolhido)
 node_modules/

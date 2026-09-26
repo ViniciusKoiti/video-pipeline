@@ -52,7 +52,8 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 - Windows + WSL2/Ubuntu. Python 3.12 em `.venv` criado com `uv` (Kokoro exige < 3.13), PyTorch só-CPU.
   `ffmpeg`/`ffprobe`, Git, `espeak-ng`, Ollama local (instalação de usuário em `~/.local`, serviço
   `systemctl --user`, só `127.0.0.1`). Detalhes em `docs/decisions/004-ambiente-wsl.md`.
-  Node.js LTS **apenas** se o Remotion for o motor escolhido na Fase 0.
+  Node.js LTS (via `nvm`) **só para o formato `explainer`**: `cd video && npm ci` instala o Remotion, o
+  @viniciusk/motion-kit e o Chrome headless pelo lock. O documentário continua só com ffmpeg.
 - `scripts/check_env.sh` valida o ambiente; rodar após qualquer mudança de máquina ou `.wslconfig`.
 - Projeto vive em `~/projetos/auto-play` (repo `video-pipeline`, filesystem Linux do WSL). **Nunca** rodar em `/mnt/c` ou `/mnt/e`.
   Exports frios opcionais em `/mnt/e/VideoPipeline/exports`, copiados após o render.
@@ -83,7 +84,7 @@ video-pipeline/
     media/                    # ffmpeg/ffprobe, preparação de ativos, checks automáticos
     render/                   # base.py (RenderEngine) + motor por formato (ADR 001)
     storage/                  # JsonFileStore (ManifestStore em JSON, trava por episódio)
-  video/                      # SOMENTE se Remotion for escolhido (um template React, public/episodes/)
+  video/                      # template Remotion do formato explainer (ADR 008): planos, tema, fonte Inter (OFL)
   config/providers.toml       # implementação por função + parâmetros, sem credenciais
   data/
     cache/                    # miniaturas, respostas de busca, hashes, fixtures

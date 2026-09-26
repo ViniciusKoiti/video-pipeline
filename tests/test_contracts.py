@@ -26,6 +26,8 @@ from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
 from app.render.ffmpeg import FfmpegEngine
+from app.render.remotion import PROJECT as REMOTION_PROJECT
+from app.render.remotion import RemotionEngine
 from app.storage.json_files import JsonFileStore
 from tests.fakes import (
     FIXED_TIME,
@@ -77,6 +79,16 @@ ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="f
 RENDERERS: list[Callable[[], RenderEngine]] = [
     pytest.param(FakeRender, id="fake"),
     pytest.param(FfmpegEngine, id="ffmpeg", marks=pytest.mark.slow),  # renderiza os 52 s da engine-test
+    pytest.param(  # formato explainer (ADR 008); exige `npm ci` em video/
+        RemotionEngine,
+        id="remotion",
+        marks=[
+            pytest.mark.slow,
+            pytest.mark.skipif(
+                not (REMOTION_PROJECT / "node_modules").exists(), reason="Remotion não instalado"
+            ),
+        ],
+    ),
 ]
 STORES: list[Callable[[Path], ManifestStore]] = [
     pytest.param(InMemoryStore, id="in-memory"),

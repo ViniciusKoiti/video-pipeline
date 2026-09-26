@@ -56,6 +56,15 @@ def _json_store(settings: Settings) -> Any:
     return JsonFileStore(settings.data_dir / "episodes")
 
 
+def _remotion(settings: Settings) -> Any:
+    from app.render.remotion import RemotionEngine
+
+    ff = settings.ffmpeg  # mesmos parâmetros de codificação do motor ffmpeg
+    return RemotionEngine(
+        crf=ff.crf, fade_s=ff.fade_s, preset_final=ff.preset_final, preset_preview=ff.preset_preview
+    )
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -78,7 +87,7 @@ DEFAULT_REGISTRY: Registry = {
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
         "moneyprinterturbo": Registration(8),
-        "remotion": Registration(43),  # formato explainer; adapter no branch experimento-remotion
+        "remotion": Registration(48, _remotion),  # formato explainer (etapa #48 antecipou a #43)
     },
     "store": {"json_files": Registration(10, _json_store)},
     "review": {"json_files": Registration(12)},
