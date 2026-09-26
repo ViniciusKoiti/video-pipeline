@@ -80,13 +80,15 @@ video-pipeline/
     providers/                # uma porta (base.py) + adapters por função: text/, tts/, image_gen/,
                               # archives/, alignment/; errors.py comum
     media/                    # ffmpeg/ffprobe, preparação de ativos, checks automáticos
-    render/                   # base.py (RenderEngine) + motor escolhido na Fase 0
+    render/                   # base.py (RenderEngine) + motor por formato (ADR 001)
+    storage/                  # JsonFileStore (ManifestStore em JSON, trava por episódio)
   video/                      # SOMENTE se Remotion for escolhido (um template React, public/episodes/)
   config/providers.toml       # implementação por função + parâmetros, sem credenciais
   data/
     cache/                    # miniaturas, respostas de busca, hashes, fixtures
     benchmarks/               # resultados de comparação de provedores e da máquina
     episodes/<id>/
+      manifest.json           # estado de cada etapa + input_hash (cache)
       episode.json            # contrato aprovado; entrada do motor de render
       sources.json  script.json  scenes.json  review.json
       assets/  voice/  renders/  credits.txt
@@ -165,9 +167,13 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
 
 ## 5. Estados, cache e invalidação
 
-- Estados por etapa no manifesto: `pending → running → needs_review → approved → completed`, ou `failed`.
-- Chave de cache: `(episode_id, step, input_hash)`. Hash igual = reutiliza a saída; hash diferente
-  = reexecuta **preservando** tudo que está `approved`.
+- Estados por etapa em `data/episodes/<id>/manifest.json` (`app/pipeline/state.py`):
+  `pending → running → needs_review → approved → completed`, ou `failed` (com o motivo).
+- Chave de cache: `(episode_id, step, input_hash)`. O `input_hash` cobre o conteúdo das entradas **e** os
+  parâmetros que mudam o resultado (modelo, voz, versão do motor). Hash igual = reutiliza a saída; hash
+  diferente = reexecuta, **exceto** etapa `approved`: essa nunca é refeita nem sobrescrita sem
+  `vp reopen <id> --step <s> --reason "..."`, registrado no `review.json` (§2.6).
+- Uma execução por episódio de cada vez: trava em `data/episodes/<id>/.lock`.
 - Regras de invalidação:
   - Trocar uma imagem invalida **só** montagem e prévia.
   - Alterar texto narrado invalida voz do bloco, timing, legendas e render.
@@ -304,6 +310,7 @@ vp render <id> [--preview]    # motor escolhido -> renders/
 vp export <id>                # final.mp4 + srt + description.txt + credits.txt
 vp approve <id> --step <s>    # registra aprovação humana em review.json
 vp status <id>                # estados por etapa e pendências
+vp reopen <id> --step <s> --reason "..."  # reabre etapa aprovada para refazer (§2.6)
 ```
 
 Cada comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.

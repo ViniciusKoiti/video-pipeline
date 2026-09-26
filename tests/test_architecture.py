@@ -10,7 +10,9 @@ APP = Path(__file__).resolve().parents[1] / "app"
 
 FUNCTIONS = sorted(p.name for p in (APP / "providers").iterdir() if p.is_dir() and p.name != "__pycache__")
 # app.providers.<função>.<adapter> ou app.render.<motor>, exceto os módulos base (e o que vem deles).
-CONCRETE_ADAPTER = re.compile(rf"^app\.(providers\.({'|'.join(FUNCTIONS)})|render)\.(?!base(\.|$))[a-z_]")
+CONCRETE_ADAPTER = re.compile(
+    rf"^app\.(providers\.({'|'.join(FUNCTIONS)})|render|storage)\.(?!base(\.|$))[a-z_]"
+)
 COMPOSITION = ("app.bootstrap", "app.cli")
 HEAVY = {"kokoro", "torch", "soundfile", "misaki", "spacy"}
 

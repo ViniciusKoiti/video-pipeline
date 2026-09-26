@@ -50,6 +50,12 @@ def _ffmpeg(settings: Settings) -> Any:
     return FfmpegEngine(**settings.ffmpeg.model_dump())
 
 
+def _json_store(settings: Settings) -> Any:
+    from app.storage.json_files import JsonFileStore
+
+    return JsonFileStore(settings.data_dir / "episodes")
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -74,7 +80,7 @@ DEFAULT_REGISTRY: Registry = {
         "moneyprinterturbo": Registration(8),
         "remotion": Registration(43),  # formato explainer; adapter no branch experimento-remotion
     },
-    "store": {"json_files": Registration(10)},
+    "store": {"json_files": Registration(10, _json_store)},
     "review": {"json_files": Registration(12)},
 }
 

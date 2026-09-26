@@ -5,7 +5,9 @@ As etapas dependem só destes Protocols; quem monta as implementações é `app.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Sequence
+from contextlib import AbstractContextManager
 from pathlib import Path
 from typing import Protocol, TypeVar
 
@@ -27,6 +29,23 @@ class ManifestNotFound(LookupError):
     pass
 
 
+class ImmutableManifest(PermissionError):
+    """§2.6: arquivo aprovado não é sobrescrito pelo código; reabrir é explícito (vp reopen)."""
+
+
+class EpisodeLocked(RuntimeError):
+    """Outra execução já está trabalhando neste episódio (uma de cada vez, §3)."""
+
+
+def is_approved_json(raw: str) -> bool:
+    """Manifesto com `review_status` de topo aprovado (ex.: ativo): nenhum armazenamento o sobrescreve."""
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return False
+    return isinstance(data, dict) and data.get("review_status") in ("approved", "completed")
+
+
 class ManifestStore(Protocol):
     """Manifestos de um episódio. Hoje JSON em `data/episodes/<id>/`; SQLite só se virar obstáculo (§11)."""
 
@@ -36,7 +55,10 @@ class ManifestStore(Protocol):
 
     def read(self, episode_id: str, name: str, model: type[M]) -> M: ...  # ausente → ManifestNotFound
 
+    # Arquivo aprovado → ImmutableManifest (§2.6).
     def write(self, episode_id: str, name: str, manifest: BaseModel) -> None: ...
+
+    def lock(self, episode_id: str) -> AbstractContextManager[None]: ...  # ocupado → EpisodeLocked
 
 
 class ReviewGate(Protocol):
