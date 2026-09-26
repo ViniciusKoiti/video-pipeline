@@ -53,3 +53,8 @@ roteiro (§7), e um modelo de 9B em CPU não dá conta de pesquisa nem de narrat
 - **2026-09-26:** `Source.authors`. Fontes que compartilham um autor (mesmo por meio de outra fonte) contam
   como uma só para a independência; fato sustentado só por elas gera alerta no `vp check`. Motivo: na fatia
   Votorantim, os artigos do SciELO e do Redalyc são dos mesmos autores, e o check os contava como duas.
+- **2026-09-26 (modelo de perfil de poder):** `FactKind` ganha `impact_today` (o que o público usa ou paga hoje
+  por causa do personagem) e `rule` (lei, tarifa, crédito ou decisão de Estado que mudou o negócio). As skills
+  passam a seguir a estrutura de perfil (gancho de impacto, ponte com o espectador, origem e vantagem, virada,
+  mecanismo, regras e Estado, custo e controvérsia, presente), com perguntas de pesquisa neutras e controvérsia
+  sempre atribuída. Motivo e análise em `docs/pesquisa/modelo-perfil-de-poder.md`.

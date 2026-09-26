@@ -206,7 +206,7 @@ ancorado num trecho da narração; o tempo sai da posição da âncora sobre a d
 fatos principais.
 
 **`facts.json`** (ADR 009) — fichas de fatos, a única base do roteiro: `text`, `kind` (`number`,
-`conflict`, `turning_point`, `mechanism`, `curiosity`, `context`), `why_it_matters` e `evidence` com
+`conflict`, `turning_point`, `mechanism`, `curiosity`, `impact_today`, `rule`, `context`), `why_it_matters` e `evidence` com
 `excerpt_id` + `quote` **literal** (conferida pelo `vp check`); `open_questions` para o que as fontes não
 respondem. Trecho = parágrafo do texto extraído (`source-01#E7`). `Source.interested` marca fonte
 interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só. Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
