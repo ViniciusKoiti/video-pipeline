@@ -212,3 +212,15 @@ def test_cli_check_and_excerpts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
     (root / "data" / "episodes" / EP / "facts.json").write_text(json.dumps(facts_file(fact(kind="rumor"))))
     assert main(["check", EP]) == 1
     assert "erro    facts.json: facts.0.kind" in capsys.readouterr().out
+
+
+def test_sources_sharing_an_author_are_not_independent(tmp_path: Path) -> None:
+    sources = [
+        source(1, authors=["Dalla Costa, A. J.", "Silva, G. P."]),
+        source(2, authors=["silva,  g. p."]),  # caixa e espaços não contam
+    ]
+    report = check_episode(episode(tmp_path, facts=facts_file(), sources=sources), EP)
+    assert report.ok
+    assert report.warnings == ["F01: fontes com os mesmos autores (source-01, source-02)"]
+    independent = [source(1, authors=["Dalla Costa, A. J."]), source(2, authors=["Pantoja, S."])]
+    assert check_episode(episode(tmp_path / "b", facts=facts_file(), sources=independent), EP).warnings == []

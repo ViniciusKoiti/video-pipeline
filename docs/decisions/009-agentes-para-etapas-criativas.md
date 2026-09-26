@@ -47,3 +47,9 @@ roteiro (§7), e um modelo de 9B em CPU não dá conta de pesquisa nem de narrat
 - Com `facts.json` presente, afirmação de roteiro sem `excerpt_ids` é erro (o schema continua aceitando
   a forma antiga para os episódios v1 de teste).
 - Agentes rodam numa sessão com o dono presente, o que combina com a revisão humana obrigatória (§2.5).
+
+## Emendas
+
+- **2026-09-26:** `Source.authors`. Fontes que compartilham um autor (mesmo por meio de outra fonte) contam
+  como uma só para a independência; fato sustentado só por elas gera alerta no `vp check`. Motivo: na fatia
+  Votorantim, os artigos do SciELO e do Redalyc são dos mesmos autores, e o check os contava como duas.

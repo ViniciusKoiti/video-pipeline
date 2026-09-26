@@ -86,6 +86,7 @@ class Source(Model):
     local_path: RelPath  # texto extraído; um parágrafo = um trecho numerado (ADR 009)
     notes: str = ""
     interested: bool = False  # fonte interessada (a própria empresa ou família): nenhum fato só com ela
+    authors: list[str] = []  # fontes que compartilham autor contam como uma só para independência (ADR 009)
 
 
 class SourcesManifest(Model):
