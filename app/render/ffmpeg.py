@@ -239,76 +239,91 @@ class FfmpegEngine:
     def _assemble(
         self, episode: EpisodeManifest, episode_dir: Path, segments: list[Path], spec: VideoSpec, out: Path
     ) -> None:
-        video_list = out.parent / f".{out.stem}-video.txt"
-        audio_list = out.parent / f".{out.stem}-audio.txt"
-        video_list.write_text(_concat_list(segments))
-        audio_list.write_text(_concat_list(self._audio_parts(episode, episode_dir, out.parent)))
-        tmp = out.with_suffix(".tmp.mp4")
-        _run(
-            [
-                "-f",
-                "concat",
-                "-safe",
-                "0",
-                "-i",
-                str(video_list),
-                "-f",
-                "concat",
-                "-safe",
-                "0",
-                "-i",
-                str(audio_list),
-                "-map",
-                "0:v",
-                "-map",
-                "1:a",
-                "-c:v",
-                "copy",
-                "-c:a",
-                "aac",
-                "-b:a",
-                self._audio_bitrate,
-                "-ar",
-                str(spec.audio_sample_rate),
-                "-ac",
-                "2",
-                "-movflags",
-                "+faststart",
-                str(tmp),
-            ]
-        )
-        tmp.replace(out)
-        video_list.unlink()
-        audio_list.unlink()
+        assemble(episode, episode_dir, segments, spec, out, audio_bitrate=self._audio_bitrate)
 
-    def _audio_parts(self, episode: EpisodeManifest, episode_dir: Path, work: Path) -> list[Path]:
-        """WAVs das cenas na ordem, com silêncio no lugar de buracos. O demuxer exige o mesmo formato."""
-        wavs = [episode_dir / scene.audio for scene in episode.scenes]
-        formats = {_audio_format(wav) for wav in wavs}
-        if len(formats) != 1:
-            raise RenderError(f"WAVs com formatos diferentes: {sorted(formats)}")
-        ((codec, rate, channels),) = formats
-        parts, cursor = [], 0
-        for scene, wav in zip(episode.scenes, wavs, strict=True):
-            if scene.start_ms > cursor:
-                silence = work / f".silence-{scene.id}.wav"
-                _run(
-                    [
-                        "-f",
-                        "lavfi",
-                        "-i",
-                        f"anullsrc=r={rate}:cl={'mono' if channels == 1 else 'stereo'}",
-                        "-t",
-                        f"{(scene.start_ms - cursor) / 1000:.3f}",
-                        "-c:a",
-                        codec,
-                        str(silence),
-                    ]
-                )
-                parts.append(silence)
-            parts.append(wav)
-            cursor = scene.end_ms
-        return parts
+
+def assemble(
+    episode: EpisodeManifest,
+    episode_dir: Path,
+    segments: list[Path],
+    spec: VideoSpec,
+    out: Path,
+    *,
+    audio_bitrate: str = "192k",
+) -> None:
+    """Junta segmentos de vídeo sem recodificar e codifica a narração inteira uma vez (demuxer concat).
+    Usada por qualquer motor que renderize por cena."""
+    video_list = out.parent / f".{out.stem}-video.txt"
+    audio_list = out.parent / f".{out.stem}-audio.txt"
+    video_list.write_text(_concat_list(segments))
+    audio_list.write_text(_concat_list(_audio_parts(episode, episode_dir, out.parent)))
+    tmp = out.with_suffix(".tmp.mp4")
+    _run(
+        [
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            str(video_list),
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            str(audio_list),
+            "-map",
+            "0:v",
+            "-map",
+            "1:a",
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-b:a",
+            audio_bitrate,
+            "-ar",
+            str(spec.audio_sample_rate),
+            "-ac",
+            "2",
+            "-movflags",
+            "+faststart",
+            str(tmp),
+        ]
+    )
+    tmp.replace(out)
+    video_list.unlink()
+    audio_list.unlink()
+
+
+def _audio_parts(episode: EpisodeManifest, episode_dir: Path, work: Path) -> list[Path]:
+    """WAVs das cenas na ordem, com silêncio no lugar de buracos. O demuxer exige o mesmo formato."""
+    wavs = [episode_dir / scene.audio for scene in episode.scenes]
+    formats = {_audio_format(wav) for wav in wavs}
+    if len(formats) != 1:
+        raise RenderError(f"WAVs com formatos diferentes: {sorted(formats)}")
+    ((codec, rate, channels),) = formats
+    parts, cursor = [], 0
+    for scene, wav in zip(episode.scenes, wavs, strict=True):
+        if scene.start_ms > cursor:
+            silence = work / f".silence-{scene.id}.wav"
+            _run(
+                [
+                    "-f",
+                    "lavfi",
+                    "-i",
+                    f"anullsrc=r={rate}:cl={'mono' if channels == 1 else 'stereo'}",
+                    "-t",
+                    f"{(scene.start_ms - cursor) / 1000:.3f}",
+                    "-c:a",
+                    codec,
+                    str(silence),
+                ]
+            )
+            parts.append(silence)
+        parts.append(wav)
+        cursor = scene.end_ms
+    return parts
 
 
 def _audio_format(path: Path) -> tuple[str, int, int]:
