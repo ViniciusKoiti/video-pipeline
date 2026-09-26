@@ -145,8 +145,7 @@ def test_render_engine_follows_episode_format(tmp_path: Path) -> None:
     context = build_context(make_root(tmp_path), environ={})
     assert context.renderer(EpisodeFormat.ARCHIVAL_DOCUMENTARY).info.name == "ffmpeg"
     assert context.renderer(EpisodeFormat.ARCHIVAL_DOCUMENTARY) is context.renderer("archival_documentary")
-    with pytest.raises(ConfigurationError, match=r"etapa #43"):  # explainer ainda fora do main
-        context.renderer(EpisodeFormat.EXPLAINER)
+    assert context.renderer(EpisodeFormat.EXPLAINER).info.name == "remotion"  # etapa #48
 
 
 def test_format_without_engine_is_a_clear_error(tmp_path: Path) -> None:

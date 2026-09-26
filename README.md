@@ -31,6 +31,9 @@ uv sync --extra tts        # sem --extra tts: só o necessário para CLI e teste
 systemctl --user enable --now ollama
 ollama pull qwen3.5:4b && ollama pull qwen3.5:9b
 
+# 3b. Só para o formato explicativo (Remotion + motion-kit, Node.js LTS)
+(cd video && npm ci && npx remotion browser ensure)
+
 # 4. Configuração e verificação
 cp .env.example .env
 scripts/check_env.sh
