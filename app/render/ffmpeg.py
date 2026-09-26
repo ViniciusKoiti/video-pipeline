@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from app.media.probe import dimensions, duration_ms, probe_streams
-from app.pipeline.schemas import EpisodeManifest, VideoSpec
+from app.pipeline.schemas import EpisodeManifest, EpisodeScene, VideoSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 
@@ -81,6 +81,15 @@ def cues_between(cues: list[Cue], start_ms: int, end_ms: int, min_ms: int = 40) 
     return [c for c in clipped if c.end_ms - c.start_ms >= min_ms]
 
 
+def scene_image(scene: EpisodeScene) -> str:
+    """Visual da cena: v1 (`image`) ou v2 com um único plano de foto. Vários planos: etapa #41/#48."""
+    if scene.image is not None:
+        return scene.image
+    if len(scene.shots) == 1 and scene.shots[0].spec.kind == "photo" and scene.shots[0].media:
+        return scene.shots[0].media
+    raise RenderError(f"{scene.id}: o motor ffmpeg ainda não monta vários planos por cena (etapas #41 e #48)")
+
+
 def _escape_filter_path(path: Path) -> str:
     return str(path).replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
 
@@ -126,7 +135,7 @@ class FfmpegEngine:
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]
             start_ms, end_ms = bounds[i] * 1000 // spec.fps, bounds[i + 1] * 1000 // spec.fps
-            image = episode_dir / scene.image
+            image = episode_dir / scene_image(scene)
             scene_cues = cues_between(cues, start_ms, end_ms)
             key = self._segment_key(image, spec, frames, scene_cues, preview)
             segment = segments_dir / f"{scene.id}-{key}.mp4"

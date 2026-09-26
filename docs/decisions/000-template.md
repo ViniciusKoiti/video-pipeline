@@ -31,4 +31,5 @@ O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui
 | 004 | Ambiente local: `.wslconfig`, Python 3.12, Ollama de usuário — **aceito** | #1 |
 | 005 | Flickr Commons na cascata de acervos | #20 |
 | 006 | Arquitetura: portas (Protocols) e adaptadores trocáveis — **aceito** | #4 |
-| 007 | Contratos de dados e política de licenças — **aceito** | #3 |
+| 007 | Contratos de dados e política de licenças — **aceito** (decisão 1 substituída pela 008) | #3 |
+| 008 | Cena com lista de planos; `episode.json` v2; português — **aceito** | #48 |
