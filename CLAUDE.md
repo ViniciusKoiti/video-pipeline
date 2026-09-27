@@ -46,7 +46,7 @@ formato explicativo antes do piloto documentário.
   blister, torre de transmissão), S08 sem a dedução sobre acionistas. Termos das quatro fontes
   (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de imagem), adapters
   Pexels/Pixabay/Unsplash, gates 1 e 3 registrados, verificador aprovou, render em `renders/final.mp4` (a v1
-  fica em `renders/v1-final.mp4`). **Aguarda o gate 2 do dono.** Pixabay e Unsplash aguardam as chaves.
+  fica em `renders/v1-final.mp4`). **Gate 2 aprovado em 2026-09-27.** Pixabay e Unsplash aguardam as chaves.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
   - fonte automática no rodapé dos planos;
   - retrato de Getúlio Vargas no gate 3; gate 3 do retrato `an-jose-ermirio` (identidade e DP no Brasil);
