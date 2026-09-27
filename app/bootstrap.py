@@ -88,6 +88,12 @@ def _pixabay(settings: Settings) -> Any:
     return PixabayArchive(_secret(settings, "PIXABAY_API_KEY"), cache_dir=_archive_cache(settings))
 
 
+def _unsplash(settings: Settings) -> Any:
+    from app.providers.archives.unsplash import UnsplashArchive
+
+    return UnsplashArchive(_secret(settings, "UNSPLASH_ACCESS_KEY"), cache_dir=_archive_cache(settings))
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -106,6 +112,7 @@ DEFAULT_REGISTRY: Registry = {
         "flickr_commons": Registration(20),
         "pexels": Registration(21, _pexels),  # antecipado pela #48 (abertura v2)
         "pixabay": Registration(21, _pixabay),  # emenda de bancos de imagem da ADR 007
+        "unsplash": Registration(21, _unsplash),  # idem; Coverr fica só manual
     },
     "aligner": {"ffprobe": Registration(17)},
     "render": {

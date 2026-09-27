@@ -43,9 +43,9 @@ formato explicativo antes do piloto documentário.
   promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
   (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
 - [ ] **← Agora: abertura v2**, com fotos e B-roll de banco de imagem no gancho (S01–S02). Feito: termos das
-  quatro fontes (`data/benchmarks/termos-bancos-de-imagem.md`) e contrato (ADR 007, emenda de bancos de
-  imagem: Pexels, Pixabay e Unsplash por API, Coverr só manual). Falta: adapters, busca, gate 3, roteiro v2,
-  voz e render.
+  quatro fontes (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de
+  imagem: Pexels, Pixabay e Unsplash por API, Coverr só manual) e adapters dos três em
+  `app/providers/archives/` (base `StockArchive`). Falta: busca real, gate 3, roteiro v2, voz e render.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
   - fonte automática no rodapé dos planos;
   - retrato de Getúlio Vargas no gate 3;

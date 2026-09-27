@@ -13,6 +13,7 @@ from app.providers.archives.base import AssetQuery
 from app.providers.archives.pexels import PexelsArchive
 from app.providers.archives.pixabay import PixabayArchive
 from app.providers.archives.stock import normalize_query, sha256_file
+from app.providers.archives.unsplash import UnsplashArchive
 from app.providers.errors import ProviderError, QuotaExhausted
 from app.providers.http import TransportError
 from tests.fakes import FIXED_TIME, FakeHttp
@@ -189,3 +190,73 @@ def test_pixabay_rate_limit_stops_the_scene() -> None:
     with pytest.raises(QuotaExhausted) as raised:
         archive.search_assets(video_query())
     assert KEY not in str(raised.value)
+
+
+# --- Unsplash -----------------------------------------------------------------------------------
+
+
+def unsplash(cache_dir: Path | None = None, **routes: Any) -> tuple[UnsplashArchive, FakeHttp]:
+    default_routes = {
+        "/search/photos": recorded("unsplash", "search-photos.json"),
+        "/download": {"url": "https://image.unsplash.com/example"},
+    }
+    http = FakeHttp(
+        routes or default_routes, headers={"x-ratelimit-limit": "50", "x-ratelimit-remaining": "49"}
+    )
+    options = {"cache_dir": cache_dir, "get": http.get, "get_file": http.get_file, "now": lambda: FIXED_TIME}
+    return UnsplashArchive(KEY, app_name="video_pipeline", **options), http
+
+
+def photo_query(text: str = "power plant", **changes: Any) -> AssetQuery:
+    return AssetQuery(text=text, visual_need=VisualNeed.CONTEXTUAL_STOCK, **changes)
+
+
+def test_unsplash_photo_with_credit_links() -> None:
+    archive, http = unsplash()
+    [candidate] = archive.search_assets(photo_query())  # a vertical sintética fica de fora
+    asset = candidate.asset
+    assert (asset.id, asset.provider_id) == ("unsplash-photo-eolpjytrbsq", "eOLpJytrbsQ")
+    assert asset.original_url and asset.original_url.startswith(
+        "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixid="
+    )
+    assert asset.license_id == "Unsplash" and asset.author == "Jeff Sheldon"
+    assert asset.attribution_text == (
+        "Photo by Jeff Sheldon on Unsplash (http://unsplash.com/@ugmonk?utm_source=video_pipeline&utm_medium=referral"
+        " · https://unsplash.com/?utm_source=video_pipeline&utm_medium=referral)"
+    )
+    url, headers = http.calls[0]
+    assert url.startswith("https://api.unsplash.com/search/photos?query=power+plant&orientation=landscape")
+    assert "content_filter=high" in url
+    assert headers == {"Authorization": f"Client-ID {KEY}", "Accept-Version": "v1"}
+
+
+def test_unsplash_has_no_video_and_does_not_call_the_api() -> None:
+    archive, http = unsplash()
+    assert archive.search_assets(video_query()) == []
+    assert http.calls == []
+
+
+def test_unsplash_download_is_announced_before_the_file(tmp_path: Path) -> None:
+    archive, http = unsplash()
+    [candidate] = archive.search_assets(photo_query())
+    archive.download_asset(candidate.asset, tmp_path / "a.jpg")
+    (track_url, track_headers), (file_url, file_headers) = http.calls[-2:]
+    assert track_url == "https://api.unsplash.com/photos/eOLpJytrbsQ/download"
+    assert track_headers["Authorization"] == f"Client-ID {KEY}"
+    assert file_url == candidate.asset.original_url and file_headers == {}
+
+
+def test_unsplash_failed_announcement_blocks_the_download(tmp_path: Path) -> None:
+    archive, http = unsplash()
+    [candidate] = archive.search_assets(photo_query())
+    http.routes["/download"] = TransportError(401, "OAuth error")
+    with pytest.raises(ProviderError):
+        archive.download_asset(candidate.asset, tmp_path / "a.jpg")
+    assert not (tmp_path / "a.jpg").exists()
+
+
+def test_unsplash_cache_never_holds_the_key(tmp_path: Path) -> None:
+    archive, _ = unsplash(tmp_path)
+    archive.search_assets(photo_query())
+    files = [p for p in (tmp_path / "unsplash").rglob("*") if p.is_file()]
+    assert files and all(KEY not in p.read_text(errors="ignore") for p in files)

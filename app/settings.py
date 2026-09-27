@@ -79,6 +79,7 @@ class Budget(_Model):
 class Secrets(_Model):
     pexels_api_key: SecretStr | None = None
     pixabay_api_key: SecretStr | None = None
+    unsplash_access_key: SecretStr | None = None
     cloudflare_account_id: SecretStr | None = None
     cloudflare_api_token: SecretStr | None = None
     groq_api_key: SecretStr | None = None
@@ -112,6 +113,7 @@ ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
 SECRET_VARS: dict[str, str] = {
     "PEXELS_API_KEY": "pexels_api_key",
     "PIXABAY_API_KEY": "pixabay_api_key",
+    "UNSPLASH_ACCESS_KEY": "unsplash_access_key",
     "CLOUDFLARE_ACCOUNT_ID": "cloudflare_account_id",
     "CLOUDFLARE_API_TOKEN": "cloudflare_api_token",
     "GROQ_API_KEY": "groq_api_key",

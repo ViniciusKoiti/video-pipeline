@@ -1,0 +1,91 @@
+{
+  "_fonte": "Estrutura e alguns valores do exemplo de 'Search photos' da documentação da API do Unsplash (lida em 2026-09-26; só o resumo dessa seção veio da página). Largura, altura, ixid e a segunda foto (vertical, sintética) não vêm do exemplo. Trocar pela resposta gravada na primeira busca real (passo 5).",
+  "total": 133,
+  "total_pages": 7,
+  "results": [
+    {
+      "id": "eOLpJytrbsQ",
+      "created_at": "2016-05-03T11:00:28-04:00",
+      "width": 5184,
+      "height": 3456,
+      "color": "#60544D",
+      "blur_hash": "LoC%a7IoIVxZ_NM|M{s:%hRjWAo0",
+      "description": "exemplo",
+      "user": {
+        "id": "Ul0QVz12Goo",
+        "username": "ugmonk",
+        "name": "Jeff Sheldon",
+        "first_name": "Jeff",
+        "last_name": "Sheldon",
+        "instagram_username": null,
+        "twitter_username": null,
+        "portfolio_url": null,
+        "profile_image": {
+          "small": "",
+          "medium": "",
+          "large": ""
+        },
+        "links": {
+          "self": "https://api.unsplash.com/users/ugmonk",
+          "html": "http://unsplash.com/@ugmonk",
+          "photos": "https://api.unsplash.com/users/ugmonk/photos"
+        }
+      },
+      "current_user_collections": [],
+      "urls": {
+        "raw": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixid=exemplo",
+        "full": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixid=exemplo&fm=jpg&q=80",
+        "regular": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixid=exemplo&fm=jpg&fit=crop&w=1080&q=80&fit=max",
+        "small": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixid=exemplo&fm=jpg&w=400&fit=max",
+        "thumb": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixid=exemplo&fm=jpg&w=200&fit=max"
+      },
+      "links": {
+        "self": "https://api.unsplash.com/photos/eOLpJytrbsQ",
+        "html": "http://unsplash.com/photos/eOLpJytrbsQ",
+        "download": "http://unsplash.com/photos/eOLpJytrbsQ/download"
+      }
+    },
+    {
+      "id": "Vertical_900006",
+      "created_at": "2016-05-03T11:00:28-04:00",
+      "width": 3000,
+      "height": 4500,
+      "color": "#60544D",
+      "blur_hash": "LoC%a7IoIVxZ_NM|M{s:%hRjWAo0",
+      "description": "exemplo",
+      "user": {
+        "id": "Ul0QVz12Goo",
+        "username": "exemplo",
+        "name": "Autor Sintetico",
+        "first_name": "Autor",
+        "last_name": "Sintetico",
+        "instagram_username": null,
+        "twitter_username": null,
+        "portfolio_url": null,
+        "profile_image": {
+          "small": "",
+          "medium": "",
+          "large": ""
+        },
+        "links": {
+          "self": "https://api.unsplash.com/users/exemplo",
+          "html": "http://unsplash.com/@exemplo",
+          "photos": "https://api.unsplash.com/users/exemplo/photos"
+        }
+      },
+      "current_user_collections": [],
+      "urls": {
+        "raw": "https://images.unsplash.com/photo-900006?ixid=exemplo",
+        "full": "https://images.unsplash.com/photo-900006?ixid=exemplo&fm=jpg&q=80",
+        "regular": "https://images.unsplash.com/photo-900006?ixid=exemplo&fm=jpg&fit=crop&w=1080&q=80&fit=max",
+        "small": "https://images.unsplash.com/photo-900006?ixid=exemplo&fm=jpg&w=400&fit=max",
+        "thumb": "https://images.unsplash.com/photo-900006?ixid=exemplo&fm=jpg&w=200&fit=max"
+      },
+      "links": {
+        "self": "https://api.unsplash.com/photos/Vertical_900006",
+        "html": "http://unsplash.com/photos/Vertical_900006",
+        "download": "http://unsplash.com/photos/Vertical_900006/download"
+      }
+    }
+  ]
+}
