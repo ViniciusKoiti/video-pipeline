@@ -8,15 +8,15 @@ flowchart TD
     end
 
     subgraph P1["Pipeline por episódio — manifestos JSON, retomável por hash"]
-        B0["Escolher o caso pela disponibilidade de fontes e imagens em DP"] --> B1["Coletar fontes: buscar, baixar, extrair texto → sources.json"]
-        B1 --> R1{"Revisão 1: tema e fontes (≥ 2 independentes)"}
+        B0["Escolher o caso pela disponibilidade de fontes e imagens em DP"] --> B1["Coletar fontes → sources.json; vp excerpts numera os trechos; agente pesquisador escreve facts.json"]
+        B1 --> R1{"Revisão 1: fontes e fichas (≥ 2 independentes)"}
         R1 -- "reprovado" --> B0
-        R1 -- "aprovado" --> B2["Roteiro em inglês: LLM escreve só a partir dos trechos-fonte; JSON Schema; claims → source_id"]
-        B2 --> V1{"Toda claim relevante tem source_id?"}
+        R1 -- "aprovado" --> B2["Roteiro no idioma do episódio: agente roteirista escreve só a partir das fichas, com planos por cena; humanizer"]
+        B2 --> V1{"vp check sem erros e agente verificador aprovou?"}
         V1 -- "não" --> B2
         V1 -- "sim" --> R2{"Revisão 2: roteiro"}
         R2 -- "reprovado" --> B2
-        R2 -- "aprovado" --> B3["Dividir em cenas: visual_need + search_query → scenes.json"]
+        R2 -- "aprovado" --> B3["Cenas e planos (ADR 008): visual_need + search_query por plano → scenes.json"]
         B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels → Workers AI → gráfico original"]
         B4 --> B5["Galeria HTML estática por cena com origem, licença e créditos"]
         B5 --> R3{"Revisão 3: ativos e direitos"}

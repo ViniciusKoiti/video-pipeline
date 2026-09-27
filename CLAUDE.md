@@ -18,9 +18,39 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 - **Piloto:** expedição polar de cauda longa (candidatos: Greely 1881–84, Karluk 1913, Belgica 1897–99).
 - **Episódio 2 ou 3:** expedição sul-americana contada em inglês (candidato: Roosevelt–Rondon 1913–14),
   o diferencial editorial do canal.
-- **Fase atual:** piloto técnico (Fase 0 + primeiro episódio). Nada de produção em escala.
+- **Formato explicativo (em teste, #48):** perfil de "dinheiro e poder" de uma pessoa ou família, no estilo
+  How Money Works, com tom crítico e documentado (nem herói, nem vilão). Modelo em
+  `docs/pesquisa/modelo-perfil-de-poder.md`. Primeiro caso: Grupo Votorantim / família Ermírio de Moraes,
+  em pt-BR com a voz `pm_alex`. O piloto documentário acima continua no roteiro.
+- **Fase atual:** ver "Etapa atual" abaixo. Nada de produção em escala.
 - **Evitar:** sobrevivência recente (fotos de agência, vira 100% ilustração gerada), true crime,
   Titanic/Hindenburg/Everest 1996 (saturados), Segunda Guerra (oceano de concorrentes).
+
+### Etapa atual (atualizada em 2026-09-26)
+
+Roteiro completo nas issues #1–#31 e #41–#48 (`docs/ROADMAP.md`). A #48 foi antecipada: fatia vertical do
+formato explicativo antes do piloto documentário.
+
+- [x] **M0 · Fase 0** (#1–#9): ambiente, base, contratos, arquitetura, bench, motores (ADR 001).
+- [x] **#10** estado, cache por `input_hash` e aprovação imutável.
+- [x] **#48, passos 1–3:** planos tipados e `episode.json` v2 em pt-BR (ADR 008); Remotion + motion-kit no
+  `main` com o template "negócios moderno" (tarja sobre a foto, mapa com contornos, números na forma da ficha).
+- [x] **ADR 009:** agentes das etapas criativas (§15), `facts.json`, trechos numerados, `vp excerpts`, `vp check`;
+  modelo de perfil de poder (tipos `impact_today` e `rule`, perguntas neutras, controvérsia atribuída).
+- [x] **Protótipo `votorantim-fatia`** (90 s, 1914–1962): gate 1 aprovado; gate 2 com mudanças pedidas
+  (faltava o objetivo: impacto hoje e como virou elite), o que originou o modelo de perfil.
+- [ ] **← Agora: protótipo `votorantim-abertura`** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
+  promessa). Gate 1 aprovado, verificador aprovou; **aguarda o gate 2 do dono**.
+- [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
+  - B-roll do Pexels no gancho (autorização e `PEXELS_API_KEY`);
+  - fonte automática no rodapé dos planos;
+  - retrato de Getúlio Vargas no gate 3;
+  - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
+  - busca por vetor (ADR 010) quando as fontes passarem do que um agente lê de uma vez;
+  - árvore da família com genro;
+  - scripts provisórios de fonte, voz e render virarem `vp sources` (#26), `vp voice` (#16) e `vp render` (#13);
+  - `vp approve` (#12).
+- Em pausa: #11 (invalidação) e M2–M7 do piloto documentário.
 
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
 
@@ -43,8 +73,9 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
    multiagente **no código**, segundo editor visual, render em nuvem. Fichas, roteiro e checagem podem
-   ser feitos por agentes do Claude Code definidos no repo; o código só valida (`vp check`, ADR 009). **Um motor de render por formato de episódio**
-   (ADR 001); o MVP produz só `archival_documentary` (ffmpeg).
+   ser feitos por agentes do Claude Code definidos no repo; o código só valida (`vp check`, ADR 009).
+   **Um motor de render por formato de episódio** (ADR 001): `archival_documentary` com ffmpeg (piloto) e
+   `explainer` com Remotion (protótipo da #48).
 9. **Nenhuma dependência nova sem justificativa no commit e licença verificada.**
 10. **Testes não acessam rede.** Provedores externos são mockados; respostas reais aprovadas viram
     fixtures em `data/cache/`.
@@ -75,6 +106,7 @@ video-pipeline/
   docs/
     spec-v0.4.md              # especificação de referência
     decisions/                # ADRs: NNN-titulo.md (motor, provedores, nicho)
+    pesquisa/                 # viabilidade de temas e modelos editoriais (ex.: modelo-perfil-de-poder.md)
     pipeline-flowchart.mermaid
   app/
     cli.py                    # vp (argparse): monta o contexto e chama as etapas
@@ -134,15 +166,15 @@ flowchart TD
     end
 
     subgraph P1["Pipeline por episódio — manifestos JSON, retomável por hash"]
-        B0["Escolher o caso pela disponibilidade de fontes e imagens em DP"] --> B1["Coletar fontes: buscar, baixar, extrair texto → sources.json"]
-        B1 --> R1{"Revisão 1: tema e fontes (≥ 2 independentes)"}
+        B0["Escolher o caso pela disponibilidade de fontes e imagens em DP"] --> B1["Coletar fontes → sources.json; vp excerpts numera os trechos; agente pesquisador escreve facts.json"]
+        B1 --> R1{"Revisão 1: fontes e fichas (≥ 2 independentes)"}
         R1 -- "reprovado" --> B0
-        R1 -- "aprovado" --> B2["Roteiro em inglês: LLM escreve só a partir dos trechos-fonte; JSON Schema; claims → source_id"]
-        B2 --> V1{"Toda claim relevante tem source_id?"}
+        R1 -- "aprovado" --> B2["Roteiro no idioma do episódio: agente roteirista escreve só a partir das fichas, com planos por cena; humanizer"]
+        B2 --> V1{"vp check sem erros e agente verificador aprovou?"}
         V1 -- "não" --> B2
         V1 -- "sim" --> R2{"Revisão 2: roteiro"}
         R2 -- "reprovado" --> B2
-        R2 -- "aprovado" --> B3["Dividir em cenas: visual_need + search_query → scenes.json"]
+        R2 -- "aprovado" --> B3["Cenas e planos (ADR 008): visual_need + search_query por plano → scenes.json"]
         B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels → Workers AI → gráfico original"]
         B4 --> B5["Galeria HTML estática por cena com origem, licença e créditos"]
         B5 --> R3{"Revisão 3: ativos e direitos"}
@@ -296,7 +328,8 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
 
 ## 9. Voz, legendas e montagem
 
-- Roteiro escrito diretamente em inglês. WAV curto por bloco narrativo para trocar uma frase isolada.
+- Roteiro escrito diretamente no idioma do episódio (en ou pt-BR). WAV curto por bloco narrativo para trocar
+  uma frase isolada.
 - Glossário de pronúncia por episódio (`voice/glossary.json`); Kokoro aceita fonemas customizados.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - Legendas geradas após aprovação da voz, por alinhamento do texto com o áudio; nomes próprios sempre
@@ -307,8 +340,9 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
 - Motor de montagem **por formato** (ADR 001, `render` em `config/providers.toml`):
   `archival_documentary` → **ffmpeg puro** (`app/render/ffmpeg.py`: segmento por cena em cache, fundo
   desfocado para imagens estreitas, legendas gravadas só na prévia, cor bt709); `explainer` →
-  **Remotion + @viniciusk/motion-kit**, que entra no `main` só no primeiro explicativo (etapa #43; base no
-  branch `experimento-remotion`). MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
+  **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o template em `video/`, no `main` desde a
+  #48): um componente por tipo de plano, tarja sobre a foto quando vem logo depois dela, mapa com contornos do
+  Natural Earth (domínio público) e cache por cena. MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
   Cena gráfica animada num documentário = clipe gerado pelo motion-kit como ativo `Original` (etapa #42).
   Comparação em `data/benchmarks/README.md`; entrada de teste `tests/fixtures/episodes/engine-test/`.
 
@@ -377,11 +411,15 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 2. **Provedor de texto padrão** (para o modo sem agente; o padrão das etapas criativas é a ADR 009). Spec: Ollama local. Proposta: Gemini/Groq gratuito para rascunho
    (fidelidade ao texto-fonte muito maior que modelos 7–8B em CPU), Ollama como fallback. Roteiro de
    história pública não é dado confidencial. Decidir após o benchmark da máquina.
-3. **ffmpeg puro como candidato zero de montagem** (não estava na spec). Elimina Node/React do MVP se
-   a qualidade bastar.
-4. **`.wslconfig`** com limite de memória explícito antes de qualquer benchmark.
+3. ~~ffmpeg puro como candidato zero de montagem~~ **Decidido** na ADR 001: um motor por formato.
+4. ~~`.wslconfig` com limite de memória explícito~~ **Feito** (§3, ADR 004).
 5. **Flickr Commons** adicionado à cascata de acervos ("no known copyright restrictions").
 6. Pós-piloto (já previstas na spec): duração ideal do episódio; versões em português/espanhol.
+7. **Busca por vetor (ADR 010, proposta):** `vp search` sobre os trechos numerados, com embeddings locais
+   guardados em arquivo (sem banco). Serve para achar trechos; a prova continua literal no `vp check`. Entra
+   quando as fontes passarem do que um agente lê de uma vez (ex.: jornais da Hemeroteca).
+8. **B-roll de banco de imagens no gancho do explicativo:** Pexels, só como ilustração (§2.4); aguarda
+   autorização do dono e `PEXELS_API_KEY`.
 
 ## 14. Como trabalhar neste repositório (instruções para o Claude Code)
 
@@ -404,9 +442,50 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.
 - Etapas criativas: `.claude/agents/` (pesquisador → roteirista → verificador) com o método nas skills
-  de `.claude/skills/`; o que eles escrevem passa pelo `vp check` e pelos gates humanos (ADR 009).
+  de `.claude/skills/`; o que eles escrevem passa pelo `vp check` e pelos gates humanos (ADR 009). Ver §15.
+- **Instruções a agentes, notas de fonte e exemplos:** nenhum fato de memória (nome, ofício, data, número)
+  e nenhum juízo embutido. Citar fichas por id (F08) e trechos (`source-02#E46`) em vez de reescrever o
+  fato; conferir na página antes de escrever uma nota; pedir gancho e promessa como pergunta neutra. Um
+  fato ou enquadramento meu no prompt vira roteiro, e o `vp check` não pega.
 - Não propor Docker, banco, fila, API web, framework multiagente no código ou provedor pago "para
   facilitar". A spec já decidiu que não, e o motivo está em §2.
+
+## 15. Agentes das etapas criativas (ADR 009)
+
+Os agentes escrevem **só arquivos de dados** em `data/episodes/<id>/`; a aplicação valida (`vp check`) e o dono
+decide nos gates. O método de cada etapa está na skill (Markdown portável: outro agente, um modelo local ou
+uma pessoa podem seguir o mesmo método e passar pelo mesmo `vp check`); o arquivo do agente só define papel e
+ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; as skills também rodam como
+`/fichamento <id>`, `/roteiro-explicativo <id>`, `/checagem <id>`.
+
+| Agente | Skill | Escreve | Ferramentas |
+|---|---|---|---|
+| `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
+| `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
+| `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; contexto limpo, só leitura |
+
+```mermaid
+flowchart LR
+  F["fontes baixadas<br/>vp excerpts"] --> P["pesquisador<br/>facts.json"] --> K1["vp check"] --> G1{"gate 1<br/>dono escolhe os fatos"}
+  G1 --> R["roteirista<br/>outline.md + scenes.json"] --> K2["vp check"] --> V["verificador<br/>só lê"]
+  V -- "problema na ficha" --> P
+  V -- "problema no roteiro" --> R
+  V -- "passa" --> Y["voz + render"] --> G2{"gate 2<br/>roteiro e vídeo"}
+  P -. "ficha mudou: gate 1 volta ao dono" .-> G1
+```
+
+**Agentes mais específicos (candidatos).** Criar só quando a etapa existir no código e houver necessidade
+concreta. Cada um com skill própria, ferramentas mínimas e validação em código quando possível; nenhum aprova
+gate.
+
+| Candidato | Etapa | O que faria | Quando criar |
+|---|---|---|---|
+| `curador-de-imagens` | ativos, gate 3 (#20–#23) | busca em Commons, LoC, Flickr Commons e Brasiliana; preenche `assets/*.json` com licença e `usage_notes`; propõe candidatos por plano | com `vp assets` |
+| `arquivista` | fontes primárias (#26) | jornais e documentos de época (Hemeroteca Digital); confirma fatos de fonte única | com a busca por vetor |
+| `planejador-de-planos` | roteiro (#28) | separa a escolha dos planos (tipo, âncora, ritmo) da escrita da narração | se o ritmo visual virar gargalo |
+| `revisor-de-risco` | antes do gate 4 | pessoas vivas, empresa ativa, controvérsia atribuída, divulgação de IA | antes do primeiro episódio publicado com pessoas vivas |
+| `pronuncia` | voz (#15) | glossário `voice/glossary.json` para nomes próprios | quando a voz errar nomes |
+| `editor-de-descricao` | export (#18) | `description.txt` e `credits.txt` a partir das fontes e dos ativos | com `vp export` |
 
 ## Referências técnicas verificadas (23–24/09/2026)
 
