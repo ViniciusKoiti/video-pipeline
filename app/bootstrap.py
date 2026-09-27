@@ -65,14 +65,27 @@ def _remotion(settings: Settings) -> Any:
     )
 
 
+def _secret(settings: Settings, env_name: str) -> str:
+    secret = getattr(settings.secrets, env_name.lower())
+    if secret is None:
+        raise ConfigurationError(f"{env_name} ausente no .env")
+    return secret.get_secret_value()
+
+
+def _archive_cache(settings: Settings) -> Path:
+    return settings.data_dir / "cache" / "archives"
+
+
 def _pexels(settings: Settings) -> Any:
     from app.providers.archives.pexels import PexelsArchive
 
-    if settings.secrets.pexels_api_key is None:
-        raise ConfigurationError("PEXELS_API_KEY ausente no .env")
-    return PexelsArchive(
-        settings.secrets.pexels_api_key.get_secret_value(), cache_dir=settings.data_dir / "cache" / "archives"
-    )
+    return PexelsArchive(_secret(settings, "PEXELS_API_KEY"), cache_dir=_archive_cache(settings))
+
+
+def _pixabay(settings: Settings) -> Any:
+    from app.providers.archives.pixabay import PixabayArchive
+
+    return PixabayArchive(_secret(settings, "PIXABAY_API_KEY"), cache_dir=_archive_cache(settings))
 
 
 def _kokoro(settings: Settings) -> Any:
@@ -92,6 +105,7 @@ DEFAULT_REGISTRY: Registry = {
         "library_of_congress": Registration(20),
         "flickr_commons": Registration(20),
         "pexels": Registration(21, _pexels),  # antecipado pela #48 (abertura v2)
+        "pixabay": Registration(21, _pixabay),  # emenda de bancos de imagem da ADR 007
     },
     "aligner": {"ffprobe": Registration(17)},
     "render": {

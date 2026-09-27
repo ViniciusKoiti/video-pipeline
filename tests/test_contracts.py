@@ -21,6 +21,7 @@ from app.pipeline.schemas import APPROVED_STATES, Asset, EpisodeManifest, Review
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider, AssetQuery
 from app.providers.archives.pexels import PexelsArchive
+from app.providers.archives.pixabay import PixabayArchive
 from app.providers.errors import InvalidOutput
 from app.providers.image_gen.base import ImageGenProvider, ImageRequest
 from app.providers.text.base import TextProvider, TextRequest
@@ -64,6 +65,12 @@ def make_pexels() -> ArchiveProvider:
     return PexelsArchive("chave", get=http.get, get_file=http.get_file)
 
 
+def make_pixabay() -> ArchiveProvider:
+    fixtures = Path(__file__).parent / "fixtures" / "archives" / "pixabay"
+    http = FakeHttp({"pixabay.com/api/?": json.loads((fixtures / "images-search.json").read_text())})
+    return PixabayArchive("chave", get=http.get, get_file=http.get_file)
+
+
 def make_kokoro() -> TTSProvider:
     os.environ.setdefault("HF_HUB_OFFLINE", "1")  # pesos já em cache: o teste não acessa a rede (§2.10)
     from app.providers.tts.kokoro import KokoroTTS
@@ -86,6 +93,7 @@ IMAGE_GEN: list[Callable[[], ImageGenProvider]] = [pytest.param(FakeImageGen, id
 ARCHIVES: list[Callable[[], ArchiveProvider]] = [
     pytest.param(FakeArchive, id="fake"),
     pytest.param(make_pexels, id="pexels"),
+    pytest.param(make_pixabay, id="pixabay"),
 ]
 ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="fake")]
 RENDERERS: list[Callable[[], RenderEngine]] = [

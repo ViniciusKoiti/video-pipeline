@@ -6,7 +6,7 @@
 text = "ollama"
 tts = "kokoro"
 image_gen = "workers_ai"
-archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels"]  # ordem da cascata (§8)
+archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay"]  # ordem da cascata (§8)
 aligner = "ffprobe"
 # Motor por formato do episódio (ADR 001). O MVP só produz archival_documentary.
 render = { archival_documentary = "ffmpeg", explainer = "remotion" }  # remotion: etapa 43

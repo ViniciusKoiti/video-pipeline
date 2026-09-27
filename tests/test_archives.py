@@ -11,6 +11,7 @@ import pytest
 from app.pipeline.schemas import Provider, Status, VisualNeed
 from app.providers.archives.base import AssetQuery
 from app.providers.archives.pexels import PexelsArchive
+from app.providers.archives.pixabay import PixabayArchive
 from app.providers.archives.stock import normalize_query, sha256_file
 from app.providers.errors import ProviderError, QuotaExhausted
 from app.providers.http import TransportError
@@ -118,3 +119,73 @@ def test_pexels_errors_stop_the_scene_without_leaking_the_key(
     with pytest.raises(error) as raised:
         archive.search_assets(video_query())
     assert KEY not in str(raised.value) and "api.pexels.com" not in str(raised.value)
+
+
+# --- Pixabay ------------------------------------------------------------------------------------
+
+PIXABAY_QUOTA = {"x-ratelimit-limit": "100", "x-ratelimit-remaining": "99", "x-ratelimit-reset": "60"}
+
+
+def pixabay(cache_dir: Path | None = None, **routes: Any) -> tuple[PixabayArchive, FakeHttp]:
+    default_routes = {
+        "/api/videos/": recorded("pixabay", "videos-search.json"),
+        "pixabay.com/api/?": recorded("pixabay", "images-search.json"),
+    }
+    http = FakeHttp(routes or default_routes, headers=PIXABAY_QUOTA)
+    options = {"cache_dir": cache_dir, "get": http.get, "get_file": http.get_file, "now": lambda: FIXED_TIME}
+    return PixabayArchive(KEY, **options), http
+
+
+def test_pixabay_video_takes_the_smallest_1080p_rendition() -> None:
+    archive, http = pixabay()
+    candidates = archive.search_assets(video_query(min_duration_s=10))
+    assert [c.asset.id for c in candidates] == [
+        "pixabay-video-125",
+        "pixabay-video-900003",
+    ]  # 900004 só tem 720p
+    first, second = candidates
+    assert (first.width, first.height, first.duration_s) == (1920, 1080, 12)
+    assert first.asset.original_url == "https://cdn.pixabay.com/video/2015/08/08/125-135736646_large.mp4"
+    assert (
+        second.asset.original_url == "https://cdn.pixabay.com/video/exemplo/900003_medium.mp4"
+    )  # large vazio
+    assert (first.asset.license_id, first.asset.attribution_text) == (
+        "Pixabay",
+        "Coverr-Free-Footage via Pixabay",
+    )
+    url, headers = http.calls[0]
+    assert url.startswith("https://pixabay.com/api/videos/?key=") and "q=saco+de+cimento" in url
+    assert "min_height=1080" in url and headers == {}
+
+
+def test_pixabay_duration_filter() -> None:
+    archive, _ = pixabay()
+    assert [c.asset.id for c in archive.search_assets(video_query(min_duration_s=15))] == [
+        "pixabay-video-900003"
+    ]
+
+
+def test_pixabay_photo_needs_full_access_to_reach_1920() -> None:
+    archive, _ = pixabay()
+    query = AssetQuery(text="usina", visual_need=VisualNeed.CONTEXTUAL_STOCK)
+    [candidate] = archive.search_assets(query)  # 195893: largeImageURL chega a 1280×720 e fica de fora
+    assert candidate.asset.id == "pixabay-photo-900005"
+    assert (candidate.width, candidate.height) == (1920, 1080)
+    assert candidate.asset.original_url == "https://pixabay.com/get/exemplo900005_1920.jpg"
+
+
+def test_pixabay_cache_and_quota_never_hold_the_key(tmp_path: Path) -> None:
+    archive, http = pixabay(tmp_path)
+    archive.search_assets(video_query())
+    archive.search_assets(video_query(" SACO de  cimento"))
+    assert len([u for u, _ in http.calls if u.startswith("https://pixabay.com/api/")]) == 1
+    files = [p for p in (tmp_path / "pixabay").rglob("*") if p.is_file()]
+    assert files and all(KEY not in p.read_text(errors="ignore") for p in files)
+    assert json.loads((tmp_path / "pixabay" / "quota.json").read_text())["headers"] == PIXABAY_QUOTA
+
+
+def test_pixabay_rate_limit_stops_the_scene() -> None:
+    archive, _ = pixabay(**{"/api/videos/": TransportError(429, "API rate limit exceeded")})
+    with pytest.raises(QuotaExhausted) as raised:
+        archive.search_assets(video_query())
+    assert KEY not in str(raised.value)

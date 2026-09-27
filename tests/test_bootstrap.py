@@ -82,7 +82,7 @@ def test_cascade_follows_config_order(tmp_path: Path) -> None:
         "archives", {p.value: Registration(0, lambda s, p=p: FakeArchive(p)) for p in Provider}
     )
     root = make_root(tmp_path, config_with(
-        'archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels"]',
+        'archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay"]',
         'archives = ["pexels", "wikimedia_commons"]',
     ))
     context = build_context(root, environ={}, registry=registry)
@@ -117,7 +117,7 @@ def test_unimplemented_adapter_points_to_roadmap_step(tmp_path: Path) -> None:
 
 
 def test_pexels_needs_its_key(tmp_path: Path) -> None:
-    cascade = 'archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels"]'
+    cascade = 'archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay"]'
     root = make_root(tmp_path, config_with(cascade, 'archives = ["pexels"]'))
     with pytest.raises(ConfigurationError, match="PEXELS_API_KEY ausente"):
         _ = build_context(root, environ={}).archives
