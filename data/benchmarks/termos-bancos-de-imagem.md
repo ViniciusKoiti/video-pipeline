@@ -181,3 +181,19 @@ Páginas: [licença](https://coverr.co/license) (sem data), [termos](https://cov
     videos for commercial use.";
   - a página de desenvolvedores responde "Can I use the API for commercial purposes?" com "Absolutely. All
     content accessed through the API is commercially licensed."
+
+## Teste com a conta real (2026-09-26)
+
+Pexels, busca do gancho da abertura v2 (4 necessidades × 3 consultas × foto e vídeo = 24 requisições):
+
+- Com o User-Agent padrão do urllib (`Python-urllib/3.12`), toda requisição voltou **HTTP 403** ("error code:
+  1010", bloqueio pela assinatura do cliente), com a chave válida. Com `User-Agent: video-pipeline/0.1`, **200**.
+  O transporte comum (`app/providers/http.py`) passou a mandar esse User-Agent.
+- Header de cota: `x-ratelimit-limit: 25000` (a documentação fala em 20 mil por mês), `x-ratelimit-remaining`
+  e `x-ratelimit-reset` presentes; 24 requisições consumiram 24 unidades.
+- `video_files[].quality` veio também como `"uhd"` e como `null`, valores fora do documentado (`hd`/`sd`); o
+  adapter filtra por largura e altura, não por esse campo.
+- Resultado: ~29 candidatos por necessidade depois dos filtros (horizontal, ≥ 1920×1080, vídeo ≥ 4 s); triagem
+  humana e gate 3 no `review.json` do episódio. Fixtures reduzidas em `tests/fixtures/archives/pexels/recorded-*`.
+
+Pixabay e Unsplash: sem chave no `.env` nesta data; o teste com a conta real fica para quando houver.

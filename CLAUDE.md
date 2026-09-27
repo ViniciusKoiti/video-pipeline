@@ -45,7 +45,9 @@ formato explicativo antes do piloto documentário.
 - [ ] **← Agora: abertura v2**, com fotos e B-roll de banco de imagem no gancho (S01–S02). Feito: termos das
   quatro fontes (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de
   imagem: Pexels, Pixabay e Unsplash por API, Coverr só manual) e adapters dos três em
-  `app/providers/archives/` (base `StockArchive`). Falta: busca real, gate 3, roteiro v2, voz e render.
+  `app/providers/archives/` (base `StockArchive`); busca real no Pexels e gate 3 (quatro ativos aprovados,
+  scripts provisórios `buscar_candidatos.py` e `baixar_escolhidos.py`). Falta: roteiro v2, voz e render;
+  Pixabay e Unsplash aguardam as chaves.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
   - fonte automática no rodapé dos planos;
   - retrato de Getúlio Vargas no gate 3;

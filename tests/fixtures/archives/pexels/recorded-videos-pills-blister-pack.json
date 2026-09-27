@@ -1,0 +1,635 @@
+{
+  "_fonte": "Resposta real da API do Pexels (/videos/search, consulta 'pills blister pack', 2026-09-27T01:33:48+00:00), reduzida aos 4 primeiros itens. Sem a chave.",
+  "page": 1,
+  "per_page": 15,
+  "videos": [
+    {
+      "id": 13048933,
+      "width": 3840,
+      "height": 2160,
+      "duration": 18,
+      "full_res": null,
+      "tags": [],
+      "url": "https://www.pexels.com/video/pills-in-blisters-13048933/",
+      "image": "https://images.pexels.com/videos/13048933/pexels-photo-13048933.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "avg_color": null,
+      "user": {
+        "id": 3440682,
+        "name": "Towfiqu barbhuiya",
+        "url": "https://www.pexels.com/@towfiqu-barbhuiya-3440682"
+      },
+      "video_files": [
+        {
+          "id": 11297590,
+          "quality": "uhd",
+          "file_type": "video/mp4",
+          "width": 3840,
+          "height": 2160,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-uhd_3840_2160_30fps.mp4",
+          "size": 40330308
+        },
+        {
+          "id": 11297603,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 426,
+          "height": 240,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-sd_426_240_30fps.mp4",
+          "size": 1041378
+        },
+        {
+          "id": 11297618,
+          "quality": "uhd",
+          "file_type": "video/mp4",
+          "width": 2560,
+          "height": 1440,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-uhd_2560_1440_30fps.mp4",
+          "size": 13233456
+        },
+        {
+          "id": 11297631,
+          "quality": "hd",
+          "file_type": "video/mp4",
+          "width": 1920,
+          "height": 1080,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-hd_1920_1080_30fps.mp4",
+          "size": 7422294
+        },
+        {
+          "id": 11297648,
+          "quality": "hd",
+          "file_type": "video/mp4",
+          "width": 1280,
+          "height": 720,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-hd_1280_720_30fps.mp4",
+          "size": 3374513
+        },
+        {
+          "id": 11297679,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 960,
+          "height": 540,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-sd_960_540_30fps.mp4",
+          "size": 2269399
+        },
+        {
+          "id": 11297703,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 640,
+          "height": 360,
+          "fps": 29.97,
+          "link": "https://videos.pexels.com/video-files/13048933/13048933-sd_640_360_30fps.mp4",
+          "size": 1287475
+        }
+      ],
+      "video_pictures": [
+        {
+          "id": 14260650,
+          "nr": 0,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-0.jpeg"
+        },
+        {
+          "id": 14260651,
+          "nr": 1,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-1.jpeg"
+        },
+        {
+          "id": 14260652,
+          "nr": 2,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-2.jpeg"
+        },
+        {
+          "id": 14260653,
+          "nr": 3,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-3.jpeg"
+        },
+        {
+          "id": 14260654,
+          "nr": 4,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-4.jpeg"
+        },
+        {
+          "id": 14260655,
+          "nr": 5,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-5.jpeg"
+        },
+        {
+          "id": 14260656,
+          "nr": 6,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-6.jpeg"
+        },
+        {
+          "id": 14260657,
+          "nr": 7,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-7.jpeg"
+        },
+        {
+          "id": 14260658,
+          "nr": 8,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-8.jpeg"
+        },
+        {
+          "id": 14260659,
+          "nr": 9,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-9.jpeg"
+        },
+        {
+          "id": 14260660,
+          "nr": 10,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-10.jpeg"
+        },
+        {
+          "id": 14260661,
+          "nr": 11,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-11.jpeg"
+        },
+        {
+          "id": 14260662,
+          "nr": 12,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-12.jpeg"
+        },
+        {
+          "id": 14260668,
+          "nr": 13,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-13.jpeg"
+        },
+        {
+          "id": 14260674,
+          "nr": 14,
+          "picture": "https://images.pexels.com/videos/13048933/pictures/preview-14.jpeg"
+        }
+      ]
+    },
+    {
+      "id": 7033927,
+      "width": 3840,
+      "height": 2160,
+      "duration": 12,
+      "full_res": null,
+      "tags": [],
+      "url": "https://www.pexels.com/video/macro-shot-of-red-and-white-capsules-7033927/",
+      "image": "https://images.pexels.com/videos/7033927/pexels-photo-7033927.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "avg_color": null,
+      "user": {
+        "id": 3088726,
+        "name": "Tima Miroshnichenko",
+        "url": "https://www.pexels.com/@tima-miroshnichenko"
+      },
+      "video_files": [
+        {
+          "id": 10282127,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 960,
+          "height": 540,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-sd_960_540_25fps.mp4",
+          "size": 647174
+        },
+        {
+          "id": 10282138,
+          "quality": "uhd",
+          "file_type": "video/mp4",
+          "width": 3840,
+          "height": 2160,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-uhd_3840_2160_25fps.mp4",
+          "size": 11828830
+        },
+        {
+          "id": 10282165,
+          "quality": "uhd",
+          "file_type": "video/mp4",
+          "width": 2560,
+          "height": 1440,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-uhd_2560_1440_25fps.mp4",
+          "size": 3875260
+        },
+        {
+          "id": 10282228,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 640,
+          "height": 360,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-sd_640_360_25fps.mp4",
+          "size": 377399
+        },
+        {
+          "id": 10282426,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 426,
+          "height": 240,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-sd_426_240_25fps.mp4",
+          "size": 208777
+        },
+        {
+          "id": 10283005,
+          "quality": "hd",
+          "file_type": "video/mp4",
+          "width": 1920,
+          "height": 1080,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-hd_1920_1080_25fps.mp4",
+          "size": 2183954
+        },
+        {
+          "id": 10283080,
+          "quality": "hd",
+          "file_type": "video/mp4",
+          "width": 1280,
+          "height": 720,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033927/7033927-hd_1280_720_25fps.mp4",
+          "size": 956203
+        }
+      ],
+      "video_pictures": [
+        {
+          "id": 5621718,
+          "nr": 0,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-0.jpg"
+        },
+        {
+          "id": 5621721,
+          "nr": 1,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-1.jpg"
+        },
+        {
+          "id": 5621725,
+          "nr": 2,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-2.jpg"
+        },
+        {
+          "id": 5621730,
+          "nr": 3,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-3.jpg"
+        },
+        {
+          "id": 5621736,
+          "nr": 4,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-4.jpg"
+        },
+        {
+          "id": 5621738,
+          "nr": 5,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-5.jpg"
+        },
+        {
+          "id": 5621742,
+          "nr": 6,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-6.jpg"
+        },
+        {
+          "id": 5621744,
+          "nr": 7,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-7.jpg"
+        },
+        {
+          "id": 5621747,
+          "nr": 8,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-8.jpg"
+        },
+        {
+          "id": 5621750,
+          "nr": 9,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-9.jpg"
+        },
+        {
+          "id": 5621755,
+          "nr": 10,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-10.jpg"
+        },
+        {
+          "id": 5621759,
+          "nr": 11,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-11.jpg"
+        },
+        {
+          "id": 5621763,
+          "nr": 12,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-12.jpg"
+        },
+        {
+          "id": 5621769,
+          "nr": 13,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-13.jpg"
+        },
+        {
+          "id": 5621773,
+          "nr": 14,
+          "picture": "https://images.pexels.com/videos/7033927/pictures/preview-14.jpg"
+        }
+      ]
+    },
+    {
+      "id": 7033928,
+      "width": 3840,
+      "height": 2160,
+      "duration": 11,
+      "full_res": null,
+      "tags": [],
+      "url": "https://www.pexels.com/video/close-up-video-of-a-medicines-on-a-blister-pack-7033928/",
+      "image": "https://images.pexels.com/videos/7033928/pexels-photo-7033928.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "avg_color": null,
+      "user": {
+        "id": 3088726,
+        "name": "Tima Miroshnichenko",
+        "url": "https://www.pexels.com/@tima-miroshnichenko"
+      },
+      "video_files": [
+        {
+          "id": 10282113,
+          "quality": "uhd",
+          "file_type": "video/mp4",
+          "width": 2560,
+          "height": 1440,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-uhd_2560_1440_25fps.mp4",
+          "size": 4949698
+        },
+        {
+          "id": 10282118,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 960,
+          "height": 540,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-sd_960_540_25fps.mp4",
+          "size": 911618
+        },
+        {
+          "id": 10282126,
+          "quality": "hd",
+          "file_type": "video/mp4",
+          "width": 1920,
+          "height": 1080,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-hd_1920_1080_25fps.mp4",
+          "size": 2894923
+        },
+        {
+          "id": 10282136,
+          "quality": "hd",
+          "file_type": "video/mp4",
+          "width": 1280,
+          "height": 720,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-hd_1280_720_25fps.mp4",
+          "size": 1313375
+        },
+        {
+          "id": 10282152,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 426,
+          "height": 240,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-sd_426_240_25fps.mp4",
+          "size": 270702
+        },
+        {
+          "id": 10282216,
+          "quality": "sd",
+          "file_type": "video/mp4",
+          "width": 640,
+          "height": 360,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-sd_640_360_25fps.mp4",
+          "size": 520004
+        },
+        {
+          "id": 10282315,
+          "quality": "uhd",
+          "file_type": "video/mp4",
+          "width": 3840,
+          "height": 2160,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/7033928/7033928-uhd_3840_2160_25fps.mp4",
+          "size": 14334193
+        }
+      ],
+      "video_pictures": [
+        {
+          "id": 5621751,
+          "nr": 0,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-0.jpg"
+        },
+        {
+          "id": 5621756,
+          "nr": 1,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-1.jpg"
+        },
+        {
+          "id": 5621760,
+          "nr": 2,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-2.jpg"
+        },
+        {
+          "id": 5621764,
+          "nr": 3,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-3.jpg"
+        },
+        {
+          "id": 5621767,
+          "nr": 4,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-4.jpg"
+        },
+        {
+          "id": 5621772,
+          "nr": 5,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-5.jpg"
+        },
+        {
+          "id": 5621775,
+          "nr": 6,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-6.jpg"
+        },
+        {
+          "id": 5621778,
+          "nr": 7,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-7.jpg"
+        },
+        {
+          "id": 5621780,
+          "nr": 8,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-8.jpg"
+        },
+        {
+          "id": 5621782,
+          "nr": 9,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-9.jpg"
+        },
+        {
+          "id": 5621784,
+          "nr": 10,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-10.jpg"
+        },
+        {
+          "id": 5621786,
+          "nr": 11,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-11.jpg"
+        },
+        {
+          "id": 5621788,
+          "nr": 12,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-12.jpg"
+        },
+        {
+          "id": 5621791,
+          "nr": 13,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-13.jpg"
+        },
+        {
+          "id": 5621794,
+          "nr": 14,
+          "picture": "https://images.pexels.com/videos/7033928/pictures/preview-14.jpg"
+        }
+      ]
+    },
+    {
+      "id": 39080202,
+      "width": 1920,
+      "height": 1080,
+      "duration": 15,
+      "full_res": null,
+      "tags": [],
+      "url": "https://www.pexels.com/video/blister-pack-with-pills-on-wooden-table-39080202/",
+      "image": "https://images.pexels.com/videos/39080202/advill-asprin-blister-pack-ibuprofen-39080202.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "avg_color": null,
+      "user": {
+        "id": 2158354883,
+        "name": "Kiwi and Camera",
+        "url": "https://www.pexels.com/@kiwi-and-camera-2158354883"
+      },
+      "video_files": [
+        {
+          "id": 16629536,
+          "quality": null,
+          "file_type": "video/mp4",
+          "width": 640,
+          "height": 360,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/39080202/16629536_640_360_25fps.mp4",
+          "size": 336770
+        },
+        {
+          "id": 16629538,
+          "quality": null,
+          "file_type": "video/mp4",
+          "width": 960,
+          "height": 540,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/39080202/16629538_960_540_25fps.mp4",
+          "size": 671575
+        },
+        {
+          "id": 16629539,
+          "quality": null,
+          "file_type": "video/mp4",
+          "width": 1280,
+          "height": 720,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/39080202/16629539_1280_720_25fps.mp4",
+          "size": 1090587
+        },
+        {
+          "id": 16629540,
+          "quality": null,
+          "file_type": "video/mp4",
+          "width": 1920,
+          "height": 1080,
+          "fps": 25.0,
+          "link": "https://videos.pexels.com/video-files/39080202/16629540_1920_1080_25fps.mp4",
+          "size": 2979925
+        }
+      ],
+      "video_pictures": [
+        {
+          "id": 34000169,
+          "nr": 0,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-0.jpg"
+        },
+        {
+          "id": 34000171,
+          "nr": 1,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-1.jpg"
+        },
+        {
+          "id": 34000173,
+          "nr": 2,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-2.jpg"
+        },
+        {
+          "id": 34000175,
+          "nr": 3,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-3.jpg"
+        },
+        {
+          "id": 34000176,
+          "nr": 4,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-4.jpg"
+        },
+        {
+          "id": 34000177,
+          "nr": 5,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-5.jpg"
+        },
+        {
+          "id": 34000178,
+          "nr": 6,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-6.jpg"
+        },
+        {
+          "id": 34000179,
+          "nr": 7,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-7.jpg"
+        },
+        {
+          "id": 34000180,
+          "nr": 8,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-8.jpg"
+        },
+        {
+          "id": 34000181,
+          "nr": 9,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-9.jpg"
+        },
+        {
+          "id": 34000182,
+          "nr": 10,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-10.jpg"
+        },
+        {
+          "id": 34000183,
+          "nr": 11,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-11.jpg"
+        },
+        {
+          "id": 34000184,
+          "nr": 12,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-12.jpg"
+        },
+        {
+          "id": 34000185,
+          "nr": 13,
+          "picture": "https://images.pexels.com/videos/39080202/pictures/preview-13.jpg"
+        }
+      ]
+    }
+  ],
+  "total_results": 3265,
+  "next_page": "https://api.pexels.com/v1/v1/videos/search?orientation=landscape&page=2&per_page=15&query=pills+blister+pack",
+  "url": "https://api.pexels.com/search/videos/pills%20blister%20pack/"
+}

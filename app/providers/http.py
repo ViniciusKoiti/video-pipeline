@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import Any
 
 CHUNK_BYTES = 1 << 20
+# O "Python-urllib" padrão é barrado por proxies anti-robô (a API do Pexels responde 403, erro 1010).
+USER_AGENT = "video-pipeline/0.1"
 
 JsonPost = Callable[[str, Mapping[str, Any], float], dict[str, Any]]  # url, corpo, timeout → JSON
 
@@ -52,7 +54,7 @@ FileGet = Callable[[str, Path, Mapping[str, str], float], Path]  # url, destino,
 
 
 def get_json(url: str, headers: Mapping[str, str], timeout: float) -> JsonResponse:
-    request = urllib.request.Request(url, headers=dict(headers), method="GET")
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, **headers}, method="GET")
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             received = {name.lower(): value for name, value in response.headers.items()}
@@ -67,7 +69,7 @@ def download(url: str, dest: Path, headers: Mapping[str, str], timeout: float) -
     """Grava em `<dest>.part` e renomeia no fim: um download interrompido não deixa arquivo pela metade."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     partial = dest.with_name(dest.name + ".part")
-    request = urllib.request.Request(url, headers=dict(headers), method="GET")
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, **headers}, method="GET")
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response, partial.open("wb") as out:
             shutil.copyfileobj(response, out, CHUNK_BYTES)

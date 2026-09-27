@@ -15,7 +15,7 @@ from app.providers.archives.pixabay import PixabayArchive
 from app.providers.archives.stock import normalize_query, sha256_file
 from app.providers.archives.unsplash import UnsplashArchive
 from app.providers.errors import ProviderError, QuotaExhausted
-from app.providers.http import TransportError
+from app.providers.http import USER_AGENT, TransportError, download, get_json
 from tests.fakes import FIXED_TIME, FakeHttp
 
 FIXTURES = Path(__file__).parent / "fixtures" / "archives"
@@ -260,3 +260,56 @@ def test_unsplash_cache_never_holds_the_key(tmp_path: Path) -> None:
     archive.search_assets(photo_query())
     files = [p for p in (tmp_path / "unsplash").rglob("*") if p.is_file()]
     assert files and all(KEY not in p.read_text(errors="ignore") for p in files)
+
+
+# --- Transporte ---------------------------------------------------------------------------------
+
+
+class _Response:
+    headers = {"X-Ratelimit-Remaining": "7"}
+
+    def __enter__(self) -> _Response:
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        return None
+
+    def read(self, size: int = -1) -> bytes:
+        data, self._data = getattr(self, "_data", b'{"ok": true}'), b""
+        return data
+
+
+def test_transport_identifies_itself_and_lowercases_headers(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    seen: list[dict[str, str]] = []
+
+    def urlopen(request: Any, timeout: float) -> _Response:
+        seen.append(dict(request.header_items()))
+        return _Response()
+
+    monkeypatch.setattr("urllib.request.urlopen", urlopen)
+    response = get_json("https://api.example.org/x", {"Authorization": KEY}, 5)
+    assert response.data == {"ok": True} and response.headers == {"x-ratelimit-remaining": "7"}
+    download("https://files.example.org/a.mp4", tmp_path / "a.mp4", {}, 5)
+    assert all(h["User-agent"] == USER_AGENT for h in seen)  # urllib guarda o nome capitalizado assim
+    assert seen[0]["Authorization"] == KEY and "Authorization" not in seen[1]
+    assert (tmp_path / "a.mp4").is_file() and not (tmp_path / "a.mp4.part").exists()
+
+
+@pytest.mark.parametrize(
+    ("fixture", "media"),
+    [("recorded-videos-pills-blister-pack.json", "video"), ("recorded-photos-cement-bags.json", "photo")],
+)
+def test_pexels_reads_recorded_real_responses(fixture: str, media: str) -> None:
+    routes = {"/videos/search" if media == "video" else "/v1/search": recorded("pexels", fixture)}
+    archive, _ = pexels(**routes)
+    need = VisualNeed.CONTEXTUAL_STOCK
+    query = AssetQuery(text="x", visual_need=need, limit=4, media=media, min_duration_s=4)
+    candidates = archive.search_assets(query)
+    assert candidates  # o formato real bate com o que o adapter espera
+    for c in candidates:
+        assert (c.width or 0) > (c.height or 0) and (c.width or 0) >= 1920 and (c.height or 0) >= 1080
+        assert c.asset.page_url and c.asset.page_url.startswith("https://www.pexels.com/")
+        assert c.asset.author and c.asset.attribution_text.endswith(" via Pexels")
+        assert media == "photo" or (c.duration_s or 0) >= 4
