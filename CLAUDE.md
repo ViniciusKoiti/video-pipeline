@@ -354,8 +354,9 @@ original. Nunca preencher com imagem irrelevante.
   `archival_documentary` → **ffmpeg puro** (`app/render/ffmpeg.py`: segmento por cena em cache, fundo
   desfocado para imagens estreitas, legendas gravadas só na prévia, cor bt709); `explainer` →
   **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o template em `video/`, no `main` desde a
-  #48): um componente por tipo de plano, tarja ou número sobre a foto ou o B-roll quando vem logo depois dela, mapa com contornos do
-  Natural Earth (domínio público) e cache por cena. MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
+  #48): um componente por tipo de plano, tarja ou número sobre a foto ou o B-roll quando vem logo depois dela,
+  foto de banco colorida em tela cheia (a de arquivo fica no cartão P&B), mapa com contornos do Natural Earth
+  (domínio público) e cache por cena. MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
   Cena gráfica animada num documentário = clipe gerado pelo motion-kit como ativo `Original` (etapa #42).
   Comparação em `data/benchmarks/README.md`; entrada de teste `tests/fixtures/episodes/engine-test/`.
 

@@ -103,6 +103,23 @@ const Photo: React.FC<{spec: PhotoSpec; src: string; frames: number; credit?: st
   );
 };
 
+// Foto de banco de imagem ou ilustração (visual_need diferente de historical_exact): colorida e em tela cheia,
+// como o B-roll, para não parecer registro de época (§2.4). O cartão P&B com grão fica só para foto de arquivo.
+// O recorte, se houver, só escolhe o centro do enquadramento.
+const StockPhoto: React.FC<{spec: PhotoSpec; src: string; frames: number}> = ({spec, src, frames}) => {
+  const frame = useCurrentFrame();
+  const p = frames > 1 ? frame / (frames - 1) : 0;
+  const crop = spec.crop ?? {x: 0, y: 0, width: 1, height: 1};
+  const focus = `${(crop.x + crop.width / 2) * 100}% ${(crop.y + crop.height / 2) * 100}%`;
+  return (
+    <AbsoluteFill style={{background: theme.bg, overflow: "hidden"}}>
+      <Img src={src} style={{width: "100%", height: "100%", objectFit: "cover", objectPosition: focus,
+        transform: motionTransform(spec.motion, p)}} />
+      <AbsoluteFill style={{background: "linear-gradient(180deg, rgba(14,17,22,0) 55%, rgba(14,17,22,0.75) 100%)"}} />
+    </AbsoluteFill>
+  );
+};
+
 const Broll: React.FC<{src: string}> = ({src}) => (
   <AbsoluteFill style={{background: theme.bg}}>
     <OffthreadVideo src={src} muted style={{width: "100%", height: "100%", objectFit: "cover"}} />
@@ -440,7 +457,11 @@ const MapPins: React.FC<{spec: MapSpec; frames: number}> = ({spec, frames}) => {
 export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit, aspect, overlay}) => {
   switch (spec.kind) {
     case "photo":
-      return <Photo spec={spec} src={media(path ?? "")} frames={frames} credit={credit} aspect={aspect} />;
+      return spec.visual_need && spec.visual_need !== "historical_exact" ? (
+        <StockPhoto spec={spec} src={media(path ?? "")} frames={frames} />
+      ) : (
+        <Photo spec={spec} src={media(path ?? "")} frames={frames} credit={credit} aspect={aspect} />
+      );
     case "broll":
       return <Broll src={media(path ?? "")} />;
     case "number":

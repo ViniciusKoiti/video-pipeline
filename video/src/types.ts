@@ -4,7 +4,8 @@ export type Crop = {x: number; y: number; width: number; height: number};
 export type Motion = "push_in" | "pull_out" | "pan_left" | "pan_right" | "pan_up" | "pan_down" | "still";
 
 type Base = {anchor: string};
-export type PhotoSpec = Base & {kind: "photo"; crop?: Crop | null; motion?: Motion};
+export type VisualNeed = "historical_exact" | "contextual_stock" | "map_or_graphic" | "illustrative_reconstruction";
+export type PhotoSpec = Base & {kind: "photo"; visual_need?: VisualNeed; crop?: Crop | null; motion?: Motion};
 export type BrollSpec = Base & {kind: "broll"};
 export type NumberSpec = Base & {kind: "number"; value: string; label: string};
 export type ChartSpec = Base & {kind: "chart"; title: string; unit?: string; points: {label: string; value: number}[]};
