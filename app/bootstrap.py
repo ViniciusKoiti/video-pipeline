@@ -65,6 +65,16 @@ def _remotion(settings: Settings) -> Any:
     )
 
 
+def _pexels(settings: Settings) -> Any:
+    from app.providers.archives.pexels import PexelsArchive
+
+    if settings.secrets.pexels_api_key is None:
+        raise ConfigurationError("PEXELS_API_KEY ausente no .env")
+    return PexelsArchive(
+        settings.secrets.pexels_api_key.get_secret_value(), cache_dir=settings.data_dir / "cache" / "archives"
+    )
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -81,7 +91,7 @@ DEFAULT_REGISTRY: Registry = {
         "wikimedia_commons": Registration(20),
         "library_of_congress": Registration(20),
         "flickr_commons": Registration(20),
-        "pexels": Registration(21),
+        "pexels": Registration(21, _pexels),  # antecipado pela #48 (abertura v2)
     },
     "aligner": {"ffprobe": Registration(17)},
     "render": {

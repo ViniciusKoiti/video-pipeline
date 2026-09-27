@@ -116,6 +116,15 @@ def test_unimplemented_adapter_points_to_roadmap_step(tmp_path: Path) -> None:
         _ = context.image_gen
 
 
+def test_pexels_needs_its_key(tmp_path: Path) -> None:
+    cascade = 'archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels"]'
+    root = make_root(tmp_path, config_with(cascade, 'archives = ["pexels"]'))
+    with pytest.raises(ConfigurationError, match="PEXELS_API_KEY ausente"):
+        _ = build_context(root, environ={}).archives
+    [pexels] = build_context(root, environ={"PEXELS_API_KEY": "s3cr3t"}).archives
+    assert pexels.info.name == Provider.PEXELS.value and pexels.info.remote
+
+
 # --- Custo zero (§2.1) --------------------------------------------------------------------------
 
 
