@@ -39,10 +39,14 @@ formato explicativo antes do piloto documentário.
   modelo de perfil de poder (tipos `impact_today` e `rule`, perguntas neutras, controvérsia atribuída).
 - [x] **Protótipo `votorantim-fatia`** (90 s, 1914–1962): gate 1 aprovado; gate 2 com mudanças pedidas
   (faltava o objetivo: impacto hoje e como virou elite), o que originou o modelo de perfil.
-- [ ] **← Agora: protótipo `votorantim-abertura`** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
-  promessa). Gate 1 aprovado, verificador aprovou; **aguarda o gate 2 do dono**.
+- [x] **Protótipo `votorantim-abertura` v1** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
+  promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
+  (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
+- [ ] **← Agora: abertura v2**, com fotos e B-roll de banco de imagem no gancho (S01–S02). Feito: termos das
+  quatro fontes (`data/benchmarks/termos-bancos-de-imagem.md`) e contrato (ADR 007, emenda de bancos de
+  imagem: Pexels, Pixabay e Unsplash por API, Coverr só manual). Falta: adapters, busca, gate 3, roteiro v2,
+  voz e render.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
-  - B-roll do Pexels no gancho (autorização e `PEXELS_API_KEY`);
   - fonte automática no rodapé dos planos;
   - retrato de Getúlio Vargas no gate 3;
   - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
@@ -148,7 +152,8 @@ video-pipeline/
 
 ### Variáveis de ambiente (`.env.example` lista nomes e exemplos não secretos)
 
-`OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `PEXELS_API_KEY`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`,
+`OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `PEXELS_API_KEY`, `PIXABAY_API_KEY`, `UNSPLASH_ACCESS_KEY`,
+`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`,
 `WORKERS_AI_MODEL=@cf/black-forest-labs/flux-1-schnell`, `DATA_DIR`, `MAX_API_SPEND_USD=0`,
 `ALLOW_PAID_API=false`, `MAX_GENERATED_IMAGES_PER_EPISODE=12`, `MAX_CANDIDATES_PER_SCENE=2`,
 `MAX_CLOUD_REQUESTS_PER_EPISODE=40`. Opcionais para comparação: `GROQ_API_KEY`, `GEMINI_API_KEY`.
@@ -175,7 +180,7 @@ flowchart TD
         V1 -- "sim" --> R2{"Revisão 2: roteiro"}
         R2 -- "reprovado" --> B2
         R2 -- "aprovado" --> B3["Cenas e planos (ADR 008): visual_need + search_query por plano → scenes.json"]
-        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels → Workers AI → gráfico original"]
+        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels/Pixabay/Unsplash → Workers AI → gráfico original"]
         B4 --> B5["Galeria HTML estática por cena com origem, licença e créditos"]
         B5 --> R3{"Revisão 3: ativos e direitos"}
         R3 -- "trocar" --> B4
@@ -270,8 +275,10 @@ interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.a
 `license_id`, `license_url`, `attribution_text`, `usage_notes`, `retrieved_at`, `sha256`,
 `review_status`, `used_in_scenes` (lista: um mapa pode voltar). Imagem gerada tem também
 `generation: {prompt, model, seed, steps}`. Só chega a `approved` com licença da lista fechada da ADR 007
-(PD, CC0, CC-BY incl. 3.0 BR, Flickr-NKCR, Pexels, Generated, Original — **sem** CC-BY-SA e NC), `sha256`, e
-`usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
+(PD, CC0, CC-BY incl. 3.0 BR, Flickr-NKCR, Pexels, Pixabay, Unsplash, Coverr, Generated, Original — **sem**
+CC-BY-SA e NC), `sha256`, e `usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
+Ativo de banco de imagem só com a licença do próprio banco (ou CC0), `author`, `attribution_text` e, em
+`usage_notes`, a conferência de pessoas, marcas e texto (emenda de bancos de imagem).
 
 **`review.json`** — fonte única das decisões humanas: entradas só acrescentadas, por etapa, cena ou ativo,
 com `decision`, `reviewer`, `at`, `input_hash` do conteúdo revisado (mudou o conteúdo, a aprovação cai) e
@@ -310,12 +317,16 @@ se o motor for o Turbo, um adapter converte este arquivo para os parâmetros del
 ## 8. Política de imagens e cota
 
 Ordem de busca por cena: (1) acervo interno já revisado → (2) Commons, Library of Congress e
-Flickr Commons para pessoas, lugares e eventos específicos → (3) Pexels para cenas genéricas
-(ondas, neve, céu) → (4) Workers AI, no máximo 2 alternativas, escolha humana → (5) mapa, cronologia,
-citação curta permitida ou tela gráfica original. Nunca preencher com imagem irrelevante.
+Flickr Commons para pessoas, lugares e eventos específicos → (3) bancos de imagem para cenas genéricas
+(ondas, neve, céu): Pexels, Pixabay e Unsplash por API, Coverr só à mão pelo site → (4) Workers AI, no
+máximo 2 alternativas, escolha humana → (5) mapa, cronologia, citação curta permitida ou tela gráfica
+original. Nunca preencher com imagem irrelevante.
 
 - Busca em lote por consulta normalizada; cache de metadados e miniaturas; `sha256` para deduplicar;
-  redimensionar só o ativo final escolhido; registrar headers de cota do Pexels quando existirem.
+  redimensionar só o ativo final escolhido; registrar headers de cota dos bancos quando existirem.
+- Termos de cada banco (limites, cache, crédito, registro de download) em
+  `data/benchmarks/termos-bancos-de-imagem.md`. Nada de pessoa reconhecível doente ou tomando remédio, marca,
+  logo, texto ou contexto político em imagem de banco.
 - Regra prática de domínio público: publicado até 1930 é DP nos EUA; o Commons exige DP também no
   país de origem. Checar caso a caso e registrar o raciocínio em `usage_notes`.
 - **Workers AI:** cota gratuita de 10.000 neurons/dia. FLUX.1 Schnell custa 4,80 neurons por tile
@@ -418,15 +429,15 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 7. **Busca por vetor (ADR 010, proposta):** `vp search` sobre os trechos numerados, com embeddings locais
    guardados em arquivo (sem banco). Serve para achar trechos; a prova continua literal no `vp check`. Entra
    quando as fontes passarem do que um agente lê de uma vez (ex.: jornais da Hemeroteca).
-8. **B-roll de banco de imagens no gancho do explicativo:** Pexels, só como ilustração (§2.4); aguarda
-   autorização do dono e `PEXELS_API_KEY`.
+8. ~~B-roll de banco de imagens no gancho do explicativo~~ **Decidido** na emenda de bancos de imagem da
+   ADR 007 (2026-09-26): Pexels, Pixabay e Unsplash por API, Coverr só manual, sempre como ilustração (§2.4).
 
 ## 14. Como trabalhar neste repositório (instruções para o Claude Code)
 
 - Antes de escrever código de uma etapa, ler o schema correspondente em `app/pipeline/schemas.py` e
   o manifesto de exemplo em `tests/fixtures/episodes/pilot-example/`.
-- Nunca executar comandos que chamem provedores externos (Pexels, Cloudflare, Groq, Gemini) a menos
-  que o usuário peça explicitamente naquela sessão. Ollama e Kokoro locais podem rodar.
+- Nunca executar comandos que chamem provedores externos (Pexels, Pixabay, Unsplash, Coverr, Cloudflare, Groq,
+  Gemini) a menos que o usuário peça explicitamente naquela sessão. Ollama e Kokoro locais podem rodar.
 - Nunca editar arquivos em `data/episodes/*/` com `review_status: approved`; se um ajuste exigir isso,
   parar e perguntar.
 - Em dúvida sobre licença de um ativo ou termos de um provedor, parar e perguntar; não decidir sozinho.

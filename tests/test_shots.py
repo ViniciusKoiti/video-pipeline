@@ -228,20 +228,24 @@ def test_on_screen_claims_are_checked_against_sources() -> None:
     assert unknown_source_refs(manifest, sources) == ["S01: fonte source-09 não está em sources.json"]
 
 
-def test_stock_broll_cannot_be_a_historical_record() -> None:
+@pytest.mark.parametrize("provider", [Provider.PEXELS, Provider.PIXABAY, Provider.UNSPLASH, Provider.COVERR])
+def test_stock_broll_cannot_be_a_historical_record(provider: Provider) -> None:
     asset = Asset.model_validate_json((FIXTURE / "assets" / "commons-111-sc-91135.json").read_text())
-    stock = asset.model_copy(update={"provider": Provider.PEXELS, "id": "pexels-1"})
+    stock = asset.model_copy(update={"provider": provider, "id": "stock-1"})
     broll = {
         "kind": "broll",
         "anchor": "uma fábrica",
         "visual_need": "historical_exact",
         "search_query": "loom",
-        "asset_id": "pexels-1",
+        "asset_id": "stock-1",
     }
     manifest = ScenesManifest(episode_id="fatia", language="pt-BR", scenes=[scene([broll])])
-    assert visual_need_violations(manifest, {"pexels-1": stock}) == [
-        "S01: historical_exact não pode usar pexels"
+    assert visual_need_violations(manifest, {"stock-1": stock}) == [
+        f"S01: historical_exact não pode usar {provider.value}"
     ]
+    broll["visual_need"] = "contextual_stock"
+    manifest = ScenesManifest(episode_id="fatia", language="pt-BR", scenes=[scene([broll])])
+    assert visual_need_violations(manifest, {"stock-1": stock}) == []
 
 
 def test_decision_counts_shots_not_scenes() -> None:

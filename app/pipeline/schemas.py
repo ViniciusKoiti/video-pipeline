@@ -376,6 +376,9 @@ class Provider(StrEnum):
     LIBRARY_OF_CONGRESS = "library_of_congress"
     FLICKR_COMMONS = "flickr_commons"
     PEXELS = "pexels"
+    PIXABAY = "pixabay"
+    UNSPLASH = "unsplash"
+    COVERR = "coverr"  # só clipes baixados à mão pelo site (ADR 007, emenda de bancos de imagem)
     WORKERS_AI = "workers_ai"
     ORIGINAL = "original"  # mapa, cronologia ou tela gráfica feitos pelo projeto
 
@@ -385,10 +388,18 @@ class Provider(StrEnum):
 # mantém o ativo fora de approved; a decisão vira revisão humana.
 PUBLIC_DOMAIN_LICENSES = frozenset({"PD-US", "PD-old"})
 ATTRIBUTION_LICENSES = frozenset({"CC-BY-2.0", "CC-BY-2.5", "CC-BY-3.0", "CC-BY-3.0-BR", "CC-BY-4.0"})
+# Banco de imagem: a licença do próprio banco, ou CC0-1.0 na parte do acervo que a tem.
+STOCK_LICENSES = {
+    Provider.PEXELS: "Pexels",
+    Provider.PIXABAY: "Pixabay",
+    Provider.UNSPLASH: "Unsplash",
+    Provider.COVERR: "Coverr",
+}
 ACCEPTED_LICENSES = (
     PUBLIC_DOMAIN_LICENSES
     | ATTRIBUTION_LICENSES
-    | {"CC0-1.0", "Flickr-NKCR", "Pexels", "Generated", "Original"}
+    | set(STOCK_LICENSES.values())
+    | {"CC0-1.0", "Flickr-NKCR", "Generated", "Original"}
 )
 
 
@@ -445,6 +456,16 @@ class Asset(Model):
             problems.append("CC-BY exige author e attribution_text")
         if self.provider not in (Provider.WORKERS_AI, Provider.ORIGINAL) and not self.page_url:
             problems.append("ativo de acervo exige page_url")
+        own = STOCK_LICENSES.get(self.provider)
+        if own is None and self.license_id in STOCK_LICENSES.values():
+            problems.append(f"licença {self.license_id!r} só vale para ativos do próprio banco")
+        if own is not None:
+            if self.license_id not in (own, "CC0-1.0"):
+                problems.append(f"ativo de {self.provider.value} usa a licença {own!r} ou CC0-1.0")
+            if not (self.author and self.attribution_text.strip()):
+                problems.append("banco de imagem exige author e attribution_text (crédito no credits.txt)")
+            if not self.usage_notes.strip():
+                problems.append("banco de imagem exige usage_notes (conferência de pessoas, marcas e texto)")
         if problems:
             raise ValueError("ativo não pode ser aprovado: " + "; ".join(problems))
         return self
@@ -635,8 +656,8 @@ def unknown_source_refs(scenes: ScenesManifest, sources: SourcesManifest) -> lis
     return sorted(set(problems))
 
 
-# §2.4: stock e imagem gerada são ilustração, nunca registro do fato.
-_NOT_A_RECORD = frozenset({Provider.PEXELS, Provider.WORKERS_AI})
+# §2.4: stock (os bancos de STOCK_LICENSES) e imagem gerada são ilustração, nunca registro do fato.
+_NOT_A_RECORD = frozenset({*STOCK_LICENSES, Provider.WORKERS_AI})
 
 
 def visual_need_violations(scenes: ScenesManifest, assets: dict[str, Asset]) -> list[str]:

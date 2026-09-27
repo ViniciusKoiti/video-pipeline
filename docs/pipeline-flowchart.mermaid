@@ -17,7 +17,7 @@ flowchart TD
         V1 -- "sim" --> R2{"Revisão 2: roteiro"}
         R2 -- "reprovado" --> B2
         R2 -- "aprovado" --> B3["Cenas e planos (ADR 008): visual_need + search_query por plano → scenes.json"]
-        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels → Workers AI → gráfico original"]
+        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels/Pixabay/Unsplash → Workers AI → gráfico original"]
         B4 --> B5["Galeria HTML estática por cena com origem, licença e créditos"]
         B5 --> R3{"Revisão 3: ativos e direitos"}
         R3 -- "trocar" --> B4

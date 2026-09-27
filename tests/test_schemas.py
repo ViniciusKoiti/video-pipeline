@@ -6,9 +6,11 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from app.pipeline.schemas import (
+    STOCK_LICENSES,
     Asset,
     Claim,
     EpisodeManifest,
+    Provider,
     ReviewLog,
     ScenesManifest,
     SourcesManifest,
@@ -172,6 +174,48 @@ def test_cc_by_requires_attribution() -> None:
 def test_approval_requires_downloaded_file() -> None:
     with pytest.raises(ValidationError, match="sha256"):
         Asset.model_validate(commons_asset(sha256=None))
+
+
+def stock_asset(provider: Provider, **changes: Any) -> dict[str, Any]:
+    defaults = {
+        "id": f"{provider.value}-001",
+        "provider": provider.value,
+        "provider_id": "123",
+        "page_url": f"https://example.org/{provider.value}/123",
+        "license_id": STOCK_LICENSES[provider],
+        "author": "Fulano",
+        "attribution_text": f"Fulano via {provider.value}",
+        "usage_notes": "Sem pessoa reconhecível, doente ou medicada; sem marca, logo, texto ou política.",
+    }
+    return commons_asset(**{**defaults, **changes})
+
+
+@pytest.mark.parametrize("provider", list(STOCK_LICENSES))
+def test_stock_asset_is_approved_with_its_own_license_or_cc0(provider: Provider) -> None:
+    assert Asset.model_validate(stock_asset(provider)).license_id == STOCK_LICENSES[provider]
+    assert Asset.model_validate(stock_asset(provider, license_id="CC0-1.0")).license_id == "CC0-1.0"
+
+
+def test_stock_license_must_match_its_bank() -> None:
+    with pytest.raises(ValidationError, match="usa a licença 'Pixabay' ou CC0-1.0"):
+        Asset.model_validate(stock_asset(Provider.PIXABAY, license_id="Pexels"))
+    with pytest.raises(ValidationError, match="só vale para ativos do próprio banco"):
+        Asset.model_validate(commons_asset(license_id="Unsplash"))
+
+
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"author": None}, "author e attribution_text"),
+        ({"attribution_text": " "}, "author e attribution_text"),
+        ({"usage_notes": ""}, "conferência de pessoas, marcas e texto"),
+        ({"page_url": None}, "page_url"),
+    ],
+)
+def test_stock_approval_requires_credit_and_rights_check(changes: dict[str, Any], message: str) -> None:
+    Asset.model_validate(stock_asset(Provider.COVERR, review_status="needs_review", **changes))
+    with pytest.raises(ValidationError, match=message):
+        Asset.model_validate(stock_asset(Provider.COVERR, **changes))
 
 
 def test_generated_image_requires_generation_metadata() -> None:
