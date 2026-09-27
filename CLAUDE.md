@@ -42,15 +42,14 @@ formato explicativo antes do piloto documentário.
 - [x] **Protótipo `votorantim-abertura` v1** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
   promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
   (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
-- [ ] **← Agora: abertura v2**, com fotos e B-roll de banco de imagem no gancho (S01–S02). Feito: termos das
-  quatro fontes (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de
-  imagem: Pexels, Pixabay e Unsplash por API, Coverr só manual) e adapters dos três em
-  `app/providers/archives/` (base `StockArchive`); busca real no Pexels e gate 3 (quatro ativos aprovados,
-  scripts provisórios `buscar_candidatos.py` e `baixar_escolhidos.py`). Falta: roteiro v2, voz e render;
-  Pixabay e Unsplash aguardam as chaves.
+- [ ] **← Agora: abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
+  blister, torre de transmissão), S08 sem a dedução sobre acionistas. Termos das quatro fontes
+  (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de imagem), adapters
+  Pexels/Pixabay/Unsplash, gates 1 e 3 registrados, verificador aprovou, render em `renders/final.mp4` (a v1
+  fica em `renders/v1-final.mp4`). **Aguarda o gate 2 do dono.** Pixabay e Unsplash aguardam as chaves.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
   - fonte automática no rodapé dos planos;
-  - retrato de Getúlio Vargas no gate 3;
+  - retrato de Getúlio Vargas no gate 3; gate 3 do retrato `an-jose-ermirio` (identidade e DP no Brasil);
   - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
   - busca por vetor (ADR 010) quando as fontes passarem do que um agente lê de uma vez;
   - árvore da família com genro;
