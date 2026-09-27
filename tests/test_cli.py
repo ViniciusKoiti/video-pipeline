@@ -10,7 +10,7 @@ from tests.fakes import make_root
 # Comandos do CLAUDE.md §10; um comando não pode sumir sem atualizar a spec.
 SPEC_COMMANDS = {
     "bench", "new", "sources", "script", "scenes", "assets", "gallery",
-    "voice", "subs", "render", "export", "approve", "status", "reopen", "excerpts", "check",
+    "voice", "subs", "render", "export", "approve", "reject", "status", "reopen", "excerpts", "check",
 }
 
 
@@ -40,7 +40,7 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
         (["new", "pilot-001", "--topic", "Greely expedition"], 12),
         (["script", "pilot-001"], 27),
         (["render", "pilot-001", "--preview"], 13),
-        (["approve", "pilot-001", "--step", "script"], 12),
+        (["reopen", "pilot-001", "--step", "script", "--reason", "refazer"], 12),
     ],
 )
 def test_stub_points_to_roadmap_step(argv: list[str], step: int, capsys: pytest.CaptureFixture[str]) -> None:

@@ -58,3 +58,11 @@ roteiro (§7), e um modelo de 9B em CPU não dá conta de pesquisa nem de narrat
   passam a seguir a estrutura de perfil (gancho de impacto, ponte com o espectador, origem e vantagem, virada,
   mecanismo, regras e Estado, custo e controvérsia, presente), com perguntas de pesquisa neutras e controvérsia
   sempre atribuída. Motivo e análise em `docs/pesquisa/modelo-perfil-de-poder.md`.
+- **2026-09-27 (gates por comando, #12):** nas etapas feitas por agente ou pessoa não há estado em
+  `manifest.json`; a decisão humana carimba os arquivos revistos. Gate 1 (`sources`): `sources.json` +
+  `facts.json`; gate 2 (`script`): `scenes.json` + `outline.md`; gate 3 (`assets`, por ativo): o arquivo de mídia
+  (`sha256`). `vp approve` e `vp reject` (`--changes` para mudanças pedidas) gravam em `review.json`; aprovar um
+  ativo reflete `review_status` no JSON dele, e o schema recusa sem licença, crédito ou conferência (ADR 007).
+  `vp status` mostra a última decisão de cada gate e ativo e se ela ainda vale. Motivo: na abertura, a ficha F38
+  mudou depois da aprovação do gate 1 e ninguém percebeu. As decisões da abertura de 2026-09-26 usaram a mesma
+  receita e continuam valendo; as da fatia usaram outra, que não dá para reproduzir, e aparecem como alteradas.

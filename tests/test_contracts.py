@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 import wave
 from collections.abc import Callable
 from importlib.util import find_spec
@@ -17,7 +18,15 @@ import pytest
 from pydantic import BaseModel
 
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate
-from app.pipeline.schemas import APPROVED_STATES, Asset, EpisodeManifest, ReviewEntry, Status, VisualNeed
+from app.pipeline.schemas import (
+    APPROVED_STATES,
+    Asset,
+    Decision,
+    EpisodeManifest,
+    ReviewEntry,
+    Status,
+    VisualNeed,
+)
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider, AssetQuery
 from app.providers.archives.pexels import PexelsArchive
@@ -32,7 +41,7 @@ from app.render.base import RenderEngine
 from app.render.ffmpeg import FfmpegEngine
 from app.render.remotion import PROJECT as REMOTION_PROJECT
 from app.render.remotion import RemotionEngine
-from app.storage.json_files import JsonFileStore
+from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import (
     FIXED_TIME,
     FakeAligner,
@@ -127,7 +136,14 @@ STORES: list[Callable[[Path], ManifestStore]] = [
     pytest.param(InMemoryStore, id="in-memory"),
     pytest.param(JsonFileStore, id="json-files"),
 ]
-REVIEW_GATES: list[Callable[[], ReviewGate]] = [pytest.param(InMemoryReviewGate, id="in-memory")]
+def make_json_review_gate() -> ReviewGate:
+    return JsonReviewGate(JsonFileStore(Path(tempfile.mkdtemp(prefix="vp-review-"))))
+
+
+REVIEW_GATES: list[Callable[[], ReviewGate]] = [
+    pytest.param(InMemoryReviewGate, id="in-memory"),
+    pytest.param(make_json_review_gate, id="json-files"),
+]
 
 
 def episode() -> EpisodeManifest:
@@ -279,7 +295,7 @@ def test_review_gate_only_appends(make: Callable[[], ReviewGate]) -> None:
     gate = make()
     assert gate.log("pilot-example").entries == []
     first = ReviewEntry(step="script", decision="changes_requested", reviewer="v", at=FIXED_TIME)
-    second = first.model_copy(update={"decision": "approved"})
+    second = first.model_copy(update={"decision": Decision.APPROVED})
     gate.record("pilot-example", first)
     gate.record("pilot-example", second)
     assert gate.log("pilot-example").entries == [first, second]

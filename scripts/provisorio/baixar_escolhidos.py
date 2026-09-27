@@ -5,8 +5,8 @@ Uso: `.venv/bin/python scripts/provisorio/baixar_escolhidos.py <episode-id> <cen
 - Lê o ativo em `candidatos/*.json` (gravado por `buscar_candidatos.py`) e baixa o arquivo final pelo adapter
   do banco (sem a chave; o Unsplash avisa o download antes), em `assets/<asset-id>.<ext>`.
 - Grava `assets/<asset-id>.json` com o `sha256` do arquivo e a cena em `used_in_scenes`, ainda em
-  `needs_review`: a aprovação e a conferência de pessoas, marcas e texto (`usage_notes`) são humanas e vêm
-  depois, com a entrada no review.json (§2.5, ADR 007).
+  `needs_review`: a conferência de pessoas, marcas e texto vai em `usage_notes`, e a aprovação é humana, com
+  `vp approve <id> --step assets --asset <asset-id>` (§2.5, ADR 007).
 """
 
 from __future__ import annotations

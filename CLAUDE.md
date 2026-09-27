@@ -54,7 +54,7 @@ formato explicativo antes do piloto documentário.
   - busca por vetor (ADR 010) quando as fontes passarem do que um agente lê de uma vez;
   - árvore da família com genro;
   - scripts provisórios de fonte, voz e render virarem `vp sources` (#26), `vp voice` (#16) e `vp render` (#13);
-  - `vp approve` (#12).
+  - `vp new` e `vp reopen` (resto da #12; `vp approve`, `vp reject` e `vp status` já existem).
 - Em pausa: #11 (invalidação) e M2–M7 do piloto documentário.
 
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
@@ -225,8 +225,10 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
   - Alterar texto narrado invalida voz do bloco, timing, legendas e render.
   - Alterar fonte invalida roteiro e tudo abaixo.
 - Erros de rede, cota ou licença param a cena, não o episódio.
-- Aprovação humana é registrada por `vp approve <id> --step <step>` em `review.json`, nunca editando
-  `review_status` à mão no manifesto principal.
+- Aprovação humana é registrada por `vp approve <id> --step <step>` (ou `vp reject`) em `review.json`, nunca
+  editando `review_status` à mão no manifesto principal. Nos gates feitos por agente ou pessoa, a decisão carimba
+  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2) ou o arquivo do ativo (gate 3);
+  `vp status` mostra se ela ainda vale (ADR 009, emenda de gates por comando).
 - **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
   (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
   (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
@@ -373,8 +375,9 @@ vp voice <id>                 # Kokoro por bloco + ffprobe -> voice/
 vp subs <id>                  # legendas alinhadas -> captions.srt
 vp render <id> [--preview]    # motor escolhido -> renders/
 vp export <id>                # final.mp4 + srt + description.txt + credits.txt
-vp approve <id> --step <s>    # registra aprovação humana em review.json
-vp status <id>                # estados por etapa e pendências
+vp approve <id> --step <s> [--asset <a>]  # aprovação humana em review.json (gates 1–3, ADR 009)
+vp reject <id> --step <s> --reason "..." [--changes]  # reprovação ou mudanças pedidas
+vp status <id>                # última decisão de cada gate e ativo, se ainda vale, e pendências
 vp reopen <id> --step <s> --reason "..."  # reabre etapa aprovada para refazer (§2.6)
 vp excerpts <id>              # trechos numerados de cada fonte -> excerpts/ (ADR 009)
 vp check <id>                 # valida fontes, fichas e cenas escritas por agente ou à mão (ADR 009)

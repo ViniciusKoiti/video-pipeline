@@ -8,6 +8,7 @@ montado quando existe handler, e cada porta só quando usada.
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -19,8 +20,9 @@ from app.bootstrap import build_context
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode
 from app.pipeline.excerpts import numbered_view
-from app.pipeline.ports import Context
-from app.pipeline.schemas import EpisodeFormat, SourcesManifest
+from app.pipeline.gates import GATED_STEPS, GateError, GateStatus, gate_report, record_decision
+from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
+from app.pipeline.schemas import Decision, EpisodeFormat, SourcesManifest, Step
 from app.settings import CONFIG_FILE
 
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
@@ -66,8 +68,26 @@ def _reopen_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
 
 
+def _decision_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--step",
+        required=True,
+        choices=[s.value for s in GATED_STEPS],
+        help="gate: sources (fontes e fichas), script (roteiro) ou assets (um ativo, com --asset)",
+    )
+    parser.add_argument("--asset", help="id do ativo, na etapa assets")
+    parser.add_argument("--reviewer", help="quem decide (padrão: git config user.name)")
+
+
 def _approve_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--step", required=True, help="etapa a aprovar")
+    _decision_arguments(parser)
+    parser.add_argument("--notes", default="", help="observação registrada no review.json")
+
+
+def _reject_arguments(parser: argparse.ArgumentParser) -> None:
+    _decision_arguments(parser)
+    parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
+    parser.add_argument("--changes", action="store_true", help="mudanças pedidas em vez de reprovação")
 
 
 COMMANDS: tuple[Command, ...] = (
@@ -86,6 +106,7 @@ COMMANDS: tuple[Command, ...] = (
     Command("render", "motor escolhido -> renders/", 13, add_arguments=_render_arguments),
     Command("export", "final.mp4 + srt + description.txt + credits.txt", 18),
     Command("approve", "registra aprovação humana em review.json", 12, add_arguments=_approve_arguments),
+    Command("reject", "registra reprovação ou mudanças pedidas", 12, add_arguments=_reject_arguments),
     Command("status", "estados por etapa e pendências", 12),
     Command(
         "reopen", "reabre etapa aprovada para refazer (motivo no review.json)", 12,
@@ -136,8 +157,88 @@ def _check(args: argparse.Namespace, context: Context) -> int:
     return 0 if report.ok else 1
 
 
+DECISION_LABELS = {
+    Decision.APPROVED: "aprovado",
+    Decision.REJECTED: "reprovado",
+    Decision.CHANGES_REQUESTED: "mudanças pedidas",
+}
+
+
+def _approve(args: argparse.Namespace, context: Context) -> int:
+    return _decide(args, context, Decision.APPROVED, args.notes)
+
+
+def _reject(args: argparse.Namespace, context: Context) -> int:
+    decision = Decision.CHANGES_REQUESTED if args.changes else Decision.REJECTED
+    return _decide(args, context, decision, args.reason)
+
+
+def _decide(args: argparse.Namespace, context: Context, decision: Decision, notes: str) -> int:
+    try:
+        entry = record_decision(
+            context.store,
+            context.review,
+            args.episode_id,
+            Step(args.step),
+            decision,
+            reviewer=args.reviewer or _git_user(),
+            now=lambda: datetime.now().astimezone().replace(microsecond=0),
+            asset_id=args.asset,
+            notes=notes,
+        )
+    except (GateError, ManifestNotFound, EpisodeLocked) as error:
+        print(f"vp {args.command}: {error}", file=sys.stderr)
+        return 1
+    target = entry.asset_id or entry.step.value
+    print(f"{DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})")
+    return 0
+
+
+def _git_user() -> str:
+    result = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True, check=False)
+    if not result.stdout.strip():
+        raise SystemExit("vp: informe --reviewer (git config user.name está vazio)")
+    return result.stdout.strip()
+
+
+def _status(args: argparse.Namespace, context: Context) -> int:
+    rows = gate_report(context.store, context.review, args.episode_id)
+    for row in rows:
+        print(_status_line(row))
+    pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
+    print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
+    return 0
+
+
+def _status_line(row: GateStatus) -> str:
+    kind, target = ("ativo", row.asset_id) if row.asset_id else ("gate", row.step.value)
+    if row.entry is None:
+        return f"{kind:6}{target:32} sem decisão"
+    if row.current_hash is None:
+        state = "arquivo removido"
+    else:
+        state = "vale" if row.valid else "MUDOU depois da decisão"
+    entry = row.entry
+    label = DECISION_LABELS[entry.decision]
+    return f"{kind:6}{target:32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
+
+
+def _pending(row: GateStatus) -> bool:
+    """Gate sem aprovação que valha; ativo rejeitado e removido não é pendência."""
+    if row.asset_id and row.current_hash is None:
+        return False
+    return not (row.entry is not None and row.entry.decision is Decision.APPROVED and row.valid)
+
+
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
-HANDLERS: dict[str, Handler] = {"bench": _bench, "excerpts": _excerpts, "check": _check}
+HANDLERS: dict[str, Handler] = {
+    "bench": _bench,
+    "excerpts": _excerpts,
+    "check": _check,
+    "approve": _approve,
+    "reject": _reject,
+    "status": _status,
+}
 
 
 def _package_version() -> str:

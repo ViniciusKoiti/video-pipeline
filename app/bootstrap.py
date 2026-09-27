@@ -94,6 +94,12 @@ def _unsplash(settings: Settings) -> Any:
     return UnsplashArchive(_secret(settings, "UNSPLASH_ACCESS_KEY"), cache_dir=_archive_cache(settings))
 
 
+def _json_review(settings: Settings) -> Any:
+    from app.storage.json_files import JsonFileStore, JsonReviewGate
+
+    return JsonReviewGate(JsonFileStore(settings.data_dir / "episodes"))
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -121,7 +127,7 @@ DEFAULT_REGISTRY: Registry = {
         "remotion": Registration(48, _remotion),  # formato explainer (etapa #48 antecipou a #43)
     },
     "store": {"json_files": Registration(10, _json_store)},
-    "review": {"json_files": Registration(12)},
+    "review": {"json_files": Registration(12, _json_review)},
 }
 
 
