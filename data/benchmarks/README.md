@@ -12,6 +12,8 @@ Evidência para as decisões de motor e provedores (ADRs 001 e 003). Cada arquiv
 - Rodar com a máquina ociosa **e sem jogos/apps pesados no Windows**; `warnings` registra carga alta ou
   CPU limitada (`cpu_probe_s` > 0,3 s: sha256 de 64 MB). Resultado com aviso não vale como benchmark.
 - Resultados de provedores remotos (etapa 29) seguem o §7 do CLAUDE.md: link oficial, data, conta real.
+- `termos-bancos-de-imagem.md` — licença, crédito, proibições e regras de API de Pexels, Pixabay, Unsplash e
+  Coverr, lidas nas páginas oficiais em 2026-09-26 (#48, abertura v2).
 
 ## Resultados — 2026-09-25 (`machine-20260925-091013.json`)
 
