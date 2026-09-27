@@ -114,7 +114,7 @@ const Broll: React.FC<{src: string}> = ({src}) => (
 
 const NUMBER_RE = /^(\D*?)([\d.,]+)(.*)$/;
 
-const NumberCallout: React.FC<{spec: NumberSpec}> = ({spec}) => {
+const NumberCallout: React.FC<{spec: NumberSpec; overlay?: boolean}> = ({spec, overlay = false}) => {
   const {height} = useVideoConfig();
   const match = NUMBER_RE.exec(spec.value);
   const digits = match?.[2] ?? "";
@@ -128,6 +128,22 @@ const NumberCallout: React.FC<{spec: NumberSpec}> = ({spec}) => {
   const format = {useGrouping: /\d\.\d{3}/.test(digits), minimumFractionDigits: decimals, maximumFractionDigits: decimals};
   const shown = match && Number.isFinite(target) ? `${match[1]}${counted.toLocaleString("pt-BR", format)}${match[3]}` : spec.value;
   const enter = useEnter();
+  if (overlay) {
+    // Sobre a foto ou o B-roll: painel no canto, como a tarja, para a mídia continuar visível.
+    return (
+      <AbsoluteFill style={{color: theme.text, fontFamily: theme.font}}>
+        <div style={{...enter, position: "absolute", left: u(height, 110), bottom: u(height, 150),
+          maxWidth: u(height, 1100), display: "flex", flexDirection: "column", gap: u(height, 14),
+          background: "rgba(14, 17, 22, 0.86)", padding: `${u(height, 26)}px ${u(height, 38)}px`,
+          borderRadius: u(height, 6), boxShadow: "0 16px 40px rgba(0,0,0,0.45)"}}>
+          <div style={{fontSize: u(height, 120), fontWeight: 800, letterSpacing: -2, fontVariantNumeric: "tabular-nums",
+            lineHeight: 1}}>{shown}</div>
+          <GoldRule width={u(height, 120)} />
+          <div style={{fontSize: u(height, 32), color: theme.muted, fontWeight: 500}}>{spec.label}</div>
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
     <Stage>
       <div style={{...enter, display: "flex", flexDirection: "column", alignItems: "center", gap: u(height, 28)}}>
@@ -428,7 +444,7 @@ export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit
     case "broll":
       return <Broll src={media(path ?? "")} />;
     case "number":
-      return <NumberCallout spec={spec} />;
+      return <NumberCallout spec={spec} overlay={overlay} />;
     case "quote":
       return <Quote spec={spec} />;
     case "stamp":

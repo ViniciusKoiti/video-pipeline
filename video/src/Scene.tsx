@@ -17,14 +17,16 @@ const Caption: React.FC<{text: string}> = ({text}) => {
   );
 };
 
-// Tarja logo depois de uma foto na mesma cena é desenhada sobre essa foto: a foto segue em movimento por
-// baixo e a tarja entra por cima (regra do template, #48; o contrato continua uma lista de planos).
+// Tarja ou número logo depois de uma foto ou B-roll na mesma cena é desenhado sobre essa mídia: ela segue em
+// movimento por baixo e o painel entra por cima (regra do template, #48; o contrato continua uma lista de planos).
+const MEDIA = new Set(["photo", "broll"]);
+const PANEL = new Set(["lower_third", "number"]);
 const layout = (shots: ShotProps[]): ShotProps[] =>
   shots.map((shot, i) => {
     const next = shots[i + 1];
-    const underTag = shot.spec.kind === "photo" && next?.spec.kind === "lower_third";
-    const overlay = shot.spec.kind === "lower_third" && shots[i - 1]?.spec.kind === "photo";
-    return {...shot, frames: underTag ? shot.frames + next.frames : shot.frames, overlay};
+    const underPanel = MEDIA.has(shot.spec.kind) && next !== undefined && PANEL.has(next.spec.kind);
+    const overlay = PANEL.has(shot.spec.kind) && MEDIA.has(shots[i - 1]?.spec.kind ?? "");
+    return {...shot, frames: underPanel ? shot.frames + next.frames : shot.frames, overlay};
   });
 
 export const Scene: React.FC<SceneProps> = (props) => {
