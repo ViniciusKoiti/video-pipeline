@@ -26,7 +26,7 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 - **Evitar:** sobrevivência recente (fotos de agência, vira 100% ilustração gerada), true crime,
   Titanic/Hindenburg/Everest 1996 (saturados), Segunda Guerra (oceano de concorrentes).
 
-### Etapa atual (atualizada em 2026-09-26)
+### Etapa atual (atualizada em 2026-09-28)
 
 Roteiro completo nas issues #1–#31 e #41–#48 (`docs/ROADMAP.md`). A #48 foi antecipada: fatia vertical do
 formato explicativo antes do piloto documentário.
@@ -42,13 +42,16 @@ formato explicativo antes do piloto documentário.
 - [x] **Protótipo `votorantim-abertura` v1** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
   promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
   (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
-- [ ] **← Agora: abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
+- [ ] **Abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
   blister, torre de transmissão), S08 sem a dedução sobre acionistas. Termos das quatro fontes
   (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de imagem), adapters
   Pexels/Pixabay/Unsplash, gates 1 e 3 registrados, verificador aprovou, render em `renders/final.mp4` (a v1
   fica em `renders/v1-final.mp4`). **Gate 2 aprovado em 2026-09-27.** Pixabay e Unsplash aguardam as chaves.
+- [x] **Diagnóstico do visual (#69)** e sugestões #70–#82; motion-kit 0.2.0 com o kit editorial (PR #83).
+- [ ] **← Agora: planos editoriais (ADR 011, aceita em 2026-09-28)**, um PR por etapa: contrato e `vp check` →
+  template com as peças do kit → skills do roteirista e do verificador → episódio de teste de ~90 s
+  reaproveitando fontes e fichas do `votorantim-completo`.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
-  - fonte automática no rodapé dos planos;
   - retrato de Getúlio Vargas no gate 3; gate 3 do retrato `an-jose-ermirio` (identidade e DP no Brasil);
   - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
   - busca por vetor (ADR 010) quando as fontes passarem do que um agente lê de uma vez;
@@ -236,10 +239,13 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
 ## 6. Contratos de dados (schemas pydantic em `app/pipeline/schemas.py`, ADR 007)
 
 Uma cena = um bloco de narração = um WAV, com uma **lista de planos tipados** (ADR 008): `photo`, `broll`,
-`number`, `chart`, `quote`, `map`, `stamp`, `lower_third`, `timeline`, `family_tree`. Cada plano fica
+`number`, `chart`, `quote`, `map`, `stamp`, `lower_third`, `timeline`, `family_tree`; a ADR 011 acrescenta
+`compare`, `network` e `keyword`, e campos em `chart` (linha, participação, destaque), `quote` (página de
+documento), `map` (mundo, países, rotas) e `timeline` (escala real). Cada plano fica
 ancorado num trecho da narração; o tempo sai da posição da âncora sobre a duração real do WAV
-(`app/pipeline/shots.py`). Cena sem planos = forma v1 (um plano de foto). Exemplo v1 completo em
-`tests/fixtures/episodes/pilot-example/`.
+(`app/pipeline/shots.py`). A fonte no rodapé sai das `claims` e do `sources.json`, e a tela não calcula razão
+nem soma que não esteja numa ficha (ADR 011). Cena sem planos = forma v1 (um plano de foto). Exemplo v1
+completo em `tests/fixtures/episodes/pilot-example/`.
 
 **`sources.json`** — por fonte: `id`, `title`, `url`, `kind` (`primary|secondary|newspaper|archive`),
 `retrieved_at`, `local_path` (texto extraído), `notes`. Mínimo de 2 fontes independentes para os
@@ -357,7 +363,8 @@ original. Nunca preencher com imagem irrelevante.
   **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o template em `video/`, no `main` desde a
   #48): um componente por tipo de plano, tarja ou número sobre a foto ou o B-roll quando vem logo depois dela,
   foto de banco colorida em tela cheia (a de arquivo fica no cartão P&B), mapa com contornos do Natural Earth
-  (domínio público) e cache por cena. MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
+  (domínio público) e cache por cena. Com a ADR 011, o template passa a usar as peças do motion-kit 0.2
+  (kit editorial, tema `editorial`). MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
   Cena gráfica animada num documentário = clipe gerado pelo motion-kit como ativo `Original` (etapa #42).
   Comparação em `data/benchmarks/README.md`; entrada de teste `tests/fixtures/episodes/engine-test/`.
 

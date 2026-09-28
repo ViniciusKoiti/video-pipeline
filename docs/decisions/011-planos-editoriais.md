@@ -1,10 +1,14 @@
 # 011 — Planos editoriais do explicativo (motion-kit 0.2)
 
-- **Status:** proposto
+- **Status:** aceito (2026-09-28)
 - **Data:** 2026-09-28
 - **Etapa do roadmap:** #69 (sugestões #70–#80); teste num episódio curto
 - **Relaciona-se com:** ADR 001 (motor por formato), ADR 007 (licenças), ADR 008 (lista de planos: esta ADR
   acrescenta tipos e campos), ADR 009 (`vp check` e agentes)
+
+O dono aceitou em 2026-09-28 as recomendações dos quatro pontos em aberto: a tela não calcula razão nem
+variação (decisão 7), `y_from_zero` ligado por padrão (decisão 3), ícones Lucide (decisão 10) e os limites
+dos alertas (decisão 9).
 
 ## Contexto
 
