@@ -34,3 +34,4 @@ O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui
 | 007 | Contratos de dados e política de licenças — **aceito** (decisão 1 substituída pela 008) | #3 |
 | 008 | Cena com lista de planos; `episode.json` v2; português — **aceito** | #48 |
 | 009 | Agentes para as etapas criativas; fichas de fatos; `vp check` — **aceito** | #48 |
+| 011 | Planos editoriais do explicativo (motion-kit 0.2) — proposto | #69 |
