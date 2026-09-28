@@ -24,7 +24,7 @@ from app.providers.alignment.base import Cue
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput
-from app.providers.http import JsonPost
+from app.providers.http import JsonPost, JsonResponse, TransportError
 from app.providers.image_gen.base import CostEstimate, GeneratedImage, ImageRequest
 from app.providers.text.base import TextRequest, TextResult, Usage
 from app.providers.tts.base import SpeechRequest, SpeechResult
@@ -265,3 +265,34 @@ def fake_ollama_post(contents: list[str], **overrides: Any) -> tuple[JsonPost, l
         }
 
     return post, calls
+
+
+class FakeHttp:
+    """Transporte GET falso para adapters de acervo: resposta por trecho de URL; registra URL e headers.
+
+    Arquivos baixados recebem bytes derivados da URL, o que basta para cache, miniatura e sha256.
+    """
+
+    def __init__(
+        self,
+        routes: Mapping[str, dict[str, Any] | TransportError],
+        headers: Mapping[str, str] | None = None,
+    ) -> None:
+        self.routes = dict(routes)
+        self.headers = dict(headers or {})
+        self.calls: list[tuple[str, dict[str, str]]] = []
+
+    def get(self, url: str, headers: Mapping[str, str], timeout: float) -> JsonResponse:
+        self.calls.append((url, dict(headers)))
+        for fragment, reply in self.routes.items():
+            if fragment in url:
+                if isinstance(reply, TransportError):
+                    raise reply
+                return JsonResponse(reply, self.headers)
+        raise TransportError(404, "rota não gravada no teste")
+
+    def get_file(self, url: str, dest: Path, headers: Mapping[str, str], timeout: float) -> Path:
+        self.calls.append((url, dict(headers)))
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(b"file:" + url.encode())
+        return dest

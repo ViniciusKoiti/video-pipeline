@@ -9,15 +9,19 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 
+from app.pipeline.attribution import shot_attribution
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
     EpisodeFormat,
     EpisodeManifest,
     EpisodeShot,
+    NetworkShot,
     RelPath,
     Scene,
     Shot,
+    SourcesManifest,
     effective_shots,
+    step_positions,
 )
 
 MIN_SHOT_MS = 1500
@@ -44,21 +48,47 @@ def shot_bounds(narration: str, shots: Sequence[Shot], duration_ms: int) -> list
 
 
 def episode_shots(
-    scene: Scene, duration_ms: int, media_for: Callable[[Shot], RelPath | None]
+    scene: Scene,
+    duration_ms: int,
+    media_for: Callable[[Shot], RelPath | None],
+    sources: SourcesManifest | None = None,
 ) -> list[EpisodeShot]:
-    """Planos de uma cena com tempo resolvido; `media_for` devolve o arquivo do ativo de foto/B-roll."""
+    """Planos de uma cena com tempo resolvido; `media_for` devolve o arquivo do ativo de foto/B-roll.
+    Com `sources`, cada plano com claims ganha a fonte do rodapé (ADR 011)."""
     shots = effective_shots(scene)
-    return [
-        EpisodeShot(
-            start_ms=start,
-            duration_ms=duration,
-            spec=shot,
-            media=media_for(shot) if shot.kind in MEDIA_SHOT_KINDS else None,
+    bounds = shot_bounds(scene.narration, shots, duration_ms)
+    positions = _anchor_positions(scene.narration, shots)
+    ends = [*positions[1:], len(scene.narration)]
+    result = []
+    for shot, (start, duration), position, end in zip(shots, bounds, positions, ends, strict=True):
+        source, flag = shot_attribution(shot.claims, sources) if sources and shot.claims else (None, None)
+        steps_ms = []
+        if isinstance(shot, NetworkShot):
+            for step in step_positions(scene.narration, shot, position, end, scene_id=scene.id):
+                at = round(step / len(scene.narration) * duration_ms) - start
+                steps_ms.append(min(max(at, 0), duration - 1))
+        result.append(
+            EpisodeShot(
+                start_ms=start,
+                duration_ms=duration,
+                spec=shot,
+                media=media_for(shot) if shot.kind in MEDIA_SHOT_KINDS else None,
+                source=source,
+                source_flag=flag,
+                steps_ms=steps_ms,
+            )
         )
-        for shot, (start, duration) in zip(
-            shots, shot_bounds(scene.narration, shots, duration_ms), strict=True
-        )
-    ]
+    return result
+
+
+def _anchor_positions(narration: str, shots: Sequence[Shot]) -> list[int]:
+    """Posição de cada âncora na narração (a validação da cena já garantiu que existem, em ordem)."""
+    positions, cursor = [], 0
+    for shot in shots:
+        position = narration.find(shot.anchor, cursor)
+        positions.append(max(position, 0))
+        cursor = max(position, 0) + 1
+    return positions
 
 
 def pacing_warnings(episode: EpisodeManifest) -> list[str]:

@@ -65,6 +65,41 @@ def _remotion(settings: Settings) -> Any:
     )
 
 
+def _secret(settings: Settings, env_name: str) -> str:
+    secret = getattr(settings.secrets, env_name.lower())
+    if secret is None:
+        raise ConfigurationError(f"{env_name} ausente no .env")
+    return secret.get_secret_value()
+
+
+def _archive_cache(settings: Settings) -> Path:
+    return settings.data_dir / "cache" / "archives"
+
+
+def _pexels(settings: Settings) -> Any:
+    from app.providers.archives.pexels import PexelsArchive
+
+    return PexelsArchive(_secret(settings, "PEXELS_API_KEY"), cache_dir=_archive_cache(settings))
+
+
+def _pixabay(settings: Settings) -> Any:
+    from app.providers.archives.pixabay import PixabayArchive
+
+    return PixabayArchive(_secret(settings, "PIXABAY_API_KEY"), cache_dir=_archive_cache(settings))
+
+
+def _unsplash(settings: Settings) -> Any:
+    from app.providers.archives.unsplash import UnsplashArchive
+
+    return UnsplashArchive(_secret(settings, "UNSPLASH_ACCESS_KEY"), cache_dir=_archive_cache(settings))
+
+
+def _json_review(settings: Settings) -> Any:
+    from app.storage.json_files import JsonFileStore, JsonReviewGate
+
+    return JsonReviewGate(JsonFileStore(settings.data_dir / "episodes"))
+
+
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
@@ -81,7 +116,9 @@ DEFAULT_REGISTRY: Registry = {
         "wikimedia_commons": Registration(20),
         "library_of_congress": Registration(20),
         "flickr_commons": Registration(20),
-        "pexels": Registration(21),
+        "pexels": Registration(21, _pexels),  # antecipado pela #48 (abertura v2)
+        "pixabay": Registration(21, _pixabay),  # emenda de bancos de imagem da ADR 007
+        "unsplash": Registration(21, _unsplash),  # idem; Coverr fica só manual
     },
     "aligner": {"ffprobe": Registration(17)},
     "render": {
@@ -90,7 +127,7 @@ DEFAULT_REGISTRY: Registry = {
         "remotion": Registration(48, _remotion),  # formato explainer (etapa #48 antecipou a #43)
     },
     "store": {"json_files": Registration(10, _json_store)},
-    "review": {"json_files": Registration(12)},
+    "review": {"json_files": Registration(12, _json_review)},
 }
 
 

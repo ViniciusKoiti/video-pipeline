@@ -12,6 +12,7 @@ from typing import TypeVar
 from pydantic import BaseModel
 
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, is_approved_json
+from app.pipeline.schemas import ReviewEntry, ReviewLog
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -57,3 +58,22 @@ class JsonFileStore:
                 fcntl.flock(fd, fcntl.LOCK_UN)
         finally:
             os.close(fd)
+
+
+class JsonReviewGate:
+    """`ReviewGate` em `data/episodes/<id>/review.json`: só acrescenta entradas (§5, ADR 007)."""
+
+    NAME = "review.json"
+
+    def __init__(self, store: JsonFileStore) -> None:
+        self._store = store
+
+    def log(self, episode_id: str) -> ReviewLog:
+        try:
+            return self._store.read(episode_id, self.NAME, ReviewLog)
+        except ManifestNotFound:
+            return ReviewLog(episode_id=episode_id)
+
+    def record(self, episode_id: str, entry: ReviewEntry) -> None:
+        log = self.log(episode_id)
+        self._store.write(episode_id, self.NAME, log.model_copy(update={"entries": [*log.entries, entry]}))

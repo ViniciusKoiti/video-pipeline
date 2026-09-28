@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -18,6 +19,7 @@ from app.settings import CONFIG_FILE, load_settings
 from tests.fakes import REPO_ROOT, FakeArchive, FakeText, make_root
 
 CONFIG = (REPO_ROOT / CONFIG_FILE).read_text()
+CASCADE = re.search(r"^archives = \[[^\]]*\]", CONFIG, re.MULTILINE).group(0)  # type: ignore[union-attr]
 
 
 def config_with(old: str, new: str) -> str:
@@ -82,7 +84,7 @@ def test_cascade_follows_config_order(tmp_path: Path) -> None:
         "archives", {p.value: Registration(0, lambda s, p=p: FakeArchive(p)) for p in Provider}
     )
     root = make_root(tmp_path, config_with(
-        'archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels"]',
+        CASCADE,
         'archives = ["pexels", "wikimedia_commons"]',
     ))
     context = build_context(root, environ={}, registry=registry)
@@ -114,6 +116,14 @@ def test_unimplemented_adapter_points_to_roadmap_step(tmp_path: Path) -> None:
     context = build_context(make_root(tmp_path), environ={})
     with pytest.raises(ConfigurationError, match=r"etapa #24"):
         _ = context.image_gen
+
+
+def test_pexels_needs_its_key(tmp_path: Path) -> None:
+    root = make_root(tmp_path, config_with(CASCADE, 'archives = ["pexels"]'))
+    with pytest.raises(ConfigurationError, match="PEXELS_API_KEY ausente"):
+        _ = build_context(root, environ={}).archives
+    [pexels] = build_context(root, environ={"PEXELS_API_KEY": "s3cr3t"}).archives
+    assert pexels.info.name == Provider.PEXELS.value and pexels.info.remote
 
 
 # --- Custo zero (§2.1) --------------------------------------------------------------------------

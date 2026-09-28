@@ -6,7 +6,9 @@ rede (transporte HTTP falso, fixtures em data/cache/). Adapters locais pesados l
 
 from __future__ import annotations
 
+import json
 import os
+import tempfile
 import wave
 from collections.abc import Callable
 from importlib.util import find_spec
@@ -16,9 +18,20 @@ import pytest
 from pydantic import BaseModel
 
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate
-from app.pipeline.schemas import APPROVED_STATES, Asset, EpisodeManifest, ReviewEntry, Status, VisualNeed
+from app.pipeline.schemas import (
+    APPROVED_STATES,
+    Asset,
+    Decision,
+    EpisodeManifest,
+    ReviewEntry,
+    Status,
+    VisualNeed,
+)
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider, AssetQuery
+from app.providers.archives.pexels import PexelsArchive
+from app.providers.archives.pixabay import PixabayArchive
+from app.providers.archives.unsplash import UnsplashArchive
 from app.providers.errors import InvalidOutput
 from app.providers.image_gen.base import ImageGenProvider, ImageRequest
 from app.providers.text.base import TextProvider, TextRequest
@@ -28,11 +41,12 @@ from app.render.base import RenderEngine
 from app.render.ffmpeg import FfmpegEngine
 from app.render.remotion import PROJECT as REMOTION_PROJECT
 from app.render.remotion import RemotionEngine
-from app.storage.json_files import JsonFileStore
+from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import (
     FIXED_TIME,
     FakeAligner,
     FakeArchive,
+    FakeHttp,
     FakeImageGen,
     FakeRender,
     FakeText,
@@ -55,6 +69,29 @@ def make_ollama(responses: list[str]) -> TextProvider:
     return OllamaText("http://127.0.0.1:11434", "qwen3.5:4b", post=fake_ollama_post(responses)[0])
 
 
+def make_pexels() -> ArchiveProvider:
+    fixtures = Path(__file__).parent / "fixtures" / "archives" / "pexels"
+    http = FakeHttp({"/v1/search": json.loads((fixtures / "photos-search.json").read_text())})
+    return PexelsArchive("chave", get=http.get, get_file=http.get_file)
+
+
+def make_pixabay() -> ArchiveProvider:
+    fixtures = Path(__file__).parent / "fixtures" / "archives" / "pixabay"
+    http = FakeHttp({"pixabay.com/api/?": json.loads((fixtures / "images-search.json").read_text())})
+    return PixabayArchive("chave", get=http.get, get_file=http.get_file)
+
+
+def make_unsplash() -> ArchiveProvider:
+    fixtures = Path(__file__).parent / "fixtures" / "archives" / "unsplash"
+    http = FakeHttp(
+        {
+            "/search/photos": json.loads((fixtures / "search-photos.json").read_text()),
+            "/download": {"url": "https://image.unsplash.com/example"},
+        }
+    )
+    return UnsplashArchive("chave", get=http.get, get_file=http.get_file)
+
+
 def make_kokoro() -> TTSProvider:
     os.environ.setdefault("HF_HUB_OFFLINE", "1")  # pesos já em cache: o teste não acessa a rede (§2.10)
     from app.providers.tts.kokoro import KokoroTTS
@@ -74,7 +111,12 @@ TTS: list[Callable[[], TTSProvider]] = [
     pytest.param(make_kokoro, id="kokoro", marks=[pytest.mark.slow, NEEDS_TTS_EXTRA]),
 ]
 IMAGE_GEN: list[Callable[[], ImageGenProvider]] = [pytest.param(FakeImageGen, id="fake")]
-ARCHIVES: list[Callable[[], ArchiveProvider]] = [pytest.param(FakeArchive, id="fake")]
+ARCHIVES: list[Callable[[], ArchiveProvider]] = [
+    pytest.param(FakeArchive, id="fake"),
+    pytest.param(make_pexels, id="pexels"),
+    pytest.param(make_pixabay, id="pixabay"),
+    pytest.param(make_unsplash, id="unsplash"),
+]
 ALIGNERS: list[Callable[[], SubtitleAligner]] = [pytest.param(FakeAligner, id="fake")]
 RENDERERS: list[Callable[[], RenderEngine]] = [
     pytest.param(FakeRender, id="fake"),
@@ -94,7 +136,14 @@ STORES: list[Callable[[Path], ManifestStore]] = [
     pytest.param(InMemoryStore, id="in-memory"),
     pytest.param(JsonFileStore, id="json-files"),
 ]
-REVIEW_GATES: list[Callable[[], ReviewGate]] = [pytest.param(InMemoryReviewGate, id="in-memory")]
+def make_json_review_gate() -> ReviewGate:
+    return JsonReviewGate(JsonFileStore(Path(tempfile.mkdtemp(prefix="vp-review-"))))
+
+
+REVIEW_GATES: list[Callable[[], ReviewGate]] = [
+    pytest.param(InMemoryReviewGate, id="in-memory"),
+    pytest.param(make_json_review_gate, id="json-files"),
+]
 
 
 def episode() -> EpisodeManifest:
@@ -246,7 +295,7 @@ def test_review_gate_only_appends(make: Callable[[], ReviewGate]) -> None:
     gate = make()
     assert gate.log("pilot-example").entries == []
     first = ReviewEntry(step="script", decision="changes_requested", reviewer="v", at=FIXED_TIME)
-    second = first.model_copy(update={"decision": "approved"})
+    second = first.model_copy(update={"decision": Decision.APPROVED})
     gate.record("pilot-example", first)
     gate.record("pilot-example", second)
     assert gate.log("pilot-example").entries == [first, second]

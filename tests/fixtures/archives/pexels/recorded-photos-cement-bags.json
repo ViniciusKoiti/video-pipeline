@@ -1,0 +1,97 @@
+{
+  "_fonte": "Resposta real da API do Pexels (/search, consulta 'cement bags construction site', 2026-09-27T01:33:11+00:00), reduzida aos 4 primeiros itens. Sem a chave.",
+  "page": 1,
+  "per_page": 15,
+  "photos": [
+    {
+      "id": 29817952,
+      "width": 5472,
+      "height": 3648,
+      "url": "https://www.pexels.com/photo/stacked-cement-bags-on-wooden-pallet-outdoors-29817952/",
+      "photographer": "Aliaksei Smalenski",
+      "photographer_url": "https://www.pexels.com/@aksakal",
+      "photographer_id": 452606978,
+      "avg_color": "#A68B70",
+      "src": {
+        "original": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg",
+        "large2x": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/29817952/pexels-photo-29817952.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "Pile of orange cement bags on a wooden pallet in an industrial setting."
+    },
+    {
+      "id": 6473974,
+      "width": 5900,
+      "height": 3933,
+      "url": "https://www.pexels.com/photo/stack-of-sacks-of-cement-6473974/",
+      "photographer": "Tima Miroshnichenko",
+      "photographer_url": "https://www.pexels.com/@tima-miroshnichenko",
+      "photographer_id": 3088726,
+      "avg_color": "#50504B",
+      "src": {
+        "original": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg",
+        "large2x": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/6473974/pexels-photo-6473974.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "Sacks of cement placed in an indoor construction area, showcasing renovation materials."
+    },
+    {
+      "id": 30539627,
+      "width": 2896,
+      "height": 1936,
+      "url": "https://www.pexels.com/photo/monochrome-construction-site-with-industrial-equipment-30539627/",
+      "photographer": "Carlos Sedano",
+      "photographer_url": "https://www.pexels.com/@carlos-sedano-273404071",
+      "photographer_id": 273404071,
+      "avg_color": "#696969",
+      "src": {
+        "original": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg",
+        "large2x": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/30539627/pexels-photo-30539627.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "Black and white image of construction site with drums and equipment highlighting industrial atmosphere."
+    },
+    {
+      "id": 33044594,
+      "width": 2742,
+      "height": 1823,
+      "url": "https://www.pexels.com/photo/construction-site-with-cement-mixer-and-steel-framework-33044594/",
+      "photographer": "Oliver Dumlao",
+      "photographer_url": "https://www.pexels.com/@oliver-dumlao-2154071505",
+      "photographer_id": 2154071505,
+      "avg_color": "#938675",
+      "src": {
+        "original": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg",
+        "large2x": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/33044594/pexels-photo-33044594.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "Industrial construction site featuring cement mixer, steel columns, and scaffolding in an outdoor setting."
+    }
+  ],
+  "total_results": 8000,
+  "next_page": "https://api.pexels.com/v1/v1/search?orientation=landscape&page=2&per_page=15&query=cement+bags+construction+site"
+}

@@ -26,7 +26,7 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 - **Evitar:** sobrevivência recente (fotos de agência, vira 100% ilustração gerada), true crime,
   Titanic/Hindenburg/Everest 1996 (saturados), Segunda Guerra (oceano de concorrentes).
 
-### Etapa atual (atualizada em 2026-09-26)
+### Etapa atual (atualizada em 2026-09-28)
 
 Roteiro completo nas issues #1–#31 e #41–#48 (`docs/ROADMAP.md`). A #48 foi antecipada: fatia vertical do
 formato explicativo antes do piloto documentário.
@@ -39,17 +39,25 @@ formato explicativo antes do piloto documentário.
   modelo de perfil de poder (tipos `impact_today` e `rule`, perguntas neutras, controvérsia atribuída).
 - [x] **Protótipo `votorantim-fatia`** (90 s, 1914–1962): gate 1 aprovado; gate 2 com mudanças pedidas
   (faltava o objetivo: impacto hoje e como virou elite), o que originou o modelo de perfil.
-- [ ] **← Agora: protótipo `votorantim-abertura`** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
-  promessa). Gate 1 aprovado, verificador aprovou; **aguarda o gate 2 do dono**.
+- [x] **Protótipo `votorantim-abertura` v1** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
+  promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
+  (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
+- [ ] **Abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
+  blister, torre de transmissão), S08 sem a dedução sobre acionistas. Termos das quatro fontes
+  (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de imagem), adapters
+  Pexels/Pixabay/Unsplash, gates 1 e 3 registrados, verificador aprovou, render em `renders/final.mp4` (a v1
+  fica em `renders/v1-final.mp4`). **Gate 2 aprovado em 2026-09-27.** Pixabay e Unsplash aguardam as chaves.
+- [x] **Diagnóstico do visual (#69)** e sugestões #70–#82; motion-kit 0.2.0 com o kit editorial (PR #83).
+- [ ] **← Agora: planos editoriais (ADR 011, aceita em 2026-09-28)**, um PR por etapa: contrato e `vp check` →
+  template com as peças do kit → skills do roteirista e do verificador → episódio de teste de ~90 s
+  reaproveitando fontes e fichas do `votorantim-completo`.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
-  - B-roll do Pexels no gancho (autorização e `PEXELS_API_KEY`);
-  - fonte automática no rodapé dos planos;
-  - retrato de Getúlio Vargas no gate 3;
+  - retrato de Getúlio Vargas no gate 3; gate 3 do retrato `an-jose-ermirio` (identidade e DP no Brasil);
   - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
   - busca por vetor (ADR 010) quando as fontes passarem do que um agente lê de uma vez;
   - árvore da família com genro;
   - scripts provisórios de fonte, voz e render virarem `vp sources` (#26), `vp voice` (#16) e `vp render` (#13);
-  - `vp approve` (#12).
+  - `vp new` e `vp reopen` (resto da #12; `vp approve`, `vp reject` e `vp status` já existem).
 - Em pausa: #11 (invalidação) e M2–M7 do piloto documentário.
 
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
@@ -148,7 +156,8 @@ video-pipeline/
 
 ### Variáveis de ambiente (`.env.example` lista nomes e exemplos não secretos)
 
-`OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `PEXELS_API_KEY`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`,
+`OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `PEXELS_API_KEY`, `PIXABAY_API_KEY`, `UNSPLASH_ACCESS_KEY`,
+`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`,
 `WORKERS_AI_MODEL=@cf/black-forest-labs/flux-1-schnell`, `DATA_DIR`, `MAX_API_SPEND_USD=0`,
 `ALLOW_PAID_API=false`, `MAX_GENERATED_IMAGES_PER_EPISODE=12`, `MAX_CANDIDATES_PER_SCENE=2`,
 `MAX_CLOUD_REQUESTS_PER_EPISODE=40`. Opcionais para comparação: `GROQ_API_KEY`, `GEMINI_API_KEY`.
@@ -175,7 +184,7 @@ flowchart TD
         V1 -- "sim" --> R2{"Revisão 2: roteiro"}
         R2 -- "reprovado" --> B2
         R2 -- "aprovado" --> B3["Cenas e planos (ADR 008): visual_need + search_query por plano → scenes.json"]
-        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels → Workers AI → gráfico original"]
+        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels/Pixabay/Unsplash → Workers AI → gráfico original"]
         B4 --> B5["Galeria HTML estática por cena com origem, licença e créditos"]
         B5 --> R3{"Revisão 3: ativos e direitos"}
         R3 -- "trocar" --> B4
@@ -219,8 +228,10 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
   - Alterar texto narrado invalida voz do bloco, timing, legendas e render.
   - Alterar fonte invalida roteiro e tudo abaixo.
 - Erros de rede, cota ou licença param a cena, não o episódio.
-- Aprovação humana é registrada por `vp approve <id> --step <step>` em `review.json`, nunca editando
-  `review_status` à mão no manifesto principal.
+- Aprovação humana é registrada por `vp approve <id> --step <step>` (ou `vp reject`) em `review.json`, nunca
+  editando `review_status` à mão no manifesto principal. Nos gates feitos por agente ou pessoa, a decisão carimba
+  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2) ou o arquivo do ativo (gate 3);
+  `vp status` mostra se ela ainda vale (ADR 009, emenda de gates por comando).
 - **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
   (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
   (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
@@ -228,10 +239,13 @@ O mesmo diagrama está em `docs/pipeline-flowchart.mermaid`.
 ## 6. Contratos de dados (schemas pydantic em `app/pipeline/schemas.py`, ADR 007)
 
 Uma cena = um bloco de narração = um WAV, com uma **lista de planos tipados** (ADR 008): `photo`, `broll`,
-`number`, `chart`, `quote`, `map`, `stamp`, `lower_third`, `timeline`, `family_tree`. Cada plano fica
+`number`, `chart`, `quote`, `map`, `stamp`, `lower_third`, `timeline`, `family_tree`; a ADR 011 acrescenta
+`compare`, `network` e `keyword`, e campos em `chart` (linha, participação, destaque), `quote` (página de
+documento), `map` (mundo, países, rotas) e `timeline` (escala real). Cada plano fica
 ancorado num trecho da narração; o tempo sai da posição da âncora sobre a duração real do WAV
-(`app/pipeline/shots.py`). Cena sem planos = forma v1 (um plano de foto). Exemplo v1 completo em
-`tests/fixtures/episodes/pilot-example/`.
+(`app/pipeline/shots.py`). A fonte no rodapé sai das `claims` e do `sources.json`, e a tela não calcula razão
+nem soma que não esteja numa ficha (ADR 011). Cena sem planos = forma v1 (um plano de foto). Exemplo v1
+completo em `tests/fixtures/episodes/pilot-example/`.
 
 **`sources.json`** — por fonte: `id`, `title`, `url`, `kind` (`primary|secondary|newspaper|archive`),
 `retrieved_at`, `local_path` (texto extraído), `notes`. Mínimo de 2 fontes independentes para os
@@ -270,8 +284,10 @@ interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.a
 `license_id`, `license_url`, `attribution_text`, `usage_notes`, `retrieved_at`, `sha256`,
 `review_status`, `used_in_scenes` (lista: um mapa pode voltar). Imagem gerada tem também
 `generation: {prompt, model, seed, steps}`. Só chega a `approved` com licença da lista fechada da ADR 007
-(PD, CC0, CC-BY incl. 3.0 BR, Flickr-NKCR, Pexels, Generated, Original — **sem** CC-BY-SA e NC), `sha256`, e
-`usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
+(PD, CC0, CC-BY incl. 3.0 BR, Flickr-NKCR, Pexels, Pixabay, Unsplash, Coverr, Generated, Original — **sem**
+CC-BY-SA e NC), `sha256`, e `usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY.
+Ativo de banco de imagem só com a licença do próprio banco (ou CC0), `author`, `attribution_text` e, em
+`usage_notes`, a conferência de pessoas, marcas e texto (emenda de bancos de imagem).
 
 **`review.json`** — fonte única das decisões humanas: entradas só acrescentadas, por etapa, cena ou ativo,
 com `decision`, `reviewer`, `at`, `input_hash` do conteúdo revisado (mudou o conteúdo, a aprovação cai) e
@@ -310,12 +326,16 @@ se o motor for o Turbo, um adapter converte este arquivo para os parâmetros del
 ## 8. Política de imagens e cota
 
 Ordem de busca por cena: (1) acervo interno já revisado → (2) Commons, Library of Congress e
-Flickr Commons para pessoas, lugares e eventos específicos → (3) Pexels para cenas genéricas
-(ondas, neve, céu) → (4) Workers AI, no máximo 2 alternativas, escolha humana → (5) mapa, cronologia,
-citação curta permitida ou tela gráfica original. Nunca preencher com imagem irrelevante.
+Flickr Commons para pessoas, lugares e eventos específicos → (3) bancos de imagem para cenas genéricas
+(ondas, neve, céu): Pexels, Pixabay e Unsplash por API, Coverr só à mão pelo site → (4) Workers AI, no
+máximo 2 alternativas, escolha humana → (5) mapa, cronologia, citação curta permitida ou tela gráfica
+original. Nunca preencher com imagem irrelevante.
 
 - Busca em lote por consulta normalizada; cache de metadados e miniaturas; `sha256` para deduplicar;
-  redimensionar só o ativo final escolhido; registrar headers de cota do Pexels quando existirem.
+  redimensionar só o ativo final escolhido; registrar headers de cota dos bancos quando existirem.
+- Termos de cada banco (limites, cache, crédito, registro de download) em
+  `data/benchmarks/termos-bancos-de-imagem.md`. Nada de pessoa reconhecível doente ou tomando remédio, marca,
+  logo, texto ou contexto político em imagem de banco.
 - Regra prática de domínio público: publicado até 1930 é DP nos EUA; o Commons exige DP também no
   país de origem. Checar caso a caso e registrar o raciocínio em `usage_notes`.
 - **Workers AI:** cota gratuita de 10.000 neurons/dia. FLUX.1 Schnell custa 4,80 neurons por tile
@@ -341,8 +361,10 @@ citação curta permitida ou tela gráfica original. Nunca preencher com imagem 
   `archival_documentary` → **ffmpeg puro** (`app/render/ffmpeg.py`: segmento por cena em cache, fundo
   desfocado para imagens estreitas, legendas gravadas só na prévia, cor bt709); `explainer` →
   **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o template em `video/`, no `main` desde a
-  #48): um componente por tipo de plano, tarja sobre a foto quando vem logo depois dela, mapa com contornos do
-  Natural Earth (domínio público) e cache por cena. MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
+  #48): um componente por tipo de plano, tarja ou número sobre a foto ou o B-roll quando vem logo depois dela,
+  foto de banco colorida em tela cheia (a de arquivo fica no cartão P&B), mapa com contornos do Natural Earth
+  (domínio público) e cache por cena. Com a ADR 011, o template passa a usar as peças do motion-kit 0.2
+  (kit editorial, tema `editorial`). MoneyPrinterTurbo reprovado (branch `experimento-mpt`).
   Cena gráfica animada num documentário = clipe gerado pelo motion-kit como ativo `Original` (etapa #42).
   Comparação em `data/benchmarks/README.md`; entrada de teste `tests/fixtures/episodes/engine-test/`.
 
@@ -360,8 +382,9 @@ vp voice <id>                 # Kokoro por bloco + ffprobe -> voice/
 vp subs <id>                  # legendas alinhadas -> captions.srt
 vp render <id> [--preview]    # motor escolhido -> renders/
 vp export <id>                # final.mp4 + srt + description.txt + credits.txt
-vp approve <id> --step <s>    # registra aprovação humana em review.json
-vp status <id>                # estados por etapa e pendências
+vp approve <id> --step <s> [--asset <a>]  # aprovação humana em review.json (gates 1–3, ADR 009)
+vp reject <id> --step <s> --reason "..." [--changes]  # reprovação ou mudanças pedidas
+vp status <id>                # última decisão de cada gate e ativo, se ainda vale, e pendências
 vp reopen <id> --step <s> --reason "..."  # reabre etapa aprovada para refazer (§2.6)
 vp excerpts <id>              # trechos numerados de cada fonte -> excerpts/ (ADR 009)
 vp check <id>                 # valida fontes, fichas e cenas escritas por agente ou à mão (ADR 009)
@@ -418,15 +441,15 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 7. **Busca por vetor (ADR 010, proposta):** `vp search` sobre os trechos numerados, com embeddings locais
    guardados em arquivo (sem banco). Serve para achar trechos; a prova continua literal no `vp check`. Entra
    quando as fontes passarem do que um agente lê de uma vez (ex.: jornais da Hemeroteca).
-8. **B-roll de banco de imagens no gancho do explicativo:** Pexels, só como ilustração (§2.4); aguarda
-   autorização do dono e `PEXELS_API_KEY`.
+8. ~~B-roll de banco de imagens no gancho do explicativo~~ **Decidido** na emenda de bancos de imagem da
+   ADR 007 (2026-09-26): Pexels, Pixabay e Unsplash por API, Coverr só manual, sempre como ilustração (§2.4).
 
 ## 14. Como trabalhar neste repositório (instruções para o Claude Code)
 
 - Antes de escrever código de uma etapa, ler o schema correspondente em `app/pipeline/schemas.py` e
   o manifesto de exemplo em `tests/fixtures/episodes/pilot-example/`.
-- Nunca executar comandos que chamem provedores externos (Pexels, Cloudflare, Groq, Gemini) a menos
-  que o usuário peça explicitamente naquela sessão. Ollama e Kokoro locais podem rodar.
+- Nunca executar comandos que chamem provedores externos (Pexels, Pixabay, Unsplash, Coverr, Cloudflare, Groq,
+  Gemini) a menos que o usuário peça explicitamente naquela sessão. Ollama e Kokoro locais podem rodar.
 - Nunca editar arquivos em `data/episodes/*/` com `review_status: approved`; se um ajuste exigir isso,
   parar e perguntar.
 - Em dúvida sobre licença de um ativo ou termos de um provedor, parar e perguntar; não decidir sozinho.

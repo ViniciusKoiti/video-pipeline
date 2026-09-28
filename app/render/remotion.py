@@ -16,14 +16,15 @@ from pathlib import Path
 from typing import Any
 
 from app.media.probe import dimensions, duration_ms
-from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene
+from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, parse_srt
 
 PROJECT = Path(__file__).resolve().parents[2] / "video"
 TEMPLATE_GLOBS = (
-    "src/*.ts", "src/*.tsx", "src/fonts/*", "src/geo/*.json", "render-scenes.mjs", "package-lock.json"
+    "src/*.ts", "src/*.tsx", "src/fonts/*", "src/geo/*.json", "src/geo/*.ts", "render-scenes.mjs",
+    "package-lock.json",
 )
 
 
@@ -39,6 +40,17 @@ def template_hash(project: Path) -> str:
     return digest.hexdigest()
 
 
+def region_codes(project: Path = PROJECT) -> frozenset[str]:
+    """Códigos de país e estado dos contornos do template (`src/geo/*.json`): o `vp check` recusa os outros
+    em `map.highlight` (ADR 011)."""
+    codes: set[str] = set()
+    for path in sorted((project / "src" / "geo").glob("*.json")):
+        data = json.loads(path.read_text())
+        items = data if isinstance(data, list) else [*data.get("countries", []), *data.get("states", [])]
+        codes |= {item["id"] for item in items if "id" in item}
+    return frozenset(codes)
+
+
 def _credit(episode_dir: Path, asset_id: str | None) -> str | None:
     """Crédito exibido sob a foto, do JSON do ativo (§6); sem JSON, sem crédito."""
     path = episode_dir / "assets" / f"{asset_id}.json"
@@ -46,6 +58,18 @@ def _credit(episode_dir: Path, asset_id: str | None) -> str | None:
         return None
     asset = Asset.model_validate_json(path.read_text())
     return asset.attribution_text or asset.author
+
+
+def _editorial(shot: EpisodeShot, fps: int) -> dict[str, Any]:
+    """Campos da ADR 011 para o template: fonte do rodapé e quadro de entrada de cada passo da rede."""
+    extra: dict[str, Any] = {}
+    if shot.source is not None:
+        extra["source"] = shot.source
+    if shot.source_flag is not None:
+        extra["sourceFlag"] = shot.source_flag
+    if shot.steps_ms:
+        extra["stepFrames"] = [round(ms * fps / 1000) for ms in shot.steps_ms]
+    return extra
 
 
 class RemotionEngine:
@@ -81,7 +105,9 @@ class RemotionEngine:
     def _shots(self, scene: EpisodeScene, frames: int, fps: int, episode_dir: Path) -> list[dict[str, Any]]:
         if not scene.shots:  # v1: um plano de foto sobre a cena inteira
             spec = {"kind": "photo", "anchor": scene.narration, "motion": "push_in"}
-            raw = [(0, spec, scene.image, scene.asset_id)]
+            raw: list[tuple[int, dict[str, Any], str | None, str | None, dict[str, Any]]] = [
+                (0, spec, scene.image, scene.asset_id, {})
+            ]
         else:
             raw = [
                 (
@@ -89,14 +115,16 @@ class RemotionEngine:
                     shot.spec.model_dump(mode="json"),
                     shot.media,
                     getattr(shot.spec, "asset_id", None),
+                    _editorial(shot, fps),
                 )
                 for shot in scene.shots
             ]
         starts = [start for start, *_ in raw]
         ends = [*starts[1:], frames]
         shots = []
-        for (start, spec, media, asset_id), end in zip(raw, ends, strict=True):
+        for (start, spec, media, asset_id, extra), end in zip(raw, ends, strict=True):
             shot: dict[str, Any] = {"from": start, "frames": end - start, "spec": spec, "media": media}
+            shot.update(extra)
             if media is not None:
                 width, height = dimensions(episode_dir / media)
                 shot["aspect"] = width / height
