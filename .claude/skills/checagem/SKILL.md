@@ -28,8 +28,17 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
    - superlativos e pioneirismos ("o maior", "o primeiro", "o único"): a fonte diz isso?
    - intenção e sentimento ("queria", "temia", "apostou tudo"): a fonte diz isso?
    - frase que afirma fato sem `claims` → sem suporte.
-   - texto na tela (`number`, `stamp`, `lower_third`, `quote`, `chart`, `timeline`, `family_tree`)
-     igual à ficha, e `quote` literal da fonte.
+   - texto na tela (`number`, `stamp`, `lower_third`, `quote`, `chart`, `timeline`, `family_tree`,
+     `compare`, `network`, `map`, `keyword`) igual à ficha, e `quote` literal da fonte. Nos planos da
+     ADR 011, também:
+     - `compare`: os dois valores e rótulos estão nas fichas; razão, variação ou soma só se uma ficha trouxer;
+     - `network`: cada aresta (quem, verbo, direção, valor) está no trecho das `claims` dela; tracejada só
+       onde a fonte descreve relação indireta;
+     - `quote` com `style: "document"`: título, emissor e data do cabeçalho correspondem à fonte;
+     - `chart`: `highlight` no ponto que a narração comenta; em `type: "line"`, só anos das fichas;
+     - `map`: país ou estado aceso e rota sustentados pelas `claims`;
+     - `keyword`: lida sozinha, a frase mantém o sentido da narração inteira (quem disse, negação,
+       ressalva); se o recorte muda o sentido → `EXAGERO`.
 3. **Pessoas vivas:** nada de vida privada; só fato público com documento.
 4. **Controvérsia e acusação:**
    - crime, fraude, cartel, intenção ou caráter afirmados diretamente pela narração → `SEM SUPORTE`,
@@ -48,6 +57,7 @@ DIVERGE     S03 "No ano seguinte, o genro já dirigia a empresa" — source-02#E
 SEM SUPORTE S04 "por isso decidiu entrar no cimento" — nenhuma ficha afirma a causa
 EXAGERO     S01 plano number "47 anos no comando" — F02 dá 1926–1973 como diretor, não "no comando"
 TELA        S02 lower_third "comprador da fábrica" — F01 diz "adquiriu o controle"
+TELA        S07 network aresta banco-b→empresa-a "empresta a" — source-02#E7 diz "avalizou o empréstimo"
 ```
 
 Para cada linha, sugira a correção mínima (trocar a palavra, tirar a causa, citar outra ficha). No fim,
