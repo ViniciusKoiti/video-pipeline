@@ -21,17 +21,18 @@ que não está nas fichas, não escreva a frase: anote a lacuna no fim do `outli
 
 ```json
 {
-  "episode_id": "votorantim-fatia",
+  "episode_id": "exemplo",
   "language": "pt-BR",
   "scenes": [
     {
       "id": "S02",
-      "narration": "Mas a história começa em 1918, com uma fábrica de tecidos que ninguém queria.",
+      "narration": "Em 1950, a Empresa A comprou uma fábrica que estava parada havia dois anos.",
       "shots": [
-        {"kind": "stamp", "anchor": "Mas a história", "date": "1918", "place": "Sorocaba (SP)",
-         "claims": [{"text": "compra em 1918", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E12"]}]},
-        {"kind": "photo", "anchor": "uma fábrica de tecidos", "visual_need": "historical_exact",
-         "search_query": "Fábrica de Tecidos Votorantim 1918", "asset_id": null, "motion": "push_in"}
+        {"kind": "photo", "anchor": "Em 1950", "visual_need": "historical_exact",
+         "search_query": "Empresa A fábrica 1950", "asset_id": null, "motion": "push_in"},
+        {"kind": "stamp", "anchor": "a Empresa A comprou", "date": "1950", "place": "Cidade A",
+         "claims": [{"text": "compra em 1950", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E12"]}]},
+        {"kind": "keyword", "anchor": "parada havia dois anos", "text": "parada havia dois anos"}
       ]
     }
   ]
@@ -84,28 +85,50 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 6. **Cenas.** Uma cena = um bloco de narração de 1 a 3 frases (5 a 12 s, cerca de 75 a 180 caracteres;
    a voz fala ~15 caracteres por segundo).
 7. **Planos.** Um plano a cada 2 a 4 s (30 a 60 caracteres de narração). `anchor` é um trecho literal da
-   narração, em ordem; o primeiro plano cobre o início da cena. Escolha pelo conteúdo:
-   - número dito → `number` (o valor exato da ficha, com a unidade no `label`);
-   - data ou lugar → `stamp`; lugares e deslocamentos → `map`;
-   - pessoa entrando na história → `photo` (se houver retrato) e `lower_third` (nome e papel);
-   - sequência de eventos → `timeline`; parentesco → `family_tree`; comparação de valores → `chart`;
-   - frase de documento → `quote` com o texto literal da fonte; `style: "headline"` só para manchete
-     real de jornal. Nunca invente citação nem manchete.
-   - `photo`/`broll`: `visual_need` correto (§2.4), `search_query` específica (pessoa, lugar, ano) e
-     `asset_id: null`; a busca de ativos é outra etapa.
+   narração, em ordem; o primeiro plano cobre o início da cena. Escolha pelo que a frase faz (formato e
+   exemplo dos tipos da ADR 011 em `planos.md`, nesta pasta; campos completos em `app/pipeline/schemas.py`):
+
+   | A frase... | Plano |
+   |---|---|
+   | apresenta uma pessoa | `photo` do retrato, seguido de `lower_third` (nome e papel) |
+   | mostra algo que se possa fotografar ou filmar | `photo` ou `broll` |
+   | diz um número | `number`: o valor como na ficha; o `label` diz o que ele mede |
+   | compara dois valores | `compare`: `side`; `before_after` para antes e depois; `scale` na mesma unidade |
+   | traz uma série no tempo (3 anos ou mais) | `chart` com `type: "line"` |
+   | divide um todo em partes | `chart` com `type: "share"` |
+   | compara categorias | `chart` com `type: "bar"` (`bar_horizontal` para rótulos longos) |
+   | liga pessoas e instituições (controla, empresta, compra, avaliza) | `network`, um passo por trecho que traz um ator novo |
+   | cita um documento | `quote` com `style: "document"` e o cabeçalho da fonte; `headline` para manchete real de jornal |
+   | tem a data ou o lugar como ponto | `stamp` |
+   | fala de lugares ou de um deslocamento | `map`; entre países, `scope: "world"` com `routes` |
+   | conta uma sequência de eventos | `timeline`, com `when` (ano ou data ISO) em cada evento |
+   | tem uma frase-chave | `keyword`: até 8 palavras copiadas da narração, uma por cena |
+   | fala de parentesco | `family_tree` |
+
+   - **Imagem por baixo:** a foto ou o B-roll de uma cena continua por baixo da tarja, do carimbo, do número
+     e da frase que vêm depois dele. Planeje pelo menos um `photo` ou `broll` por cena, com `visual_need`
+     correto (§2.4), `search_query` específica (pessoa, lugar, ano) e `asset_id: null` (a busca de ativos é
+     outra etapa); quando nenhuma imagem for possível, anote a lacuna no outline.
+   - **Destaque:** em `chart`, `highlight` é o ponto que a frase comenta; sem ele, nenhum ponto se destaca.
+   - **Quem disse** vai na narração ("segundo o relatório da empresa"); a fonte de cada plano com `claims`
+     aparece sozinha no rodapé, e o `label` fica só com o que o valor mede.
+   - **Variedade:** alterne os tipos e mantenha imagem na tela; os alertas do `vp check` apontam as
+     repetições.
 8. **Toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena; plano que mostra número,
    data, nome, cargo, citação ou gráfico → `claims` no plano. Use `source_ids` e `excerpt_ids` das
-   evidências das fichas usadas. O texto na tela repete a ficha: não arredonde nem "atualize" valores.
+   evidências das fichas usadas; cada aresta de `network` tem as suas próprias `claims`. O texto na tela
+   repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz.
 9. **Narração para ser falada** em pt-BR (voz Kokoro `pm_alex`):
    - frases de até ~20 palavras, uma ideia por frase, alternando curtas e longas;
    - anos em algarismos; outros números escritos como devem ser ditos ("mil e quinhentos operários");
    - sigla por extenso na primeira vez; nomes próprios vão para `voice/glossary.json` se a pronúncia
      falhar;
    - sem "nesse vídeo", "você não vai acreditar", "fica até o final", "e isso muda tudo".
-10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s.
+10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
+    cronologia e documento com pelo menos 4 s, o tempo de ler.
 
 ## Fechamento
 
 - Passe a skill `humanizer-narracao` na narração.
-- Rode `.venv/bin/vp check <id>` até zero erros; trate os alertas de ritmo.
+- Rode `.venv/bin/vp check <id>` até zero erros; trate os alertas de ritmo e de variedade.
 - Entregue para o agente `verificador` (contexto limpo) antes do gate 2.

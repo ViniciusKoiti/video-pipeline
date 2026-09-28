@@ -401,3 +401,27 @@ def test_unknown_map_code_is_an_error(tmp_path: Path) -> None:
     report = check_episode(episode(tmp_path, facts=facts_file(), scenes_json=raw), EP,
                            region_codes=frozenset({"BR-SP"}))
     assert report.errors == ["S01: código BR-XX fora dos contornos do mapa"]
+
+
+# --- Skills (etapa 3) ---------------------------------------------------------------------------
+
+SKILL = Path(__file__).parents[1] / ".claude" / "skills" / "roteiro-explicativo"
+
+
+def _json_blocks(path: Path) -> list[str]:
+    import re
+
+    return re.findall(r"```json\n(.*?)```", path.read_text(), flags=re.S)
+
+
+def test_shot_examples_in_the_skill_follow_the_contract() -> None:
+    """Os exemplos que o roteirista copia passam no schema: a skill não fica atrás do contrato."""
+    import json
+
+    blocks = _json_blocks(SKILL / "planos.md")
+    kinds = [SHOT.validate_python(json.loads(block)).kind for block in blocks]
+    assert set(kinds) == {"compare", "network", "chart", "quote", "map", "timeline", "keyword"}
+    (example,) = _json_blocks(SKILL / "SKILL.md")
+    from app.pipeline.schemas import ScenesManifest
+
+    assert ScenesManifest.model_validate_json(example).scenes[0].shots[-1].kind == "keyword"
