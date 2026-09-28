@@ -15,9 +15,15 @@ from pydantic import ValidationError
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.ports import M, ManifestStore
 from app.pipeline.schemas import (
+    MEDIA_SHOT_KINDS,
+    OVERLAY_SHOT_KINDS,
+    ChartShot,
     FactKind,
     FactsManifest,
+    QuoteShot,
+    Scene,
     ScenesManifest,
+    Shot,
     SourcesManifest,
     effective_shots,
     unknown_source_refs,
@@ -28,6 +34,13 @@ from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
 # vem do WAV (§9).
 CHARS_PER_SECOND = 15.0
 MAX_SHOT_MS = 6000
+# Alertas de variedade (ADR 011, decisão 9): a revisão humana decide.
+MAX_GRAPHIC_RUN = 4  # planos gráficos seguidos sem foto nem B-roll na tela
+MAX_STAMP_SHARE = 0.10
+MIN_SHOTS_FOR_SHARE = 10  # porcentagem de poucos planos não diz nada
+READING_MS = 4000  # tempo mínimo de leitura de gráfico, comparação, rede, cronologia e documento
+READING_KINDS = frozenset({"chart", "compare", "network", "timeline"})
+LONG_KINDS = frozenset({"network", "timeline"})  # a câmera percorre o plano: sem teto de duração
 
 
 @dataclass
@@ -149,14 +162,81 @@ def _check_scenes(
             report.errors.append(f"{scene.id}: {error}")
             continue
         for shot, (_, ms) in zip(planned, bounds, strict=True):
-            if not MIN_SHOT_MS <= ms <= MAX_SHOT_MS:
+            too_long = ms > MAX_SHOT_MS and shot.kind not in LONG_KINDS
+            if ms < MIN_SHOT_MS or too_long:
                 report.warnings.append(
                     f"{scene.id}: plano {shot.kind} ({shot.anchor!r}) com ~{ms / 1000:.1f} s"
                 )
+            elif ms < READING_MS and _needs_reading_time(shot):
+                report.warnings.append(
+                    f"{scene.id}: {shot.kind} ({shot.anchor!r}) com ~{ms / 1000:.1f} s; "
+                    f"precisa de {READING_MS / 1000:.0f} s para ser lido"
+                )
+            if isinstance(shot, QuoteShot) and excerpts:
+                cited = [excerpts[e] for c in shot.claims for e in c.excerpt_ids if e in excerpts]
+                if cited and not any(quote_in_excerpt(shot.text, text) for text in cited):
+                    report.errors.append(
+                        f"{scene.id}: citação na tela não está nos trechos citados: {shot.text!r}"
+                    )
+    report.warnings += variety_warnings(scenes.scenes)
     report.checked.append(
         f"scenes.json: {len(scenes.scenes)} cena(s), {shots} plano(s), ~{total_ms / 1000:.0f} s de narração "
         f"(média ~{total_ms / shots / 1000:.1f} s por plano, estimada)"
     )
+
+
+def _needs_reading_time(shot: Shot) -> bool:
+    return shot.kind in READING_KINDS or (isinstance(shot, QuoteShot) and shot.style == "document")
+
+
+def variety_warnings(scenes: list[Scene]) -> list[str]:
+    """Cartões demais sem imagem, carimbos demais, tarja sem imagem, o mesmo tipo em sequência, gráfico de
+    barras que devia ser comparação, frase na tela repetida (ADR 011, decisão 9)."""
+    warnings: list[str] = []
+    run: list[str] = []  # cenas do trecho atual de planos gráficos sem mídia
+    total = stamps = 0
+    previous: tuple[str, str] | None = None  # (cena, tipo) do plano gráfico anterior
+
+    def close_run() -> None:
+        if len(run) > MAX_GRAPHIC_RUN:
+            where = run[0] if run[0] == run[-1] else f"{run[0]}–{run[-1]}"
+            warnings.append(f"{where}: {len(run)} planos gráficos seguidos sem foto nem B-roll")
+        run.clear()
+
+    for scene in scenes:
+        media_before = False
+        keywords = 0
+        for shot in effective_shots(scene):
+            total += 1
+            stamps += shot.kind == "stamp"
+            keywords += shot.kind == "keyword"
+            if shot.kind in MEDIA_SHOT_KINDS:
+                media_before = True
+                previous = None
+                close_run()
+                continue
+            if shot.kind == "lower_third" and not media_before:
+                warnings.append(f"{scene.id}: tarja ({shot.anchor!r}) sem foto nem B-roll por baixo")
+            two_bars = isinstance(shot, ChartShot) and shot.type in ("bar", "bar_horizontal")
+            if two_bars and len(shot.points) == 2:
+                warnings.append(f"{scene.id}: gráfico de barras com 2 pontos ({shot.anchor!r}); use compare")
+            if previous is not None and previous[1] == shot.kind:
+                where = scene.id if previous[0] == scene.id else f"{previous[0]}–{scene.id}"
+                warnings.append(f"{where}: {shot.kind} duas vezes seguidas")
+            previous = (scene.id, shot.kind)
+            if shot.kind in OVERLAY_SHOT_KINDS and media_before:
+                close_run()  # desenhado sobre a mídia da cena: ainda há imagem na tela
+            else:
+                run.append(scene.id)
+        if keywords > 1:
+            warnings.append(f"{scene.id}: {keywords} frases na tela na mesma cena; use uma")
+        media_before = False
+    close_run()
+    if total >= MIN_SHOTS_FOR_SHARE and stamps / total > MAX_STAMP_SHARE:
+        warnings.append(
+            f"carimbos em {stamps} de {total} planos ({stamps / total:.0%}); o limite é {MAX_STAMP_SHARE:.0%}"
+        )
+    return warnings
 
 
 def check_episode(store: ManifestStore, episode_id: str) -> CheckReport:

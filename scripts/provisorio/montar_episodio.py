@@ -7,6 +7,7 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
 - Duração real de cada WAV (ffprobe) → tempo dos planos (app/pipeline/shots.py) → episode.json v2.
 - Render pelo motor do formato explicativo (Remotion), com cache por cena.
 - A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>` (jpg, png, webp, mp4, webm).
+- Com `sources.json` na pasta, cada plano com claims ganha a fonte do rodapé (ADR 011).
 """
 
 from __future__ import annotations
@@ -22,7 +23,13 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.media.probe import duration_ms  # noqa: E402
-from app.pipeline.schemas import EpisodeFormat, EpisodeManifest, EpisodeScene, ScenesManifest  # noqa: E402
+from app.pipeline.schemas import (  # noqa: E402
+    EpisodeFormat,
+    EpisodeManifest,
+    EpisodeScene,
+    ScenesManifest,
+    SourcesManifest,
+)
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
 from app.providers.tts.base import SpeechRequest  # noqa: E402
 from app.providers.tts.kokoro import KokoroTTS  # noqa: E402
@@ -46,6 +53,10 @@ def main() -> None:
     settings = load_settings(ROOT)
     episode_dir = settings.data_dir / "episodes" / args[0]
     scenes = ScenesManifest.model_validate_json((episode_dir / "scenes.json").read_text())
+    sources_path = episode_dir / "sources.json"  # fonte no rodapé dos planos (ADR 011)
+    sources = None
+    if sources_path.is_file():
+        sources = SourcesManifest.model_validate_json(sources_path.read_text())
     voice_name = settings.kokoro.voices[scenes.language]
     tts = KokoroTTS(settings.kokoro.voices)
     voice_dir = episode_dir / "voice"
@@ -61,7 +72,7 @@ def main() -> None:
                 stale.unlink()
             tts.synthesize_speech(SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language))
         ms = duration_ms(wav)
-        shots = episode_shots(scene, ms, lambda shot: media_path(episode_dir, shot.asset_id))
+        shots = episode_shots(scene, ms, lambda shot: media_path(episode_dir, shot.asset_id), sources)
         episode_scenes.append(
             EpisodeScene(
                 id=scene.id, start_ms=cursor, duration_ms=ms, narration=scene.narration,

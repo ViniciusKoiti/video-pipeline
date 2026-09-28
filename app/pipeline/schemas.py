@@ -11,7 +11,15 @@ from enum import StrEnum
 from pathlib import PurePosixPath
 from typing import Annotated, Literal, Self
 
-from pydantic import AfterValidator, AwareDatetime, BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    AfterValidator,
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 
 class Model(BaseModel):
@@ -174,18 +182,72 @@ class ChartPoint(Model):
     value: float
 
 
+# Ano ("1927") ou data ISO ("1927-03" ou "1927-03-12"): posição num eixo de tempo (ADR 011).
+_WHEN_RE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")
+_YEAR_RE = re.compile(r"(?<!\d)\d{4}(?!\d)")
+# Número como aparece na tela ("R$ 47,6 bi", "1.500", "78%"): prefixo, dígitos e sufixo (regra do `number`).
+_SCREEN_NUMBER_RE = re.compile(r"^(\D*?)([\d.,]*\d)(.*)$")
+
+
+def screen_number(value: str) -> tuple[str, float, str] | None:
+    """(prefixo, número, sufixo) de um valor escrito em pt-BR; None se não houver número reconhecível."""
+    match = _SCREEN_NUMBER_RE.match(value.strip())
+    if match is None:
+        return None
+    digits = match.group(2).replace(".", "").replace(",", ".")
+    try:
+        return match.group(1).strip(), float(digits), match.group(3).strip()
+    except ValueError:
+        return None
+
+
 class ChartShot(_FactualShot):
     kind: Literal["chart"] = "chart"
     title: NonEmpty
     unit: str = ""
     points: list[ChartPoint] = Field(min_length=2)
+    type: Literal["bar", "bar_horizontal", "line", "share"] = "bar"  # ADR 011
+    highlight: str | None = None  # rótulo do ponto em destaque; sem ele, nenhum destaque
+    y_from_zero: bool = True  # só `line`: eixo a partir do zero, para não exagerar variação pequena
+    rest: str | None = None  # só `share`: rótulo da fatia do que sobra (ex.: "outros")
+
+    @model_validator(mode="after")
+    def _consistent_type(self) -> Self:
+        labels = [p.label for p in self.points]
+        if self.highlight is not None and self.highlight not in labels:
+            raise ValueError(f"destaque {self.highlight!r} não é um dos rótulos do gráfico")
+        if self.type == "line" and not all(_WHEN_RE.match(label) for label in labels):
+            raise ValueError("gráfico de linha: os rótulos precisam ser anos (1927) ou datas ISO")
+        if self.type == "share" and any(p.value < 0 for p in self.points):
+            raise ValueError("gráfico de participação sem valor negativo")
+        if self.rest is not None and self.type != "share":
+            raise ValueError("rest só vale no gráfico de participação (type share)")
+        return self
+
+
+class DocumentHeader(Model):
+    """Cabeçalho da página recriada; o texto real da página é só o trecho citado (ADR 011)."""
+
+    title: NonEmpty
+    issuer: str = ""
+    date: str = ""
 
 
 class QuoteShot(_FactualShot):
     kind: Literal["quote"] = "quote"  # citação ou manchete recriada como tipografia, nunca print (§8)
-    text: NonEmpty
+    text: NonEmpty  # literal num dos trechos citados (`vp check`, ADR 011)
     attribution: NonEmpty
-    style: Literal["quote", "headline"] = "quote"
+    style: Literal["quote", "headline", "document"] = "quote"
+    document: DocumentHeader | None = None  # obrigatório em `document`; opcional em `headline`
+    variant: Literal["report", "newspaper", "letter"] = "report"  # só `document`
+
+    @model_validator(mode="after")
+    def _document_header(self) -> Self:
+        if self.style == "document" and self.document is None:
+            raise ValueError("citação em página de documento precisa do cabeçalho (document)")
+        if self.style == "quote" and self.document is not None:
+            raise ValueError("document só vale nos estilos document e headline")
+        return self
 
 
 class Place(Model):
@@ -194,9 +256,42 @@ class Place(Model):
     lon: float = Field(ge=-180, le=180)
 
 
+class _FromTo(Model):
+    """`from` é palavra reservada no Python: o campo se chama `from_` e o JSON continua com "from"."""
+
+    model_config = ConfigDict(
+        extra="forbid", validate_assignment=True, serialize_by_alias=True, validate_by_name=True
+    )
+
+    from_: NonEmpty = Field(alias="from")
+    to: NonEmpty
+
+
+class Route(_FromTo):
+    """Rota entre dois lugares do mapa, pelos nomes em `places`."""
+
+
+# País (ISO 3166-1 alfa-3, "BRA") ou estado (ISO 3166-2, "BR-SP").
+RegionCode = Annotated[str, Field(pattern=r"^([A-Z]{3}|[A-Z]{2}-[A-Z0-9]{1,3})$")]
+
+
 class MapShot(_Shot):
     kind: Literal["map"] = "map"
     places: list[Place] = Field(min_length=1)
+    scope: Literal["region", "world"] = "region"  # ADR 011
+    highlight: list[RegionCode] = []  # países ou estados acesos, em ordem
+    routes: list[Route] = []
+
+    @model_validator(mode="after")
+    def _routes_and_claims(self) -> Self:
+        names = {p.name for p in self.places}
+        for route in self.routes:
+            missing = sorted({route.from_, route.to} - names)
+            if missing:
+                raise ValueError(f"rota com lugar fora de places: {', '.join(missing)}")
+        if (self.highlight or self.routes) and not self.claims:
+            raise ValueError("mapa com países acesos ou rotas afirma algo: precisa de claims (§2.2)")
+        return self
 
 
 class StampShot(_FactualShot):
@@ -212,8 +307,25 @@ class LowerThirdShot(_FactualShot):
 
 
 class TimelineEvent(Model):
-    date: NonEmpty
+    date: NonEmpty  # texto na tela ("7 jan. 1918", "anos 1920")
     label: NonEmpty
+    when: str | None = None  # ano ou data ISO: posição na escala real (ADR 011)
+
+    @field_validator("when", mode="before")
+    @classmethod
+    def _year_as_text(cls, value: object) -> object:
+        return str(value) if isinstance(value, int) else value
+
+    @model_validator(mode="after")
+    def _when_matches_date(self) -> Self:
+        if self.when is None:
+            return self
+        if not _WHEN_RE.match(self.when):
+            raise ValueError(f"when {self.when!r}: use o ano (1927) ou uma data ISO (1927-03-12)")
+        years = _YEAR_RE.findall(self.date)
+        if years and self.when[:4] not in years:
+            raise ValueError(f"when {self.when!r} não bate com o ano escrito em {self.date!r}")
+        return self
 
 
 class TimelineShot(_FactualShot):
@@ -242,6 +354,126 @@ class FamilyTreeShot(_FactualShot):
         return self
 
 
+# --- Planos editoriais (ADR 011) -----------------------------------------------------------------
+
+
+class CompareSide(Model):
+    value: NonEmpty  # como aparece na tela, como no `number`: "69 mil", "R$ 47,6 bi"
+    label: NonEmpty
+
+
+class CompareShot(_FactualShot):
+    """Dois valores lado a lado; a tela não calcula razão nem variação (ADR 011, decisão 7)."""
+
+    kind: Literal["compare"] = "compare"
+    left: CompareSide
+    right: CompareSide
+    mode: Literal["side", "before_after", "scale"] = "side"
+    emphasis: Literal["left", "right"] | None = None  # só o peso da fonte; o outro lado não apaga
+
+    @model_validator(mode="after")
+    def _scale_needs_same_unit(self) -> Self:
+        if self.mode != "scale":
+            return self
+        left, right = screen_number(self.left.value), screen_number(self.right.value)
+        if left is None or right is None:
+            raise ValueError("comparação em escala precisa de dois números")
+        if (left[0], left[2]) != (right[0], right[2]):
+            raise ValueError(
+                f"comparação em escala com unidades diferentes: {self.left.value!r} e {self.right.value!r}"
+            )
+        return self
+
+
+NodeId = Annotated[str, Field(pattern=r"^[a-z0-9]+(-[a-z0-9]+)*$")]
+
+
+class NetworkNode(Model):
+    id: NodeId
+    label: NonEmpty  # nome da pessoa ou instituição
+    role: str = ""
+    # O ícone sai do tipo, no template: o roteiro não escolhe ícone, cor nem logo.
+    kind: Literal["person", "family", "company", "bank", "government", "other"]
+
+
+class NetworkEdge(_FromTo):
+    label: str = ""  # a relação ("controla", "empresta a")
+    value: str = ""  # valor na seta, como aparece na tela
+    style: Literal["solid", "dashed"] = "solid"  # tracejada: relação indireta
+    flow: bool = False  # dinheiro correndo de `from` para `to`
+    claims: list[Claim] = Field(min_length=1)  # cada relação é uma afirmação (§2.2)
+
+
+class NetworkStep(Model):
+    anchor: NonEmpty  # trecho da narração em que o passo entra, depois da âncora do plano
+    nodes: list[NodeId] = []  # nós que entram
+    highlight: list[NodeId] = []  # nós acesos (e as arestas entre eles); o resto esmaece
+
+    @model_validator(mode="after")
+    def _does_something(self) -> Self:
+        if not self.nodes and not self.highlight:
+            raise ValueError(f"passo {self.anchor!r} sem nós novos nem destaque")
+        return self
+
+
+class NetworkShot(_FactualShot):
+    """Rede que cresce no ritmo da narração enquanto a câmera se afasta (ExpandingNetwork)."""
+
+    kind: Literal["network"] = "network"
+    root: NodeId
+    nodes: list[NetworkNode] = Field(min_length=2)
+    edges: list[NetworkEdge] = Field(min_length=1)
+    steps: list[NetworkStep] = Field(min_length=1)
+    layout: Literal["radial", "layered"] = "radial"
+
+    @model_validator(mode="after")
+    def _consistent_graph(self) -> Self:
+        ids = [n.id for n in self.nodes]
+        _unique(ids, "nós da rede")
+        _unique([f"{e.from_}->{e.to}" for e in self.edges], "arestas da rede")
+        known = set(ids)
+        if self.root not in known:
+            raise ValueError(f"raiz {self.root!r} não está entre os nós")
+        referenced = {self.root} | {x for e in self.edges for x in (e.from_, e.to)}
+        referenced |= {x for s in self.steps for x in s.nodes + s.highlight}
+        unknown = sorted(referenced - known)
+        if unknown:
+            raise ValueError(f"nós inexistentes na rede: {', '.join(unknown)}")
+        entering = [x for s in self.steps for x in s.nodes]
+        _unique(entering, "nós que entram nos passos")
+        if self.root in entering:
+            raise ValueError("a raiz já abre o plano; não entra de novo num passo")
+        never = sorted(known - set(entering) - {self.root})
+        if never:
+            raise ValueError(f"nós que nunca entram na rede: {', '.join(never)}")
+        return self
+
+
+KEYWORD_MAX_WORDS = 8
+
+
+def _fold(text: str) -> str:
+    """Comparação de texto na tela com a narração: sem diferença de maiúscula nem de espaços."""
+    return " ".join(text.casefold().split())
+
+
+class KeywordShot(_Shot):
+    """Frase-chave da narração na tela (KineticHeadline). Cópia literal da narração da cena, que já tem
+    as suas claims; por isso o plano não exige claims próprias (ADR 011)."""
+
+    kind: Literal["keyword"] = "keyword"
+    text: NonEmpty
+    highlight: str = ""  # trecho do `text` em destaque
+
+    @model_validator(mode="after")
+    def _short_and_consistent(self) -> Self:
+        if len(self.text.split()) > KEYWORD_MAX_WORDS:
+            raise ValueError(f"frase na tela com mais de {KEYWORD_MAX_WORDS} palavras: {self.text!r}")
+        if self.highlight and _fold(self.highlight) not in _fold(self.text):
+            raise ValueError(f"destaque {self.highlight!r} fora da frase {self.text!r}")
+        return self
+
+
 Shot = Annotated[
     PhotoShot
     | BrollShot
@@ -252,13 +484,20 @@ Shot = Annotated[
     | StampShot
     | LowerThirdShot
     | TimelineShot
-    | FamilyTreeShot,
+    | FamilyTreeShot
+    | CompareShot
+    | NetworkShot
+    | KeywordShot,
     Field(discriminator="kind"),
 ]
 MEDIA_SHOT_KINDS = frozenset({"photo", "broll"})  # visual vem de um ativo
 GRAPHIC_SHOT_KINDS = frozenset(
-    {"number", "chart", "quote", "map", "stamp", "lower_third", "timeline", "family_tree"}
+    {"number", "chart", "quote", "map", "stamp", "lower_third", "timeline", "family_tree", "compare",
+     "network", "keyword"}
 )
+# Desenhados por cima da foto ou do B-roll anterior da mesma cena; os outros gráficos ficam em tela cheia
+# (ADR 011, decisão 5).
+OVERLAY_SHOT_KINDS = frozenset({"lower_third", "stamp", "number", "keyword"})
 
 
 class Scene(Model):
@@ -281,15 +520,38 @@ class Scene(Model):
             if self.visual_need is None or self.search_query is None:
                 raise ValueError(f"{self.id}: cena sem planos precisa de visual_need e search_query")
             return self
-        cursor = 0
+        cursor, positions = 0, []
         for shot in self.shots:
             position = self.narration.find(shot.anchor, cursor)
             if position < 0:
                 raise ValueError(
                     f"{self.id}: âncora {shot.anchor!r} não aparece na narração depois do plano anterior"
                 )
+            positions.append(position)
             cursor = position + 1
+        ends = [*positions[1:], len(self.narration)]
+        for shot, start, end in zip(self.shots, positions, ends, strict=True):
+            if isinstance(shot, KeywordShot) and _fold(shot.text) not in _fold(self.narration):
+                raise ValueError(f"{self.id}: frase na tela {shot.text!r} não está na narração")
+            if isinstance(shot, NetworkShot):
+                step_positions(self.narration, shot, start, end, scene_id=self.id)
         return self
+
+
+def step_positions(narration: str, shot: NetworkShot, start: int, end: int, *, scene_id: str) -> list[int]:
+    """Posição, na narração, da âncora de cada passo da rede: em ordem, dentro do trecho do plano
+    ([`start`, `end`), até a âncora do plano seguinte)."""
+    cursor, positions = start, []
+    for step in shot.steps:
+        position = narration.find(step.anchor, cursor)
+        if position < 0 or position >= end:
+            raise ValueError(
+                f"{scene_id}: passo {step.anchor!r} da rede não aparece na narração, em ordem, "
+                "dentro do trecho do plano"
+            )
+        positions.append(position)
+        cursor = position + 1
+    return positions
 
 
 def effective_shots(scene: Scene) -> list[Shot]:
@@ -566,6 +828,9 @@ class EpisodeShot(Model):
     duration_ms: int = Field(gt=0)
     spec: Shot
     media: RelPath | None = None  # arquivo do ativo, para foto e B-roll
+    source: str | None = None  # "Fonte: …" do rodapé, derivado das claims e do sources.json (ADR 011)
+    source_flag: str | None = None  # ressalva ao lado da fonte ("fonte interessada")
+    steps_ms: list[int] = []  # só `network`: entrada de cada passo, relativa ao início do plano
 
     @property
     def end_ms(self) -> int:
@@ -575,6 +840,14 @@ class EpisodeShot(Model):
     def _media_when_needed(self) -> Self:
         if (self.spec.kind in MEDIA_SHOT_KINDS) != (self.media is not None):
             raise ValueError(f"plano {self.spec.kind}: media é obrigatório para foto/B-roll e só para eles")
+        expected = len(self.spec.steps) if isinstance(self.spec, NetworkShot) else 0
+        if len(self.steps_ms) != expected:
+            raise ValueError(
+                f"plano {self.spec.kind}: {len(self.steps_ms)} tempos de passo, esperado {expected}"
+            )
+        outside = any(not 0 <= ms < self.duration_ms for ms in self.steps_ms)
+        if self.steps_ms != sorted(self.steps_ms) or outside:
+            raise ValueError("tempos dos passos da rede fora de ordem ou fora do plano")
         return self
 
 
