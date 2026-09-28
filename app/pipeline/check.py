@@ -20,6 +20,7 @@ from app.pipeline.schemas import (
     ChartShot,
     FactKind,
     FactsManifest,
+    MapShot,
     QuoteShot,
     Scene,
     ScenesManifest,
@@ -137,6 +138,7 @@ def _check_scenes(
     facts: FactsManifest | None,
     excerpts: dict[str, str],
     report: CheckReport,
+    region_codes: frozenset[str] | None = None,
 ) -> None:
     if sources is not None:
         report.errors += unknown_source_refs(scenes, sources)
@@ -172,6 +174,10 @@ def _check_scenes(
                     f"{scene.id}: {shot.kind} ({shot.anchor!r}) com ~{ms / 1000:.1f} s; "
                     f"precisa de {READING_MS / 1000:.0f} s para ser lido"
                 )
+            if isinstance(shot, MapShot) and region_codes is not None:
+                for code in shot.highlight:
+                    if code not in region_codes:
+                        report.errors.append(f"{scene.id}: código {code} fora dos contornos do mapa")
             if isinstance(shot, QuoteShot) and excerpts:
                 cited = [excerpts[e] for c in shot.claims for e in c.excerpt_ids if e in excerpts]
                 if cited and not any(quote_in_excerpt(shot.text, text) for text in cited):
@@ -239,7 +245,10 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
     return warnings
 
 
-def check_episode(store: ManifestStore, episode_id: str) -> CheckReport:
+def check_episode(
+    store: ManifestStore, episode_id: str, region_codes: frozenset[str] | None = None
+) -> CheckReport:
+    """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere)."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -251,7 +260,7 @@ def check_episode(store: ManifestStore, episode_id: str) -> CheckReport:
         else:
             _check_facts(facts, sources, excerpts, report)
     if scenes is not None:
-        _check_scenes(scenes, sources, facts, excerpts, report)
+        _check_scenes(scenes, sources, facts, excerpts, report, region_codes)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
     return report

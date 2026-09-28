@@ -366,3 +366,38 @@ def planned(kinds: list[str], scene_id: str = "S01") -> Scene:
 def test_variety_warnings(plans: list[list[str]], expected: list[str]) -> None:
     scenes_list = [planned(kinds, f"S0{i + 1}") for i, kinds in enumerate(plans)]
     assert variety_warnings(scenes_list) == expected
+
+
+# --- Template (etapa 2) -------------------------------------------------------------------------
+
+
+def test_template_handles_every_shot_kind() -> None:
+    """Todo tipo que o contrato aceita tem um `case` no despacho do template (video/src/ShotView.tsx)."""
+    from typing import get_args
+
+    from app.render.remotion import PROJECT
+
+    kinds = {model.model_fields["kind"].default for model in get_args(get_args(Shot)[0])}
+    dispatch = (PROJECT / "src" / "ShotView.tsx").read_text()
+    missing = sorted(kind for kind in kinds if f'case "{kind}":' not in dispatch)
+    assert missing == []
+
+
+def test_region_codes_come_from_the_template_outlines() -> None:
+    from app.render.remotion import region_codes
+
+    codes = region_codes()
+    assert {"BRA", "BR-SP", "GBR", "ARG"} <= codes
+    assert "Brasil" not in codes
+
+
+def test_unknown_map_code_is_an_error(tmp_path: Path) -> None:
+    raw = scenes()
+    raw["scenes"][0]["shots"][1] = {
+        "kind": "map", "anchor": "comprada num leilão", "highlight": ["BR-SP", "BR-XX"],
+        "places": [{"name": "Sorocaba", "lat": -23.5, "lon": -47.46}],
+        "claims": raw["scenes"][0]["shots"][0]["claims"],
+    }
+    report = check_episode(episode(tmp_path, facts=facts_file(), scenes_json=raw), EP,
+                           region_codes=frozenset({"BR-SP"}))
+    assert report.errors == ["S01: código BR-XX fora dos contornos do mapa"]

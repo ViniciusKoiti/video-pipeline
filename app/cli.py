@@ -23,6 +23,7 @@ from app.pipeline.excerpts import numbered_view
 from app.pipeline.gates import GATED_STEPS, GateError, GateStatus, gate_report, record_decision
 from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
 from app.pipeline.schemas import Decision, EpisodeFormat, SourcesManifest, Step
+from app.render.remotion import region_codes
 from app.settings import CONFIG_FILE
 
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
@@ -146,7 +147,7 @@ def _excerpts(args: argparse.Namespace, context: Context) -> int:
 
 
 def _check(args: argparse.Namespace, context: Context) -> int:
-    report = check_episode(context.store, args.episode_id)
+    report = check_episode(context.store, args.episode_id, region_codes=region_codes())
     for line in report.checked:
         print(f"ok      {line}")
     for line in report.warnings:

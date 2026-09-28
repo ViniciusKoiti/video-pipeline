@@ -23,7 +23,8 @@ from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, pa
 
 PROJECT = Path(__file__).resolve().parents[2] / "video"
 TEMPLATE_GLOBS = (
-    "src/*.ts", "src/*.tsx", "src/fonts/*", "src/geo/*.json", "render-scenes.mjs", "package-lock.json"
+    "src/*.ts", "src/*.tsx", "src/fonts/*", "src/geo/*.json", "src/geo/*.ts", "render-scenes.mjs",
+    "package-lock.json",
 )
 
 
@@ -37,6 +38,17 @@ def template_hash(project: Path) -> str:
         for path in sorted(project.glob(pattern)):
             digest.update(path.name.encode() + path.read_bytes())
     return digest.hexdigest()
+
+
+def region_codes(project: Path = PROJECT) -> frozenset[str]:
+    """Códigos de país e estado dos contornos do template (`src/geo/*.json`): o `vp check` recusa os outros
+    em `map.highlight` (ADR 011)."""
+    codes: set[str] = set()
+    for path in sorted((project / "src" / "geo").glob("*.json")):
+        data = json.loads(path.read_text())
+        items = data if isinstance(data, list) else [*data.get("countries", []), *data.get("states", [])]
+        codes |= {item["id"] for item in items if "id" in item}
+    return frozenset(codes)
 
 
 def _credit(episode_dir: Path, asset_id: str | None) -> str | None:
