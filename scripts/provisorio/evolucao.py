@@ -5,11 +5,13 @@ Uso: `.venv/bin/python scripts/provisorio/evolucao.py <comando> <episode-id> ...
   gerar <id> --nota "..."              prévia pelo `montar_episodio.py --preview` e guarda como nova versão
   guardar <id> --nota "..." [--commit REF] [--tempo-s N] [--sonda S]
                                        guarda a prévia que já existe (`renders/preview.mp4`)
-  comparar <id> [--versoes v1,v3]      folha de quadros: o mesmo instante de cada plano, uma coluna por versão
+  comparar <id> [--versoes v1,v3]      folha de quadros: o mesmo instante de cada plano, uma coluna por
+                                       versão, com borda no quadro que mudou em relação à coluna anterior
   lado-a-lado <id> <vA> <vB>           vídeo com as duas versões lado a lado, com o áudio da segunda
 
 - As versões ficam em `data/episodes/<id>/renders/evolucao/` (fora do Git), cada uma com um `vN.json`: commit,
-  hash do template, sha do motion-kit, tempo, sonda de CPU e o instante de cada plano.
+  hash do template, sha do motion-kit, tempo, sonda de CPU, o instante de cada plano e os planos que mudaram
+  em relação à versão anterior (um quadro por plano).
 - Cada versão acrescenta uma linha em `data/benchmarks/evolucao-template.md` (no Git).
 - `gerar` recusa rodar com a CPU limitada (sonda acima de 0,3 s, CLAUDE.md §3), porque o tempo entra no
   registro.
@@ -70,6 +72,8 @@ def save(episode_dir: Path, note: str, ref: str | None, render_s: float | None, 
     )
     evolution.append_registry(REGISTRY, version)
     print(f"{version.name}: {len(version.samples)} planos, commit {commit}, template {template[:12]}")
+    if version.changed is not None:
+        print(f"planos que mudaram desde a versão anterior: {', '.join(version.changed) or 'nenhum'}")
     print(f"registro: {REGISTRY.relative_to(ROOT)}")
 
 
@@ -112,8 +116,11 @@ def main() -> None:
         elif args.command == "comparar":
             names = args.versoes.split(",") if args.versoes else evolution.versions(folder)
             suffix = "" if not args.versoes else "-" + "-".join(names)
-            out = evolution.contact_sheet(folder, names, folder / f"folha{suffix}.jpg")
-            print(f"folha: {out} ({len(names)} versões)")
+            out = folder / f"folha{suffix}.jpg"
+            changes = evolution.contact_sheet(folder, names, out)
+            print(f"folha: {out} ({len(names)} versões; borda nos quadros que mudaram)")
+            for name, changed in changes.items():
+                print(f"  {name}: {', '.join(changed) or 'nenhum plano mudou'}")
         else:
             out = folder / f"{args.antes}-{args.depois}.mp4"
             evolution.side_by_side(folder, args.antes, args.depois, out)

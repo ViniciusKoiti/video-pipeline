@@ -14,10 +14,15 @@ from app.pipeline.schemas import EpisodeFormat, EpisodeManifest, EpisodeScene, E
 NARRATION = "um dois três quatro"
 
 
-def video(path: Path, color: str, seconds: float = 2.0) -> Path:
+def video(path: Path, color: str, seconds: float = 2.0, then: str | None = None) -> Path:
+    """Vídeo de uma cor; com `then`, a segunda metade tem outra cor."""
+    half = seconds / 2
+    colors = [(color, seconds)] if then is None else [(color, half), (then, half)]
+    inputs = [arg for c, d in colors for arg in ("-f", "lavfi", "-i", f"color=c={c}:s=320x180:r=10:d={d}")]
+    joined = "".join(f"[{i}:v]" for i in range(len(colors))) + f"concat=n={len(colors)}:v=1:a=0[v]"
     subprocess.run(
-        ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"color=c={color}:s=320x180:r=10:d={seconds}",
-         "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", str(seconds),
+        ["ffmpeg", "-v", "error", "-y", *inputs, "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo",
+         "-filter_complex", joined, "-map", "[v]", "-map", f"{len(colors)}:a", "-t", str(seconds),
          "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p", "-c:a", "aac", str(path)],
         check=True,
     )
@@ -93,15 +98,25 @@ def test_registry_starts_with_the_header_and_escapes_pipes(tmp_path: Path) -> No
     lines = registry.read_text().splitlines()
     assert registry.read_text().startswith(evolution.REGISTRY_HEADER)
     assert lines[-2] == ("| v1 | `regua` | " + evolution.load(folder, "v1").rendered_at
-                         + " | `abc1234` | `2af5a7e` | `ffffffffffff` | 180 s | 0,05 s | mudança |")
-    assert lines[-1].endswith("| — | — | a \\| b |")
+                         + " | `abc1234` | `2af5a7e` | `ffffffffffff` | 180 s | 0,05 s | — | mudança |")
+    assert lines[-1].endswith("| — | — | S01 plano 1, S01 plano 2, S02 plano 1 | a \\| b |")
+
+
+def test_only_the_shots_whose_frame_changed_are_marked(tmp_path: Path) -> None:
+    folder = tmp_path / "evolucao"
+    first = store(video(tmp_path / "a.mp4", "navy", then="darkred"), folder)
+    second = store(video(tmp_path / "b.mp4", "navy", then="darkgreen"), folder)
+    assert first.changed is None  # a primeira versão não tem com o que comparar
+    assert second.changed == ["S02#1"]  # S01 fica no primeiro segundo, igual nas duas
+    assert evolution.load(folder, "v2").changed == ["S02#1"]
 
 
 def test_contact_sheet_has_one_row_per_shot_and_one_column_per_version(tmp_path: Path) -> None:
     folder = tmp_path / "evolucao"
-    store(video(tmp_path / "a.mp4", "navy"), folder)
-    store(video(tmp_path / "b.mp4", "darkred"), folder)
-    out = evolution.contact_sheet(folder, ["v1", "v2"], folder / "folha.jpg")
+    store(video(tmp_path / "a.mp4", "navy", then="darkred"), folder)
+    store(video(tmp_path / "b.mp4", "navy", then="darkgreen"), folder)
+    out = folder / "folha.jpg"
+    assert evolution.contact_sheet(folder, ["v1", "v2"], out) == {"v2": ["S02#1"]}
     assert dimensions(out) == (evolution.LABEL_W + 2 * evolution.CELL_W,
                                evolution.HEADER_H + 3 * evolution.CELL_H)
 

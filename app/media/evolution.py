@@ -3,7 +3,8 @@
 O conteúdo do vídeo-régua fica congelado (roteiro, imagens e voz aprovados) e só o template muda entre as
 versões. Cada versão é `vN.mp4` com um `vN.json` ao lado, numa pasta fora do Git; o registro em Markdown fica
 no Git. A folha de quadros põe o mesmo instante de cada plano, de todas as versões, numa imagem só (quadros
-tirados dos MP4 prontos, sem render novo); o vídeo lado a lado mostra duas versões em movimento.
+tirados dos MP4 prontos, sem render novo) e marca os planos que mudaram em relação à coluna anterior; o vídeo
+lado a lado mostra duas versões em movimento.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ import shutil
 import subprocess
 import tempfile
 from datetime import datetime
+from itertools import pairwise
 from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
@@ -27,6 +29,9 @@ LABEL_W, HEADER_H = 300, 56
 SIDE_W, SIDE_H = 960, 540
 DURATION_TOLERANCE_MS = 500
 BACKGROUND, EMPTY = "0x16181d", "0x2a2d33"
+MARK, MARK_PX = "0xF2B134", 6  # borda do quadro que mudou (a cor de destaque do template)
+# Um quadro por plano: abaixo disto, o plano mudou. O mesmo template dá quadros idênticos (PSNR infinito).
+CHANGE_PSNR_DB = 50.0
 VERSION = re.compile(r"^v(\d+)$")
 MOTION_KIT_SHA = re.compile(r"motion-kit[^\"]*\"\s*:\s*\"[^\"]*sha=([0-9a-f]{7,40})")
 
@@ -36,11 +41,15 @@ Uma versão por mudança no visual do formato explicativo, sempre do mesmo víde
 (roteiro, imagens e voz aprovados): só o template muda entre as versões. Os vídeos ficam fora do Git, em
 `data/episodes/<id>/renders/evolucao/` (`vN.mp4` e `vN.json`); a folha de quadros e o vídeo lado a lado saem
 de `scripts/provisorio/evolucao.py`. "Tempo" é o do `montar_episodio.py --preview` (voz em cache + render);
-a sonda de CPU acima de 0,3 s indica máquina limitada (CLAUDE.md §3).
+a sonda de CPU acima de 0,3 s indica máquina limitada (CLAUDE.md §3). "Planos que mudaram" compara um quadro
+por plano com a versão anterior; um PR de visual deve mudar só os planos que pretendia.
 
-| Versão | Vídeo-régua | Render em | Commit | motion-kit | Template | Tempo | Sonda de CPU | O que mudou |
-|---|---|---|---|---|---|---|---|---|
 """
+REGISTRY_COLUMNS = [
+    "Versão", "Vídeo-régua", "Render em", "Commit", "motion-kit", "Template", "Tempo", "Sonda de CPU",
+    "Planos que mudaram", "O que mudou",
+]
+REGISTRY_HEADER += "| " + " | ".join(REGISTRY_COLUMNS) + " |\n" + "|---" * len(REGISTRY_COLUMNS) + "|\n"
 
 
 class EvolutionError(RuntimeError):
@@ -72,6 +81,7 @@ class Version(BaseModel):
     cpu_probe_s: float | None = None
     note: str
     samples: list[Sample]
+    changed: list[str] | None = None  # planos que mudaram em relação à versão anterior; None na primeira
 
 
 def samples(episode: EpisodeManifest) -> list[Sample]:
@@ -140,8 +150,25 @@ def store(
     )
     folder.mkdir(parents=True, exist_ok=True)
     shutil.copy2(render, folder / f"{name}.mp4")
+    if existing:
+        changed = changed_shots(folder, load(folder, existing[-1]), version)
+        version = version.model_copy(update={"changed": changed})
     (folder / f"{name}.json").write_text(version.model_dump_json(indent=2) + "\n")
     return version
+
+
+def changed_shots(folder: Path, before: Version, after: Version) -> list[str]:
+    """Planos de `after` cujo quadro difere do de `before` no mesmo plano (plano novo conta como mudança)."""
+    previous = {s.key: s for s in before.samples}
+    changed = []
+    for sample in after.samples:
+        old = previous.get(sample.key)
+        if old is None or _psnr(
+            folder / f"{before.name}.mp4", min(old.at_ms, before.duration_ms - 100),
+            folder / f"{after.name}.mp4", min(sample.at_ms, after.duration_ms - 100),
+        ) < CHANGE_PSNR_DB:
+            changed.append(sample.key)
+    return changed
 
 
 def registry_row(version: Version) -> str:
@@ -150,6 +177,7 @@ def registry_row(version: Version) -> str:
         f"`{version.motion_kit}`", f"`{version.template_hash[:12]}`",
         "—" if version.render_s is None else f"{version.render_s:.0f} s",
         "—" if version.cpu_probe_s is None else f"{version.cpu_probe_s:.2f} s".replace(".", ","),
+        "—" if version.changed is None else ", ".join(map(_shot_name, version.changed)) or "nenhum",
         version.note.replace("|", "\\|").replace("\n", " "),
     ]
     return "| " + " | ".join(cells) + " |"
@@ -162,21 +190,26 @@ def append_registry(path: Path, version: Version) -> None:
     path.write_text(text + registry_row(version) + "\n")
 
 
-def contact_sheet(folder: Path, names: list[str], out: Path) -> Path:
-    """Folha de quadros: uma linha por plano, uma coluna por versão, no mesmo instante do plano."""
+def contact_sheet(folder: Path, names: list[str], out: Path) -> dict[str, list[str]]:
+    """Folha de quadros: uma linha por plano, uma coluna por versão, no mesmo instante do plano. O quadro que
+    mudou em relação à coluna anterior ganha borda. Devolve, por versão, os planos que mudaram."""
     loaded = [load(folder, name) for name in names]
     by_version = [{s.key: s for s in version.samples} for version in loaded]
     keys = sorted({key for found in by_version for key in found}, key=_key_order)
     if not keys:
         raise EvolutionError("nenhum plano nas versões escolhidas")
+    changes = {after.name: changed_shots(folder, before, after) for before, after in pairwise(loaded)}
     with tempfile.TemporaryDirectory() as tmp:
         work = Path(tmp)
         parts = [_header(work, loaded)]
         for index, key in enumerate(keys):
             latest = next(found[key] for found in reversed(by_version) if key in found)
+            moved = [name for name, changed in changes.items() if key in changed]
             label = [key.replace("#", " · plano "), latest.kind, _clock(latest.at_ms)]
+            label += [f"mudou em {', '.join(moved)}"] if moved else []
             cells = [
-                (folder / f"{version.name}.mp4", min(found[key].at_ms, version.duration_ms - 100))
+                (folder / f"{version.name}.mp4", min(found[key].at_ms, version.duration_ms - 100),
+                 key in changes.get(version.name, []))
                 if key in found else None
                 for version, found in zip(loaded, by_version, strict=True)
             ]
@@ -187,7 +220,7 @@ def contact_sheet(folder: Path, names: list[str], out: Path) -> Path:
         _run(["ffmpeg", "-v", "error", "-y", *inputs,
               "-filter_complex", f"{stack}vstack=inputs={len(parts)}[out]",
               "-map", "[out]", "-frames:v", "1", "-q:v", "3", str(out)])
-    return out
+    return changes
 
 
 def side_by_side(folder: Path, before: str, after: str, out: Path) -> Path:
@@ -214,7 +247,7 @@ def side_by_side(folder: Path, before: str, after: str, out: Path) -> Path:
 
 def _header(work: Path, loaded: list[Version]) -> Path:
     width = LABEL_W + CELL_W * len(loaded)
-    texts = []
+    texts = [_text(work / "legend", ["borda: mudou"], 20, 16, 18)] if len(loaded) > 1 else []
     for i, version in enumerate(loaded):
         lines = [f"{version.name} · {version.rendered_at[:10]}"]
         texts.append(_text(work / f"header{i}", lines, 24, LABEL_W + i * CELL_W + 16, 16))
@@ -225,15 +258,17 @@ def _header(work: Path, loaded: list[Version]) -> Path:
     return out
 
 
-def _row(work: Path, index: int, label: list[str], cells: list[tuple[Path, int] | None]) -> Path:
+def _row(work: Path, index: int, label: list[str], cells: list[tuple[Path, int, bool] | None]) -> Path:
     args, filters = ["ffmpeg", "-v", "error", "-y"], []
     for i, cell in enumerate(cells):
+        mark = ""
         if cell is None:  # plano que não existia nessa versão
             args += ["-f", "lavfi", "-i", f"color=c={EMPTY}:s={CELL_W}x{CELL_H}:d=1"]
         else:
-            video, at_ms = cell
+            video, at_ms, changed = cell
             args += ["-ss", f"{max(at_ms, 0) / 1000:.3f}", "-i", str(video)]
-        filters.append(f"[{i}:v]{_fit(CELL_W, CELL_H)},format=rgb24,trim=end_frame=1[c{i}]")
+            mark = f",drawbox=x=0:y=0:w=iw:h=ih:color={MARK}:t={MARK_PX}" if changed else ""
+        filters.append(f"[{i}:v]{_fit(CELL_W, CELL_H)}{mark},format=rgb24,trim=end_frame=1[c{i}]")
     args += ["-f", "lavfi", "-i", f"color=c={BACKGROUND}:s={LABEL_W}x{CELL_H}:d=1"]
     text = _text(work / f"row{index:03d}", label, 22, 16, 16)
     filters.append(f"[{len(cells)}:v]{text},format=rgb24,trim=end_frame=1[label]")
@@ -263,6 +298,25 @@ def _text(stem: Path, lines: list[str], size: int, x: int, y: int, box: bool = F
 
 def _escape(path: Path) -> str:
     return str(path).replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
+
+
+def _shot_name(key: str) -> str:
+    return key.replace("#", " plano ")
+
+
+def _psnr(first: Path, first_ms: int, second: Path, second_ms: int) -> float:
+    """PSNR entre um quadro de cada vídeo; infinito quando são idênticos."""
+    result = subprocess.run(
+        ["ffmpeg", "-v", "info", "-ss", f"{max(first_ms, 0) / 1000:.3f}", "-i", str(first),
+         "-ss", f"{max(second_ms, 0) / 1000:.3f}", "-i", str(second),
+         # Um quadro de cada lado: sem o trim, o psnr compara também o quadro seguinte e devolve a média.
+         "-lavfi", "[0:v]trim=end_frame=1[a];[1:v]trim=end_frame=1[b];[a][b]psnr", "-f", "null", "-"],
+        capture_output=True, text=True, check=False,
+    )
+    match = re.search(r"average:(inf|[\d.]+)", result.stderr)
+    if result.returncode != 0 or match is None:
+        raise EvolutionError(f"ffmpeg não comparou os quadros: {result.stderr.strip()[-300:]}")
+    return float(match.group(1))
 
 
 def _key_order(key: str) -> tuple[int, str, int]:
