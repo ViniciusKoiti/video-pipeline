@@ -141,3 +141,27 @@ ao template e o template chama o componente. Hoje a cadeia só conhece os 10 tip
 - `CLAUDE.md` §6 (lista de tipos de plano) muda quando esta ADR for aceita.
 - Fica mais difícil: o roteirista tem mais tipos para escolher. A tabela da skill e os alertas do `vp check`
   seguram a escolha, e o gate 2 continua decidindo.
+
+## Emenda de 2026-09-29: texto que cabe na tela
+
+**Contexto.** No vídeo-régua (`votorantim-dinheiro`), três defeitos vieram de texto maior que a peça:
+- o valor da seta da rede ficou atrás do nome de um nó de duas linhas (corrigido no template, #92);
+- o texto de um número sobre a foto ocupou duas linhas, e o painel cresceu por cima do crédito da foto;
+- a linha do tempo tinha texto demais para o tempo do plano.
+
+Nada avisava antes do render.
+
+**Decisão.** O `vp check` ganha alertas de texto que não cabe (`app/pipeline/text_fit.py`). São alertas, não erros, como os da decisão 9: a revisão humana decide.
+- Cada limite é a largura da caixa no template e no motion-kit dividida pela largura média de um caractere da Inter. Os valores foram conferidos nos quadros da v3 do vídeo-régua.
+- Número sobre a imagem: 1 linha. Em tela cheia: 2 linhas.
+- Comparação: 2 linhas por lado.
+- Tarja: nome em 1 linha, cargo em 2.
+- Evento da linha do tempo: 3 linhas.
+- Nó da rede de onde sai uma seta: nome e papel em 2 linhas. Nas camadas, o nó sem seta saindo fica de fora, porque o nome dele não pende sobre nenhuma seta.
+- Texto e valor de uma seta: ~40 e ~24 caracteres.
+- A linha do tempo também recebe um alerta de tempo de leitura: o texto de todos os eventos somado, lido a ~17 caracteres por segundo, dentro da duração estimada do plano.
+- A skill `roteiro-explicativo` traz a mesma tabela, para o roteirista escrever dentro dos limites.
+
+**Consequências.**
+- Contar caracteres é aproximado ("WWW" ocupa mais que "iii"). A conferência automática da tela, que mede o texto desenhado em 1080p, é a próxima medida e vai recalibrar estes números.
+- Os roteiros aprovados passam a mostrar alertas novos (o `votorantim-completo` tem 19), sem derrubar a aprovação.

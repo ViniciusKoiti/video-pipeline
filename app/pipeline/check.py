@@ -30,6 +30,7 @@ from app.pipeline.schemas import (
     unknown_source_refs,
 )
 from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
+from app.pipeline.text_fit import text_fit_warnings
 
 # Ritmo de fala medido no exemplo com pm_alex (150 caracteres em 9,95 s). Só estimativa: o tempo real
 # vem do WAV (§9).
@@ -163,7 +164,12 @@ def _check_scenes(
         except ValueError as error:
             report.errors.append(f"{scene.id}: {error}")
             continue
+        media_before = False  # foto ou B-roll da cena já na tela: tarja, número e carimbo vão por cima
         for shot, (_, ms) in zip(planned, bounds, strict=True):
+            report.warnings += text_fit_warnings(
+                scene.id, shot, ms, media_before and shot.kind in OVERLAY_SHOT_KINDS
+            )
+            media_before = media_before or shot.kind in MEDIA_SHOT_KINDS
             too_long = ms > MAX_SHOT_MS and shot.kind not in LONG_KINDS
             if ms < MIN_SHOT_MS or too_long:
                 report.warnings.append(
