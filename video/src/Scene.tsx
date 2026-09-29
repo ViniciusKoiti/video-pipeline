@@ -66,7 +66,7 @@ const Camera: React.FC<{active: boolean; frames: number; children: React.ReactNo
 };
 
 // Fonte do plano (ADR 011): em tela cheia, no canto superior direito, longe de títulos e rótulos; sobre a
-// imagem, embaixo, acima da legenda (do lado direito quando há tarja).
+// imagem, embaixo à direita, acima da legenda: tarja e painel de número ficam à esquerda.
 const Source: React.FC<{shot: Planned}> = ({shot}) => {
   const {height} = useVideoConfig();
   if (shot.layer === "full") {
@@ -76,8 +76,7 @@ const Source: React.FC<{shot: Planned}> = ({shot}) => {
       </div>
     );
   }
-  return <SourceTag text={shot.source!} flag={shot.sourceFlag} side={shot.spec.kind === "lower_third" ? "right" : "left"}
-    at={8} />;
+  return <SourceTag text={shot.source!} flag={shot.sourceFlag} side="right" at={8} />;
 };
 
 const Caption: React.FC<{text: string}> = ({text}) => {
