@@ -30,13 +30,12 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.media import evolution  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench import CPU_PROBE_SLOW_S, cpu_probe  # noqa: E402
 from app.pipeline.schemas import EpisodeManifest  # noqa: E402
 from app.render.remotion import PROJECT, template_hash  # noqa: E402
 from app.settings import load_settings  # noqa: E402
 
 REGISTRY = ROOT / "data" / "benchmarks" / "evolucao-template.md"
-PROBE_LIMIT_S = 0.3
 
 
 def git(*args: str) -> str:
@@ -101,8 +100,8 @@ def main() -> None:
     try:
         if args.command == "gerar":
             probe = cpu_probe()
-            if probe > PROBE_LIMIT_S:
-                raise SystemExit(f"CPU limitada (sonda {probe:.2f} s, limite {PROBE_LIMIT_S} s): "
+            if probe > CPU_PROBE_SLOW_S:
+                raise SystemExit(f"CPU limitada (sonda {probe:.2f} s, limite {CPU_PROBE_SLOW_S} s): "
                                  "feche os apps pesados e tente de novo")
             started = time.monotonic()
             script = ROOT / "scripts" / "provisorio" / "montar_episodio.py"
