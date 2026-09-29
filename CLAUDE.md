@@ -57,10 +57,17 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
   aprovados; prévia em `renders/preview.mp4`; métricas em `data/benchmarks/episodio-votorantim-dinheiro.md`.
 - [ ] **← Agora: Remotion.** Decisão do dono em 2026-09-29: o vídeo não será publicado por enquanto; o foco
   passa a ser o template do formato explicativo (`video/`, Remotion + motion-kit), com calma, uma frente por
-  vez. Frentes candidatas, a escolher com o dono:
+  vez.
+  - **Evolução do template (vídeo-régua), escolhida em 2026-09-29:** em vez de conferir cada correção num render
+    avulso, o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
+    visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Script
+    `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar` com a folha de quadros, `lado-a-lado`),
+    vídeos em `renders/evolucao/` e registro em `data/benchmarks/evolucao-template.md`.
+
+  Frentes candidatas, a escolher com o dono (cada uma gera uma versão nova do vídeo-régua):
   - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
-  - defeitos vistos no `votorantim-dinheiro`: fonte sobre a imagem (PR #88, conferir no próximo render),
-    rótulos longos cortados na linha do tempo, rótulos das setas da rede pequenos (prop no motion-kit);
+  - defeitos vistos no `votorantim-dinheiro`: rótulos longos cortados na linha do tempo, rótulos das setas da rede
+    pequenos (prop no motion-kit);
   - resto da #69: zoom nas transições (#72), entrada 2.5D (#71), tipos novos aplicados às cenas citadas nas
     #73 e #76–#80;
   - trilha e efeitos com `MusicBed`/`SfxTrack` (#81, licença por faixa decidida pelo dono);
