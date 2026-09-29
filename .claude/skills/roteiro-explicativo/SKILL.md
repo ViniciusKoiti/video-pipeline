@@ -114,6 +114,18 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      aparece sozinha no rodapé, e o `label` fica só com o que o valor mede.
    - **Variedade:** alterne os tipos e mantenha imagem na tela; os alertas do `vp check` apontam as
      repetições.
+   - **Texto que cabe na tela:** a narração explica; a tela mostra o essencial. O `vp check` alerta quando
+     um texto passa do que a peça mostra (`app/pipeline/text_fit.py`):
+
+     | Texto | Cabe |
+     |---|---|
+     | `label` do `number` sobre a foto ou o B-roll | 1 linha, ~60 caracteres (com 2, o painel cobre a imagem e o crédito) |
+     | `label` do `number` em tela cheia | 2 linhas de ~54 |
+     | `label` de cada lado do `compare` | 2 linhas de ~44 |
+     | `name` e `role` do `lower_third` | 1 linha de ~34; 2 linhas de ~60 |
+     | `label` de cada evento da `timeline` | 3 linhas de ~31; somando todos os eventos, ~17 caracteres por segundo do plano (6 s, ~100 caracteres) |
+     | nó da `network` de onde sai uma seta | nome e papel em 2 linhas (~23 e ~30 por linha); nome longo vira sigla, apresentada antes |
+     | `label` e `value` de uma seta da `network` | ~40 e ~24 caracteres |
 8. **Toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena; plano que mostra número,
    data, nome, cargo, citação ou gráfico → `claims` no plano. Use `source_ids` e `excerpt_ids` das
    evidências das fichas usadas; cada aresta de `network` tem as suas próprias `claims`. O texto na tela
@@ -130,5 +142,6 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 ## Fechamento
 
 - Passe a skill `humanizer-narracao` na narração.
-- Rode `.venv/bin/vp check <id>` até zero erros; trate os alertas de ritmo e de variedade.
+- Rode `.venv/bin/vp check <id>` até zero erros; trate os alertas de ritmo, de variedade e de texto que não
+  cabe na tela.
 - Entregue para o agente `verificador` (contexto limpo) antes do gate 2.
