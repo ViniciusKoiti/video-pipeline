@@ -1,5 +1,5 @@
 import React from "react";
-import {AbsoluteFill, useVideoConfig} from "remotion";
+import {AbsoluteFill, Sequence, useVideoConfig} from "remotion";
 import {Odometer} from "@viniciusk/motion-kit";
 import {BarChart, LineChart, ShareChart, ValueCompare, YearTimeline} from "@viniciusk/motion-kit/charts";
 import {
@@ -8,7 +8,8 @@ import {
 import {FootageBackground, ImageBackground} from "@viniciusk/motion-kit/fx";
 import {GeoMap} from "@viniciusk/motion-kit/geo";
 import type {LonLat} from "@viniciusk/motion-kit/geo";
-import {ExpandingNetwork} from "@viniciusk/motion-kit/graph";
+import {ExpandingNetwork, layeredLayout, networkDepths} from "@viniciusk/motion-kit/graph";
+import type {NetworkPositions} from "@viniciusk/motion-kit/graph";
 import {mapBoxes, regionsFor} from "./geo/regions";
 import {NODE_ICONS} from "./icons";
 import {screenNumber} from "./numbers";
@@ -218,12 +219,53 @@ export const MapShot: React.FC<{spec: MapSpec; frames: number}> = ({spec, frames
   );
 };
 
+// Rede em camadas de cima para baixo, com as setas descendo: se a maioria delas aponta para a raiz (o dinheiro
+// chega nela), a raiz fica embaixo. O nome do nó pendura embaixo do círculo, no começo da seta que sai dele, e o
+// texto e o valor da seta ficam no meio e perto do fim, sem disputar espaço. Deitada não cabe: numa seta de
+// ~400 px o texto e o valor, de tamanho fixo no kit, se sobrepõem. Distâncias em px de 1080p, convertidas para a
+// tela da rede (NETWORK_CANVAS).
+const LAYER_GAP = 240;
+const NODE_GAP = 300;
+const LAYERED_MAX_SCALE = 1.4; // abaixo do enquadramento justo (~1,5 com três camadas): folga para o último nome
+
+const layeredPositions = (spec: NetworkSpec, height: number): NetworkPositions => {
+  const ids = spec.nodes.map((n) => n.id);
+  const links = spec.edges.map((e) => ({from: e.from, to: e.to}));
+  const world = layeredLayout(ids, links, spec.root, {layerGap: u(height, LAYER_GAP), nodeGap: u(height, NODE_GAP)});
+  const depth = networkDepths(ids, links, spec.root, false);
+  const inward = spec.edges.filter((e) => (depth.get(e.from) ?? 0) > (depth.get(e.to) ?? 0)).length;
+  const flip = inward * 2 > spec.edges.length ? -1 : 1;
+  return Object.fromEntries(Object.entries(world).map(([id, p]) => [id, {x: p.x, y: flip * p.y}]));
+};
+
+// O kit desenha a rede com medidas fixas em px (caixa do nome com 260, texto da seta com 17, valor com 16), que
+// cabem numa tela de 1280×720. A rede é desenhada nessa tela e ampliada: a prévia (720p) e o final (1080p) ficam
+// iguais, em vez de o final quebrar mais linhas nos nomes e encolher o texto das setas.
+const NETWORK_CANVAS = {width: 1280, height: 720};
+
 export const NetworkShot: React.FC<{spec: NetworkSpec; stepFrames?: number[]}> = ({spec, stepFrames}) => {
   const {height} = useVideoConfig();
+  return (
+    <AbsoluteFill>
+      <div style={{position: "absolute", left: 0, top: 0, ...NETWORK_CANVAS,
+        transform: `scale(${height / NETWORK_CANVAS.height})`, transformOrigin: "top left"}}>
+        <Sequence layout="none" {...NETWORK_CANVAS}>
+          <NetworkCanvas spec={spec} stepFrames={stepFrames} />
+        </Sequence>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const NetworkCanvas: React.FC<{spec: NetworkSpec; stepFrames?: number[]}> = ({spec, stepFrames}) => {
+  const {height} = useVideoConfig();
+  const layered = spec.layout === "layered";
   return (
     <ExpandingNetwork
       root={spec.root}
       layout={spec.layout ?? "radial"}
+      positions={layered ? layeredPositions(spec, height) : undefined}
+      maxScale={layered ? LAYERED_MAX_SCALE : undefined}
       nodes={spec.nodes.map((n) => ({id: n.id, label: n.label, sublabel: n.role || undefined, kind: n.kind,
         icon: NODE_ICONS[n.kind]}))}
       edges={spec.edges.map((e) => ({from: e.from, to: e.to, label: e.label || undefined, value: e.value || undefined,
