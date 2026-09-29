@@ -26,10 +26,10 @@ de acervo com licença registrada, gera ilustrações apenas para lacunas, narra
 - **Evitar:** sobrevivência recente (fotos de agência, vira 100% ilustração gerada), true crime,
   Titanic/Hindenburg/Everest 1996 (saturados), Segunda Guerra (oceano de concorrentes).
 
-### Etapa atual (atualizada em 2026-09-28)
+### Etapa atual (atualizada em 2026-09-29)
 
-Roteiro completo nas issues #1–#31 e #41–#48 (`docs/ROADMAP.md`). A #48 foi antecipada: fatia vertical do
-formato explicativo antes do piloto documentário.
+Roteiro completo nas issues #1–#31, #41–#43, #48 e #69–#82 (`docs/ROADMAP.md`). A #48 foi antecipada: fatia
+vertical do formato explicativo antes do piloto documentário. Nenhum vídeo publicado ainda.
 
 - [x] **M0 · Fase 0** (#1–#9): ambiente, base, contratos, arquitetura, bench, motores (ADR 001).
 - [x] **#10** estado, cache por `input_hash` e aprovação imutável.
@@ -42,19 +42,39 @@ formato explicativo antes do piloto documentário.
 - [x] **Protótipo `votorantim-abertura` v1** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
   promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
   (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
-- [ ] **Abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
+- [x] **Abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
   blister, torre de transmissão), S08 sem a dedução sobre acionistas. Termos das quatro fontes
   (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de imagem), adapters
   Pexels/Pixabay/Unsplash, gates 1 e 3 registrados, verificador aprovou, render em `renders/final.mp4` (a v1
-  fica em `renders/v1-final.mp4`). **Gate 2 aprovado em 2026-09-27.** Pixabay e Unsplash aguardam as chaves.
+  fica em `renders/v1-final.mp4`). **Gate 2 aprovado em 2026-09-27.** Falta o gate 3 do retrato
+  `an-jose-ermirio`; Pixabay e Unsplash aguardam as chaves.
+- [x] **`votorantim-completo`** (47 cenas, ~7 min 35 s, 128 planos): gates 1 e 2 aprovados em 2026-09-27; prévia
+  sem imagens em `votorantim-completo-previa`; mapa de lacunas em `lacunas.md`. Roteiro anterior à ADR 011.
 - [x] **Diagnóstico do visual (#69)** e sugestões #70–#82; motion-kit 0.2.0 com o kit editorial (PR #83).
-- [ ] **← Agora: planos editoriais (ADR 011, aceita em 2026-09-28)**, um PR por etapa: contrato e `vp check` →
-  template com as peças do kit → skills do roteirista e do verificador → episódio de teste de ~90 s
-  reaproveitando fontes e fichas do `votorantim-completo`.
+- [x] **Planos editoriais (ADR 011, aceita em 2026-09-28):** contrato e `vp check` (PR #85), template com as
+  peças do kit (PR #86, cobre #70–#72), skills do roteirista e do verificador (PR #87).
+- [x] **Episódio de teste `votorantim-dinheiro`** (ADR 011, etapa 4): 93 s, 10 cenas, 21 planos, gates 1–3
+  aprovados; prévia em `renders/preview.mp4`; métricas em `data/benchmarks/episodio-votorantim-dinheiro.md`.
+- [ ] **← Agora: primeiro vídeo publicável.** Pendências na ordem (análise na `docs/ANALISE.md`, revisão de
+  2026-09-29):
+  1. Merge do PR #88 (fonte fora do painel do número) e do PR #89 (métricas).
+  2. Decisões do dono, numa rodada só: (a) o `votorantim-completo` sai com o roteiro atual (32 carimbos,
+     7 planos com "Fonte:" no texto, que agora duplica o rodapé, trechos de até 18 planos sem imagem) ou é
+     reescrito com os planos da ADR 011, o que reabre o gate 2 e cumpre os critérios das #73 e #76–#79;
+     (b) o recorte da validação de audiência (§12): perfis de poder em pt-BR ou o piloto documentário, que o §1
+     ainda cita.
+  3. Se reescrito: roteirista e verificador só nas cenas afetadas, e gate 2 de novo.
+  4. Gate 3 do `completo`: imagem por cena (várias sem candidato no Commons; a Brasiliana Fotográfica recusou o
+     acesso automatizado com 403), retratos `an-jose-ermirio` e de Getúlio Vargas.
+  5. Revisão de risco antes do gate 4 (pessoas vivas, empresa ativa, fatos de fonte única ou interessada): criar o
+     agente `revisor-de-risco` (§15).
+  6. Voz, render, legendas e pacote: não há `captions.srt`, `credits.txt` nem `description.txt` (#17 e #18,
+     ou scripts provisórios como os de voz e render). Depois, gate 4.
+  7. Publicação manual e métricas aos 7 e 28 dias (§12, #31), com as horas humanas do episódio medidas.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
-  - retrato de Getúlio Vargas no gate 3; gate 3 do retrato `an-jose-ermirio` (identidade e DP no Brasil);
+  - decupagem da referência (#69, passo 0, feita pelo dono);
   - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
-  - busca por vetor (ADR 010) quando as fontes passarem do que um agente lê de uma vez;
+  - busca por vetor (ADR 010, ainda não escrita) quando as fontes passarem do que um agente lê de uma vez;
   - árvore da família com genro;
   - scripts provisórios de fonte, voz e render virarem `vp sources` (#26), `vp voice` (#16) e `vp render` (#13);
   - `vp new` e `vp reopen` (resto da #12; `vp approve`, `vp reject` e `vp status` já existem).
@@ -438,7 +458,7 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 4. ~~`.wslconfig` com limite de memória explícito~~ **Feito** (§3, ADR 004).
 5. **Flickr Commons** adicionado à cascata de acervos ("no known copyright restrictions").
 6. Pós-piloto (já previstas na spec): duração ideal do episódio; versões em português/espanhol.
-7. **Busca por vetor (ADR 010, proposta):** `vp search` sobre os trechos numerados, com embeddings locais
+7. **Busca por vetor (ADR 010, proposta ainda sem arquivo em `docs/decisions/`):** `vp search` sobre os trechos numerados, com embeddings locais
    guardados em arquivo (sem banco). Serve para achar trechos; a prova continua literal no `vp check`. Entra
    quando as fontes passarem do que um agente lê de uma vez (ex.: jornais da Hemeroteca).
 8. ~~B-roll de banco de imagens no gancho do explicativo~~ **Decidido** na emenda de bancos de imagem da

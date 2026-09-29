@@ -1,8 +1,26 @@
-# Roadmap — 31 etapas entregáveis
+# Roadmap — etapas entregáveis (#1–#31, #41–#43, #48, #69–#82)
 
 Cada etapa é uma issue no GitHub com o mesmo número (etapa N = issue #N) e pertence a um milestone
 que segue a ordem de implementação do §11 do `CLAUDE.md`. Gerado a partir de uma fonte única;
 detalhes e critérios de aceite completos estão nas issues.
+
+## Situação em 2026-09-29
+
+O formato explicativo (#48, #69–#82, no fim deste arquivo) passou na frente do piloto documentário. As
+pendências em ordem estão no "Etapa atual" do `CLAUDE.md`.
+
+| Issues | Situação |
+|---|---|
+| #1–#10 | Fechadas. |
+| #11 | Em pausa até o modelo de planos estabilizar. |
+| #12 | Parcial: `vp approve`, `vp reject` e `vp status` (PR #67); faltam `vp new` e `vp reopen`. |
+| #13, #16 | Script provisório `scripts/provisorio/montar_episodio.py` faz voz e render; os comandos `vp` não existem. |
+| #15 | Adapter Kokoro existe (usado no `vp bench` e no script de voz); falta o glossário de pronúncia. |
+| #19–#22 | Adapters Pexels, Pixabay e Unsplash feitos na #48 (PRs #61–#63); Commons e Arquivo Nacional só pelos scripts provisórios de busca e download; `vp assets` não existe. |
+| #26 | Parcial: script provisório `baixar_fonte.py` (PR #68) e `vp excerpts`. |
+| #27, #28 | Adapter Ollama existe; `vp script` e `vp scenes` não. Desde a ADR 009, fichas, roteiro e cenas saem dos agentes (pesquisador, roteirista, verificador) validados pelo `vp check`; o Ollama ficou como candidato (§7). |
+| #14, #17, #18, #23–#25, #29–#31, #41, #42 | Não começadas. #17 (legendas) e #18 (pacote) são necessárias antes de publicar. |
+| M2–M7 do piloto documentário | Em pausa. |
 
 ## M0 · Fase 0 — Ambiente e decisão do motor
 
@@ -100,3 +118,24 @@ Os números seguem os das issues: #32–#40 foram usados pelos PRs das etapas 1�
 | 41 | Motor ffmpeg: granulação, vinheta e movimento variado por cena (§12) | M6 (antes do piloto #30) | #9 | Render da engine-test com o novo visual e cache por cena preservado |
 | 42 | Gráfico como ativo: clipes Remotion + motion-kit para cenas `map_or_graphic` | M8 (antes do piloto, se precisar de mapa) | #9 | Clipe gráfico como ativo `Original` renderizado pelo ffmpeg |
 | 43 | Formato explainer: trazer Remotion + motion-kit para o `main` | M8 | #9, #42 | `render.explainer = "remotion"` funcionando pelo mapa formato → motor |
+
+## Formato explicativo (#48 e #69–#82)
+
+Fatia vertical e visual do formato `explainer` (ADR 008, ADR 009, ADR 011). Situação em 2026-09-29.
+
+| # | Etapa | Situação |
+|---|---|---|
+| 43 | Remotion + motion-kit no `main` | Antecipada pela #48 (PR #50); falta a medição limpa com `vp bench --render`. |
+| 48 | Fatia vertical Votorantim | Passos 1–3 feitos; abertura v2 com gate 2 aprovado. Faltam o gate 3 do retrato `an-jose-ermirio`, fotos de 1918, a árvore com genro e o "próximo da referência" do dono. |
+| 69 | Visual mais próximo do How Money Works (guarda-chuva) | ADR 011, etapas 1–4 (PRs #83–#87 e o episódio de teste `votorantim-dinheiro`). Faltam a decupagem da referência (dono) e a prévia completa refeita. |
+| 70–72 | Mídia por baixo, câmera e transições | Entregues no PR #86 (quadros aprovados em 2026-09-28; transição só com empurrão lateral, sem zoom). Falta a conferência em movimento com o dono. |
+| 73 | Plano de documento | Peça pronta (PRs #85 e #86). Falta S28, S34 e S42 do `votorantim-completo` como documento. |
+| 74 | Fonte no rodapé | Pronto (PRs #85 e #86). Faltam os rótulos com "Fonte:" da abertura (5) e do `completo` (7). |
+| 75 | Mistura de planos | Alertas no `vp check` (PR #85) e regra na skill (PR #87): critérios cumpridos. |
+| 76 | Números: hodômetro e comparação | Peça pronta. Falta S05 e S10 da abertura como `compare`. |
+| 77 | Gráficos: linha, participação e destaque | Peça pronta, com o alerta de tempo. Falta S15, S19 e S40 do `completo`. |
+| 78 | Diagrama de poder | Peça pronta, `claims` por aresta no `vp check`. Falta S09 e S41 do `completo`; rótulos das setas pequenos (prop no motion-kit). |
+| 79 | Mapa-múndi com rotas | Peça pronta, contornos do Natural Earth registrados. Falta S18 do `completo`. |
+| 80 | Texto cinético | Peça pronta. Falta em duas cenas da abertura. |
+| 81 | Trilha e efeitos | Não começada; depende de decisão do dono (licença por faixa). |
+| 82 | Retrato recortado | Não começada; dependência nova e direito de derivar em aberto. |
