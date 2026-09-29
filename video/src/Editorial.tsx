@@ -1,9 +1,9 @@
 import React from "react";
-import {AbsoluteFill, Sequence, useVideoConfig} from "remotion";
+import {AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
 import {Odometer} from "@viniciusk/motion-kit";
 import {BarChart, LineChart, ShareChart, ValueCompare, YearTimeline} from "@viniciusk/motion-kit/charts";
 import {
-  ArchivalPhoto, DateStamp, DocumentPage, KineticHeadline, LowerThird as KitLowerThird,
+  ArchivalPhoto, DateStamp, DocumentPage, KineticHeadline, LowerThird as KitLowerThird, fitCard,
 } from "@viniciusk/motion-kit/editorial";
 import {FootageBackground, ImageBackground} from "@viniciusk/motion-kit/fx";
 import {GeoMap} from "@viniciusk/motion-kit/geo";
@@ -43,12 +43,31 @@ const Title: React.FC<{title: string; subtitle?: string}> = ({title, subtitle}) 
 
 // --- Mídia --------------------------------------------------------------------------------------
 
+// O crédito vai acima da foto, alinhado à direita, e não embaixo como no kit: embaixo entram a tarja, o painel
+// do número e a fonte, que ficam por cima da foto nos planos seguintes da cena e cobriam o crédito.
+const CARD = {maxWidth: 0.78, maxHeight: 0.74}; // os padrões do ArchivalPhoto
+
 export const ArchivalShot: React.FC<{spec: PhotoSpec; src: string; credit?: string; aspect?: number}> = ({
   spec, src, credit, aspect = 16 / 9,
-}) => (
-  <ArchivalPhoto src={src} aspect={aspect} crop={spec.crop ?? undefined} motion={spec.motion ?? "push_in"}
-    credit={credit} />
-);
+}) => {
+  const {width, height} = useVideoConfig();
+  const frame = useCurrentFrame();
+  const crop = spec.crop ?? {x: 0, y: 0, width: 1, height: 1};
+  const card = fitCard((crop.width * aspect) / crop.height, width * CARD.maxWidth, height * CARD.maxHeight);
+  return (
+    <ArchivalPhoto src={src} aspect={aspect} crop={spec.crop ?? undefined} motion={spec.motion ?? "push_in"}
+      maxWidth={CARD.maxWidth} maxHeight={CARD.maxHeight}>
+      {credit && (
+        <div style={{position: "absolute", right: (width - card.width) / 2,
+          bottom: (height + card.height) / 2 + u(height, 14), maxWidth: card.width, textAlign: "right",
+          fontFamily: theme.font, fontSize: u(height, 22), lineHeight: 1.3, color: theme.muted,
+          opacity: interpolate(frame, [12, 24], [0, 1], {extrapolateLeft: "clamp", extrapolateRight: "clamp"})}}>
+          {credit}
+        </div>
+      )}
+    </ArchivalPhoto>
+  );
+};
 
 // Foto de banco ou ilustração: colorida e em tela cheia, para não parecer registro de época (§2.4).
 export const StockShot: React.FC<{spec: PhotoSpec; src: string}> = ({spec, src}) => {
