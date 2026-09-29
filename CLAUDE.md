@@ -62,7 +62,8 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
     avulso, o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
     visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Script
     `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar` com a folha de quadros, `lado-a-lado`),
-    vídeos em `renders/evolucao/` e registro em `data/benchmarks/evolucao-template.md`.
+    vídeos em `renders/evolucao/` e registro em `data/benchmarks/evolucao-template.md`. A folha e o registro
+    marcam os planos que mudaram em relação à versão anterior: um PR de visual deve mudar só os que pretendia.
 
   Frentes candidatas, a escolher com o dono (cada uma gera uma versão nova do vídeo-régua):
   - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
