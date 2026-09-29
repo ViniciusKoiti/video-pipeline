@@ -55,22 +55,31 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
   peças do kit (PR #86, cobre #70–#72), skills do roteirista e do verificador (PR #87).
 - [x] **Episódio de teste `votorantim-dinheiro`** (ADR 011, etapa 4): 93 s, 10 cenas, 21 planos, gates 1–3
   aprovados; prévia em `renders/preview.mp4`; métricas em `data/benchmarks/episodio-votorantim-dinheiro.md`.
-- [ ] **← Agora: primeiro vídeo publicável.** Pendências na ordem (análise na `docs/ANALISE.md`, revisão de
-  2026-09-29):
-  1. Merge do PR #88 (fonte fora do painel do número) e do PR #89 (métricas).
-  2. Decisões do dono, numa rodada só: (a) o `votorantim-completo` sai com o roteiro atual (32 carimbos,
+- [ ] **← Agora: Remotion.** Decisão do dono em 2026-09-29: o vídeo não será publicado por enquanto; o foco
+  passa a ser o template do formato explicativo (`video/`, Remotion + motion-kit), com calma, uma frente por
+  vez. Frentes candidatas, a escolher com o dono:
+  - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
+  - defeitos vistos no `votorantim-dinheiro`: fonte sobre a imagem (PR #88, conferir no próximo render),
+    rótulos longos cortados na linha do tempo, rótulos das setas da rede pequenos (prop no motion-kit);
+  - resto da #69: zoom nas transições (#72), entrada 2.5D (#71), tipos novos aplicados às cenas citadas nas
+    #73 e #76–#80;
+  - trilha e efeitos com `MusicBed`/`SfxTrack` (#81, licença por faixa decidida pelo dono);
+  - `vp render` (#13) no lugar do script provisório; o `npm run render` de `video/package.json` ainda aponta
+    para a composição `Episode`, que não existe mais.
+- [ ] **Quando for publicar**, na ordem (análise na `docs/ANALISE.md`, revisão de 2026-09-29):
+  1. Decisões do dono, numa rodada só: (a) o `votorantim-completo` sai com o roteiro atual (32 carimbos,
      7 planos com "Fonte:" no texto, que agora duplica o rodapé, trechos de até 18 planos sem imagem) ou é
      reescrito com os planos da ADR 011, o que reabre o gate 2 e cumpre os critérios das #73 e #76–#79;
      (b) o recorte da validação de audiência (§12): perfis de poder em pt-BR ou o piloto documentário, que o §1
      ainda cita.
-  3. Se reescrito: roteirista e verificador só nas cenas afetadas, e gate 2 de novo.
-  4. Gate 3 do `completo`: imagem por cena (várias sem candidato no Commons; a Brasiliana Fotográfica recusou o
+  2. Se reescrito: roteirista e verificador só nas cenas afetadas, e gate 2 de novo.
+  3. Gate 3 do `completo`: imagem por cena (várias sem candidato no Commons; a Brasiliana Fotográfica recusou o
      acesso automatizado com 403), retratos `an-jose-ermirio` e de Getúlio Vargas.
-  5. Revisão de risco antes do gate 4 (pessoas vivas, empresa ativa, fatos de fonte única ou interessada): criar o
+  4. Revisão de risco antes do gate 4 (pessoas vivas, empresa ativa, fatos de fonte única ou interessada): criar o
      agente `revisor-de-risco` (§15).
-  6. Voz, render, legendas e pacote: não há `captions.srt`, `credits.txt` nem `description.txt` (#17 e #18,
+  5. Voz, render, legendas e pacote: não há `captions.srt`, `credits.txt` nem `description.txt` (#17 e #18,
      ou scripts provisórios como os de voz e render). Depois, gate 4.
-  7. Publicação manual e métricas aos 7 e 28 dias (§12, #31), com as horas humanas do episódio medidas.
+  6. Publicação manual e métricas aos 7 e 28 dias (§12, #31), com as horas humanas do episódio medidas.
 - [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
   - decupagem da referência (#69, passo 0, feita pelo dono);
   - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
