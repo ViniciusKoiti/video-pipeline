@@ -165,3 +165,11 @@ def test_kokoro_is_one_line_away(tmp_path: Path) -> None:
     (root / CONFIG_FILE).write_text(config)
     settings = load_settings(root, environ={})
     assert speech_chars_per_second(settings) == settings.kokoro.chars_per_second
+
+
+def test_the_daily_limit_is_not_retried(tmp_path: Path) -> None:
+    daily = TransportError(429, "Rate limit exceeded (limit: 10 requests per day on Free Tier)")
+    post = FakePost(daily)
+    with pytest.raises(QuotaExhausted, match="per day"):
+        make(post).synthesize_speech(request(tmp_path))
+    assert len(post.calls) == 1  # a segunda chamada só gastaria cota

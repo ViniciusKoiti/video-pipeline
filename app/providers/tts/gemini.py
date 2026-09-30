@@ -2,9 +2,10 @@
 
 - A chave vai só no cabeçalho `x-goog-api-key` e nunca aparece em erro nem em log (§2.7).
 - A camada gratuita aceita poucas chamadas por minuto (3 no `gemini-3.8-flash-tts`, erro 429 visto em
-  2026-09-29): o adapter espaça as chamadas. Falha passageira (429, 500, 503 "high demand", tempo esgotado ou
-  rede) espera o intervalo e tenta de novo uma vez; na segunda, 429 vira `QuotaExhausted` e o resto,
-  `ProviderError` (a cena fica pendente, §2.1). Nunca troca de modelo sozinho: 404 vira `ModelUnavailable`.
+  2026-09-29) e 10 por dia (2026-09-30): o adapter espaça as chamadas. Falha passageira (429 por minuto, 500,
+  503 "high demand", tempo esgotado ou rede) espera o intervalo e tenta de novo uma vez; o limite diário não é
+  repetido. 429 vira `QuotaExhausted` e o resto, `ProviderError` (a cena fica pendente, §2.1). Nunca troca de
+  modelo sozinho: 404 vira `ModelUnavailable`.
 - O texto é lido ao pé da letra; a direção de fala vai em `speech_metadata.style`, por idioma.
 - Sem dicionário de fonemas: um glossário no pedido é erro, em vez de ser ignorado em silêncio.
 - A resposta é WAV com cabeçalho RIFF (24 kHz, mono, 16 bits), gravado como veio.
@@ -83,7 +84,8 @@ class GeminiTTS:
             try:
                 return self._post(API, body, {"x-goog-api-key": self._key}, TIMEOUT_S)
             except TransportError as error:
-                if attempt == 1 and (error.status is None or error.status in TRANSIENT):
+                daily = error.status == 429 and "per day" in str(error)  # 10 por dia: esperar não adianta
+                if attempt == 1 and not daily and (error.status is None or error.status in TRANSIENT):
                     continue  # limite por minuto, serviço sobrecarregado ou rede: espera e tenta uma vez mais
                 if error.status == 429:  # a mensagem do serviço diz qual limite (por minuto ou por dia)
                     detail = f"cota da camada gratuita esgotada: {error}"

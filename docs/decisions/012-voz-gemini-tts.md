@@ -49,8 +49,12 @@ pt-BR; o Kokoro fica como alternativa local, a uma linha de configuração.
 
 - O vídeo fica ~20–30% mais longo com o mesmo roteiro: o vídeo-régua passa de 93 s para ~2 min, e o completo de
   ~7,5 para ~9,5 min.
-- Gerar a voz leva ~20 s por cena (3 por minuto): ~16 min para 47 cenas. Sem limite diário publicado; se ele
-  aparecer, as cenas que faltam ficam pendentes para o dia seguinte.
+- **Limite diário de 10 chamadas** (observado em 2026-09-30, "limit: 10 requests per day on Free Tier"): o
+  vídeo-régua (10 cenas) gasta um dia de cota; o completo (47 cenas), cinco; cada reescrita de cena gasta mais.
+  Com 3 por minuto, cada fala leva ~20 s. Cenas que passam do limite ficam pendentes para o dia seguinte (a cota
+  zera à meia-noite do Pacífico). Serviço sobrecarregado ("503 high demand") e tempo esgotado também aconteceram
+  no primeiro dia de uso. **Este limite pode mudar a decisão** (alternativas na conversa de 2026-09-30: várias
+  cenas por chamada, Kokoro nos rascunhos e Charon só na versão final, ou gasto pequeno com teto).
 - O roteiro narrado (história pública, §13.2) vai para o Google, como aceito pelo dono. A descrição do vídeo diz
   que a narração é sintética (política de uso do Google e divulgação do YouTube, §12).
 - Nomes sem dicionário de fonemas: se a voz errar um nome, uma lista "nome → como falar" entra só na síntese, sem
