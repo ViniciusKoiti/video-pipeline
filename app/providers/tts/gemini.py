@@ -2,9 +2,9 @@
 
 - A chave vai só no cabeçalho `x-goog-api-key` e nunca aparece em erro nem em log (§2.7).
 - A camada gratuita aceita poucas chamadas por minuto (3 no `gemini-3.8-flash-tts`, erro 429 visto em
-  2026-09-29): o adapter espaça as chamadas; um 429 espera o intervalo e tenta de novo uma vez, e o segundo
-  vira `QuotaExhausted` (a cena fica pendente, §2.1). Nunca troca de modelo sozinho: 404 vira
-  `ModelUnavailable`.
+  2026-09-29): o adapter espaça as chamadas. Falha passageira (429, 500, 503 "high demand", tempo esgotado ou
+  rede) espera o intervalo e tenta de novo uma vez; na segunda, 429 vira `QuotaExhausted` e o resto,
+  `ProviderError` (a cena fica pendente, §2.1). Nunca troca de modelo sozinho: 404 vira `ModelUnavailable`.
 - O texto é lido ao pé da letra; a direção de fala vai em `speech_metadata.style`, por idioma.
 - Sem dicionário de fonemas: um glossário no pedido é erro, em vez de ser ignorado em silêncio.
 - A resposta é WAV com cabeçalho RIFF (24 kHz, mono, 16 bits), gravado como veio.
@@ -23,7 +23,8 @@ from app.providers.http import AuthPost, TransportError, post_json_with_headers
 from app.providers.tts.base import SpeechRequest, SpeechResult
 
 API = "https://generativelanguage.googleapis.com/v1beta/interactions"
-TIMEOUT_S = 180.0
+TIMEOUT_S = 90.0  # a fala mais longa do teste (188 caracteres) levou 27,5 s
+TRANSIENT = frozenset({429, 500, 503})  # e status None: tempo esgotado ou rede
 MARGIN_S = 1.0  # folga sobre 60 / chamadas por minuto
 
 
@@ -82,8 +83,8 @@ class GeminiTTS:
             try:
                 return self._post(API, body, {"x-goog-api-key": self._key}, TIMEOUT_S)
             except TransportError as error:
-                if error.status == 429 and attempt == 1:
-                    continue  # limite por minuto: espera o intervalo e tenta uma vez mais
+                if attempt == 1 and (error.status is None or error.status in TRANSIENT):
+                    continue  # limite por minuto, serviço sobrecarregado ou rede: espera e tenta uma vez mais
                 if error.status == 429:
                     raise QuotaExhausted(self.info.name, "cota da camada gratuita esgotada") from None
                 if error.status == 404:

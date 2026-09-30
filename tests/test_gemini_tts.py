@@ -116,19 +116,29 @@ def test_one_rate_limit_is_retried_and_a_second_becomes_quota_exhausted(tmp_path
         make(FakePost(limit, limit)).synthesize_speech(request(tmp_path))
 
 
+@pytest.mark.parametrize("status", [503, 500, None])  # None: tempo esgotado ou rede
+def test_passing_failures_are_retried_once(tmp_path: Path, status: int | None) -> None:
+    busy = TransportError(status, "high demand")
+    assert make(FakePost(busy, audio_response(wav_bytes()))).synthesize_speech(request(tmp_path)).voice
+    with pytest.raises(ProviderError) as raised:
+        make(FakePost(busy, busy)).synthesize_speech(request(tmp_path))
+    assert not isinstance(raised.value, QuotaExhausted)
+
+
 @pytest.mark.parametrize(
     ("reply", "error"),
     [
         (TransportError(404, "not found"), ModelUnavailable),
-        (TransportError(500, "internal"), ProviderError),
+        (TransportError(400, "bad request"), ProviderError),
         ({"steps": [{"type": "model_output", "content": []}]}, InvalidOutput),
         (audio_response(b"not a wav"), InvalidOutput),
     ],
 )
 def test_failures_become_provider_errors(tmp_path: Path, reply: Any, error: type[Exception]) -> None:
+    post = FakePost(reply)
     with pytest.raises(error) as raised:
-        make(FakePost(reply)).synthesize_speech(request(tmp_path))
-    assert "chave-secreta" not in str(raised.value)
+        make(post).synthesize_speech(request(tmp_path))
+    assert "chave-secreta" not in str(raised.value) and len(post.calls) == 1  # sem nova tentativa
 
 
 def test_missing_voice_and_phoneme_glossary_are_refused(tmp_path: Path) -> None:
