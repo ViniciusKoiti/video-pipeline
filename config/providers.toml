@@ -4,7 +4,8 @@
 
 [providers]
 text = "ollama"
-tts = "gemini"  # ADR 012 (proposta): Charon na camada gratuita; "kokoro" é a voz local
+tts = "kokoro"        # rascunhos e prévias de revisão: local, sem limite
+tts_final = "gemini"  # vídeo final e vídeo-régua: Charon, várias cenas por chamada (ADR 012, proposta)
 image_gen = "workers_ai"
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"

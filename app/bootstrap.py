@@ -153,9 +153,13 @@ def _choices(settings: Settings) -> dict[str, list[str]]:
     chosen = settings.providers.model_dump()
     flat: dict[str, list[str]] = {}
     for port, names in chosen.items():
+        if names is None:
+            continue
         if isinstance(names, dict):  # render: formato -> motor
             names = list(names.values())
-        flat[port] = names if isinstance(names, list) else [names]
+        port = "tts" if port == "tts_final" else port  # a voz final vem da mesma porta
+        flat.setdefault(port, [])
+        flat[port] += names if isinstance(names, list) else [names]
     return flat
 
 
@@ -186,6 +190,12 @@ class LazyContext:
     @cached_property
     def tts(self) -> TTSProvider:
         return self._build("tts", self._settings.providers.tts)
+
+    @cached_property
+    def tts_final(self) -> TTSProvider:
+        """Voz do vídeo final (ADR 012); sem `tts_final` na configuração, a mesma dos rascunhos."""
+        name = self._settings.providers.tts_final
+        return self.tts if name is None else self._build("tts", name)
 
     @cached_property
     def image_gen(self) -> ImageGenProvider:

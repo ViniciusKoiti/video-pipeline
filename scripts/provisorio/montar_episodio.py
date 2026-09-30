@@ -1,11 +1,14 @@
 """Voz e render de um episódio a partir do scenes.json (provisório até `vp voice` #16 e `vp render` #13).
 
-Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-render] [--preview]`
+Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-render] [--preview]
+     [--voz-final]`
 
-- Narração por cena na voz configurada (`tts` em config/providers.toml: Gemini Charon pela ADR 012, ou
-  Kokoro), em `voice/<cena>-<provedor>-<hash>.wav`. O hash cobre o texto, o modelo, a voz e a direção de fala:
-  a fala só é gerada de novo quando um deles muda, e trocar de provedor não apaga as falas do outro.
-- Cota esgotada (Gemini): o script para; as falas já geradas ficam no cache e a próxima execução continua.
+- Narração por cena, em `voice/<cena>-<provedor>-<hash>.wav`: a voz dos rascunhos (`tts`, Kokoro) ou, com
+  `--voz-final`, a do vídeo final (`tts_final`, Gemini Charon, ADR 012). O hash cobre o texto, o modelo, a voz
+  e a direção de fala: a fala só é gerada de novo quando um deles muda, e uma voz não apaga as falas da outra.
+- A voz final gera as cenas que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
+  pode ser cortado com segurança é gerado cena a cena. Cota esgotada: o script para, as falas já geradas ficam
+  no cache e a próxima execução continua.
 - Duração real de cada WAV (ffprobe) → tempo dos planos (app/pipeline/shots.py) → episode.json v2.
 - Render pelo motor do formato explicativo (Remotion), com cache por cena.
 - A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>` (jpg, png, webp, mp4, webm).
@@ -34,20 +37,56 @@ from app.pipeline.schemas import (  # noqa: E402
     SourcesManifest,
 )
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
-from app.providers.errors import ProviderError  # noqa: E402
-from app.providers.tts.base import SpeechRequest  # noqa: E402
+from app.providers.errors import InvalidOutput, ProviderError  # noqa: E402
+from app.providers.tts.base import SpeechRequest, TTSProvider  # noqa: E402
 from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
 
 
-def voice_fingerprint(settings: Settings, language: str) -> str:
+BATCH_CHARS = 1200  # ~90 s de fala por chamada num lote da voz final (ADR 012)
+
+
+def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
     """O que muda a fala gerada, além do texto: provedor, modelo, voz e direção de fala."""
-    if settings.providers.tts == "gemini":
+    if provider == "gemini":
         gemini = settings.gemini_tts
         return f"gemini|{gemini.model}|{gemini.voices.get(language)}|{gemini.styles.get(language, '')}"
-    return f"{settings.providers.tts}|{settings.kokoro.voices.get(language)}"
+    return f"{provider}|{settings.kokoro.voices.get(language)}"
+
+
+def batches(requests: list[SpeechRequest], limit: int = BATCH_CHARS) -> list[list[SpeechRequest]]:
+    """Cenas seguidas em grupos de até `limit` caracteres (uma cena maior que o limite vai sozinha)."""
+    groups: list[list[SpeechRequest]] = []
+    size = 0
+    for request in requests:
+        if groups and size + len(request.text) <= limit:
+            groups[-1].append(request)
+            size += len(request.text)
+        else:
+            groups.append([request])
+            size = len(request.text)
+    return groups
+
+
+def generate(tts: TTSProvider, requests: list[SpeechRequest]) -> None:
+    many = getattr(tts, "synthesize_many", None)
+    groups = batches(requests) if many else [[r] for r in requests]
+    print(f"voz: {len(requests)} cena(s) a gerar em {len(groups)} chamada(s)")
+    for group in groups:
+        try:
+            if many and len(group) > 1:
+                try:
+                    many(group)
+                    continue
+                except InvalidOutput as error:
+                    print(f"lote recusado ({error}); gerando cena a cena")
+            for request in group:
+                tts.synthesize_speech(request)
+        except ProviderError as error:
+            raise SystemExit(f"{group[0].out_path.name}: {error.reason}: {error}. As falas já geradas "
+                             "ficam no cache; rode de novo depois.") from error
 
 
 def media_path(episode_dir: Path, asset_id: str) -> str:
@@ -69,26 +108,28 @@ def main() -> None:
     sources = None
     if sources_path.is_file():
         sources = SourcesManifest.model_validate_json(sources_path.read_text())
-    fingerprint = voice_fingerprint(settings, scenes.language)
-    provider = settings.providers.tts
-    tts = context.tts
+    final = "--voz-final" in sys.argv
+    provider = (settings.providers.tts_final or settings.providers.tts) if final else settings.providers.tts
+    tts = context.tts_final if final else context.tts
+    fingerprint = voice_fingerprint(settings, provider, scenes.language)
     voice_dir = episode_dir / "voice"
     voice_dir.mkdir(exist_ok=True)
 
     started = time.monotonic()
-    episode_scenes, cursor = [], 0
+    wavs, missing = {}, []
     for scene in scenes.scenes:
         key = hashlib.sha256(f"{fingerprint}|{scene.narration}".encode()).hexdigest()[:10]
-        wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
+        wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
             for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):
                 stale.unlink()
-            try:
-                speech = SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language)
-                tts.synthesize_speech(speech)
-            except ProviderError as error:
-                raise SystemExit(f"{scene.id}: {error.reason}: {error}. As falas já geradas ficam no cache; "
-                                 "rode de novo depois.") from error
+            missing.append(SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language))
+    if missing:
+        generate(tts, missing)
+
+    episode_scenes, cursor = [], 0
+    for scene in scenes.scenes:
+        wav = wavs[scene.id]
         ms = duration_ms(wav)
         shots = episode_shots(scene, ms, lambda shot: media_path(episode_dir, shot.asset_id), sources)
         episode_scenes.append(

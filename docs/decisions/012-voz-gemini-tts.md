@@ -30,8 +30,16 @@ aceitas. As regras do §2 continuam: custo zero, segredo só no `.env`, cota esg
 
 ## Decisão
 
-Proposta: **Gemini TTS `gemini-3.8-flash-tts` com a voz Charon, na camada gratuita**, como voz do explicativo em
-pt-BR; o Kokoro fica como alternativa local, a uma linha de configuração.
+Proposta: **Gemini TTS `gemini-3.8-flash-tts` com a voz Charon, na camada gratuita**, como voz do vídeo final do
+explicativo em pt-BR, e **Kokoro nos rascunhos** (escolha do dono em 2026-09-30, depois do limite de 10 chamadas
+por dia):
+
+- `config/providers.toml`: `tts = "kokoro"` (rascunhos e prévias de revisão, sem limite) e `tts_final = "gemini"`
+  (vídeo final e vídeo-régua). `montar_episodio.py --voz-final` usa a voz final; o vídeo-régua usa sempre ela.
+- **Várias cenas por chamada:** as cenas que faltam vão em lotes de até ~1.200 caracteres (~90 s de fala),
+  separadas por `<long pause>` (marca da documentação, em inglês mesmo com texto em português); o áudio é cortado
+  nas pausas mais longas (`app/media/pauses.py`), e o corte é recusado quando elas não se destacam das pausas de
+  respiração. Lote recusado é gerado cena a cena. Um episódio completo (~6.600 caracteres) cabe em ~6 chamadas.
 
 - **Escuta às cegas (2026-09-29/30):** três falas do vídeo-régua (S04 datas e valores; S05 nomes difíceis; S09
   banco e valor por extenso) em cinco versões com o mesmo volume e letras sorteadas por fala: Kokoro `pm_alex`,

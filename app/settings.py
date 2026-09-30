@@ -24,7 +24,8 @@ class _Model(BaseModel):
 
 class ProviderChoice(_Model):
     text: str
-    tts: str
+    tts: str  # voz dos rascunhos e das prévias de revisão
+    tts_final: str | None = None  # voz do vídeo final e do vídeo-régua (ADR 012); None = a mesma de `tts`
     image_gen: str
     archives: list[str] = Field(min_length=1)  # ordem da cascata (§8)
     aligner: str
@@ -165,6 +166,7 @@ def load_settings(root: Path, environ: Mapping[str, str] | None = None) -> Setti
 
 
 def speech_chars_per_second(settings: Settings) -> float:
-    """Ritmo da voz configurada: estima a duração das cenas antes da voz real (§9)."""
+    """Ritmo da voz final: estima a duração das cenas antes da voz real (§9); é o tempo do vídeo publicado."""
     rates = {"kokoro": settings.kokoro.chars_per_second, "gemini": settings.gemini_tts.chars_per_second}
-    return rates.get(settings.providers.tts, settings.kokoro.chars_per_second)
+    voice = settings.providers.tts_final or settings.providers.tts
+    return rates.get(voice, settings.kokoro.chars_per_second)

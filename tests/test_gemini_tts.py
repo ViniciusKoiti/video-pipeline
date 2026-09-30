@@ -16,8 +16,9 @@ from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import TransportError
 from app.providers.tts.base import SpeechRequest, SpeechResult
-from app.providers.tts.gemini import API, GeminiTTS
+from app.providers.tts.gemini import API, SCENE_BREAK, TIMEOUT_S, GeminiTTS
 from app.settings import CONFIG_FILE, load_settings, speech_chars_per_second
+from tests.test_pauses import THREE_SCENES, narration
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 STYLE = "narração de documentário"
@@ -46,9 +47,11 @@ class FakePost:
     def __init__(self, *replies: dict[str, Any] | TransportError) -> None:
         self.replies = list(replies)
         self.calls: list[tuple[str, Mapping[str, Any], Mapping[str, str]]] = []
+        self.timeouts: list[float] = []
 
     def __call__(self, url: str, body: Mapping[str, Any], headers: Mapping[str, str], timeout: float) -> Any:
         self.calls.append((url, body, headers))
+        self.timeouts.append(timeout)
         reply = self.replies.pop(0)
         if isinstance(reply, TransportError):
             raise reply
@@ -150,21 +153,26 @@ def test_missing_voice_and_phoneme_glossary_are_refused(tmp_path: Path) -> None:
         make(FakePost()).synthesize_speech(request(tmp_path, lexicon={"Ignácio": "iɡnˈasju"}))
 
 
-def test_config_picks_gemini_with_the_key_from_env_and_its_speech_rate() -> None:
+def test_drafts_use_kokoro_and_the_final_video_uses_gemini() -> None:
     settings = load_settings(REPO_ROOT, environ={"GEMINI_API_KEY": "chave"})
-    assert settings.providers.tts == "gemini" and settings.gemini_tts.voices["pt-BR"] == "Charon"
-    assert speech_chars_per_second(settings) == settings.gemini_tts.chars_per_second
+    assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "gemini")
+    assert settings.gemini_tts.voices["pt-BR"] == "Charon"
+    assert speech_chars_per_second(settings) == settings.gemini_tts.chars_per_second  # o tempo do vídeo final
     context = build_context(REPO_ROOT, environ={"GEMINI_API_KEY": "chave"})
-    assert context.tts.info == ProviderInfo("gemini_tts", remote=True)  # custo zero: passa pela trava (§2.1)
+    assert context.tts.info.name == "kokoro"
+    assert context.tts_final.info == ProviderInfo("gemini_tts", remote=True)  # custo zero: trava do §2.1
 
 
-def test_kokoro_is_one_line_away(tmp_path: Path) -> None:
+def test_without_a_final_voice_the_draft_voice_is_used(tmp_path: Path) -> None:
     root = tmp_path / "repo"
     (root / CONFIG_FILE).parent.mkdir(parents=True)
-    config = (REPO_ROOT / CONFIG_FILE).read_text().replace('tts = "gemini"', 'tts = "kokoro"', 1)
-    (root / CONFIG_FILE).write_text(config)
+    lines = (REPO_ROOT / CONFIG_FILE).read_text().splitlines()
+    (root / CONFIG_FILE).write_text("\n".join(line for line in lines if not line.startswith("tts_final")))
     settings = load_settings(root, environ={})
+    assert settings.providers.tts_final is None
     assert speech_chars_per_second(settings) == settings.kokoro.chars_per_second
+    context = build_context(root, environ={})
+    assert context.tts_final is context.tts
 
 
 def test_the_daily_limit_is_not_retried(tmp_path: Path) -> None:
@@ -173,3 +181,41 @@ def test_the_daily_limit_is_not_retried(tmp_path: Path) -> None:
     with pytest.raises(QuotaExhausted, match="per day"):
         make(post).synthesize_speech(request(tmp_path))
     assert len(post.calls) == 1  # a segunda chamada só gastaria cota
+
+
+# --- Várias cenas por chamada -------------------------------------------------------------------
+
+
+def scene_requests(tmp_path: Path, texts: list[str], language: str = "pt-BR") -> list[SpeechRequest]:
+    return [SpeechRequest(text=text, out_path=tmp_path / "voice" / f"S0{i}.wav", language=language)
+            for i, text in enumerate(texts, start=1)]
+
+
+def test_several_scenes_go_in_one_call_and_come_back_cut(tmp_path: Path) -> None:
+    audio = narration(tmp_path / "lote.wav", THREE_SCENES).read_bytes()
+    post = FakePost(audio_response(audio))
+    requests = scene_requests(tmp_path, ["Primeira cena.", "Segunda cena.", "Terceira cena."])
+    results = make(post).synthesize_many(requests)
+    assert [r.path for r in results] == [r.out_path for r in requests]
+    assert all(r.path.is_file() and r.voice == "Charon" for r in results)
+    (_, body, _), = post.calls
+    assert body["input"][0]["content"][0]["text"] == SCENE_BREAK.join(r.text for r in requests)
+    assert post.timeouts[0] > TIMEOUT_S  # lote demora mais que uma fala
+    assert not list((tmp_path / "voice").glob("tmp*"))  # o arquivo do lote não fica para trás
+
+
+def test_a_batch_that_cannot_be_cut_is_invalid_output(tmp_path: Path) -> None:
+    audio = narration(tmp_path / "corrido.wav", [("tom", 2.0)]).read_bytes()
+    requests = scene_requests(tmp_path, ["Uma.", "Duas."])
+    with pytest.raises(InvalidOutput, match="lote de 2 cenas"):
+        make(FakePost(audio_response(audio))).synthesize_many(requests)
+
+
+def test_one_scene_is_a_plain_call_and_mixed_languages_are_refused(tmp_path: Path) -> None:
+    post = FakePost(audio_response(wav_bytes()))
+    assert len(make(post).synthesize_many(scene_requests(tmp_path, ["Só uma."]))) == 1
+    tts = GeminiTTS("chave", model="m", voices={"pt-BR": "Charon", "en": "Charon"}, styles={},
+                    requests_per_minute=3, post=FakePost())
+    mixed = scene_requests(tmp_path, ["Uma."]) + scene_requests(tmp_path / "en", ["Two."], language="en")
+    with pytest.raises(ProviderError, match="um idioma só"):
+        tts.synthesize_many(mixed)
