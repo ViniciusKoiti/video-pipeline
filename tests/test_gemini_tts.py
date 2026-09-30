@@ -112,8 +112,9 @@ def test_one_rate_limit_is_retried_and_a_second_becomes_quota_exhausted(tmp_path
     post = FakePost(limit, audio_response(wav_bytes()))
     assert make(post).synthesize_speech(request(tmp_path)).voice == "Charon"
     assert len(post.calls) == 2
-    with pytest.raises(QuotaExhausted):
+    with pytest.raises(QuotaExhausted, match="Rate limit exceeded") as raised:
         make(FakePost(limit, limit)).synthesize_speech(request(tmp_path))
+    assert "chave-secreta" not in str(raised.value)
 
 
 @pytest.mark.parametrize("status", [503, 500, None])  # None: tempo esgotado ou rede

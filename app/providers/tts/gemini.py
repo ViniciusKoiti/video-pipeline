@@ -85,8 +85,9 @@ class GeminiTTS:
             except TransportError as error:
                 if attempt == 1 and (error.status is None or error.status in TRANSIENT):
                     continue  # limite por minuto, serviço sobrecarregado ou rede: espera e tenta uma vez mais
-                if error.status == 429:
-                    raise QuotaExhausted(self.info.name, "cota da camada gratuita esgotada") from None
+                if error.status == 429:  # a mensagem do serviço diz qual limite (por minuto ou por dia)
+                    detail = f"cota da camada gratuita esgotada: {error}"
+                    raise QuotaExhausted(self.info.name, detail) from None
                 if error.status == 404:
                     raise ModelUnavailable(self.info.name, f"modelo {self._model} indisponível") from None
                 raise ProviderError(self.info.name, str(error)) from None
