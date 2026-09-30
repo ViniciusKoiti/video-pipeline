@@ -106,11 +106,21 @@ def _kokoro(settings: Settings) -> Any:
     return KokoroTTS(settings.kokoro.voices, num_threads=settings.kokoro.num_threads)
 
 
+def _gemini_tts(settings: Settings) -> Any:
+    from app.providers.tts.gemini import GeminiTTS
+
+    gemini = settings.gemini_tts
+    return GeminiTTS(
+        _secret(settings, "GEMINI_API_KEY"), model=gemini.model, voices=gemini.voices, styles=gemini.styles,
+        requests_per_minute=gemini.requests_per_minute,
+    )
+
+
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
 
 DEFAULT_REGISTRY: Registry = {
     "text": {"ollama": Registration(5, _ollama), "groq": Registration(29), "gemini": Registration(29)},
-    "tts": {"kokoro": Registration(5, _kokoro)},
+    "tts": {"kokoro": Registration(5, _kokoro), "gemini": Registration(15, _gemini_tts)},  # ADR 012
     "image_gen": {"workers_ai": Registration(24)},
     "archives": {
         "wikimedia_commons": Registration(20),

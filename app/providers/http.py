@@ -19,6 +19,7 @@ CHUNK_BYTES = 1 << 20
 USER_AGENT = "video-pipeline/0.1"
 
 JsonPost = Callable[[str, Mapping[str, Any], float], dict[str, Any]]  # url, corpo, timeout → JSON
+AuthPost = Callable[[str, Mapping[str, Any], Mapping[str, str], float], dict[str, Any]]  # + cabeçalhos
 
 
 class TransportError(Exception):
@@ -27,11 +28,19 @@ class TransportError(Exception):
         self.status = status
 
 
+
 def post_json(url: str, payload: Mapping[str, Any], timeout: float) -> dict[str, Any]:
+    return post_json_with_headers(url, payload, {}, timeout)
+
+
+def post_json_with_headers(
+    url: str, payload: Mapping[str, Any], headers: Mapping[str, str], timeout: float
+) -> dict[str, Any]:
+    """POST com cabeçalhos (ex.: a chave da API, que nunca vai na URL, §2.7)."""
     request = urllib.request.Request(
         url,
         data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "User-Agent": USER_AGENT, **headers},
         method="POST",
     )
     try:

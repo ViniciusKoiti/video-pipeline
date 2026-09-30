@@ -92,6 +92,16 @@ def make_unsplash() -> ArchiveProvider:
     return UnsplashArchive("chave", get=http.get, get_file=http.get_file)
 
 
+def make_gemini_tts() -> TTSProvider:
+    from app.providers.tts.gemini import GeminiTTS
+    from tests.test_gemini_tts import FakePost, audio_response, wav_bytes
+
+    return GeminiTTS(
+        "chave", model="gemini-3.8-flash-tts", voices={"en": "Charon"}, styles={},
+        requests_per_minute=3, post=FakePost(audio_response(wav_bytes())),
+    )
+
+
 def make_kokoro() -> TTSProvider:
     os.environ.setdefault("HF_HUB_OFFLINE", "1")  # pesos já em cache: o teste não acessa a rede (§2.10)
     from app.providers.tts.kokoro import KokoroTTS
@@ -108,6 +118,7 @@ TEXT: list[Callable[[list[str]], TextProvider]] = [
 ]
 TTS: list[Callable[[], TTSProvider]] = [
     pytest.param(FakeTTS, id="fake"),
+    pytest.param(make_gemini_tts, id="gemini"),  # POST falso: sem rede (§2.10)
     pytest.param(make_kokoro, id="kokoro", marks=[pytest.mark.slow, NEEDS_TTS_EXTRA]),
 ]
 IMAGE_GEN: list[Callable[[], ImageGenProvider]] = [pytest.param(FakeImageGen, id="fake")]

@@ -32,8 +32,8 @@ from app.pipeline.schemas import (
 from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
 from app.pipeline.text_fit import text_fit_warnings
 
-# Ritmo de fala medido no exemplo com pm_alex (150 caracteres em 9,95 s). Só estimativa: o tempo real
-# vem do WAV (§9).
+# Ritmo de fala padrão, medido no exemplo com pm_alex (150 caracteres em 9,95 s); a CLI passa o da voz
+# configurada. Só estimativa: o tempo real vem do WAV (§9).
 CHARS_PER_SECOND = 15.0
 MAX_SHOT_MS = 6000
 # Alertas de variedade (ADR 011, decisão 9): a revisão humana decide.
@@ -140,6 +140,7 @@ def _check_scenes(
     excerpts: dict[str, str],
     report: CheckReport,
     region_codes: frozenset[str] | None = None,
+    chars_per_second: float = CHARS_PER_SECOND,
 ) -> None:
     if sources is not None:
         report.errors += unknown_source_refs(scenes, sources)
@@ -155,7 +156,7 @@ def _check_scenes(
                     report.errors.append(f"{scene.id}: trecho {excerpt_id} não existe")
                 elif facts is not None and excerpt_id not in fact_excerpts:
                     report.errors.append(f"{scene.id}: trecho {excerpt_id} não está em nenhuma ficha")
-        duration_ms = len(scene.narration) / CHARS_PER_SECOND * 1000
+        duration_ms = len(scene.narration) / chars_per_second * 1000
         total_ms += duration_ms
         planned = effective_shots(scene)
         shots += len(planned)
@@ -252,9 +253,13 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
 
 
 def check_episode(
-    store: ManifestStore, episode_id: str, region_codes: frozenset[str] | None = None
+    store: ManifestStore,
+    episode_id: str,
+    region_codes: frozenset[str] | None = None,
+    chars_per_second: float = CHARS_PER_SECOND,
 ) -> CheckReport:
-    """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere)."""
+    """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
+    `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -266,7 +271,7 @@ def check_episode(
         else:
             _check_facts(facts, sources, excerpts, report)
     if scenes is not None:
-        _check_scenes(scenes, sources, facts, excerpts, report, region_codes)
+        _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
     return report

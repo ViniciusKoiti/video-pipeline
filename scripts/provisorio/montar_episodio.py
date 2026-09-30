@@ -2,8 +2,10 @@
 
 Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-render] [--preview]`
 
-- Narração Kokoro por cena, na voz do idioma do episódio (config/providers.toml), com cache pelo texto:
-  o WAV só é refeito quando a narração da cena muda.
+- Narração por cena na voz configurada (`tts` em config/providers.toml: Gemini Charon pela ADR 012, ou
+  Kokoro), em `voice/<cena>-<provedor>-<hash>.wav`. O hash cobre o texto, o modelo, a voz e a direção de fala:
+  a fala só é gerada de novo quando um deles muda, e trocar de provedor não apaga as falas do outro.
+- Cota esgotada (Gemini): o script para; as falas já geradas ficam no cache e a próxima execução continua.
 - Duração real de cada WAV (ffprobe) → tempo dos planos (app/pipeline/shots.py) → episode.json v2.
 - Render pelo motor do formato explicativo (Remotion), com cache por cena.
 - A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>` (jpg, png, webp, mp4, webm).
@@ -22,6 +24,7 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.bootstrap import build_context  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
@@ -31,12 +34,20 @@ from app.pipeline.schemas import (  # noqa: E402
     SourcesManifest,
 )
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
+from app.providers.errors import ProviderError  # noqa: E402
 from app.providers.tts.base import SpeechRequest  # noqa: E402
-from app.providers.tts.kokoro import KokoroTTS  # noqa: E402
 from app.render.remotion import RemotionEngine  # noqa: E402
-from app.settings import load_settings  # noqa: E402
+from app.settings import Settings  # noqa: E402
 
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
+
+
+def voice_fingerprint(settings: Settings, language: str) -> str:
+    """O que muda a fala gerada, além do texto: provedor, modelo, voz e direção de fala."""
+    if settings.providers.tts == "gemini":
+        gemini = settings.gemini_tts
+        return f"gemini|{gemini.model}|{gemini.voices.get(language)}|{gemini.styles.get(language, '')}"
+    return f"{settings.providers.tts}|{settings.kokoro.voices.get(language)}"
 
 
 def media_path(episode_dir: Path, asset_id: str) -> str:
@@ -50,27 +61,34 @@ def main() -> None:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
         raise SystemExit(__doc__)
-    settings = load_settings(ROOT)
+    context = build_context(ROOT)
+    settings = context.settings
     episode_dir = settings.data_dir / "episodes" / args[0]
     scenes = ScenesManifest.model_validate_json((episode_dir / "scenes.json").read_text())
     sources_path = episode_dir / "sources.json"  # fonte no rodapé dos planos (ADR 011)
     sources = None
     if sources_path.is_file():
         sources = SourcesManifest.model_validate_json(sources_path.read_text())
-    voice_name = settings.kokoro.voices[scenes.language]
-    tts = KokoroTTS(settings.kokoro.voices)
+    fingerprint = voice_fingerprint(settings, scenes.language)
+    provider = settings.providers.tts
+    tts = context.tts
     voice_dir = episode_dir / "voice"
     voice_dir.mkdir(exist_ok=True)
 
     started = time.monotonic()
     episode_scenes, cursor = [], 0
     for scene in scenes.scenes:
-        key = hashlib.sha256(f"{voice_name}|{scene.narration}".encode()).hexdigest()[:10]
-        wav = voice_dir / f"{scene.id}-{key}.wav"
+        key = hashlib.sha256(f"{fingerprint}|{scene.narration}".encode()).hexdigest()[:10]
+        wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
-            for stale in voice_dir.glob(f"{scene.id}-*.wav"):
+            for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):
                 stale.unlink()
-            tts.synthesize_speech(SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language))
+            try:
+                speech = SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language)
+                tts.synthesize_speech(speech)
+            except ProviderError as error:
+                raise SystemExit(f"{scene.id}: {error.reason}: {error}. As falas já geradas ficam no cache; "
+                                 "rode de novo depois.") from error
         ms = duration_ms(wav)
         shots = episode_shots(scene, ms, lambda shot: media_path(episode_dir, shot.asset_id), sources)
         episode_scenes.append(

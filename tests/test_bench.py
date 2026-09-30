@@ -10,7 +10,9 @@ import app.cli
 from app.cli import main
 from app.pipeline.bench import BenchReport, run_bench, summary
 from app.pipeline.bench_data import EXCERPTS, BenchClaim, BenchScript, prompt
-from tests.fakes import FakeContext, FakeText, InMemoryStore, make_root, make_settings
+from app.providers.base import ProviderInfo
+from app.providers.tts.base import SpeechRequest, SpeechResult
+from tests.fakes import FakeContext, FakeText, FakeTTS, InMemoryStore, make_root, make_settings
 
 NOW = datetime(2026, 9, 25, 14, 30, tzinfo=UTC)
 
@@ -110,3 +112,21 @@ def test_render_bench_measures_cold_cached_and_preview(tmp_path: Path) -> None:
     ]
     assert all(r.video_s == 52.52 and r.realtime_factor for r in report.render)
     assert any(line.startswith("render fake-render final-frio") for line in summary(report))
+
+
+def test_bench_skips_remote_speech(tmp_path: Path) -> None:
+    """O bench mede a máquina: voz remota gastaria a cota de um serviço externo sem pedido (§14)."""
+
+    class RemoteTTS(FakeTTS):
+        def __init__(self) -> None:
+            self.info = ProviderInfo("remota", remote=True)
+
+        def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
+            raise AssertionError("o bench não pode chamar voz remota")
+
+    ctx = context(tmp_path, [])
+    ctx.tts = RemoteTTS()
+    report, _ = run_bench(
+        ctx, models=[], runs=1, now=lambda: NOW, include_llm=False, proc=fake_proc(tmp_path)
+    )
+    assert report.tts == []
