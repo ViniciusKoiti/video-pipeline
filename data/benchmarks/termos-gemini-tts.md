@@ -47,6 +47,10 @@ página diz. Candidato à narração em pt-BR no lugar do Kokoro (`pm_alex`), co
   não por chave; o limite diário zera à meia-noite do Pacífico. **Observado em 2026-09-29:** o erro 429 do
   `gemini-3.8-flash-tts` diz "limit: 3 requests per minute on Free Tier"; o limite diário não apareceu em 14
   requisições (1 lista de vozes, 13 de fala). O script espera 21 s entre chamadas.
+- **Limite diário observado em 2026-09-30:** "Rate limit exceeded for model gemini-3.8-flash-tts (limit: **10
+  requests per day** on Free Tier)", na geração da voz do vídeo-régua pelo adapter (7 de 10 falas saíram no dia;
+  antes disso, dois tempos esgotados e um "503 ... currently experiencing high demand"). A cota diária zera à
+  meia-noite do Pacífico (04h de Brasília no horário de verão dos EUA).
 - **Tokens de áudio observados:** 32 por segundo nos dois modelos 3.8 (12 falas, 151,5 s, campo `usage` da
   resposta), não os 25 da página de preços: o custo real por segundo, se um dia for pago, é ~28% maior que o
   "per 10s audio" publicado. O teste inteiro custaria US$ 0,043 na tabela paga; na gratuita, custou zero.

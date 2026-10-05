@@ -106,11 +106,21 @@ def _kokoro(settings: Settings) -> Any:
     return KokoroTTS(settings.kokoro.voices, num_threads=settings.kokoro.num_threads)
 
 
+def _gemini_tts(settings: Settings) -> Any:
+    from app.providers.tts.gemini import GeminiTTS
+
+    gemini = settings.gemini_tts
+    return GeminiTTS(
+        _secret(settings, "GEMINI_API_KEY"), model=gemini.model, voices=gemini.voices, styles=gemini.styles,
+        requests_per_minute=gemini.requests_per_minute,
+    )
+
+
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
 
 DEFAULT_REGISTRY: Registry = {
     "text": {"ollama": Registration(5, _ollama), "groq": Registration(29), "gemini": Registration(29)},
-    "tts": {"kokoro": Registration(5, _kokoro)},
+    "tts": {"kokoro": Registration(5, _kokoro), "gemini": Registration(15, _gemini_tts)},  # ADR 012
     "image_gen": {"workers_ai": Registration(24)},
     "archives": {
         "wikimedia_commons": Registration(20),
@@ -143,9 +153,13 @@ def _choices(settings: Settings) -> dict[str, list[str]]:
     chosen = settings.providers.model_dump()
     flat: dict[str, list[str]] = {}
     for port, names in chosen.items():
+        if names is None:
+            continue
         if isinstance(names, dict):  # render: formato -> motor
             names = list(names.values())
-        flat[port] = names if isinstance(names, list) else [names]
+        port = "tts" if port == "tts_final" else port  # a voz final vem da mesma porta
+        flat.setdefault(port, [])
+        flat[port] += names if isinstance(names, list) else [names]
     return flat
 
 
@@ -176,6 +190,12 @@ class LazyContext:
     @cached_property
     def tts(self) -> TTSProvider:
         return self._build("tts", self._settings.providers.tts)
+
+    @cached_property
+    def tts_final(self) -> TTSProvider:
+        """Voz do vídeo final (ADR 012); sem `tts_final` na configuração, a mesma dos rascunhos."""
+        name = self._settings.providers.tts_final
+        return self.tts if name is None else self._build("tts", name)
 
     @cached_property
     def image_gen(self) -> ImageGenProvider:

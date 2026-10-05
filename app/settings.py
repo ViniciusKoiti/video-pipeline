@@ -24,7 +24,8 @@ class _Model(BaseModel):
 
 class ProviderChoice(_Model):
     text: str
-    tts: str
+    tts: str  # voz dos rascunhos e das prévias de revisão
+    tts_final: str | None = None  # voz do vídeo final e do vídeo-régua (ADR 012); None = a mesma de `tts`
     image_gen: str
     archives: list[str] = Field(min_length=1)  # ordem da cascata (§8)
     aligner: str
@@ -49,6 +50,17 @@ class OllamaSettings(_Model):
 class KokoroSettings(_Model):
     voices: dict[str, str] = Field(min_length=1)  # idioma -> voz (ADR 008)
     num_threads: int = Field(default=8, gt=0)
+    chars_per_second: float = Field(default=15.0, gt=0)  # ritmo da voz, para estimar a cena antes do WAV
+
+
+class GeminiTTSSettings(_Model):
+    """Gemini TTS na camada gratuita (ADR 012); a chave fica no `.env` (GEMINI_API_KEY)."""
+
+    model: str = "gemini-3.8-flash-tts"
+    voices: dict[str, str] = Field(default_factory=lambda: {"pt-BR": "Charon"})  # idioma -> voz
+    styles: dict[str, str] = Field(default_factory=dict)  # idioma -> direção de fala (speech_metadata.style)
+    requests_per_minute: int = Field(default=3, gt=0)  # limite da camada gratuita
+    chars_per_second: float = Field(default=13.0, gt=0)
 
 
 class WorkersAISettings(_Model):
@@ -90,6 +102,7 @@ class Settings(_Model):
     providers: ProviderChoice
     ollama: OllamaSettings
     kokoro: KokoroSettings
+    gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()
@@ -150,3 +163,10 @@ def load_settings(root: Path, environ: Mapping[str, str] | None = None) -> Setti
     if not settings.data_dir.is_absolute():
         settings = settings.model_copy(update={"data_dir": root / settings.data_dir})
     return settings
+
+
+def speech_chars_per_second(settings: Settings) -> float:
+    """Ritmo da voz final: estima a duração das cenas antes da voz real (§9); é o tempo do vídeo publicado."""
+    rates = {"kokoro": settings.kokoro.chars_per_second, "gemini": settings.gemini_tts.chars_per_second}
+    voice = settings.providers.tts_final or settings.providers.tts
+    return rates.get(voice, settings.kokoro.chars_per_second)

@@ -279,6 +279,10 @@ def run_bench(
                 progress(f"LLM {model or 'padrão'}: execução {run}/{runs}")
                 llm.append(bench_llm(context, model, run, proc))
     tts: list[TtsRun] = []
+    if include_tts and context.tts.info.remote:
+        # O bench mede a máquina; voz remota gastaria a cota de um serviço externo sem pedido (§14).
+        progress(f"TTS pulado: {context.tts.info.name} é remoto (o bench mede só voz local)")
+        include_tts = False
     if include_tts:
         with tempfile.TemporaryDirectory(prefix="vp-bench-") as tmp:
             for run in range(1, runs + 1):

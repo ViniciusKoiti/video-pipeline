@@ -30,8 +30,16 @@ aceitas. As regras do §2 continuam: custo zero, segredo só no `.env`, cota esg
 
 ## Decisão
 
-Proposta: **Gemini TTS `gemini-3.8-flash-tts` com a voz Charon, na camada gratuita**, como voz do explicativo em
-pt-BR; o Kokoro fica como alternativa local, a uma linha de configuração.
+Proposta: **Gemini TTS `gemini-3.8-flash-tts` com a voz Charon, na camada gratuita**, como voz do vídeo final do
+explicativo em pt-BR, e **Kokoro nos rascunhos** (escolha do dono em 2026-09-30, depois do limite de 10 chamadas
+por dia):
+
+- `config/providers.toml`: `tts = "kokoro"` (rascunhos e prévias de revisão, sem limite) e `tts_final = "gemini"`
+  (vídeo final e vídeo-régua). `montar_episodio.py --voz-final` usa a voz final; o vídeo-régua usa sempre ela.
+- **Várias cenas por chamada:** as cenas que faltam vão em lotes de até ~1.200 caracteres (~90 s de fala),
+  separadas por `<long pause>` (marca da documentação, em inglês mesmo com texto em português); o áudio é cortado
+  nas pausas mais longas (`app/media/pauses.py`), e o corte é recusado quando elas não se destacam das pausas de
+  respiração. Lote recusado é gerado cena a cena. Um episódio completo (~6.600 caracteres) cabe em ~6 chamadas.
 
 - **Escuta às cegas (2026-09-29/30):** três falas do vídeo-régua (S04 datas e valores; S05 nomes difíceis; S09
   banco e valor por extenso) em cinco versões com o mesmo volume e letras sorteadas por fala: Kokoro `pm_alex`,
@@ -49,8 +57,12 @@ pt-BR; o Kokoro fica como alternativa local, a uma linha de configuração.
 
 - O vídeo fica ~20–30% mais longo com o mesmo roteiro: o vídeo-régua passa de 93 s para ~2 min, e o completo de
   ~7,5 para ~9,5 min.
-- Gerar a voz leva ~20 s por cena (3 por minuto): ~16 min para 47 cenas. Sem limite diário publicado; se ele
-  aparecer, as cenas que faltam ficam pendentes para o dia seguinte.
+- **Limite diário de 10 chamadas** (observado em 2026-09-30, "limit: 10 requests per day on Free Tier"): o
+  vídeo-régua (10 cenas) gasta um dia de cota; o completo (47 cenas), cinco; cada reescrita de cena gasta mais.
+  Com 3 por minuto, cada fala leva ~20 s. Cenas que passam do limite ficam pendentes para o dia seguinte (a cota
+  zera à meia-noite do Pacífico). Serviço sobrecarregado ("503 high demand") e tempo esgotado também aconteceram
+  no primeiro dia de uso. **Este limite pode mudar a decisão** (alternativas na conversa de 2026-09-30: várias
+  cenas por chamada, Kokoro nos rascunhos e Charon só na versão final, ou gasto pequeno com teto).
 - O roteiro narrado (história pública, §13.2) vai para o Google, como aceito pelo dono. A descrição do vídeo diz
   que a narração é sintética (política de uso do Google e divulgação do YouTube, §12).
 - Nomes sem dicionário de fonemas: se a voz errar um nome, uma lista "nome → como falar" entra só na síntese, sem

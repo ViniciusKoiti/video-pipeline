@@ -82,9 +82,10 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
    causa ou a cena sobra. Só escreva causa que a ficha sustenta.
 4. **Mecanismo.** Onde o público perguntaria "como?", use uma ficha `mechanism`. Contexto só o mínimo.
 5. **Fecho com fato.** Responda à pergunta central com um fato, sem moral nem frase de efeito.
-6. **Cenas.** Uma cena = um bloco de narração de 1 a 3 frases (5 a 12 s, cerca de 75 a 180 caracteres;
-   a voz fala ~15 caracteres por segundo).
-7. **Planos.** Um plano a cada 2 a 4 s (30 a 60 caracteres de narração). `anchor` é um trecho literal da
+6. **Cenas.** Uma cena = um bloco de narração de 1 a 3 frases (5 a 12 s, cerca de 65 a 160 caracteres;
+   a voz Charon fala ~13 caracteres por segundo, o Kokoro ~15; o ritmo da voz configurada está em
+   `config/providers.toml`, e o `vp check` estima as cenas com ele).
+7. **Planos.** Um plano a cada 2 a 4 s (26 a 52 caracteres de narração com a Charon). `anchor` é um trecho literal da
    narração, em ordem; o primeiro plano cobre o início da cena. Escolha pelo que a frase faz (formato e
    exemplo dos tipos da ADR 011 em `planos.md`, nesta pasta; campos completos em `app/pipeline/schemas.py`):
 

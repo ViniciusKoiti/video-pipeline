@@ -4,7 +4,8 @@
 
 [providers]
 text = "ollama"
-tts = "kokoro"
+tts = "kokoro"        # rascunhos e prévias de revisão: local, sem limite
+tts_final = "gemini"  # vídeo final e vídeo-régua: Charon, várias cenas por chamada (ADR 012, proposta)
 image_gen = "workers_ai"
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"
@@ -21,6 +22,14 @@ num_thread = 8        # núcleos físicos; 12 threads derruba o desempenho (ADR 
 [kokoro]
 voices = { en = "am_michael", "pt-BR" = "pm_alex" }  # voz por idioma (ADR 008)
 num_threads = 8
+chars_per_second = 15.0  # ritmo medido com pm_alex; o vp check estima a cena com ele
+
+[gemini_tts]
+model = "gemini-3.8-flash-tts"
+voices = { "pt-BR" = "Charon" }  # escolhida às cegas (data/benchmarks/termos-gemini-tts.md)
+styles = { "pt-BR" = "narração de documentário em português do Brasil, com sotaque brasileiro; tom calmo, informativo e neutro; ritmo moderado" }
+requests_per_minute = 3  # camada gratuita (erro 429 em 2026-09-29)
+chars_per_second = 13.0  # Charon: 12 a 14 caracteres por segundo no teste
 
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"

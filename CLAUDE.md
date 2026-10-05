@@ -66,9 +66,10 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
     marcam os planos que mudaram em relação à versão anterior: um PR de visual deve mudar só os que pretendia.
 
   - **Voz (2026-09-30):** a Charon (Gemini TTS, camada gratuita) ganhou do Kokoro na escuta às cegas; ADR 012
-    proposta, aceite depois da v5 do vídeo-régua com ela. Termos, limites e resultado em
-    `data/benchmarks/termos-gemini-tts.md`. Próximos: adapter `app/providers/tts/gemini.py` e v5; depois, o volume
-    (-14 LUFS) como v6.
+    proposta, aceite depois da v5 do vídeo-régua com ela. Camada gratuita: 3 chamadas por minuto e **10 por dia**.
+    Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `montar_episodio.py --voz-final`), várias
+    cenas por chamada cortadas nas pausas. Termos, limites e resultado em `data/benchmarks/termos-gemini-tts.md`.
+    Próximos: as 3 falas que faltam do vídeo-régua (S08–S10, um lote) e a v5; depois, o volume (-14 LUFS) como v6.
 
   Frentes candidatas, a escolher com o dono (cada uma gera uma versão nova do vídeo-régua):
   - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
