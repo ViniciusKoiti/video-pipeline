@@ -534,6 +534,11 @@ flowchart LR
   P -. "ficha mudou: gate 1 volta ao dono" .-> G1
 ```
 
+**Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
+unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),
+medido por `scripts/provisorio/checagem_local.py`. O `vp check` e os gates continuam decidindo; o veredito do
+modelo é alerta.
+
 **Agentes mais específicos (candidatos).** Criar só quando a etapa existir no código e houver necessidade
 concreta. Cada um com skill própria, ferramentas mínimas e validação em código quando possível; nenhum aprova
 gate.
