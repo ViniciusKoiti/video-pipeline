@@ -35,3 +35,4 @@ O que muda no código, no `CLAUDE.md` e no que fica mais difícil a partir daqui
 | 008 | Cena com lista de planos; `episode.json` v2; português — **aceito** | #48 |
 | 009 | Agentes para as etapas criativas; fichas de fatos; `vp check` — **aceito** | #48 |
 | 011 | Planos editoriais do explicativo (motion-kit 0.2) — **aceito** | #69 |
+| 012 | Voz do explicativo em pt-BR: Gemini TTS (Charon), Kokoro como alternativa — proposto | #15, #29 |

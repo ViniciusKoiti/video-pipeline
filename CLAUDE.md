@@ -65,6 +65,11 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
     vídeos em `renders/evolucao/` e registro em `data/benchmarks/evolucao-template.md`. A folha e o registro
     marcam os planos que mudaram em relação à versão anterior: um PR de visual deve mudar só os que pretendia.
 
+  - **Voz (2026-09-30):** a Charon (Gemini TTS, camada gratuita) ganhou do Kokoro na escuta às cegas; ADR 012
+    proposta, aceite depois da v5 do vídeo-régua com ela. Termos, limites e resultado em
+    `data/benchmarks/termos-gemini-tts.md`. Próximos: adapter `app/providers/tts/gemini.py` e v5; depois, o volume
+    (-14 LUFS) como v6.
+
   Frentes candidatas, a escolher com o dono (cada uma gera uma versão nova do vídeo-régua):
   - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
   - defeitos vistos no `votorantim-dinheiro`: rótulos longos cortados na linha do tempo, rótulos das setas da rede

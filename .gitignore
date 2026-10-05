@@ -25,6 +25,7 @@ data/cache/*
 data/benchmarks/renders/
 data/benchmarks/estilo/
 data/benchmarks/voz-pt/
+data/benchmarks/voz-gemini/
 
 # Node (somente se Remotion for escolhido)
 node_modules/
