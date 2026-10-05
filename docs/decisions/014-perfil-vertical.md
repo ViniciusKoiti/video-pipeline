@@ -1,6 +1,6 @@
 # 014 — Perfil vertical (9:16) do formato explicativo
 
-- **Status:** proposto (dono respondeu as duas perguntas em 2026-10-05; falta o aceite)
+- **Status:** aceito (2026-10-05; o dono respondeu as duas perguntas e aceitou)
 - **Data:** 2026-10-05
 - **Etapa do roadmap:** frente do apresentador, B2 (o B1 é a ADR 013)
 - **Relaciona-se com:** ADR 001 (motor por formato), ADR 007 (contratos), ADR 008 (planos), ADR 011 (planos
