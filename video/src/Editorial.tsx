@@ -196,7 +196,7 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   if (type === "line") {
     const labels = new Map(spec.points.map((p) => [yearValue(p.label), p.label]));
     chart = (
-      <LineChart width={chartWidth} height={portrait ? 820 : 660} unit={inline} decimals={decimals} yFromZero={spec.y_from_zero ?? true}
+      <LineChart width={chartWidth} height={portrait ? 600 : 660} unit={inline} decimals={decimals} yFromZero={spec.y_from_zero ?? true}
         points={spec.points.map((p) => ({x: yearValue(p.label), y: p.value}))}
         formatX={(x: number) => labels.get(x) ?? String(Math.round(x))}
         annotate={spec.highlight ? [{x: yearValue(spec.highlight), text: spec.highlight}] : undefined} />
@@ -209,7 +209,7 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
     );
   } else {
     chart = (
-      <BarChart width={chartWidth} height={portrait ? 820 : 620} orientation={type === "bar_horizontal" ? "horizontal" : "vertical"}
+      <BarChart width={chartWidth} height={portrait ? 600 : 620} orientation={type === "bar_horizontal" ? "horizontal" : "vertical"}
         unit={inline} decimals={decimals} labelSize={34} maxBarThickness={type === "bar_horizontal" ? 110 : 240}
         bars={spec.points.map((p) => ({label: p.label, value: p.value,
           color: p.label === spec.highlight ? theme.accent : theme.muted}))} />
@@ -218,7 +218,7 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   return (
     <Design>
       <div style={{position: "absolute", left: portrait ? 70 : 160, top: portrait ? design(safe.top) : 120,
-        right: portrait ? 70 : 160, bottom: portrait ? 260 : 120, display: "flex", flexDirection: "column", gap: 40}}>
+        right: portrait ? 70 : 160, bottom: portrait ? design(safe.bottom) + 280 : 120, display: "flex", flexDirection: "column", gap: 40}}>
         <Title title={spec.title} subtitle={subtitle} />
         <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>{chart}</div>
       </div>
