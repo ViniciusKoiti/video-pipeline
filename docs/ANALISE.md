@@ -23,8 +23,8 @@ Questões encontradas ao organizar o projeto a partir do `CLAUDE.md`, e o que fo
 
 ## Revisão de 2026-09-29
 
-Estado depois da ADR 011 e do episódio de teste `votorantim-dinheiro`. As pendências em ordem estão no "Etapa
-atual" do `CLAUDE.md`; a situação por issue, no `ROADMAP.md`. O item 3 (spec v0.4 ausente) continua aberto.
+Estado depois da ADR 011 e do episódio de teste `votorantim-dinheiro`. As pendências em ordem e a situação por issue
+estão no `ROADMAP.md` ("Etapa atual e pendências"). O item 3 (spec v0.4 ausente) continua aberto.
 
 | # | Questão | Situação | Ação |
 |---|---|---|---|

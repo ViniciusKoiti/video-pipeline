@@ -6,8 +6,8 @@ detalhes e critérios de aceite completos estão nas issues.
 
 ## Situação em 2026-09-29
 
-O formato explicativo (#48, #69–#82, no fim deste arquivo) passou na frente do piloto documentário. As
-pendências em ordem estão no "Etapa atual" do `CLAUDE.md`.
+O formato explicativo (#48, #69–#82, no fim deste arquivo) passou na frente do piloto documentário. O histórico
+e as pendências em ordem estão em "Etapa atual e pendências", logo abaixo da tabela.
 
 | Issues | Situação |
 |---|---|
@@ -21,6 +21,83 @@ pendências em ordem estão no "Etapa atual" do `CLAUDE.md`.
 | #27, #28 | Adapter Ollama existe; `vp script` e `vp scenes` não. Desde a ADR 009, fichas, roteiro e cenas saem dos agentes (pesquisador, roteirista, verificador) validados pelo `vp check`; o Ollama ficou como candidato (§7). |
 | #14, #17, #18, #23–#25, #29–#31, #41, #42 | Não começadas. #17 (legendas) e #18 (pacote) são necessárias antes de publicar. |
 | M2–M7 do piloto documentário | Em pausa. |
+
+## Etapa atual e pendências (movido do `CLAUDE.md` em 2026-10-05; estado de 2026-09-30)
+
+Roteiro completo nas issues #1–#31, #41–#43, #48 e #69–#82 (`docs/ROADMAP.md`). A #48 foi antecipada: fatia
+vertical do formato explicativo antes do piloto documentário. Nenhum vídeo publicado ainda.
+
+- [x] **M0 · Fase 0** (#1–#9): ambiente, base, contratos, arquitetura, bench, motores (ADR 001).
+- [x] **#10** estado, cache por `input_hash` e aprovação imutável.
+- [x] **#48, passos 1–3:** planos tipados e `episode.json` v2 em pt-BR (ADR 008); Remotion + motion-kit no
+  `main` com o template "negócios moderno" (tarja sobre a foto, mapa com contornos, números na forma da ficha).
+- [x] **ADR 009:** agentes das etapas criativas (§15), `facts.json`, trechos numerados, `vp excerpts`, `vp check`;
+  modelo de perfil de poder (tipos `impact_today` e `rule`, perguntas neutras, controvérsia atribuída).
+- [x] **Protótipo `votorantim-fatia`** (90 s, 1914–1962): gate 1 aprovado; gate 2 com mudanças pedidas
+  (faltava o objetivo: impacto hoje e como virou elite), o que originou o modelo de perfil.
+- [x] **Protótipo `votorantim-abertura` v1** (80 s, modelo de perfil: gancho de impacto, ponte, origem,
+  promessa): gate 2 com mudanças pedidas (gancho só com cartões de número). O gate 1 voltou ao dono
+  (ajuste de F38). A v1 fica em `renders/v1-final.mp4` e `v1/`.
+- [x] **Abertura v2** (79 s): gancho com fotos e B-roll do Pexels (sacos de cimento, pátio de carros,
+  blister, torre de transmissão), S08 sem a dedução sobre acionistas. Termos das quatro fontes
+  (`data/benchmarks/termos-bancos-de-imagem.md`), contrato (ADR 007, emenda de bancos de imagem), adapters
+  Pexels/Pixabay/Unsplash, gates 1 e 3 registrados, verificador aprovou, render em `renders/final.mp4` (a v1
+  fica em `renders/v1-final.mp4`). **Gate 2 aprovado em 2026-09-27.** Falta o gate 3 do retrato
+  `an-jose-ermirio`; Pixabay e Unsplash aguardam as chaves.
+- [x] **`votorantim-completo`** (47 cenas, ~7 min 35 s, 128 planos): gates 1 e 2 aprovados em 2026-09-27; prévia
+  sem imagens em `votorantim-completo-previa`; mapa de lacunas em `lacunas.md`. Roteiro anterior à ADR 011.
+- [x] **Diagnóstico do visual (#69)** e sugestões #70–#82; motion-kit 0.2.0 com o kit editorial (PR #83).
+- [x] **Planos editoriais (ADR 011, aceita em 2026-09-28):** contrato e `vp check` (PR #85), template com as
+  peças do kit (PR #86, cobre #70–#72), skills do roteirista e do verificador (PR #87).
+- [x] **Episódio de teste `votorantim-dinheiro`** (ADR 011, etapa 4): 93 s, 10 cenas, 21 planos, gates 1–3
+  aprovados; prévia em `renders/preview.mp4`; métricas em `data/benchmarks/episodio-votorantim-dinheiro.md`.
+- [ ] **← Agora: Remotion.** Decisão do dono em 2026-09-29: o vídeo não será publicado por enquanto; o foco
+  passa a ser o template do formato explicativo (`video/`, Remotion + motion-kit), com calma, uma frente por
+  vez.
+  - **Evolução do template (vídeo-régua), escolhida em 2026-09-29:** em vez de conferir cada correção num render
+    avulso, o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
+    visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Script
+    `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar` com a folha de quadros, `lado-a-lado`),
+    vídeos em `renders/evolucao/` e registro em `data/benchmarks/evolucao-template.md`. A folha e o registro
+    marcam os planos que mudaram em relação à versão anterior: um PR de visual deve mudar só os que pretendia.
+
+  - **Voz (2026-09-30):** a Charon (Gemini TTS, camada gratuita) ganhou do Kokoro na escuta às cegas; ADR 012
+    proposta, aceite depois da v5 do vídeo-régua com ela. Camada gratuita: 3 chamadas por minuto e **10 por dia**.
+    Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `montar_episodio.py --voz-final`), várias
+    cenas por chamada cortadas nas pausas. Termos, limites e resultado em `data/benchmarks/termos-gemini-tts.md`.
+    Próximos: as 3 falas que faltam do vídeo-régua (S08–S10, um lote) e a v5; depois, o volume (-14 LUFS) como v6.
+
+  Frentes candidatas, a escolher com o dono (cada uma gera uma versão nova do vídeo-régua):
+  - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
+  - defeitos vistos no `votorantim-dinheiro`: rótulos longos cortados na linha do tempo, rótulos das setas da rede
+    pequenos (prop no motion-kit);
+  - resto da #69: zoom nas transições (#72), entrada 2.5D (#71), tipos novos aplicados às cenas citadas nas
+    #73 e #76–#80;
+  - trilha e efeitos com `MusicBed`/`SfxTrack` (#81, licença por faixa decidida pelo dono);
+  - `vp render` (#13) no lugar do script provisório; o `npm run render` de `video/package.json` ainda aponta
+    para a composição `Episode`, que não existe mais.
+- [ ] **Quando for publicar**, na ordem (análise na `docs/ANALISE.md`, revisão de 2026-09-29):
+  1. Decisões do dono, numa rodada só: (a) o `votorantim-completo` sai com o roteiro atual (32 carimbos,
+     7 planos com "Fonte:" no texto, que agora duplica o rodapé, trechos de até 18 planos sem imagem) ou é
+     reescrito com os planos da ADR 011, o que reabre o gate 2 e cumpre os critérios das #73 e #76–#79;
+     (b) o recorte da validação de audiência (§12): perfis de poder em pt-BR ou o piloto documentário, que o §1
+     ainda cita.
+  2. Se reescrito: roteirista e verificador só nas cenas afetadas, e gate 2 de novo.
+  3. Gate 3 do `completo`: imagem por cena (várias sem candidato no Commons; a Brasiliana Fotográfica recusou o
+     acesso automatizado com 403), retratos `an-jose-ermirio` e de Getúlio Vargas.
+  4. Revisão de risco antes do gate 4 (pessoas vivas, empresa ativa, fatos de fonte única ou interessada): criar o
+     agente `revisor-de-risco` (§15).
+  5. Voz, render, legendas e pacote: não há `captions.srt`, `credits.txt` nem `description.txt` (#17 e #18,
+     ou scripts provisórios como os de voz e render). Depois, gate 4.
+  6. Publicação manual e métricas aos 7 e 28 dias (§12, #31), com as horas humanas do episódio medidas.
+- [ ] **Próximos passos propostos**, cada um aguardando decisão do dono:
+  - decupagem da referência (#69, passo 0, feita pelo dono);
+  - Hemeroteca Digital para confirmar o leilão e o rateio de 1918 (cena S08 da fatia);
+  - busca por vetor (ADR 010, ainda não escrita) quando as fontes passarem do que um agente lê de uma vez;
+  - árvore da família com genro;
+  - scripts provisórios de fonte, voz e render virarem `vp sources` (#26), `vp voice` (#16) e `vp render` (#13);
+  - `vp new` e `vp reopen` (resto da #12; `vp approve`, `vp reject` e `vp status` já existem).
+- Em pausa: #11 (invalidação) e M2–M7 do piloto documentário.
 
 ## M0 · Fase 0 — Ambiente e decisão do motor
 
