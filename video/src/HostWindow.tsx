@@ -4,7 +4,7 @@ import {FloatingWindow} from "@viniciusk/motion-kit";
 import {Host, hostAspect} from "@viniciusk/motion-kit/host";
 import type {HostIdentity} from "@viniciusk/motion-kit/host";
 import {notionistsSkin} from "@viniciusk/motion-kit/host/dicebear";
-import {theme} from "./theme";
+import {theme, useFrame} from "./theme";
 import type {HostProps} from "./types";
 
 // Apresentador (ADR 013): o personagem Notionists (CC0) numa janela flutuante por cima da cena. A boca segue o
@@ -12,6 +12,8 @@ import type {HostProps} from "./types";
 // arrastada ao da cena, nos primeiros quadros. O arrasto não cruza o corte entre cenas: cada cena é um render.
 const DRAG_FRAMES = 26;
 const ENTER_FRAME = 12;
+// Em retrato a janela fica abaixo da fonte do plano, que ocupa o alto da área segura (ADR 014).
+const PORTRAIT_TOP_MARGIN = 90; // px de projeto; `kit()` converte para a unidade do FloatingWindow
 
 const Pane: React.FC<{identity: HostIdentity; levels: number[]}> = ({identity, levels}) => {
   const {width, height} = useVideoConfig();
@@ -26,6 +28,7 @@ const Pane: React.FC<{identity: HostIdentity; levels: number[]}> = ({identity, l
 
 export const HostWindow: React.FC<{host: HostProps}> = ({host}) => {
   const {corner, fromCorner} = host;
+  const {portrait, kit} = useFrame();
   const stops = !fromCorner
     ? [{at: ENTER_FRAME, to: corner}]
     : fromCorner === corner
@@ -33,7 +36,8 @@ export const HostWindow: React.FC<{host: HostProps}> = ({host}) => {
       : [{at: 0, to: fromCorner}, {at: DRAG_FRAMES, to: corner, travel: DRAG_FRAMES}];
   // Depois da primeira cena a janela já estava na tela: `at` antes do início evita a entrada a cada corte.
   return (
-    <FloatingWindow width={host.width} stops={stops} at={fromCorner ? -60 : undefined}>
+    <FloatingWindow width={host.width} stops={stops} at={fromCorner ? -60 : undefined}
+      margin={portrait ? {top: kit(PORTRAIT_TOP_MARGIN)} : undefined}>
       <Pane identity={{...host.identity, skin: "notionists"} as HostIdentity} levels={host.levels} />
     </FloatingWindow>
   );

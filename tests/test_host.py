@@ -239,7 +239,7 @@ def test_preview_and_host_width_follow_the_orientation() -> None:
     assert (target_spec(port, preview=True).width, target_spec(port, preview=True).height) == (720, 1280)
     assert target_spec(port, preview=False).height == 1920
     spec = HostSpec.model_validate({"identity": HOST["identity"]})
-    assert (spec.width_for(portrait=False), spec.width_for(portrait=True)) == (0.16, 0.32)
+    assert (spec.width_for(portrait=False), spec.width_for(portrait=True)) == (0.16, 0.28)
     assert HostSpec.model_validate(HOST).width_for(portrait=True) == 0.16  # a largura dada vale nos dois
 
 
@@ -257,5 +257,23 @@ def test_portrait_burns_captions_in_the_final_and_widens_the_window(tmp_path: Pa
         EpisodeManifest.model_validate(portrait_episode(**extra)), tmp_path, preview=False
     )
     assert land["cues"] == [] and land["host"]["width"] == 0.16
-    assert [c["text"] for c in port["cues"]] == ["legenda"] and port["host"]["width"] == 0.32
+    assert [c["text"] for c in port["cues"]] == ["legenda"] and port["host"]["width"] == 0.28
     assert (port["width"], port["height"]) == (1080, 1920)
+
+
+def test_portrait_corner_table_follows_the_vertical_layout() -> None:
+    fonte = "Fonte: x"
+    # só os cantos de cima são livres (a faixa de baixo é a base segura); a fonte fica acima da janela
+    over_photo = scene("S01", [("photo", None), ("number", fonte)])
+    assert blocked_corners(over_photo, portrait=True) == {"bottom-left", "bottom-right"}
+    assert blocked_corners(over_photo) == {"bottom-left", "bottom-right"}
+    compare = scene("S01", [("compare", None)])
+    assert blocked_corners(compare, portrait=True) == {"top-right", "bottom-left", "bottom-right"}
+    # o gráfico ocupa o topo; o selo no canto toma o de cima à esquerda
+    assert blocked_corners(scene("S01", [("chart", None)]), portrait=True) == {
+        "top-left", "top-right", "bottom-left", "bottom-right"
+    }
+    over_stamp = scene("S01", [("photo", None), ("stamp", None)])
+    assert blocked_corners(over_stamp, portrait=True) == {"top-left", "bottom-left", "bottom-right"}
+    scenes = [scene(f"S0{i}", [("stamp", fonte)]) for i in range(1, 5)]
+    assert host_corners(scenes, portrait=True) == ["top-left", "top-right", "top-left", "top-right"]

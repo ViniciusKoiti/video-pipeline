@@ -7,7 +7,7 @@ import {CameraRig} from "@viniciusk/motion-kit/motion";
 import {MotionThemeProvider} from "@viniciusk/motion-kit/theme";
 import {HostWindow} from "./HostWindow";
 import {ShotView} from "./ShotView";
-import {motionTheme, theme, u} from "./theme";
+import {motionTheme, theme, useFrame} from "./theme";
 import type {SceneProps, ShotProps} from "./types";
 
 // Uma cena = um bloco de narração (ADR 008), com as camadas da ADR 011 (decisão 5): a foto ou o B-roll continua
@@ -57,35 +57,37 @@ const StageBg: React.FC = () => {
 };
 
 const Camera: React.FC<{active: boolean; frames: number; children: React.ReactNode}> = ({active, frames, children}) => {
-  const {height} = useVideoConfig();
+  const {u} = useFrame();
   if (!active) return <>{children}</>;
   return (
-    <CameraRig zoom={0.05} driftX={u(height, 6)} driftY={u(height, 4)} rampFrames={frames}>
+    <CameraRig zoom={0.05} driftX={u(6)} driftY={u(4)} rampFrames={frames}>
       {children}
     </CameraRig>
   );
 };
 
 // Fonte do plano (ADR 011): em tela cheia, no canto superior direito, longe de títulos e rótulos; sobre a
-// imagem, embaixo à direita, acima da legenda: tarja e painel de número ficam à esquerda.
+// imagem, embaixo à direita, acima da legenda: tarja e painel de número ficam à esquerda. Em retrato (ADR 014)
+// o painel e a tarja ocupam a largura, então a fonte vai sempre para o topo, abaixo da faixa que a plataforma cobre.
 const Source: React.FC<{shot: Planned}> = ({shot}) => {
-  const {height} = useVideoConfig();
-  if (shot.layer === "full") {
-    return (
-      <div style={{position: "absolute", left: 0, right: 0, top: 0, height: u(height, 150)}}>
-        <SourceTag text={shot.source!} flag={shot.sourceFlag} side="right" captionSafe={false} at={8} />
-      </div>
-    );
-  }
-  return <SourceTag text={shot.source!} flag={shot.sourceFlag} side="right" at={8} />;
+  const {u, kit, portrait, safe} = useFrame();
+  const top = shot.layer === "full" || portrait;
+  const tag = (
+    <SourceTag text={shot.source!} flag={shot.sourceFlag} side="right" captionSafe={!top} at={8}
+      {...(portrait ? {fontSize: kit(24)} : {})} />
+  );
+  if (!top) return tag;
+  return <div style={{position: "absolute", left: 0, right: 0, top: portrait ? safe.top : 0, height: u(150)}}>{tag}</div>;
 };
 
 const Caption: React.FC<{text: string}> = ({text}) => {
-  const {height} = useVideoConfig();
+  const {u, portrait, safe} = useFrame();
   return (
-    <AbsoluteFill style={{justifyContent: "flex-end", alignItems: "center", paddingBottom: u(height, 70)}}>
-      <div style={{maxWidth: "78%", textAlign: "center", color: theme.text, fontFamily: theme.font, fontWeight: 600,
-        fontSize: u(height, 44), lineHeight: 1.25, textShadow: "0 0 6px #000, 0 0 3px #000"}}>{text}</div>
+    <AbsoluteFill style={{justifyContent: "flex-end", alignItems: "center", paddingBottom: portrait ? safe.bottom : u(70)}}>
+      <div style={{maxWidth: portrait ? "86%" : "78%", textAlign: "center", color: theme.text, fontFamily: theme.font,
+        fontWeight: 600, fontSize: u(portrait ? 54 : 44), lineHeight: 1.25, textShadow: "0 0 6px #000, 0 0 3px #000"}}>
+        {text}
+      </div>
     </AbsoluteFill>
   );
 };

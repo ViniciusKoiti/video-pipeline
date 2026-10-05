@@ -161,7 +161,9 @@ class RemotionEngine:
         if (self._burn[preview] or episode.video.portrait) and episode.captions:
             cues = parse_srt((episode_dir / episode.captions).read_text())
         bounds = frame_bounds(episode, fps)
-        corners = host_corners(episode.scenes) if episode.host is not None else []
+        corners = []
+        if episode.host is not None:
+            corners = host_corners(episode.scenes, portrait=episode.video.portrait)
         props = []
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]

@@ -19,9 +19,14 @@ from app.pipeline.schemas import (
 )
 
 
-def blocked_corners(scene: EpisodeScene) -> set[HostCorner]:
-    """Cantos que algum plano da cena ocupa. Cena v1 (só uma foto) não bloqueia canto."""
-    blocked: set[HostCorner] = set()
+def blocked_corners(scene: EpisodeScene, *, portrait: bool = False) -> set[HostCorner]:
+    """Cantos que algum plano da cena ocupa. Cena v1 (só uma foto) não bloqueia canto.
+
+    Em retrato (ADR 014) só os cantos de cima são livres: o conteúdo fica centralizado e a base segura das
+    plataformas reserva a faixa de baixo, então os cantos de baixo caem no meio do quadro e ficam
+    bloqueados. A janela vem logo abaixo da fonte, que fica no topo. O selo no canto e o título do gráfico
+    tomam o topo; a comparação empilhada, que começa alto, toma o de cima à direita."""
+    blocked: set[HostCorner] = {"bottom-left", "bottom-right"} if portrait else set()
     media_seen = False
     for shot in scene.shots:
         kind = shot.spec.kind
@@ -30,6 +35,14 @@ def blocked_corners(scene: EpisodeScene) -> set[HostCorner]:
             media_seen = True
         else:  # camadas de Scene.tsx: tarja, carimbo, número e frase vão sobre a mídia anterior
             layer = "overlay" if kind in OVERLAY_SHOT_KINDS and media_seen else "full"
+        if portrait:
+            if kind == "chart":
+                blocked |= {"top-left", "top-right"}
+            if kind == "compare":  # a coluna de valores começa alto e a janela da direita invade o centro
+                blocked.add("top-right")
+            if kind == "stamp" and layer == "overlay":
+                blocked.add("top-left")
+            continue
         if shot.source is not None:
             blocked.add("top-right" if layer == "full" else "bottom-right")
         if kind == "lower_third" or (kind == "number" and layer == "overlay"):
@@ -41,7 +54,7 @@ def blocked_corners(scene: EpisodeScene) -> set[HostCorner]:
     return blocked
 
 
-def host_corners(scenes: Sequence[EpisodeScene]) -> list[HostCorner]:
+def host_corners(scenes: Sequence[EpisodeScene], *, portrait: bool = False) -> list[HostCorner]:
     """Um canto por cena. O `host_corner` da cena vale como está; sem ele, o primeiro canto livre depois do
     anterior, em sentido horário. Sem outro canto livre, fica onde estava; se o atual também está ocupado,
     segue o próximo da fila."""
@@ -54,7 +67,7 @@ def host_corners(scenes: Sequence[EpisodeScene]) -> list[HostCorner]:
             start = HOST_CORNERS.index(previous) + 1 if previous else 0
             ring = [HOST_CORNERS[(start + i) % len(HOST_CORNERS)] for i in range(len(HOST_CORNERS))]
             candidates = [c for c in ring if c != previous]
-            blocked = blocked_corners(scene)
+            blocked = blocked_corners(scene, portrait=portrait)
             stay = [previous] if previous and previous not in blocked else []
             chosen = next((c for c in [*candidates, *stay] if c not in blocked), candidates[0])
         corners.append(chosen)

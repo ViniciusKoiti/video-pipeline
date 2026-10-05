@@ -546,7 +546,7 @@ class HostSpec(Model):
 
     def width_for(self, *, portrait: bool) -> float:
         """Largura da janela: a dada, ou o padrão do perfil (o quadro em pé é mais estreito)."""
-        return self.width if self.width is not None else (0.32 if portrait else 0.16)
+        return self.width if self.width is not None else (0.28 if portrait else 0.16)
 
 
 class Scene(Model):

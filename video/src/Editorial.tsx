@@ -13,7 +13,7 @@ import type {NetworkPositions} from "@viniciusk/motion-kit/graph";
 import {mapBoxes, regionsFor} from "./geo/regions";
 import {NODE_ICONS} from "./icons";
 import {screenNumber} from "./numbers";
-import {theme, u} from "./theme";
+import {theme, useFrame} from "./theme";
 import type {
   ChartSpec, CompareSpec, KeywordSpec, LowerThirdSpec, MapSpec, NetworkSpec, NumberSpec, PhotoSpec, QuoteSpec,
   StampSpec, TimelineSpec,
@@ -22,13 +22,15 @@ import type {
 // Planos da ADR 011 com as peças do motion-kit 0.2 (tema `editorial` injetado em Scene.tsx). Tempos em quadros
 // relativos ao plano. A tela nunca calcula razão, variação nem soma (decisão 7).
 
-// Peças sem escala própria (gráficos): desenhadas num quadro de 1920×1080 e escaladas para a composição.
+// Peças sem escala própria (gráficos): desenhadas num quadro de projeto (1920×1080 em paisagem, 1080×1920 em
+// retrato) e escaladas pelo lado curto para a composição.
 const Design: React.FC<{children: React.ReactNode}> = ({children}) => {
-  const {height} = useVideoConfig();
+  const {width, height, u} = useFrame();
+  const scale = u(1);
   return (
     <AbsoluteFill>
-      <div style={{position: "absolute", left: 0, top: 0, width: 1920, height: 1080, transformOrigin: "top left",
-        transform: `scale(${height / 1080})`}}>{children}</div>
+      <div style={{position: "absolute", left: 0, top: 0, width: width / scale, height: height / scale,
+        transformOrigin: "top left", transform: `scale(${scale})`}}>{children}</div>
     </AbsoluteFill>
   );
 };
@@ -51,6 +53,7 @@ export const ArchivalShot: React.FC<{spec: PhotoSpec; src: string; credit?: stri
   spec, src, credit, aspect = 16 / 9,
 }) => {
   const {width, height} = useVideoConfig();
+  const {u} = useFrame();
   const frame = useCurrentFrame();
   const crop = spec.crop ?? {x: 0, y: 0, width: 1, height: 1};
   const card = fitCard((crop.width * aspect) / crop.height, width * CARD.maxWidth, height * CARD.maxHeight);
@@ -59,8 +62,8 @@ export const ArchivalShot: React.FC<{spec: PhotoSpec; src: string; credit?: stri
       maxWidth={CARD.maxWidth} maxHeight={CARD.maxHeight}>
       {credit && (
         <div style={{position: "absolute", right: (width - card.width) / 2,
-          bottom: (height + card.height) / 2 + u(height, 14), maxWidth: card.width, textAlign: "right",
-          fontFamily: theme.font, fontSize: u(height, 22), lineHeight: 1.3, color: theme.muted,
+          bottom: (height + card.height) / 2 + u(14), maxWidth: card.width, textAlign: "right",
+          fontFamily: theme.font, fontSize: u(22), lineHeight: 1.3, color: theme.muted,
           opacity: interpolate(frame, [12, 24], [0, 1], {extrapolateLeft: "clamp", extrapolateRight: "clamp"})}}>
           {credit}
         </div>
@@ -93,30 +96,39 @@ const Digits: React.FC<{value: string; fontSize: number}> = ({value, fontSize}) 
   );
 };
 
+// Em retrato o número cabe na largura: o corpo cai até caber (um caractere ocupa ~0,62 do corpo).
+const fitDigits = (value: string, maxWidth: number, size: number) =>
+  Math.min(size, maxWidth / (Math.max(value.length, 1) * 0.62));
+
 export const NumberShot: React.FC<{spec: NumberSpec; overlay?: boolean}> = ({spec, overlay = false}) => {
-  const {height} = useVideoConfig();
+  const {u, width, portrait, safe} = useFrame();
   if (overlay) {
-    // Sobre a foto ou o B-roll: painel no canto, para a mídia continuar visível.
+    // Sobre a foto ou o B-roll: painel no canto, para a mídia continuar visível. Em retrato fica na área segura,
+    // acima da legenda.
+    const maxWidth = portrait ? width - safe.left - safe.right : u(1100);
+    const digits = portrait ? fitDigits(spec.value, maxWidth - u(76), u(120)) : u(120);
     return (
       <AbsoluteFill style={{color: theme.text, fontFamily: theme.font}}>
-        <div style={{position: "absolute", left: u(height, 110), bottom: u(height, 150), maxWidth: u(height, 1100),
-          display: "flex", flexDirection: "column", gap: u(height, 14), background: "rgba(14, 17, 22, 0.86)",
-          padding: `${u(height, 26)}px ${u(height, 38)}px`, borderRadius: u(height, 6),
+        <div style={{position: "absolute", left: portrait ? safe.left : u(110),
+          bottom: portrait ? safe.bottom + u(240) : u(150), maxWidth,
+          display: "flex", flexDirection: "column", gap: u(14), background: "rgba(14, 17, 22, 0.86)",
+          padding: `${u(26)}px ${u(38)}px`, borderRadius: u(6),
           boxShadow: "0 16px 40px rgba(0,0,0,0.45)"}}>
-          <Digits value={spec.value} fontSize={u(height, 120)} />
-          <div style={{width: u(height, 120), height: 3, background: theme.accent, borderRadius: 2}} />
-          <div style={{fontSize: u(height, 32), color: theme.muted, fontWeight: 500}}>{spec.label}</div>
+          <Digits value={spec.value} fontSize={digits} />
+          <div style={{width: u(120), height: 3, background: theme.accent, borderRadius: 2}} />
+          <div style={{fontSize: u(portrait ? 36 : 32), color: theme.muted, fontWeight: 500}}>{spec.label}</div>
         </div>
       </AbsoluteFill>
     );
   }
+  const digits = portrait ? fitDigits(spec.value, width * 0.9, u(220)) : u(220);
   return (
     <AbsoluteFill style={{justifyContent: "center", alignItems: "center", color: theme.text, fontFamily: theme.font}}>
-      <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(height, 28)}}>
-        <Digits value={spec.value} fontSize={u(height, 220)} />
-        <div style={{width: u(height, 180), height: 3, background: theme.accent, borderRadius: 2}} />
-        <div style={{fontSize: u(height, 44), color: theme.muted, fontWeight: 500, textAlign: "center",
-          maxWidth: u(height, 1200)}}>{spec.label}</div>
+      <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(28)}}>
+        <Digits value={spec.value} fontSize={digits} />
+        <div style={{width: u(180), height: 3, background: theme.accent, borderRadius: 2}} />
+        <div style={{fontSize: u(portrait ? 46 : 44), color: theme.muted, fontWeight: 500, textAlign: "center",
+          maxWidth: portrait ? width * 0.84 : u(1200)}}>{spec.label}</div>
       </div>
     </AbsoluteFill>
   );
@@ -124,7 +136,7 @@ export const NumberShot: React.FC<{spec: NumberSpec; overlay?: boolean}> = ({spe
 
 // Dois valores; sem número reconhecível, lado a lado em texto (a tela não converte nem calcula).
 export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
-  const {height} = useVideoConfig();
+  const {u, kit, kitPx, width, portrait} = useFrame();
   const left = screenNumber(spec.left.value);
   const right = screenNumber(spec.right.value);
   if (left && right) {
@@ -132,22 +144,29 @@ export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
       value: n.value, label, prefix: n.prefix || undefined, suffix: n.suffix || undefined, decimals: n.decimals,
       format: n.grouped ? ("grouped" as const) : ("plain" as const),
     });
+    // Em retrato os valores empilham (layout do kit) dentro da largura do quadro.
+    const stacked = portrait
+      ? {layout: "vertical" as const, maxWidth: kitPx(width - 2 * u(70)), valueSize: kit(120), labelSize: kit(34)}
+      : {};
     return (
       <ValueCompare left={side(left, spec.left.label)} right={side(right, spec.right.label)}
-        mode={spec.mode ?? "side"} emphasis={spec.emphasis ?? undefined} showRatio={false} at={4} duration={40} />
+        mode={spec.mode ?? "side"} emphasis={spec.emphasis ?? undefined} showRatio={false} at={4} duration={40}
+        {...stacked} />
     );
   }
   const column = (s: {value: string; label: string}) => (
-    <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(height, 18), flex: 1}}>
-      <div style={{fontSize: u(height, 110), fontWeight: 800}}>{s.value}</div>
-      <div style={{fontSize: u(height, 36), color: theme.muted, textAlign: "center"}}>{s.label}</div>
+    <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(18), flex: 1}}>
+      <div style={{fontSize: u(portrait ? 90 : 110), fontWeight: 800, textAlign: "center"}}>{s.value}</div>
+      <div style={{fontSize: u(36), color: theme.muted, textAlign: "center"}}>{s.label}</div>
     </div>
   );
   return (
-    <AbsoluteFill style={{flexDirection: "row", alignItems: "center", padding: `0 ${u(height, 160)}px`,
-      color: theme.text, fontFamily: theme.font}}>
+    <AbsoluteFill style={{flexDirection: portrait ? "column" : "row", alignItems: "center",
+      justifyContent: portrait ? "center" : undefined, gap: portrait ? u(60) : undefined,
+      padding: `0 ${u(portrait ? 70 : 160)}px`, color: theme.text, fontFamily: theme.font}}>
       {column(spec.left)}
-      <div style={{width: 2, height: u(height, 260), background: theme.line}} />
+      <div style={portrait ? {height: 2, width: u(260), background: theme.line}
+        : {width: 2, height: u(260), background: theme.line}} />
       {column(spec.right)}
     </AbsoluteFill>
   );
@@ -163,6 +182,10 @@ const yearValue = (label: string) => {
 };
 
 export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
+  const {portrait, safe, u} = useFrame();
+  // Tela de projeto: 1920×1080 (paisagem, gráficos de 1600 px) ou 1080×1920 (retrato, gráficos de 940 px).
+  const chartWidth = portrait ? 940 : 1600;
+  const design = (framePx: number) => framePx / u(1);
   const type = spec.type ?? "bar";
   const unit = spec.unit ?? "";
   // "%" cola no número; unidade longa ("contos de réis") vai para o subtítulo, não para cada valor.
@@ -173,20 +196,20 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   if (type === "line") {
     const labels = new Map(spec.points.map((p) => [yearValue(p.label), p.label]));
     chart = (
-      <LineChart width={1600} height={660} unit={inline} decimals={decimals} yFromZero={spec.y_from_zero ?? true}
+      <LineChart width={chartWidth} height={portrait ? 820 : 660} unit={inline} decimals={decimals} yFromZero={spec.y_from_zero ?? true}
         points={spec.points.map((p) => ({x: yearValue(p.label), y: p.value}))}
         formatX={(x: number) => labels.get(x) ?? String(Math.round(x))}
         annotate={spec.highlight ? [{x: yearValue(spec.highlight), text: spec.highlight}] : undefined} />
     );
   } else if (type === "share") {
     chart = (
-      <ShareChart width={1600} variant="bar100" unit={unit.startsWith("%") ? "%" : inline} decimals={decimals}
+      <ShareChart width={chartWidth} variant="bar100" unit={unit.startsWith("%") ? "%" : inline} decimals={decimals}
         highlight={spec.highlight ?? undefined} rest={spec.rest ?? undefined}
         parts={spec.points.map((p) => ({label: p.label, value: p.value}))} />
     );
   } else {
     chart = (
-      <BarChart width={1600} height={620} orientation={type === "bar_horizontal" ? "horizontal" : "vertical"}
+      <BarChart width={chartWidth} height={portrait ? 820 : 620} orientation={type === "bar_horizontal" ? "horizontal" : "vertical"}
         unit={inline} decimals={decimals} labelSize={34} maxBarThickness={type === "bar_horizontal" ? 110 : 240}
         bars={spec.points.map((p) => ({label: p.label, value: p.value,
           color: p.label === spec.highlight ? theme.accent : theme.muted}))} />
@@ -194,8 +217,8 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   }
   return (
     <Design>
-      <div style={{position: "absolute", left: 160, top: 120, right: 160, bottom: 120, display: "flex",
-        flexDirection: "column", gap: 40}}>
+      <div style={{position: "absolute", left: portrait ? 70 : 160, top: portrait ? design(safe.top) : 120,
+        right: portrait ? 70 : 160, bottom: portrait ? 260 : 120, display: "flex", flexDirection: "column", gap: 40}}>
         <Title title={spec.title} subtitle={subtitle} />
         <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>{chart}</div>
       </div>
@@ -247,10 +270,10 @@ const LAYER_GAP = 240;
 const NODE_GAP = 300;
 const LAYERED_MAX_SCALE = 1.4; // abaixo do enquadramento justo (~1,5 com três camadas): folga para o último nome
 
-const layeredPositions = (spec: NetworkSpec, height: number): NetworkPositions => {
+const layeredPositions = (spec: NetworkSpec, u: (px: number) => number): NetworkPositions => {
   const ids = spec.nodes.map((n) => n.id);
   const links = spec.edges.map((e) => ({from: e.from, to: e.to}));
-  const world = layeredLayout(ids, links, spec.root, {layerGap: u(height, LAYER_GAP), nodeGap: u(height, NODE_GAP)});
+  const world = layeredLayout(ids, links, spec.root, {layerGap: u(LAYER_GAP), nodeGap: u(NODE_GAP)});
   const depth = networkDepths(ids, links, spec.root, false);
   const inward = spec.edges.filter((e) => (depth.get(e.from) ?? 0) > (depth.get(e.to) ?? 0)).length;
   const flip = inward * 2 > spec.edges.length ? -1 : 1;
@@ -277,13 +300,13 @@ export const NetworkShot: React.FC<{spec: NetworkSpec; stepFrames?: number[]}> =
 };
 
 const NetworkCanvas: React.FC<{spec: NetworkSpec; stepFrames?: number[]}> = ({spec, stepFrames}) => {
-  const {height} = useVideoConfig();
+  const {u} = useFrame();
   const layered = spec.layout === "layered";
   return (
     <ExpandingNetwork
       root={spec.root}
       layout={spec.layout ?? "radial"}
-      positions={layered ? layeredPositions(spec, height) : undefined}
+      positions={layered ? layeredPositions(spec, u) : undefined}
       maxScale={layered ? LAYERED_MAX_SCALE : undefined}
       nodes={spec.nodes.map((n) => ({id: n.id, label: n.label, sublabel: n.role || undefined, kind: n.kind,
         icon: NODE_ICONS[n.kind]}))}
@@ -291,10 +314,10 @@ const NetworkCanvas: React.FC<{spec: NetworkSpec; stepFrames?: number[]}> = ({sp
         style: e.style ?? "solid", flow: e.flow ?? false}))}
       steps={spec.steps.map((s, i) => ({at: stepFrames?.[i] ?? 0, nodes: s.nodes,
         highlight: s.highlight?.length ? s.highlight : undefined}))}
-      nodeRadius={u(height, 46)}
-      labelSize={u(height, 32)}
+      nodeRadius={u(46)}
+      labelSize={u(32)}
       layoutOptions={{ringGap: 340}}
-      drift={u(height, 5)}
+      drift={u(5)}
     />
   );
 };
@@ -316,26 +339,50 @@ export const DocumentShot: React.FC<{spec: QuoteSpec; frames: number}> = ({spec,
   );
 };
 
-export const KeywordShot: React.FC<{spec: KeywordSpec; overlay?: boolean}> = ({spec, overlay = false}) => (
-  <AbsoluteFill>
-    {overlay && <AbsoluteFill style={{background: "rgba(14, 17, 22, 0.55)"}} />}
-    <KineticHeadline text={spec.text} highlight={spec.highlight || undefined} at={4} />
-  </AbsoluteFill>
-);
+export const KeywordShot: React.FC<{spec: KeywordSpec; overlay?: boolean}> = ({spec, overlay = false}) => {
+  const {u, kit, width, portrait} = useFrame();
+  // Em retrato a frase quebra na largura do quadro e fica menor (as peças do kit medem pela altura).
+  const fit = portrait ? {fontSize: kit(104), maxWidth: kit(width / u(1) - 140), align: "center" as const} : {};
+  return (
+    <AbsoluteFill>
+      {overlay && <AbsoluteFill style={{background: "rgba(14, 17, 22, 0.55)"}} />}
+      <KineticHeadline text={spec.text} highlight={spec.highlight || undefined} at={4} {...fit} />
+    </AbsoluteFill>
+  );
+};
 
-export const StampShot: React.FC<{spec: StampSpec; overlay?: boolean}> = ({spec, overlay = false}) => (
-  <AbsoluteFill>
-    {overlay ? (
-      <DateStamp date={spec.date} place={spec.place || undefined} mode="corner" corner="top-left" at={4} />
-    ) : (
-      <DateStamp date={spec.date} place={spec.place || undefined} mode="hero" scrim={0} at={4} />
-    )}
-  </AbsoluteFill>
-);
+export const StampShot: React.FC<{spec: StampSpec; overlay?: boolean}> = ({spec, overlay = false}) => {
+  const {u, kit, kitPx, width, portrait, safe} = useFrame();
+  if (overlay) {
+    // Selo no canto; em retrato, abaixo do topo coberto pela plataforma.
+    return (
+      <AbsoluteFill style={portrait ? {top: safe.top} : undefined}>
+        <DateStamp date={spec.date} place={spec.place || undefined} mode="corner" corner="top-left" at={4}
+          {...(portrait ? {offset: kitPx(safe.left), dateSize: kit(44), placeSize: kit(24)} : {})} />
+      </AbsoluteFill>
+    );
+  }
+  const fit = portrait
+    ? {dateSize: kit(Math.min(150, (width / u(1) * 0.88) / (Math.max(spec.date.length, 1) * 0.58))), placeSize: kit(34)}
+    : {};
+  return (
+    <AbsoluteFill>
+      <DateStamp date={spec.date} place={spec.place || undefined} mode="hero" scrim={0} at={4} {...fit} />
+    </AbsoluteFill>
+  );
+};
 
-// Sobre a foto, a tarja sobe um pouco para não cobrir o crédito da imagem.
-export const LowerThirdShot: React.FC<{spec: LowerThirdSpec; overlay?: boolean}> = ({spec, overlay = false}) => (
-  <AbsoluteFill>
-    <KitLowerThird name={spec.name} role={spec.role} at={0} offsetY={overlay ? 190 : 120} />
-  </AbsoluteFill>
-);
+// Sobre a foto, a tarja sobe um pouco para não cobrir o crédito da imagem. Em retrato fica na área segura,
+// acima da legenda.
+export const LowerThirdShot: React.FC<{spec: LowerThirdSpec; overlay?: boolean}> = ({spec, overlay = false}) => {
+  const {u, kit, kitPx, width, portrait, safe} = useFrame();
+  const tall = portrait
+    ? {offsetX: kitPx(safe.left), offsetY: kitPx(safe.bottom + u(260)), maxWidth: kitPx(width - safe.left - safe.right),
+      nameSize: kit(46), roleSize: kit(28)}
+    : {offsetY: overlay ? 190 : 120};
+  return (
+    <AbsoluteFill>
+      <KitLowerThird name={spec.name} role={spec.role} at={0} {...tall} />
+    </AbsoluteFill>
+  );
+};

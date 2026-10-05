@@ -165,6 +165,9 @@ revela:
   cenas com `start_ms`/`duration_ms` medidos da voz real e sem sobreposição.
   Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
   muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena.
+  Perfil vertical 9:16 (`orientation: portrait` em `scenes.json`, só `explainer`; ADR 014): 1080×1920, prévia
+  720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare` e `chart` (os outros planos
+  são erro de validação), legenda queimada no final e área segura das plataformas para legenda, fonte, tarja e janela.
 
 ## 7. Provedores e política de escolha
 

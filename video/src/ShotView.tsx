@@ -5,7 +5,7 @@ import {
   ArchivalShot, BrollShot, ChartShot, CompareShot, DocumentShot, KeywordShot, LowerThirdShot, MapShot, NetworkShot,
   NumberShot, StampShot, StockShot, TimelineShot,
 } from "./Editorial";
-import {media, theme, u} from "./theme";
+import {media, theme, useFrame} from "./theme";
 import type {FamilyTreeSpec, QuoteSpec, ShotProps} from "./types";
 
 const clamp = {extrapolateLeft: "clamp", extrapolateRight: "clamp"} as const;
@@ -21,7 +21,7 @@ const GoldRule: React.FC<{width: number; delay?: number}> = ({width, delay = 4})
 // Palco dos planos em tela cheia: sem fundo próprio (o fundo do tema fica em Scene.tsx, parado, para a
 // transição deslizar só o conteúdo).
 const Stage: React.FC<{children: React.ReactNode; align?: "center" | "left"}> = ({children, align = "center"}) => {
-  const {height} = useVideoConfig();
+  const {u} = useFrame();
   return (
     <AbsoluteFill
       style={{
@@ -29,7 +29,7 @@ const Stage: React.FC<{children: React.ReactNode; align?: "center" | "left"}> = 
         fontFamily: theme.font,
         justifyContent: "center",
         alignItems: align === "center" ? "center" : "flex-start",
-        padding: `0 ${u(height, 160)}px`,
+        padding: `0 ${u(160)}px`,
       }}
     >
       {children}
@@ -45,18 +45,18 @@ const useEnter = (delay = 0) => {
 // --- Peças que continuam do template (sem equivalente no kit) ------------------------------------
 
 const Quote: React.FC<{spec: QuoteSpec}> = ({spec}) => {
-  const {height} = useVideoConfig();
+  const {u} = useFrame();
   const enter = useEnter();
   const headline = spec.style === "headline";
   return (
     <Stage align="left">
-      <div style={{...enter, display: "flex", flexDirection: "column", gap: u(height, 30), maxWidth: u(height, 1450)}}>
-        <div style={{color: theme.accent, fontSize: u(height, 28), fontWeight: 700, letterSpacing: 3,
+      <div style={{...enter, display: "flex", flexDirection: "column", gap: u(30), maxWidth: u(1450)}}>
+        <div style={{color: theme.accent, fontSize: u(28), fontWeight: 700, letterSpacing: 3,
           textTransform: "uppercase"}}>{headline ? "Manchete" : "Citação"}</div>
-        <div style={{fontSize: u(height, headline ? 86 : 70), fontWeight: headline ? 800 : 600, lineHeight: 1.12,
+        <div style={{fontSize: u(headline ? 86 : 70), fontWeight: headline ? 800 : 600, lineHeight: 1.12,
           letterSpacing: headline ? -1.5 : -0.5}}>{headline ? spec.text : `“${spec.text}”`}</div>
-        <GoldRule width={u(height, 120)} delay={8} />
-        <div style={{fontSize: u(height, 30), color: theme.muted}}>— {spec.attribution}</div>
+        <GoldRule width={u(120)} delay={8} />
+        <div style={{fontSize: u(30), color: theme.muted}}>— {spec.attribution}</div>
       </div>
     </Stage>
   );
@@ -64,6 +64,7 @@ const Quote: React.FC<{spec: QuoteSpec}> = ({spec}) => {
 
 const FamilyTree: React.FC<{spec: FamilyTreeSpec}> = ({spec}) => {
   const {width, height} = useVideoConfig();
+  const {u} = useFrame();
   const frame = useCurrentFrame();
   const depth: Record<string, number> = {};
   const depthOf = (id: string): number => {
@@ -78,7 +79,7 @@ const FamilyTree: React.FC<{spec: FamilyTreeSpec}> = ({spec}) => {
   const rows: string[][] = Array.from({length: levels}, () => []);
   spec.people.forEach((p) => rows[depth[p.id]].push(p.id));
   const pos: Record<string, {x: number; y: number}> = {};
-  const minGap = u(height, 380);
+  const minGap = u(380);
   rows.forEach((row, level) => {
     const y = height * (0.24 + (0.52 * level) / Math.max(levels - 1, 1));
     const xs = row.map((id, i) => {
@@ -107,10 +108,10 @@ const FamilyTree: React.FC<{spec: FamilyTreeSpec}> = ({spec}) => {
       {spec.people.map((p) => (
         <div key={p.id} style={{position: "absolute", left: pos[p.id].x, top: pos[p.id].y,
           transform: "translate(-50%, -50%)", opacity: reveal(depth[p.id]), background: theme.surface,
-          border: `1px solid ${theme.line}`, borderTop: `4px solid ${theme.accent}`, padding: `${u(height, 18)}px ${u(height, 28)}px`,
-          textAlign: "center", minWidth: u(height, 300)}}>
-          <div style={{fontSize: u(height, 34), fontWeight: 700}}>{p.name}</div>
-          {p.role && <div style={{fontSize: u(height, 24), color: theme.muted, marginTop: u(height, 6)}}>{p.role}</div>}
+          border: `1px solid ${theme.line}`, borderTop: `4px solid ${theme.accent}`, padding: `${u(18)}px ${u(28)}px`,
+          textAlign: "center", minWidth: u(300)}}>
+          <div style={{fontSize: u(34), fontWeight: 700}}>{p.name}</div>
+          {p.role && <div style={{fontSize: u(24), color: theme.muted, marginTop: u(6)}}>{p.role}</div>}
         </div>
       ))}
     </Stage>
