@@ -13,7 +13,14 @@ from pydantic import ValidationError
 
 from app.media.envelope import mouth_levels
 from app.media.host import blocked_corners, host_corners
-from app.pipeline.schemas import EpisodeFormat, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
+from app.pipeline.schemas import (
+    EpisodeFormat,
+    EpisodeManifest,
+    EpisodeScene,
+    EpisodeShot,
+    HostSpec,
+    VideoSpec,
+)
 from app.render.remotion import RemotionEngine
 from tests.test_remotion_props import FIXTURE
 from tests.test_shots import v2_episode
@@ -165,3 +172,90 @@ def test_scene_props_carry_the_host_only_when_the_episode_has_one(tmp_path: Path
     assert host["corner"] in {"top-left", "top-right", "bottom-left", "bottom-right"}
     assert len(host["levels"]) == props["frames"] and max(host["levels"]) <= 1.0
     assert {k: v for k, v in props.items() if k != "host"} == without
+
+
+# --- perfil vertical (ADR 014) --------------------------------------------------------------------
+
+PORTRAIT_VIDEO = {"width": 1080, "height": 1920}
+
+
+def portrait_episode(**changes: Any) -> dict[str, Any]:
+    """O episódio de teste v2 sem o plano `quote` (não cabe em retrato), em 1080×1920."""
+    raw = v2_episode()
+    raw["scenes"][0]["shots"][1]["spec"] = {
+        "kind": "number", "anchor": "um banco falido", "value": "5", "label": "x", "claims": CLAIM,
+    }
+    return {**raw, "video": PORTRAIT_VIDEO, **changes}
+
+
+def test_portrait_video_only_in_the_explainer_with_portrait_shots() -> None:
+    ok = EpisodeManifest.model_validate(portrait_episode())
+    assert ok.video.portrait and VideoSpec.for_orientation("portrait") == ok.video
+    assert VideoSpec.for_orientation("landscape") == VideoSpec()
+    with pytest.raises(ValidationError, match="só existe no formato explainer"):
+        EpisodeManifest.model_validate(portrait_episode(format=EpisodeFormat.ARCHIVAL_DOCUMENTARY.value))
+    raw = portrait_episode()
+    raw["scenes"][0]["shots"][0]["spec"] = {
+        "kind": "map", "anchor": "a", "places": [{"name": "X", "lat": 0, "lon": 0}], "claims": CLAIM,
+    }
+    with pytest.raises(ValidationError, match="S01: plano map não cabe em retrato"):
+        EpisodeManifest.model_validate(raw)
+
+
+def scenes_json(orientation: str, kind: str) -> dict[str, Any]:
+    shots = {
+        "number": {"kind": "number", "anchor": "cinco", "value": "5", "label": "x", "claims": CLAIM},
+        "network": {
+            "kind": "network", "anchor": "cinco", "root": "a", "claims": CLAIM,
+            "nodes": [
+                {"id": "a", "label": "A", "kind": "company"},
+                {"id": "b", "label": "B", "kind": "bank"},
+            ],
+            "edges": [{"from": "a", "to": "b", "claims": CLAIM}],
+            "steps": [{"anchor": "cinco", "nodes": ["b"]}],
+        },
+    }
+    return {
+        "episode_id": "t", "language": "pt-BR", "orientation": orientation,
+        "scenes": [{"id": "S01", "narration": "Foram cinco mil.", "shots": [shots[kind]]}],
+    }
+
+
+def test_scenes_manifest_checks_portrait_shots() -> None:
+    from app.pipeline.schemas import ScenesManifest
+
+    assert ScenesManifest.model_validate(scenes_json("portrait", "number")).orientation == "portrait"
+    assert ScenesManifest.model_validate(scenes_json("landscape", "network"))  # em paisagem a rede vale
+    with pytest.raises(ValidationError, match="plano network não cabe em retrato"):
+        ScenesManifest.model_validate(scenes_json("portrait", "network"))
+
+
+def test_preview_and_host_width_follow_the_orientation() -> None:
+    from app.render.base import target_spec
+
+    land = EpisodeManifest.model_validate(v2_episode())
+    port = EpisodeManifest.model_validate(portrait_episode(host=HOST))
+    assert (target_spec(land, preview=True).width, target_spec(land, preview=True).height) == (1280, 720)
+    assert (target_spec(port, preview=True).width, target_spec(port, preview=True).height) == (720, 1280)
+    assert target_spec(port, preview=False).height == 1920
+    spec = HostSpec.model_validate({"identity": HOST["identity"]})
+    assert (spec.width_for(portrait=False), spec.width_for(portrait=True)) == (0.16, 0.32)
+    assert HostSpec.model_validate(HOST).width_for(portrait=True) == 0.16  # a largura dada vale nos dois
+
+
+def test_portrait_burns_captions_in_the_final_and_widens_the_window(tmp_path: Path) -> None:
+    (tmp_path / "assets").mkdir()
+    photo = FIXTURE / "assets" / "commons-lc-usz62-136192.jpg"
+    (tmp_path / "assets" / "f.jpg").write_bytes(photo.read_bytes())
+    write_wav(tmp_path / "voice" / "S01.wav", 9.0)
+    (tmp_path / "captions.srt").write_text("1\n00:00:00,500 --> 00:00:02,000\nlegenda\n")
+    extra = {"host": {"identity": HOST["identity"]}, "captions": "captions.srt"}
+    (land,) = RemotionEngine().scene_props(
+        EpisodeManifest.model_validate({**v2_episode(), **extra}), tmp_path, preview=False
+    )
+    (port,) = RemotionEngine().scene_props(
+        EpisodeManifest.model_validate(portrait_episode(**extra)), tmp_path, preview=False
+    )
+    assert land["cues"] == [] and land["host"]["width"] == 0.16
+    assert [c["text"] for c in port["cues"]] == ["legenda"] and port["host"]["width"] == 0.32
+    assert (port["width"], port["height"]) == (1080, 1920)

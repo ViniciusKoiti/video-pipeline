@@ -24,7 +24,10 @@ def target_spec(episode: EpisodeManifest, *, preview: bool) -> VideoSpec:
     """Formato de saída: o do episódio, ou 1280×720 na prévia."""
     if not preview:
         return episode.video
-    return episode.video.model_copy(update={"width": PREVIEW_HEIGHT * 16 // 9, "height": PREVIEW_HEIGHT})
+    long_side = PREVIEW_HEIGHT * 16 // 9  # o lado curto vale PREVIEW_HEIGHT nos dois perfis
+    size = {"width": PREVIEW_HEIGHT, "height": long_side} if episode.video.portrait else {
+        "width": long_side, "height": PREVIEW_HEIGHT}
+    return episode.video.model_copy(update=size)
 
 
 class RenderEngine(Protocol):

@@ -499,6 +499,22 @@ GRAPHIC_SHOT_KINDS = frozenset(
 # (ADR 011, decisão 5).
 OVERLAY_SHOT_KINDS = frozenset({"lower_third", "stamp", "number", "keyword"})
 
+Orientation = Literal["landscape", "portrait"]  # 16:9 ou 9:16 (ADR 014)
+# Planos com layout em retrato; rede, mapa, linha do tempo, árvore e documento dependem de canvas largo.
+PORTRAIT_SHOT_KINDS = frozenset(
+    {"photo", "broll", "number", "keyword", "stamp", "lower_third", "compare", "chart"}
+)
+
+
+def portrait_problems(scene_id: str, kinds: list[str]) -> list[str]:
+    """Planos de uma cena que não cabem no perfil vertical (ADR 014), um erro por plano."""
+    allowed = ", ".join(sorted(PORTRAIT_SHOT_KINDS))
+    return [
+        f"{scene_id}: plano {kind} não cabe em retrato (9:16); use {allowed}"
+        for kind in kinds
+        if kind not in PORTRAIT_SHOT_KINDS
+    ]
+
 
 # --- Apresentador em janela flutuante (ADR 013) --------------------------------------------------
 
@@ -526,7 +542,11 @@ class HostSpec(Model):
 
     skin: Literal["notionists"] = "notionists"
     identity: HostIdentity
-    width: float = Field(default=0.16, ge=0.1, le=0.4)  # largura da janela, fração do quadro
+    width: float | None = Field(default=None, ge=0.1, le=0.5)  # fração do quadro; padrão por perfil
+
+    def width_for(self, *, portrait: bool) -> float:
+        """Largura da janela: a dada, ou o padrão do perfil (o quadro em pé é mais estreito)."""
+        return self.width if self.width is not None else (0.32 if portrait else 0.16)
 
 
 class Scene(Model):
@@ -603,10 +623,23 @@ class ScenesManifest(Model):
     language: Language
     scenes: list[Scene] = Field(min_length=1)
     host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
+    orientation: Orientation = "landscape"  # `portrait`: 9:16, só com PORTRAIT_SHOT_KINDS (ADR 014)
 
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        return self
+
+    @model_validator(mode="after")
+    def _portrait_shots(self) -> Self:
+        if self.orientation == "portrait":
+            problems = [
+                p
+                for scene in self.scenes
+                for p in portrait_problems(scene.id, [shot.kind for shot in effective_shots(scene)])
+            ]
+            if problems:
+                raise ValueError("; ".join(problems))
         return self
 
 
@@ -846,10 +879,19 @@ class VideoSpec(Model):
     audio_sample_rate: int = Field(default=48_000, gt=0)
 
     @model_validator(mode="after")
-    def _sixteen_by_nine(self) -> Self:
-        if self.width * 9 != self.height * 16:
-            raise ValueError(f"{self.width}x{self.height} não é 16:9")
+    def _sixteen_by_nine_either_way(self) -> Self:
+        if self.width * 9 != self.height * 16 and self.width * 16 != self.height * 9:
+            raise ValueError(f"{self.width}x{self.height} não é 16:9 nem 9:16")
         return self
+
+    @property
+    def portrait(self) -> bool:
+        return self.height > self.width
+
+    @classmethod
+    def for_orientation(cls, orientation: Orientation) -> VideoSpec:
+        """1920×1080 em paisagem e 1080×1920 em retrato (ADR 014)."""
+        return cls(width=1080, height=1920) if orientation == "portrait" else cls()
 
 
 class EpisodeShot(Model):
@@ -942,6 +984,16 @@ class EpisodeManifest(Model):
             raise ValueError("schema_version 2 exige planos em todas as cenas")
         if self.host is not None and self.format != EpisodeFormat.EXPLAINER:
             raise ValueError("host (apresentador) só existe no formato explainer (ADR 013)")
+        if self.video.portrait:
+            if self.format != EpisodeFormat.EXPLAINER:
+                raise ValueError("o perfil vertical (9:16) só existe no formato explainer (ADR 014)")
+            problems = [
+                p
+                for scene in self.scenes
+                for p in portrait_problems(scene.id, [shot.spec.kind for shot in scene.shots])
+            ]
+            if problems:
+                raise ValueError("; ".join(problems))
         for previous, current in zip(self.scenes, self.scenes[1:], strict=False):
             if current.start_ms < previous.end_ms:
                 raise ValueError(f"cena {current.id} começa antes do fim de {previous.id}")
