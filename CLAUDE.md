@@ -163,6 +163,8 @@ revela:
   motor for o Turbo, um adapter converte este arquivo para os parâmetros dele, nunca o contrário. Versão 1 (um
   visual por cena, ADR 001) ou 2 (planos contíguos, ADR 008); `language` `en` | `pt-BR`; `format` decide o motor;
   cenas com `start_ms`/`duration_ms` medidos da voz real e sem sobreposição.
+  Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
+  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena.
 
 ## 7. Provedores e política de escolha
 
@@ -219,8 +221,9 @@ lacuna fica registrada.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
   (`app/render/ffmpeg.py`); `explainer` → **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o
   template em `video/`; peças do kit editorial, tema `editorial`, mapa com contornos do Natural Earth em domínio
-  público, cache por cena). MoneyPrinterTurbo reprovado (branch `experimento-mpt`). Cena gráfica animada num
-  documentário = clipe do motion-kit como ativo `Original` (#42). Comparação dos motores em
+  público, cache por cena). O apresentador (ADR 013) vem de `video/src/HostWindow.tsx`; sem `host`, nada muda.
+  MoneyPrinterTurbo reprovado (branch `experimento-mpt`). Cena gráfica animada num documentário = clipe do
+  motion-kit como ativo `Original` (#42). Comparação dos motores em
   `data/benchmarks/README.md`; entrada de teste em `tests/fixtures/episodes/engine-test/`.
 
 ## 10. CLI (`vp`, console script em `pyproject.toml`)

@@ -81,6 +81,16 @@ export type ShotProps = {
 };
 export type Cue = {from: number; to: number; text: string};
 
+// Apresentador em janela flutuante (ADR 013): o motor já resolve o canto de cada cena e o envelope da boca.
+export type HostCorner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+export type HostProps = {
+  identity: Record<string, unknown>; // peças do Notionists, como o <Host> do motion-kit as lê
+  width: number; // largura da janela, fração do quadro
+  corner: HostCorner;
+  fromCorner: HostCorner | null; // canto da cena anterior; null na primeira
+  levels: number[]; // energia da fala por quadro, de 0 a 1
+};
+
 export type SceneProps = {
   width: number;
   height: number;
@@ -89,4 +99,5 @@ export type SceneProps = {
   fadeFrames: number;
   shots: ShotProps[];
   cues: Cue[];
+  host?: HostProps;
 };
