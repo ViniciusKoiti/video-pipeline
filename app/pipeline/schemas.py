@@ -500,6 +500,35 @@ GRAPHIC_SHOT_KINDS = frozenset(
 OVERLAY_SHOT_KINDS = frozenset({"lower_third", "stamp", "number", "keyword"})
 
 
+# --- Apresentador em janela flutuante (ADR 013) --------------------------------------------------
+
+HostCorner = Literal["top-left", "top-right", "bottom-left", "bottom-right"]
+# sentido horário
+HOST_CORNERS: tuple[HostCorner, ...] = ("top-left", "top-right", "bottom-right", "bottom-left")
+HostVariant = Annotated[str, Field(pattern=r"^(variant\d{2}|hat)$")]  # nome de peça do Notionists (CC0)
+
+
+class HostIdentity(Model):
+    """Peças do personagem (estilo Notionists, DiceBear); sem peça, vale a do estilo (ou nenhuma)."""
+
+    hair: HostVariant
+    outfit: HostVariant
+    eyes: HostVariant = "variant05"
+    brows: HostVariant | None = None
+    nose: HostVariant | None = None
+    facial_hair: HostVariant | None = None
+    glasses: HostVariant | None = None
+
+
+class HostSpec(Model):
+    """O apresentador do episódio: um personagem numa janela que muda de canto a cada cena (ADR 013).
+    A boca segue o áudio de cada cena; o canto sai de uma regra sobre os planos (`app/media/host.py`)."""
+
+    skin: Literal["notionists"] = "notionists"
+    identity: HostIdentity
+    width: float = Field(default=0.16, ge=0.1, le=0.4)  # largura da janela, fração do quadro
+
+
 class Scene(Model):
     """Uma cena = um bloco de narração = um WAV (ADR 007), com uma lista de planos (ADR 008).
     Sem planos, vale a forma v1: um único plano de foto com os campos visuais da própria cena."""
@@ -512,6 +541,7 @@ class Scene(Model):
     chosen_asset_id: AssetId | None = None  # forma v1
     shots: list[Shot] = []  # forma v2
     duration_ms: int | None = Field(default=None, gt=0)  # medido da voz real, nunca estimado (§9)
+    host_corner: HostCorner | None = None  # ajuste do canto do apresentador nesta cena (ADR 013)
     review_status: Status = Status.PENDING  # reflexo de review.json, escrito pelo código (§5)
 
     @model_validator(mode="after")
@@ -572,6 +602,7 @@ class ScenesManifest(Model):
     episode_id: EpisodeId
     language: Language
     scenes: list[Scene] = Field(min_length=1)
+    host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
 
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
@@ -860,6 +891,7 @@ class EpisodeScene(Model):
     asset_id: AssetId | None = None  # v1: um visual por cena
     image: RelPath | None = None  # v1
     shots: list[EpisodeShot] = []  # v2: planos cobrindo a cena inteira
+    host_corner: HostCorner | None = None  # ajuste do canto do apresentador (ADR 013)
 
     @property
     def end_ms(self) -> int:
@@ -894,6 +926,7 @@ class EpisodeManifest(Model):
     video: VideoSpec = Field(default_factory=VideoSpec)
     scenes: list[EpisodeScene] = Field(min_length=1)
     captions: RelPath | None = None  # captions.srt editável
+    host: HostSpec | None = None  # apresentador em janela flutuante (ADR 013); só `explainer`
 
     @property
     def duration_ms(self) -> int:
@@ -907,6 +940,8 @@ class EpisodeManifest(Model):
             raise ValueError("schema_version 1 não tem planos; use 2 (ADR 008)")
         if self.schema_version == 2 and not all(with_shots):
             raise ValueError("schema_version 2 exige planos em todas as cenas")
+        if self.host is not None and self.format != EpisodeFormat.EXPLAINER:
+            raise ValueError("host (apresentador) só existe no formato explainer (ADR 013)")
         for previous, current in zip(self.scenes, self.scenes[1:], strict=False):
             if current.start_ms < previous.end_ms:
                 raise ValueError(f"cena {current.id} começa antes do fim de {previous.id}")

@@ -15,8 +15,10 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from app.media.envelope import mouth_levels
+from app.media.host import host_corners
 from app.media.probe import dimensions, duration_ms
-from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot
+from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, parse_srt
@@ -70,6 +72,23 @@ def _editorial(shot: EpisodeShot, fps: int) -> dict[str, Any]:
     if shot.steps_ms:
         extra["stepFrames"] = [round(ms * fps / 1000) for ms in shot.steps_ms]
     return extra
+
+
+def _host_identity(host: HostSpec) -> dict[str, Any]:
+    """Identidade do `<Host>` do motion-kit (camelCase, como a pele Notionists a lê); só as peças dadas."""
+    identity = host.identity
+    parts = {
+        "hair": identity.hair,
+        "outfit": identity.outfit,
+        "eyes": identity.eyes,
+        "brows": identity.brows,
+        "facialHair": identity.facial_hair,
+        "glasses": identity.glasses,
+    }
+    result: dict[str, Any] = {"skin": host.skin, **{k: v for k, v in parts.items() if v is not None}}
+    if identity.nose is not None:
+        result["extras"] = {"nose": identity.nose}
+    return result
 
 
 class RemotionEngine:
@@ -141,6 +160,7 @@ class RemotionEngine:
         if self._burn[preview] and episode.captions:
             cues = parse_srt((episode_dir / episode.captions).read_text())
         bounds = frame_bounds(episode, fps)
+        corners = host_corners(episode.scenes) if episode.host is not None else []
         props = []
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]
@@ -163,6 +183,14 @@ class RemotionEngine:
                     ],
                 }
             )
+            if episode.host is not None:  # sem apresentador, as props (e o cache) ficam como estavam
+                props[-1]["host"] = {
+                    "identity": _host_identity(episode.host),
+                    "width": episode.host.width,
+                    "corner": corners[i],
+                    "fromCorner": corners[i - 1] if i > 0 else None,
+                    "levels": mouth_levels(episode_dir / scene.audio, fps, frames),
+                }
         return props
 
     # --- render -------------------------------------------------------------------------------

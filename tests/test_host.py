@@ -1,0 +1,167 @@
+"""Apresentador em janela flutuante (ADR 013): contrato, cantos, envelope e props do motor. Sem Node."""
+
+from __future__ import annotations
+
+import math
+import struct
+import wave
+from pathlib import Path
+from typing import Any
+
+import pytest
+from pydantic import ValidationError
+
+from app.media.envelope import mouth_levels
+from app.media.host import blocked_corners, host_corners
+from app.pipeline.schemas import EpisodeFormat, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
+from app.render.remotion import RemotionEngine
+from tests.test_remotion_props import FIXTURE
+from tests.test_shots import v2_episode
+
+HOST = {"identity": {"hair": "variant07", "outfit": "variant10", "nose": "variant07"}, "width": 0.16}
+
+
+def write_wav(path: Path, seconds: float, loud: bool = True, rate: int = 24_000) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with wave.open(str(path), "wb") as out:
+        out.setnchannels(1)
+        out.setsampwidth(2)
+        out.setframerate(rate)
+        n = int(seconds * rate)
+        amp = 12_000 if loud else 0
+        out.writeframes(b"".join(struct.pack("<h", int(amp * math.sin(i / 7))) for i in range(n)))
+
+
+CLAIM = [{"text": "t", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E1"]}]
+
+
+def shot(kind: str, start: int, ms: int, source: str | None = None) -> EpisodeShot:
+    specs: dict[str, dict[str, Any]] = {
+        "photo": {"kind": "photo", "anchor": "a", "visual_need": "contextual_stock", "search_query": "q"},
+        "broll": {"kind": "broll", "anchor": "a", "visual_need": "contextual_stock", "search_query": "q"},
+        "number": {"kind": "number", "anchor": "a", "value": "5", "label": "x", "claims": CLAIM},
+        "stamp": {"kind": "stamp", "anchor": "a", "date": "1918", "claims": CLAIM},
+        "lower_third": {"kind": "lower_third", "anchor": "a", "name": "N", "role": "R", "claims": CLAIM},
+        "compare": {
+            "kind": "compare", "anchor": "a", "claims": CLAIM,
+            "left": {"value": "1", "label": "a"}, "right": {"value": "2", "label": "b"},
+        },
+        "chart": {
+            "kind": "chart", "anchor": "a", "title": "t", "claims": CLAIM,
+            "points": [{"label": "a", "value": 1}, {"label": "b", "value": 2}],
+        },
+    }
+    return EpisodeShot.model_validate({
+        "start_ms": start, "duration_ms": ms, "spec": specs[kind], "source": source,
+        "media": "assets/f.jpg" if kind in ("photo", "broll") else None,
+    })
+
+
+def scene(sid: str, kinds: list[tuple[str, str | None]], corner: str | None = None) -> EpisodeScene:
+    shots = [shot(k, i * 1000, 1000, s) for i, (k, s) in enumerate(kinds)]
+    return EpisodeScene.model_validate({
+        "id": sid, "start_ms": 0, "duration_ms": 1000 * len(shots), "narration": "n", "audio": "voice/x.wav",
+        "shots": [s.model_dump() for s in shots], "host_corner": corner,
+    })
+
+
+# --- contrato -------------------------------------------------------------------------------------
+
+
+def test_host_only_in_the_explainer_format() -> None:
+    assert EpisodeManifest.model_validate({**v2_episode(), "host": HOST}).host is not None
+    with pytest.raises(ValidationError, match="só existe no formato explainer"):
+        EpisodeManifest.model_validate(
+            {**v2_episode(), "host": HOST, "format": EpisodeFormat.ARCHIVAL_DOCUMENTARY.value}
+        )
+
+
+def test_host_spec_is_strict() -> None:
+    assert HostSpec.model_validate(HOST).identity.eyes == "variant05"
+    for bad in ({"hair": "longo", "outfit": "variant10"}, {"hair": "variant07", "outfit": "variant1"}):
+        with pytest.raises(ValidationError):
+            HostSpec.model_validate({"identity": bad})
+    with pytest.raises(ValidationError):
+        HostSpec.model_validate({**HOST, "width": 0.9})
+    with pytest.raises(ValidationError):
+        HostSpec.model_validate({**HOST, "extra": 1})
+    with pytest.raises(ValidationError, match="Input should be"):
+        scene("S01", [("photo", None)], corner="middle")
+
+
+# --- cantos ---------------------------------------------------------------------------------------
+
+
+def test_what_the_template_occupies_blocks_corners() -> None:
+    fonte = "Fonte: x"
+    assert blocked_corners(scene("S01", [("number", fonte)])) == {"top-right"}  # tela cheia: fonte em cima
+    over_photo = scene("S01", [("photo", None), ("number", fonte)])
+    assert blocked_corners(over_photo) == {"bottom-left", "bottom-right"}
+    assert blocked_corners(scene("S01", [("lower_third", None)])) == {"bottom-left"}
+    assert blocked_corners(scene("S01", [("chart", fonte)])) == {"top-left", "top-right"}
+    assert blocked_corners(scene("S01", [("compare", None)])) == {"bottom-left", "bottom-right"}
+    assert blocked_corners(scene("S01", [("photo", None)])) == set()
+
+
+def test_corners_rotate_clockwise_and_avoid_blocked_ones() -> None:
+    free = [scene(f"S0{i}", [("stamp", None)]) for i in range(1, 6)]
+    assert host_corners(free) == ["top-left", "top-right", "bottom-right", "bottom-left", "top-left"]
+    # só o canto de cima à esquerda está livre: a janela fica onde estava em vez de ir para um ocupado
+    crowded = scene("S02", [("compare", "Fonte: x")])
+    assert host_corners([free[0], crowded]) == ["top-left", "top-left"]
+
+
+def test_scene_override_wins_and_sets_the_next_start() -> None:
+    scenes = [scene("S01", [("stamp", None)], corner="bottom-left"), scene("S02", [("stamp", None)])]
+    assert host_corners(scenes) == ["bottom-left", "top-left"]
+
+
+# --- envelope -------------------------------------------------------------------------------------
+
+
+def test_mouth_levels_follow_the_speech(tmp_path: Path) -> None:
+    wav = tmp_path / "a.wav"
+    write_wav(wav, 1.0)
+    levels = mouth_levels(wav, 30, 30)
+    assert len(levels) == 30 and max(levels) == 1.0 and min(levels) > 0.9  # tom constante
+    assert len(mouth_levels(wav, 30, 40)) == 40 and mouth_levels(wav, 30, 40)[-1] == 0.0  # completa com 0
+    assert len(mouth_levels(wav, 30, 10)) == 10  # corta
+    silent = tmp_path / "s.wav"
+    write_wav(silent, 1.0, loud=False)
+    assert mouth_levels(silent, 30, 30) == [0.0] * 30
+
+
+def test_mouth_levels_refuse_non_16_bit_wav(tmp_path: Path) -> None:
+    wav = tmp_path / "b.wav"
+    with wave.open(str(wav), "wb") as out:
+        out.setnchannels(1)
+        out.setsampwidth(1)
+        out.setframerate(8_000)
+        out.writeframes(b"\x80" * 800)
+    with pytest.raises(ValueError, match="16 bits"):
+        mouth_levels(wav, 30, 3)
+
+
+# --- props do motor -------------------------------------------------------------------------------
+
+
+def test_scene_props_carry_the_host_only_when_the_episode_has_one(tmp_path: Path) -> None:
+    (tmp_path / "assets").mkdir()
+    photo = FIXTURE / "assets" / "commons-lc-usz62-136192.jpg"
+    (tmp_path / "assets" / "f.jpg").write_bytes(photo.read_bytes())
+    write_wav(tmp_path / "voice" / "S01.wav", 9.0)
+    plain = EpisodeManifest.model_validate(v2_episode())
+    (without,) = RemotionEngine().scene_props(plain, tmp_path, preview=True)
+    assert "host" not in without  # sem apresentador as props (e o cache) não mudam
+
+    with_host = EpisodeManifest.model_validate({**v2_episode(), "host": HOST})
+    (props,) = RemotionEngine().scene_props(with_host, tmp_path, preview=True)
+    host = props["host"]
+    assert host["identity"] == {
+        "skin": "notionists", "hair": "variant07", "outfit": "variant10", "eyes": "variant05",
+        "extras": {"nose": "variant07"},
+    }
+    assert (host["width"], host["fromCorner"]) == (0.16, None)
+    assert host["corner"] in {"top-left", "top-right", "bottom-left", "bottom-right"}
+    assert len(host["levels"]) == props["frames"] and max(host["levels"]) <= 1.0
+    assert {k: v for k, v in props.items() if k != "host"} == without

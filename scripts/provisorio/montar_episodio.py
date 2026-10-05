@@ -135,7 +135,7 @@ def main() -> None:
         episode_scenes.append(
             EpisodeScene(
                 id=scene.id, start_ms=cursor, duration_ms=ms, narration=scene.narration,
-                audio=f"voice/{wav.name}", shots=shots,
+                audio=f"voice/{wav.name}", shots=shots, host_corner=scene.host_corner,
             )
         )
         summary = ", ".join(f"{s.spec.kind} {s.duration_ms / 1000:.1f}" for s in shots)
@@ -145,7 +145,7 @@ def main() -> None:
 
     episode = EpisodeManifest(
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
-        language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes,
+        language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes, host=scenes.host,
     )
     (episode_dir / "episode.json").write_text(episode.model_dump_json(indent=2))
     print("ritmo:", pacing_warnings(episode) or "ok")

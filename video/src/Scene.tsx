@@ -5,6 +5,7 @@ import {SourceTag} from "@viniciusk/motion-kit/editorial";
 import {SceneBackground} from "@viniciusk/motion-kit/fx";
 import {CameraRig} from "@viniciusk/motion-kit/motion";
 import {MotionThemeProvider} from "@viniciusk/motion-kit/theme";
+import {HostWindow} from "./HostWindow";
 import {ShotView} from "./ShotView";
 import {motionTheme, theme, u} from "./theme";
 import type {SceneProps, ShotProps} from "./types";
@@ -131,6 +132,7 @@ export const Scene: React.FC<SceneProps> = (props) => {
             </Sequence>
           ))}
         </AbsoluteFill>
+        {props.host && <HostWindow host={props.host} />}
       </AbsoluteFill>
     </MotionThemeProvider>
   );
