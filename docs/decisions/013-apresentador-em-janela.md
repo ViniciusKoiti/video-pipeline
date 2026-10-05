@@ -1,6 +1,6 @@
 # 013 — Apresentador em janela flutuante no formato explicativo
 
-- **Status:** proposto (aceite quando o dono revir o render de teste, `votorantim-apresentador`)
+- **Status:** aceito (2026-10-05, depois de o dono rever o render de teste `votorantim-apresentador`)
 - **Data:** 2026-10-05
 - **Etapa do roadmap:** frente do apresentador (derivada do #48); B1 de duas etapas, o 9:16 fica para o B2
 - **Relaciona-se com:** ADR 001 (motor por formato), ADR 007 (contratos), ADR 008 (planos), ADR 011 (planos
