@@ -301,6 +301,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Convenções: Python 3.11+ (3.12 no `.venv`), tipagem completa, pydantic v2 para manifestos, `pathlib`, sem estado
   global, um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.
+- Template do `explainer` (`video/`): consultar o kit pelo MCP `motion-kit` (skill `componentes-do-kit`) antes de
+  escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com o SHA do pin.
 - Etapas criativas: agentes em `.claude/agents/` com o método nas skills de `.claude/skills/`; o que eles escrevem
   passa pelo `vp check` e pelos gates humanos (ADR 009). Ver §15.
 - **Instruções a agentes, notas de fonte e exemplos:** só o que está nos trechos baixados. Citar fichas por id
