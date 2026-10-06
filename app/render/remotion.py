@@ -157,10 +157,13 @@ class RemotionEngine:
         spec = target_spec(episode, preview=preview)
         fps = spec.fps
         cues = []
-        if self._burn[preview] and episode.captions:
+        # No vertical o final também sai com a legenda queimada (ADR 014): quem assiste sem som lê.
+        if (self._burn[preview] or episode.video.portrait) and episode.captions:
             cues = parse_srt((episode_dir / episode.captions).read_text())
         bounds = frame_bounds(episode, fps)
-        corners = host_corners(episode.scenes) if episode.host is not None else []
+        corners = []
+        if episode.host is not None:
+            corners = host_corners(episode.scenes, portrait=episode.video.portrait)
         props = []
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]
@@ -186,7 +189,7 @@ class RemotionEngine:
             if episode.host is not None:  # sem apresentador, as props (e o cache) ficam como estavam
                 props[-1]["host"] = {
                     "identity": _host_identity(episode.host),
-                    "width": episode.host.width,
+                    "width": episode.host.width_for(portrait=episode.video.portrait),
                     "corner": corners[i],
                     "fromCorner": corners[i - 1] if i > 0 else None,
                     "levels": mouth_levels(episode_dir / scene.audio, fps, frames),

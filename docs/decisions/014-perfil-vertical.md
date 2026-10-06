@@ -33,15 +33,20 @@ do motion-kit já têm área segura (`safeArea`) para vertical.
 - **Unidade.** O template mede por `u = px × lado curto ÷ 1080`: o mesmo valor em px de projeto vale nos dois
   perfis (em paisagem, lado curto = altura, nada muda). Um gancho do template substitui `u(height, …)`.
 - **Prévia.** 720 × 1280 no vertical (lado curto 720, como hoje).
-- **Layout em retrato.** Cada plano do subconjunto ganha o seu arranjo: o número e a comparação empilham
-  (comparação em coluna, uma abaixo da outra), o gráfico usa a largura do quadro menos as margens, a foto e o
-  B-roll preenchem o quadro com recorte pelo `focus`, e a tarja, o carimbo e a frase ficam dentro da área segura.
+- **Layout em retrato.** Cada plano do subconjunto ganha o seu arranjo: o número e o carimbo caem de tamanho até
+  caber na largura, a comparação empilha (`layout="vertical"` do kit), o gráfico usa a tela de projeto 1080×1920
+  com 940 px de largura, a frase quebra na largura do quadro, e a foto e o B-roll preenchem o quadro. As peças do
+  kit medem pela altura (`useUnit`); o template as alimenta com props em px finais (`kit()` em `theme.ts`). A fonte
+  do plano vai sempre para o topo da área segura: o painel do número e a tarja ocupam a largura embaixo.
 - **Área segura.** Legenda, fonte, tarja, carimbo e janela do apresentador ficam dentro da área segura `vertical`
   do kit (1080×1920: topo 288, base 500, direita 140, esquerda 60 px). Número, comparação e gráfico usam o quadro
   todo, centralizados, e podem passar um pouco para os lados (escolha do dono, 2026-10-05).
-- **Apresentador.** A janela usa a área segura automática do kit. `HostSpec.width` passa a ser opcional, com
-  padrão 0,16 em paisagem e 0,32 em retrato (a largura é fração do quadro, e o quadro é mais estreito). A regra de
-  cantos (`app/media/host.py`) ganha a tabela do retrato, com as mesmas regras de ocupação do template vertical.
+- **Apresentador.** A janela usa a área segura automática do kit e fica logo abaixo da fonte do plano.
+  `HostSpec.width` passa a ser opcional, com padrão 0,16 em paisagem e 0,28 em retrato (a largura é fração do
+  quadro, e o quadro é mais estreito; 0,32 invadia o conteúdo centralizado). Em retrato só os dois cantos de cima
+  são livres: a base segura (500 px) coloca os de baixo no meio do quadro, onde fica o conteúdo. A regra de cantos
+  (`app/media/host.py`) bloqueia os de baixo sempre, o de cima à esquerda no selo de canto, o de cima à direita na
+  comparação empilhada (que começa alto) e os dois de cima no gráfico; sem canto livre, a janela fica onde estava.
 - **Legendas.** No vertical, o final sai com a legenda queimada na imagem (padrão dos vídeos curtos, escolha do
   dono em 2026-10-05) e o SRT continua sendo gerado e editável. No paisagem nada muda: o final sem legenda
   queimada e a prévia com. A legenda queimada fica acima da base segura.

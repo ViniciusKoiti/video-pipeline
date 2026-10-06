@@ -266,7 +266,8 @@ def test_media_paths_must_stay_inside_episode(path: str) -> None:
         EpisodeManifest.model_validate(raw)
 
 
-def test_video_must_be_16_by_9() -> None:
+def test_video_must_be_16_by_9_either_way() -> None:
     assert VideoSpec() == VideoSpec(width=1920, height=1080, fps=30, audio_sample_rate=48_000)
-    with pytest.raises(ValidationError, match="16:9"):
-        VideoSpec(width=1080, height=1920)
+    assert VideoSpec(width=1080, height=1920).portrait and not VideoSpec().portrait
+    with pytest.raises(ValidationError, match="16:9 nem 9:16"):
+        VideoSpec(width=1000, height=1000)
