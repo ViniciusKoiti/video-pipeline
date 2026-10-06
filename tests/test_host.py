@@ -268,7 +268,8 @@ def test_portrait_corner_table_follows_the_vertical_layout() -> None:
     assert blocked_corners(over_photo, portrait=True) == {"bottom-left", "bottom-right"}
     assert blocked_corners(over_photo) == {"bottom-left", "bottom-right"}
     compare = scene("S01", [("compare", None)])
-    assert blocked_corners(compare, portrait=True) == {"top-right", "bottom-left", "bottom-right"}
+    # a comparação começa abaixo da janela: só os cantos de baixo ficam bloqueados
+    assert blocked_corners(compare, portrait=True) == {"bottom-left", "bottom-right"}
     # o gráfico ocupa o topo; o selo no canto toma o de cima à esquerda
     # o gráfico fica alinhado ao topo: numa cena só de gráficos os cantos de baixo ficam livres
     assert blocked_corners(scene("S01", [("chart", None)]), portrait=True) == {"top-left", "top-right"}

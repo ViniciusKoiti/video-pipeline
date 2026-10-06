@@ -135,6 +135,9 @@ export const NumberShot: React.FC<{spec: NumberSpec; overlay?: boolean}> = ({spe
 };
 
 // Dois valores; sem número reconhecível, lado a lado em texto (a tela não converte nem calcula).
+// Topo da região da comparação em retrato, em px de projeto: abaixo da janela do apresentador (cantos de cima).
+const COMPARE_TOP = 240;
+
 export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
   const {u, kit, kitPx, width, portrait} = useFrame();
   const left = screenNumber(spec.left.value);
@@ -148,24 +151,30 @@ export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
     const stacked = portrait
       ? {layout: "vertical" as const, maxWidth: kitPx(width - 2 * u(70)), valueSize: kit(120), labelSize: kit(34)}
       : {};
+    // Em retrato a comparação começa abaixo da janela do apresentador (no alto, abaixo da fonte), não no centro.
     return (
-      <ValueCompare left={side(left, spec.left.label)} right={side(right, spec.right.label)}
-        mode={spec.mode ?? "side"} emphasis={spec.emphasis ?? undefined} showRatio={false} at={4} duration={40}
-        {...stacked} />
+      <AbsoluteFill style={portrait ? {top: u(COMPARE_TOP)} : undefined}>
+        <ValueCompare left={side(left, spec.left.label)} right={side(right, spec.right.label)}
+          mode={spec.mode ?? "side"} emphasis={spec.emphasis ?? undefined} showRatio={false} at={4} duration={40}
+          {...stacked} />
+      </AbsoluteFill>
     );
   }
+  // Em retrato as colunas empilham: `flex: 1` daria a cada uma metade da altura do quadro e o texto estouraria o topo.
   const column = (s: {value: string; label: string}) => (
-    <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(18), flex: 1}}>
-      <div style={{fontSize: u(portrait ? 90 : 110), fontWeight: 800, textAlign: "center"}}>{s.value}</div>
-      <div style={{fontSize: u(36), color: theme.muted, textAlign: "center"}}>{s.label}</div>
+    <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(portrait ? 14 : 18),
+      flex: portrait ? "none" : 1}}>
+      <div style={{fontSize: u(portrait ? 64 : 110), fontWeight: 800, textAlign: "center", lineHeight: portrait ? 1.1 : undefined}}>{s.value}</div>
+      <div style={{fontSize: u(portrait ? 30 : 36), color: theme.muted, textAlign: "center"}}>{s.label}</div>
     </div>
   );
   return (
     <AbsoluteFill style={{flexDirection: portrait ? "column" : "row", alignItems: "center",
-      justifyContent: portrait ? "center" : undefined, gap: portrait ? u(60) : undefined,
+      justifyContent: portrait ? "center" : undefined, gap: portrait ? u(36) : undefined,
+      top: portrait ? u(COMPARE_TOP) : undefined,
       padding: `0 ${u(portrait ? 70 : 160)}px`, color: theme.text, fontFamily: theme.font}}>
       {column(spec.left)}
-      <div style={portrait ? {height: 2, width: u(260), background: theme.line}
+      <div style={portrait ? {height: 2, width: u(220), background: theme.line}
         : {width: 2, height: u(260), background: theme.line}} />
       {column(spec.right)}
     </AbsoluteFill>
