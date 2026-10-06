@@ -25,8 +25,8 @@ def blocked_corners(scene: EpisodeScene, *, portrait: bool = False) -> set[HostC
     Em retrato (ADR 014) só os cantos de cima são livres: o conteúdo fica centralizado e a base segura das
     plataformas reserva a faixa de baixo, então os cantos de baixo caem no meio do quadro e ficam bloqueados
     (menos numa cena só de gráficos, que ficam alinhados ao topo). A janela vem logo abaixo da fonte, que fica
-    no topo. O selo no canto e o título do gráfico tomam o topo; a comparação empilhada, que começa alto, toma
-    o de cima à direita."""
+    no topo. O selo no canto e o título do gráfico tomam o topo; a comparação empilhada começa abaixo da
+    janela (template: COMPARE_TOP) e não toma canto."""
     # Em retrato o conteúdo é centralizado, menos o gráfico (no alto): cena só de gráficos libera os de baixo.
     centered = any(shot.spec.kind != "chart" for shot in scene.shots) or not scene.shots
     blocked: set[HostCorner] = {"bottom-left", "bottom-right"} if portrait and centered else set()
@@ -41,8 +41,6 @@ def blocked_corners(scene: EpisodeScene, *, portrait: bool = False) -> set[HostC
         if portrait:
             if kind == "chart":
                 blocked |= {"top-left", "top-right"}
-            if kind == "compare":  # a coluna de valores começa alto e a janela da direita invade o centro
-                blocked.add("top-right")
             if kind == "stamp" and layer == "overlay":
                 blocked.add("top-left")
             continue
