@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 
 from pydantic import ValidationError
 
+from app.media.narration import timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.ports import M, ManifestStore
 from app.pipeline.schemas import (
@@ -156,7 +157,7 @@ def _check_scenes(
                     report.errors.append(f"{scene.id}: trecho {excerpt_id} não existe")
                 elif facts is not None and excerpt_id not in fact_excerpts:
                     report.errors.append(f"{scene.id}: trecho {excerpt_id} não está em nenhuma ficha")
-        duration_ms = len(scene.narration) / chars_per_second * 1000
+        duration_ms = timeline_length(scene.narration) / chars_per_second * 1000
         total_ms += duration_ms
         planned = effective_shots(scene)
         shots += len(planned)

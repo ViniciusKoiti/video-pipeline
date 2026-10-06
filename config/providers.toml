@@ -23,6 +23,7 @@ num_thread = 8        # núcleos físicos; 12 threads derruba o desempenho (ADR 
 voices = { en = "am_michael", "pt-BR" = "pm_alex" }  # voz por idioma (ADR 008)
 num_threads = 8
 chars_per_second = 15.0  # ritmo medido com pm_alex; o vp check estima a cena com ele
+pause_ms = 300           # silêncio extra por <short pause>; com o do Kokoro nas pontas dá ~0,7 s (ADR 015)
 
 [gemini_tts]
 model = "gemini-3.8-flash-tts"

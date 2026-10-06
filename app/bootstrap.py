@@ -103,7 +103,9 @@ def _json_review(settings: Settings) -> Any:
 def _kokoro(settings: Settings) -> Any:
     from app.providers.tts.kokoro import KokoroTTS
 
-    return KokoroTTS(settings.kokoro.voices, num_threads=settings.kokoro.num_threads)
+    return KokoroTTS(
+        settings.kokoro.voices, num_threads=settings.kokoro.num_threads, pause_ms=settings.kokoro.pause_ms
+    )
 
 
 def _gemini_tts(settings: Settings) -> Any:

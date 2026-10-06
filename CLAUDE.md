@@ -217,6 +217,10 @@ lacuna fica registrada.
   trocar uma frase isolada. Glossário de pronúncia por episódio em `voice/glossary.json` (o Kokoro aceita
   fonemas customizados; o Gemini TTS não).
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
+- **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
+  `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
+  (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro faz silêncio
+  (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
 - Legendas geradas após aprovação da voz, por alinhamento do texto com o áudio; nomes próprios sempre revisados.
   `captions.srt` é editável.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.

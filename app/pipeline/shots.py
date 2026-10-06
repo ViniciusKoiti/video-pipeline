@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 
+from app.media.narration import strip_pauses, timeline_length, timeline_position
 from app.pipeline.attribution import shot_attribution
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
@@ -32,13 +33,15 @@ TARGET_AVERAGE_MS: dict[EpisodeFormat, tuple[int, int]] = {
 
 
 def shot_bounds(narration: str, shots: Sequence[Shot], duration_ms: int) -> list[tuple[int, int]]:
-    """(início, duração) de cada plano, relativos à cena. O primeiro começa em 0 e o último termina no fim."""
+    """(início, duração) de cada plano, relativos à cena. O primeiro começa em 0 e o último termina no fim.
+    As âncoras valem no texto sem as marcas de pausa; cada marca pesa `PAUSE_CHARS` no tempo (ADR 015)."""
+    spoken, total = strip_pauses(narration), timeline_length(narration)
     starts, cursor = [], 0
     for i, shot in enumerate(shots):
-        position = 0 if i == 0 else narration.find(shot.anchor, cursor)
+        position = 0 if i == 0 else spoken.find(shot.anchor, cursor)
         if position < 0:
             raise ValueError(f"âncora {shot.anchor!r} não aparece na narração em ordem")
-        starts.append(round(position / len(narration) * duration_ms))
+        starts.append(round(timeline_position(narration, position) / total * duration_ms))
         cursor = position + 1
     ends = [*starts[1:], duration_ms]
     bounds = [(start, end - start) for start, end in zip(starts, ends, strict=True)]
@@ -57,15 +60,16 @@ def episode_shots(
     Com `sources`, cada plano com claims ganha a fonte do rodapé (ADR 011)."""
     shots = effective_shots(scene)
     bounds = shot_bounds(scene.narration, shots, duration_ms)
-    positions = _anchor_positions(scene.narration, shots)
-    ends = [*positions[1:], len(scene.narration)]
+    spoken, total = strip_pauses(scene.narration), timeline_length(scene.narration)
+    positions = _anchor_positions(spoken, shots)
+    ends = [*positions[1:], len(spoken)]
     result = []
     for shot, (start, duration), position, end in zip(shots, bounds, positions, ends, strict=True):
         source, flag = shot_attribution(shot.claims, sources) if sources and shot.claims else (None, None)
         steps_ms = []
         if isinstance(shot, NetworkShot):
-            for step in step_positions(scene.narration, shot, position, end, scene_id=scene.id):
-                at = round(step / len(scene.narration) * duration_ms) - start
+            for step in step_positions(spoken, shot, position, end, scene_id=scene.id):
+                at = round(timeline_position(scene.narration, step) / total * duration_ms) - start
                 steps_ms.append(min(max(at, 0), duration - 1))
         result.append(
             EpisodeShot(

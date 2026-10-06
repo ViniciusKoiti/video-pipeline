@@ -31,16 +31,24 @@ falada (a confirmar de ouvido).
   cenas, e qualquer outra tag `<…>` é erro de validação em `scenes.json` e no `vp check`. A marca não vem no começo
   nem no fim da narração, nem duas seguidas.
 - **Texto falado e texto mostrado.** O que o Gemini recebe leva a marca; o que a tela, a legenda e as âncoras dos
-  planos veem não leva (`app/pipeline/narration.py`: `strip_pauses`). A âncora de um plano é procurada no texto sem
+  planos veem não leva (`app/media/narration.py`: `strip_pauses`). A âncora de um plano é procurada no texto sem
   marcas, então pode atravessar uma pausa.
 - **Tempo dos planos.** Cada marca vale `PAUSE_CHARS = 10` caracteres no cálculo de posição das âncoras e na
   estimativa de duração do `vp check` (≈0,75 s a 13 caracteres por segundo; no teste as pausas ficaram entre 0,5 e
-  1,1 s). Mais o ajuste de duração, o tempo real continua vindo do WAV.
+  1,1 s). Medido no Kokoro com pausas de 0,7–0,8 s: o erro do início de um plano depois de uma pausa cai de ~0,6 s
+  (sem peso) para ~0,1 s (peso 10) na S02; na S01 sobra ~0,8 s, que vem do modelo proporcional por caracteres
+  (ADR 008) e não da pausa. O tempo real das cenas continua vindo do WAV.
 - **Kokoro.** O adapter divide o texto na marca, sintetiza os pedaços e junta com um silêncio (`pause_ms`, padrão
-  600 em `config/providers.toml`, `[kokoro]`). O rascunho local passa a ter as mesmas pausas.
+  300 em `config/providers.toml`, `[kokoro]`). O rascunho local passa a ter as mesmas pausas. O Kokoro já deixa
+  ~0,4 s de silêncio nas pontas de cada trecho: com 600 ms a pausa real saiu de ~1,0 s, longa demais para o peso de
+  10 caracteres; com 300 ms ficou em 0,70–0,79 s (medido em S01 e S02 da cópia local da régua).
 - **Cache de voz.** A chave do WAV usa a `narration` com as marcas: mexer numa pausa regenera só aquela cena.
-  A chave do Kokoro (`voice_fingerprint`) passa a incluir `pause_ms`, para trocar a duração do silêncio refazer as
-  cenas que têm marca.
+  No Kokoro, `pause_ms` entra na chave só das cenas que têm marca (as outras não mudam de chave).
+- **Lote do Gemini.** Cena com `<short pause>` vai sozinha numa chamada. No teste de 2026-10-05 o corte de lote
+  (`app/media/pauses.py`) foi **recusado** no áudio com marcas: a fronteira de 1,14 s não se destacou da pausa
+  interna de 1,12 s (exige 30% a mais). Custo: com o tom pausado quase toda cena tem marca, então um episódio de ~10
+  cenas gasta ~10 chamadas, o limite do dia. Vale testar, com uma chamada, `<long pause> <long pause>` como separador
+  de cenas num lote com marcas; se a fronteira ficar 30% acima das pausas internas, o lote volta a valer.
 - **Roteiro.** A skill `roteiro-explicativo` e o agente `roteirista` ganham a regra: pausa só onde o ouvinte
   respiraria (antes da informação nova, depois de uma pergunta), no máximo uma a cada ~15 palavras.
 - **Tom (pendente de escuta).** Trocar `styles` em `[gemini_tts]` para "narração de documentário em português do
@@ -52,7 +60,7 @@ falada (a confirmar de ouvido).
 
 ## Consequências
 
-- Código: `app/pipeline/narration.py` (novo), `app/pipeline/schemas.py` (validação da narração e âncoras),
+- Código: `app/media/narration.py` (novo), `app/pipeline/schemas.py` (validação da narração e âncoras),
   `app/pipeline/shots.py` e `check.py` (peso da marca), `app/providers/tts/kokoro.py` (silêncio),
   `config/providers.toml`, `.claude/skills/roteiro-explicativo`, `CLAUDE.md` (§6 e §9) e testes.
 - Cenas já aprovadas sem marcas não mudam. Marcas novas só valem para o formato `explainer` (o documentário usa
