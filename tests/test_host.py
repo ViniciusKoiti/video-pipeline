@@ -270,9 +270,10 @@ def test_portrait_corner_table_follows_the_vertical_layout() -> None:
     compare = scene("S01", [("compare", None)])
     assert blocked_corners(compare, portrait=True) == {"top-right", "bottom-left", "bottom-right"}
     # o gráfico ocupa o topo; o selo no canto toma o de cima à esquerda
-    assert blocked_corners(scene("S01", [("chart", None)]), portrait=True) == {
-        "top-left", "top-right", "bottom-left", "bottom-right"
-    }
+    # o gráfico fica alinhado ao topo: numa cena só de gráficos os cantos de baixo ficam livres
+    assert blocked_corners(scene("S01", [("chart", None)]), portrait=True) == {"top-left", "top-right"}
+    mixed = scene("S01", [("chart", None), ("number", None)])
+    assert blocked_corners(mixed, portrait=True) == {"top-left", "top-right", "bottom-left", "bottom-right"}
     over_stamp = scene("S01", [("photo", None), ("stamp", None)])
     assert blocked_corners(over_stamp, portrait=True) == {"top-left", "bottom-left", "bottom-right"}
     scenes = [scene(f"S0{i}", [("stamp", fonte)]) for i in range(1, 5)]
