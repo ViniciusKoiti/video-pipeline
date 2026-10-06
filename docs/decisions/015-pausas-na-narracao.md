@@ -1,6 +1,6 @@
 # 015 — Pausas dentro da narração e tom calmo e pausado
 
-- **Status:** proposto (a parte do tom depende de o dono ouvir os áudios de teste)
+- **Status:** aceito para as pausas na narração (2026-10-06, o dono aprovou a abordagem); o tom novo do Gemini segue proposto, pendente de o dono ouvir os áudios de teste
 - **Data:** 2026-10-05
 - **Etapa do roadmap:** voz (#15), roteiro explicativo (ADR 008)
 - **Relaciona-se com:** ADR 008 (planos ancorados na narração), ADR 012 (voz Gemini e Kokoro)
