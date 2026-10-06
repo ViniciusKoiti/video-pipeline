@@ -85,6 +85,12 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 6. **Cenas.** Uma cena = um bloco de narração de 1 a 3 frases (5 a 12 s, cerca de 65 a 160 caracteres;
    a voz Charon fala ~13 caracteres por segundo, o Kokoro ~15; o ritmo da voz configurada está em
    `config/providers.toml`, e o `vp check` estima as cenas com ele).
+   **Pausas na fala (ADR 015).** Para a voz respirar num ponto exato, escreva `<short pause>` na narração, com uma
+   palavra e um espaço de cada lado: "Se você quer realmente `<short pause>` aprender sobre isso, você
+   `<short pause>` deve começar pelo dinheiro." Use onde o ouvinte respiraria: antes da informação nova, depois de
+   uma pergunta, antes de um número que pesa; no máximo uma a cada ~15 palavras e nunca no começo ou no fim da
+   cena. Não use `<long pause>` (é do lote de cenas) nem outra tag. A `anchor` de um plano é escrita **sem** a
+   marca (o texto que a tela vê não a tem) e pode atravessar uma pausa. Cada marca vale 10 caracteres no tempo.
 7. **Planos.** Um plano a cada 2 a 4 s (26 a 52 caracteres de narração com a Charon). `anchor` é um trecho literal da
    narração, em ordem; o primeiro plano cobre o início da cena. Escolha pelo que a frase faz (formato e
    exemplo dos tipos da ADR 011 em `planos.md`, nesta pasta; campos completos em `app/pipeline/schemas.py`):

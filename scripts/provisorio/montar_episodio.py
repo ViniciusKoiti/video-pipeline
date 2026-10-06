@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import build_context  # noqa: E402
+from app.media.narration import has_pauses  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
@@ -58,16 +59,23 @@ def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
 
 
 def batches(requests: list[SpeechRequest], limit: int = BATCH_CHARS) -> list[list[SpeechRequest]]:
-    """Cenas seguidas em grupos de até `limit` caracteres (uma cena maior que o limite vai sozinha)."""
+    """Cenas seguidas em grupos de até `limit` caracteres (uma cena maior que o limite vai sozinha).
+    Cena com `<short pause>` também vai sozinha: no teste de 2026-10-05 as pausas dentro da cena (até 1,1 s)
+    não se destacaram da fronteira entre cenas, e o corte do lote foi recusado (ADR 015)."""
     groups: list[list[SpeechRequest]] = []
     size = 0
+    open_group = False  # o último grupo ainda aceita mais cenas
     for request in requests:
-        if groups and size + len(request.text) <= limit:
+        if has_pauses(request.text):
+            groups.append([request])
+            open_group = False
+        elif open_group and size + len(request.text) <= limit:
             groups[-1].append(request)
             size += len(request.text)
         else:
             groups.append([request])
             size = len(request.text)
+            open_group = True
     return groups
 
 
@@ -119,7 +127,10 @@ def main() -> None:
     started = time.monotonic()
     wavs, missing = {}, []
     for scene in scenes.scenes:
-        key = hashlib.sha256(f"{fingerprint}|{scene.narration}".encode()).hexdigest()[:10]
+        # Cena com pausa: o silêncio do Kokoro entra na chave (ADR 015); sem pausa a chave não muda.
+        tagged = provider == "kokoro" and has_pauses(scene.narration)
+        pause = f"|pausa{settings.kokoro.pause_ms}" if tagged else ""
+        key = hashlib.sha256(f"{fingerprint}{pause}|{scene.narration}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
             for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):

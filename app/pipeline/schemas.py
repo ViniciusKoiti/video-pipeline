@@ -21,6 +21,8 @@ from pydantic import (
     model_validator,
 )
 
+from app.media.narration import narration_problems, strip_pauses
+
 
 class Model(BaseModel):
     model_config = ConfigDict(extra="forbid", validate_assignment=True)
@@ -565,26 +567,34 @@ class Scene(Model):
     review_status: Status = Status.PENDING  # reflexo de review.json, escrito pelo código (§5)
 
     @model_validator(mode="after")
+    def _narration_marks(self) -> Self:
+        problems = narration_problems(self.narration)
+        if problems:
+            raise ValueError(f"{self.id}: " + "; ".join(problems))
+        return self
+
+    @model_validator(mode="after")
     def _visual_plan(self) -> Self:
         if not self.shots:
             if self.visual_need is None or self.search_query is None:
                 raise ValueError(f"{self.id}: cena sem planos precisa de visual_need e search_query")
             return self
+        spoken = strip_pauses(self.narration)  # âncoras e frases da tela: texto sem as marcas de pausa
         cursor, positions = 0, []
         for shot in self.shots:
-            position = self.narration.find(shot.anchor, cursor)
+            position = spoken.find(shot.anchor, cursor)
             if position < 0:
                 raise ValueError(
                     f"{self.id}: âncora {shot.anchor!r} não aparece na narração depois do plano anterior"
                 )
             positions.append(position)
             cursor = position + 1
-        ends = [*positions[1:], len(self.narration)]
+        ends = [*positions[1:], len(spoken)]
         for shot, start, end in zip(self.shots, positions, ends, strict=True):
-            if isinstance(shot, KeywordShot) and _fold(shot.text) not in _fold(self.narration):
+            if isinstance(shot, KeywordShot) and _fold(shot.text) not in _fold(spoken):
                 raise ValueError(f"{self.id}: frase na tela {shot.text!r} não está na narração")
             if isinstance(shot, NetworkShot):
-                step_positions(self.narration, shot, start, end, scene_id=self.id)
+                step_positions(spoken, shot, start, end, scene_id=self.id)
         return self
 
 
@@ -610,7 +620,7 @@ def effective_shots(scene: Scene) -> list[Shot]:
         return list(scene.shots)
     return [
         PhotoShot(
-            anchor=scene.narration,
+            anchor=strip_pauses(scene.narration),
             visual_need=scene.visual_need,  # type: ignore[arg-type]  # garantido pelo validador da cena
             search_query=scene.search_query,  # type: ignore[arg-type]
             asset_id=scene.chosen_asset_id,

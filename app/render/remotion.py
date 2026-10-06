@@ -17,6 +17,7 @@ from typing import Any
 
 from app.media.envelope import mouth_levels
 from app.media.host import host_corners
+from app.media.narration import strip_pauses
 from app.media.probe import dimensions, duration_ms
 from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
 from app.providers.base import ProviderInfo
@@ -123,7 +124,7 @@ class RemotionEngine:
 
     def _shots(self, scene: EpisodeScene, frames: int, fps: int, episode_dir: Path) -> list[dict[str, Any]]:
         if not scene.shots:  # v1: um plano de foto sobre a cena inteira
-            spec = {"kind": "photo", "anchor": scene.narration, "motion": "push_in"}
+            spec = {"kind": "photo", "anchor": strip_pauses(scene.narration), "motion": "push_in"}
             raw: list[tuple[int, dict[str, Any], str | None, str | None, dict[str, Any]]] = [
                 (0, spec, scene.image, scene.asset_id, {})
             ]

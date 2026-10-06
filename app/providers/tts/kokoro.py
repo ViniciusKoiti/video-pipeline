@@ -10,6 +10,7 @@ import re
 from collections.abc import Mapping
 from typing import Any
 
+from app.media.narration import split_pauses
 from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest, SpeechResult
@@ -29,10 +30,11 @@ def apply_lexicon(text: str, lexicon: Mapping[str, str]) -> str:
 
 
 class KokoroTTS:
-    def __init__(self, voices: Mapping[str, str], *, num_threads: int = 8) -> None:
+    def __init__(self, voices: Mapping[str, str], *, num_threads: int = 8, pause_ms: int = 300) -> None:
         self.info = ProviderInfo("kokoro", remote=False)
         self._voices = dict(voices)  # idioma -> voz (ex.: {"en": "am_michael", "pt-BR": "pm_alex"})
         self._num_threads = num_threads  # 8 = núcleos físicos (ADR 004)
+        self._pause_ms = pause_ms  # silêncio no lugar de cada `<short pause>` da narração (ADR 015)
         self._pipelines: dict[str, Any] = {}
 
     def voice_for(self, request: SpeechRequest) -> tuple[str, str]:
@@ -60,8 +62,14 @@ class KokoroTTS:
 
         lang_code, voice = self.voice_for(request)
         pipeline = self._load(lang_code)
-        text = apply_lexicon(request.text, request.lexicon)
-        chunks = [audio for _, _, audio in pipeline(text, voice=voice)]
+        # O Kokoro não tem tags: divide em cada `<short pause>` e separa os pedaços por silêncio.
+        silence = np.zeros(round(SAMPLE_RATE * self._pause_ms / 1000), dtype=np.float32)
+        chunks: list[Any] = []
+        for i, part in enumerate(split_pauses(request.text) or [request.text]):
+            if i:
+                chunks.append(silence)
+            text = apply_lexicon(part, request.lexicon)
+            chunks += [audio for _, _, audio in pipeline(text, voice=voice)]
         if not chunks:
             raise ProviderError(self.info.name, "nenhum áudio gerado para o texto")
         request.out_path.parent.mkdir(parents=True, exist_ok=True)
