@@ -183,7 +183,8 @@ const yearValue = (label: string) => {
 
 export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   const {portrait, safe, u} = useFrame();
-  // Tela de projeto: 1920×1080 (paisagem, gráficos de 1600 px) ou 1080×1920 (retrato, gráficos de 940 px).
+  // Tela de projeto: 1920×1080 (paisagem, gráficos de 1600 px) ou 1080×1920 (retrato, gráficos de 940 px). Em
+  // retrato o título começa 150 px abaixo do topo da área segura: acima dele fica a fonte do plano.
   const chartWidth = portrait ? 940 : 1600;
   const design = (framePx: number) => framePx / u(1);
   const type = spec.type ?? "bar";
@@ -217,10 +218,11 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   }
   return (
     <Design>
-      <div style={{position: "absolute", left: portrait ? 70 : 160, top: portrait ? design(safe.top) : 120,
+      <div style={{position: "absolute", left: portrait ? 70 : 160, top: portrait ? design(safe.top) + 150 : 120,
         right: portrait ? 70 : 160, bottom: portrait ? design(safe.bottom) + 280 : 120, display: "flex", flexDirection: "column", gap: 40}}>
         <Title title={spec.title} subtitle={subtitle} />
-        <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>{chart}</div>
+        <div style={{flex: 1, display: "flex", alignItems: portrait ? "flex-start" : "center",
+          justifyContent: "center"}}>{chart}</div>
       </div>
     </Design>
   );
