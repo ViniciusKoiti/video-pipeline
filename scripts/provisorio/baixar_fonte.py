@@ -1,7 +1,9 @@
 """Baixa uma fonte, extrai o texto e registra em sources.json (provisório até `vp sources`, #26).
 
 Uso: `.venv/bin/python scripts/provisorio/baixar_fonte.py <episode-id> <url> --title "..." --kind secondary
-[--authors "Sobrenome, Nome; ..."] [--interested] [--notes "..."]`
+[--authors "Sobrenome, Nome; ..."] [--interested] [--notes "..."] [--file arquivo.pdf]`
+
+- `--file`: PDF salvo à mão no navegador, para o servidor que recusa o robô (403); `url` segue como origem.
 
 - Só para serviços que o dono autorizou na sessão (§14). O transporte manda o User-Agent do projeto.
 - Original em `sources/raw/source-NN.(html|pdf)`; texto em `sources/source-NN.txt`, um parágrafo por trecho
@@ -13,6 +15,7 @@ Uso: `.venv/bin/python scripts/provisorio/baixar_fonte.py <episode-id> <url> --t
 from __future__ import annotations
 
 import argparse
+import shutil
 import subprocess
 import sys
 from datetime import datetime
@@ -39,6 +42,7 @@ def main() -> None:
     parser.add_argument("--authors", default="", help="separados por ponto e vírgula")
     parser.add_argument("--interested", action="store_true", help="fonte da própria empresa ou família")
     parser.add_argument("--notes", default="")
+    parser.add_argument("--file", help="PDF baixado à mão (servidor que recusa o robô); `url` é só a origem")
     args = parser.parse_args()
 
     store = JsonFileStore(load_settings(ROOT).data_dir / "episodes")
@@ -46,7 +50,12 @@ def main() -> None:
     number = max((int(s.id.removeprefix("source-")) for s in manifest.sources), default=0) + 1
     source_id = f"source-{number:02d}"
     raw_dir = store.path(args.episode_id, "sources/raw")
-    partial = download(args.url, raw_dir / f"{source_id}.download", {}, 120)
+    if args.file:
+        partial = raw_dir / f"{source_id}.download"
+        raw_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(args.file, partial)
+    else:
+        partial = download(args.url, raw_dir / f"{source_id}.download", {}, 120)
     is_pdf = partial.read_bytes()[:5] == b"%PDF-"
     raw = partial.rename(raw_dir / f"{source_id}.{'pdf' if is_pdf else 'html'}")
     if is_pdf:
