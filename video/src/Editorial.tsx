@@ -126,8 +126,11 @@ export const NumberShot: React.FC<{spec: NumberSpec; overlay?: boolean}> = ({spe
     );
   }
   const digits = portrait ? fitDigits(spec.value, width * 0.9, u(220)) : u(220);
+  // Em retrato o número centraliza abaixo da janela do apresentador (cantos de cima), como a comparação
+  // (COMPARE_TOP); centrado no quadro, um rótulo de três linhas empurrava o topo do número para baixo da janela.
   return (
-    <AbsoluteFill style={{justifyContent: "center", alignItems: "center", color: theme.text, fontFamily: theme.font}}>
+    <AbsoluteFill style={{justifyContent: "center", alignItems: "center", color: theme.text, fontFamily: theme.font,
+      top: portrait ? u(COMPARE_TOP) : undefined}}>
       <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: u(28)}}>
         <Digits value={spec.value} fontSize={digits} />
         <div style={{width: u(180), height: 3, background: theme.accent, borderRadius: 2}} />
