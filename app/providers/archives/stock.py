@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, ClassVar
 from urllib.parse import urlparse
 
-from app.pipeline.schemas import Asset, Provider, Status
+from app.pipeline.schemas import Asset, Orientation, Provider, Status
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
 from app.providers.errors import ProviderError, QuotaExhausted
@@ -86,8 +86,9 @@ class ArchiveCache:
 
 
 class StockArchive:
-    """O que os bancos de imagem fazem igual (ArchiveProvider): busca com cache, filtro 16:9 de pelo menos
-    1920×1080, miniatura, ativo em revisão com licença e crédito, download do arquivo escolhido sem a chave.
+    """O que os bancos de imagem fazem igual (ArchiveProvider): busca com cache, filtro de orientação e
+    resolução (16:9 de pelo menos 1920×1080, ou 9:16 de pelo menos 1080×1920), miniatura, ativo em revisão com
+    licença e crédito, download do arquivo escolhido sem a chave.
 
     Cada banco diz de onde vêm os resultados (`_results`) e como um resultado vira candidato (`_parse`).
     """
@@ -149,9 +150,11 @@ class StockArchive:
         except TransportError as error:
             raise provider_error(self.info.name, error) from None
 
-    def _fits(self, width: int | None, height: int | None) -> bool:
-        """Horizontal e pelo menos 1920×1080: o vídeo é 16:9."""
+    def _fits(self, width: int | None, height: int | None, orientation: Orientation = "landscape") -> bool:
+        """Na orientação do vídeo e pelo menos 1920×1080 (em pé, 1080×1920): o vídeo é 16:9 ou 9:16."""
         width, height = width or 0, height or 0
+        if orientation == "portrait":
+            return height > width and height >= self._min_width and width >= self._min_height
         return width > height and width >= self._min_width and height >= self._min_height
 
     @staticmethod

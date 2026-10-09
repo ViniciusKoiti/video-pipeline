@@ -46,7 +46,7 @@ class UnsplashArchive(StockArchive):
             return []  # a API do Unsplash não tem vídeo
         params = {
             "query": normalize_query(query.text),
-            "orientation": "landscape",
+            "orientation": query.orientation,
             "content_filter": "high",
             "per_page": PER_PAGE,
         }
@@ -55,7 +55,7 @@ class UnsplashArchive(StockArchive):
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         width, height = int(item.get("width") or 0), int(item.get("height") or 0)
-        if not self._fits(width, height):
+        if not self._fits(width, height, query.orientation):
             return None
         user = item["user"]
         profile = f"{user['links']['html']}?{self._utm}"

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Protocol
 
-from app.pipeline.schemas import Asset, VisualNeed
+from app.pipeline.schemas import Asset, Orientation, VisualNeed
 from app.providers.base import ProviderInfo
 
 Media = Literal["photo", "video"]
@@ -19,6 +19,7 @@ class AssetQuery:
     limit: int = 2  # MAX_CANDIDATES_PER_SCENE
     media: Media = "photo"  # "video" = B-roll em movimento
     min_duration_s: float | None = None  # vídeo: pelo menos a duração do plano
+    orientation: Orientation = "landscape"  # "portrait": arquivo em pé para o vídeo 9:16 (ADR 014)
 
 
 @dataclass(frozen=True)
