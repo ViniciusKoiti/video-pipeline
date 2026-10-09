@@ -5,6 +5,8 @@ import {
   ArchivalShot, BrollShot, ChartShot, CompareShot, DocumentShot, KeywordShot, LowerThirdShot, MapShot, NetworkShot,
   NumberShot, StampShot, StockShot, TimelineShot,
 } from "./Editorial";
+import {LABELS} from "./labels";
+import {useLanguage} from "./language";
 import {media, theme, useFrame} from "./theme";
 import type {FamilyTreeSpec, QuoteSpec, ShotProps} from "./types";
 
@@ -46,13 +48,14 @@ const useEnter = (delay = 0) => {
 
 const Quote: React.FC<{spec: QuoteSpec}> = ({spec}) => {
   const {u} = useFrame();
+  const labels = LABELS[useLanguage()];
   const enter = useEnter();
   const headline = spec.style === "headline";
   return (
     <Stage align="left">
       <div style={{...enter, display: "flex", flexDirection: "column", gap: u(30), maxWidth: u(1450)}}>
         <div style={{color: theme.accent, fontSize: u(28), fontWeight: 700, letterSpacing: 3,
-          textTransform: "uppercase"}}>{headline ? "Manchete" : "Citação"}</div>
+          textTransform: "uppercase"}}>{headline ? labels.headline : labels.quote}</div>
         <div style={{fontSize: u(headline ? 86 : 70), fontWeight: headline ? 800 : 600, lineHeight: 1.12,
           letterSpacing: headline ? -1.5 : -0.5}}>{headline ? spec.text : `“${spec.text}”`}</div>
         <GoldRule width={u(120)} delay={8} />

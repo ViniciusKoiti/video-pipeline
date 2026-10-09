@@ -19,15 +19,19 @@ from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
     OVERLAY_SHOT_KINDS,
     ChartShot,
+    CompareShot,
     FactKind,
     FactsManifest,
+    Language,
     MapShot,
+    NumberShot,
     QuoteShot,
     Scene,
     ScenesManifest,
     Shot,
     SourcesManifest,
     effective_shots,
+    number_format_problem,
     unknown_source_refs,
 )
 from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
@@ -44,6 +48,10 @@ MIN_SHOTS_FOR_SHARE = 10  # porcentagem de poucos planos não diz nada
 READING_MS = 4000  # tempo mínimo de leitura de gráfico, comparação, rede, cronologia e documento
 READING_KINDS = frozenset({"chart", "compare", "network", "timeline"})
 LONG_KINDS = frozenset({"network", "timeline"})  # a câmera percorre o plano: sem teto de duração
+# O BarChart do motion-kit fixado formata os valores em pt-BR (sem prop `locale`): em inglês só serve onde as
+# duas convenções coincidem, que é inteiro abaixo de mil. Retirar quando o kit ganhar a prop e o pin subir.
+BAR_TYPES = frozenset({"bar", "bar_horizontal"})
+BAR_PLAIN_BELOW = 1000
 
 
 @dataclass
@@ -171,6 +179,7 @@ def _check_scenes(
             report.warnings += text_fit_warnings(
                 scene.id, shot, ms, media_before and shot.kind in OVERLAY_SHOT_KINDS
             )
+            report.errors += number_errors(scene.id, shot, scenes.language)
             media_before = media_before or shot.kind in MEDIA_SHOT_KINDS
             too_long = ms > MAX_SHOT_MS and shot.kind not in LONG_KINDS
             if ms < MIN_SHOT_MS or too_long:
@@ -201,6 +210,32 @@ def _check_scenes(
 
 def _needs_reading_time(shot: Shot) -> bool:
     return shot.kind in READING_KINDS or (isinstance(shot, QuoteShot) and shot.style == "document")
+
+
+def number_errors(scene_id: str, shot: Shot, language: Language) -> list[str]:
+    """Número na tela fora da convenção do idioma do episódio, ou que o template não sabe formatar nele
+    (ADR 011, emenda "número por idioma"). Escrito errado, o hodômetro mostraria outro valor."""
+    values: list[str] = []
+    if isinstance(shot, NumberShot):
+        values = [shot.value]
+    elif isinstance(shot, CompareShot):
+        values = [shot.left.value, shot.right.value]
+    errors = [
+        f"{scene_id}: {shot.kind} ({shot.anchor!r}): {problem}"
+        for value in values
+        if (problem := number_format_problem(value, language))
+    ]
+    if (
+        language == "en"
+        and isinstance(shot, ChartShot)
+        and shot.type in BAR_TYPES
+        and any(abs(p.value) >= BAR_PLAIN_BELOW or p.value != round(p.value) for p in shot.points)
+    ):
+        errors.append(
+            f"{scene_id}: gráfico de barras ({shot.anchor!r}) em inglês com valor que o motion-kit fixado "
+            "formata em pt-BR; use inteiros abaixo de mil ou outro tipo de gráfico"
+        )
+    return errors
 
 
 def variety_warnings(scenes: list[Scene]) -> list[str]:

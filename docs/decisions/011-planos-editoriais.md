@@ -165,3 +165,30 @@ Nada avisava antes do render.
 **Consequências.**
 - Contar caracteres é aproximado ("WWW" ocupa mais que "iii"). A conferência automática da tela, que mede o texto desenhado em 1080p, é a próxima medida e vai recalibrar estes números.
 - Os roteiros aprovados passam a mostrar alertas novos (o `votorantim-completo` tem 19), sem derrubar a aprovação.
+
+## Emenda de 2026-10-07: número por idioma
+
+**Status:** proposta; vale com o merge do PR que a traz. Não muda o `episode.json`: `language` já existe.
+
+**Contexto.** O pipeline aceita `language: en` (ADR 008), mas os números da tela só funcionavam em pt-BR:
+- `screen_number` (Python) e `screenNumber` (template) liam "." como milhar e "," como decimal: "US$ 1,500" virava 1,5, "$4.2 bn" virava 42 e "15.3%", 153;
+- o hodômetro do `number` e o `ValueCompare` tinham os separadores fixos em pt-BR;
+- o adaptador não levava o idioma ao template (`SceneProps` não tinha idioma);
+- a validação do `compare` em escala (decisão 8) lia o número em pt-BR e recusava "US$ 1,234,567" como "não é número";
+- o `BarChart` do motion-kit fixado (`527c708`) formata em pt-BR e não tem a prop `locale`; `LineChart`, `ShareChart` e `ValueCompare` têm.
+
+Achado ao ler o código para as verticais em inglês (`docs/pesquisa/nichos-globais-2026-10.md`), antes de qualquer vídeo em inglês.
+
+**Decisão.**
+1. O `value` de `number` e de cada lado de `compare` segue a convenção numérica do idioma do episódio: em pt-BR, "1.500,5" (milhar ".", decimal ","); em inglês, "1,500.5" (milhar ",", decimal "."). O mesmo texto vale outro número no outro idioma ("1,500" é 1.500 em inglês e 1,5 em português): quem escreve responde pelo idioma, e o `verificador` confere o valor contra a ficha.
+2. `screen_number(valor, idioma)` lê na convenção do idioma (padrão pt-BR). `screen_parts` separa prefixo, dígitos e sufixo sem ler o número, e a regra de unidade do `compare` em escala passa a usá-lo: a unidade não depende do idioma.
+3. O adaptador leva `language` às props de cada cena **só quando não é pt-BR**: as props e o cache dos vídeos em português ficam como estavam. O template escolhe os separadores do hodômetro e do `ValueCompare` pelo idioma e passa `locale` ao `LineChart` e ao `ShareChart`.
+4. `vp check`, erro novo: `value` de `number` ou de `compare` fora da convenção do idioma quando isso é inequívoco ("47,6" ou "1.234.567" em inglês; "4.2" ou "1,234,567" em português). "1,500" e "1.500" são escritas válidas nos dois idiomas, com valores diferentes, e passam.
+5. **Limite temporário, erro:** em inglês, o `chart` de barras (`bar` e `bar_horizontal`) só aceita valores inteiros abaixo de mil, onde o `BarChart` fixado escreve igual nas duas convenções. Sai quando o kit ganhar `locale` no `BarChart` e o pin subir (PR do kit, separado).
+6. **As palavras do próprio template e do rodapé também seguem o idioma.** A fonte do rodapé sai de `app/pipeline/attribution.py` no idioma do episódio: "A e B" e "A e outros" em português, "A and B" e "A et al." em inglês; "e outras" vira "and others"; a ressalva "fonte interessada" vira "interested source". O template escreve o resto em `video/src/labels.ts`: o "Fonte" do rodapé (`label` do `SourceTag`) vira "Source", o "em {unidade}" do subtítulo do gráfico vira "in {unidade}", "Manchete" e "Citação" do plano `quote` viram "Headline" e "Quote", e as duas frases-padrão do `ValueCompare` em escala (`ratioWord`, `clampNote`) são trocadas por prop. O texto que o roteiro escreve (narração, rótulos, `unit`, nomes) já vem no idioma do episódio.
+
+**Consequências.**
+- Os vídeos em português não mudam: os mesmos casos rodam em Python e em TypeScript (`tests/fixtures/screen-numbers.json`), e as props em pt-BR continuam idênticas.
+- Em inglês, números maiores que mil em barras esperam o PR do kit; `number`, `compare`, `line` e `share` já servem.
+- Conferido nos pacotes do kit fixado (`527c708`) que o Reel usa (`editorial`, `charts`, `host`, `fx`, `motion`, `theme`): os únicos textos em português visíveis na tela são o "Fonte" do `SourceTag` e as duas frases do `ValueCompare`, todos com prop. As outras peças (rede, mapa, cronologia, documento) não foram auditadas.
+- A skill `roteiro-explicativo` traz a regra para o roteirista.

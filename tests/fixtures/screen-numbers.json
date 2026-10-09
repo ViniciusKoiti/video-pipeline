@@ -1,0 +1,20 @@
+[
+  {"language": "pt-BR", "text": "R$ 47,6 bi", "number": {"prefix": "R$", "value": 47.6, "suffix": "bi", "decimals": 1, "grouped": false}},
+  {"language": "pt-BR", "text": "1.500", "number": {"prefix": "", "value": 1500, "suffix": "", "decimals": 0, "grouped": true}},
+  {"language": "pt-BR", "text": "R$ 1.234.567,89", "number": {"prefix": "R$", "value": 1234567.89, "suffix": "", "decimals": 2, "grouped": true}},
+  {"language": "pt-BR", "text": "0,125", "number": {"prefix": "", "value": 0.125, "suffix": "", "decimals": 3, "grouped": false}},
+  {"language": "pt-BR", "text": "78%", "number": {"prefix": "", "value": 78, "suffix": "%", "decimals": 0, "grouped": false}},
+  {"language": "pt-BR", "text": "6ª", "number": {"prefix": "", "value": 6, "suffix": "ª", "decimals": 0, "grouped": false}},
+  {"language": "pt-BR", "text": "2025", "number": {"prefix": "", "value": 2025, "suffix": "", "decimals": 0, "grouped": false}},
+  {"language": "pt-BR", "text": "muito", "number": null},
+  {"language": "en", "text": "US$ 1,500", "number": {"prefix": "US$", "value": 1500, "suffix": "", "decimals": 0, "grouped": true}},
+  {"language": "en", "text": "US$ 20,000", "number": {"prefix": "US$", "value": 20000, "suffix": "", "decimals": 0, "grouped": true}},
+  {"language": "en", "text": "$4.2 bn", "number": {"prefix": "$", "value": 4.2, "suffix": "bn", "decimals": 1, "grouped": false}},
+  {"language": "en", "text": "15.3%", "number": {"prefix": "", "value": 15.3, "suffix": "%", "decimals": 1, "grouped": false}},
+  {"language": "en", "text": "1,234,567", "number": {"prefix": "", "value": 1234567, "suffix": "", "decimals": 0, "grouped": true}},
+  {"language": "en", "text": "$1,500.50", "number": {"prefix": "$", "value": 1500.5, "suffix": "", "decimals": 2, "grouped": true}},
+  {"language": "en", "text": "1.500", "number": {"prefix": "", "value": 1.5, "suffix": "", "decimals": 3, "grouped": false}},
+  {"language": "en", "text": "6th", "number": {"prefix": "", "value": 6, "suffix": "th", "decimals": 0, "grouped": false}},
+  {"language": "en", "text": "2025", "number": {"prefix": "", "value": 2025, "suffix": "", "decimals": 0, "grouped": false}},
+  {"language": "en", "text": "many", "number": null}
+]
