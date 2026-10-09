@@ -149,7 +149,7 @@ export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
     });
     // Em retrato os valores empilham (layout do kit) dentro da largura do quadro.
     const stacked = portrait
-      ? {layout: "vertical" as const, maxWidth: kitPx(width - 2 * u(70)), valueSize: kit(120), labelSize: kit(34)}
+      ? {layout: "vertical" as const, maxWidth: kitPx(width - 2 * u(70)), valueSize: kit(150), labelSize: kit(38)}
       : {};
     // Em retrato a comparação começa abaixo da janela do apresentador (no alto, abaixo da fonte), não no centro.
     return (

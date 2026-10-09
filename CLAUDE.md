@@ -313,6 +313,9 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   logging estruturado sem segredos.
 - Template do `explainer` (`video/`): consultar o kit pelo MCP `motion-kit` (skill `componentes-do-kit`) antes de
   escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com o SHA do pin.
+- Animação de texto nos Reels (entrada, legenda palavra a palavra, lista que acumula): ler
+  `docs/guia-animacao-de-texto.md` antes de propor ou implementar. É rascunho (2026-10-07): onde diz *decisão aberta*,
+  perguntar ao dono; em conflito valem as ADRs.
 - Etapas criativas: agentes em `.claude/agents/` com o método nas skills de `.claude/skills/`; o que eles escrevem
   passa pelo `vp check` e pelos gates humanos (ADR 009). Ver §15.
 - **Instruções a agentes, notas de fonte e exemplos:** só o que está nos trechos baixados. Citar fichas por id
