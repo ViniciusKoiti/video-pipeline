@@ -1,5 +1,6 @@
 import React from "react";
 import {Composition} from "remotion";
+import {Clipe, CLIPE_FPS, CLIPE_PADRAO, clipeMetadata} from "./clipe/Clipe";
 import {Scene} from "./Scene";
 import type {SceneProps} from "./types";
 import "./theme";
@@ -17,5 +18,8 @@ export const RemotionRoot: React.FC = () => (
       defaultProps={EMPTY} calculateMetadata={metadata} />
     <Composition id="Shot" component={Scene} durationInFrames={1} fps={30} width={1920} height={1080}
       defaultProps={EMPTY} calculateMetadata={metadata} />
+    {/* Clipe de letra, fora do contrato do episódio: `inicio`/`fim` em segundos cortam um trecho; `retrato` = 9:16. */}
+    <Composition id="Clipe" component={Clipe} durationInFrames={1} fps={CLIPE_FPS} width={1920} height={1080}
+      defaultProps={CLIPE_PADRAO} calculateMetadata={clipeMetadata} />
   </>
 );

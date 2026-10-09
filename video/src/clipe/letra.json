@@ -1,0 +1,2698 @@
+{
+ "duracao": 195.56,
+ "linhas": [
+  {
+   "secao": "intro",
+   "vez": 1,
+   "texto": "Contra todo poder que promete salvar você.",
+   "ini": 8.78,
+   "fim": 12.7,
+   "palavras": [
+    {
+     "t": "Contra",
+     "ini": 8.78,
+     "ok": true
+    },
+    {
+     "t": "todo",
+     "ini": 9.18,
+     "ok": true
+    },
+    {
+     "t": "poder",
+     "ini": 9.48,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 10.26,
+     "ok": true
+    },
+    {
+     "t": "promete",
+     "ini": 11.44,
+     "ok": true
+    },
+    {
+     "t": "salvar",
+     "ini": 11.9,
+     "ok": true
+    },
+    {
+     "t": "você.",
+     "ini": 12.22,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "O plano é cego, apaga a informação,",
+   "ini": 13.06,
+   "fim": 15.08,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 13.06,
+     "ok": true
+    },
+    {
+     "t": "plano",
+     "ini": 13.56,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 13.8,
+     "ok": true
+    },
+    {
+     "t": "cego,",
+     "ini": 13.98,
+     "ok": true
+    },
+    {
+     "t": "apaga",
+     "ini": 14.26,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 14.62,
+     "ok": true
+    },
+    {
+     "t": "informação,",
+     "ini": 14.76,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Sem preço, o Estado é um deus na escuridão.",
+   "ini": 15.64,
+   "fim": 18.56,
+   "palavras": [
+    {
+     "t": "Sem",
+     "ini": 15.64,
+     "ok": false
+    },
+    {
+     "t": "preço,",
+     "ini": 15.64,
+     "ok": false
+    },
+    {
+     "t": "o",
+     "ini": 15.98,
+     "ok": false
+    },
+    {
+     "t": "Estado",
+     "ini": 15.98,
+     "ok": false
+    },
+    {
+     "t": "é",
+     "ini": 17.02,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 17.14,
+     "ok": true
+    },
+    {
+     "t": "deus",
+     "ini": 17.46,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 17.74,
+     "ok": true
+    },
+    {
+     "t": "escuridão.",
+     "ini": 17.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Perito dita o “como”, mas o fim quem vai ditar?",
+   "ini": 18.62,
+   "fim": 21.34,
+   "palavras": [
+    {
+     "t": "Perito",
+     "ini": 18.62,
+     "ok": true
+    },
+    {
+     "t": "dita",
+     "ini": 19.08,
+     "ok": false
+    },
+    {
+     "t": "o",
+     "ini": 19.08,
+     "ok": false
+    },
+    {
+     "t": "“como”,",
+     "ini": 19.5,
+     "ok": true
+    },
+    {
+     "t": "mas",
+     "ini": 20.08,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 20.22,
+     "ok": true
+    },
+    {
+     "t": "fim",
+     "ini": 20.36,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 20.54,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 20.74,
+     "ok": true
+    },
+    {
+     "t": "ditar?",
+     "ini": 20.98,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "A toga quer ser dona do que eu vim pra cultivar.",
+   "ini": 21.42,
+   "fim": 24.66,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 21.42,
+     "ok": true
+    },
+    {
+     "t": "toga",
+     "ini": 21.58,
+     "ok": false
+    },
+    {
+     "t": "quer",
+     "ini": 21.88,
+     "ok": true
+    },
+    {
+     "t": "ser",
+     "ini": 22.12,
+     "ok": true
+    },
+    {
+     "t": "dona",
+     "ini": 22.32,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 22.66,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 22.92,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 23.12,
+     "ok": true
+    },
+    {
+     "t": "vim",
+     "ini": 23.46,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 23.74,
+     "ok": true
+    },
+    {
+     "t": "cultivar.",
+     "ini": 23.92,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "(Aham)",
+   "ini": 24.81,
+   "fim": 25.21,
+   "palavras": [
+    {
+     "t": "(Aham)",
+     "ini": 24.81,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "O cálculo se perde na arrogância de quem manda,",
+   "ini": 24.96,
+   "fim": 27.92,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 24.96,
+     "ok": true
+    },
+    {
+     "t": "cálculo",
+     "ini": 25.18,
+     "ok": true
+    },
+    {
+     "t": "se",
+     "ini": 25.64,
+     "ok": true
+    },
+    {
+     "t": "perde",
+     "ini": 25.88,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 26.24,
+     "ok": true
+    },
+    {
+     "t": "arrogância",
+     "ini": 26.5,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 27.04,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 27.3,
+     "ok": true
+    },
+    {
+     "t": "manda,",
+     "ini": 27.54,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "A técnica não mede a vida que a minha terra planta.",
+   "ini": 28.08,
+   "fim": 31.12,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 28.08,
+     "ok": true
+    },
+    {
+     "t": "técnica",
+     "ini": 28.34,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 28.62,
+     "ok": true
+    },
+    {
+     "t": "mede",
+     "ini": 29.12,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 29.48,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 29.54,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 29.82,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 30.04,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 30.2,
+     "ok": true
+    },
+    {
+     "t": "terra",
+     "ini": 30.28,
+     "ok": true
+    },
+    {
+     "t": "planta.",
+     "ini": 30.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Na tua planilha, minha vida é só uma linha,",
+   "ini": 31.18,
+   "fim": 33.84,
+   "palavras": [
+    {
+     "t": "Na",
+     "ini": 31.18,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 31.3,
+     "ok": true
+    },
+    {
+     "t": "planilha,",
+     "ini": 31.56,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 32.48,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 32.72,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 32.98,
+     "ok": true
+    },
+    {
+     "t": "só",
+     "ini": 33.16,
+     "ok": true
+    },
+    {
+     "t": "uma",
+     "ini": 33.28,
+     "ok": true
+    },
+    {
+     "t": "linha,",
+     "ini": 33.48,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Mas nessa linha há meu filho, minha casa e minha vinha.",
+   "ini": 33.92,
+   "fim": 37.1,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 33.92,
+     "ok": false
+    },
+    {
+     "t": "nessa",
+     "ini": 33.98,
+     "ok": false
+    },
+    {
+     "t": "linha",
+     "ini": 34.28,
+     "ok": true
+    },
+    {
+     "t": "há",
+     "ini": 34.78,
+     "ok": false
+    },
+    {
+     "t": "meu",
+     "ini": 34.9,
+     "ok": true
+    },
+    {
+     "t": "filho,",
+     "ini": 35.06,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 35.62,
+     "ok": true
+    },
+    {
+     "t": "casa",
+     "ini": 35.82,
+     "ok": true
+    },
+    {
+     "t": "e",
+     "ini": 36.24,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 36.36,
+     "ok": true
+    },
+    {
+     "t": "vinha.",
+     "ini": 36.62,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Quem vive? Quem morre? O teu cálculo responde.",
+   "ini": 37.2,
+   "fim": 40.36,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 37.2,
+     "ok": true
+    },
+    {
+     "t": "vive?",
+     "ini": 37.52,
+     "ok": true
+    },
+    {
+     "t": "Quem",
+     "ini": 37.94,
+     "ok": true
+    },
+    {
+     "t": "morre?",
+     "ini": 38.14,
+     "ok": true
+    },
+    {
+     "t": "O",
+     "ini": 38.88,
+     "ok": true
+    },
+    {
+     "t": "teu",
+     "ini": 38.94,
+     "ok": true
+    },
+    {
+     "t": "cálculo",
+     "ini": 39.08,
+     "ok": true
+    },
+    {
+     "t": "responde.",
+     "ini": 39.62,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "E a mão que fez a conta, em qual coluna se esconde?",
+   "ini": 40.48,
+   "fim": 43.36,
+   "palavras": [
+    {
+     "t": "E",
+     "ini": 40.48,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 40.66,
+     "ok": true
+    },
+    {
+     "t": "mão",
+     "ini": 40.78,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 40.92,
+     "ok": true
+    },
+    {
+     "t": "fez",
+     "ini": 41.08,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 41.38,
+     "ok": true
+    },
+    {
+     "t": "conta,",
+     "ini": 41.56,
+     "ok": true
+    },
+    {
+     "t": "em",
+     "ini": 41.8,
+     "ok": true
+    },
+    {
+     "t": "qual",
+     "ini": 41.92,
+     "ok": true
+    },
+    {
+     "t": "coluna",
+     "ini": 42.12,
+     "ok": true
+    },
+    {
+     "t": "se",
+     "ini": 42.66,
+     "ok": true
+    },
+    {
+     "t": "esconde?",
+     "ini": 42.94,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "O saldo deu positivo. Minha casa ficou vazia.",
+   "ini": 43.4,
+   "fim": 46.7,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 43.4,
+     "ok": true
+    },
+    {
+     "t": "saldo",
+     "ini": 43.54,
+     "ok": true
+    },
+    {
+     "t": "deu",
+     "ini": 43.9,
+     "ok": true
+    },
+    {
+     "t": "positivo.",
+     "ini": 44.16,
+     "ok": true
+    },
+    {
+     "t": "Minha",
+     "ini": 45.14,
+     "ok": true
+    },
+    {
+     "t": "casa",
+     "ini": 45.3,
+     "ok": true
+    },
+    {
+     "t": "ficou",
+     "ini": 45.64,
+     "ok": true
+    },
+    {
+     "t": "vazia.",
+     "ini": 46.1,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Teu gráfico não chora por quem falta todo dia.",
+   "ini": 46.92,
+   "fim": 49.82,
+   "palavras": [
+    {
+     "t": "Teu",
+     "ini": 46.92,
+     "ok": true
+    },
+    {
+     "t": "gráfico",
+     "ini": 47.14,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 47.7,
+     "ok": true
+    },
+    {
+     "t": "chora",
+     "ini": 47.88,
+     "ok": true
+    },
+    {
+     "t": "por",
+     "ini": 48.26,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 48.56,
+     "ok": true
+    },
+    {
+     "t": "falta",
+     "ini": 48.7,
+     "ok": true
+    },
+    {
+     "t": "todo",
+     "ini": 49.06,
+     "ok": true
+    },
+    {
+     "t": "dia.",
+     "ini": 49.42,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Se tudo é político, onde eu vou descansar?",
+   "ini": 50.26,
+   "fim": 53.38,
+   "palavras": [
+    {
+     "t": "Se",
+     "ini": 50.26,
+     "ok": true
+    },
+    {
+     "t": "tudo",
+     "ini": 50.54,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 50.78,
+     "ok": true
+    },
+    {
+     "t": "político,",
+     "ini": 50.94,
+     "ok": true
+    },
+    {
+     "t": "onde",
+     "ini": 51.56,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 52.0,
+     "ok": true
+    },
+    {
+     "t": "vou",
+     "ini": 52.14,
+     "ok": true
+    },
+    {
+     "t": "descansar?",
+     "ini": 52.34,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "No afeto, na sala, o tribunal vem arbitrar.",
+   "ini": 53.4,
+   "fim": 56.28,
+   "palavras": [
+    {
+     "t": "No",
+     "ini": 53.4,
+     "ok": true
+    },
+    {
+     "t": "afeto,",
+     "ini": 53.58,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 54.04,
+     "ok": true
+    },
+    {
+     "t": "sala,",
+     "ini": 54.28,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 54.64,
+     "ok": true
+    },
+    {
+     "t": "tribunal",
+     "ini": 54.78,
+     "ok": true
+    },
+    {
+     "t": "vem",
+     "ini": 55.3,
+     "ok": true
+    },
+    {
+     "t": "arbitrar.",
+     "ini": 55.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Tradição na marra é só o uso do terror,",
+   "ini": 56.72,
+   "fim": 59.32,
+   "palavras": [
+    {
+     "t": "Tradição",
+     "ini": 56.72,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 57.34,
+     "ok": true
+    },
+    {
+     "t": "marra",
+     "ini": 57.56,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 57.88,
+     "ok": true
+    },
+    {
+     "t": "só",
+     "ini": 58.02,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 58.16,
+     "ok": true
+    },
+    {
+     "t": "uso",
+     "ini": 58.38,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 58.68,
+     "ok": true
+    },
+    {
+     "t": "terror,",
+     "ini": 58.92,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Adesão na caneta nunca construiu valor.",
+   "ini": 59.96,
+   "fim": 62.48,
+   "palavras": [
+    {
+     "t": "Adesão",
+     "ini": 59.96,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 60.34,
+     "ok": true
+    },
+    {
+     "t": "caneta",
+     "ini": 60.52,
+     "ok": true
+    },
+    {
+     "t": "nunca",
+     "ini": 61.04,
+     "ok": true
+    },
+    {
+     "t": "construiu",
+     "ini": 61.44,
+     "ok": true
+    },
+    {
+     "t": "valor.",
+     "ini": 62.1,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Destino comum é desculpa de quem tá no topo,",
+   "ini": 63.04,
+   "fim": 66.98,
+   "palavras": [
+    {
+     "t": "Destino",
+     "ini": 63.04,
+     "ok": true
+    },
+    {
+     "t": "comum",
+     "ini": 63.66,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 64.16,
+     "ok": true
+    },
+    {
+     "t": "desculpa",
+     "ini": 64.54,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 65.14,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 65.66,
+     "ok": true
+    },
+    {
+     "t": "tá",
+     "ini": 65.9,
+     "ok": true
+    },
+    {
+     "t": "no",
+     "ini": 66.1,
+     "ok": true
+    },
+    {
+     "t": "topo,",
+     "ini": 66.36,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Tu escreves a glória, mas quem sangra é o meu corpo.",
+   "ini": 67.12,
+   "fim": 70.04,
+   "palavras": [
+    {
+     "t": "Tu",
+     "ini": 67.12,
+     "ok": false
+    },
+    {
+     "t": "escreves",
+     "ini": 67.12,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 67.74,
+     "ok": true
+    },
+    {
+     "t": "glória,",
+     "ini": 67.98,
+     "ok": true
+    },
+    {
+     "t": "mas",
+     "ini": 68.42,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 68.54,
+     "ok": true
+    },
+    {
+     "t": "sangra",
+     "ini": 68.7,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 69.08,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 69.2,
+     "ok": true
+    },
+    {
+     "t": "meu",
+     "ini": 69.32,
+     "ok": true
+    },
+    {
+     "t": "corpo.",
+     "ini": 69.5,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 70.14,
+   "fim": 72.74,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 70.14,
+     "ok": false
+    },
+    {
+     "t": "e",
+     "ini": 70.38,
+     "ok": false
+    },
+    {
+     "t": "ainda",
+     "ini": 71.0,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 71.42,
+     "ok": false
+    },
+    {
+     "t": "posse?",
+     "ini": 71.92,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Meu chão, minha voz, meu nome.",
+   "ini": 72.74,
+   "fim": 75.66,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 72.74,
+     "ok": true
+    },
+    {
+     "t": "chão,",
+     "ini": 73.36,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 74.02,
+     "ok": true
+    },
+    {
+     "t": "voz,",
+     "ini": 74.14,
+     "ok": true
+    },
+    {
+     "t": "meu",
+     "ini": 74.8,
+     "ok": true
+    },
+    {
+     "t": "nome.",
+     "ini": 75.0,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 76.54,
+   "fim": 79.2,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 76.54,
+     "ok": false
+    },
+    {
+     "t": "e",
+     "ini": 76.94,
+     "ok": false
+    },
+    {
+     "t": "ainda",
+     "ini": 77.44,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 77.84,
+     "ok": false
+    },
+    {
+     "t": "posse?",
+     "ini": 78.32,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Minha vida não é pasto pra tua fome.",
+   "ini": 79.2,
+   "fim": 82.08,
+   "palavras": [
+    {
+     "t": "Minha",
+     "ini": 79.2,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 79.78,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 80.22,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 80.5,
+     "ok": true
+    },
+    {
+     "t": "pasto",
+     "ini": 80.66,
+     "ok": false
+    },
+    {
+     "t": "pra",
+     "ini": 81.12,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 81.3,
+     "ok": true
+    },
+    {
+     "t": "fome.",
+     "ini": 81.46,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "STF, a toga não te dá revelação,",
+   "ini": 82.56,
+   "fim": 85.74,
+   "palavras": [
+    {
+     "t": "STF,",
+     "ini": 82.56,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 83.84,
+     "ok": true
+    },
+    {
+     "t": "toga",
+     "ini": 84.0,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 84.28,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 84.5,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 84.68,
+     "ok": true
+    },
+    {
+     "t": "revelação,",
+     "ini": 84.9,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quem vigia o guardião? Quem limita a decisão?",
+   "ini": 85.74,
+   "fim": 89.02,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 85.74,
+     "ok": true
+    },
+    {
+     "t": "vigia",
+     "ini": 86.12,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 86.66,
+     "ok": true
+    },
+    {
+     "t": "guardião?",
+     "ini": 86.8,
+     "ok": true
+    },
+    {
+     "t": "Quem",
+     "ini": 87.54,
+     "ok": true
+    },
+    {
+     "t": "limita",
+     "ini": 87.72,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 88.26,
+     "ok": true
+    },
+    {
+     "t": "decisão?",
+     "ini": 88.44,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Mármore não é altar, cargo não é divindade,",
+   "ini": 89.18,
+   "fim": 92.22,
+   "palavras": [
+    {
+     "t": "Mármore",
+     "ini": 89.18,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 89.62,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 89.94,
+     "ok": true
+    },
+    {
+     "t": "altar,",
+     "ini": 90.14,
+     "ok": false
+    },
+    {
+     "t": "cargo",
+     "ini": 90.5,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 91.08,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 91.32,
+     "ok": true
+    },
+    {
+     "t": "divindade,",
+     "ini": 91.56,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Meu nome não se apaga na abstração da tua vontade.",
+   "ini": 92.22,
+   "fim": 95.3,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 92.22,
+     "ok": true
+    },
+    {
+     "t": "nome",
+     "ini": 92.5,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 92.84,
+     "ok": true
+    },
+    {
+     "t": "se",
+     "ini": 93.08,
+     "ok": true
+    },
+    {
+     "t": "apaga",
+     "ini": 93.24,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 93.68,
+     "ok": true
+    },
+    {
+     "t": "abstração",
+     "ini": 93.88,
+     "ok": true
+    },
+    {
+     "t": "da",
+     "ini": 94.46,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 94.72,
+     "ok": true
+    },
+    {
+     "t": "vontade.",
+     "ini": 94.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Acabe quer a vinha; meu “não” não vira “sim”,",
+   "ini": 95.38,
+   "fim": 98.32,
+   "palavras": [
+    {
+     "t": "Acabe",
+     "ini": 95.38,
+     "ok": true
+    },
+    {
+     "t": "quer",
+     "ini": 95.86,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 96.2,
+     "ok": true
+    },
+    {
+     "t": "vinha;",
+     "ini": 96.36,
+     "ok": true
+    },
+    {
+     "t": "meu",
+     "ini": 96.64,
+     "ok": true
+    },
+    {
+     "t": "“não”",
+     "ini": 97.22,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 97.4,
+     "ok": true
+    },
+    {
+     "t": "vira",
+     "ini": 97.5,
+     "ok": true
+    },
+    {
+     "t": "“sim”,",
+     "ini": 97.92,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Nenhum “bem maior” te dá direito sobre mim.",
+   "ini": 98.42,
+   "fim": 100.96,
+   "palavras": [
+    {
+     "t": "Nenhum",
+     "ini": 98.42,
+     "ok": true
+    },
+    {
+     "t": "“bem",
+     "ini": 98.74,
+     "ok": true
+    },
+    {
+     "t": "maior”",
+     "ini": 98.92,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 99.32,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 99.52,
+     "ok": true
+    },
+    {
+     "t": "direito",
+     "ini": 99.72,
+     "ok": true
+    },
+    {
+     "t": "sobre",
+     "ini": 100.22,
+     "ok": true
+    },
+    {
+     "t": "mim.",
+     "ini": 100.64,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Minha fé não dá ao Estado procuração pro sentimento.",
+   "ini": 101.12,
+   "fim": 104.28,
+   "palavras": [
+    {
+     "t": "Minha",
+     "ini": 101.12,
+     "ok": true
+    },
+    {
+     "t": "fé",
+     "ini": 101.52,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 101.74,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 101.94,
+     "ok": true
+    },
+    {
+     "t": "ao",
+     "ini": 102.08,
+     "ok": false
+    },
+    {
+     "t": "Estado",
+     "ini": 102.24,
+     "ok": true
+    },
+    {
+     "t": "procuração",
+     "ini": 102.76,
+     "ok": false
+    },
+    {
+     "t": "pro",
+     "ini": 103.2,
+     "ok": true
+    },
+    {
+     "t": "sentimento.",
+     "ini": 103.48,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quem me oferece um paraíso e me impede de sair,",
+   "ini": 104.33,
+   "fim": 107.32,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 104.33,
+     "ok": false
+    },
+    {
+     "t": "me",
+     "ini": 104.38,
+     "ok": true
+    },
+    {
+     "t": "oferece",
+     "ini": 104.56,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 104.98,
+     "ok": true
+    },
+    {
+     "t": "paraíso",
+     "ini": 105.22,
+     "ok": true
+    },
+    {
+     "t": "e",
+     "ini": 105.92,
+     "ok": true
+    },
+    {
+     "t": "me",
+     "ini": 106.12,
+     "ok": true
+    },
+    {
+     "t": "impede",
+     "ini": 106.28,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 106.68,
+     "ok": true
+    },
+    {
+     "t": "sair,",
+     "ini": 106.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Que liberdade é essa que eu não posso discutir?",
+   "ini": 107.74,
+   "fim": 110.84,
+   "palavras": [
+    {
+     "t": "Que",
+     "ini": 107.74,
+     "ok": true
+    },
+    {
+     "t": "liberdade",
+     "ini": 107.92,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 108.62,
+     "ok": true
+    },
+    {
+     "t": "essa",
+     "ini": 108.78,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 109.08,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 109.26,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 109.36,
+     "ok": true
+    },
+    {
+     "t": "posso",
+     "ini": 109.5,
+     "ok": true
+    },
+    {
+     "t": "discutir?",
+     "ini": 109.86,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Se tudo é político, onde eu vou descansar?",
+   "ini": 111.08,
+   "fim": 114.14,
+   "palavras": [
+    {
+     "t": "Se",
+     "ini": 111.08,
+     "ok": true
+    },
+    {
+     "t": "tudo",
+     "ini": 111.32,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 111.58,
+     "ok": true
+    },
+    {
+     "t": "político,",
+     "ini": 111.78,
+     "ok": true
+    },
+    {
+     "t": "onde",
+     "ini": 112.36,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 112.8,
+     "ok": true
+    },
+    {
+     "t": "vou",
+     "ini": 112.94,
+     "ok": true
+    },
+    {
+     "t": "descansar?",
+     "ini": 113.12,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "No afeto, na sala, o tribunal vem arbitrar.",
+   "ini": 114.2,
+   "fim": 117.02,
+   "palavras": [
+    {
+     "t": "No",
+     "ini": 114.2,
+     "ok": true
+    },
+    {
+     "t": "afeto,",
+     "ini": 114.38,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 114.84,
+     "ok": true
+    },
+    {
+     "t": "sala,",
+     "ini": 115.14,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 115.44,
+     "ok": true
+    },
+    {
+     "t": "tribunal",
+     "ini": 115.6,
+     "ok": true
+    },
+    {
+     "t": "vem",
+     "ini": 116.12,
+     "ok": true
+    },
+    {
+     "t": "arbitrar.",
+     "ini": 116.38,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Tradição na marra é só o uso do terror,",
+   "ini": 117.44,
+   "fim": 120.16,
+   "palavras": [
+    {
+     "t": "Tradição",
+     "ini": 117.44,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 118.14,
+     "ok": true
+    },
+    {
+     "t": "marra",
+     "ini": 118.32,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 118.68,
+     "ok": true
+    },
+    {
+     "t": "só",
+     "ini": 118.8,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 118.96,
+     "ok": true
+    },
+    {
+     "t": "uso",
+     "ini": 119.2,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 119.48,
+     "ok": true
+    },
+    {
+     "t": "terror,",
+     "ini": 119.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Adesão na caneta nunca construiu valor.",
+   "ini": 120.54,
+   "fim": 123.32,
+   "palavras": [
+    {
+     "t": "Adesão",
+     "ini": 120.54,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 121.16,
+     "ok": true
+    },
+    {
+     "t": "caneta",
+     "ini": 121.3,
+     "ok": true
+    },
+    {
+     "t": "nunca",
+     "ini": 121.84,
+     "ok": true
+    },
+    {
+     "t": "construiu",
+     "ini": 122.22,
+     "ok": false
+    },
+    {
+     "t": "valor.",
+     "ini": 122.94,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Destino comum é desculpa de quem tá no topo,",
+   "ini": 123.88,
+   "fim": 127.82,
+   "palavras": [
+    {
+     "t": "Destino",
+     "ini": 123.88,
+     "ok": true
+    },
+    {
+     "t": "comum",
+     "ini": 124.46,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 124.94,
+     "ok": true
+    },
+    {
+     "t": "desculpa",
+     "ini": 125.32,
+     "ok": false
+    },
+    {
+     "t": "de",
+     "ini": 126.02,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 126.48,
+     "ok": true
+    },
+    {
+     "t": "tá",
+     "ini": 126.7,
+     "ok": true
+    },
+    {
+     "t": "no",
+     "ini": 126.88,
+     "ok": true
+    },
+    {
+     "t": "topo,",
+     "ini": 127.12,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Tu escreves a glória, mas quem sangra é o meu corpo.",
+   "ini": 127.96,
+   "fim": 130.8,
+   "palavras": [
+    {
+     "t": "Tu",
+     "ini": 127.96,
+     "ok": false
+    },
+    {
+     "t": "escreves",
+     "ini": 127.96,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 128.54,
+     "ok": true
+    },
+    {
+     "t": "glória,",
+     "ini": 128.78,
+     "ok": true
+    },
+    {
+     "t": "mas",
+     "ini": 129.06,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 129.34,
+     "ok": true
+    },
+    {
+     "t": "sangra",
+     "ini": 129.48,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 129.88,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 130.0,
+     "ok": true
+    },
+    {
+     "t": "meu",
+     "ini": 130.12,
+     "ok": true
+    },
+    {
+     "t": "corpo.",
+     "ini": 130.26,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 130.98,
+   "fim": 132.96,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 130.98,
+     "ok": false
+    },
+    {
+     "t": "e",
+     "ini": 131.52,
+     "ok": false
+    },
+    {
+     "t": "ainda",
+     "ini": 131.84,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 132.24,
+     "ok": false
+    },
+    {
+     "t": "posse?",
+     "ini": 132.56,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Meu chão, minha voz, meu nome.",
+   "ini": 133.78,
+   "fim": 136.5,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 133.78,
+     "ok": true
+    },
+    {
+     "t": "chão,",
+     "ini": 134.14,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 134.8,
+     "ok": true
+    },
+    {
+     "t": "voz,",
+     "ini": 134.94,
+     "ok": true
+    },
+    {
+     "t": "meu",
+     "ini": 135.6,
+     "ok": true
+    },
+    {
+     "t": "nome.",
+     "ini": 135.84,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 137.3,
+   "fim": 139.38,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 137.3,
+     "ok": false
+    },
+    {
+     "t": "e",
+     "ini": 138.12,
+     "ok": false
+    },
+    {
+     "t": "ainda",
+     "ini": 138.24,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 138.64,
+     "ok": false
+    },
+    {
+     "t": "posse?",
+     "ini": 138.98,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Minha vida não é pasto pra tua fome.",
+   "ini": 139.96,
+   "fim": 142.92,
+   "palavras": [
+    {
+     "t": "Minha",
+     "ini": 139.96,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 140.6,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 141.04,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 141.32,
+     "ok": true
+    },
+    {
+     "t": "pasto",
+     "ini": 141.5,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 141.92,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 142.08,
+     "ok": true
+    },
+    {
+     "t": "fome.",
+     "ini": 142.26,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem manda?",
+   "ini": 143.74,
+   "fim": 144.54,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 143.74,
+     "ok": true
+    },
+    {
+     "t": "manda?",
+     "ini": 143.92,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem paga?",
+   "ini": 144.56,
+   "fim": 145.22,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 144.56,
+     "ok": true
+    },
+    {
+     "t": "paga?",
+     "ini": 144.68,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem pode recusar?",
+   "ini": 145.3,
+   "fim": 146.84,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 145.3,
+     "ok": true
+    },
+    {
+     "t": "pode",
+     "ini": 145.52,
+     "ok": true
+    },
+    {
+     "t": "recusar?",
+     "ini": 145.82,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem vive?",
+   "ini": 146.84,
+   "fim": 147.68,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 146.84,
+     "ok": true
+    },
+    {
+     "t": "vive?",
+     "ini": 147.12,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem morre?",
+   "ini": 147.68,
+   "fim": 148.46,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 147.68,
+     "ok": true
+    },
+    {
+     "t": "morre?",
+     "ini": 147.92,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem vai responder?",
+   "ini": 148.48,
+   "fim": 149.66,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 148.48,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 148.7,
+     "ok": true
+    },
+    {
+     "t": "responder?",
+     "ini": 148.96,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "No relatório, só um número.",
+   "ini": 149.66,
+   "fim": 151.5,
+   "palavras": [
+    {
+     "t": "No",
+     "ini": 149.66,
+     "ok": true
+    },
+    {
+     "t": "relatório,",
+     "ini": 149.92,
+     "ok": true
+    },
+    {
+     "t": "só",
+     "ini": 150.76,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 150.92,
+     "ok": true
+    },
+    {
+     "t": "número.",
+     "ini": 151.16,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Na minha casa, falta um nome.",
+   "ini": 151.5,
+   "fim": 153.06,
+   "palavras": [
+    {
+     "t": "Na",
+     "ini": 151.5,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 151.7,
+     "ok": true
+    },
+    {
+     "t": "casa,",
+     "ini": 151.9,
+     "ok": true
+    },
+    {
+     "t": "falta",
+     "ini": 152.24,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 152.66,
+     "ok": true
+    },
+    {
+     "t": "nome.",
+     "ini": 152.78,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Não sou saldo.",
+   "ini": 153.16,
+   "fim": 154.02,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 153.16,
+     "ok": true
+    },
+    {
+     "t": "sou",
+     "ini": 153.3,
+     "ok": true
+    },
+    {
+     "t": "saldo.",
+     "ini": 153.5,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Não sou sobra.",
+   "ini": 154.02,
+   "fim": 154.7,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 154.02,
+     "ok": true
+    },
+    {
+     "t": "sou",
+     "ini": 154.12,
+     "ok": true
+    },
+    {
+     "t": "sobra.",
+     "ini": 154.32,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Não sou pasto pra tua fome.",
+   "ini": 154.7,
+   "fim": 156.46,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 154.7,
+     "ok": true
+    },
+    {
+     "t": "sou",
+     "ini": 154.9,
+     "ok": true
+    },
+    {
+     "t": "pasto",
+     "ini": 155.08,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 155.54,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 155.68,
+     "ok": true
+    },
+    {
+     "t": "fome.",
+     "ini": 155.86,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 156.54,
+   "fim": 159.12,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 156.54,
+     "ok": false
+    },
+    {
+     "t": "e",
+     "ini": 157.34,
+     "ok": false
+    },
+    {
+     "t": "ainda",
+     "ini": 157.44,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 157.8,
+     "ok": true
+    },
+    {
+     "t": "posse?",
+     "ini": 158.3,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Meu chão, minha voz, meu nome.",
+   "ini": 159.12,
+   "fim": 162.1,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 159.12,
+     "ok": true
+    },
+    {
+     "t": "chão,",
+     "ini": 159.78,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 160.4,
+     "ok": true
+    },
+    {
+     "t": "voz,",
+     "ini": 160.58,
+     "ok": true
+    },
+    {
+     "t": "meu",
+     "ini": 161.22,
+     "ok": true
+    },
+    {
+     "t": "nome.",
+     "ini": 161.42,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 162.94,
+   "fim": 165.5,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 162.94,
+     "ok": false
+    },
+    {
+     "t": "e",
+     "ini": 163.52,
+     "ok": false
+    },
+    {
+     "t": "ainda",
+     "ini": 163.86,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 164.22,
+     "ok": true
+    },
+    {
+     "t": "posse?",
+     "ini": 164.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Minha vida não é pasto pra tua fome.",
+   "ini": 165.76,
+   "fim": 168.52,
+   "palavras": [
+    {
+     "t": "Minha",
+     "ini": 165.76,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 166.18,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 166.64,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 166.92,
+     "ok": true
+    },
+    {
+     "t": "pasto",
+     "ini": 167.1,
+     "ok": false
+    },
+    {
+     "t": "pra",
+     "ini": 167.1,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 167.72,
+     "ok": true
+    },
+    {
+     "t": "fome.",
+     "ini": 167.86,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "Contra todo poder que promete salvar você.",
+   "ini": 171.46,
+   "fim": 175.9,
+   "palavras": [
+    {
+     "t": "Contra",
+     "ini": 171.46,
+     "ok": true
+    },
+    {
+     "t": "todo",
+     "ini": 171.94,
+     "ok": true
+    },
+    {
+     "t": "poder",
+     "ini": 172.26,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 174.18,
+     "ok": true
+    },
+    {
+     "t": "promete",
+     "ini": 174.5,
+     "ok": true
+    },
+    {
+     "t": "salvar",
+     "ini": 175.04,
+     "ok": true
+    },
+    {
+     "t": "você.",
+     "ini": 175.4,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "A planilha é tua.",
+   "ini": 178.32,
+   "fim": 179.46,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 178.32,
+     "ok": true
+    },
+    {
+     "t": "planilha",
+     "ini": 178.64,
+     "ok": false
+    },
+    {
+     "t": "é",
+     "ini": 179.06,
+     "ok": true
+    },
+    {
+     "t": "tua.",
+     "ini": 179.24,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "A vida é minha.",
+   "ini": 180.86,
+   "fim": 181.82,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 180.86,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 181.1,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 181.36,
+     "ok": true
+    },
+    {
+     "t": "minha.",
+     "ini": 181.54,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "Nabote.",
+   "ini": 184.38,
+   "fim": 184.78,
+   "palavras": [
+    {
+     "t": "Nabote.",
+     "ini": 184.38,
+     "ok": false
+    }
+   ]
+  }
+ ]
+}
