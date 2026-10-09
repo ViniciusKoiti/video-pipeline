@@ -133,6 +133,11 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      | `label` de cada evento da `timeline` | 3 linhas de ~31; somando todos os eventos, ~17 caracteres por segundo do plano (6 s, ~100 caracteres) |
      | nó da `network` de onde sai uma seta | nome e papel em 2 linhas (~23 e ~30 por linha); nome longo vira sigla, apresentada antes |
      | `label` e `value` de uma seta da `network` | ~40 e ~24 caracteres |
+
+   - **Animação do texto na tela:** o padrão de entrada, de legenda palavra a palavra e de lista que acumula está em
+     `docs/guia-animacao-de-texto.md` (rascunho; onde diz *decisão aberta*, pergunte ao dono). Você não escreve
+     tempo de palavra nem animação no `scenes.json`: o `keyword` segue com até 8 palavras copiadas da narração, um
+     por cena, e uma lista de passos não vira vários `keyword` na mesma cena.
 8. **Toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena; plano que mostra número,
    data, nome, cargo, citação ou gráfico → `claims` no plano. Use `source_ids` e `excerpt_ids` das
    evidências das fichas usadas; cada aresta de `network` tem as suas próprias `claims`. O texto na tela
