@@ -91,6 +91,9 @@ export type HostProps = {
   levels: number[]; // energia da fala por quadro, de 0 a 1
 };
 
+// Idioma do episódio (episode.json). Ausente nas props = pt-BR: o adaptador só o envia fora do padrão.
+export type Language = "en" | "pt-BR";
+
 export type SceneProps = {
   width: number;
   height: number;
@@ -100,4 +103,5 @@ export type SceneProps = {
   shots: ShotProps[];
   cues: Cue[];
   host?: HostProps;
+  language?: Language;
 };

@@ -189,18 +189,43 @@ _WHEN_RE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")
 _YEAR_RE = re.compile(r"(?<!\d)\d{4}(?!\d)")
 # Número como aparece na tela ("R$ 47,6 bi", "1.500", "78%"): prefixo, dígitos e sufixo (regra do `number`).
 _SCREEN_NUMBER_RE = re.compile(r"^(\D*?)([\d.,]*\d)(.*)$")
+# Separador de milhar e de decimal de cada idioma: o mesmo texto vale outro número em outro idioma, então o
+# valor da tela segue a convenção do idioma do episódio (ADR 011, emenda "número por idioma").
+NUMBER_SEPARATORS: dict[Language, tuple[str, str]] = {"pt-BR": (".", ","), "en": (",", ".")}
 
 
-def screen_number(value: str) -> tuple[str, float, str] | None:
-    """(prefixo, número, sufixo) de um valor escrito em pt-BR; None se não houver número reconhecível."""
+def screen_parts(value: str) -> tuple[str, str, str] | None:
+    """(prefixo, dígitos, sufixo) como escritos, sem ler o número: a leitura depende do idioma."""
     match = _SCREEN_NUMBER_RE.match(value.strip())
     if match is None:
         return None
-    digits = match.group(2).replace(".", "").replace(",", ".")
+    return match.group(1).strip(), match.group(2), match.group(3).strip()
+
+
+def screen_number(value: str, language: Language = "pt-BR") -> tuple[str, float, str] | None:
+    """(prefixo, número, sufixo) de um valor escrito na convenção do idioma ("1.500,5" em pt-BR, "1,500.5" em
+    en); None se não houver número reconhecível."""
+    parts = screen_parts(value)
+    if parts is None:
+        return None
+    group, decimal = NUMBER_SEPARATORS[language]
     try:
-        return match.group(1).strip(), float(digits), match.group(3).strip()
+        return parts[0], float(parts[1].replace(group, "").replace(decimal, ".")), parts[2]
     except ValueError:
         return None
+
+
+def number_format_problem(value: str, language: Language = "pt-BR") -> str | None:
+    """Por que o número de `value` não segue a convenção do idioma, ou None. Texto sem número passa. Só pega
+    o que é inequívoco: "1,500" é 1.500 em inglês e 1,5 em português, e os dois são escritas válidas."""
+    parts = screen_parts(value)
+    if parts is None:
+        return None
+    group, decimal = NUMBER_SEPARATORS[language]
+    group_re, decimal_re = re.escape(group), re.escape(decimal)
+    if re.fullmatch(rf"(\d{{1,3}}({group_re}\d{{3}})+|\d+)({decimal_re}\d+)?", parts[1]):
+        return None
+    return f"{value!r} não segue a convenção de {language} (ex.: 1{group}500{decimal}5)"
 
 
 class ChartShot(_FactualShot):
@@ -377,7 +402,9 @@ class CompareShot(_FactualShot):
     def _scale_needs_same_unit(self) -> Self:
         if self.mode != "scale":
             return self
-        left, right = screen_number(self.left.value), screen_number(self.right.value)
+        # A unidade (prefixo e sufixo) não depende do idioma, então aqui o número não é lido: "US$ 1,234,567"
+        # é número em inglês, e seria recusado se lido como pt-BR.
+        left, right = screen_parts(self.left.value), screen_parts(self.right.value)
         if left is None or right is None:
             raise ValueError("comparação em escala precisa de dois números")
         if (left[0], left[2]) != (right[0], right[2]):

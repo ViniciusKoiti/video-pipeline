@@ -12,7 +12,9 @@ import {ExpandingNetwork, layeredLayout, networkDepths} from "@viniciusk/motion-
 import type {NetworkPositions} from "@viniciusk/motion-kit/graph";
 import {mapBoxes, regionsFor} from "./geo/regions";
 import {NODE_ICONS} from "./icons";
-import {screenNumber} from "./numbers";
+import {LABELS} from "./labels";
+import {useLanguage} from "./language";
+import {SEPARATORS, screenNumber} from "./numbers";
 import {theme, useFrame} from "./theme";
 import type {
   ChartSpec, CompareSpec, KeywordSpec, LowerThirdSpec, MapSpec, NetworkSpec, NumberSpec, PhotoSpec, QuoteSpec,
@@ -84,12 +86,14 @@ export const BrollShot: React.FC<{src: string}> = ({src}) => <FootageBackground 
 // --- Números ------------------------------------------------------------------------------------
 
 // O hodômetro mostra o número como a ficha escreve: milhar só se ela agrupa, as mesmas casas decimais,
-// prefixo e sufixo fixos. Texto sem número fica estático.
+// prefixo e sufixo fixos, com os separadores do idioma do episódio. Texto sem número fica estático.
 const Digits: React.FC<{value: string; fontSize: number}> = ({value, fontSize}) => {
-  const parsed = screenNumber(value);
+  const language = useLanguage();
+  const parsed = screenNumber(value, language);
   if (!parsed) return <span style={{fontSize, fontWeight: 800}}>{value}</span>;
+  const {group, decimal} = SEPARATORS[language];
   return (
-    <Odometer to={parsed.value} decimals={parsed.decimals} decimalSeparator="," groupSeparator="."
+    <Odometer to={parsed.value} decimals={parsed.decimals} decimalSeparator={decimal} groupSeparator={group}
       format={parsed.grouped ? "grouped" : "plain"} prefix={parsed.prefix || undefined}
       suffix={parsed.suffix || undefined} font="sans" fontSize={fontSize} color={theme.text} delay={3}
       duration={30} />
@@ -140,9 +144,11 @@ const COMPARE_TOP = 240;
 
 export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
   const {u, kit, kitPx, width, portrait} = useFrame();
-  const left = screenNumber(spec.left.value);
-  const right = screenNumber(spec.right.value);
+  const language = useLanguage();
+  const left = screenNumber(spec.left.value, language);
+  const right = screenNumber(spec.right.value, language);
   if (left && right) {
+    const {group, decimal} = SEPARATORS[language];
     const side = (n: NonNullable<typeof left>, label: string) => ({
       value: n.value, label, prefix: n.prefix || undefined, suffix: n.suffix || undefined, decimals: n.decimals,
       format: n.grouped ? ("grouped" as const) : ("plain" as const),
@@ -156,7 +162,8 @@ export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
       <AbsoluteFill style={portrait ? {top: u(COMPARE_TOP)} : undefined}>
         <ValueCompare left={side(left, spec.left.label)} right={side(right, spec.right.label)}
           mode={spec.mode ?? "side"} emphasis={spec.emphasis ?? undefined} showRatio={false} at={4} duration={40}
-          {...stacked} />
+          groupSeparator={group} decimalSeparator={decimal} locale={language}
+          ratioWord={LABELS[language].ratioWord} clampNote={LABELS[language].clampNote} {...stacked} />
       </AbsoluteFill>
     );
   }
@@ -192,6 +199,7 @@ const yearValue = (label: string) => {
 
 export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   const {portrait, safe, u} = useFrame();
+  const language = useLanguage();
   // Tela de projeto: 1920×1080 (paisagem, gráficos de 1600 px) ou 1080×1920 (retrato, gráficos de 940 px). Em
   // retrato o título começa 150 px abaixo do topo da área segura: acima dele fica a fonte do plano.
   const chartWidth = portrait ? 940 : 1600;
@@ -200,13 +208,14 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   const unit = spec.unit ?? "";
   // "%" cola no número; unidade longa ("contos de réis") vai para o subtítulo, não para cada valor.
   const inline = unit === "%" ? "%" : "";
-  const subtitle = unit && unit !== "%" ? `em ${unit}` : undefined;
+  const subtitle = unit && unit !== "%" ? `${LABELS[language].unitIn} ${unit}` : undefined;
   const decimals = decimalsOf(spec.points.map((p) => p.value));
   let chart: React.ReactNode;
   if (type === "line") {
     const labels = new Map(spec.points.map((p) => [yearValue(p.label), p.label]));
     chart = (
-      <LineChart width={chartWidth} height={portrait ? 600 : 660} unit={inline} decimals={decimals} yFromZero={spec.y_from_zero ?? true}
+      <LineChart width={chartWidth} height={portrait ? 600 : 660} unit={inline} decimals={decimals} locale={language}
+        yFromZero={spec.y_from_zero ?? true}
         points={spec.points.map((p) => ({x: yearValue(p.label), y: p.value}))}
         formatX={(x: number) => labels.get(x) ?? String(Math.round(x))}
         annotate={spec.highlight ? [{x: yearValue(spec.highlight), text: spec.highlight}] : undefined} />
@@ -214,10 +223,12 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
   } else if (type === "share") {
     chart = (
       <ShareChart width={chartWidth} variant="bar100" unit={unit.startsWith("%") ? "%" : inline} decimals={decimals}
-        highlight={spec.highlight ?? undefined} rest={spec.rest ?? undefined}
+        locale={language} highlight={spec.highlight ?? undefined} rest={spec.rest ?? undefined}
         parts={spec.points.map((p) => ({label: p.label, value: p.value}))} />
     );
   } else {
+    // O BarChart do kit fixado formata em pt-BR (sem `locale`): em inglês o `vp check` só deixa passar o que as
+    // duas convenções escrevem igual (inteiro abaixo de mil; app/pipeline/check.py).
     chart = (
       <BarChart width={chartWidth} height={portrait ? 600 : 620} orientation={type === "bar_horizontal" ? "horizontal" : "vertical"}
         unit={inline} decimals={decimals} labelSize={34} maxBarThickness={type === "bar_horizontal" ? 110 : 240}

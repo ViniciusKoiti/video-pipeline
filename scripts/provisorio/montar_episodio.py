@@ -143,7 +143,9 @@ def main() -> None:
     for scene in scenes.scenes:
         wav = wavs[scene.id]
         ms = duration_ms(wav)
-        shots = episode_shots(scene, ms, lambda shot: media_path(episode_dir, shot.asset_id), sources)
+        shots = episode_shots(
+            scene, ms, lambda shot: media_path(episode_dir, shot.asset_id), sources, scenes.language
+        )
         episode_scenes.append(
             EpisodeScene(
                 id=scene.id, start_ms=cursor, duration_ms=ms, narration=scene.narration,

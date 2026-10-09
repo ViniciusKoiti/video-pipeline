@@ -187,6 +187,9 @@ class RemotionEngine:
                     ],
                 }
             )
+            # pt-BR é o padrão do template: as props (e o cache) dos vídeos em português ficam como estavam
+            if episode.language != "pt-BR":
+                props[-1]["language"] = episode.language
             if episode.host is not None:  # sem apresentador, as props (e o cache) ficam como estavam
                 props[-1]["host"] = {
                     "identity": _host_identity(episode.host),

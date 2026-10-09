@@ -16,6 +16,7 @@ from app.pipeline.schemas import (
     EpisodeFormat,
     EpisodeManifest,
     EpisodeShot,
+    Language,
     NetworkShot,
     RelPath,
     Scene,
@@ -55,9 +56,10 @@ def episode_shots(
     duration_ms: int,
     media_for: Callable[[Shot], RelPath | None],
     sources: SourcesManifest | None = None,
+    language: Language = "pt-BR",
 ) -> list[EpisodeShot]:
     """Planos de uma cena com tempo resolvido; `media_for` devolve o arquivo do ativo de foto/B-roll.
-    Com `sources`, cada plano com claims ganha a fonte do rodapé (ADR 011)."""
+    Com `sources`, cada plano com claims ganha a fonte do rodapé (ADR 011), no `language` do episódio."""
     shots = effective_shots(scene)
     bounds = shot_bounds(scene.narration, shots, duration_ms)
     spoken, total = strip_pauses(scene.narration), timeline_length(scene.narration)
@@ -65,7 +67,8 @@ def episode_shots(
     ends = [*positions[1:], len(spoken)]
     result = []
     for shot, (start, duration), position, end in zip(shots, bounds, positions, ends, strict=True):
-        source, flag = shot_attribution(shot.claims, sources) if sources and shot.claims else (None, None)
+        has_source = sources and shot.claims
+        source, flag = shot_attribution(shot.claims, sources, language) if has_source else (None, None)
         steps_ms = []
         if isinstance(shot, NetworkShot):
             for step in step_positions(spoken, shot, position, end, scene_id=scene.id):

@@ -117,6 +117,10 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      correto (§2.4), `search_query` específica (pessoa, lugar, ano) e `asset_id: null` (a busca de ativos é
      outra etapa); quando nenhuma imagem for possível, anote a lacuna no outline.
    - **Destaque:** em `chart`, `highlight` é o ponto que a frase comenta; sem ele, nenhum ponto se destaca.
+   - **Número na convenção do idioma:** o `value` do `number` e dos lados do `compare` segue o idioma do
+     episódio: em pt-BR `1.500` e `4,2`; em inglês `1,500` e `4.2`. O `vp check` recusa a convenção trocada
+     ("47,6" num episódio em inglês). Em inglês, o `chart` de barras só leva valores inteiros abaixo de mil
+     (o `BarChart` do kit formata em pt-BR); para valores maiores use `number`, `compare` ou `line`.
    - **Quem disse** vai na narração ("segundo o relatório da empresa"); a fonte de cada plano com `claims`
      aparece sozinha no rodapé, e o `label` fica só com o que o valor mede.
    - **Variedade:** alterne os tipos e mantenha imagem na tela; os alertas do `vp check` apontam as

@@ -6,6 +6,8 @@ import {SceneBackground} from "@viniciusk/motion-kit/fx";
 import {CameraRig} from "@viniciusk/motion-kit/motion";
 import {MotionThemeProvider} from "@viniciusk/motion-kit/theme";
 import {HostWindow} from "./HostWindow";
+import {LABELS} from "./labels";
+import {LanguageProvider, useLanguage} from "./language";
 import {ShotView} from "./ShotView";
 import {motionTheme, theme, useFrame} from "./theme";
 import type {SceneProps, ShotProps} from "./types";
@@ -71,10 +73,11 @@ const Camera: React.FC<{active: boolean; frames: number; children: React.ReactNo
 // o painel e a tarja ocupam a largura, então a fonte vai sempre para o topo, abaixo da faixa que a plataforma cobre.
 const Source: React.FC<{shot: Planned}> = ({shot}) => {
   const {u, kit, portrait, safe} = useFrame();
+  const language = useLanguage();
   const top = shot.layer === "full" || portrait;
   const tag = (
-    <SourceTag text={shot.source!} flag={shot.sourceFlag} side="right" captionSafe={!top} at={8}
-      {...(portrait ? {fontSize: kit(24)} : {})} />
+    <SourceTag text={shot.source!} flag={shot.sourceFlag} label={LABELS[language].source} side="right"
+      captionSafe={!top} at={8} {...(portrait ? {fontSize: kit(24)} : {})} />
   );
   if (!top) return tag;
   return <div style={{position: "absolute", left: 0, right: 0, top: portrait ? safe.top : 0, height: u(150)}}>{tag}</div>;
@@ -92,7 +95,13 @@ const Caption: React.FC<{text: string}> = ({text}) => {
   );
 };
 
-export const Scene: React.FC<SceneProps> = (props) => {
+export const Scene: React.FC<SceneProps> = (props) => (
+  <LanguageProvider value={props.language ?? "pt-BR"}>
+    <SceneBody {...props} />
+  </LanguageProvider>
+);
+
+const SceneBody: React.FC<SceneProps> = (props) => {
   const frame = useCurrentFrame();
   const fade = Math.min(props.fadeFrames, Math.floor(props.frames / 2));
   const opacity =
