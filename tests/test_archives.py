@@ -87,6 +87,20 @@ def test_pexels_photo_must_be_landscape_and_at_least_1920() -> None:
     assert candidate.duration_s is None
 
 
+def test_pexels_portrait_asks_for_standing_files_of_at_least_1080x1920() -> None:
+    archive, http = pexels()
+    [video] = archive.search_assets(video_query(orientation="portrait"))
+    assert video.asset.id == "pexels-video-2499611"  # os deitados (1448735, 900001) ficam de fora
+    assert (video.width, video.height) == (1080, 1920)  # o menor arquivo que ainda chega a 1080×1920
+    query = AssetQuery(
+        text="treino", visual_need=VisualNeed.CONTEXTUAL_STOCK, orientation="portrait"
+    )
+    [photo] = archive.search_assets(query)  # a quadrada (2014422) e a deitada (900002) ficam de fora
+    assert photo.asset.id == "pexels-photo-3573351"
+    video_url, photo_url = (url for url, _ in http.calls)
+    assert "orientation=portrait" in video_url and "orientation=portrait" in photo_url
+
+
 def test_pexels_search_is_cached_with_quota_and_without_the_key(tmp_path: Path) -> None:
     archive, http = pexels(tmp_path)
     first = archive.search_assets(video_query("Saco de cimento", limit=2))
@@ -175,6 +189,31 @@ def test_pixabay_photo_needs_full_access_to_reach_1920() -> None:
     assert candidate.asset.original_url == "https://pixabay.com/get/exemplo900005_1920.jpg"
 
 
+def test_pixabay_portrait_swaps_the_minimum_size_and_keeps_standing_renditions() -> None:
+    def rendition(name: str, width: int, height: int) -> dict[str, Any]:
+        url = f"https://cdn.pixabay.com/video/exemplo/900007_{name}.mp4"
+        return {"url": url, "width": width, "height": height, "thumbnail": url.replace(".mp4", ".jpg")}
+
+    def hit(item_id: int, **renditions: dict[str, Any]) -> dict[str, Any]:
+        return {"id": item_id, "pageURL": f"https://pixabay.com/videos/id-{item_id}/", "duration": 12,
+                "user": "autor", "videos": renditions}
+
+    standing = {
+        "hits": [
+            hit(900007, large=rendition("large", 1080, 1920), medium=rendition("medium", 720, 1280)),
+            hit(900008, large=rendition("large", 1920, 1080)),
+        ]
+    }
+    archive, http = pixabay(**{"/api/videos/": standing, "pixabay.com/api/?": {"hits": []}})
+    [video] = archive.search_assets(video_query(orientation="portrait"))
+    assert (video.asset.id, video.width, video.height) == ("pixabay-video-900007", 1080, 1920)
+    photos = AssetQuery(text="treino", visual_need=VisualNeed.CONTEXTUAL_STOCK, orientation="portrait")
+    assert archive.search_assets(photos) == []
+    video_url, photo_url = (url for url, _ in http.calls)
+    assert "min_width=1080" in video_url and "min_height=1920" in video_url  # trocados em retrato
+    assert "orientation=vertical" in photo_url and "min_height=1920" in photo_url
+
+
 def test_pixabay_cache_and_quota_never_hold_the_key(tmp_path: Path) -> None:
     archive, http = pixabay(tmp_path)
     archive.search_assets(video_query())
@@ -228,6 +267,14 @@ def test_unsplash_photo_with_credit_links() -> None:
     assert url.startswith("https://api.unsplash.com/search/photos?query=power+plant&orientation=landscape")
     assert "content_filter=high" in url
     assert headers == {"Authorization": f"Client-ID {KEY}", "Accept-Version": "v1"}
+
+
+def test_unsplash_portrait_asks_for_standing_photos() -> None:
+    archive, http = unsplash()
+    [candidate] = archive.search_assets(photo_query(orientation="portrait"))  # a deitada fica de fora
+    assert candidate.asset.provider_id == "Vertical_900006"
+    assert (candidate.width, candidate.height) == (3000, 4500)
+    assert "orientation=portrait" in http.calls[0][0]
 
 
 def test_unsplash_has_no_video_and_does_not_call_the_api() -> None:

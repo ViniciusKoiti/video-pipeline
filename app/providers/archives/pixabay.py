@@ -32,21 +32,29 @@ class PixabayArchive(StockArchive):
 
     def _results(self, query: AssetQuery) -> list[Mapping[str, Any]]:
         video = query.media == "video"
+        portrait = query.orientation == "portrait"
+        min_width, min_height = self._min_width, self._min_height
+        if portrait:  # o mínimo é 1920×1080 deitado; em pé, 1080×1920
+            min_width, min_height = min_height, min_width
         params: dict[str, Any] = {
             "q": normalize_query(query.text)[:MAX_QUERY_CHARS],
-            "min_width": self._min_width,
-            "min_height": self._min_height,
+            "min_width": min_width,
+            "min_height": min_height,
             "safesearch": "true",
             "per_page": PER_PAGE,
         }
-        params |= {"video_type": "film"} if video else {"image_type": "photo", "orientation": "horizontal"}
+        # o vídeo não tem filtro de orientação na API: o corte em pé sai do `_fits` de cada arquivo
+        params |= {"video_type": "film"} if video else {
+            "image_type": "photo",
+            "orientation": "vertical" if portrait else "horizontal",
+        }
         endpoint = f"{API}videos/" if video else API
         url = f"{endpoint}?{urlencode({'key': self._key, **params})}"
         data = self._fetch(url, {}, {"endpoint": "videos" if video else "images", **params})
         return data.get("hits", [])
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
-        return self._video(item, query) if query.media == "video" else self._photo(item)
+        return self._video(item, query) if query.media == "video" else self._photo(item, query)
 
     def _video(self, hit: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         # A documentação não diz a unidade de `duration`; o exemplo (12) é de segundos. Conferir no passo 5.
@@ -54,7 +62,7 @@ class PixabayArchive(StockArchive):
         renditions = [  # large pode vir com URL vazia; tiny e small ficam abaixo de 1080p
             r
             for r in (hit.get("videos") or {}).values()
-            if r.get("url") and self._fits(r.get("width"), r.get("height"))
+            if r.get("url") and self._fits(r.get("width"), r.get("height"), query.orientation)
         ]
         if not renditions or not self._long_enough(duration, query):
             return None
@@ -71,11 +79,11 @@ class PixabayArchive(StockArchive):
             duration=duration,
         )
 
-    def _photo(self, hit: Mapping[str, Any]) -> AssetCandidate | None:
+    def _photo(self, hit: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         # fullHDURL (até 1920 px) só com acesso completo aprovado; sem ele, largeImageURL (até 1280 px).
         url, max_side = (hit["fullHDURL"], 1920) if hit.get("fullHDURL") else (hit.get("largeImageURL"), 1280)
         width, height = _scaled(hit.get("imageWidth"), hit.get("imageHeight"), max_side)
-        if not url or not self._fits(width, height):
+        if not url or not self._fits(width, height, query.orientation):
             return None
         return self._candidate(
             hit["id"],

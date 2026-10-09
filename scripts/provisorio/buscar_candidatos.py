@@ -3,10 +3,13 @@
 Uso: `.venv/bin/python scripts/provisorio/buscar_candidatos.py <episode-id> <pedidos.json> [--limit N]`
 
 `pedidos.json`: `{"pedidos": [{"id": "cimento", "plano": "S01 · ...", "consultas": ["..."],
-"midias": ["video", "photo"], "min_duration_s": 4}]}`.
+"midias": ["video", "photo"], "min_duration_s": 4, "orientacao": "portrait"}]}`.
 
 - Usa os bancos da cascata de config/providers.toml que têm adapter e chave no .env; os outros são pulados
   com aviso (o Coverr é só manual).
+- Orientação do arquivo: `orientacao` do pedido (`landscape` ou `portrait`); sem ela, a do `scenes.json`
+  do episódio (ADR 014), e sem o arquivo, `landscape`. Em retrato só entram arquivos em pé de pelo menos
+  1080×1920.
 - Cada consulta vai a cada banco em cada mídia pedida; `--limit` candidatos por chamada (padrão 5), para a
   triagem humana escolher até 2 por plano. Tudo é ilustração: `visual_need` sempre `contextual_stock`.
 - Saída: `data/episodes/<id>/candidatos/<pedido>.json` com o ativo (licença, autor, página, crédito), a
@@ -25,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import DEFAULT_REGISTRY, ConfigurationError  # noqa: E402
-from app.pipeline.schemas import VisualNeed  # noqa: E402
+from app.pipeline.schemas import Orientation, VisualNeed  # noqa: E402
 from app.providers.archives.base import ArchiveProvider, AssetCandidate, AssetQuery  # noqa: E402
 from app.providers.errors import ProviderError  # noqa: E402
 from app.settings import load_settings  # noqa: E402
@@ -44,6 +47,22 @@ def available_archives(settings) -> list[ArchiveProvider]:  # noqa: ANN001
     return archives
 
 
+def episode_orientation(episode_dir: Path) -> Orientation:
+    """`orientation` do scenes.json do episódio (ADR 014); sem o arquivo, 16:9."""
+    scenes = episode_dir / "scenes.json"
+    if scenes.is_file() and json.loads(scenes.read_text()).get("orientation") == "portrait":
+        return "portrait"
+    return "landscape"
+
+
+def _relative(path: Path) -> str:
+    """Caminho a partir da raiz do repositório; com `DATA_DIR` fora dela (worktree), o caminho inteiro."""
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def _record(candidate: AssetCandidate, bank: str, text: str, media: str) -> dict:
     thumb = candidate.thumbnail_path
     return {
@@ -53,7 +72,7 @@ def _record(candidate: AssetCandidate, bank: str, text: str, media: str) -> dict
         "largura": candidate.width,
         "altura": candidate.height,
         "duracao_s": candidate.duration_s,
-        "miniatura": str(thumb.relative_to(ROOT)) if thumb else None,
+        "miniatura": _relative(thumb) if thumb else None,
         "ativo": candidate.asset.model_dump(mode="json"),
     }
 
@@ -70,10 +89,14 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     archives = available_archives(settings)
     print("bancos:", ", ".join(a.info.name for a in archives) or "nenhum")
+    default_orientation = episode_orientation(out_dir.parent)
 
     for pedido in json.loads(args.pedidos.read_text())["pedidos"]:
         found: dict[str, dict] = {}
         failures = []
+        orientation = pedido.get("orientacao", default_orientation)
+        if orientation not in ("landscape", "portrait"):
+            raise SystemExit(f"{pedido['id']}: orientacao é landscape ou portrait, não {orientation!r}")
         for text in pedido["consultas"]:
             for media in pedido.get("midias", ["video"]):
                 query = AssetQuery(
@@ -82,6 +105,7 @@ def main() -> None:
                     limit=args.limit,
                     media=media,
                     min_duration_s=pedido.get("min_duration_s") if media == "video" else None,
+                    orientation=orientation,
                 )
                 for archive in archives:
                     try:
@@ -96,7 +120,7 @@ def main() -> None:
         by_bank = {}
         for c in found.values():
             by_bank[c["banco"]] = by_bank.get(c["banco"], 0) + 1
-        print(f"{pedido['id']}: {len(found)} candidatos {by_bank}; falhas: {len(failures)}")
+        print(f"{pedido['id']} ({orientation}): {len(found)} candidatos {by_bank}; falhas: {len(failures)}")
 
 
 if __name__ == "__main__":

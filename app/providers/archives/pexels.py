@@ -31,19 +31,24 @@ class PexelsArchive(StockArchive):
     def _results(self, query: AssetQuery) -> list[Mapping[str, Any]]:
         video = query.media == "video"
         path = "/videos/search" if video else "/search"
-        params = {"query": normalize_query(query.text), "orientation": "landscape", "per_page": PER_PAGE}
+        params = {
+            "query": normalize_query(query.text),
+            "orientation": query.orientation,
+            "per_page": PER_PAGE,
+        }
         data = self._fetch(f"{API}{path}?{urlencode(params)}", self._headers, {"endpoint": path, **params})
         return data.get("videos" if video else "photos", [])
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
-        return self._video(item, query) if query.media == "video" else self._photo(item)
+        return self._video(item, query) if query.media == "video" else self._photo(item, query)
 
     def _video(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         duration = float(item.get("duration") or 0)
         files = [  # hls vem sem largura e altura e cai aqui, junto com o que fica abaixo de 1080p
             f
             for f in item.get("video_files", [])
-            if f.get("file_type") == "video/mp4" and self._fits(f.get("width"), f.get("height"))
+            if f.get("file_type") == "video/mp4"
+            and self._fits(f.get("width"), f.get("height"), query.orientation)
         ]
         if not files or not self._long_enough(duration, query):
             return None
@@ -60,9 +65,9 @@ class PexelsArchive(StockArchive):
             duration=duration,
         )
 
-    def _photo(self, item: Mapping[str, Any]) -> AssetCandidate | None:
+    def _photo(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         width, height = int(item.get("width") or 0), int(item.get("height") or 0)
-        if not self._fits(width, height):
+        if not self._fits(width, height, query.orientation):
             return None
         return self._candidate(
             item["id"],
