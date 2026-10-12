@@ -12,7 +12,14 @@ import pytest
 from pydantic import ValidationError
 
 from app.media.envelope import mouth_levels
-from app.media.host import blocked_corners, host_corners
+from app.media.host import (
+    ORIGIN_FILE,
+    SPRITES_DIR,
+    blocked_corners,
+    host_corners,
+    sprite_files,
+    sprites_hash,
+)
 from app.pipeline.schemas import (
     EpisodeFormat,
     EpisodeManifest,
@@ -279,3 +286,59 @@ def test_portrait_corner_table_follows_the_vertical_layout() -> None:
     assert blocked_corners(over_stamp, portrait=True) == {"top-left", "bottom-left", "bottom-right"}
     scenes = [scene(f"S0{i}", [("stamp", fonte)]) for i in range(1, 5)]
     assert host_corners(scenes, portrait=True) == ["top-left", "top-right", "top-left", "top-right"]
+
+
+# --- pele do dono (ADR 017, parte A) ----------------------------------------------------------------
+
+
+def write_dono_sprites(episode_dir: Path, *, skip: str | None = None) -> None:
+    folder = episode_dir / SPRITES_DIR
+    folder.mkdir(parents=True)
+    for file in sprite_files(episode_dir):
+        if file.name != skip:
+            file.write_bytes(b"png " + file.name.encode())
+    (folder / ORIGIN_FILE).write_text('{"author": "dono", "review_status": "needs_review"}')
+
+
+def test_dono_skin_is_a_ready_drawing_without_parts() -> None:
+    assert HostSpec.model_validate({"skin": "dono"}).identity is None
+    with pytest.raises(ValidationError, match="não leva identity"):
+        HostSpec.model_validate({"skin": "dono", **HOST})
+    with pytest.raises(ValidationError, match="precisa de identity"):
+        HostSpec.model_validate({"skin": "notionists"})
+    with pytest.raises(ValidationError):
+        HostSpec.model_validate({"skin": "vizinho"})
+
+
+def test_dono_sprites_are_twelve_images_and_part_of_the_scene_cache(tmp_path: Path) -> None:
+    names = [f.name for f in sprite_files(tmp_path)]
+    assert len(names) == 12 and {"rest.png", "rest-piscada.png", "fv.png", "ou-piscada.png"} <= set(names)
+    write_dono_sprites(tmp_path)
+    first = sprites_hash(tmp_path)
+    (tmp_path / SPRITES_DIR / "a.png").write_bytes(b"outra boca")
+    assert sprites_hash(tmp_path) != first  # trocar um desenho refaz as cenas
+
+
+def test_dono_sprites_need_every_image_and_the_origin_record(tmp_path: Path) -> None:
+    write_dono_sprites(tmp_path, skip="mbp-piscada.png")
+    with pytest.raises(FileNotFoundError, match="mbp-piscada.png"):
+        sprites_hash(tmp_path)
+    (tmp_path / SPRITES_DIR / "mbp-piscada.png").write_bytes(b"png")
+    (tmp_path / SPRITES_DIR / ORIGIN_FILE).unlink()
+    with pytest.raises(FileNotFoundError, match="origem.json"):  # sem origem registrada não entra no render
+        sprites_hash(tmp_path)
+
+
+def test_scene_props_carry_the_dono_skin_and_its_sprites(tmp_path: Path) -> None:
+    (tmp_path / "assets").mkdir()
+    photo = FIXTURE / "assets" / "commons-lc-usz62-136192.jpg"
+    (tmp_path / "assets" / "f.jpg").write_bytes(photo.read_bytes())
+    write_wav(tmp_path / "voice" / "S01.wav", 9.0)
+    write_dono_sprites(tmp_path)
+    episode = EpisodeManifest.model_validate({**v2_episode(), "host": {"skin": "dono"}})
+    (props,) = RemotionEngine().scene_props(episode, tmp_path, preview=True)
+    assert props["host"]["identity"] == {"skin": "dono"}
+    assert props["host"]["sprites"] == sprites_hash(tmp_path)
+    with_parts = EpisodeManifest.model_validate({**v2_episode(), "host": HOST})
+    (other,) = RemotionEngine().scene_props(with_parts, tmp_path, preview=True)
+    assert "sprites" not in other["host"]  # o Notionists fica como estava (e o cache dele também)

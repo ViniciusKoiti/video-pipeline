@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from app.media.envelope import mouth_levels
-from app.media.host import host_corners
+from app.media.host import host_corners, sprites_hash
 from app.media.narration import strip_pauses
 from app.media.probe import dimensions, duration_ms
 from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
@@ -76,8 +76,11 @@ def _editorial(shot: EpisodeShot, fps: int) -> dict[str, Any]:
 
 
 def _host_identity(host: HostSpec) -> dict[str, Any]:
-    """Identidade do `<Host>` do motion-kit (camelCase, como a pele Notionists a lê); só as peças dadas."""
+    """Identidade do `<Host>` do motion-kit (camelCase, como a pele Notionists a lê); só as peças dadas.
+    A pele `dono` não tem peças: só o nome dela."""
     identity = host.identity
+    if identity is None:
+        return {"skin": host.skin}
     parts = {
         "hair": identity.hair,
         "outfit": identity.outfit,
@@ -198,6 +201,8 @@ class RemotionEngine:
                     "fromCorner": corners[i - 1] if i > 0 else None,
                     "levels": mouth_levels(episode_dir / scene.audio, fps, frames),
                 }
+                if episode.host.skin == "dono":  # trocar o desenho refaz as cenas (cache por props)
+                    props[-1]["host"]["sprites"] = sprites_hash(episode_dir)
         return props
 
     # --- render -------------------------------------------------------------------------------

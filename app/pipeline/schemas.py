@@ -567,10 +567,21 @@ class HostIdentity(Model):
 
 class HostSpec(Model):
     """O apresentador do episódio: um personagem numa janela que muda de canto a cada cena (ADR 013).
-    A boca segue o áudio de cada cena; o canto sai de uma regra sobre os planos (`app/media/host.py`)."""
+    A boca segue o áudio de cada cena; o canto sai de uma regra sobre os planos (`app/media/host.py`).
 
-    skin: Literal["notionists"] = "notionists"
-    identity: HostIdentity
+    Pele `notionists`: personagem montado de peças (`identity`). Pele `dono` (ADR 017, parte A): o desenho
+    do dono, em imagens na pasta do episódio (`app/media/host.py`), sem peças."""
+
+    skin: Literal["notionists", "dono"] = "notionists"
+    identity: HostIdentity | None = None
+
+    @model_validator(mode="after")
+    def _identity_matches_skin(self) -> Self:
+        if self.skin == "notionists" and self.identity is None:
+            raise ValueError("a pele notionists precisa de identity (as peças do personagem)")
+        if self.skin != "notionists" and self.identity is not None:
+            raise ValueError(f"a pele {self.skin} é um desenho pronto: não leva identity")
+        return self
     width: float | None = Field(default=None, ge=0.1, le=0.5)  # fração do quadro; padrão por perfil
 
     def width_for(self, *, portrait: bool) -> float:
