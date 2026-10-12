@@ -13,7 +13,7 @@
     "@remotion/bundler": "4.0.529",
     "@remotion/cli": "4.0.529",
     "@remotion/renderer": "4.0.529",
-    "@viniciusk/motion-kit": "https://gitlab.com/api/v4/projects/ViniciusKoiti%2Fmotion-kit/repository/archive.tar.gz?sha=527c708fe12c7aed524386308164452dbdabaa0d",
+    "@viniciusk/motion-kit": "https://gitlab.com/api/v4/projects/ViniciusKoiti%2Fmotion-kit/repository/archive.tar.gz?sha=b39301244999c6b062445c90942c7fe470815496",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-icons": "5.7.0",

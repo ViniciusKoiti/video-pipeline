@@ -118,11 +118,25 @@ def _gemini_tts(settings: Settings) -> Any:
     )
 
 
+def _chatterbox(settings: Settings) -> Any:
+    from app.providers.tts.chatterbox import ChatterboxTTS
+
+    box = settings.chatterbox
+    return ChatterboxTTS(
+        box.python and box.python.expanduser(), box.reference and box.reference.expanduser(), model=box.model,
+        language_ids=box.language_ids, num_threads=box.num_threads, pause_ms=box.pause_ms,
+    )
+
+
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
 
 DEFAULT_REGISTRY: Registry = {
     "text": {"ollama": Registration(5, _ollama), "groq": Registration(29), "gemini": Registration(29)},
-    "tts": {"kokoro": Registration(5, _kokoro), "gemini": Registration(15, _gemini_tts)},  # ADR 012
+    "tts": {
+        "kokoro": Registration(5, _kokoro),
+        "gemini": Registration(15, _gemini_tts),  # ADR 012
+        "chatterbox": Registration(15, _chatterbox),  # voz clonada local (ADR 016, proposta)
+    },
     "image_gen": {"workers_ai": Registration(24)},
     "archives": {
         "wikimedia_commons": Registration(20),
@@ -198,6 +212,13 @@ class LazyContext:
         """Voz do vídeo final (ADR 012); sem `tts_final` na configuração, a mesma dos rascunhos."""
         name = self._settings.providers.tts_final
         return self.tts if name is None else self._build("tts", name)
+
+    def tts_named(self, name: str) -> TTSProvider:
+        """Uma voz registrada pelo nome, fora da escolha do `providers.toml` (ex.: teste da voz clonada)."""
+        if name not in self._registry["tts"]:
+            options = ", ".join(sorted(self._registry["tts"]))
+            raise ConfigurationError(f"tts = {name!r} não existe (opções: {options})")
+        return self._build("tts", name)
 
     @cached_property
     def image_gen(self) -> ImageGenProvider:

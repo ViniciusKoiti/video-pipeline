@@ -1,11 +1,13 @@
 """Voz e render de um episódio a partir do scenes.json (provisório até `vp voice` #16 e `vp render` #13).
 
 Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-render] [--preview]
-     [--voz-final]`
+     [--voz-final] [--voz=<nome>]`
 
 - Narração por cena, em `voice/<cena>-<provedor>-<hash>.wav`: a voz dos rascunhos (`tts`, Kokoro) ou, com
   `--voz-final`, a do vídeo final (`tts_final`, Gemini Charon, ADR 012). O hash cobre o texto, o modelo, a voz
   e a direção de fala: a fala só é gerada de novo quando um deles muda, e uma voz não apaga as falas da outra.
+- `--voz=<nome>` usa outra voz registrada, fora da escolha do `providers.toml`: hoje `chatterbox`, a voz
+  clonada local (ADR 016, proposta), uma cena por vez e bem mais lenta que o tempo real.
 - A voz final gera as cenas que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
   pode ser cortado com segurança é gerado cena a cena. Cota esgotada: o script para, as falas já geradas ficam
   no cache e a próxima execução continua.
@@ -41,6 +43,7 @@ from app.pipeline.schemas import (  # noqa: E402
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
 from app.providers.errors import InvalidOutput, ProviderError  # noqa: E402
 from app.providers.tts.base import SpeechRequest, TTSProvider  # noqa: E402
+from app.providers.tts.chatterbox import reference_hash  # noqa: E402
 from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
@@ -55,6 +58,11 @@ def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
     if provider == "gemini":
         gemini = settings.gemini_tts
         return f"gemini|{gemini.model}|{gemini.voices.get(language)}|{gemini.styles.get(language, '')}"
+    if provider == "chatterbox":
+        box = settings.chatterbox
+        reference = box.reference.expanduser() if box.reference else None
+        voice = reference_hash(reference) if reference and reference.is_file() else None
+        return f"chatterbox|{box.model}|{box.language_ids.get(language)}|{voice}"
     return f"{provider}|{settings.kokoro.voices.get(language)}"
 
 
@@ -118,8 +126,13 @@ def main() -> None:
     if sources_path.is_file():
         sources = SourcesManifest.model_validate_json(sources_path.read_text())
     final = "--voz-final" in sys.argv
-    provider = (settings.providers.tts_final or settings.providers.tts) if final else settings.providers.tts
-    tts = context.tts_final if final else context.tts
+    named = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--voz=")), None)
+    if named:
+        provider, tts = named, context.tts_named(named)
+    else:
+        choice = settings.providers
+        provider = (choice.tts_final or choice.tts) if final else choice.tts
+        tts = context.tts_final if final else context.tts
     fingerprint = voice_fingerprint(settings, provider, scenes.language)
     voice_dir = episode_dir / "voice"
     voice_dir.mkdir(exist_ok=True)
@@ -128,8 +141,10 @@ def main() -> None:
     wavs, missing = {}, []
     for scene in scenes.scenes:
         # Cena com pausa: o silêncio do Kokoro entra na chave (ADR 015); sem pausa a chave não muda.
-        tagged = provider == "kokoro" and has_pauses(scene.narration)
-        pause = f"|pausa{settings.kokoro.pause_ms}" if tagged else ""
+        pauses = {"kokoro": settings.kokoro.pause_ms, "chatterbox": settings.chatterbox.pause_ms}
+        pause_ms = pauses.get(provider)
+        tagged = pause_ms is not None and has_pauses(scene.narration)
+        pause = f"|pausa{pause_ms}" if tagged else ""
         key = hashlib.sha256(f"{fingerprint}{pause}|{scene.narration}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
@@ -138,6 +153,9 @@ def main() -> None:
             missing.append(SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language))
     if missing:
         generate(tts, missing)
+    close = getattr(tts, "close", None)  # a voz clonada mantém um processo com o modelo carregado
+    if close:
+        close()
 
     episode_scenes, cursor = [], 0
     for scene in scenes.scenes:
