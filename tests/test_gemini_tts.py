@@ -153,14 +153,22 @@ def test_missing_voice_and_phoneme_glossary_are_refused(tmp_path: Path) -> None:
         make(FakePost()).synthesize_speech(request(tmp_path, lexicon={"Ignácio": "iɡnˈasju"}))
 
 
-def test_drafts_use_kokoro_and_the_final_video_uses_gemini() -> None:
+def test_gemini_is_still_a_voice_by_name_after_the_cloned_voice_became_the_final_one() -> None:
     settings = load_settings(REPO_ROOT, environ={"GEMINI_API_KEY": "chave"})
-    assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "gemini")
+    assert settings.providers.tts_final == "chatterbox"  # ADR 016; a Charon fica para o vídeo-régua
     assert settings.gemini_tts.voices["pt-BR"] == "Charon"
-    assert speech_chars_per_second(settings) == settings.gemini_tts.chars_per_second  # o tempo do vídeo final
     context = build_context(REPO_ROOT, environ={"GEMINI_API_KEY": "chave"})
     assert context.tts.info.name == "kokoro"
-    assert context.tts_final.info == ProviderInfo("gemini_tts", remote=True)  # custo zero: trava do §2.1
+    assert context.tts_named("gemini").info == ProviderInfo("gemini_tts", remote=True)  # custo zero: §2.1
+
+
+def test_check_estimates_with_the_gemini_rate_when_it_is_the_final_voice(tmp_path: Path) -> None:
+    config = (REPO_ROOT / CONFIG_FILE).read_text().replace('tts_final = "chatterbox"', 'tts_final = "gemini"')
+    (tmp_path / CONFIG_FILE.parent).mkdir()
+    (tmp_path / CONFIG_FILE).write_text(config)
+    settings = load_settings(tmp_path, {})
+    assert settings.providers.tts_final == "gemini"
+    assert speech_chars_per_second(settings) == settings.gemini_tts.chars_per_second
 
 
 def test_without_a_final_voice_the_draft_voice_is_used(tmp_path: Path) -> None:

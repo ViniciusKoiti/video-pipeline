@@ -36,10 +36,13 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
   `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar`, `lado-a-lado`), vídeos em
   `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`. A folha de quadros marca os planos que
   mudaram: um PR de visual deve mudar só os que pretendia.
-- **Voz (ADR 012, proposta):** Kokoro nos rascunhos (`tts`), Gemini TTS Charon no vídeo final (`tts_final`,
-  `montar_episodio.py --voz-final`), várias cenas por chamada cortadas nas pausas. A camada gratuita dá 3 chamadas
-  por minuto e **10 por dia**. Termos e resultado: `data/benchmarks/termos-gemini-tts.md`. Faltam as falas S08–S10
-  do vídeo-régua (um lote) e a v5; o aceite da ADR vem depois dela.
+- **Voz (ADR 016, aceita em 2026-10-12):** Kokoro nos rascunhos (`tts`), voz clonada do dono no vídeo final
+  (`tts_final = "chatterbox"`, `montar_episodio.py --voz-final`): Chatterbox local, no ambiente próprio dele
+  (`CHATTERBOX_PYTHON` e `CHATTERBOX_REFERENCE` no `.env`), uma cena por vez e ~30 vezes mais lenta que o tempo
+  real. A gravação de referência é dado pessoal: fora do Git, nunca enviada a provedor. Licença em
+  `data/benchmarks/termos-chatterbox.md`. A Charon do Gemini (ADR 012) segue registrada (`--voz=gemini`; 3 chamadas
+  por minuto e **10 por dia** na camada gratuita, termos em `data/benchmarks/termos-gemini-tts.md`) e é a voz do
+  vídeo-régua, que não troca de voz.
 
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
 
@@ -174,7 +177,7 @@ revela:
 | Função | Padrão | Candidato a teste | Critério de troca |
 |---|---|---|---|
 | Fichas, roteiro, cenas, checagem | Agentes do Claude Code + skills + `vp check` (ADR 009; a spec previa Ollama) | Ollama local (#27, checagem já medida em `data/benchmarks/checagem-local.md`); Groq e Gemini gratuitos; outro agente que leia as skills | Fidelidade ao texto-fonte e fatos que prendem, sem custo por chamada. |
-| Narração | Kokoro local nos rascunhos; Gemini TTS Charon no vídeo final em pt-BR (ADR 012, proposta) | Outra voz do Gemini | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
+| Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
 | Alinhamento de áudio | ffprobe + revisão manual | Groq Whisper gratuito, quando necessário | Corrigir problema concreto de legenda; não transcrever episódio inteiro sem necessidade. |
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
 | Roteador de modelos | Nenhum | OpenRouter com variante `:free` | Só se o candidato direto falhar. |
@@ -215,12 +218,12 @@ lacuna fica registrada.
 
 - Roteiro escrito diretamente no idioma do episódio (en ou pt-BR), com um WAV curto por bloco narrativo para
   trocar uma frase isolada. Glossário de pronúncia por episódio em `voice/glossary.json` (o Kokoro aceita
-  fonemas customizados; o Gemini TTS não).
+  fonemas customizados; o Gemini TTS e o Chatterbox não).
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
-  (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro faz silêncio
-  (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
+  (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
+  silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
 - Legendas geradas após aprovação da voz, por alinhamento do texto com o áudio; nomes próprios sempre revisados.
   `captions.srt` é editável.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.

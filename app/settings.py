@@ -64,6 +64,18 @@ class GeminiTTSSettings(_Model):
     chars_per_second: float = Field(default=13.0, gt=0)
 
 
+class ChatterboxSettings(_Model):
+    """Voz clonada local (ADR 016, proposta). O ambiente do modelo e a gravação de referência vêm do .env."""
+
+    python: Path | None = None  # CHATTERBOX_PYTHON: o Python do ambiente em que o modelo está instalado
+    reference: Path | None = None  # CHATTERBOX_REFERENCE: gravação da voz a clonar (dado pessoal)
+    model: str = "v3"
+    language_ids: dict[str, str] = Field(default_factory=lambda: {"pt-BR": "pt", "en": "en"})
+    num_threads: int = Field(default=12, gt=0)
+    chars_per_second: float = Field(default=14.0, gt=0)
+    pause_ms: int = Field(default=400, ge=0)  # silêncio no lugar de cada `<short pause>` (ADR 015)
+
+
 class WorkersAISettings(_Model):
     model: str
 
@@ -104,6 +116,7 @@ class Settings(_Model):
     ollama: OllamaSettings
     kokoro: KokoroSettings
     gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
+    chatterbox: ChatterboxSettings = ChatterboxSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()
@@ -117,6 +130,8 @@ ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
     "OLLAMA_BASE_URL": ("ollama", "base_url"),
     "OLLAMA_MODEL": ("ollama", "model"),
     "WORKERS_AI_MODEL": ("workers_ai", "model"),
+    "CHATTERBOX_PYTHON": ("chatterbox", "python"),
+    "CHATTERBOX_REFERENCE": ("chatterbox", "reference"),
     "DATA_DIR": ("data_dir",),
     "MAX_API_SPEND_USD": ("budget", "max_api_spend_usd"),
     "ALLOW_PAID_API": ("budget", "allow_paid_api"),
@@ -168,6 +183,10 @@ def load_settings(root: Path, environ: Mapping[str, str] | None = None) -> Setti
 
 def speech_chars_per_second(settings: Settings) -> float:
     """Ritmo da voz final: estima a duração das cenas antes da voz real (§9); é o tempo do vídeo publicado."""
-    rates = {"kokoro": settings.kokoro.chars_per_second, "gemini": settings.gemini_tts.chars_per_second}
+    rates = {
+        "kokoro": settings.kokoro.chars_per_second,
+        "gemini": settings.gemini_tts.chars_per_second,
+        "chatterbox": settings.chatterbox.chars_per_second,
+    }
     voice = settings.providers.tts_final or settings.providers.tts
     return rates.get(voice, settings.kokoro.chars_per_second)

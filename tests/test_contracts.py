@@ -109,6 +109,12 @@ def make_kokoro() -> TTSProvider:
     return KokoroTTS({"en": "am_michael"})
 
 
+def make_chatterbox() -> TTSProvider:
+    from tests.test_chatterbox_tts import make_tts
+
+    return make_tts()  # processo do modelo falso: sem rede e sem o modelo (§2.10)
+
+
 NEEDS_TTS_EXTRA = pytest.mark.skipif(find_spec("kokoro") is None, reason="extra tts ausente")
 
 # Uma lista por porta. Etapas futuras acrescentam os adapters reais.
@@ -120,6 +126,7 @@ TTS: list[Callable[[], TTSProvider]] = [
     pytest.param(FakeTTS, id="fake"),
     pytest.param(make_gemini_tts, id="gemini"),  # POST falso: sem rede (§2.10)
     pytest.param(make_kokoro, id="kokoro", marks=[pytest.mark.slow, NEEDS_TTS_EXTRA]),
+    pytest.param(make_chatterbox, id="chatterbox"),
 ]
 IMAGE_GEN: list[Callable[[], ImageGenProvider]] = [pytest.param(FakeImageGen, id="fake")]
 ARCHIVES: list[Callable[[], ArchiveProvider]] = [

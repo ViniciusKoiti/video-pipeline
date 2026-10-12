@@ -1,0 +1,385 @@
+{
+  "relatorio": "Custo de produção: das fontes ao roteiro pronto para o gate 2",
+  "data": "2026-10-12",
+  "episodios": [
+    "thiel-contrato-pt",
+    "thiel-empresa-pt"
+  ],
+  "base_de_pesquisa": "thiel-dados-pt",
+  "formato": "Reel 9:16, pt-BR, 80 a 90 s, explainer",
+  "escopo": {
+    "inclui": [
+      "download de fontes",
+      "fichamento",
+      "gate 1",
+      "roteiro",
+      "checagem",
+      "legenda do post"
+    ],
+    "nao_inclui": [
+      "voz",
+      "busca de imagem",
+      "render",
+      "prévia",
+      "atualização do motion-kit",
+      "gate 2",
+      "publicação"
+    ]
+  },
+  "custo_em_dinheiro": {
+    "api_paga_usd": 0,
+    "provedores_pagos_chamados": [],
+    "provedores_gratuitos_chamados": [],
+    "observacao": "MAX_API_SPEND_USD=0 respeitado. Os agentes rodaram no plano do Claude do dono, que não é cobrado por chamada (ADR 009); o valor em dinheiro desse uso não é medido aqui."
+  },
+  "plano_do_claude": {
+    "unidade": "tokens por agente, como informados pelo Claude Code ao fim de cada execução (subagent_tokens, acumulado do agente)",
+    "agentes": [
+      {
+        "agente": "pesquisador",
+        "episodio": "thiel-dados-pt",
+        "execucoes": 4,
+        "tokens": 276916,
+        "duracao_s": 1378,
+        "ferramentas": 39,
+        "trabalho": "45 fichas de 6 fontes; 8 fichas da fonte 7; duas rodadas de ajustes de redação"
+      },
+      {
+        "agente": "roteirista",
+        "episodio": "thiel-contrato-pt",
+        "execucoes": 2,
+        "tokens": 163207,
+        "duracao_s": 631,
+        "ferramentas": 48,
+        "trabalho": "roteiro, outline e legenda; correções da primeira checagem"
+      },
+      {
+        "agente": "roteirista",
+        "episodio": "thiel-empresa-pt",
+        "execucoes": 3,
+        "tokens": 207120,
+        "duracao_s": 888,
+        "ferramentas": 48,
+        "trabalho": "roteiro, outline e legenda; correções das duas checagens"
+      },
+      {
+        "agente": "verificador",
+        "episodio": "thiel-contrato-pt",
+        "execucoes": 1,
+        "tokens": 95049,
+        "duracao_s": 162,
+        "ferramentas": 16,
+        "trabalho": "primeira checagem: 3 erros, 10 riscos"
+      },
+      {
+        "agente": "verificador",
+        "episodio": "thiel-empresa-pt",
+        "execucoes": 1,
+        "tokens": 93048,
+        "duracao_s": 155,
+        "ferramentas": 19,
+        "trabalho": "primeira checagem: 5 erros, 9 riscos"
+      },
+      {
+        "agente": "verificador",
+        "episodio": "thiel-contrato-pt",
+        "execucoes": 1,
+        "tokens": 99176,
+        "duracao_s": 165,
+        "ferramentas": 15,
+        "trabalho": "segunda checagem: 1 erro, 13 riscos"
+      },
+      {
+        "agente": "verificador",
+        "episodio": "thiel-empresa-pt",
+        "execucoes": 1,
+        "tokens": 98834,
+        "duracao_s": 180,
+        "ferramentas": 21,
+        "trabalho": "segunda checagem: nenhum erro, 8 riscos"
+      }
+    ],
+    "total_tokens_agentes": 1033350,
+    "total_execucoes_agentes": 13,
+    "total_duracao_agentes_s": 3559,
+    "por_etapa_tokens": {
+      "fichamento": 276916,
+      "roteiro": 370327,
+      "checagem": 386107
+    },
+    "nao_medido": [
+      "horas humanas",
+      "divisão exata de tokens de saída dos agentes (ver equivalente_na_api.ressalvas)"
+    ],
+    "ressalva_duracao": "Soma das durações informadas por execução; a última execução do pesquisador pode incluir tempo de espera entre duas mensagens enfileiradas."
+  },
+  "por_video": {
+    "videos": 2,
+    "tokens_de_agente_por_video": 516675,
+    "observacao": "A pesquisa (fontes e fichas) foi feita uma vez e serviu aos dois vídeos; um terceiro vídeo das mesmas fichas custaria só roteiro e checagem (cerca de 380 mil tokens por vídeo, pela média destes dois)."
+  },
+  "tempo_de_relogio": {
+    "inicio": "2026-10-12T14:32-03:00",
+    "fim": "2026-10-12T17:31-03:00",
+    "minutos": 179,
+    "observacao": "Inclui as esperas por decisão do dono e por arquivos salvos à mão; não é tempo de trabalho contínuo."
+  },
+  "rede": {
+    "downloads_autorizados": 8,
+    "baixadas_pelo_script": 5,
+    "baixada_com_contato_no_user_agent": 1,
+    "copiada_a_mao_pelo_dono": 1,
+    "fora": 1,
+    "detalhe": {
+      "baixadas_pelo_script": [
+        "Defense News (AP)",
+        "Yahoo News (Business Insider)",
+        "Chequeado",
+        "The Globe and Mail",
+        "Tecnoblog"
+      ],
+      "baixada_com_contato_no_user_agent": [
+        "SEC, Form 10-K de 2024"
+      ],
+      "copiada_a_mao_pelo_dono": [
+        "Business Wire, comunicado Palantir e Grupo Globo (403 para o robô)"
+      ],
+      "fora": [
+        "Digital Health, contrato do NHS (403 para o robô)"
+      ]
+    }
+  },
+  "producao": {
+    "fontes_registradas": 7,
+    "trechos_numerados": 4453,
+    "fichas": 53,
+    "fichas_impact_today": 0,
+    "fichas_com_redacao_ajustada_pela_checagem": 26,
+    "open_questions": 29,
+    "roteiros": [
+      {
+        "episodio": "thiel-contrato-pt",
+        "cenas": 7,
+        "planos": 24,
+        "duracao_estimada_s": 89,
+        "fichas_no_roteiro": [
+          "F01",
+          "F02",
+          "F03",
+          "F06",
+          "F13",
+          "F27",
+          "F39"
+        ],
+        "fichas_so_na_legenda": [
+          "F04",
+          "F05"
+        ]
+      },
+      {
+        "episodio": "thiel-empresa-pt",
+        "cenas": 8,
+        "planos": 21,
+        "duracao_estimada_s": 89,
+        "fichas_no_roteiro": [
+          "F17",
+          "F18",
+          "F21",
+          "F46",
+          "F47",
+          "F53"
+        ],
+        "fichas_so_na_legenda": [
+          "F26",
+          "F27",
+          "F49"
+        ]
+      }
+    ],
+    "rodadas_de_checagem_por_roteiro": 2,
+    "achados_da_checagem": {
+      "primeira_rodada": {
+        "erros": 8,
+        "riscos": 19
+      },
+      "segunda_rodada": {
+        "erros": 1,
+        "riscos": 21
+      },
+      "erros_abertos_ao_fim": 0,
+      "observacao": "As correções da segunda rodada não passaram por um terceiro verificador; passaram no vp check."
+    }
+  },
+  "decisoes_humanas": [
+    {
+      "decisao": "lista de oito fontes e ângulo (dados e vigilância)",
+      "quando": "prompt da sessão"
+    },
+    {
+      "decisao": "autorizar User-Agent de navegador e contato no User-Agent da SEC",
+      "quando": "2026-10-12"
+    },
+    {
+      "decisao": "copiar à mão o comunicado da Business Wire",
+      "quando": "2026-10-12"
+    },
+    {
+      "decisao": "fazer dois reels (A: o contrato; B: a empresa) em vez de um",
+      "quando": "2026-10-12"
+    },
+    {
+      "decisao": "gate 1 aprovado nos dois episódios",
+      "quando": "2026-10-12 16:20"
+    },
+    {
+      "decisao": "abertura alternativa no reel B",
+      "quando": "2026-10-12"
+    },
+    {
+      "decisao": "gate 1 revalidado após ajustes de redação das fichas",
+      "quando": "2026-10-12 17:31"
+    }
+  ],
+  "horas_humanas": null,
+  "horas_humanas_observacao": "Não medido: o dono precisa informar o tempo que dedicou (leitura das fichas e dos roteiros, cópia do comunicado, decisões).",
+  "pendente_para_fechar_o_custo_do_video": [
+    "voz de rascunho (Kokoro, local) e voz final (Gemini TTS, 10 chamadas por dia na camada gratuita)",
+    "busca e aprovação de imagens (gate 3)",
+    "render da prévia e do final (tempo de máquina, com a sonda de CPU)",
+    "gate 2 e gate 4"
+  ],
+  "equivalente_na_api": {
+    "o_que_e": "Quanto esta sessão custaria se fosse cobrada por token na API da Anthropic, em vez do plano do Claude. Não é um valor cobrado.",
+    "modelo": "claude-opus-5-5 (conversa principal e todos os agentes)",
+    "precos_usd_por_milhao": {
+      "entrada": 4.0,
+      "saida": 20.0,
+      "leitura_de_cache": 0.2,
+      "escrita_de_cache_5min": 5.0,
+      "escrita_de_cache_1h": 8.0
+    },
+    "fonte_dos_precos": "tabela de modelos do Claude Code (cache de 2026-10-06) para entrada, saída e leitura de cache; escrita de cache pelos multiplicadores usuais (1,25x para 5 min; 2x para 1 h, este último é suposição minha)",
+    "fonte_do_uso": "campos `usage` dos registros da sessão em ~/.claude/projects (medido até 2026-10-12 17:50, inclui o começo do trabalho no motion-kit)",
+    "total_usd": {
+      "min": 21.85,
+      "max": 23.66
+    },
+    "por_video_usd": {
+      "min": 10.93,
+      "max": 11.83
+    },
+    "tokens": {
+      "leitura_cache": 25281445,
+      "escrita_cache_5m": 1525776,
+      "escrita_cache_1h": 323084,
+      "entrada_sem_cache": 410,
+      "saida_registrada": 179129,
+      "saida_estimada_min": 329128,
+      "saida_estimada_max": 419325,
+      "chamadas": 171
+    },
+    "por_origem": {
+      "conversa principal": {
+        "chamadas": 103,
+        "leitura_cache": 19006083,
+        "escrita_cache_5m": 0,
+        "escrita_cache_1h": 323084,
+        "entrada_sem_cache": 260,
+        "saida_registrada": 108123,
+        "saida_estimada_min": 108123,
+        "saida_estimada_max": 108123,
+        "usd_min": 8.55,
+        "usd_max": 8.55
+      },
+      "verificador B2": {
+        "chamadas": 5,
+        "leitura_cache": 251519,
+        "escrita_cache_5m": 93330,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 10,
+        "saida_registrada": 12782,
+        "saida_estimada_min": 15683,
+        "saida_estimada_max": 17426,
+        "usd_min": 0.83,
+        "usd_max": 0.87
+      },
+      "verificador A2": {
+        "chamadas": 4,
+        "leitura_cache": 169951,
+        "escrita_cache_5m": 93276,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 8,
+        "saida_registrada": 11954,
+        "saida_estimada_min": 15087,
+        "saida_estimada_max": 16970,
+        "usd_min": 0.8,
+        "usd_max": 0.84
+      },
+      "roteirista B": {
+        "chamadas": 18,
+        "leitura_cache": 2144322,
+        "escrita_cache_5m": 384009,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 40,
+        "saida_registrada": 13423,
+        "saida_estimada_min": 39402,
+        "saida_estimada_max": 55055,
+        "usd_min": 3.14,
+        "usd_max": 3.45
+      },
+      "verificador A1": {
+        "chamadas": 6,
+        "leitura_cache": 344340,
+        "escrita_cache_5m": 89102,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 12,
+        "saida_registrada": 10251,
+        "saida_estimada_min": 13033,
+        "saida_estimada_max": 14706,
+        "usd_min": 0.78,
+        "usd_max": 0.81
+      },
+      "pesquisador": {
+        "chamadas": 16,
+        "leitura_cache": 1758123,
+        "escrita_cache_5m": 623466,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 40,
+        "saida_registrada": 2783,
+        "saida_estimada_min": 94610,
+        "saida_estimada_max": 149774,
+        "usd_min": 5.36,
+        "usd_max": 6.46
+      },
+      "roteirista A": {
+        "chamadas": 14,
+        "leitura_cache": 1352260,
+        "escrita_cache_5m": 158915,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 30,
+        "saida_registrada": 10029,
+        "saida_estimada_min": 30449,
+        "saida_estimada_max": 42754,
+        "usd_min": 1.67,
+        "usd_max": 1.92
+      },
+      "verificador B1": {
+        "chamadas": 5,
+        "leitura_cache": 254847,
+        "escrita_cache_5m": 83678,
+        "escrita_cache_1h": 0,
+        "entrada_sem_cache": 10,
+        "saida_registrada": 9784,
+        "saida_estimada_min": 12741,
+        "saida_estimada_max": 14517,
+        "usd_min": 0.72,
+        "usd_max": 0.76
+      }
+    },
+    "ressalvas": [
+      "Os tokens de saída dos agentes estão incompletos no registro (mensagens com 50 mil caracteres gerados aparecem com 3 a 6 tokens). A saída foi estimada pelo texto gerado, a 2,5 a 4 caracteres por token; daí a faixa.",
+      "Quase todo o volume é leitura de cache (o contexto reenviado a cada chamada), que custa 5% da entrada normal. Sem cache, os mesmos tokens de entrada custariam cerca de US$ 100.",
+      "O maior custo isolado é a conversa principal (orquestração); entre os agentes, o pesquisador, que regravou o facts.json inteiro em cada rodada por não ter edição parcial."
+    ]
+  }
+}
