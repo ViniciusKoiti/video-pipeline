@@ -9,12 +9,21 @@ alerta vai para a revisão humana.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 
 from pydantic import ValidationError
 
 from app.media.narration import timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.ports import M, ManifestStore
+from app.pipeline.radar import (
+    BRIEF_FILE,
+    CAPTION_FILE,
+    RadarBrief,
+    brief_summary,
+    form_warnings,
+    unmeasured_patterns,
+)
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
     OVERLAY_SHOT_KINDS,
@@ -288,14 +297,39 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
     return warnings
 
 
+def _check_radar(
+    store: ManifestStore,
+    episode_id: str,
+    scenes: ScenesManifest,
+    report: CheckReport,
+    chars_per_second: float,
+    today: date | None,
+) -> None:
+    """Forma do roteiro contra o resumo do reels-radar, se o episódio tiver um (ADR 018). Só alertas: o
+    resumo é observação de amostra pequena e nunca fonte de fato."""
+    brief = _read(store, episode_id, BRIEF_FILE, RadarBrief, report)
+    if brief is None:
+        return
+    caption_path = store.path(episode_id, CAPTION_FILE)
+    caption = caption_path.read_text(encoding="utf-8") if caption_path.is_file() else None
+    line = brief_summary(brief)
+    unmeasured = unmeasured_patterns(scenes, brief, chars_per_second, caption)
+    if unmeasured:
+        line += f"; sem conferência no texto: {', '.join(unmeasured)}"
+    report.checked.append(line)
+    report.warnings += form_warnings(scenes, brief, chars_per_second, caption, today)
+
+
 def check_episode(
     store: ManifestStore,
     episode_id: str,
     region_codes: frozenset[str] | None = None,
     chars_per_second: float = CHARS_PER_SECOND,
+    today: date | None = None,
 ) -> CheckReport:
     """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
-    `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos."""
+    `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos.
+    `today`: a data de hoje, para dizer se o resumo do radar do episódio já está velho."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -308,6 +342,7 @@ def check_episode(
             _check_facts(facts, sources, excerpts, report)
     if scenes is not None:
         _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
+        _check_radar(store, episode_id, scenes, report, chars_per_second, today)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
     return report

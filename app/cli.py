@@ -12,7 +12,7 @@ import subprocess
 import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
@@ -149,7 +149,7 @@ def _excerpts(args: argparse.Namespace, context: Context) -> int:
 def _check(args: argparse.Namespace, context: Context) -> int:
     report = check_episode(
         context.store, args.episode_id, region_codes=region_codes(),
-        chars_per_second=speech_chars_per_second(context.settings),
+        chars_per_second=speech_chars_per_second(context.settings), today=date.today(),
     )
     for line in report.checked:
         print(f"ok      {line}")

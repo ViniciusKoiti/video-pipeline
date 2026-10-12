@@ -95,7 +95,8 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
 Remotion do `explainer` (ADR 008) · `.claude/agents/` e `.claude/skills/` etapas criativas (§15) · `prompts/local/`
 prompts para modelo local · `config/providers.toml` implementação por função · `scripts/provisorio/` scripts até
 virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
-`outline.md`, `scenes.json`, `review.json`, `sources/`, `excerpts/`, `assets/`, `voice/`, `renders/`) ·
+`outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `pauta.md`, `sources/`, `excerpts/`, `assets/`,
+`voice/`, `renders/`) ·
 `data/benchmarks/` medições e termos dos provedores · `data/cache/` fora do Git. Variáveis de ambiente: nomes e
 exemplos não secretos em `.env.example`.
 
@@ -110,6 +111,9 @@ exemplos não secretos em `.env.example`.
 - `tests/test_architecture.py` falha se `app/pipeline/` importar adapter concreto ou biblioteca pesada.
 
 ## 4. Fluxo de trabalho
+
+Nos Reels, antes das fontes: resumo do nicho no reels-radar (`radar_resumo.py`) → pauta (skill `pauta`), que o
+dono aprova (ADR 018). O resumo é forma, nunca fato; o `vp check` avisa onde o roteiro foge dos padrões dele.
 
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
@@ -323,6 +327,9 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   perguntar ao dono; em conflito valem as ADRs.
 - Etapas criativas: agentes em `.claude/agents/` com o método nas skills de `.claude/skills/`; o que eles escrevem
   passa pelo `vp check` e pelos gates humanos (ADR 009). Ver §15.
+- Reels: o resumo do reels-radar (`~/projetos/radar-de-reels`, `RADAR_DIR` no `.env`) entra como cópia datada no
+  episódio e orienta só a forma (ADR 018). Gerar ou atualizar o resumo é no outro projeto; coleta que gasta
+  crédito só com decisão do dono. Nenhuma afirmação do roteiro sai do resumo.
 - **Instruções a agentes, notas de fonte e exemplos:** só o que está nos trechos baixados. Citar fichas por id
   (F08) e trechos (`source-02#E46`) em vez de reescrever o fato; conferir na página antes de escrever uma nota;
   pedir gancho e promessa como pergunta neutra. Um fato ou enquadramento meu no prompt vira roteiro, e o
@@ -346,7 +353,8 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador →
 voz + render → gate 2. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
-que muda faz o gate 1 voltar ao dono.
+que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
+pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).
 
 **Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
 unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),

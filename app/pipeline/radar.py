@@ -1,0 +1,165 @@
+"""Resumo do reels-radar como entrada de FORMA do roteiro (ADR 018).
+
+O reels-radar (projeto à parte) lê Reels de um nicho e grava `briefs/<nicho>.json` (`script_brief.v1`): que
+características de forma andam com mais ou menos compartilhamento. Uma cópia datada fica na pasta do episódio
+(`radar-brief.json`); aqui ela é lida e comparada com o roteiro. É observação de amostra pequena, nunca fonte
+de fato (§2.2): só gera alertas, e só do que dá para medir no texto. O que depende de olhar o vídeo (pessoa
+falando para a câmera, tom de alerta) fica para a skill de roteiro e para a revisão humana.
+"""
+
+from __future__ import annotations
+
+import re
+from datetime import date, datetime
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.media.narration import strip_pauses, timeline_length
+from app.pipeline.schemas import ScenesManifest
+
+BRIEF_FILE = "radar-brief.json"
+CAPTION_FILE = "legenda-post.txt"
+MAX_AGE_DAYS = 45  # depois disso o resumo descreve Reels que já saíram de circulação
+OPENING_SHOTS = 2  # o título de alerta conta se for um dos primeiros planos da primeira cena
+
+_VIEWER = {
+    "pt-BR": r"\b(você|vocês|seu|sua|seus|suas|teu|tua|teus|tuas|contigo)\b",
+    "en": r"\b(you|your|yours)\b",
+}
+_SENTENCE_END = re.compile(r"(?<=[.?!…])\s+")
+_EMOJI = re.compile("[\U0001f000-\U0001faff☀-➿⬀-⯿]")
+_ASKS_COMMENT = re.compile(r"coment|comment", re.IGNORECASE)
+
+
+class _Radar(BaseModel):
+    # O contrato é do reels-radar e pode ganhar campos: o que não é lido aqui é ignorado.
+    model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
+
+
+class RadarGuidance(_Radar):
+    about: str  # form | opening | video | engagement | theme
+    trait: str
+    advice: Literal["use", "avoid"]
+    strength: Literal["pattern", "hint"]  # pattern: 5+ Reels de cada lado e acaso até 10%; hint: até 30%
+    share_rate_with: float | None = None
+    share_rate_without: float | None = None
+    n_with: int
+    n_without: int
+    chance: float
+
+
+class RadarBrief(_Radar):
+    schema_name: Literal["script_brief.v1"] = Field(alias="schema")
+    niche: str
+    generated_at: datetime
+    analysed: int  # quantos Reels foram lidos
+    guidance: list[RadarGuidance] = []
+    themes: list[RadarGuidance] = []  # palavras soltas das legendas: pergunta para a pesquisa, nunca fato
+    thresholds: dict[str, float] = {}
+    caveats: list[str] = []
+
+    def patterns(self) -> list[RadarGuidance]:
+        return [g for g in self.guidance if g.strength == "pattern"]
+
+    def hints(self) -> list[RadarGuidance]:
+        return [g for g in self.guidance if g.strength == "hint"]
+
+
+def brief_summary(brief: RadarBrief) -> str:
+    return (
+        f"{BRIEF_FILE}: nicho {brief.niche}, {brief.analysed} Reels lidos, de {brief.generated_at:%d/%m/%Y}; "
+        f"{len(brief.patterns())} padrão(ões) e {len(brief.hints())} indício(s) de forma"
+    )
+
+
+def opening_sentence(scenes: ScenesManifest) -> str:
+    """A primeira frase falada do vídeo, sem as marcas de pausa."""
+    text = strip_pauses(scenes.scenes[0].narration).strip()
+    return _SENTENCE_END.split(text, maxsplit=1)[0]
+
+
+def _rates(g: RadarGuidance) -> str:
+    if g.share_rate_with is None or g.share_rate_without is None:
+        return f"n={g.n_with}/{g.n_without}"
+    with_, without = f"{g.share_rate_with:.1%}", f"{g.share_rate_without:.1%}"
+    return f"{with_} com × {without} sem, n={g.n_with}/{g.n_without}".replace(".", ",")
+
+
+def _measured(
+    trait: str,
+    scenes: ScenesManifest,
+    brief: RadarBrief,
+    chars_per_second: float,
+    caption: str | None,
+) -> tuple[bool, str] | None:
+    """(o roteiro tem a característica?, o que foi medido) ou None quando o código não sabe medir."""
+    opening = opening_sentence(scenes)
+    if trait == "long_video" and "long_video_above_s" in brief.thresholds:
+        limit = brief.thresholds["long_video_above_s"]
+        seconds = sum(timeline_length(s.narration) for s in scenes.scenes) / chars_per_second
+        return seconds > limit, f"o roteiro tem ~{seconds:.0f} s e o corte é {limit:.0f} s"
+    if trait == "addresses_viewer" and scenes.language in _VIEWER:
+        found = re.search(_VIEWER[scenes.language], opening, re.IGNORECASE) is not None
+        return found, f"abertura: {opening!r}"
+    if trait == "opens_question":
+        return opening.rstrip().endswith("?"), f"abertura: {opening!r}"
+    if trait == "long_opening" and "long_opening_above_words" in brief.thresholds:
+        limit = brief.thresholds["long_opening_above_words"]
+        words = len(opening.split())
+        return words > limit, f"a abertura tem {words} palavras e o corte é {limit:.0f}"
+    if trait == "screen_alert":
+        kinds = [shot.kind for shot in scenes.scenes[0].shots[:OPENING_SHOTS]]
+        return "keyword" in kinds, f"primeiros planos: {', '.join(kinds) or 'nenhum'}"
+    if caption is not None:
+        first_line = caption.strip().splitlines()[0] if caption.strip() else ""
+        if trait == "has_emoji":
+            return _EMOJI.search(first_line) is not None, f"primeira linha da legenda: {first_line!r}"
+        if trait == "ask_comment":
+            return _ASKS_COMMENT.search(caption) is not None, "legenda do post"
+        if trait == "long_caption" and "long_caption_above_words" in brief.thresholds:
+            limit = brief.thresholds["long_caption_above_words"]
+            words = len(caption.split())
+            return words > limit, f"a legenda tem {words} palavras e o corte é {limit:.0f}"
+    return None
+
+
+def form_warnings(
+    scenes: ScenesManifest,
+    brief: RadarBrief,
+    chars_per_second: float,
+    caption: str | None = None,
+    today: date | None = None,
+) -> list[str]:
+    """Onde o roteiro vai contra um PADRÃO do resumo, no que o código sabe medir. Indícios (`hint`) e o que
+    não dá para medir no texto não geram alerta (`unmeasured_patterns` diz o que ficou sem conferência)."""
+    warnings: list[str] = []
+    if today is not None:
+        age = (today - brief.generated_at.date()).days
+        if age > MAX_AGE_DAYS:
+            made = f"{brief.generated_at:%d/%m/%Y}"
+            warnings.append(f"radar: resumo de {made} ({age} dias); gere outro no reels-radar")
+    for g in brief.patterns():
+        result = _measured(g.trait, scenes, brief, chars_per_second, caption)
+        if result is None:
+            continue
+        has, detail = result
+        if has != (g.advice == "use"):
+            verb = "anda com mais" if g.advice == "use" else "anda com menos"
+            state = "não tem" if g.advice == "use" else "tem"
+            warnings.append(
+                f"radar ({brief.niche}, {brief.analysed} Reels): {g.trait} {verb} compartilhamento "
+                f"({_rates(g)}) e o roteiro {state}: {detail}"
+            )
+    return warnings
+
+
+def unmeasured_patterns(
+    scenes: ScenesManifest, brief: RadarBrief, chars_per_second: float, caption: str | None = None
+) -> list[str]:
+    """Padrões do resumo que o código não sabe conferir no texto: ficam para a prévia e a revisão humana."""
+    return [
+        g.trait
+        for g in brief.patterns()
+        if _measured(g.trait, scenes, brief, chars_per_second, caption) is None
+    ]
