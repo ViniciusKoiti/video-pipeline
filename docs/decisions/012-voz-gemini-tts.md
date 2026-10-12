@@ -1,6 +1,7 @@
 # 012 — Voz do explicativo em pt-BR: Gemini TTS (Charon)
 
-- **Status:** proposto (aceite depois da v5 do vídeo-régua, na escuta do dono)
+- **Status:** proposto; desde 2026-10-12 a voz do vídeo final é a clonada do dono (ADR 016). A Charon segue
+  registrada (`montar_episodio.py --voz=gemini`) e continua sendo a voz do vídeo-régua
 - **Data:** 2026-09-30
 - **Etapa do roadmap:** #15 (voz por bloco), #29 (comparação pequena de remotos gratuitos, §7)
 - **Relaciona-se com:** ADR 006 (portas e adaptadores), ADR 008 (pt-BR, voz Kokoro `pm_alex`), ADR 011

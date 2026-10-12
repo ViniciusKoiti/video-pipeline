@@ -109,8 +109,9 @@ def main() -> None:
                                  "feche os apps pesados e tente de novo")
             started = time.monotonic()
             script = ROOT / "scripts" / "provisorio" / "montar_episodio.py"
-            # O vídeo-régua usa sempre a voz final (ADR 012), já guardada: só o template muda.
-            command = [sys.executable, str(script), args.episode_id, "--preview", "--voz-final"]
+            # O vídeo-régua fica com a voz com que foi gravado (Charon, ADR 012), já guardada: só o
+            # template muda. A voz final de hoje é outra (ADR 016) e mudaria o tempo de todos os planos.
+            command = [sys.executable, str(script), args.episode_id, "--preview", "--voz=gemini"]
             subprocess.run(command, cwd=ROOT, check=True)
             save(episode_dir, args.nota, None, round(time.monotonic() - started, 1), probe)
         elif args.command == "guardar":

@@ -4,11 +4,13 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
      [--voz-final] [--voz=<nome>]`
 
 - Narração por cena, em `voice/<cena>-<provedor>-<hash>.wav`: a voz dos rascunhos (`tts`, Kokoro) ou, com
-  `--voz-final`, a do vídeo final (`tts_final`, Gemini Charon, ADR 012). O hash cobre o texto, o modelo, a voz
+  `--voz-final`, a do vídeo final (`tts_final`: a voz clonada do dono, ADR 016).
+  O hash cobre o texto, o modelo, a voz
   e a direção de fala: a fala só é gerada de novo quando um deles muda, e uma voz não apaga as falas da outra.
-- `--voz=<nome>` usa outra voz registrada, fora da escolha do `providers.toml`: hoje `chatterbox`, a voz
-  clonada local (ADR 016, proposta), uma cena por vez e bem mais lenta que o tempo real.
-- A voz final gera as cenas que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
+- `--voz=<nome>` usa uma voz registrada pelo nome, fora da escolha do `providers.toml`: `gemini` (Charon,
+  ADR 012; é a do vídeo-régua), `chatterbox` ou `kokoro`.
+- A voz clonada gera uma cena por vez, dezenas de vezes mais devagar que o tempo real. O Gemini gera as cenas
+  que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
   pode ser cortado com segurança é gerado cena a cena. Cota esgotada: o script para, as falas já geradas ficam
   no cache e a próxima execução continua.
 - Duração real de cada WAV (ffprobe) → tempo dos planos (app/pipeline/shots.py) → episode.json v2.

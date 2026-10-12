@@ -166,13 +166,13 @@ def test_close_stops_the_model_process(tmp_path: Path) -> None:
     assert worker.closed
 
 
-def test_paths_come_from_the_environment_and_the_default_voices_do_not_change(tmp_path: Path) -> None:
+def test_paths_come_from_the_environment_and_drafts_stay_on_kokoro(tmp_path: Path) -> None:
     env = {"CHATTERBOX_PYTHON": "/opt/voz/bin/python", "CHATTERBOX_REFERENCE": "~/voz/referencia.wav"}
     settings = load_settings(REPO_ROOT, env)
     assert settings.chatterbox.python == Path("/opt/voz/bin/python")
     assert settings.chatterbox.reference == Path("~/voz/referencia.wav")
-    # a ADR 012 segue valendo: a voz clonada não vira padrão por estar configurada
-    assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "gemini")
+    # ADR 016: a voz clonada é a do vídeo final; os rascunhos seguem no Kokoro, que é rápido
+    assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "chatterbox")
     (tmp_path / CONFIG_FILE.parent).mkdir()  # sem `.env` ao lado, para não depender do desta máquina
     (tmp_path / CONFIG_FILE).write_text((REPO_ROOT / CONFIG_FILE).read_text())
     assert load_settings(tmp_path, {}).chatterbox.python is None
@@ -185,11 +185,8 @@ def test_voice_by_name_outside_the_config_choice() -> None:
         context.tts_named("vozinha")
 
 
-def test_check_estimates_with_the_cloned_voice_rate_when_it_is_the_final_voice(tmp_path: Path) -> None:
-    config = (REPO_ROOT / CONFIG_FILE).read_text().replace('tts_final = "gemini"', 'tts_final = "chatterbox"')
-    (tmp_path / CONFIG_FILE.parent).mkdir()
-    (tmp_path / CONFIG_FILE).write_text(config)
-    settings = load_settings(tmp_path, {})
+def test_check_estimates_with_the_cloned_voice_rate() -> None:
+    settings = load_settings(REPO_ROOT, {})
     assert speech_chars_per_second(settings) == settings.chatterbox.chars_per_second
 
 

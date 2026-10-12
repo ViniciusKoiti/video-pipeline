@@ -5,7 +5,7 @@
 [providers]
 text = "ollama"
 tts = "kokoro"        # rascunhos e prévias de revisão: local, sem limite
-tts_final = "gemini"  # vídeo final e vídeo-régua: Charon, várias cenas por chamada (ADR 012, proposta)
+tts_final = "chatterbox"  # vídeo final: voz clonada do dono, local (ADR 016); "gemini" = Charon (ADR 012)
 image_gen = "workers_ai"
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"
@@ -32,7 +32,7 @@ styles = { "pt-BR" = "narração de documentário em português do Brasil, com s
 requests_per_minute = 3  # camada gratuita (erro 429 em 2026-09-29)
 chars_per_second = 13.0  # Charon: 12 a 14 caracteres por segundo no teste
 
-[chatterbox]  # voz clonada local (ADR 016, proposta); ambiente e gravação de referência no .env
+[chatterbox]  # voz clonada local (ADR 016); ambiente e gravação de referência no .env
 model = "v3"
 language_ids = { "pt-BR" = "pt", "en" = "en" }
 num_threads = 12

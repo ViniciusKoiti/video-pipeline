@@ -1,7 +1,7 @@
 # 016 — Voz clonada do dono no explicativo em pt-BR (Chatterbox local)
 
-- **Status:** proposto (aceite depende da escuta às cegas contra a Charon e da medição de tempo com a máquina
-  ociosa)
+- **Status:** aceito pelo dono em 2026-10-12, como voz do vídeo final (`tts_final`), sem a escuta às cegas contra a
+  Charon; as pendências do fim deste arquivo seguem como tarefas
 - **Data:** 2026-10-11
 - **Etapa do roadmap:** #15 (voz por bloco), #29 (comparação de vozes)
 - **Relaciona-se com:** ADR 006 (portas e adaptadores), ADR 012 (Gemini Charon; a opção 4 de lá, clonar a voz do
@@ -71,7 +71,7 @@ Charon. Qual delas vai no vídeo final continua sendo uma linha em `config/provi
 - Sem dicionário de fonemas: nome próprio errado pede a mesma lista "nome → como falar" da ADR 012.
 - `CLAUDE.md` §1, §7 e §9 mudam quando esta ADR for aceita.
 
-## Pendente antes do aceite
+## Pendente (não bloqueou o aceite)
 
 1. **Escuta às cegas** do dono, no molde da ADR 012: as mesmas falas do vídeo-régua em Charon, Kokoro e voz
    clonada, com o mesmo volume e letras sorteadas.
@@ -81,9 +81,12 @@ Charon. Qual delas vai no vídeo final continua sendo uma linha em `config/provi
 5. **Compatibilidade de dependências** com o extra `tts`, para decidir entre ambiente separado e extra novo.
 6. **Licença do modelo geral** conferida no cartão do Hugging Face e registrada em `data/benchmarks/`.
 
-## Implementado como experimento (2026-10-12)
+## Implementado e aceito (2026-10-12)
 
-A pedido do dono, o adapter entrou antes do aceite, sem mudar a voz padrão (ADR 012 segue valendo):
+A pedido do dono, o adapter entrou e, no mesmo dia, a voz clonada virou a voz do vídeo final
+(`tts_final = "chatterbox"`). Os rascunhos seguem no Kokoro, que é rápido. A Charon (ADR 012) continua
+registrada, pelo nome (`--voz=gemini`), e é a voz do vídeo-régua: o conteúdo dele é congelado, e trocar a voz
+mudaria o tempo de todos os planos.
 
 - `app/providers/tts/chatterbox.py` e `chatterbox_worker.py`: o modelo roda no ambiente próprio, num processo que
   carrega uma vez e atende uma cena por pedido; `<short pause>` vira silêncio (`pause_ms`), sem chegar ao modelo.
@@ -92,4 +95,5 @@ A pedido do dono, o adapter entrou antes do aceite, sem mudar a voz padrão (ADR
 - Medido com a máquina ociosa (sonda 0,05 s): 3,4 s de áudio em 180 s (primeira fala, com aquecimento) e 6,8 s em
   194 s. `chars_per_second = 14.0` é provisório (duas falas: 12,9 e 14,4).
 
-Os seis itens de "Pendente antes do aceite" continuam pendentes.
+Dos itens abaixo, o 6 foi feito (licença MIT conferida no cartão do modelo geral, registro em
+`data/benchmarks/termos-chatterbox.md`) e o 2 foi medido só em duas falas. Os outros seguem abertos.
