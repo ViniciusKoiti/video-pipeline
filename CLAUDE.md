@@ -114,6 +114,8 @@ exemplos não secretos em `.env.example`.
 
 Nos Reels, antes das fontes: resumo do nicho no reels-radar (`radar_resumo.py`) → pauta (skill `pauta`), que o
 dono aprova (ADR 018). O resumo é forma, nunca fato; o `vp check` avisa onde o roteiro foge dos padrões dele.
+Todo roteiro declara o **objetivo** (`objective` no `scenes.json`, ADR 019): `noticiar`, `explicar` ou `opinar`, de
+um a três na ordem em que aparecem, mais a promessa em uma frase. O objetivo e a tese de uma opinião vêm do dono.
 
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
@@ -154,6 +156,9 @@ revela:
   rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha.
   Cena sem planos = forma v1 (um plano de foto). `visual_need` ∈ `historical_exact | contextual_stock |
   map_or_graphic | illustrative_reconstruction`.
+- **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
+  (`event_date`, `question`, `thesis` + `thesis_by`). Opinião é dita como opinião e nunca vira dado na tela;
+  notícia com mais de 30 dias gera alerta; roteiro sem objetivo também.
 - **`sources.json`:** mínimo de 2 fontes independentes para os fatos principais. `Source.interested` marca fonte
   interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só.
 - **`facts.json` (ADR 009):** as fichas são a única base do roteiro. Cada evidência traz `excerpt_id` (parágrafo do

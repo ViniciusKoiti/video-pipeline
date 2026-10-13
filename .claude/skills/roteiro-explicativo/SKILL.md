@@ -155,6 +155,37 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
 
+## Objetivo do vídeo (ADR 019)
+
+Todo roteiro declara, no `scenes.json`, o que o vídeo se propõe a fazer. O objetivo vem da pauta ou do dono;
+se não veio, pergunte antes de escrever. Não escolha por ele.
+
+```text
+"objective": {
+  "kinds": ["explicar"],
+  "promise": "A pessoa entende o que o contrato compra.",
+  "question": "O que o governo comprou com esse contrato?"
+}
+```
+
+`kinds` traz de um a três tipos, na ordem em que aparecem no vídeo. O primeiro é o principal e manda na
+estrutura; os outros entram como partes menores. `promise` é uma frase: o que a pessoa sabe, entende ou pensa
+depois de assistir. Toda cena serve à promessa; cena que não serve sai.
+
+| Tipo | Campo a mais | Estrutura quando é o principal | O que não cabe |
+|---|---|---|---|
+| `noticiar` | `event_date`: quando o fato aconteceu | o fato novo e quem diz → o que muda → o que ainda não se sabe | opinião; fato com mais de 30 dias (o `vp check` avisa: aí o vídeo explica) |
+| `explicar` | `question`: a pergunta que o vídeo responde | a pergunta → o mecanismo em passos, ligados por causa → a resposta | terminar sem responder à pergunta |
+| `opinar` | `thesis` e `thesis_by`: a tese e de quem ela é | a tese → os fatos que a apoiam, com fonte → o melhor argumento contrário → a tese de novo | tese escrita pelo agente; opinião dita como fato |
+
+- **A opinião é do dono.** `thesis` chega pronta, nas palavras dele. A narração a diz como opinião, na
+  primeira pessoa ou atribuída ("eu acho", "para mim"), e nunca vira número, data ou citação na tela. Os fatos
+  em volta dela seguem as fichas, como sempre.
+- **Tipos combinados.** Num vídeo que noticia e depois opina, a parte de notícia termina antes de a opinião
+  começar, e o `outline.md` diz em que cena a opinião entra. Não misture as duas na mesma frase.
+- **No `outline.md`**, logo no começo: os tipos, a promessa e, para cada cena, a que parte ela pertence.
+- Se as fichas não sustentam a promessa, pare e devolva ao dono: trocar a promessa é decisão dele.
+
 ## Resumo do radar: forma, nunca fato (ADR 018)
 
 Se a pasta do episódio tem `radar-brief.json`, leia-o **antes** de escrever. É o resumo do reels-radar: o que

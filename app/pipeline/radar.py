@@ -49,6 +49,21 @@ class RadarGuidance(_Radar):
     chance: float
 
 
+class RadarPurposes(_Radar):
+    """Que tipo de vídeo (notícia, explicação, opinião) anda mais no nicho, quando o radar fez essa leitura.
+    Vem das palavras soltas das legendas, com o léxico do idioma de cada Reel: é palpite de vocabulário."""
+
+    reader: str
+    read: int  # quantos Reels tiveram a legenda lida
+    main_purposes: dict[str, int] = {}  # tipo principal (ou "none") -> Reels
+    guidance: list[RadarGuidance] = []  # `purpose_news`, `purpose_explain`, `purpose_opinion`
+    no_basis: list[str] = []
+
+
+# tipo do radar -> objetivo do roteiro (ADR 019)
+PURPOSE_KINDS = {"purpose_news": "noticiar", "purpose_explain": "explicar", "purpose_opinion": "opinar"}
+
+
 class RadarBrief(_Radar):
     schema_name: Literal["script_brief.v1"] = Field(alias="schema")
     niche: str
@@ -58,9 +73,12 @@ class RadarBrief(_Radar):
     themes: list[RadarGuidance] = []  # palavras soltas das legendas: pergunta para a pesquisa, nunca fato
     thresholds: dict[str, float] = {}
     caveats: list[str] = []
+    purposes: RadarPurposes | None = None  # resumos antigos não têm
 
     def patterns(self) -> list[RadarGuidance]:
-        return [g for g in self.guidance if g.strength == "pattern"]
+        """Os padrões de forma e, quando o radar leu os tipos, os de tipo de vídeo."""
+        about_kind = self.purposes.guidance if self.purposes else []
+        return [g for g in [*self.guidance, *about_kind] if g.strength == "pattern"]
 
     def hints(self) -> list[RadarGuidance]:
         return [g for g in self.guidance if g.strength == "hint"]
@@ -70,7 +88,14 @@ def brief_summary(brief: RadarBrief) -> str:
     return (
         f"{BRIEF_FILE}: nicho {brief.niche}, {brief.analysed} Reels lidos, de {brief.generated_at:%d/%m/%Y}; "
         f"{len(brief.patterns())} padrão(ões) e {len(brief.hints())} indício(s) de forma"
+        + (_purposes_summary(brief.purposes) if brief.purposes else "")
     )
+
+
+def _purposes_summary(purposes: RadarPurposes) -> str:
+    names = {"news": "notícia", "explain": "explicação", "opinion": "opinião", "none": "sem sinal"}
+    counts = ", ".join(f"{names.get(kind, kind)} {n}" for kind, n in purposes.main_purposes.items())
+    return f"; tipos lidos em {purposes.read} Reels ({counts})"
 
 
 def opening_sentence(scenes: ScenesManifest) -> str:
@@ -95,6 +120,11 @@ def _measured(
 ) -> tuple[bool, str] | None:
     """(o roteiro tem a característica?, o que foi medido) ou None quando o código não sabe medir."""
     opening = opening_sentence(scenes)
+    if trait in PURPOSE_KINDS:
+        if scenes.objective is None:
+            return None  # sem objetivo declarado não há o que comparar; o `vp check` já avisa disso
+        kinds = scenes.objective.kinds
+        return PURPOSE_KINDS[trait] in kinds, f"o objetivo declarado é {' + '.join(kinds)}"
     if trait == "long_video" and "long_video_above_s" in brief.thresholds:
         limit = brief.thresholds["long_video_above_s"]
         seconds = sum(timeline_length(s.narration) for s in scenes.scenes) / chars_per_second

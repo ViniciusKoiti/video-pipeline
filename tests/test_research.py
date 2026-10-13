@@ -52,11 +52,20 @@ def fact(fid: str = "F01", **extra: Any) -> dict[str, Any]:
     }
 
 
+# um roteiro limpo declara o que se propõe a fazer (ADR 019)
+OBJECTIVE = {
+    "kinds": ["explicar"],
+    "promise": "A pessoa entende como a fábrica mudou de dono.",
+    "question": "Como uma fábrica falida mudou de dono?",
+}
+
+
 def scenes(**claim: Any) -> dict[str, Any]:
     narration = "Em 1918, uma fábrica de tecidos falida mudou de dono, comprada num leilão perto de Sorocaba."
     return {
         "episode_id": EP,
         "language": "pt-BR",
+        "objective": OBJECTIVE,
         "scenes": [
             {
                 "id": "S01",

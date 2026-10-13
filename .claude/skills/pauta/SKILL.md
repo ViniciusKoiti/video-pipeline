@@ -27,18 +27,21 @@ O resumo é observação de amostra pequena (`analysed` diz quantos Reels), nunc
 1. **Nicho e base.** Nome do nicho, quantos Reels, data do resumo e a medida usada. Se o resumo tem mais de 45
    dias ou menos de 30 Reels, diga isso na primeira linha.
 2. **Público.** Quem assiste, nas palavras do dono. Não deduza do resumo.
-3. **Tema concreto.** Dos `themes` com `strength: "pattern"`, quais têm a ver com o ângulo do dono. Para cada
+3. **Objetivo (ADR 019).** O que o dono quer que o vídeo faça: `noticiar`, `explicar`, `opinar`, ou mais de
+   um, na ordem. Mais a promessa em uma frase. Se ele não disse, este item fica como pergunta ao dono, com as
+   opções; não escolha por ele. Para `opinar`, a tese é dele e vem escrita por ele.
+4. **Tema concreto.** Dos `themes` com `strength: "pattern"`, quais têm a ver com o ângulo do dono. Para cada
    um, a pergunta que as fontes precisam responder para o tema poder entrar. Tema `avoid` ou `hint` vai numa
    linha à parte, como hipótese.
-4. **Forma.** Uma linha por padrão de `guidance` (o que usar, o que evitar, com `n` e `chance`), os cortes de
+5. **Forma.** Uma linha por padrão de `guidance` (o que usar, o que evitar, com `n` e `chance`), os cortes de
    `thresholds` e o perfil de `top` (duração e tamanho da abertura dos melhores). Separe o que o roteiro
    controla (abertura, duração, título na tela, legenda) do que depende do vídeo (pessoa falando para a câmera).
-5. **O que as fontes precisam responder.** De três a seis perguntas neutras, sem resposta embutida. Marque a
+6. **O que as fontes precisam responder.** De três a seis perguntas neutras, sem resposta embutida. Marque a
    que sustenta falar com quem assiste: se nenhuma fonte responder a ela, o vídeo não pode afirmar nada sobre
    o espectador.
-6. **Critério de parada.** O que precisa aparecer nas fichas para o roteiro valer a pena. Sem isso depois do
+7. **Critério de parada.** O que precisa aparecer nas fichas para a promessa do item 3 se sustentar. Sem isso depois do
    fichamento, a pauta volta ao dono antes do roteiro.
-7. **O que o resumo não diz.** O que está em `no_basis`, e o que só uma coleta nova responderia. Coleta que
+8. **O que o resumo não diz.** O que está em `no_basis`, e o que só uma coleta nova responderia. Coleta que
    gasta crédito é decisão do dono: não a proponha como passo automático.
 
 ## Regras

@@ -169,3 +169,56 @@ def test_vp_check_without_a_brief_says_nothing_about_the_radar(tmp_path: Path) -
 def test_brief_with_the_wrong_contract_is_an_error(tmp_path: Path) -> None:
     report = check_episode(write_episode(tmp_path, {"schema": "patterns.v1"}), "ep")
     assert any(error.startswith("radar-brief.json:") for error in report.errors)
+
+
+# --- tipo de vídeo do radar × objetivo do roteiro (ADR 019) -----------------------------------------
+
+
+def with_purposes(*items: dict[str, Any]) -> RadarBrief:
+    block = {
+        "reader": "purpose-keywords@2", "read": 30, "main_purposes": {"explain": 14, "none": 10, "news": 6},
+        "guidance": list(items), "no_basis": ["purpose_opinion"], "language_unknown": 3,
+    }
+    return brief(purposes=block)
+
+
+def with_objective(kinds: list[str], **fields: Any) -> ScenesManifest:
+    raw = scenes(LONG).model_dump(mode="json")
+    raw["objective"] = {"kinds": kinds, "promise": "A pessoa entende o contrato.", **fields}
+    return ScenesManifest.model_validate(raw)
+
+
+EXPLAINS = {"question": "O que o contrato compra?"}
+
+
+def test_brief_summary_shows_the_kinds_the_radar_read() -> None:
+    assert brief_summary(with_purposes()).endswith(
+        "; tipos lidos em 30 Reels (explicação 14, sem sinal 10, notícia 6)"
+    )
+    assert "tipos lidos" not in brief_summary(brief())  # resumo antigo, sem o bloco
+
+
+def test_objective_is_compared_with_the_kind_pattern_of_the_niche() -> None:
+    read = with_purposes(guidance("purpose_explain", about="purpose"))
+    assert form_warnings(with_objective(["explicar"], **EXPLAINS), read, 14.0) == []
+    (warning,) = form_warnings(with_objective(["noticiar"], event_date="2026-10-01"), read, 14.0)
+    assert "purpose_explain anda com mais compartilhamento" in warning
+    assert "o objetivo declarado é noticiar" in warning
+    both = with_objective(["noticiar", "explicar"], event_date="2026-10-01", **EXPLAINS)
+    assert form_warnings(both, read, 14.0) == []  # o tipo está no vídeo, mesmo sem ser o principal
+
+
+def test_kind_to_avoid_warns_only_when_the_script_has_it() -> None:
+    read = with_purposes(guidance("purpose_opinion", advice="avoid", about="purpose"))
+    opinion = with_objective(["opinar"], thesis="Deveria ter licitação.", thesis_by="dono")
+    (warning,) = form_warnings(opinion, read, 14.0)
+    assert "purpose_opinion anda com menos compartilhamento" in warning
+    assert form_warnings(with_objective(["explicar"], **EXPLAINS), read, 14.0) == []
+
+
+def test_without_an_objective_or_with_only_a_hint_the_kind_does_not_warn() -> None:
+    read = with_purposes(guidance("purpose_explain", about="purpose"))
+    assert form_warnings(scenes(LONG), read, 14.0) == []
+    assert unmeasured_patterns(scenes(LONG), read, 14.0) == ["purpose_explain"]
+    hint = with_purposes(guidance("purpose_explain", strength="hint", about="purpose"))
+    assert form_warnings(with_objective(["noticiar"], event_date="2026-10-01"), hint, 14.0) == []

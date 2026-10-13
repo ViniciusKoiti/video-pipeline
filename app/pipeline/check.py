@@ -297,6 +297,34 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
     return warnings
 
 
+NEWS_MAX_AGE_DAYS = 30  # depois disso o fato não é mais notícia: o vídeo explica ou opina (ADR 019)
+
+
+def objective_warnings(scenes: ScenesManifest, today: date | None = None) -> list[str]:
+    """O objetivo do vídeo (ADR 019): alerta quando falta, e quando o fato noticiado já é velho."""
+    objective = scenes.objective
+    if objective is None:
+        return ["roteiro sem objetivo declarado (noticiar, explicar ou opinar; ADR 019)"]
+    if "noticiar" in objective.kinds and objective.event_date is not None and today is not None:
+        age = (today - objective.event_date).days
+        when = f"{objective.event_date:%d/%m/%Y}"
+        if age < 0:
+            return [f"objetivo noticiar com data no futuro ({when})"]
+        if age > NEWS_MAX_AGE_DAYS:
+            return [
+                f"objetivo noticiar, mas o fato é de {when} ({age} dias): depois de {NEWS_MAX_AGE_DAYS} "
+                "dias não é notícia; o vídeo explica ou opina"
+            ]
+    return []
+
+
+def objective_summary(scenes: ScenesManifest) -> str | None:
+    objective = scenes.objective
+    if objective is None:
+        return None
+    return f"objetivo: {' + '.join(objective.kinds)}: {objective.promise}"
+
+
 def _check_radar(
     store: ManifestStore,
     episode_id: str,
@@ -329,7 +357,7 @@ def check_episode(
 ) -> CheckReport:
     """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
     `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos.
-    `today`: a data de hoje, para dizer se o resumo do radar do episódio já está velho."""
+    `today`: a data de hoje: diz se o resumo do radar está velho e se o fato noticiado ainda é notícia."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -342,6 +370,9 @@ def check_episode(
             _check_facts(facts, sources, excerpts, report)
     if scenes is not None:
         _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
+        if (summary := objective_summary(scenes)) is not None:
+            report.checked.append(summary)
+        report.warnings += objective_warnings(scenes, today)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
