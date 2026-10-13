@@ -49,6 +49,7 @@ class LlmRun(BaseModel):
     provider: str
     model: str
     run: int
+    prompt_sha256: str = ""  # relatórios antigos não registravam o prompt
     ok: bool
     error: str = ""
     wall_s: float
@@ -154,6 +155,7 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
         max_tokens=MAX_OUTPUT_TOKENS,
         model=model,
     )
+    prompt_sha256 = hashlib.sha256(f"{request.system}\n\n{request.prompt}".encode()).hexdigest()
     start = time.perf_counter()
     try:
         result = context.text.generate_json(request)
@@ -162,6 +164,7 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
             provider=provider,
             model=model or "padrão",
             run=run,
+            prompt_sha256=prompt_sha256,
             ok=False,
             error=f"{error.reason}: {error}",
             wall_s=round(time.perf_counter() - start, 1),
@@ -174,6 +177,7 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
         provider=provider,
         model=result.model,
         run=run,
+        prompt_sha256=prompt_sha256,
         ok=True,
         wall_s=round(time.perf_counter() - start, 1),
         input_tokens=usage.input_tokens,

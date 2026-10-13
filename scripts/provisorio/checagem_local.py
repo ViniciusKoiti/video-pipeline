@@ -15,6 +15,7 @@ Uso: `.venv/bin/python scripts/provisorio/checagem_local.py <episode-id> --model
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from dataclasses import asdict
@@ -55,6 +56,7 @@ def main() -> None:
     report = {
         "episodio": args.episode_id,
         "modelo": model,
+        "prompt_sha256": hashlib.sha256(f"{system}\n\n{template}".encode()).hexdigest(),
         "sonda_cpu_s": round(probe, 3),
         "resumo": summary,
         "casos": [
