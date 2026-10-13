@@ -6,6 +6,7 @@ verificáveis e imagens com licença registrada. O piloto documental aborda expe
 
 - Contexto e regras: [CLAUDE.md](CLAUDE.md)
 - Agentes Codex/OpenAI e skills do workspace: [AGENT.MD](AGENT.MD)
+- Exploração estrutural com codebase-memory: [guia e configuração local](docs/opencode-codebase-memory-mcp.md)
 - Análise da pipeline e do processo editorial: [docs/analise-pipeline-agentes.md](docs/analise-pipeline-agentes.md)
 - Prompts locais e limites da validação: [docs/analise-prompts-locais.md](docs/analise-prompts-locais.md)
 - Fluxo com radar, ambiente de voz e motion-kit: [docs/pipeline-hoje.mermaid](docs/pipeline-hoje.mermaid)

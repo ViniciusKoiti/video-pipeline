@@ -35,6 +35,14 @@ para capacidades implementadas, confira o código. Documentos antigos podem desc
 
 ## Skills e papéis
 
+Para explorar a estrutura do código, use a skill instalada `codebase-memory` com o
+projeto `auto-play`. Confira se o índice está pronto, localize os símbolos e rastreie
+as chamadas; confirme cobertura dos arquivos usados como evidência. O grafo não é
+uma execução do vídeo nem uma aprovação de conteúdo. Lacunas de parser, imports
+dinâmicos e integração por arquivos exigem leitura da fonte. Os diagramas Mermaid
+apresentaram falha de parsing no indexador 0.11.0: leia seus arquivos diretamente.
+Configuração e comandos de fallback: [guia local](docs/opencode-codebase-memory-mcp.md).
+
 As skills ficam em `.agents/skills/`, com `SKILL.md` e metadados `agents/openai.yaml`.
 Invoque com `$vp-pauta`, por exemplo. Se não aparecerem no seletor, reinicie a sessão.
 O formato e a descoberta seguem a [documentação oficial de skills](https://learn.chatgpt.com/docs/build-skills).

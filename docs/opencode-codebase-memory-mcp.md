@@ -1,155 +1,129 @@
-# codebase-memory-mcp no opencode
+# Codebase-memory no workspace de vídeo
 
-Como ligar o [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) ao opencode nesta máquina
-(WSL2/Ubuntu, opencode 1.17.8, config global em `~/.config/opencode/opencode.jsonc`).
+Configuração conferida em **13/10/2026**, com o binário instalado **0.11.0**.
+A ferramenta faz exploração estrutural do código; não gera voz, renderiza vídeos,
+verifica fatos do roteiro ou aprova gates.
 
-Fonte: README do projeto, consultado em 2026-10-11. Nada aqui foi instalado ou testado ainda.
+## Estado configurado
 
-## O que é
+- Binário: `/home/viniciusk/.local/bin/codebase-memory-mcp`.
+- Projeto do grafo: `auto-play`.
+- Raiz indexada: `/home/viniciusk/projetos/auto-play`.
+- MCP já registrado globalmente no Codex e no Claude; não foi reinstalado.
+- Skill global `codebase-memory` disponível; [AGENTS.md](../AGENTS.md) orienta seu uso.
+- [AGENT.MD](../AGENT.MD) explica os limites do grafo no trabalho editorial.
+- Índice criado em modo `full`, usando o cache padrão fora do repositório.
+- [Exclusões locais](../.cbmignore) versionáveis e diretório de export opcional
+  `.codebase-memory/` ignorado pelo Git.
 
-Um servidor MCP que indexa o repositório num grafo (funções, classes, chamadas, imports, rotas) e responde a
-consultas estruturais: quem chama uma função, o que um diff afeta, visão geral da arquitetura. O agente consulta
-o grafo em vez de abrir arquivo por arquivo.
+Nesta sessão, as ferramentas MCP não estavam expostas, então indexação e consultas
+foram executadas pela CLI instalada. Reinicie o cliente para carregar o servidor
+registrado e use suas ferramentas quando aparecerem. A CLI é alternativa funcional;
+não foi apresentado seu uso como chamada MCP nesta sessão.
 
-- Licença MIT, binário nativo, sem Docker, sem runtime e sem chave de API.
-- Roda 100% local; o README afirma que o binário não faz requisição de rede por conta própria.
-- Custo zero, e não entra no `pyproject.toml` nem no `video/package.json`: é ferramenta da máquina, não
-  dependência do projeto.
+Não foi criada uma entrada local duplicada de servidor, nem alterado o comportamento
+global de indexação automática. Este guia substitui a proposta anterior de instalação
+somente no OpenCode. A configuração do OpenCode não foi alterada nesta tarefa.
 
-## Escolha antes de instalar
+## O que entra e o que fica fora
 
-O comando `install` do projeto configura **todos** os agentes que ele detecta na máquina, não só o opencode.
-Aqui isso inclui o Claude Code: ele escreveria entrada de MCP, skill, instruções e hooks também lá.
+O índice cobre código Python (`app/`, `scripts/`, `tests/`), template TS/TSX
+(`video/src/`), scripts JavaScript/MJS, configuração, documentação e instruções
+de agentes. As skills e agentes em `.claude/` são incluídos explicitamente; as
+configurações privadas dessa pasta continuam excluídas.
 
-| Caminho | O que muda | Quando usar |
-|---|---|---|
-| A. Só o opencode (manual) | Uma entrada `mcp` no `opencode.jsonc` | Quer testar sem mexer no Claude Code |
-| B. Instalador completo | MCP + `AGENTS.md` + skill + 3 agentes só-leitura + plugin no opencode, e o equivalente nos outros agentes detectados | Quer a integração inteira em tudo |
+Não entram `data/`, `renders/`, sprites brutos, ambientes virtuais, dependências,
+caches, arquivos `.env*`, chaves e configurações privadas. Fixtures de código e
+contratos em `tests/fixtures/` continuam disponíveis; binários podem ser excluídos
+pelos filtros do próprio indexador.
 
-Recomendação: começar pelo A. Dá para rodar o B depois.
+O arquivo `.cbmignore` controla apenas indexação, sem mudar o que o Git versiona.
+Esse comportamento e a sintaxe estão na [documentação da versão 0.11.0](https://github.com/DeusData/codebase-memory-mcp/blob/v0.11.0/docs/cbmignore.md).
 
-## Caminho A: só o opencode
+## Uso diário
 
-### 1. Baixar o binário sem configurar agentes
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh -o /tmp/cbm-install.sh
-less /tmp/cbm-install.sh                 # opcional: ler antes de rodar
-bash /tmp/cbm-install.sh --skip-config   # só o binário, nenhum agente configurado
-```
-
-`--dir=<caminho>` escolhe outra pasta de instalação. Depois, anote o caminho absoluto:
-
-```bash
-which codebase-memory-mcp
-codebase-memory-mcp --version
-```
-
-### 2. Registrar no opencode
-
-Em `~/.config/opencode/opencode.jsonc` (vale para todos os projetos) ou num `opencode.json` na raiz deste
-repositório (vale só aqui):
-
-```jsonc
-{
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "codebase-memory-mcp": {
-      "type": "local",
-      "command": ["/caminho/absoluto/codebase-memory-mcp"],
-      "enabled": true
-    }
-  }
-}
-```
-
-Troque o caminho pelo que o `which` devolveu. No opencode, `command` é uma lista (binário + argumentos), e o
-bloco se chama `mcp`, não `mcpServers` como no exemplo do README (que é do Claude Code).
-
-### 3. Conferir
+Antes de explorar:
 
 ```bash
-opencode mcp list
-```
-
-O servidor deve aparecer como conectado. Reinicie o opencode se ele já estava aberto.
-
-## Caminho B: instalador completo
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
-```
-
-No opencode ele escreve em `$OPENCODE_CONFIG` ou na config global e acrescenta `AGENTS.md`, uma skill, três
-agentes só-leitura e um plugin (consulta ao grafo em grep/glob, contexto no início da sessão e depois da
-compactação). Reinicie todos os agentes abertos ao terminar.
-
-## Indexar este repositório
-
-Dentro do opencode, peça: **"Index this project"**. Ou pelo terminal:
-
-```bash
-codebase-memory-mcp cli index_repository --repo-path ~/projetos/auto-play
 codebase-memory-mcp cli list_projects
+codebase-memory-mcp cli index_status --project auto-play --diagnostics summary
+codebase-memory-mcp cli get_graph_schema --project auto-play
 ```
 
-Use o `name` devolvido por `list_projects` como `--project` nas consultas.
-
-Opcional, para indexar sozinho ao abrir a sessão:
+Atualizar o índice da árvore de trabalho:
 
 ```bash
-codebase-memory-mcp config set auto_index true
+codebase-memory-mcp cli index_repository --repo-path /home/viniciusk/projetos/auto-play --name auto-play --mode full
 ```
 
-O índice fica em `~/.cache/codebase-memory-mcp` (ou `$CBM_CACHE_DIR`), fora do repositório. Projetos git são
-acompanhados por um daemon em segundo plano enquanto houver sessão aberta; `config set auto_watch false` desliga
-esse acompanhamento por sessão.
+Execute novamente depois de mudanças quando não houver acompanhamento por uma sessão
+MCP ativa. Não presuma que uma indexação feita pela CLI mantém um watcher permanente.
+A exportação `--persistence true` é opcional e não foi ativada.
 
-## Ferramentas mais úteis
-
-| Ferramenta | Para quê |
-|---|---|
-| `get_architecture` | Visão geral: linguagens, pacotes, pontos quentes |
-| `get_graph_schema` | Contagem de nós e arestas; rodar primeiro |
-| `search_graph` | Busca estrutural e semântica por símbolo |
-| `trace_path` | Quem chama uma função e o que ela chama |
-| `detect_changes` | Símbolos afetados por um diff do git |
-| `get_code_snippet` | Código de uma função pelo nome qualificado |
-| `search_code` | Busca de texto nos arquivos indexados |
-| `query_graph` | Consulta Cypher só-leitura |
-
-Exemplos pelo terminal:
+Localizar símbolos de validação, render e voz:
 
 ```bash
-codebase-memory-mcp cli search_graph --project <nome> --name-pattern '.*check.*' --label Function
-codebase-memory-mcp cli trace_path --project <nome> --function-name cpu_probe --direction both
+codebase-memory-mcp cli search_graph --project auto-play --name-pattern '^(check_episode|scene_props|KeywordShot|radar_dir|SubprocessWorker)$' --limit 20
 ```
 
-`codebase-memory-mcp cli <ferramenta> --help` lista os parâmetros de cada uma.
-
-## Interface gráfica (opcional)
+Rastrear chamadas e ler a implementação descoberta:
 
 ```bash
-codebase-memory-mcp --ui=true --port=9749
+codebase-memory-mcp cli trace_path --project auto-play --function-name auto-play.app.pipeline.check.check_episode --direction both --depth 1 --limit 50
+codebase-memory-mcp cli get_code_snippet --project auto-play --qualified-name auto-play.app.pipeline.check.check_episode --source-mode full
 ```
 
-Abre em `http://127.0.0.1:9749`.
-
-## Atualizar e remover
+Conferir cobertura antes de usar resultados como evidência:
 
 ```bash
-codebase-memory-mcp update      # imprime o comando do install.sh a rodar
-codebase-memory-mcp uninstall   # remove binário e entradas que ele criou; mantém os índices
-codebase-memory-mcp uninstall --dry-run --delete-indexes   # mostra o que apagaria, sem apagar
+codebase-memory-mcp cli check_index_coverage --project auto-play --paths '["app/pipeline/check.py","app/render/remotion.py","video/src/Editorial.tsx"]' --diagnostics full
 ```
 
-No caminho A, apague também à mão o bloco `mcp` do `opencode.jsonc`.
+Use a ajuda da versão instalada para outras flags:
 
-## Pontos a conferir na primeira vez
+```bash
+codebase-memory-mcp cli search_graph --help
+codebase-memory-mcp cli trace_path --help
+codebase-memory-mcp cli check_index_coverage --help
+```
 
-- A indexação de um repositório grande usa CPU; com a máquina limitada (CLAUDE.md §3), deixe para quando ela
-  estiver livre.
-- Confira com `list_projects` o tamanho do índice: `data/`, `renders/` e `video/node_modules` não deveriam
-  entrar. O indexador tem regras próprias de exclusão, que não foram verificadas aqui.
-- Se uma chamada de `index_repository` estourar o tempo do cliente, use `async: true` e acompanhe com
-  `status: true`.
+Resultados paginados precisam de continuação quando houver `has_more` ou cursor.
+Cobertura sem lacuna registrada não prova que toda chamada dinâmica foi resolvida.
+Não classifique uma função como inútil só por não encontrar callers no grafo.
+
+## Projetos vizinhos e fronteiras
+
+`motion-kit/`, `lab-voz/` e `radar-de-reels/` estão ao lado do auto-play, mas
+não foram indexados nesta tarefa. Consultas com `project=auto-play` não percorrem
+automaticamente o código de todos eles.
+
+- **Motion-kit:** o template importa o pacote fixado em `video/package.json`;
+  `node_modules` fica fora do índice. Conferir API e SHA no pacote/checkout quando
+  a alteração depender de código da biblioteca.
+- **Radar:** a integração copia um JSON e lê o brief do episódio; essa transferência
+  não deve ser tratada como uma chamada direta entre funções dos dois repositórios.
+- **Lab-voz:** o adapter executa um worker com Python externo configurado; o grafo
+  do auto-play não comprova o valor atual de `CHATTERBOX_PYTHON`.
+
+O [mapa do workspace](WORKSPACE-ATUAL-E-COMPONENTES.md) descreve essas integrações.
+Indexar projetos vizinhos separadamente pode ajudar uma análise posterior; isso
+não substitui a revisão dos imports, arquivos transferidos e caminhos configurados.
+
+## Verificação e limitações observadas
+
+A indexação inicial foi concluída e as consultas localizaram `check_episode`,
+`RemotionEngine.scene_props`, `KeywordShot`, `radar_dir` e `SubprocessWorker`.
+A validação final também confere a cobertura de código e instruções incluídos.
+
+O parser 0.11.0 reportou falha em `docs/pipeline-flowchart.mermaid` e
+`docs/pipeline-hoje.mermaid`. Os arquivos continuam no repositório; leia os
+diagramas diretamente e não use o grafo como prova da sua interpretação.
+Arquivos excluídos intencionalmente também não podem ser usados como evidência
+a partir de uma busca vazia.
+
+O sandbox desta sessão não permitiu a gravação/manutenção do cache em
+`~/.cache/codebase-memory-mcp`; as chamadas necessárias da CLI receberam
+escalonamento. O cache não foi desviado para um índice paralelo temporário.
+
+Referência de configuração da versão instalada:
+[DeusData/codebase-memory-mcp 0.11.0](https://github.com/DeusData/codebase-memory-mcp/blob/v0.11.0/docs/CONFIGURATION.md).
