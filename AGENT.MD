@@ -36,7 +36,7 @@ para capacidades implementadas, confira o código. Documentos antigos podem desc
 ## Skills e papéis
 
 Para explorar a estrutura do código, use a skill instalada `codebase-memory` com o
-projeto `auto-play`. Confira se o índice está pronto, localize os símbolos e rastreie
+projeto `home-viniciusk-projetos-auto-play`. Confira se o índice está pronto, localize os símbolos e rastreie
 as chamadas; confirme cobertura dos arquivos usados como evidência. O grafo não é
 uma execução do vídeo nem uma aprovação de conteúdo. Lacunas de parser, imports
 dinâmicos e integração por arquivos exigem leitura da fonte. Os diagramas Mermaid

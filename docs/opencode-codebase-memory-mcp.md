@@ -7,7 +7,7 @@ verifica fatos do roteiro ou aprova gates.
 ## Estado configurado
 
 - Binário: `/home/viniciusk/.local/bin/codebase-memory-mcp`.
-- Projeto do grafo: `auto-play`.
+- Projeto do grafo usado pelo MCP: `home-viniciusk-projetos-auto-play`.
 - Raiz indexada: `/home/viniciusk/projetos/auto-play`.
 - MCP já registrado globalmente no Codex e no Claude; não foi reinstalado.
 - Skill global `codebase-memory` disponível; [AGENTS.md](../AGENTS.md) orienta seu uso.
@@ -15,11 +15,18 @@ verifica fatos do roteiro ou aprova gates.
 - Índice criado em modo `full`, usando o cache padrão fora do repositório.
 - [Exclusões locais](../.cbmignore) versionáveis e diretório de export opcional
   `.codebase-memory/` ignorado pelo Git.
+- [Mapeamento local de extensão](../.codebase-memory.json): `.MD` como Markdown,
+  necessário para incluir `AGENT.MD` na versão instalada.
 
-Nesta sessão, as ferramentas MCP não estavam expostas, então indexação e consultas
-foram executadas pela CLI instalada. Reinicie o cliente para carregar o servidor
-registrado e use suas ferramentas quando aparecerem. A CLI é alternativa funcional;
-não foi apresentado seu uso como chamada MCP nesta sessão.
+No início da configuração, as ferramentas MCP não estavam expostas e a CLI foi
+usada como alternativa. Na retomada, o servidor já estava disponível nesta sessão:
+indexação, busca, rastreamento e leitura de código foram validados diretamente por MCP.
+Reinicie apenas clientes que ainda não mostrem as ferramentas registradas.
+
+O primeiro índice pela CLI recebeu o alias `auto-play`; o MCP usa o nome derivado
+da raiz mostrado acima. Ambos aparecem em `list_projects` para a mesma pasta.
+As instruções e exemplos passam a usar o índice ativo do MCP, evitando consultar
+o alias antigo sem atualização. Nenhum índice existente foi apagado.
 
 Não foi criada uma entrada local duplicada de servidor, nem alterado o comportamento
 global de indexação automática. Este guia substitui a proposta anterior de instalação
@@ -46,14 +53,14 @@ Antes de explorar:
 
 ```bash
 codebase-memory-mcp cli list_projects
-codebase-memory-mcp cli index_status --project auto-play --diagnostics summary
-codebase-memory-mcp cli get_graph_schema --project auto-play
+codebase-memory-mcp cli index_status --project home-viniciusk-projetos-auto-play --diagnostics summary
+codebase-memory-mcp cli get_graph_schema --project home-viniciusk-projetos-auto-play
 ```
 
 Atualizar o índice da árvore de trabalho:
 
 ```bash
-codebase-memory-mcp cli index_repository --repo-path /home/viniciusk/projetos/auto-play --name auto-play --mode full
+codebase-memory-mcp cli index_repository --repo-path /home/viniciusk/projetos/auto-play --name home-viniciusk-projetos-auto-play --mode full
 ```
 
 Execute novamente depois de mudanças quando não houver acompanhamento por uma sessão
@@ -63,20 +70,20 @@ A exportação `--persistence true` é opcional e não foi ativada.
 Localizar símbolos de validação, render e voz:
 
 ```bash
-codebase-memory-mcp cli search_graph --project auto-play --name-pattern '^(check_episode|scene_props|KeywordShot|radar_dir|SubprocessWorker)$' --limit 20
+codebase-memory-mcp cli search_graph --project home-viniciusk-projetos-auto-play --name-pattern '^(check_episode|scene_props|KeywordShot|radar_dir|SubprocessWorker)$' --limit 20
 ```
 
 Rastrear chamadas e ler a implementação descoberta:
 
 ```bash
-codebase-memory-mcp cli trace_path --project auto-play --function-name auto-play.app.pipeline.check.check_episode --direction both --depth 1 --limit 50
-codebase-memory-mcp cli get_code_snippet --project auto-play --qualified-name auto-play.app.pipeline.check.check_episode --source-mode full
+codebase-memory-mcp cli trace_path --project home-viniciusk-projetos-auto-play --function-name home-viniciusk-projetos-auto-play.app.pipeline.check.check_episode --direction both --depth 1 --limit 50
+codebase-memory-mcp cli get_code_snippet --project home-viniciusk-projetos-auto-play --qualified-name home-viniciusk-projetos-auto-play.app.pipeline.check.check_episode --source-mode full
 ```
 
 Conferir cobertura antes de usar resultados como evidência:
 
 ```bash
-codebase-memory-mcp cli check_index_coverage --project auto-play --paths '["app/pipeline/check.py","app/render/remotion.py","video/src/Editorial.tsx"]' --diagnostics full
+codebase-memory-mcp cli check_index_coverage --project home-viniciusk-projetos-auto-play --paths '["app/pipeline/check.py","app/render/remotion.py","video/src/Editorial.tsx"]' --diagnostics full
 ```
 
 Use a ajuda da versão instalada para outras flags:
@@ -93,9 +100,11 @@ Não classifique uma função como inútil só por não encontrar callers no gra
 
 ## Projetos vizinhos e fronteiras
 
-`motion-kit/`, `lab-voz/` e `radar-de-reels/` estão ao lado do auto-play, mas
-não foram indexados nesta tarefa. Consultas com `project=auto-play` não percorrem
-automaticamente o código de todos eles.
+`motion-kit/`, `lab-voz/` e `radar-de-reels/` estão ao lado do auto-play.
+Na retomada, `list_projects` também retornou `home-viniciusk-projetos-motion-kit`
+e `home-viniciusk-projetos-radar-de-reels`, já indexados por outras sessões.
+Lab-voz não apareceu nessa lista. Consultas com um único `project` não percorrem
+automaticamente o código de todos eles; a cobertura dos vizinhos não foi auditada aqui.
 
 - **Motion-kit:** o template importa o pacote fixado em `video/package.json`;
   `node_modules` fica fora do índice. Conferir API e SHA no pacote/checkout quando
@@ -113,7 +122,15 @@ não substitui a revisão dos imports, arquivos transferidos e caminhos configur
 
 A indexação inicial foi concluída e as consultas localizaram `check_episode`,
 `RemotionEngine.scene_props`, `KeywordShot`, `radar_dir` e `SubprocessWorker`.
-A validação final também confere a cobertura de código e instruções incluídos.
+Busca por símbolos Python/TSX, rastreamento de callers/callees, snippets e outline
+do script MJS foram testados por MCP. A validação final também confere a cobertura
+de código e instruções incluídos.
+
+Os caminhos Python, TSX, MJS e as skills consultados tiveram cobertura com
+`metadata_match`, sem problema registrado. As lacunas dos escopos de código
+conferidos foram caches Python e arquivos gráficos/fontes excluídos intencionalmente.
+Após mapear `.MD`, `AGENT.MD` também passou a ter `metadata_match`.
+Isso confirma a configuração consultada, sem provar resolução de toda chamada dinâmica.
 
 O parser 0.11.0 reportou falha em `docs/pipeline-flowchart.mermaid` e
 `docs/pipeline-hoje.mermaid`. Os arquivos continuam no repositório; leia os
