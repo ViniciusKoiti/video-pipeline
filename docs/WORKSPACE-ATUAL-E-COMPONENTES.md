@@ -29,6 +29,22 @@ As skills são instruções para o agente executar o trabalho no workspace. A CL
 
 O armazenamento principal é JSON no filesystem. Não há necessidade demonstrada de adicionar banco, servidor web ou outro framework para fechar esse fluxo. Remotion Studio é uma ferramenta de prévia, não um painel que orquestra toda a produção.
 
+### Projetos vizinhos: onde motion-kit, lab-voz e radar entram
+
+Os três diretórios existem ao lado do auto-play, dentro de `/home/viniciusk/projetos/`. Ter o checkout nessa pasta e utilizá-lo na produção são coisas distintas:
+
+| Projeto | Como participa da pipeline | Momento e evidência | O que o auto-play não executa |
+|---|---|---|---|
+| `motion-kit/` | Dependência direta: `video/` importa `@viniciusk/motion-kit`, instalado pelo SHA fixado em `package.json` | Render do explicativo; imports em `Editorial`, `Scene` e `HostWindow` | O checkout vizinho não é importado diretamente em tempo de render; sua alteração precisa chegar ao pacote consumido |
+| `radar-de-reels/` | Entrada por arquivo: `radar_resumo.py` copia `briefs/<nicho>.json` para `radar-brief.json` do episódio | Antes da pauta/roteiro; `vp check` também compara a forma com o brief | Não inicia coleta nem mineração automaticamente; gerar o brief é trabalho do radar |
+| `lab-voz/` | Bancada de teste do Chatterbox, documentada na ADR 016; pode fornecer seu ambiente Python ao adapter | Produção de voz final: adapter usa o executável definido em `CHATTERBOX_PYTHON`; o Python `.venv/bin/python` do laboratório existe | Não chama `lab-voz/falar.py`; executa `chatterbox_worker.py` do próprio auto-play com o Python externo configurado |
+
+**Uso observado:** `thiel-empresa-pt` e `thiel-contrato-pt` têm briefs locais e arquivos WAV com nome Chatterbox. Isso confirma artefatos compatíveis com uso dessas etapas, mas nomes de arquivo não certificam configuração ou execução histórica. A seleção padrão de voz final é Chatterbox; rascunhos usam Kokoro. O radar é opcional por episódio e o motion-kit pertence ao formato explicativo; não participam obrigatoriamente de toda peça.
+
+Não foi inspecionado o `.env`: a ligação histórica com lab-voz está confirmada em [ADR 016](decisions/016-voz-clonada-do-dono.md), mas o caminho configurado hoje para `CHATTERBOX_PYTHON` não foi conferido. Pode apontar para o laboratório ou outro ambiente compatível. A documentação de integração não deve afirmar que o executável atual está naquela pasta sem essa verificação.
+
+O [diagrama com os pontos de integração](pipeline-hoje.mermaid) mostra o radar como entrada editorial, o ambiente externo como suporte à voz e o pacote motion-kit como dependência do render. São mecanismos já existentes; uma CLI única que orquestre tudo ainda não está implementada.
+
 ### Subtópico 1.2 — Sequência editorial e execução disponível
 
 ```mermaid
@@ -280,4 +296,4 @@ O workspace já consegue produzir explicativos, mas combina etapas manuais, agen
 
 Foram lidos CLI/handlers, registry, configuração, storage/estado, gates, scripts de montagem, schemas, timing, render, template e declarações do pacote instalado. `vp --help` foi executado; presença no help foi cruzada com `HANDLERS`. As contagens de planos e nomes dos comandos foram conferidas diretamente no código.
 
-Não foram executados TTS, modelos, downloads de ativos, renders, revisão visual ou publicação. Não foi examinada a configuração secreta do `.env`; as escolhas descritas são defaults versionados. Custo, prazo e ganho de engajamento não foram medidos. Arquivos `AGENT.MD`, skills e specs locais citados por caminho podem ainda estar fora do histórico desta branch; não são novos componentes implementados.
+Não foram executados TTS, modelos, downloads de ativos, renders, revisão visual ou publicação. Não foi examinada a configuração secreta do `.env`; as escolhas descritas são defaults versionados. Custo, prazo e ganho de engajamento não foram medidos. `AGENT.MD`, skills e specs locais entram no versionamento solicitado pelo dono nesta revisão; a presença de uma spec não significa componente implementado.

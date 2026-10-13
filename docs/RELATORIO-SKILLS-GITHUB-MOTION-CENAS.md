@@ -339,6 +339,6 @@ Foram consultadas fontes primárias no GitHub e arquivos reais de biblioteca, te
 
 Não foram instaladas skills nem executados seus scripts; seus `SKILL.md` foram tratados como material de pesquisa. Não houve alteração de código, atualização de dependência, render, escuta ou teste de audiência. As cenas propostas ainda precisam de revisão visual em 16:9/9:16 quando implementadas.
 
-As specs citadas por caminho estavam sem versionamento na revisão e não fazem parte dos commits destes relatórios. As descrições aqui preservam as decisões necessárias mesmo em uma cópia sem esses rascunhos locais.
+As specs citadas por caminho estavam sem versionamento na consulta inicial e entram no conjunto de commits posteriores solicitado pelo dono. Continuam sendo propostas: versionar a spec não implementa nem aprova o componente.
 
 **Risco principal:** importar receitas de skills externas sem adaptar tempo, contratos e identidade pode aumentar efeitos e reduzir compreensão. As prioridades e benefícios aqui são julgamento técnico/editorial, não ganho medido de engajamento.

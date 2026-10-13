@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Engajamento"
+  short_description: "Analise métricas e planeje o próximo teste editorial"
+  default_prompt: "Use $vp-engajamento para analisar as métricas fornecidas e propor um próximo teste de tema ou abertura."

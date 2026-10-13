@@ -307,7 +307,7 @@ Foram examinados README, contexto, roadmap, análise anterior, decisões sobre o
 
 Os episódios locais usados como evidência ficam fora do Git: seus IDs foram registrados para localizar os casos nesta máquina, sem copiar fontes, imagens ou dados de voz para o relatório. Uma cópia isolada do repositório pode não conter esses exemplos.
 
-Agenda musical, ADR 019 e prompt Thiel também estavam sem versionamento na revisão. Seus caminhos foram mantidos como referências locais; este relatório não incorpora esses arquivos nem as outras mudanças em andamento.
+Agenda musical, ADR 019 e prompt Thiel estavam sem versionamento na consulta inicial. Esses arquivos entram no conjunto de commits posteriores solicitado pelo dono; os episódios e áudios continuam fora do Git.
 
 Não foram reproduzidos ou ouvidos os vídeos, capturadas telas das publicações, medidos contraste e tamanho efetivo de texto no celular, executados renders ou testes, nem auditados todos os providers e aspectos de segurança. Este é um diagnóstico editorial e do fluxo de produção, baseado em arquivos, e não uma auditoria visual dos vídeos ou uma medição de audiência real.
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Roteiro"
+  short_description: "Transforme fichas aprovadas em roteiro e planos"
+  default_prompt: "Use $vp-roteiro para escrever o episódio indicado a partir das fichas aprovadas e da promessa definida."

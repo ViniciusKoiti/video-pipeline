@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Checagem"
+  short_description: "Confira evidências e promessa sem editar o episódio"
+  default_prompt: "Use $vp-checagem para revisar o episódio indicado e entregar um relatório independente sem editar os dados."
