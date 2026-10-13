@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {AbsoluteFill, Audio, continueRender, delayRender, Img, random, staticFile, useCurrentFrame, useVideoConfig} from "remotion";
+import {
+  AbsoluteFill, Audio, continueRender, delayRender, Img, random, Sequence, staticFile, useCurrentFrame, useVideoConfig,
+} from "remotion";
 import antonUrl from "./fonts/Anton-Regular.ttf";
 import cinzelUrl from "./fonts/Cinzel.ttf";
 import plexUrl from "./fonts/IBMPlexMono-Regular.ttf";
@@ -11,19 +13,26 @@ import brasaoUrl from "./marca/brasao.svg";
 // Duas vozes, duas letras: o poder em serifada de inscrição (Cinzel), o eu em condensada pesada (Anton); as
 // falas secas (intro, ponte, outro) em monoespaçada (IBM Plex Mono). Todas SIL OFL 1.1 (`fonts/*-OFL.txt`).
 // O brasão do Nabote (`marca/brasao.svg`, de nabote.com.br/marca/) fica num canto e fecha o clipe com "Nabote.".
+// Nos cortes (`fecho`), `fim` é o tempo forte em que o próximo verso entraria: ali o som passa para o final da
+// própria música (CAUDA) e o último verso se dissolve na tela de fecho (brasão, título, "clipe completo no canal").
 
-export type ClipeProps = {inicio: number; fim: number | null; audio: string | null; retrato: boolean};
+export type ClipeProps = {inicio: number; fim: number | null; audio: string | null; retrato: boolean; fecho?: boolean};
 type Palavra = {t: string; ini: number; ok: boolean};
 type Linha = {secao: string; vez: number; texto: string; ini: number; fim: number; palavras: Palavra[]};
 
 const LINHAS = letra.linhas as Linha[];
 export const CLIPE_FPS = 30;
-export const CLIPE_PADRAO: ClipeProps = {inicio: 0, fim: null, audio: null, retrato: false};
+export const CLIPE_PADRAO: ClipeProps = {inicio: 0, fim: null, audio: null, retrato: false, fecho: false};
+// Os últimos segundos da faixa: a textura cai em 192,8 s e a música para sozinha em ~195,2 s. O final entra
+// nesse ponto, sem antecipar a passagem: antes dele a parte final é alta e soaria como estalo.
+const CAUDA = 192.8;
+const comFecho = (props: ClipeProps) => Boolean(props.fecho && props.fim !== null);
 export const clipeMetadata = ({props}: {props: ClipeProps}) => ({
   fps: CLIPE_FPS,
   width: props.retrato ? 1080 : 1920,
   height: props.retrato ? 1920 : 1080,
-  durationInFrames: Math.max(1, Math.round(((props.fim ?? letra.duracao) - props.inicio) * CLIPE_FPS)),
+  durationInFrames: Math.max(1, Math.round(
+    ((props.fim ?? letra.duracao) - props.inicio + (comFecho(props) ? letra.duracao - CAUDA : 0)) * CLIPE_FPS)),
 });
 
 // Cores do site do Nabote (nabote.com.br, lidas em 2026-10-08): fundo, texto, dourado (`--gold`, a cor primária)
@@ -45,7 +54,9 @@ const PODER = new Set([
 const SANGUE = new Set(["sangra", "mataste", "nabote", "terror"]);
 const MONO_SECOES = new Set(["intro", "ponte", "outro"]);
 const POP = 4; // quadros da entrada de cada palavra (escala e opacidade, sem quique)
-const SEGURA = 1.0; // s que um verso fica depois do fim, quando o próximo demora
+const SEGURA = 1.0; // s que um verso fica depois do fim, quando o próximo demora (no outro, até o próximo)
+const EMENDA = 6; // quadros da passagem do som do corte para o final da música
+const DISSOLVE = 8; // quadros em que a tela de fecho aparece sobre o último verso
 
 const norm = (word: string) => word.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
 const clamp = (x: number) => Math.min(1, Math.max(0, x));
@@ -108,12 +119,16 @@ const useFontes = () => {
   }, [handle]);
 };
 
-export const Clipe: React.FC<ClipeProps> = ({inicio, audio}) => {
+export const Clipe: React.FC<ClipeProps> = (props) => {
+  const {inicio, fim, audio} = props;
   useFontes();
   const local = useCurrentFrame();
   const {width, height, durationInFrames} = useVideoConfig();
   const retrato = height > width;
-  const frame = local + quadro(inicio);
+  const fechando = comFecho(props);
+  const corteLocal = fechando && fim !== null ? quadro(fim) - quadro(inicio) : durationInFrames;
+  // Na tela de fecho a letra fica parada no último quadro antes do corte, por baixo do dissolve.
+  const frame = Math.min(local, corteLocal - 1) + quadro(inicio);
   const t = frame / CLIPE_FPS;
 
   // Área segura das plataformas no vertical (ADR 014: topo 288, base 500, direita 140, esquerda 60 em 1080×1920).
@@ -140,11 +155,40 @@ export const Clipe: React.FC<ClipeProps> = ({inicio, audio}) => {
   const linha = indice >= 0 ? LINHAS[indice] : null;
   const proxima = indice + 1 < LINHAS.length ? LINHAS[indice + 1] : null;
   const ultima = linha !== null && proxima === null; // "Nabote." fica até o fim
-  const visivel = linha !== null && (ultima || t < Math.min(proxima ? proxima.ini : Infinity, linha.fim + SEGURA));
-  // Nos cortes o som entra em 3 quadros e sai em 10, para não estalar.
-  const volume = (f: number) => Math.min(1, (f + 1) / 3, (durationInFrames - f) / 10);
-  const som = audio ? <Audio src={staticFile(audio)} trimBefore={quadro(inicio)} volume={volume} /> : null;
-  if (!linha || !visivel) return <AbsoluteFill style={{background: COR.preto}}>{som}{selo}</AbsoluteFill>;
+  const segura = linha?.secao === "outro" ? Infinity : SEGURA;
+  // No corte, o verso que termina no corte fica até a tela de fecho.
+  const ateOCorte = fechando && fim !== null && proxima !== null && proxima.ini >= fim - 0.05;
+  const visivel = linha !== null
+    && (ultima || ateOCorte || t < Math.min(proxima ? proxima.ini : Infinity, linha.fim + segura));
+  // Nos cortes o som entra em 3 quadros; sem fecho sai em 10, com fecho passa em EMENDA quadros para o final da música.
+  const som = !audio ? null : fechando ? (
+    <>
+      <Sequence durationInFrames={corteLocal} layout="none">
+        <Audio src={staticFile(audio)} trimBefore={quadro(inicio)}
+          volume={(f) => Math.min(1, (f + 1) / 3, (corteLocal - f) / EMENDA)} />
+      </Sequence>
+      <Sequence from={corteLocal - EMENDA} layout="none">
+        <Audio src={staticFile(audio)} trimBefore={quadro(CAUDA)}
+          volume={(f) => Math.min(1, (f + 1) / EMENDA)} />
+      </Sequence>
+    </>
+  ) : (
+    <Audio src={staticFile(audio)} trimBefore={quadro(inicio)}
+      volume={(f) => Math.min(1, (f + 1) / 3, (durationInFrames - f) / 10)} />
+  );
+  // Tela de fecho dos cortes: brasão, título e chamada para o clipe completo, sobre o último verso parado.
+  const tela = fechando && local >= corteLocal ? (
+    <AbsoluteFill style={{background: COR.preto, opacity: clamp((local - corteLocal + 1) / DISSOLVE),
+      display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
+      paddingBottom: retrato ? (500 - 288) * k : 0}}>
+      <Img src={brasaoUrl} style={{height: retrato ? 560 * k : height * 0.5, margin: `${-60 * k}px 0`}} />
+      <div style={{fontFamily: ANTON, color: COR.osso, fontSize: Math.min(width * 0.8, 1300 * k) / (16 * 0.48),
+        textTransform: "uppercase", letterSpacing: "0.01em", lineHeight: 1.1}}>A Planilha é Tua</div>
+      <div style={{fontFamily: MONO, color: COR.ouro, fontSize: retrato ? 54 * k : height * 0.045,
+        marginTop: 24 * k}}>clipe completo no canal</div>
+    </AbsoluteFill>
+  ) : null;
+  if (!linha || !visivel) return <AbsoluteFill style={{background: COR.preto}}>{som}{selo}{tela}</AbsoluteFill>;
 
   const lf = frame - quadro(linha.ini);
   const mono = MONO_SECOES.has(linha.secao) && !ultima;
@@ -191,7 +235,7 @@ export const Clipe: React.FC<ClipeProps> = ({inicio, audio}) => {
   const deriva = mono ? 1 : 1 + 0.04 * clamp(lf / duracao);
   const direcao = indice % 2 === 0 ? 1 : -1;
   const contiguo = proxima !== null && proxima.ini <= linha.fim + SEGURA;
-  const sai = contiguo && !mono ? clamp((lf - (duracao - 4)) / 4) : 0;
+  const sai = contiguo && !mono && !ateOCorte ? clamp((lf - (duracao - 4)) / 4) : 0;
   let tremor = 0;
   if (linha.secao === "refrao") {
     linha.palavras.forEach((p, i) => {
@@ -276,6 +320,7 @@ export const Clipe: React.FC<ClipeProps> = ({inicio, audio}) => {
         <AbsoluteFill style={{background: COR.ouro, transform: `translateX(${(direcao * (lf - 4) * 100) / 4}%)`}} />
       )}
       {final && lf === 0 && <AbsoluteFill style={{background: "#FFFFFF"}} />}
+      {tela}
     </AbsoluteFill>
   );
 };
