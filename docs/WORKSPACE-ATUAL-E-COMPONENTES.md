@@ -297,3 +297,109 @@ O workspace já consegue produzir explicativos, mas combina etapas manuais, agen
 Foram lidos CLI/handlers, registry, configuração, storage/estado, gates, scripts de montagem, schemas, timing, render, template e declarações do pacote instalado. `vp --help` foi executado; presença no help foi cruzada com `HANDLERS`. As contagens de planos e nomes dos comandos foram conferidas diretamente no código.
 
 Não foram executados TTS, modelos, downloads de ativos, renders, revisão visual ou publicação. Não foi examinada a configuração secreta do `.env`; as escolhas descritas são defaults versionados. Custo, prazo e ganho de engajamento não foram medidos. `AGENT.MD`, skills e specs locais entram no versionamento solicitado pelo dono nesta revisão; a presença de uma spec não significa componente implementado.
+
+## Plano de execução — 10 atividades
+
+**Visão conjunta:** [30 atividades e sequência de execução](tarefas/plano-30-atividades.md).
+
+Este bloco transforma as lacunas de componentes e contratos em entregas futuras. **P0**: pré-requisito do piloto; **P1**: base de leitura/explicação; **P2**: conforme pauta e necessidade concreta. Os pré-requisitos de legenda e revisão estão nas atividades AE. **S/M/L** indicam esforço relativo, sem datas. A numeração identifica o trabalho; as dependências definem a ordem.
+
+Os planos [AE — audiência/operação](RELATORIO-GAPS-AUDIENCIA-ENGAJAMENTO.md) e [MC — método/cenas](RELATORIO-SKILLS-GITHUB-MOTION-CENAS.md) cuidam, respectivamente, de alinhamento, gates/métricas e de direção/receitas/revisão. Aqui fica a fabricação ou integração concreta de componentes. Nenhuma atividade implementa ou aprova agora suas decisões abertas.
+
+**Alcance comum:** componente novo no kit exige API, export, demo neutra, testes úteis, catálogo, build e `dist`; integração no auto-play exige ADR quando muda contrato, schema Python/espelho TS, claims/check, timing/adapter, `ShotView`/`Editorial`/`Scene` e área segura conforme afetados. Pin/lock só mudam quando a API necessária não está no pacote instalado; arquivo novo do template entra no hash de cache. Preservar planos existentes e só atualizar instruções editoriais depois da implementação. Esses passos são etapas da mesma atividade, com entregas separadas em cada repositório.
+
+**Conferência do código atual:** `Editorial.tsx` já passa o idioma a `ShareChart` e converte `chart.highlight` em uma anotação do rótulo em `LineChart`. Specs antigas que descrevem essas integrações como ausentes precisam ser reconciliadas ao implementar; CP-07 trata de anotação explicativa adicional. `StyleTheme.motion` e `Callout` já existem no pin, conforme o relatório de cenas.
+
+### CP-01 — Legenda por palavra: `WordCaption`
+
+- **Prioridade / esforço:** P1 / M; desenvolvimento possível com fixture, uso real depende de tempos confiáveis de AE-05.
+- **Gap de origem:** §3.1 deste mapa; relatório de cenas §4.1. Cues de frase e `KineticHeadline.wordFrames` não fornecem uma legenda com palavra ativa.
+- **Objetivo / escopo:** criar no kit um componente que recebe texto e intervalos revisados, sem transcrever nem inferir duração por caracteres. No auto-play, definir o contrato desses intervalos e a camada em `Scene`, com convivência explícita com `keyword`, fonte e apresentador.
+- **Entrega:** componente/demo/teste no kit; depois ADR, props de cues por palavra, adapter, cache e integração de legenda no auto-play. SRT por frase continua sendo a saída editável da etapa AE.
+- **Aceite verificável:** palavra ativa coincide com os tempos de uma fixture revisada; antes/depois do intervalo não fica destacada; pausa não destaca uma palavra inexistente; acentos/nomes e bloco em duas linhas permanecem legíveis em 9:16. Intervalos invertidos ou fora do áudio são rejeitados e a falta de tempos não produz sincronização fictícia.
+- **Dependências / papel:** kit precede integração no auto-play; para episódio real, AE-05 entrega SRT/WAV e tempos por palavra revisados, não apenas duração de ffprobe. MC-04 coordena o blueprint da receita e sua demonstração posterior; verificador confere sincronização e dono decide a revisão da prévia.
+
+### CP-02 — Lista textual acumulativa: `RevealList`
+
+- **Prioridade / esforço:** P1 / M.
+- **Gap de origem:** §3.2; relatório de cenas §4.2 e [spec existente](specs/reveal-list.md). `BarList`/`ShareList` não substituem lista textual.
+- **Objetivo / escopo:** criar a lista com espaço reservado, destaque do item atual e itens anteriores legíveis. Resolver na ADR a literalidade dos textos, limites e convivência com legenda; integrar `list`, tempos por item e regras do apresentador.
+- **Entrega:** API/demo/testes no kit; depois schema/TS, `steps_ms`, `episode_shots`, adapter, despacho, `text_fit`, claims da narração e exemplo de roteiro no auto-play. Estado de lista que continua em outra cena deve viajar explicitamente nas props.
+- **Aceite verificável:** fixture com três itens revela na ordem da fala, não desloca itens assentados e preserva os anteriores; rejeita itens/âncoras incompatíveis, tempos fora do plano e texto que não cumpre o contrato decidido. Conferir também a capacidade máxima em retrato, com fonte/legenda/apresentador.
+- **Dependências / papel:** MC-05 fornece a receita de enumeração; kit precede pin/integração; roteirista prepara âncoras e verificador checa o conteúdo. Timing proporcional pode ser usado com seu limite declarado, sem aguardar CP-01; tempos reais de AE melhoram a sincronização.
+
+### CP-03 — Processo curto reutilizando `Pipeline`
+
+- **Prioridade / esforço:** P1 / M.
+- **Gap de origem:** §3.2; relatório de cenas §4.3. `Pipeline` está no pin, mas não há plano integrado para mecanismo em retrato.
+- **Objetivo / escopo:** integrar um processo de três etapas com layout vertical, rótulos curtos e tempos por etapa. Estender `Pipeline` no kit apenas se a API confirmada não atender layout/timing; evitar outro motor de diagramas.
+- **Entrega:** contrato de processo decidido em ADR, schema/TS, âncoras/`steps_ms`, adapter e composição em `ShotView`/`Editorial`, com claims verificadas para etapas e relações. Mudança de API no kit, se necessária, precede o pin do aplicativo.
+- **Aceite verificável:** entrada → processamento → resultado aparece na ordem narrada em fixture neutra; cada seta tem relação sustentada nas fichas; erro para etapa sem base, ordem inválida ou tempo fora do plano. Rótulos, fontes, legenda e janela ficam separados em 9:16.
+- **Dependências / papel:** MC-05 fornece o mecanismo/receita; pesquisador ficha relações, dono decide contrato, integrador reaproveita o kit e verificador revisa semântica. Independe de CP-02 e não exige alinhamento por palavra para a primeira versão.
+
+### CP-04 — Tabela de valores heterogêneos: `ValueTable`
+
+- **Prioridade / esforço:** P2 / M, somente para pauta que precise de notas ou unidades mistas.
+- **Gap de origem:** §3.3; relatório de cenas §4.6 e [spec existente](specs/value-table.md). `compare` tem dois lados e barras exigem base comum.
+- **Objetivo / escopo:** criar linhas de rótulo/valor/nota como texto pronto, com revelação e destaque; usar barras atuais quando resolverem a pergunta. Registrar na ADR a localização das claims e impedir barras proporcionais em unidades incompatíveis.
+- **Entrega:** componente/API/demo/testes no kit; depois plano `table`, schema/TS, check/`text_fit`, tempos de linhas, adapter, `ShotView`/`Editorial`, fonte e regras de cantos no auto-play. Variante de prazos só como dados de tabela, sem fabricar `DeadlineBoard` na primeira entrega.
+- **Aceite verificável:** fixture com moeda, percentual e ressalva preserva exatamente os valores; nenhuma soma/conversão é exibida; rótulo longo não corta o valor. Rejeitar claims ausentes, linhas repetidas, unidades mistas com barras e tempos inválidos; conferir quadro máximo em 9:16 e um caso em inglês.
+- **Dependências / papel:** MC-07 escolhe tabela ou barras pelo argumento; dono decide ADR, kit entrega a peça e integrador fecha contrato/renderer; verificador confere cada linha e a equivalência entre valor textual e geometria quando houver barra.
+
+### CP-05 — Limiar linear rotulado: `LimitMeter`
+
+- **Prioridade / esforço:** P2 / M, condicionado a um limite já fichado.
+- **Gap de origem:** §3.3; relatório de cenas §4.8 e [spec existente](specs/limit-meter.md). `Gauge` radial não resolve a régua sóbria com marcos/faixas.
+- **Objetivo / escopo:** criar escala linear com até três marcos, faixas e marcador opcional. Resolver na ADR `limit` próprio ou extensão de `chart`; separar texto factual de coordenada geométrica e nunca calcular margem restante na tela.
+- **Entrega:** API/layout/demo/testes no kit; depois schema/TS, claims, escala/ordem/limites, check/`text_fit`, tempos, adapter e composição com fontes e área segura no auto-play.
+- **Aceite verificável:** marcos próximos ficam legíveis e apontam para a posição correta; rejeitar escala inválida, marcos repetidos/fora de ordem, faixa de tamanho incompatível e marcador fora da escala. Verificador confere `at` contra o valor da ficha; nenhum “faltam X” surge do desenho.
+- **Dependências / papel:** pesquisador e dono fornecem pauta/limites/consequências sustentados; MC-07 especifica o uso; kit e integração são sequenciais. A ADR pode ser discutida com CP-04 sem obrigar a entrega de ambos juntos.
+
+### CP-06 — Trecho documental e `quote` em retrato
+
+- **Prioridade / esforço:** P2 / M.
+- **Gap de origem:** §3.4; relatório de cenas §4.4. `DocumentPage` existe, mas `quote` é excluído do retrato.
+- **Objetivo / escopo:** adaptar trecho/cabeçalho/destaque para celular, reaproveitando `DocumentPage` e `Highlighter`. Decidir o subconjunto de layouts aceito em 9:16; não liberar todo `quote` sem validação nem simular screenshot autêntico numa recriação.
+- **Entrega:** layout de trecho e fixture; ADR de retrato, validação condicional de estilo/limites no schema/check, props/adapter quando afetados, `ShotView`/`Editorial`, fonte e cantos do apresentador. Pin só muda se for necessário alterar API do kit.
+- **Aceite verificável:** citação com negação/ressalva mantém texto e atribuição; trecho legível na área segura em 720×1280 com legenda. Layout não validado permanece rejeitado; recorte real exige ativo aprovado e recriação tem identificação clara. Planos horizontais existentes mantêm comportamento.
+- **Dependências / papel:** MC-06 define a receita; pesquisador fornece trecho literal, roteirista escolhe o recorte, integrador adapta e verificador confere fidelidade/direitos. Não depende de construir tabela.
+
+### CP-07 — Detalhe visual e anotação explicativa
+
+- **Prioridade / esforço:** P2 / M.
+- **Gap de origem:** §3.5; relatório de cenas §4.5. `Callout`, `Marker`, `Highlighter` e câmera existem no pin; `highlight` já vira anotação do próprio rótulo no gráfico, mas falta chamada explicativa/alvo editorial.
+- **Objetivo / escopo:** integrar alvo, crop/zoom e texto curto ligado às claims; começar pelo ponto destacado ou uma chamada sobre imagem. Estender campos de anotação apenas onde necessário, sem fabricar outro `ChartCallout`.
+- **Entrega:** contrato restrito de alvo/texto em ADR, schema/TS, validação de coordenadas/dado, claims/check, adapter e composição reaproveitando as peças do kit; considerar hashes de crop/props e direitos da imagem.
+- **Aceite verificável:** alvo dentro da imagem/gráfico e texto apoiado em ficha; crop preserva o assunto; chamada não cruza a fonte nem cobre o dado relevante. Rejeitar coordenada/ponto inexistente; caso sem novo campo mantém o `highlight` atual; conferir entrada, leitura e saída.
+- **Dependências / papel:** MC-06/MC-07 fornecem receita documental ou de dado; integrador faz contrato/layout, roteirista aponta um detalhe e verificador confere significado do recorte. Multi-séries e controle de B-roll ficam fora deste primeiro alvo.
+
+### CP-08 — Localização e cronologia legíveis em 9:16
+
+- **Prioridade / esforço:** P2 / M, iniciando pela modalidade exigida na pauta.
+- **Gap de origem:** §3.4; relatório de cenas §4.7. `GeoMap` e `YearTimeline` existem, mas os tipos são excluídos do retrato.
+- **Objetivo / escopo:** compor locator de um/dois lugares e timeline curta em coluna, como adaptações independentes dentro desta frente. Permitir cada modalidade só após seu layout e contrato passarem; não encolher a versão horizontal.
+- **Entrega:** fixtures e layouts para as modalidades selecionadas; ADR/validação de retrato, coordenadas/datas/claims, schema/TS e tempos se necessários, adapter, `ShotView`/`Editorial`, fontes e cantos seguros. Não criar biblioteca geográfica nem outro componente de cronologia.
+- **Aceite verificável:** lugar real e evento/data coincidem com ficha; rótulos cabem e destaque acompanha a fala. Rota precisa de relação sustentada; prazo sem escala temporal usa tabela/selo. Modalidade ainda não validada segue proibida e nenhuma adaptação altera a cena horizontal por acidente.
+- **Dependências / papel:** MC-08 decide recomposição; pesquisador ficha geografia/cronologia, dono decide escopo, integrador adapta e verificador confere relações. Não depende de CP-04 quando a ordem temporal/localização é a função essencial.
+
+### CP-09 — Proporção e decomposição, somente quando necessárias
+
+- **Prioridade / esforço:** P2 / L para a frente completa; integrar variante existente é S, waffle é M.
+- **Gap de origem:** §3.3/§4.2; relatório de cenas §4.8 e [spec waffle](specs/waffle-chart.md). `ShareChart` já tem `bar100`/`donut`; waffle e `Waterfall` não foram identificados como componentes.
+- **Objetivo / escopo:** reutilizar `share` primeiro; expor `donut` somente no formato/layout validado. Criar waffle só para “em cada 100”; cascata só quando entrada/deduções/resultado explícitos e comparáveis estiverem fichados. São alternativas por pergunta, não três peças obrigatórias.
+- **Entrega:** decisão da visualização e demo; para nova variante/componente, API/testes/build no kit antes do pin. ADR/schema/TS/check, adapter/template e instruções registram denominador, unidade, arredondamento e política dos valores derivados.
+- **Aceite verificável:** proporção usa base comum e valor exato no rótulo; grade preserva total de células e declara arredondamento; resto não recebe valor editorial inventado. Cascata recebe líquido explícito e consistência revisada; falha para unidade/base incompatível. `share` sem variante continua `bar100`; donut não é liberado em retrato por simples inclusão no enum.
+- **Dependências / papel:** MC-07 escolhe o gráfico; dono decide política de número derivado; pesquisador/verificador sustentam valores. Kit/integrador executam apenas a alternativa necessária e registram as demais como adiadas, sem custo de implementação obrigatório.
+
+### CP-10 — Camada sonora licenciada na montagem final
+
+- **Prioridade / esforço:** P2 / L, depois de fechar voz/legenda/entrega sem trilha.
+- **Gap de origem:** §1.6/§4.1; relatório de cenas §5.1. `MusicBed`/`SfxTrack` existem, mas `assemble` seleciona vídeo e narração e pode descartar áudio do render visual.
+- **Objetivo / escopo:** integrar uma trilha opcional na duração do episódio, com licença/hash, fades e nível subordinado à voz. Reusar ffmpeg/fluxo atual; áudio não deve reiniciar nem ser aplicado duas vezes por cena. J/L-cuts ficam para caso que justifique mudar a timeline.
+- **Entrega:** ADR do contrato sonoro quando necessária, entrada validada de ativo/caminho/duração, montagem final com mix e cache, fixture curta de áudio e créditos entregues ao pacote de revisão AE-06. Conferir a compatibilidade antes de encaminhar saída dos componentes sonoros do kit; export automatizado continua uma decisão operacional separada.
+- **Aceite verificável:** fixture de duas cenas tem voz e trilha no arquivo final, continuidade no corte, duração correta e ausência de clipping; rejeitar ativo sem licença/caminho válido. Sem trilha, a montagem atual permanece igual; revisar inteligibilidade por escuta, pois pico medido sozinho não comprova compreensão.
+- **Dependências / papel:** ativo aprovado/licenciado é pré-requisito real; coordenar checklist de direitos/entrega com AE-06 sem esperar toda sua revisão final. MC-09 fornece direção dos cortes; integrador fecha mixagem, verificador confere créditos e dono revisa a prévia. Whiteboard/Lottie/2.5D fica como receita MC condicional à pauta, sem novo motor ou pacote aqui.
+
+**Ordem de início:** AE-05 fecha SRT/timing; CP-01 pode nascer com fixture e aguarda esses dados para uso real. CP-02 e CP-03 podem avançar em paralelo sem depender de CP-01. Escolher CP-06/CP-07 ou CP-04 pelo próximo roteiro; CP-05/CP-08/CP-09 só entram pelo argumento e CP-10 após a entrega básica estável. MC fornece blueprints antes da integração e demonstra as receitas depois; revisão temporal usa MC-10 e leitura/camadas usa AE-07, sem dependências circulares.
+
+**Limites deste plano:** apenas documentação; nenhum componente, contrato, pin ou decisão humana foi alterado. Demos, testes e revisão audiovisual acima são critérios futuros; esforço e ganho de compreensão/engajamento continuam hipóteses até execução e medição.

@@ -342,3 +342,103 @@ Não foram instaladas skills nem executados seus scripts; seus `SKILL.md` foram 
 As specs citadas por caminho estavam sem versionamento na consulta inicial e entram no conjunto de commits posteriores solicitado pelo dono. Continuam sendo propostas: versionar a spec não implementa nem aprova o componente.
 
 **Risco principal:** importar receitas de skills externas sem adaptar tempo, contratos e identidade pode aumentar efeitos e reduzir compreensão. As prioridades e benefícios aqui são julgamento técnico/editorial, não ganho medido de engajamento.
+
+## Plano de execução — 10 atividades
+
+**Visão conjunta:** [30 atividades e sequência de execução](tarefas/plano-30-atividades.md).
+
+**Estado: proposta; nenhuma atividade abaixo foi implementada por este planejamento.** Este bloco trata da adaptação dos métodos externos e da direção de cenas no auto-play. A fabricação de componentes e a integração tipada pertencem ao [plano CP](WORKSPACE-ATUAL-E-COMPONENTES.md#plano-de-execução--10-atividades); a jornada editorial, o alinhamento e a medição pertencem ao [plano AE](RELATORIO-GAPS-AUDIENCIA-ENGAJAMENTO.md#plano-de-execução--10-atividades).
+
+Prioridades: **P0**, pré-requisito; **P1**, próxima aplicação; **P2**, conforme pauta concreta. Esforço relativo: **S**, guia ou receita curta; **M**, conjunto de receitas com revisão; **L**, mudança extensa. Não representa dias. O roteirista entrega intenção, evidência e âncoras; o integrador usa apenas o contrato disponível; o verificador revisa o resultado. Receitas e critérios podem ser escritos antes de CP; sua aplicação executável depende da capacidade integrada. Uma receita pendente não autoriza inserir novos campos em `scenes.json` ou alterar episódio aprovado.
+
+### MC-01 — Matriz de disponibilidade e compatibilidade
+
+**Prioridade / esforço:** P0 / S.
+- **Gap de origem:** subtópicos 1.2 e 2.1 — exemplos incompatíveis e divergência entre pin, checkout e pacote instalado.
+- **Objetivo/escopo:** indicar quais APIs podem sustentar cada receita e quando seria necessário atualizar o kit; distinguir disponibilidade na biblioteca de exposição no contrato do auto-play.
+- **Entrega concreta:** matriz com capacidade, versão/SHA consultado, export/declaração pública, suporte por formato, integração existente e alternativa disponível; usar [package.json](../video/package.json), [types.ts](../video/src/types.ts) e [ShotView.tsx](../video/src/ShotView.tsx) como entradas.
+- **Critérios de aceite:** toda receita classificada como disponível no contrato, disponível só no kit, só no checkout ou ausente; divergências explícitas; nenhum exemplo promete API sem evidência; atualização de pin tem necessidade identificada.
+- **Dependências / papel:** nenhuma; integrador do auto-play, com consulta de leitura ao motion-kit. CP-01 a CP-10 usam essa matriz antes de escolher integração ou componente novo.
+
+### MC-02 — Guia de adaptação das skills externas
+
+**Prioridade / esforço:** P0 / S.
+- **Gap de origem:** subtópicos 1.1 e 1.2 — conhecimento externo útil misturado a ferramentas, idioma e instruções de outro fluxo.
+- **Objetivo/escopo:** extrair métodos de storyboard, composição, revelação e revisão, preservando fontes, gates, identidade e tempo por frame do projeto.
+- **Entrega concreta:** guia curto de referência para [vp-roteiro](../.agents/skills/vp-roteiro/SKILL.md), com fonte consultada, método aproveitado, adaptação necessária, limite e exemplo de handoff por cena; sem instalar packs ou executar seus scripts.
+- **Critérios de aceite:** cada método tem fonte do tópico 1 e uso concreto; exemplos removem relógios de animação web, serviços pagos e imposições de idioma; handoff identifica episódio/plano, objetivo, claims, formato, âncora de fala e saída permitida.
+- **Dependências / papel:** MC-01; agente responsável pelas instruções do workspace e roteirista. Alterações futuras na skill mantêm seu escopo, sem convertê-la em renderizador ou aprovador.
+
+### MC-03 — Vocabulário de movimento e transições
+
+**Prioridade / esforço:** P1 / S.
+- **Gap de origem:** subtópicos 3.1 e 3.2 — câmera repetida, `push` uniforme e acabamento concorrendo com leitura.
+- **Objetivo/escopo:** escolher movimento por função: apresentar, revelar, comparar ou concluir; usar os tokens existentes e poucos modos de `SceneSlide` compatíveis, com pausa de leitura.
+- **Entrega concreta:** ficha de direção para gancho, mecanismo e resposta, com foco, entrada, permanência, saída e transição motivada; mapa de decisões para APIs atuais de [Scene.tsx](../video/src/Scene.tsx) e [theme.ts](../video/src/theme.ts), marcando campos ainda não expostos.
+- **Critérios de aceite:** os três exemplos têm um foco principal identificável; documento e número podem permanecer estáticos; corte simples é alternativa explícita; nenhuma transição supõe sobreposição de renders independentes ou inventa novos tokens.
+- **Dependências / papel:** MC-01 e MC-02; direção de motion e integrador. Mudanças técnicas necessárias seguem a integração mínima descrita acima; a ficha não equivale à sua implementação.
+
+### MC-04 — Receitas de headline e legenda
+
+**Prioridade / esforço:** P1 / M.
+- **Gap de origem:** subtópico 4.1 — entrada por palavra confundida com legenda sincronizada e risco de `keyword` ocultar a fala.
+- **Objetivo/escopo:** definir quando usar `KineticHeadline.wordFrames` para ênfase editorial e quando manter legenda por frase ou palavra ativa; consumir tempos reais, sem produzir alinhamento aqui.
+- **Entrega concreta:** duas receitas com narração, destaque, bloco de legenda, âncoras medidas, pontuação, pausas e regra de convivência com fonte/apresentador; conservar os limites de [text_fit.py](../app/pipeline/text_fit.py).
+- **Critérios de aceite:** exemplo pt-BR inclui número, nome próprio e pausa; destaque não substitui a informação completa da fala; tempos têm origem no áudio; falta de alinhamento aciona legenda por frase revisada e não divisão por caracteres.
+- **Dependências / papel:** AE-05 fornece SRT/tempos; CP-01 fornece `WordCaption` quando disponível; MC-03 orienta entradas. Roteirista define a ênfase e verificador confere a correspondência.
+
+### MC-05 — Receitas de lista, processo e ilustração
+
+**Prioridade / esforço:** P1 / M.
+- **Gap de origem:** subtópicos 4.2, 4.3 e 4.9 — fatores sem memória visual, mecanismos em cartões isolados e ilustração sem receita editorial.
+- **Objetivo/escopo:** escolher lista acumulativa para enumeração e processo curto para relações; usar desenho estático ou vetorial antes de Lottie/2.5D, somente quando a explicação exigir.
+- **Entrega concreta:** receita de três a cinco itens, receita de mecanismo de três etapas e opção esquemática condicionada a ativos/direitos; referenciar a [spec RevealList](specs/reveal-list.md), sem reescrevê-la nem fabricar componente.
+- **Critérios de aceite:** itens anteriores permanecem conforme o plano; cada seta tem relação sustentada por ficha; tempos vêm de âncoras identificadas; continuidade entre cenas passa por props suportadas; ilustração é identificada como esquema e tem alternativa com planos atuais.
+- **Dependências / papel:** MC-03, AE-05, CP-02 e CP-03; roteirista e direção de motion, com revisão factual independente. Uso de Lottie fica pendente de disponibilidade, peers e licença confirmados em MC-01.
+
+### MC-06 — Receita de evidência documental
+
+**Prioridade / esforço:** P1 / S.
+- **Gap de origem:** subtópico 4.4 — documento indisponível no vertical e trecho ilegível ou sem contexto.
+- **Objetivo/escopo:** escolher citação atribuída, recriação gráfica ou recorte real conforme a evidência e os direitos; orientar o foco no trecho que sustenta a claim.
+- **Entrega concreta:** roteiro visual de um trecho já fichado, com fonte, `excerpt_id`, citação literal, ressalvas, cabeçalho, destaque e indicação de recriação quando aplicável; respeitar o contrato de [schemas.py](../app/pipeline/schemas.py).
+- **Critérios de aceite:** negações, atribuição e limitações continuam visíveis; nenhuma recriação se apresenta como captura autêntica; fonte é legível; recorte real tem direito registrado; a receita aponta alternativa textual enquanto o layout não estiver integrado.
+- **Dependências / papel:** CP-06 fornece a variante/integração vertical; MC-03 e MC-08 orientam foco/composição; pesquisador entrega o trecho e verificador confere fidelidade. Esta atividade não busca fontes novas.
+
+### MC-07 — Receitas de comparação, gráfico e detalhe
+
+**Prioridade / esforço:** P1 / M.
+- **Gap de origem:** subtópicos 4.5, 4.6 e 4.8 — detalhe sem vínculo à fala, comparação múltipla e gráficos escolhidos sem respeitar unidade/denominador.
+- **Objetivo/escopo:** orientar a escolha entre barras, tabela, proporção, limite ou cascata pela pergunta; definir um dado/detalhe em foco com anotação já disponível, preservando escala e contexto.
+- **Entrega concreta:** árvore de decisão com exemplo homogêneo, heterogêneo e detalhe anotado; registrar valor, unidade, denominador, fonte e âncora, reutilizando as specs de [ValueTable](specs/value-table.md), [LimitMeter](specs/limit-meter.md) e [waffle](specs/waffle-chart.md).
+- **Critérios de aceite:** unidades incompatíveis não compartilham escala; proporções explicam denominador e arredondamento; cascata só usa valores sustentados; callout aponta o dado correto sem cruzar rótulos; nenhum exemplo inventa cálculo ou causalidade para animar.
+- **Dependências / papel:** CP-04, CP-05, CP-07 e CP-09 apenas para as variantes exigidas pela pauta; MC-01 e MC-03; roteirista com revisão factual e visual. Barras, `share` e `compare` existentes seguem como alternativas.
+
+### MC-08 — Composição vertical, localização e cronologia
+
+**Prioridade / esforço:** P1 / M.
+- **Gap de origem:** subtópicos 4.4 e 4.7 — planos horizontais excluídos do retrato e risco de apenas encolher o conteúdo.
+- **Objetivo/escopo:** recompor a informação em 9:16; escolher locator para localização/rota e timeline para sequência, usando selo quando lugar/data forem apenas contexto.
+- **Entrega concreta:** fichas de composição para documento, locator de um ou dois lugares e timeline curta, com foco, rótulos, área segura e posição de legenda/apresentador; usar a [ADR 014](decisions/014-perfil-vertical.md) e [HostWindow.tsx](../video/src/HostWindow.tsx).
+- **Critérios de aceite:** composição demonstra leitura em 720×1280 sem cortar fonte/ressalva; mapa e datas preservam significado; camadas não se sobrepõem; formatos suportados e alternativas atuais são explícitos; nenhum `kind` é liberado em retrato só por existir no kit.
+- **Dependências / papel:** CP-06 e CP-08 para layouts/contratos; MC-03 e MC-04 para convivência; direção de motion e integrador. A revisão de compreensão com voz final pertence a AE-07.
+
+### MC-09 — Cortes motivados e continuidade de áudio
+
+**Prioridade / esforço:** P2 / S.
+- **Gap de origem:** subtópico 5.1 — transição visual confundida com continuidade sonora e trilha sem garantia na montagem final.
+- **Objetivo/escopo:** marcar mudança de ideia, pergunta e resposta na fala aprovada; indicar continuidade desejada e necessidade real de trilha, sem implementar mixagem ou timeline aqui.
+- **Entrega concreta:** mapa de cortes de um trecho com posição no áudio, motivo, relação entre planos e decisão de trilha/silêncio; handoff para o fluxo de [montagem provisória](../scripts/provisorio/montar_episodio.py), após conferir sua montagem efetiva.
+- **Critérios de aceite:** cada corte preserva frase e pausa relevantes; decisão serve ao argumento; plano não promete J/L-cut sem suporte; trilha proposta tem licença e voz permanece como foco; nenhuma faixa é presumida presente apenas por usar `MusicBed`.
+- **Dependências / papel:** AE-05 fornece áudio/tempos medidos e CP-10 trata mixagem quando necessária; MC-03 orienta transições; editor define cortes e dono revisa a prévia no gate correspondente.
+
+### MC-10 — Revisão visual e temporal por cena
+
+**Prioridade / esforço:** P1 / S.
+- **Gap de origem:** subtópico 5.2 — quadro final/build não demonstram a informação durante entradas e saídas.
+- **Objetivo/escopo:** definir cedo o protocolo de revisão do comportamento visual por receita, aproveitando régua e demos existentes; separar a inspeção de movimento/geometria da revisão editorial de AE-07.
+- **Entrega concreta:** checklist e registro por plano/formato, com evidência antes da entrada, durante movimento, na pausa de leitura e na saída; anexar trecho com áudio quando o recurso depender dele e identificar versão do template.
+- **Critérios de aceite:** alvo correto, texto/fonte íntegros, ausência de colisão e valor final esperado documentados; erros têm plano/frame e encaminhamento ao responsável; demos de CP são reaproveitadas; mudança de template considera [template_hash](../app/render/remotion.py); cobertura parcial é declarada.
+- **Dependências / papel:** MC-01 e MC-03 para preparar o protocolo; aplicar por receita MC e entrega CP disponível, sem aguardar o catálogo inteiro. Verificador visual independente; o registro alimenta AE-06, sem aprovar gate humano ou certificar ganho de audiência.
+
+Começar por MC-01 a MC-03 e escolher um trecho piloto. MC-04 a MC-08 fecham suas receitas conforme os contratos e tempos estiverem disponíveis; MC-09 entra quando a pauta exigir. MC-10 acompanha cada receita aplicada, sem exigir render completo para revisar uma mudança de documentação.

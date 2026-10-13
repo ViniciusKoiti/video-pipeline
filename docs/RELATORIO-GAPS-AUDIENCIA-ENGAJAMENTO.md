@@ -312,3 +312,103 @@ Agenda musical, ADR 019 e prompt Thiel estavam sem versionamento na consulta ini
 Não foram reproduzidos ou ouvidos os vídeos, capturadas telas das publicações, medidos contraste e tamanho efetivo de texto no celular, executados renders ou testes, nem auditados todos os providers e aspectos de segurança. Este é um diagnóstico editorial e do fluxo de produção, baseado em arquivos, e não uma auditoria visual dos vídeos ou uma medição de audiência real.
 
 **Risco central:** mudar muitas variáveis antes de registrar resultados próprios pode gerar mais produção sem aprendizado. As soluções acima são caminhos de teste; nenhuma garante alcance ou engajamento.
+
+## Plano de execução — 10 atividades
+
+**Visão conjunta:** [30 atividades e sequência de execução](tarefas/plano-30-atividades.md).
+
+Estas atividades são propostas para execução futura; os gaps e as evidências acima permanecem como diagnóstico. O plano cobre direção editorial, compreensão e aprendizado operacional. Receitas de movimento e implementação de componentes pertencem aos outros planos; aqui ficam seus insumos e critérios de revisão.
+
+**Prioridade:** P0 antes de usar o piloto como teste confiável; P1 no próximo ciclo; P2 após observar resultados e capacidade. **Esforço relativo:** S = tarefa localizada; M = coordenação de etapas; L = integração e validação de timing. Não são estimativas de dias. Os nomes de novos artefatos abaixo são entregas propostas, não arquivos já existentes.
+
+### AE-01 — Definir recorte da série e pauta do piloto
+
+- **Prioridade e esforço:** P1 / S.
+- **Gap de origem:** subtópico 1.1, públicos e formatos sem recorte consolidado; subtópico 2.1, objetivo ausente.
+- **Objetivo e escopo:** delimitar um lote comparável por público, idioma, problema e formato; registrar quais frentes estão em teste, agendadas ou publicadas, conforme informação fornecida pelo dono. O dono define objetivo e eventual tese.
+- **Entrega concreta:** `pauta.md` do episódio piloto, com pergunta, promessa, recorte da série, limites e lacunas de evidência, usando [$vp-pauta](../.agents/skills/vp-pauta/SKILL.md).
+- **Aceite verificável:** o dono confirma o recorte e objetivo; pergunta e promessa cabem em frases claras; lacunas permanecem identificadas, sem escolher canais novos ou atribuir intenção ao dono.
+- **Dependências e papel:** não depende de outras atividades; usa apenas arquivos e radar já disponíveis. Editor de pauta prepara; dono decide antes de fechar pesquisa e roteiro.
+
+### AE-02 — Ligar promessa, progressão e resposta final
+
+- **Prioridade e esforço:** P0 / M.
+- **Gap de origem:** subtópicos 2.1 e 5.1, roteiro correto sem ponto claro e fecho concentrado em dados ou ressalvas.
+- **Objetivo e escopo:** dar função a cada bloco — pergunta, evidência, mecanismo ou resposta — e preservar ressalvas junto do que foi demonstrado. Cortar ou devolver para pesquisa o que não serve à promessa.
+- **Entrega concreta:** proposta de revisão de `outline.md` e `scenes.json`, acompanhada de um mapa promessa → cenas → resposta e checagem independente, usando [$vp-roteiro](../.agents/skills/vp-roteiro/SKILL.md) e [$vp-checagem](../.agents/skills/vp-checagem/SKILL.md).
+- **Aceite verificável:** o verificador resume o que o vídeo entrega, localiza a resposta e suas evidências e lista lacunas remanescentes. Nova decisão do dono no gate 2 precede voz final; conteúdo aprovado não é sobrescrito para contornar revisão.
+- **Dependências e papel:** AE-01 e fichas aprovadas no gate 1. Roteirista propõe; verificador independente confere; dono mantém objetivo, tese e aprovação.
+
+### AE-03 — Revisar gancho e embalagem pela mesma promessa
+
+- **Prioridade e esforço:** P1 / M.
+- **Gap de origem:** subtópicos 3.1 e 3.2, valor tardio na abertura e título, capa ou primeiro quadro fora da entrega editorial.
+- **Objetivo e escopo:** preparar duas aberturas com as mesmas fichas e apresentar cedo uma pergunta ou descoberta compreensível, com unidade e contexto mínimos; alinhar título público, primeiro quadro ou capa e legenda do post.
+- **Entrega concreta:** pacote editorial proposto no episódio, com duas aberturas, opção escolhida e justificativa, título, descrição do primeiro quadro ou capa e texto do post. Reutilizar template e ativos aprovados; sem novos componentes.
+- **Aceite verificável:** alguém do público pretendido, que não escreveu o roteiro, explica o que espera aprender; a expectativa coincide com a resposta de AE-02. Nomes e percentuais têm significado; embalagem não acrescenta alegações nem benefício pessoal sem fonte.
+- **Dependências e papel:** AE-01 e AE-02. Roteirista e editor de pauta preparam; leitor independente registra compreensão; dono escolhe. Mudança no roteiro retorna à revisão correspondente.
+
+### AE-04 — Escolher CTA útil e registrar dúvidas reais
+
+- **Prioridade e esforço:** P2 / S.
+- **Gap de origem:** subtópico 8.1, pedido genérico de comentário e continuidade indefinida; subtópico 9.2, volume de comentários sem interpretação.
+- **Objetivo e escopo:** escolher no máximo uma ação relevante ao mecanismo explicado: pergunta específica, conteúdo já disponível ou fecho sem CTA. Após publicação autorizada, separar dúvidas, compreensão, discordância e comentários sem relação com o tema.
+- **Entrega concreta:** decisão de CTA no pacote editorial e seção de comentários em `resultado.md`, com síntese das dúvidas e vínculo ao próximo conteúdo quando houver, sem copiar dados pessoais dos participantes.
+- **Aceite verificável:** a pessoa pode responder sem pesquisar outro assunto; não se anuncia um vídeo inexistente; vínculo indicado é conferido manualmente quando a peça estiver publicada. Sem comentários fornecidos, o resultado fica pendente, nunca preenchido por inferência.
+- **Dependências e papel:** AE-02 e AE-03 para o CTA; AE-09 e dados reais fornecidos para o retorno. Roteirista prepara; analista interpreta; dono decide qualquer resposta pública ou publicação.
+
+### AE-05 — Fechar SRT e tempos reais no fluxo de montagem
+
+- **Prioridade e esforço:** P0 / L.
+- **Gap de origem:** subtópico 4.1, legendas ausentes na montagem; subtópico 6.1, tempos de palavras aproximados por caracteres.
+- **Objetivo e escopo:** começar pelo SRT manual revisado sobre a voz aprovada, ligar o arquivo ao manifesto e fechar o caminho até o render. Para planos que precisem de palavras sincronizadas, medir seus tempos sobre a mesma voz pela [porta de alinhamento existente](../app/providers/alignment/base.py); não promover estimativas a tempos reais.
+- **Entrega concreta:** `captions.srt`, `episode.captions` preenchido como caminho relativo, integração na [montagem](../scripts/provisorio/montar_episodio.py) e contrato de tempos por palavra com origem, unidade e referência temporal explícitas. WordCaption, no plano de componentes, consome esses dados; esta atividade não desenha a legenda.
+- **Aceite verificável:** SRT contém a fala completa, abre no [parser usado pelo render](../app/render/remotion.py) e acompanha a voz final na prévia vertical; nomes, números e pausas foram revisados. Dados por palavra existem apenas quando medidos; ausência mantém a alternativa por frase e impede a sincronização do WordCaption até serem entregues, sem divisão artificial de cues.
+- **Dependências e papel:** AE-02, gate 2 e voz aprovada; ativos/gate 3 antes da prévia de produção. Produção fecha arquivo e vínculo; implementação reutiliza a porta e montagem; revisor confere áudio e leitura. Nova voz exige rever tempos.
+
+### AE-06 — Consolidar preflight e revisão dos gates
+
+- **Prioridade e esforço:** P0 / M.
+- **Gap de origem:** subtópicos 2.1, 3.2 e 4.1; subtópico 10.1, fluxo provisório e revisão concentrada no dono.
+- **Objetivo e escopo:** consolidar uma lista operacional que distingue validação técnica, checagem factual e revisão humana. Conferir fontes, direitos e promessa antes da voz final; conferir embalagem, SRT e versões na prévia antes de preparar publicação.
+- **Entrega concreta:** checklist do episódio com saída de `vp check`, relatório independente, referências às decisões de `sources`, `script` e `assets` e registro manual da revisão da prévia. Usar os [comandos e limites reais](../AGENT.MD), sem inventar gate `preview` na CLI.
+- **Aceite verificável:** cada requisito está aprovado pelo responsável humano ou pendente com motivo; conteúdo alterado é devolvido à revisão correspondente. Check técnico sem erros não substitui decisão editorial; nenhuma atividade registra aprovação, edita `review.json` ou publica por iniciativa do agente.
+- **Dependências e papel:** AE-02 e AE-03 permitem preparar o checklist; sua conclusão consome AE-05, AE-07 e a revisão visual do plano de motion quando aplicável. Verificador consolida; produção fornece evidências; dono decide gates e prévia.
+
+### AE-07 — Revisar ritmo, leitura e convivência de camadas
+
+- **Prioridade e esforço:** P1 / M.
+- **Gap de origem:** subtópicos 4.2 e 6.1, fala omitida em planos `keyword`, sincronização aproximada e densidade visual.
+- **Objetivo e escopo:** revisar números, comparações e destaques com voz final e sem áudio no tamanho de um celular; ajustar texto, âncora ou duração quando prejudicarem compreensão. Avaliar informações concorrentes sem implementar animações ou novos componentes.
+- **Entrega concreta:** lista de trechos com timestamp, problema observado e ajuste editorial proposto; incluir todos os intervalos `keyword` e as comparações densas do piloto. Referências: [Scene.tsx](../video/src/Scene.tsx), [shot_bounds](../app/pipeline/shots.py) e [text_fit](../app/pipeline/text_fit.py).
+- **Aceite verificável:** nenhum intervalo perde o sentido da fala quando o destaque aparece; números e comparações podem ser lidos enquanto estão na tela e coincidem com a voz revisada. Alertas de duração são triagem; entendimento é conferido por leitura independente, sem alegar retenção medida.
+- **Dependências e papel:** AE-05 e prévia com voz final. Revisor aponta trechos; roteirista ajusta texto/planos; problemas de desenho ou camada seguem para o plano de componentes. Se texto ou voz mudar, repetir os trechos afetados e seus tempos.
+
+### AE-08 — Copiar radar e converter orientação em hipótese
+
+- **Prioridade e esforço:** P1 / S.
+- **Gap de origem:** subtópico 7.1, associações em conteúdo de terceiros convertidas em regras rígidas.
+- **Objetivo e escopo:** levar ao episódio um brief existente por [radar_resumo.py](../scripts/provisorio/radar_resumo.py), quando aplicável, e distinguir `pattern`, `hint`, data e limites. Escolher uma característica de forma para testar sem tratar radar como fonte factual.
+- **Entrega concreta:** cópia local do radar no episódio e hipótese de forma no `outline.md`, com métrica principal, resultado ainda pendente e limitação. Registrar ausência ou desatualização; não iniciar coleta ou serviço no projeto vizinho.
+- **Aceite verificável:** a hipótese explicita qual escolha de abertura, duração ou forma será observada e por quê; não obriga um vídeo acima de 72 s nem exige termos sem respaldo nas fichas. Amostra de terceiros não vira resultado próprio; evidência editorial permanece separada.
+- **Dependências e papel:** AE-01 e brief já disponível; pode avançar antes da revisão final de AE-02. Editor de pauta propõe; analista explicita limites; dono escolhe a hipótese. Radar ausente não bloqueia uma pauta apoiada em fontes.
+
+### AE-09 — Registrar métricas e decidir o próximo experimento
+
+- **Prioridade e esforço:** P0 / M.
+- **Gap de origem:** subtópicos 9.1 e 9.2, ausência de registro operacional próprio e risco de interpretação causal indevida.
+- **Objetivo e escopo:** preparar CSV ou planilha manual por episódio antes de publicar; comparar mesma plataforma, série, formato e janela. Registrar uma hipótese principal e manter outras escolhas estáveis quando possível; publicações orgânicas continuam sem controle experimental.
+- **Entrega concreta:** registro com episódio/versão, plataforma, URL, série, duração, hipótese, métrica principal, origem de tráfego, data/janela, numerador e denominador das taxas; `resultado.md` com leitura de trechos e proposta do próximo teste, usando [$vp-engajamento](../.agents/skills/vp-engajamento/SKILL.md).
+- **Aceite verificável:** colunas e definições estão prontas antes do lote; dados fornecidos são registrados aos 7 e 28 dias ou a ausência é explícita. Nenhuma taxa agrega plataformas distintas; comentários e picos de retenção têm hipóteses alternativas; amostra insuficiente resulta em conclusão inconclusiva, sem meta universal inventada.
+- **Dependências e papel:** AE-01 para preparar o registro; AE-03/AE-08 definem a hipótese quando pertinentes. Análise posterior depende de publicação separadamente autorizada e métricas reais fornecidas. Analista recomenda uma mudança; dono decide o próximo teste.
+
+### AE-10 — Medir capacidade e reduzir o retrabalho dominante
+
+- **Prioridade e esforço:** P2 / M.
+- **Gap de origem:** subtópico 10.1, tempo técnico e revisão humana atrasando peças comparáveis.
+- **Objetivo e escopo:** medir um episódio de ponta a ponta, distinguindo tempo humano, espera e processamento; usar voz de rascunho até roteiro aprovado e congelar o visual do piloto, resolvendo bloqueios de compreensão e export observados.
+- **Entrega concreta:** registro por etapa com tempo, revisões, uso de cache e motivo de retrabalho; escolher um gargalo medido e propor sua menor correção com os scripts/comandos existentes, consultando [estado do workspace](WORKSPACE-ATUAL-E-COMPONENTES.md).
+- **Aceite verificável:** a proposta aponta uma etapa realmente medida, preserva gates de fontes/direitos e cabe na capacidade informada pelo dono. Comandos placeholders não entram como solução pronta; automação adicional é justificada pelo gargalo, sem novo serviço ou agenda automática.
+- **Dependências e papel:** AE-06 para operar o piloto e AE-09 para ligar custo ao aprendizado; observação começa desde AE-01. Produção registra; analista identifica o gargalo; dono escolhe a prioridade. Voz/render longos exigem `cpu_probe()` e um trabalho pesado por vez.
+
+A preparação pode ocorrer em paralelo: AE-01 orienta AE-08 e o registro inicial de AE-09; AE-02 e AE-03 fecham a entrega editorial; AE-05 e AE-07 fecham a compreensão da prévia; AE-06 consolida evidências para a decisão humana. AE-04 e AE-09 recebem resultados somente quando fornecidos, e AE-10 orienta a redução de trabalho observada no ciclo. Nenhuma atividade garante aumento de audiência.
