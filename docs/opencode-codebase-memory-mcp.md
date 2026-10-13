@@ -24,9 +24,9 @@ indexação, busca, rastreamento e leitura de código foram validados diretament
 Reinicie apenas clientes que ainda não mostrem as ferramentas registradas.
 
 O primeiro índice pela CLI recebeu o alias `auto-play`; o MCP usa o nome derivado
-da raiz mostrado acima. Ambos aparecem em `list_projects` para a mesma pasta.
-As instruções e exemplos passam a usar o índice ativo do MCP, evitando consultar
-o alias antigo sem atualização. Nenhum índice existente foi apagado.
+da raiz mostrado acima. As instruções e exemplos usam o índice ativo do MCP.
+O alias `auto-play` ficou sem atualização e foi apagado em 13/10/2026; a versão
+instalada ignora `--name` e grava sempre com o nome derivado da raiz.
 
 Não foi criada uma entrada local duplicada de servidor, nem alterado o comportamento
 global de indexação automática. Este guia substitui a proposta anterior de instalação
