@@ -145,7 +145,9 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 8. **Toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena; plano que mostra número,
    data, nome, cargo, citação ou gráfico → `claims` no plano. Use `source_ids` e `excerpt_ids` das
    evidências das fichas usadas; cada aresta de `network` tem as suas próprias `claims`. O texto na tela
-   repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz.
+   repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz. **Conta feita na tela (ADR 020):** só em `explicar`, com a narração dizendo a conta
+   inteira, cada insumo e a regra em fichas, e a claim do plano escrevendo a expressão com o resultado
+   ("18,44 ÷ 395 × 195 = R$ 9,10").
 9. **Narração para ser falada** em pt-BR (voz Kokoro `pm_alex`):
    - frases de até ~20 palavras, uma ideia por frase, alternando curtas e longas;
    - anos em algarismos; outros números escritos como devem ser ditos ("mil e quinhentos operários");

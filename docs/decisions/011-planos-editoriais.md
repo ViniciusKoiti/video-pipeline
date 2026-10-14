@@ -93,6 +93,8 @@ ao template e o template chama o componente. Hoje a cadeia só conhece os 10 tip
 
 7. **A tela não calcula.** Razão, variação percentual e soma só aparecem se estiverem numa ficha. O
    `ValueCompare` roda com `showRatio` desligado, e o template nunca converte moeda nem corrige valor.
+   *Ressalva de 2026-10-14 (ADR 020):* a conta dita inteira na narração, com insumos e regra em fichas, pode
+   mostrar o resultado; o template continua sem calcular.
 
 8. **`vp check`, erros novos:**
    - `quote`, em qualquer estilo: `text` literal num dos trechos citados, com a mesma regra das fichas
