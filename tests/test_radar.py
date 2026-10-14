@@ -43,6 +43,7 @@ def brief(*items: dict[str, Any], **changes: Any) -> RadarBrief:
             "long_video_above_s": 72.0, "long_opening_above_words": 9.0, "long_caption_above_words": 150,
         },
         "caveats": ["Observation, not experiment."], "campo_novo_do_radar": {"qualquer": 1},
+        "measure": "shares/views",  # Instagram; o YouTube mede curtidas/views (ver os testes de medida)
         **changes,
     }
     return RadarBrief.model_validate(raw)
@@ -69,7 +70,7 @@ def test_brief_is_read_by_its_contract_and_ignores_new_fields() -> None:
     assert [g.trait for g in read.hints()] == ["ask_comment"]
     assert brief_summary(read) == (
         "radar-brief.json: nicho exemplo, 34 Reels lidos, de 12/10/2026; "
-        "1 padrão(ões) e 1 indício(s) de forma"
+        "1 padrão(ões) e 1 indício(s) de forma; medida: compartilhamentos por visualização"
     )
     with pytest.raises(ValidationError):
         brief(schema="patterns.v1")
@@ -141,6 +142,43 @@ def test_old_brief_warns() -> None:
     assert "resumo de 12/10/2026 (50 dias)" in warning
 
 
+# --- a medida é a da plataforma; corte nulo e amostra pequena são "sem base" (AP-09, #122) --------
+
+
+def test_shorts_brief_is_labelled_by_its_measure_and_never_says_shares() -> None:
+    read = brief(
+        guidance("long_video"), measure="likes/views",
+        thresholds={"long_video_above_s": 17.0, "long_opening_above_words": 27.5,
+                    "long_caption_above_words": None},
+    )
+    assert brief_summary(read).endswith("; medida: curtidas por visualização")
+    (warning,) = form_warnings(scenes("Uma fala curta."), read, 14.0)
+    assert "long_video anda com mais curtidas por visualização" in warning and "o corte é 17 s" in warning
+    assert "compartilhamento" not in warning
+
+
+def test_old_brief_without_measure_keeps_it_unknown() -> None:
+    read = brief(guidance("long_video"), measure=None)
+    assert brief_summary(read).endswith("; medida não informada (resumo antigo)")
+    (warning,) = form_warnings(scenes("Uma fala curta."), read, 14.0)
+    assert "anda com mais na medida do resumo, que não está informada" in warning
+    assert "compartilhamento" not in warning
+
+
+def test_null_threshold_is_no_basis_not_a_comparison() -> None:
+    read = brief(guidance("long_video"), thresholds={"long_video_above_s": None})
+    manifest = scenes("Uma fala curta.")
+    assert form_warnings(manifest, read, 14.0) == []
+    assert unmeasured_patterns(manifest, read, 14.0) == ["long_video"]
+
+
+def test_small_sample_warns_and_keeps_the_patterns_as_hypothesis() -> None:
+    read = brief(guidance("long_video"), analysed=12)
+    assert form_warnings(scenes(LONG), read, 14.0) == [
+        "radar: resumo com só 12 Reels lidos (abaixo de 30): os padrões são hipótese, não base"
+    ]
+
+
 def write_episode(root: Path, brief_raw: dict[str, Any] | None) -> JsonFileStore:
     folder = root / "ep"
     folder.mkdir(parents=True)
@@ -159,6 +197,16 @@ def test_vp_check_reads_the_episode_brief_and_only_warns(tmp_path: Path) -> None
     assert any(line.startswith("radar-brief.json: nicho exemplo") for line in report.checked)
     assert any("sem conferência no texto: scene_talking_head" in line for line in report.checked)
     assert any("long_video anda com mais" in w for w in report.warnings)
+
+
+def test_vp_check_with_a_shorts_brief_never_mentions_shares(tmp_path: Path) -> None:
+    read = brief(guidance("long_video"), measure="likes/views")
+    raw = json.loads(read.model_dump_json(by_alias=True))
+    report = check_episode(write_episode(tmp_path, raw), "ep", today=date(2026, 10, 13))
+    assert report.ok
+    assert any("medida: curtidas por visualização" in line for line in report.checked)
+    assert any("long_video anda com mais curtidas por visualização" in w for w in report.warnings)
+    assert all("compartilhamento" not in w for w in report.warnings)
 
 
 def test_vp_check_without_a_brief_says_nothing_about_the_radar(tmp_path: Path) -> None:
