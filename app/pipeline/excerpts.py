@@ -46,7 +46,8 @@ def quote_in_excerpt(quote: str, excerpt: str) -> bool:
 
 def numbered_view(source: Source, text: str) -> str:
     """Texto da fonte com o id de cada trecho, para ler e citar (`vp excerpts`)."""
-    header = f"# {source.id} — {source.title}\n\n{source.url}\n"
+    origin = source.url or "Fonte declarada pelo dono, sem URL: ele responde por ela."
+    header = f"# {source.id} — {source.title}\n\n{origin}\n"
     if source.interested:
         header += "\nFonte interessada: nenhum fato só com ela.\n"
     numbered = excerpts_of(source, text).items()

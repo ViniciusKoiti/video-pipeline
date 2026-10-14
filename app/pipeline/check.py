@@ -38,6 +38,7 @@ from app.pipeline.schemas import (
     Scene,
     ScenesManifest,
     Shot,
+    SourceKind,
     SourcesManifest,
     effective_shots,
     number_format_problem,
@@ -99,6 +100,10 @@ def _check_sources(
             report.errors.append(f"sources.json: texto de {source.id} ausente em {source.local_path}")
             continue
         excerpts |= excerpts_of(source, path.read_text(encoding="utf-8"))
+        if source.kind is SourceKind.DECLARED:
+            report.warnings.append(
+                f"{source.id}: fonte declarada pelo dono, sem URL; ele responde por ela no gate 1"
+            )
     report.checked.append(f"sources.json: {len(sources.sources)} fonte(s), {len(excerpts)} trecho(s)")
     return excerpts
 
