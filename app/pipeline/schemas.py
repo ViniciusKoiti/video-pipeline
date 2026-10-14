@@ -398,7 +398,8 @@ class CompareSide(Model):
 
 
 class CompareShot(_FactualShot):
-    """Dois valores lado a lado; a tela não calcula razão nem variação (ADR 011, decisão 7)."""
+    """Dois valores lado a lado; a tela não calcula razão nem variação (ADR 011, decisão 7). Um valor
+    calculado pelo roteiro entra só como conta dita inteira, com insumos e regra em fichas (ADR 020)."""
 
     kind: Literal["compare"] = "compare"
     left: CompareSide

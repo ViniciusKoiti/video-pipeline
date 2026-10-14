@@ -32,6 +32,8 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
      `compare`, `network`, `map`, `keyword`) igual à ficha, e `quote` literal da fonte. Nos planos da
      ADR 011, também:
      - `compare`: os dois valores e rótulos estão nas fichas; razão, variação ou soma só se uma ficha trouxer;
+       ou se for conta dita inteira na narração com insumos e regra em fichas (ADR 020): refaça a conta e confira
+       o arredondamento e a unidade;
      - `network`: cada aresta (quem, verbo, direção, valor) está no trecho das `claims` dela; tracejada só
        onde a fonte descreve relação indireta;
      - `quote` com `style: "document"`: título, emissor e data do cabeçalho correspondem à fonte;

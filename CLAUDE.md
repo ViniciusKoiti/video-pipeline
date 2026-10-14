@@ -153,7 +153,8 @@ revela:
 - **Cena e planos (ADR 008, 011):** uma cena = um bloco de narração = um WAV, com uma lista de planos tipados
   (tipos em `schemas.py`; método de escolha na skill `roteiro-explicativo`). Cada plano se ancora num trecho da
   narração, e o tempo sai da posição da âncora sobre a duração real do WAV (`app/pipeline/shots.py`). A fonte do
-  rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha.
+  rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha,
+  salvo a conta dita inteira na narração com insumos e regra em fichas (ADR 020, 2026-10-14).
   Cena sem planos = forma v1 (um plano de foto). `visual_need` ∈ `historical_exact | contextual_stock |
   map_or_graphic | illustrative_reconstruction`.
 - **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
