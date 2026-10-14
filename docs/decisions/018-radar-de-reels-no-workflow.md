@@ -59,3 +59,11 @@ O resumo do radar é uma **entrada do episódio**, em quatro pontos, sempre como
   modelo daqui precisa acompanhar.
 - Os Reels citados no resumo (`evidence`, `top.watch`) são de terceiros: servem para o dono assistir e ver a
   forma. Nada deles é copiado, e o resumo fica em `data/episodes/`, fora do Git.
+
+## Nota de 14/10/2026 (AP-09, #122)
+
+A medida do resumo depende da plataforma e vem no campo `measure`: `shares/views` no Instagram; `likes/views`
+no YouTube Shorts, que não mostra compartilhamentos. O `vp check` rotula cada alerta por essa medida, trata corte
+nulo em `thresholds` como "sem base" e avisa quando o resumo leu menos de 30 Reels. Resumo sem `measure` é
+antigo, e a medida fica desconhecida. Os nomes `share_rate_with`/`share_rate_without` continuam no contrato por
+compatibilidade; são as taxas na medida do resumo, não necessariamente compartilhamentos.

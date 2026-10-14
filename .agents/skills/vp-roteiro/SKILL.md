@@ -31,7 +31,9 @@ outline a função de cada bloco e as fichas usadas. Títulos e legendas não pr
 mais que o vídeo entrega. Não force "você" sem ficha de impacto comprovado.
 
 Com radar, registre no outline os padrões relevantes seguidos ou desvios justificados;
-`hint` continua hipótese. Faça planos ancorados na narração, com claims inclusive para
+`hint` continua hipótese. Registre também uma hipótese de forma (característica, medida
+`measure`, corte, resultado pendente); a medida do YouTube é curtidas por visualização,
+não compartilhamento, e corte nulo é sem base. Faça planos ancorados na narração, com claims inclusive para
 dados, relações e texto na tela. Vertical aceita apenas os tipos do schema.
 Não estime `duration_ms` no JSON: timing final vem dos WAVs reais. A duração estimada
 pertence ao relatório/outline. Só `<short pause>` é marca de pausa válida.

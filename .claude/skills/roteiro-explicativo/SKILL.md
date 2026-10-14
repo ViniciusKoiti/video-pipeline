@@ -189,11 +189,14 @@ depois de assistir. Toda cena serve à promessa; cena que não serve sai.
 ## Resumo do radar: forma, nunca fato (ADR 018)
 
 Se a pasta do episódio tem `radar-brief.json`, leia-o **antes** de escrever. É o resumo do reels-radar: o que
-anda com mais ou menos compartilhamento nos Reels do nicho. Sem o arquivo, este bloco não se aplica.
+anda com mais ou menos na medida do nicho (`measure`: compartilhamentos por visualização no Instagram; curtidas
+por visualização no YouTube Shorts, que não mostra compartilhamentos). Resumo sem `measure` é antigo, e a medida
+fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco não se aplica.
 
 - **O que ele é.** Observação de amostra pequena, sem causa: cada item traz `n_with`, `n_without` e `chance`.
   `strength: "pattern"` é o que tem base (5+ Reels de cada lado, acaso até 10%); `hint` é hipótese a testar;
-  o que está em `no_basis` não diz nada. Leia também `caveats`.
+  o que está em `no_basis` não diz nada; corte nulo em `thresholds` é "sem base", não zero. Com menos de 30
+  Reels lidos (`analysed`), tudo é hipótese. Leia também `caveats`.
 - **Para que serve.** Decidir a **forma**: tipo e tamanho da abertura, se ela fala com quem assiste, duração,
   título na tela nos primeiros segundos, pedido de comentário e tamanho da legenda do post. Os cortes estão em
   `thresholds` e o perfil dos melhores em `top`.
@@ -206,7 +209,10 @@ anda com mais ou menos compartilhamento nos Reels do nicho. Sem o arquivo, este 
   pergunta.
 - **Quando a forma e as fichas brigam, as fichas vencem.** Se seguir um padrão exigiria um fato que não existe,
   não siga, e diga isso.
-- **No `outline.md`**, uma seção "Radar" com uma linha por padrão do resumo: seguido, ou não seguido e por quê.
+- **No `outline.md`**, uma seção "Radar" com uma linha por padrão do resumo: seguido, ou não seguido e por quê,
+  e **uma hipótese de forma** para o episódio: a característica escolhida, a medida (`measure`), o corte usado
+  e `resultado: pendente` até existir métrica própria (AP-10). É o que a publicação testa, não promessa de
+  alcance.
   O `vp check` compara o roteiro e a legenda com os padrões que dá para medir no texto e avisa; trate cada
   alerta `radar` como os de ritmo: corrija ou justifique na seção.
 
