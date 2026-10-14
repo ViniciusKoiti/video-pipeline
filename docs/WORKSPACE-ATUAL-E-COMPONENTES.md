@@ -84,7 +84,7 @@ Os gates disponíveis por comando são:
 - `script`: hash de `scenes.json` e `outline.md`.
 - `assets --asset <id>`: hash da mídia; aprovação também valida/carimba os metadados do ativo.
 
-Pauta e prévia têm revisão manual. Não existe `vp approve --step preview`. A aprovação pertence ao dono; alterar o material revisado exige nova decisão. A função interna de reabertura existe no módulo de estado, mas `vp reopen` ainda não está ligada a um handler.
+A pauta tem revisão manual. A prévia tem gate por comando desde a #120: `vp approve --step preview` carimba o render mais acabado com `episode.json`, legenda e texto do post. A aprovação pertence ao dono; alterar o material revisado exige nova decisão. A função interna de reabertura existe no módulo de estado, mas `vp reopen` ainda não está ligada a um handler.
 
 ### Subtópico 1.4 — Provedores: configuração não prova implementação
 

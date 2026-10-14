@@ -20,7 +20,14 @@ from app.bootstrap import build_context
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode
 from app.pipeline.excerpts import numbered_view
-from app.pipeline.gates import GATED_STEPS, GateError, GateStatus, gate_report, record_decision
+from app.pipeline.gates import (
+    GATED_STEPS,
+    GateError,
+    GateStatus,
+    gate_report,
+    missing_pieces,
+    record_decision,
+)
 from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
 from app.pipeline.schemas import Decision, EpisodeFormat, SourcesManifest, Step
 from app.render.remotion import region_codes
@@ -74,7 +81,8 @@ def _decision_arguments(parser: argparse.ArgumentParser) -> None:
         "--step",
         required=True,
         choices=[s.value for s in GATED_STEPS],
-        help="gate: sources (fontes e fichas), script (roteiro) ou assets (um ativo, com --asset)",
+        help="gate: sources (fontes e fichas), script (roteiro), assets (um ativo, com --asset) ou preview "
+        "(o render mais acabado, com legenda e texto do post)",
     )
     parser.add_argument("--asset", help="id do ativo, na etapa assets")
     parser.add_argument("--reviewer", help="quem decide (padrão: git config user.name)")
@@ -210,6 +218,7 @@ def _status(args: argparse.Namespace, context: Context) -> int:
     for row in rows:
         print(_status_line(row))
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
+    pending += missing_pieces(context.store, args.episode_id)
     print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
     return 0
 
