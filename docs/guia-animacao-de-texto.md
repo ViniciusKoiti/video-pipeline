@@ -11,7 +11,7 @@
 1. Estudamos o mecanismo da referência; **não copiamos** identidade (fonte, paleta, enquadramento, rosto).
 2. O movimento tem vocabulário curto e nomeado. **Peça nova não escreve mola, easing nem duração em linha.**
 3. A tela não calcula e não inventa tempo (ADR 011, decisão 7; ADR 015): texto sincronizado com a fala usa tempo que vem do áudio real.
-4. A legenda some enquanto há um `keyword` na tela (ADR 011, decisão 5).
+4. A legenda continua na tela junto com o `keyword` (ADR 021, que emenda a decisão 5 da ADR 011).
 5. Legenda, fonte, tarja, carimbo e janela ficam dentro da área segura vertical (ADR 014): 1080×1920, topo 288, base 500, direita 140, esquerda 60 px. Número, comparação e gráfico usam o quadro todo.
 6. Uma frente por vez, um PR por frente. Mudou o visual: sonda de CPU antes do render e versão nova do vídeo-régua (`CLAUDE.md` §1).
 
@@ -39,14 +39,14 @@
 - **Peça:** `WordCaption` em `@viniciusk/motion-kit/editorial`, com `words: {text, from, to}[]` (quadros), `block` (padrão 3), `activeColor` (padrão `theme.accent`), `hold` (a palavra fica acesa até o início da próxima) e `swap` (`cut`) [I, proposta do conselho]. Reaproveita `layoutText` e `legibilityShadow`.
 - **Destaque:** uma palavra por vez, com `cut`. A cor é a do tema (dourado `#F2B134`); o amarelo é a identidade da referência.
 - **Posição:** acima da base segura, como a legenda de hoje (`Scene.tsx`, `Caption`: `paddingBottom: safe.bottom`), **não** no centro, que é onde fica o conteúdo [I].
-- **Convivência:** some com `keyword` na tela; sem `words`, a cena cai na legenda por frase de hoje.
+- **Convivência:** fica visível junto com o `keyword` (ADR 021); sem `words`, a cena cai na legenda por frase.
 - **Tipografia:** a de hoje (Inter, OFL; peso 600; sombra de legibilidade). Traço grosso, caixa alta e amarelo são **decisão aberta** (segunda identidade visual).
 
 ### 3.3 Dependência crítica: tempo por palavra
 
 | Fato | Onde |
 |---|---|
-| `captions` é `null` nos 11 `episode.json`; não existe `captions.srt`; a #17 (legendas) não começou | [F] `data/episodes/*/episode.json`, `docs/ROADMAP.md` |
+| Até 2026-10-14 `captions` era `null` em todos os `episode.json`. Desde a ADR 021 o SRT é por frase, com o tempo das fronteiras tirado dos silêncios do WAV: serve à legenda, não ao destaque por palavra | [F] `app/media/captions.py`, ADR 021 |
 | A ADR 014 já decidiu legenda queimada no vertical, com SRT editável | [F] `docs/decisions/014-perfil-vertical.md` |
 | "Tempo por palavra vindo do alinhamento (#17)" ficou **fora** da ADR 011 | [F] ADR 011, item 11 |
 | Os `cues` de hoje são por frase (`Cue = {from, to, text}`, em quadros), lidos do SRT em `app/render/remotion.py` (l. 160 a 163) | [F] |
@@ -83,7 +83,7 @@
 | Quem | Faz | Não faz | Como se confere |
 |---|---|---|---|
 | `roteirista` | `keyword` curto (até 8 palavras), um por cena; deixa o tempo para a âncora | não escreve tempo de palavra, nem lista de itens como vários `keyword` | `vp check` |
-| `verificador` | confere que o texto na tela está nas fichas e que a legenda não repete o `keyword` | não julga o movimento | relatório |
+| `verificador` | confere que o texto na tela está nas fichas | não julga o movimento | relatório |
 | Quem implementa (kit e template) | usa tokens; props em px de um quadro de 1080 de altura (`useUnit`); demo em `examples/Root.tsx`; `typecheck`, build e `dist/`; quadros inicial, intermediário e final no Studio | não escreve mola em linha; não decide as decisões abertas; não muda `episode.json` sem ADR | critérios da seção 8 |
 | Conselho (`/llm-council`) | decisão com trade-offs reais, só quando o dono pedir | não substitui o dono nem confere fato | `~/.claude/skills/llm-council/SKILL.md` |
 
@@ -93,7 +93,7 @@
 2. `cut` = 0 quadros; `pop` = 3 a 4 quadros e sem quique; `rise` = a entrada atual (a régua não muda sem aval).
 3. Animação determinística por quadro, sem `Math.random` e sem estado (`AGENTS.md` do kit).
 4. Destaque por palavra só com tempo por palavra do áudio. Tolerância de sincronia: **decisão aberta**, a definir com o primeiro alinhamento real.
-5. Legenda dentro da área segura e fora de cena com `keyword`.
+5. Legenda dentro da área segura, visível também durante o `keyword` (ADR 021).
 6. Fonte nova só com licença registrada na lista fechada (`CLAUDE.md` §6); hoje, Inter (OFL).
 7. Kit: demo registrada, `npm run typecheck`, build e `dist/` versionado. Template: pin novo, sonda de CPU, vídeo-régua vN com a folha de quadros marcando só o que se pretendia mudar.
 8. Nenhum render ou clipe de teste sem pedido do dono.

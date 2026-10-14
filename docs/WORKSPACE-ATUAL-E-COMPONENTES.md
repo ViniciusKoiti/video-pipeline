@@ -125,7 +125,7 @@ O TOML declara intenção e seleção. `Registration(..., factory=None)` gera er
 3. `episode_shots` calcula o intervalo de cada plano proporcionalmente à posição da âncora. A duração da cena é real; o instante das palavras continua aproximado.
 4. O adapter converte milissegundos em frames e entrega props à composição `Scene`.
 5. `ShotView` despacha pelo `kind`; `Editorial` compõe as peças do motion-kit.
-6. `Scene` mantém mídia por baixo dos overlays, aplica fontes, legenda e apresentador. Durante `keyword`, oculta a legenda por frase.
+6. `Scene` mantém mídia por baixo dos overlays, aplica fontes, legenda e apresentador. Durante `keyword`, a legenda por frase continua visível (ADR 021).
 7. Cada cena é renderizada e pode ser reutilizada por hash de template, mídia e props.
 8. `assemble` concatena vídeo e áudio separadamente e seleciona `0:v` e `1:a`. Áudio acrescentado só no render visual da cena não entra automaticamente no final.
 

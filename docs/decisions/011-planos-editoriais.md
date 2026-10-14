@@ -79,7 +79,8 @@ ao template e o template chama o componente. Hoje a cadeia só conhece os 10 tip
 5. **Camadas no template** (generaliza a emenda da ADR 008). Foto ou B-roll continua por baixo dos planos
    seguintes da cena até a próxima mídia (#70). Por cima dela entram `lower_third`, `stamp`, `number` e
    `keyword`. Em tela cheia, sobre o fundo do tema, ficam `chart`, `compare`, `quote`, `network`, `map`,
-   `timeline` e `family_tree`. A legenda some enquanto um `keyword` está na tela.
+   `timeline` e `family_tree`. ~~A legenda some enquanto um `keyword` está na tela.~~ Emendada pela ADR 021
+   (2026-10-14): a legenda fica visível junto com o `keyword`.
 
 6. **Fonte no rodapé, sem campo no roteiro (#74).** Na montagem do `episode.json`, cada plano com `claims`
    ganha `source` (texto) e `source_flag`, derivados do `sources.json` **sem editá-lo** (editar derrubaria o
