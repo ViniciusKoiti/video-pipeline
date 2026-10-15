@@ -71,7 +71,8 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
    multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
    (`docs/postiz.md`) envia mídia e cria agendamentos no Postiz do dono, só depois do gate 4 e com a
    autorização do dono para aquele agendamento; sem esse pedido nada é agendado, e a conexão das redes usa o
-   login do dono. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
+   login do dono. O `schedule` só aceita um JSON que já passou pelo `vp postiz pacote`, pede a confirmação do
+   dono pela regra `ask` do `.claude/settings.json` e grava cada passo em `data/publicacoes/registro.jsonl`. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
    o código só valida (`vp check`, ADR 009).
    **Um motor de render por formato de episódio** (ADR 001): `archival_documentary` com ffmpeg (piloto) e
    `explainer` com Remotion (protótipo da #48).

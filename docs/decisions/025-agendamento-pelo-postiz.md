@@ -44,3 +44,25 @@ conectado só ao YouTube em 2026-10-14. O Postiz tem uma API pública com chave 
 - A resposta da criação não prova a publicação: conferir o estado `QUEUE` com `vp postiz posts` e, depois do
   horário, o post na rede.
 - Mudar a instalação do Postiz é trocar as duas variáveis do `.env`; o código não guarda endereço nem conta.
+
+## Emenda (2026-10-15): cadeia de provas do agendamento
+
+Pedida pelo dono na mesma sessão, a partir de uma cadeia de 12 passos em que cada passo deixa uma prova. No
+agendamento, os passos 9 a 12 (pacote de decisão, "pode" do dono, agir, registrar) deixavam de prova só a
+conversa: o código não guardava a autorização nem o que foi agendado, e o item 2 dependia de o agente obedecer.
+
+1. **Pacote de decisão:** `vp postiz pacote post.json [--episode ID]` roda todas as defesas do item 5 só com
+   consultas e devolve o quê (canal, data, legenda visível, mídia com arquivo e `sha256`), a evidência (estado do
+   gate 4 do episódio, quando informado), os riscos, como desfazer e a recomendação. Nada é criado no Postiz.
+2. **O "pode" do dono é uma confirmação do Claude Code:** a regra `ask` `Bash(* postiz schedule *)` no
+   `.claude/settings.json` faz o Claude Code parar e pedir o clique do dono, inclusive no modo automático e nos
+   subagentes. O `pacote` não pede confirmação. A regra casa o texto do comando e não é barreira de segurança:
+   por isso o código também exige o pacote (item 3).
+3. **Agir só com pacote:** o `schedule` recusa um JSON sem pacote com o mesmo hash (JSON canônico), um pacote que
+   recomenda não agendar e um gate 4 que mudou depois do pacote.
+4. **Registro:** `data/publicacoes/registro.jsonl`, versionado e só acrescentado, recebe `upload` (arquivo,
+   `sha256`, id e caminho da mídia), `pacote`, `agendado` (ids criados) e `falha` (mensagem segura do adapter).
+   A conversa continua sendo a prova do pedido; o registro prova o que foi mostrado e o que foi feito.
+
+Sem episódio (caso dos cortes do clipe, que não passam pelos gates do pipeline), o pacote marca como risco que
+o gate 4 não foi conferido pelo código e deixa a decisão com o dono.

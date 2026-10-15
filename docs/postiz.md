@@ -19,8 +19,9 @@ O `.env` não deve entrar no Git. Há campos vazios em [.env.example](../.env.ex
 | `vp postiz connect instagram-standalone` | Link de autorização para o dono conectar o Instagram |
 | `vp postiz settings ID` | Regras e campos aceitos pelo canal |
 | `vp postiz posts --start ISO --end ISO` | Posts na janela, com ID, legenda, horário, estado e canal |
-| `vp postiz upload VIDEO.mp4` | ID e caminho da mídia enviada |
-| `vp postiz schedule post.json` | IDs das postagens criadas |
+| `vp postiz upload VIDEO.mp4` | ID e caminho da mídia enviada; registra o arquivo e o `sha256` |
+| `vp postiz pacote post.json [--episode ID]` | Pacote de decisão para o dono, sem criar nada |
+| `vp postiz schedule post.json` | IDs das postagens criadas; só com pacote e com a confirmação do dono |
 
 Sucesso escreve JSON na saída padrão. Falhas de execução escrevem JSON em stderr e saem com código 1;
 argumentos inválidos seguem o argparse, com código 2. `--help` funciona sem credenciais.
@@ -55,8 +56,11 @@ Depois de revisar o vídeo e a legenda com o dono:
 }
 ```
 
-4. Execute `.venv/bin/vp postiz schedule post.json` para criar o agendamento.
-5. Consulte `posts --start ... --end ...` e confira os IDs e o estado `QUEUE`. A resposta de criação sozinha
+4. Rode `.venv/bin/vp postiz pacote post.json` (com `--episode ID` quando o vídeo for de um episódio, para
+   conferir o gate 4) e mostre ao dono o pacote: o quê, evidência, riscos, como desfazer e recomendação.
+5. Com o "pode" do dono, execute `.venv/bin/vp postiz schedule post.json`. O Claude Code pede a confirmação dele
+   antes de rodar (regra `ask` do `.claude/settings.json`); sem pacote para o mesmo JSON, o comando recusa.
+6. Consulte `posts --start ... --end ...` e confira os IDs e o estado `QUEUE`. A resposta de criação sozinha
    não comprova que o conteúdo foi publicado.
 
 A camada rejeita datas sem fuso ou no passado, canais ausentes/desativados e tentativas de atualizar posts
@@ -64,6 +68,9 @@ existentes. Antes de criar, consulta a janela para detectar o mesmo canal, horá
 normalizando HTML e espaços. O Postiz
 não fornece idempotência documentada para essa operação: chamadas concorrentes ainda podem duplicar posts.
 Não há repetição automática de POST. Em caso de timeout, consulte a fila antes de tentar novamente.
+
+Cada `upload`, `pacote`, `schedule` criado e falha de envio vira uma linha em `data/publicacoes/registro.jsonl`,
+que só cresce e entra no Git. É ali que ficam os ids das postagens, em vez de copiá-los à mão.
 
 A autorização para publicar continua sendo do dono ([ADR 025](decisions/025-agendamento-pelo-postiz.md)). A camada não aprova gates editoriais nem altera
 `review.json`. [Agenda do Nabote](../renders/clipe/agenda-instagram.md).
