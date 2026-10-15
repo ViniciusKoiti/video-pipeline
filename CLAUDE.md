@@ -37,9 +37,13 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
   `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`. A folha de quadros marca os planos que
   mudaram: um PR de visual deve mudar só os que pretendia.
 - **Voz (ADR 016, aceita em 2026-10-12):** Kokoro nos rascunhos (`tts`), voz clonada do dono no vídeo final
-  (`tts_final = "chatterbox"`, `montar_episodio.py --voz-final`): Chatterbox local, no ambiente próprio dele
+  (`montar_episodio.py --voz-final`). Desde 2026-10-15 a voz final é `tts_final = "chatterbox_modal"` (ADR 024,
+  aprovada pelo dono na escuta: a mesma voz numa GPU do Modal, segundos por cena). A alternativa local
+  (`--voz=chatterbox`) é o Chatterbox na CPU, no ambiente próprio dele
   (`CHATTERBOX_PYTHON` e `CHATTERBOX_REFERENCE` no `.env`), uma cena por vez e ~30 vezes mais lenta que o tempo
-  real. A gravação de referência é dado pessoal: fora do Git, nunca enviada a provedor. Licença em
+  real. A gravação de referência é dado pessoal: fora do Git, nunca enviada a provedor, com uma exceção (ADR 024,
+  2026-10-14): um volume privado da conta do dono no Modal, onde a mesma voz roda numa GPU T4
+  (`--voz=chatterbox_modal`, função em `deploy/modal_chatterbox.py`; quem envia a gravação é o dono). Licença em
   `data/benchmarks/termos-chatterbox.md`. A Charon do Gemini (ADR 012) segue registrada (`--voz=gemini`; 3 chamadas
   por minuto e **10 por dia** na camada gratuita, termos em `data/benchmarks/termos-gemini-tts.md`) e é a voz do
   vídeo-régua, que não troca de voz.

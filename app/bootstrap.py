@@ -129,6 +129,18 @@ def _chatterbox(settings: Settings) -> Any:
     )
 
 
+def _chatterbox_modal(settings: Settings) -> Any:
+    from app.providers.tts.chatterbox import ChatterboxTTS, modal_starter
+
+    box, cloud = settings.chatterbox, settings.chatterbox_modal
+    return ChatterboxTTS(
+        cloud.python.expanduser(), box.reference and box.reference.expanduser(), model=box.model,
+        language_ids=box.language_ids, pause_ms=box.pause_ms,
+        delivery={name: params.model_dump() for name, params in box.delivery.items()},
+        start=modal_starter(cloud.app, cloud.reference_name), provider="chatterbox_modal", remote=True,
+    )
+
+
 def _groq_words(settings: Settings) -> Any:
     from app.providers.alignment.groq import GroqWordAligner
 
@@ -145,6 +157,7 @@ DEFAULT_REGISTRY: Registry = {
         "kokoro": Registration(5, _kokoro),
         "gemini": Registration(15, _gemini_tts),  # ADR 012
         "chatterbox": Registration(15, _chatterbox),  # voz clonada local (ADR 016, proposta)
+        "chatterbox_modal": Registration(15, _chatterbox_modal),  # a mesma voz numa GPU do Modal (ADR 024)
     },
     "image_gen": {"workers_ai": Registration(24)},
     "archives": {

@@ -5,7 +5,8 @@
 [providers]
 text = "ollama"
 tts = "kokoro"        # rascunhos e prévias de revisão: local, sem limite
-tts_final = "chatterbox"  # vídeo final: voz clonada do dono, local (ADR 016); "gemini" = Charon (ADR 012)
+tts_final = "chatterbox_modal"  # vídeo final: voz clonada do dono numa GPU do Modal (ADR 024); "chatterbox" = a
+                                # mesma voz na CPU (ADR 016); "gemini" = Charon (ADR 012)
 image_gen = "workers_ai"
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"
@@ -52,6 +53,11 @@ turn = { exaggeration = 0.7, cfg_weight = 0.4 }
 invite = { exaggeration = 0.6, cfg_weight = 0.4 }
 neutral = { exaggeration = 0.5, cfg_weight = 0.5 }
 calm = { exaggeration = 0.4, cfg_weight = 0.6 }
+
+[chatterbox_modal]  # a mesma voz numa GPU do Modal (ADR 024); modelo, entrega e gravação vêm de [chatterbox]
+python = "~/.local/share/uv/tools/modal/bin/python"  # o Python da CLI do Modal (uv tool install modal)
+app = "voz-dono"  # publicado com `modal deploy deploy/modal_chatterbox.py`
+reference_name = "referencia.wav"  # no volume privado voz-dono-referencia, enviado pelo dono
 
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"

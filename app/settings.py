@@ -102,6 +102,15 @@ class ChatterboxSettings(_Model):
     delivery: dict[str, DeliveryParams] = Field(default_factory=_default_delivery)  # por entrega (ADR 022)
 
 
+class ChatterboxModalSettings(_Model):
+    """A mesma voz clonada numa GPU do Modal (ADR 024). Modelo, idioma, pausa, entrega e gravação de
+    referência vêm de `[chatterbox]`; aqui fica só o que é da nuvem."""
+
+    python: Path = Path("~/.local/share/uv/tools/modal/bin/python")  # o Python da CLI do Modal
+    app: str = "voz-dono"  # nome publicado por `modal deploy deploy/modal_chatterbox.py`
+    reference_name: str = "referencia.wav"  # a gravação no volume privado `voz-dono-referencia`
+
+
 class WorkersAISettings(_Model):
     model: str
 
@@ -143,6 +152,7 @@ class Settings(_Model):
     kokoro: KokoroSettings
     gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
     chatterbox: ChatterboxSettings = ChatterboxSettings()
+    chatterbox_modal: ChatterboxModalSettings = ChatterboxModalSettings()
     groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
@@ -214,6 +224,7 @@ def speech_chars_per_second(settings: Settings) -> float:
         "kokoro": settings.kokoro.chars_per_second,
         "gemini": settings.gemini_tts.chars_per_second,
         "chatterbox": settings.chatterbox.chars_per_second,
+        "chatterbox_modal": settings.chatterbox.chars_per_second,  # a mesma voz (ADR 024)
     }
     voice = settings.providers.tts_final or settings.providers.tts
     return rates.get(voice, settings.kokoro.chars_per_second)
