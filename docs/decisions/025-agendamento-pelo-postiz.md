@@ -64,5 +64,12 @@ conversa: o código não guardava a autorização nem o que foi agendado, e o it
    `sha256`, id e caminho da mídia), `pacote`, `agendado` (ids criados) e `falha` (mensagem segura do adapter).
    A conversa continua sendo a prova do pedido; o registro prova o que foi mostrado e o que foi feito.
 
+5. **Dúvida cega obrigatória** (decisão do dono, mesma data): depois do pacote, o agente `duvida-cega` (só
+   leitura, recebe só os caminhos, sem a conversa; método na skill `duvida-cega`) procura o que sairia errado:
+   fuso, canal, corte, legenda, gate 4, repetição, tempo para desfazer. A sessão principal grava o parecer com
+   `vp postiz duvida post.json parecer.json`. O `schedule` exige um parecer "segue" gravado depois do último
+   pacote do mesmo JSON; "não segue" ou pacote refeito pedem nova rodada. O código confere que o parecer existe
+   e tem forma válida, não que veio do agente: a prova de que o agente rodou fica na conversa.
+
 Sem episódio (caso dos cortes do clipe, que não passam pelos gates do pipeline), o pacote marca como risco que
 o gate 4 não foi conferido pelo código e deixa a decisão com o dono.

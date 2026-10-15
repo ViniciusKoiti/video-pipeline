@@ -58,6 +58,9 @@ def test_schedule_reads_native_payload(
     postiz.check_schedule.return_value = {"date": payload["date"], "integrations": {}}
     postiz.schedule.return_value = [{"postId": "post-1"}]
     assert cli.main(["postiz", "pacote", str(path)]) == 0
+    report = tmp_path / "parecer.json"
+    report.write_text('{"veredito": "segue", "riscos": [], "revisor": "duvida-cega"}', encoding="utf-8")
+    assert cli.main(["postiz", "duvida", str(path), str(report)]) == 0
     capsys.readouterr()
     assert cli.main(["postiz", "schedule", str(path)]) == 0
     postiz.schedule.assert_called_once_with(payload)
