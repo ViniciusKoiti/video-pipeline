@@ -3,7 +3,9 @@
 Uso: `<python do ambiente do Chatterbox> chatterbox_worker.py <modelo> <threads>`. Não importa nada de `app`.
 
 Carrega o modelo uma vez e atende um pedido por linha da entrada padrão, em JSON:
-`{"parts": ["..."], "language_id": "pt", "reference": "voz.wav", "out_path": "S01.wav", "pause_ms": 400}`.
+`{"parts": ["..."], "language_id": "pt", "reference": "voz.wav", "out_path": "S01.wav", "pause_ms": 400,
+"exaggeration": 0.5, "cfg_weight": 0.5}`; os dois últimos são a entrega da fala (ADR 022) e, sem eles,
+vale o padrão do modelo.
 Cada parte é uma síntese; entre duas partes entra `pause_ms` de silêncio (as `<short pause>` da ADR 015).
 Responde uma linha por pedido: `{"ok": true, "seconds": 6.8}` ou `{"ok": false, "error": "..."}`. A primeira
 linha, depois de carregar o modelo, é `{"ready": true, "sample_rate": 24000}`.
@@ -52,7 +54,13 @@ def main() -> None:
                 if i:
                     chunks.append(silence)
                 chunks.append(
-                    model.generate(part, language_id=job["language_id"], audio_prompt_path=job["reference"])
+                    model.generate(
+                        part,
+                        language_id=job["language_id"],
+                        audio_prompt_path=job["reference"],
+                        exaggeration=float(job.get("exaggeration", 0.5)),
+                        cfg_weight=float(job.get("cfg_weight", 0.5)),
+                    )
                 )
             audio = torch.cat(chunks, dim=-1)
             torchaudio.save(job["out_path"], audio, model.sr, encoding="PCM_S", bits_per_sample=16)

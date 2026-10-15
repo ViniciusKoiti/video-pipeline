@@ -84,10 +84,35 @@ def test_one_scene_is_one_job_with_the_reference_voice(tmp_path: Path) -> None:
     assert worker.jobs == [{
         "parts": ["Uma fala só."], "language_id": "pt", "reference": str(tmp_path / "voz.wav"),
         "out_path": str(out), "pause_ms": 400,
+        "exaggeration": 0.5,
+        "cfg_weight": 0.5,
     }]
     assert result.path == out and out.is_file()
     assert result.model == "chatterbox-multilingual-v3"
     assert result.voice == f"clone:{reference_hash(tmp_path / 'voz.wav')}"
+
+
+def test_delivery_sets_the_expressiveness_and_unknown_falls_back_to_neutral(tmp_path: Path) -> None:
+    worker = FakeWorker()
+    tts = make_tts(worker, tmp_path)
+    for delivery in ("neutral", "hook", "calm", "gritado"):
+        out = tmp_path / f"{delivery}.wav"
+        tts.synthesize_speech(SpeechRequest(text="Oi.", out_path=out, language="pt-BR", delivery=delivery))
+    params = [(j["exaggeration"], j["cfg_weight"]) for j in worker.jobs]
+    assert params == [(0.5, 0.5), (0.8, 0.3), (0.4, 0.6), (0.5, 0.5)]
+
+
+def test_delivery_values_come_from_the_config(tmp_path: Path) -> None:
+    worker = FakeWorker()
+    tts = make_tts(worker, tmp_path, delivery={"neutral": {"exaggeration": 0.4, "cfg_weight": 0.6},
+                                               "hook": {"exaggeration": 1.0, "cfg_weight": 0.2}})
+    request = SpeechRequest(text="Oi.", out_path=tmp_path / "h.wav", language="pt-BR", delivery="hook")
+    tts.synthesize_speech(request)
+    assert (worker.jobs[0]["exaggeration"], worker.jobs[0]["cfg_weight"]) == (1.0, 0.2)
+    settings = load_settings(REPO_ROOT)
+    assert settings.chatterbox.delivery["hook"].exaggeration == 0.8
+    assert settings.chatterbox.delivery["neutral"].cfg_weight == 0.5
+    assert list(settings.chatterbox.delivery) == ["hook", "turn", "invite", "neutral", "calm"]
 
 
 def test_pauses_split_the_text_and_the_tag_never_reaches_the_model(tmp_path: Path) -> None:
