@@ -120,6 +120,7 @@ def test_scene_delivery_is_optional_and_closed() -> None:
     shot = {"kind": "keyword", "anchor": "Oi", "text": "Oi"}
     assert Scene(id="S01", narration="Oi.", shots=[shot]).delivery is None
     assert Scene(id="S01", narration="Oi.", shots=[shot], delivery="hook").delivery == "hook"
+    assert Scene(id="S01", narration="Oi.", shots=[shot], delivery="calm").delivery == "calm"
     with pytest.raises(ValidationError):
         Scene(id="S01", narration="Oi.", shots=[shot], delivery="gritado")
 

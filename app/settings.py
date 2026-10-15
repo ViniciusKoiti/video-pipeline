@@ -72,7 +72,13 @@ class DeliveryParams(_Model):
 
 
 def _default_delivery() -> dict[str, DeliveryParams]:
-    return {"neutral": DeliveryParams(), "hook": DeliveryParams(exaggeration=0.8, cfg_weight=0.3)}
+    return {
+        "hook": DeliveryParams(exaggeration=0.8, cfg_weight=0.3),
+        "turn": DeliveryParams(exaggeration=0.7, cfg_weight=0.4),
+        "invite": DeliveryParams(exaggeration=0.6, cfg_weight=0.4),
+        "neutral": DeliveryParams(),
+        "calm": DeliveryParams(exaggeration=0.4, cfg_weight=0.6),
+    }
 
 
 class ChatterboxSettings(_Model):

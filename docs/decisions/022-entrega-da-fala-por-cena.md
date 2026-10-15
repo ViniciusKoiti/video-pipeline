@@ -20,18 +20,21 @@ toda cena. Nenhum lugar do roteiro dizia onde a voz deveria subir.
 
 ## Decisão
 
-1. **A cena declara a entrega.** `Scene.delivery` no `scenes.json`, opcional: `"hook"` para a cena que chama
-   (abertura, pergunta final), ausente ou `"neutral"` para o resto. Lista fechada; outro valor é erro de schema.
+1. **A cena declara a entrega.** `Scene.delivery` no `scenes.json`, opcional, numa lista fechada do mais ao menos
+   enfático: `hook` (abertura e chamado), `turn` (a virada, o "mas"), `invite` (a pergunta final), `neutral`
+   (explicação; é o valor sem o campo) e `calm` (a conta, pausada e clara). Outro valor é erro de schema. O dono
+   pediu, em 2026-10-14, que o tom varie ao longo do vídeo, não só na abertura: por isso cinco entregas, não duas.
 2. **A porta de voz carrega a entrega.** `SpeechRequest.delivery` (padrão `"neutral"`). O provedor que não souber
    ignora: o Kokoro segue igual; o Gemini continua com a direção por idioma (uma direção por cena é mudança à parte).
 3. **A voz clonada obedece.** `config/providers.toml` tem `[chatterbox.delivery]` com `exaggeration` e `cfg_weight`
-   por entrega (`neutral` 0,5/0,5; `hook` 0,8/0,3, valores do teste de 2026-10-14, ajustáveis). O adapter põe os
-   dois no pedido e o processo do modelo os passa ao `generate`. Entrega desconhecida cai na neutra.
+   por entrega (`hook` 0,8/0,3; `turn` 0,7/0,4; `invite` 0,6/0,4; `neutral` 0,5/0,5; `calm` 0,4/0,6; pontos de
+   partida do teste de 2026-10-14, ajustáveis sem código). O adapter põe os dois no pedido e o processo do modelo os
+   passa ao `generate`. Entrega desconhecida cai na neutra.
 4. **Cache.** Na montagem, a chave do WAV inclui a entrega quando ela não é neutra e a voz é a clonada: trocar
    `delivery` regera só aquela cena; os rascunhos no Kokoro não mudam de chave.
-5. **O roteirista marca.** A skill `roteiro-explicativo` pede `delivery: "hook"` na cena de abertura e na pergunta
-   final, e um texto curto nessas cenas: chamado em pergunta, sem explicação longa. A ênfase é da voz; o texto
-   precisa caber nela.
+5. **O roteirista marca.** A skill `roteiro-explicativo` pede a entrega de cada cena pelo que ela faz: `hook` na
+   abertura, `turn` na virada, `calm` na conta, `invite` na pergunta final, nada nas cenas de explicação. Cena `hook`
+   leva texto curto, em pergunta ou chamado. A ênfase é da voz; o texto precisa caber nela.
 
 ## Consequências
 

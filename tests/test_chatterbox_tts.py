@@ -95,11 +95,11 @@ def test_one_scene_is_one_job_with_the_reference_voice(tmp_path: Path) -> None:
 def test_delivery_sets_the_expressiveness_and_unknown_falls_back_to_neutral(tmp_path: Path) -> None:
     worker = FakeWorker()
     tts = make_tts(worker, tmp_path)
-    for delivery in ("neutral", "hook", "gritado"):
+    for delivery in ("neutral", "hook", "calm", "gritado"):
         out = tmp_path / f"{delivery}.wav"
         tts.synthesize_speech(SpeechRequest(text="Oi.", out_path=out, language="pt-BR", delivery=delivery))
     params = [(j["exaggeration"], j["cfg_weight"]) for j in worker.jobs]
-    assert params == [(0.5, 0.5), (0.8, 0.3), (0.5, 0.5)]
+    assert params == [(0.5, 0.5), (0.8, 0.3), (0.4, 0.6), (0.5, 0.5)]
 
 
 def test_delivery_values_come_from_the_config(tmp_path: Path) -> None:
@@ -112,6 +112,7 @@ def test_delivery_values_come_from_the_config(tmp_path: Path) -> None:
     settings = load_settings(REPO_ROOT)
     assert settings.chatterbox.delivery["hook"].exaggeration == 0.8
     assert settings.chatterbox.delivery["neutral"].cfg_weight == 0.5
+    assert list(settings.chatterbox.delivery) == ["hook", "turn", "invite", "neutral", "calm"]
 
 
 def test_pauses_split_the_text_and_the_tag_never_reaches_the_model(tmp_path: Path) -> None:

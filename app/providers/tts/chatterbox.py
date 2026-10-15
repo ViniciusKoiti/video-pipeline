@@ -27,8 +27,11 @@ WORKER = Path(__file__).with_name("chatterbox_worker.py")
 MODEL_PREFIX = "chatterbox-multilingual-"
 # Entrega da fala (ADR 022): padrão do modelo na fala neutra; ênfase alta e cfg baixo no chamado.
 DEFAULT_DELIVERY: dict[str, dict[str, float]] = {
-    "neutral": {"exaggeration": 0.5, "cfg_weight": 0.5},
     "hook": {"exaggeration": 0.8, "cfg_weight": 0.3},
+    "turn": {"exaggeration": 0.7, "cfg_weight": 0.4},
+    "invite": {"exaggeration": 0.6, "cfg_weight": 0.4},
+    "neutral": {"exaggeration": 0.5, "cfg_weight": 0.5},
+    "calm": {"exaggeration": 0.4, "cfg_weight": 0.6},
 }
 
 

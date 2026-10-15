@@ -598,14 +598,16 @@ class HostSpec(Model):
         return self.width if self.width is not None else (0.28 if portrait else 0.16)
 
 
-Delivery = Literal["neutral", "hook"]  # entrega da fala (ADR 022): `hook` = abertura e chamado, com ênfase
+# Entrega da fala (ADR 022), do mais ao menos enfático: `hook` abertura e chamado; `turn` a virada ("mas…");
+# `invite` a pergunta final; `neutral` explicação; `calm` a conta, pausada e clara.
+Delivery = Literal["hook", "turn", "invite", "neutral", "calm"]
 
 
 class Scene(Model):
     """Uma cena = um bloco de narração = um WAV (ADR 007), com uma lista de planos (ADR 008).
     Sem planos, vale a forma v1: um único plano de foto com os campos visuais da própria cena.
-    `delivery` diz como a voz entrega a cena (ADR 022): sem o campo, neutra; `hook` pede ênfase e energia
-    (abertura, pergunta final). Só a voz clonada obedece hoje; o Kokoro ignora."""
+    `delivery` diz como a voz entrega a cena (ADR 022): sem o campo, neutra; `hook`, `turn`, `invite` e `calm`
+    variam a ênfase ao longo do vídeo. Só a voz clonada obedece hoje; o Kokoro ignora."""
 
     id: SceneId
     narration: NonEmpty
