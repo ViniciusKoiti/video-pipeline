@@ -180,12 +180,17 @@ def main() -> None:
         pause_ms = pauses.get(provider)
         tagged = pause_ms is not None and has_pauses(scene.narration)
         pause = f"|pausa{pause_ms}" if tagged else ""
-        key = hashlib.sha256(f"{fingerprint}{pause}|{scene.narration}".encode()).hexdigest()[:10]
+        # Entrega da fala (ADR 022): só a voz clonada obedece; a chave muda só quando a entrega não é neutra.
+        delivery = scene.delivery or "neutral"
+        entrega = f"|entrega:{delivery}" if provider == "chatterbox" and delivery != "neutral" else ""
+        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}|{scene.narration}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
             for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):
                 stale.unlink()
-            missing.append(SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language))
+            missing.append(
+                SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language, delivery=delivery)
+            )
     if missing:
         generate(tts, missing)
     close = getattr(tts, "close", None)  # a voz clonada mantém um processo com o modelo carregado

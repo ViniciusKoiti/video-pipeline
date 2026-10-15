@@ -241,6 +241,9 @@ lacuna fica registrada.
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
   silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
+- **Entrega da fala por cena (ADR 022):** `delivery` em `hook` (abertura), `turn` (virada), `calm` (a conta), `invite`
+  (pergunta final); sem o campo, neutra. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`);
+  Kokoro e Gemini ignoram.
 - Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
   `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
   quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.
