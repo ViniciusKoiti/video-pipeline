@@ -125,6 +125,7 @@ def _chatterbox(settings: Settings) -> Any:
     return ChatterboxTTS(
         box.python and box.python.expanduser(), box.reference and box.reference.expanduser(), model=box.model,
         language_ids=box.language_ids, num_threads=box.num_threads, pause_ms=box.pause_ms,
+        delivery={name: params.model_dump() for name, params in box.delivery.items()},
     )
 
 

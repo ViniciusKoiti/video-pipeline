@@ -114,6 +114,17 @@ def test_visual_need_has_exactly_four_values() -> None:
         ScenesManifest.model_validate(raw)
 
 
+def test_scene_delivery_is_optional_and_closed() -> None:
+    from app.pipeline.schemas import Scene
+
+    shot = {"kind": "keyword", "anchor": "Oi", "text": "Oi"}
+    assert Scene(id="S01", narration="Oi.", shots=[shot]).delivery is None
+    assert Scene(id="S01", narration="Oi.", shots=[shot], delivery="hook").delivery == "hook"
+    assert Scene(id="S01", narration="Oi.", shots=[shot], delivery="calm").delivery == "calm"
+    with pytest.raises(ValidationError):
+        Scene(id="S01", narration="Oi.", shots=[shot], delivery="gritado")
+
+
 def test_duplicate_scene_ids_are_rejected() -> None:
     raw = load("scenes.json")
     raw["scenes"][1]["id"] = "S01"
