@@ -139,8 +139,11 @@ Diagrama completo: `docs/pipeline-flowchart.mermaid`.
   cena, não o episódio.
 - Aprovação humana é registrada por `vp approve <id> --step <step>` (ou `vp reject`) em `review.json`, nunca
   editando `review_status` à mão no manifesto principal. Nos gates feitos por agente ou pessoa, a decisão carimba
-  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2) ou o arquivo do ativo (gate 3);
-  `vp status` mostra se ela ainda vale (ADR 009, emenda de gates por comando).
+  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2), o arquivo do ativo (gate 3) ou,
+  no gate 4 (`--step preview`), o render mais acabado (`final.mp4`, senão `preview.mp4`) com `episode.json`,
+  legenda e texto do post; renderizar o final depois de aprovar a prévia pede nova decisão. `vp status` mostra se
+  a decisão ainda vale e, nas pendências, a legenda que falta no vertical (ADR 009, emenda de gates por comando;
+  #120).
 - **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
   (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
   (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
@@ -238,6 +241,9 @@ lacuna fica registrada.
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
   silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
+- **Entrega da fala por cena (ADR 022):** `delivery` em `hook` (abertura), `turn` (virada), `calm` (a conta), `invite`
+  (pergunta final); sem o campo, neutra. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`);
+  Kokoro e Gemini ignoram.
 - Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
   `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
   quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.

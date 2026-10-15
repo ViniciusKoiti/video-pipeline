@@ -9,8 +9,17 @@ from pathlib import Path
 import pytest
 
 from app.cli import main
-from app.pipeline.gates import GateError, gate_hash, gate_report, record_decision
-from app.pipeline.schemas import Asset, Decision, Status, Step
+from app.pipeline.gates import GateError, gate_hash, gate_report, missing_pieces, record_decision
+from app.pipeline.schemas import (
+    Asset,
+    Decision,
+    EpisodeFormat,
+    EpisodeManifest,
+    EpisodeScene,
+    Status,
+    Step,
+    VideoSpec,
+)
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
 
@@ -143,7 +152,7 @@ def test_cli_approve_reject_and_status(
     out = capsys.readouterr().out
     assert "gate  sources" in out and "aprovado" in out and "vale" in out
     assert "mudanças pedidas" in out
-    assert out.strip().endswith("pendências: script")
+    assert out.strip().endswith("pendências: script, preview")  # sem render ainda
     log = json.loads((folder / "review.json").read_text())
     assert [e["decision"] for e in log["entries"]] == ["approved", "changes_requested", "approved"]
     assert log["entries"][1]["notes"] == "gancho sem imagem"
@@ -155,3 +164,66 @@ def test_cli_reports_gate_errors(
     episode(tmp_path)
     assert run(tmp_path, monkeypatch, "approve", EPISODE, "--step", "assets", "--reviewer", "Dono") == 1
     assert "informe --asset" in capsys.readouterr().err
+
+
+def rendered(folder: Path, name: str = "preview.mp4", content: bytes = b"previa") -> Path:
+    (folder / "renders").mkdir(exist_ok=True)
+    (folder / "renders" / name).write_bytes(content)
+    return folder / "renders" / name
+
+
+def test_preview_gate_needs_a_render(tmp_path: Path) -> None:
+    store, review, _ = episode(tmp_path)
+    with pytest.raises(GateError, match="nenhum render"):
+        decide(store, review, Step.PREVIEW, Decision.APPROVED)
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.PREVIEW]
+    assert row.entry is None and row.current_hash is None
+
+
+def test_preview_gate_covers_render_captions_and_post_text(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    rendered(folder)
+    before = gate_hash(store, EPISODE, Step.PREVIEW)
+    (folder / "captions.srt").write_text("1\n00:00:00,000 --> 00:00:01,000\nOlá.\n")
+    with_captions = gate_hash(store, EPISODE, Step.PREVIEW)
+    assert with_captions != before
+    (folder / "legenda-post.txt").write_text("Salve para lembrar.\n")
+    assert gate_hash(store, EPISODE, Step.PREVIEW) != with_captions
+
+
+def test_the_final_render_reopens_an_approved_preview(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    rendered(folder)
+    decide(store, review, Step.PREVIEW, Decision.APPROVED)
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.PREVIEW]
+    assert row.valid
+    rendered(folder, "final.mp4", b"final com voz final")
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.PREVIEW]
+    assert not row.valid  # a versão final é revista de novo
+
+
+def _episode_json(folder: Path, *, portrait: bool, captions: str | None) -> None:
+    scene = EpisodeScene.model_validate(
+        {"id": "S01", "start_ms": 0, "duration_ms": 1000, "narration": "Olá.", "audio": "voice/S01.wav",
+         "shots": [{"start_ms": 0, "duration_ms": 1000,
+                    "spec": {"kind": "keyword", "text": "Olá", "anchor": "Olá"}}]}
+    )
+    manifest = EpisodeManifest(
+        schema_version=2, episode_id=EPISODE, title="teste", language="pt-BR", format=EpisodeFormat.EXPLAINER,
+        scenes=[scene], video=VideoSpec.for_orientation("portrait" if portrait else "landscape"),
+        captions=captions,
+    )
+    (folder / "episode.json").write_text(manifest.model_dump_json())
+
+
+def test_missing_captions_are_pending_only_in_portrait(tmp_path: Path) -> None:
+    store, _, folder = episode(tmp_path)
+    assert missing_pieces(store, EPISODE) == []  # sem episode.json ainda
+    _episode_json(folder, portrait=True, captions=None)
+    assert missing_pieces(store, EPISODE) == ["legenda (captions.srt)"]
+    _episode_json(folder, portrait=True, captions="captions.srt")
+    assert missing_pieces(store, EPISODE) == ["legenda (captions.srt)"]  # o arquivo ainda não existe
+    (folder / "captions.srt").write_text("1\n00:00:00,000 --> 00:00:01,000\nOlá.\n")
+    assert missing_pieces(store, EPISODE) == []
+    _episode_json(folder, portrait=False, captions=None)
+    assert missing_pieces(store, EPISODE) == []
