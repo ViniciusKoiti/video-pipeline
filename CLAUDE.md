@@ -241,8 +241,9 @@ lacuna fica registrada.
 - **Entrega da fala por cena (ADR 022):** `delivery` em `hook` (abertura), `turn` (virada), `calm` (a conta), `invite`
   (pergunta final); sem o campo, neutra. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`);
   Kokoro e Gemini ignoram.
-- Legendas geradas após aprovação da voz, por alinhamento do texto com o áudio; nomes próprios sempre revisados.
-  `captions.srt` é editável.
+- Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
+  `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
+  quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**

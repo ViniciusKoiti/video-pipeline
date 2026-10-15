@@ -17,6 +17,8 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
 - Render pelo motor do formato explicativo (Remotion), com cache por cena.
 - A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>` (jpg, png, webp, mp4, webm).
 - Com `sources.json` na pasta, cada plano com claims ganha a fonte do rodapé (ADR 011).
+- Legenda por frase em `captions.srt` (#17, ADR 021), com o tempo tirado dos WAVs; o arquivo é editável e só
+  é refeito quando a fala muda. Um SRT com intervalo inválido ou além do áudio para o script antes do render.
 """
 
 from __future__ import annotations
@@ -32,7 +34,18 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import build_context  # noqa: E402
+from app.media.captions import (  # noqa: E402
+    CAPTIONS,
+    SceneAudio,
+    captions_key,
+    episode_cues,
+    parse_srt,
+    review_hints,
+    sync_captions,
+    timing_problems,
+)
 from app.media.narration import has_pauses  # noqa: E402
+from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
@@ -115,6 +128,26 @@ def media_path(episode_dir: Path, asset_id: str) -> str:
     raise SystemExit(f"ativo {asset_id} sem arquivo de mídia em assets/")
 
 
+def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path], total_ms: int) -> None:
+    """Gera ou mantém `captions.srt` e confere o arquivo que vai para o render (#17)."""
+    audio = [
+        SceneAudio(
+            start_ms=scene.start_ms, duration_ms=scene.duration_ms, narration=scene.narration,
+            silences_ms=[(round(a * 1000), round(b * 1000)) for a, b in silences(wavs[scene.id])],
+        )
+        for scene in scenes
+    ]
+    cues, approximate = episode_cues(audio)
+    note = sync_captions(episode_dir, cues, captions_key([wavs[scene.id].name for scene in scenes]))
+    found, problems = parse_srt((episode_dir / CAPTIONS).read_text())
+    problems += timing_problems(found, total_ms)
+    if problems:
+        raise SystemExit(f"{CAPTIONS}: " + "; ".join(problems))
+    print(f"legenda: {note}; {len(found)} blocos, {approximate} fronteira(s) no tempo proporcional")
+    for n, hint in review_hints(found):
+        print(f"  revisar bloco {n}: {hint}")
+
+
 def main() -> None:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
@@ -182,10 +215,11 @@ def main() -> None:
         cursor += ms
     print(f"voz: {time.monotonic() - started:.0f} s; total {cursor / 1000:.1f} s")
 
+    captions(episode_dir, episode_scenes, wavs, cursor)
     episode = EpisodeManifest(
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
         language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes, host=scenes.host,
-        video=VideoSpec.for_orientation(scenes.orientation),
+        video=VideoSpec.for_orientation(scenes.orientation), captions=CAPTIONS,
     )
     (episode_dir / "episode.json").write_text(episode.model_dump_json(indent=2))
     print("ritmo:", pacing_warnings(episode) or "ok")

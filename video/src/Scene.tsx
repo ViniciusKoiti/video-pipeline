@@ -112,8 +112,6 @@ const SceneBody: React.FC<SceneProps> = (props) => {
         )
       : 1;
   const planned = plan(props.shots, props.frames);
-  // A legenda some enquanto a frase-chave está na tela: o mesmo texto duas vezes confunde (ADR 011).
-  const keyword = planned.some((p) => p.spec.kind === "keyword" && frame >= p.from && frame < p.from + p.frames);
   return (
     <MotionThemeProvider theme={motionTheme}>
       <AbsoluteFill style={{backgroundColor: theme.bg}}>
@@ -136,7 +134,8 @@ const SceneBody: React.FC<SceneProps> = (props) => {
             </Sequence>
           ))}
         </AbsoluteFill>
-        <AbsoluteFill style={{opacity: keyword ? 0 : 1}}>
+        {/* A legenda fica na tela também durante o `keyword`: sem som, a fala inteira continua legível (ADR 021). */}
+        <AbsoluteFill>
           {props.cues.map((cue) => (
             <Sequence key={`${cue.from}-${cue.text}`} from={cue.from} durationInFrames={Math.max(cue.to - cue.from, 1)}>
               <Caption text={cue.text} />
