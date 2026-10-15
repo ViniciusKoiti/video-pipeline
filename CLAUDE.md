@@ -71,8 +71,9 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
    multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
    (`docs/postiz.md`) envia mídia e cria agendamentos no Postiz do dono, só depois do gate 4 e com a
    autorização do dono para aquele agendamento; sem esse pedido nada é agendado, e a conexão das redes usa o
-   login do dono. O `schedule` só aceita um JSON que já passou pelo `vp postiz pacote`, pede a confirmação do
-   dono pela regra `ask` do `.claude/settings.json` e grava cada passo em `data/publicacoes/registro.jsonl`. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
+   login do dono. O `schedule` só aceita um JSON que já passou pelo `vp postiz pacote` e pela dúvida cega
+   (agente `duvida-cega`, gravada por `vp postiz duvida`), pede a confirmação do dono pela regra `ask` do
+   `.claude/settings.json` e grava cada passo em `data/publicacoes/registro.jsonl`. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
    o código só valida (`vp check`, ADR 009).
    **Um motor de render por formato de episódio** (ADR 001): `archival_documentary` com ffmpeg (piloto) e
    `explainer` com Remotion (protótipo da #48).
@@ -380,6 +381,7 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; contexto limpo, só leitura |
+| `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador →
 voz + render → gate 2. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha

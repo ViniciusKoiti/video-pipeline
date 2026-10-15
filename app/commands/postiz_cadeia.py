@@ -1,10 +1,11 @@
 """Cadeia de provas do agendamento (ADR 025, emenda): pacote de decisão, pedido do dono e registro.
 
 O `pacote` monta o que o dono lê antes de dizer "pode" (o quê, evidência, riscos, como desfazer,
-recomendação) e grava esse pacote no registro. O `schedule` só envia um JSON que já tem pacote e cuja
-recomendação é agendar; o "pode" em si é a confirmação que o Claude Code pede pela regra `ask` do
-`.claude/settings.json`. Envios de mídia, pacotes, agendamentos e falhas entram, nessa ordem, no registro
-`publicacoes/registro.jsonl` da pasta de dados, que só cresce.
+recomendação) e grava esse pacote no registro. A `duvida` grava o parecer do agente `duvida-cega`, que leu só
+o pacote, sem a conversa. O `schedule` só envia um JSON que tem pacote com recomendação de agendar e, depois
+desse pacote, um parecer "segue"; o "pode" em si é a confirmação que o Claude Code pede pela regra `ask` do
+`.claude/settings.json`. Envios de mídia, pacotes, pareceres, agendamentos e falhas entram, nessa ordem, no
+registro `publicacoes/registro.jsonl` da pasta de dados, que só cresce.
 """
 
 from __future__ import annotations
@@ -147,17 +148,51 @@ def package(context: Context, client: Any, payload: dict, episode_id: str | None
 
 
 class ChainError(ValueError):
-    """O agendamento não tem o pacote de decisão exigido."""
+    """O agendamento não tem o pacote de decisão ou a dúvida cega exigidos."""
+
+
+VERDICTS = ("segue", "não segue")
+NO_PACKAGE = "sem pacote de decisão para este JSON: rode `vp postiz pacote` e mostre o pacote ao dono"
+
+
+def _last_package(entries: list[dict], digest: str) -> int:
+    for index in range(len(entries) - 1, -1, -1):
+        if entries[index]["event"] == "pacote" and entries[index]["payload"] == digest:
+            return index
+    raise ChainError(NO_PACKAGE)
+
+
+def record_doubt(context: Context, payload: dict, report: dict, now: Clock = _now) -> dict:
+    """Grava o parecer da dúvida cega sobre o último pacote deste JSON."""
+    digest = payload_hash(payload)
+    _last_package(read(registro_path(context)), digest)
+    report = report if isinstance(report, dict) else {}
+    risks, reviewer = report.get("riscos"), report.get("revisor")
+    if (
+        report.get("veredito") not in VERDICTS
+        or not isinstance(risks, list)
+        or not all(isinstance(r, str) and r.strip() for r in risks)
+        or not isinstance(reviewer, str)
+        or not reviewer.strip()
+    ):
+        raise ChainError('parecer precisa de "veredito" (segue | não segue), "riscos" (textos) e "revisor"')
+    line = {"payload": digest, "veredito": report["veredito"], "riscos": risks, "revisor": reviewer}
+    append(registro_path(context), "duvida", line, now)
+    return line
 
 
 def schedule(context: Context, client: Any, payload: dict, now: Clock = _now) -> list[dict]:
     digest = payload_hash(payload)
-    packages = [e for e in read(registro_path(context)) if e["event"] == "pacote" and e["payload"] == digest]
-    if not packages:
+    entries = read(registro_path(context))
+    index = _last_package(entries, digest)
+    last = entries[index]
+    doubts = [e for e in entries[index + 1 :] if e["event"] == "duvida" and e["payload"] == digest]
+    if not doubts:
         raise ChainError(
-            "sem pacote de decisão para este JSON: rode `vp postiz pacote` e mostre o pacote ao dono"
+            "sem dúvida cega sobre o pacote atual: rode o agente duvida-cega e `vp postiz duvida`"
         )
-    last = packages[-1]
+    if doubts[-1]["veredito"] != "segue":
+        raise ChainError("a dúvida cega disse 'não segue': resolva os riscos e refaça o pacote")
     episode_id = last["evidencia"]["episodio"]
     if not last["recomendacao"].startswith("agendar") or gate4(context, episode_id) not in {
         "aprovado",

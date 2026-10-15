@@ -30,8 +30,13 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     )
     package.add_argument("payload", type=Path)
     package.add_argument("--episode", help="episódio cujo gate 4 (prévia) precisa estar aprovado")
+    doubt = commands.add_parser(
+        "duvida", help="grava o parecer da dúvida cega (agente duvida-cega) sobre o pacote do JSON"
+    )
+    doubt.add_argument("payload", type=Path)
+    doubt.add_argument("parecer", type=Path, help='JSON com "veredito", "riscos" e "revisor"')
     schedule = commands.add_parser(
-        "schedule", help="agenda o JSON nativo do Postiz que já tem pacote; pede a confirmação do dono"
+        "schedule", help="agenda o JSON com pacote e dúvida cega; pede a confirmação do dono"
     )
     schedule.add_argument("payload", type=Path)
 
@@ -60,6 +65,10 @@ def run(args: argparse.Namespace, context: Context) -> int:
             case "pacote":
                 payload = json.loads(args.payload.read_text(encoding="utf-8"))
                 result = postiz_cadeia.package(context, client, payload, args.episode)
+            case "duvida":
+                payload = json.loads(args.payload.read_text(encoding="utf-8"))
+                report = json.loads(args.parecer.read_text(encoding="utf-8"))
+                result = postiz_cadeia.record_doubt(context, payload, report)
             case "schedule":
                 payload = json.loads(args.payload.read_text(encoding="utf-8"))
                 result = postiz_cadeia.schedule(context, client, payload)

@@ -57,6 +57,14 @@ def write_payload(root: Path, data: dict) -> str:
     return str(path)
 
 
+def doubt(root: Path, path: str, veredito: str = "segue", riscos: list[str] | None = None) -> int:
+    report = root / "parecer.json"
+    report.write_text(
+        json.dumps({"veredito": veredito, "riscos": riscos or [], "revisor": "duvida-cega"}), encoding="utf-8"
+    )
+    return cli.main(["postiz", "duvida", path, str(report)])
+
+
 def events(root: Path) -> list[dict]:
     return [json.loads(line) for line in (root / REGISTRO).read_text(encoding="utf-8").splitlines()]
 
@@ -120,11 +128,13 @@ def test_schedule_after_package_sends_once_and_records_ids(
 ) -> None:
     path = write_payload(root, payload())
     cli.main(["postiz", "pacote", path])
+    assert doubt(root, path) == 0
     capsys.readouterr()
     assert cli.main(["postiz", "schedule", path]) == 0
     client.schedule.assert_called_once_with(payload())
     assert json.loads(capsys.readouterr().out) == client.schedule.return_value
-    package, scheduled = events(root)
+    package, parecer, scheduled = events(root)
+    assert parecer["event"] == "duvida"
     assert scheduled["event"] == "agendado"
     assert scheduled["payload"] == package["payload"]
     assert scheduled["posts"] == client.schedule.return_value
@@ -133,6 +143,7 @@ def test_schedule_after_package_sends_once_and_records_ids(
 def test_failed_schedule_is_recorded(root: Path, client: Mock) -> None:
     path = write_payload(root, payload())
     cli.main(["postiz", "pacote", path])
+    doubt(root, path)
     client.schedule.side_effect = ProviderError("postiz", "envio falhou; consulte a fila antes de repetir")
     assert cli.main(["postiz", "schedule", path]) == 1
     assert events(root)[-1]["event"] == "falha"
@@ -167,6 +178,7 @@ def test_preview_changed_after_package_blocks_schedule(
     path = write_payload(root, payload())
     assert cli.main(["postiz", "pacote", path, "--episode", EPISODE]) == 0
     assert json.loads(capsys.readouterr().out)["evidencia"]["gate_4"] == "aprovado"
+    doubt(root, path)
     (folder / "renders" / "preview.mp4").write_bytes(b"outra previa")
     assert cli.main(["postiz", "schedule", path]) == 1
     client.schedule.assert_not_called()
@@ -177,3 +189,60 @@ def test_permission_rule_asks_the_owner_before_schedule() -> None:
     ask = settings["permissions"]["ask"]
     assert "Bash(* postiz schedule *)" in ask  # vp, .venv/bin/vp e python -m app.cli
     assert not any("pacote" in rule for rule in ask)
+
+
+def test_schedule_without_doubt_is_refused(
+    root: Path, client: Mock, capsys: pytest.CaptureFixture[str]
+) -> None:
+    path = write_payload(root, payload())
+    cli.main(["postiz", "pacote", path])
+    capsys.readouterr()
+    assert cli.main(["postiz", "schedule", path]) == 1
+    assert "dúvida cega" in json.loads(capsys.readouterr().err)["error"]
+    client.schedule.assert_not_called()
+
+
+def test_doubt_that_says_stop_blocks_schedule(root: Path, client: Mock) -> None:
+    path = write_payload(root, payload())
+    cli.main(["postiz", "pacote", path])
+    assert doubt(root, path, "não segue", ["canal do YouTube num post de Instagram"]) == 0
+    assert cli.main(["postiz", "schedule", path]) == 1
+    client.schedule.assert_not_called()
+    assert events(root)[-1]["riscos"] == ["canal do YouTube num post de Instagram"]
+
+
+def test_doubt_must_follow_the_latest_package(root: Path, client: Mock) -> None:
+    path = write_payload(root, payload())
+    cli.main(["postiz", "pacote", path])
+    doubt(root, path)
+    cli.main(["postiz", "pacote", path])  # pacote refeito: o parecer anterior não vale para ele
+    assert cli.main(["postiz", "schedule", path]) == 1
+    client.schedule.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "report",
+    [
+        {"veredito": "talvez", "riscos": [], "revisor": "x"},
+        {"veredito": "segue", "riscos": [""], "revisor": "x"},
+        {"veredito": "segue", "riscos": []},
+        ["segue"],
+    ],
+)
+def test_malformed_doubt_is_rejected(root: Path, client: Mock, report: object) -> None:
+    path = write_payload(root, payload())
+    cli.main(["postiz", "pacote", path])
+    (root / "parecer.json").write_text(json.dumps(report), encoding="utf-8")
+    assert cli.main(["postiz", "duvida", path, str(root / "parecer.json")]) == 1
+    assert events(root)[-1]["event"] == "pacote"
+
+
+def test_doubt_without_package_is_refused(root: Path, client: Mock) -> None:
+    assert doubt(root, write_payload(root, payload())) == 1
+    assert not (root / REGISTRO).exists()
+
+
+def test_doubt_agent_is_read_only() -> None:
+    agent = (Path(__file__).parents[1] / ".claude/agents/duvida-cega.md").read_text(encoding="utf-8")
+    tools = next(line for line in agent.splitlines() if line.startswith("tools:"))
+    assert tools == "tools: Read, Grep, Glob"
