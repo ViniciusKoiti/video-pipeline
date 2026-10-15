@@ -8,6 +8,7 @@ montado quando existe handler, e cada porta só quando usada.
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 from collections.abc import Callable, Sequence
@@ -26,11 +27,13 @@ from app.pipeline.gates import (
     GateError,
     GateStatus,
     gate_report,
+    latest_check,
     missing_pieces,
+    record_check,
     record_decision,
 )
 from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
-from app.pipeline.schemas import Decision, EpisodeFormat, SourcesManifest, Step
+from app.pipeline.schemas import CheckVerdict, Decision, EpisodeFormat, SourcesManifest, Step
 from app.render.remotion import region_codes
 from app.settings import CONFIG_FILE, speech_chars_per_second
 
@@ -92,6 +95,17 @@ def _decision_arguments(parser: argparse.ArgumentParser) -> None:
 def _approve_arguments(parser: argparse.ArgumentParser) -> None:
     _decision_arguments(parser)
     parser.add_argument("--notes", default="", help="observação registrada no review.json")
+    parser.add_argument(
+        "--sem-checagem",
+        dest="skip_check",
+        metavar="MOTIVO",
+        help="aprova o gate 2 sem parecer do verificador; o motivo vai para o review.json",
+    )
+
+
+def _checagem_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("parecer", type=Path, help='JSON com "verdict" (approved | rejected) e "problems"')
+    parser.add_argument("--reviewer", default="verificador", help="quem conferiu (padrão: verificador)")
 
 
 def _reject_arguments(parser: argparse.ArgumentParser) -> None:
@@ -124,6 +138,10 @@ COMMANDS: tuple[Command, ...] = (
     ),
     Command("excerpts", "trechos numerados de cada fonte -> excerpts/<fonte>.md (ADR 009)", 48),
     Command("check", "valida fontes, fichas e cenas, escritas por agente ou à mão (ADR 009)", 48),
+    Command(
+        "checagem", "grava o parecer do verificador sobre fichas e roteiro -> checagem.json (gate 2)", 48,
+        add_arguments=_checagem_arguments,
+    ),
 )
 
 def _bench(args: argparse.Namespace, context: Context) -> int:
@@ -178,7 +196,7 @@ DECISION_LABELS = {
 
 
 def _approve(args: argparse.Namespace, context: Context) -> int:
-    return _decide(args, context, Decision.APPROVED, args.notes)
+    return _decide(args, context, Decision.APPROVED, args.notes, skip_check=args.skip_check)
 
 
 def _reject(args: argparse.Namespace, context: Context) -> int:
@@ -186,7 +204,9 @@ def _reject(args: argparse.Namespace, context: Context) -> int:
     return _decide(args, context, decision, args.reason)
 
 
-def _decide(args: argparse.Namespace, context: Context, decision: Decision, notes: str) -> int:
+def _decide(
+    args: argparse.Namespace, context: Context, decision: Decision, notes: str, skip_check: str | None = None
+) -> int:
     try:
         entry = record_decision(
             context.store,
@@ -198,6 +218,7 @@ def _decide(args: argparse.Namespace, context: Context, decision: Decision, note
             now=lambda: datetime.now().astimezone().replace(microsecond=0),
             asset_id=args.asset,
             notes=notes,
+            skip_check=skip_check,
         )
     except (GateError, ManifestNotFound, EpisodeLocked) as error:
         print(f"vp {args.command}: {error}", file=sys.stderr)
@@ -214,10 +235,32 @@ def _git_user() -> str:
     return result.stdout.strip()
 
 
+def _checagem(args: argparse.Namespace, context: Context) -> int:
+    try:
+        report = json.loads(args.parecer.read_text(encoding="utf-8"))
+        verdict = CheckVerdict(report["verdict"])
+        problems = report.get("problems", [])
+        entry = record_check(
+            context.store, args.episode_id, verdict, problems, reviewer=args.reviewer,
+            now=lambda: datetime.now().astimezone().replace(microsecond=0),
+        )
+    except (OSError, ValueError, KeyError, TypeError, GateError, EpisodeLocked) as error:
+        print(f"vp checagem: parecer inválido ou episódio sem roteiro ({error})", file=sys.stderr)
+        return 1
+    label = CHECK_LABELS[entry.verdict]
+    print(f"checagem: {label} por {entry.reviewer}, {len(entry.problems)} problema(s) ({entry.input_hash})")
+    return 0
+
+
+CHECK_LABELS = {CheckVerdict.APPROVED: "aprovado", CheckVerdict.REJECTED: "reprovado"}
+
+
 def _status(args: argparse.Namespace, context: Context) -> int:
     rows = gate_report(context.store, context.review, args.episode_id)
     for row in rows:
         print(_status_line(row))
+        if row.step is Step.SCRIPT:
+            print(_check_line(context, args.episode_id))
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
     pending += missing_pieces(context.store, args.episode_id)
     print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
@@ -237,6 +280,15 @@ def _status_line(row: GateStatus) -> str:
     return f"{kind:6}{target:32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
 
 
+def _check_line(context: Context, episode_id: str) -> str:
+    entry, valid = latest_check(context.store, episode_id)
+    if entry is None:
+        return f"{'parecer':6}{'verificador':32} sem parecer"
+    state = "vale" if valid else "MUDOU depois do parecer"
+    label = CHECK_LABELS[entry.verdict]
+    return f"{'parecer':6}{'verificador':32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
+
+
 def _pending(row: GateStatus) -> bool:
     """Gate sem aprovação que valha; ativo rejeitado e removido não é pendência."""
     if row.asset_id and row.current_hash is None:
@@ -252,6 +304,7 @@ HANDLERS: dict[str, Handler] = {
     "approve": _approve,
     "reject": _reject,
     "status": _status,
+    "checagem": _checagem,
     "postiz": postiz.run,
 }
 
