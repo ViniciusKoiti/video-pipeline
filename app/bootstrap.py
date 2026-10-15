@@ -15,7 +15,7 @@ from typing import Any
 
 from app.pipeline.ports import ManifestStore, ReviewGate
 from app.pipeline.schemas import EpisodeFormat
-from app.providers.alignment.base import SubtitleAligner
+from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.base import ProviderInfo
 from app.providers.errors import PaidApiBlocked
@@ -128,6 +128,14 @@ def _chatterbox(settings: Settings) -> Any:
     )
 
 
+def _groq_words(settings: Settings) -> Any:
+    from app.providers.alignment.groq import GroqWordAligner
+
+    whisper = settings.groq_whisper
+    key = _secret(settings, "GROQ_API_KEY")
+    return GroqWordAligner(key, model=whisper.model, timeout_s=whisper.timeout_s)
+
+
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
 
 DEFAULT_REGISTRY: Registry = {
@@ -147,6 +155,7 @@ DEFAULT_REGISTRY: Registry = {
         "unsplash": Registration(21, _unsplash),  # idem; Coverr fica só manual
     },
     "aligner": {"ffprobe": Registration(17)},
+    "word_aligner": {"groq": Registration(17, _groq_words)},
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
         "moneyprinterturbo": Registration(8),
@@ -231,6 +240,10 @@ class LazyContext:
     @cached_property
     def aligner(self) -> SubtitleAligner:
         return self._build("aligner", self._settings.providers.aligner)
+
+    @cached_property
+    def word_aligner(self) -> WordAligner:
+        return self._build("word_aligner", self._settings.providers.word_aligner)
 
     def renderer(self, episode_format: EpisodeFormat) -> RenderEngine:
         if episode_format not in self._renderers:

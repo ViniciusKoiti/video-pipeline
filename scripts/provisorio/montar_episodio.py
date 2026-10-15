@@ -19,6 +19,10 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
 - Com `sources.json` na pasta, cada plano com claims ganha a fonte do rodapé (ADR 011).
 - Legenda por frase em `captions.srt` (#17, ADR 021), com o tempo tirado dos WAVs; o arquivo é editável e só
   é refeito quando a fala muda. Um SRT com intervalo inválido ou além do áudio para o script antes do render.
+- `--legenda-palavra`: legenda palavra a palavra (ADR 023). Manda o WAV de cada cena ainda não reconhecida ao
+  Whisper da Groq (remoto, camada gratuita: só com pedido do dono na sessão) e guarda o resultado em
+  `captions.words.json`. Sem a opção, o arquivo que já existe é reaproveitado; cena sem ele fica na legenda
+  por frase.
 """
 
 from __future__ import annotations
@@ -33,7 +37,7 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.bootstrap import build_context  # noqa: E402
+from app.bootstrap import LazyContext, build_context  # noqa: E402
 from app.media.captions import (  # noqa: E402
     CAPTIONS,
     SceneAudio,
@@ -44,9 +48,10 @@ from app.media.captions import (  # noqa: E402
     sync_captions,
     timing_problems,
 )
-from app.media.narration import has_pauses  # noqa: E402
+from app.media.narration import has_pauses, strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
+from app.media.word_captions import WORDS, SceneSpeech, sync_words  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
     EpisodeManifest,
@@ -148,6 +153,32 @@ def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path
         print(f"  revisar bloco {n}: {hint}")
 
 
+def word_captions(context: LazyContext, episode_dir: Path, scenes: list[EpisodeScene], language: str) -> None:
+    """Palavras com tempo em `captions.words.json`; reconhece no Whisper remoto só com `--legenda-palavra`."""
+    request = "--legenda-palavra" in sys.argv
+    path = episode_dir / WORDS
+    if not request and not path.is_file():
+        return
+    speech = [SceneSpeech(s.id, s.audio, s.narration, s.duration_ms) for s in scenes]
+    recognize = None
+    if request:
+        aligner = context.word_aligner
+        recognize = lambda scene: aligner.recognize_words(  # noqa: E731
+            episode_dir / scene.audio, language, prompt=strip_pauses(scene.narration)
+        )
+    name = f"{context.settings.providers.word_aligner}/{context.settings.groq_whisper.model}"
+    try:
+        report = sync_words(path, speech, recognize, name)
+    except ProviderError as error:
+        raise SystemExit(f"legenda palavra a palavra: {error.reason}: {error}. As cenas já reconhecidas "
+                         f"ficam em {WORDS}; rode de novo depois.") from error
+    print(f"legenda palavra a palavra: {len(report.with_words)} cena(s), {report.unmatched} palavra(s) com "
+          "tempo dividido entre as vizinhas")
+    if report.without:
+        print(f"  sem reconhecimento (ficam na legenda por frase): {', '.join(report.without)}; "
+              "rode com --legenda-palavra")
+
+
 def main() -> None:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
@@ -211,6 +242,7 @@ def main() -> None:
     print(f"voz: {time.monotonic() - started:.0f} s; total {cursor / 1000:.1f} s")
 
     captions(episode_dir, episode_scenes, wavs, cursor)
+    word_captions(context, episode_dir, episode_scenes, scenes.language)
     episode = EpisodeManifest(
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
         language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes, host=scenes.host,

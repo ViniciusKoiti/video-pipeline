@@ -29,6 +29,7 @@ class ProviderChoice(_Model):
     image_gen: str
     archives: list[str] = Field(min_length=1)  # ordem da cascata (§8)
     aligner: str
+    word_aligner: str = "groq"  # palavras com tempo para a legenda palavra a palavra (ADR 023)
     render: dict[EpisodeFormat, str]  # motor por formato do episódio (ADR 001)
     store: str
     review: str
@@ -62,6 +63,13 @@ class GeminiTTSSettings(_Model):
     styles: dict[str, str] = Field(default_factory=dict)  # idioma -> direção de fala (speech_metadata.style)
     requests_per_minute: int = Field(default=3, gt=0)  # limite da camada gratuita
     chars_per_second: float = Field(default=13.0, gt=0)
+
+
+class GroqWhisperSettings(_Model):
+    """Whisper da Groq na camada gratuita, só para o tempo das palavras da legenda (ADR 023)."""
+
+    model: str = "whisper-large-v3-turbo"
+    timeout_s: float = Field(default=120.0, gt=0)
 
 
 class ChatterboxSettings(_Model):
@@ -117,6 +125,7 @@ class Settings(_Model):
     kokoro: KokoroSettings
     gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
     chatterbox: ChatterboxSettings = ChatterboxSettings()
+    groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()

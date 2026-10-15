@@ -6,9 +6,11 @@ As mensagens de erro nunca incluem URL nem headers: podem carregar tokens (§2.7
 from __future__ import annotations
 
 import json
+import mimetypes
 import shutil
 import urllib.error
 import urllib.request
+import uuid
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -41,6 +43,44 @@ def post_json_with_headers(
         url,
         data=json.dumps(payload).encode(),
         headers={"Content-Type": "application/json", "User-Agent": USER_AGENT, **headers},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return json.loads(response.read())
+    except urllib.error.HTTPError as error:
+        raise TransportError(error.code, error.read().decode(errors="replace")[:500]) from None
+    except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+        raise TransportError(None, str(getattr(error, "reason", error))) from None
+
+
+MultipartPost = Callable[  # url, campos, arquivos, cabeçalhos, timeout → JSON
+    [str, Mapping[str, str], Mapping[str, Path], Mapping[str, str], float], dict[str, Any]
+]
+
+
+def post_multipart(
+    url: str, fields: Mapping[str, str], files: Mapping[str, Path], headers: Mapping[str, str], timeout: float
+) -> dict[str, Any]:
+    """POST `multipart/form-data` (ex.: um áudio para transcrição), com a biblioteca padrão."""
+    boundary = f"----video-pipeline-{uuid.uuid4().hex}"
+    body = bytearray()
+    for name, value in fields.items():
+        body += f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode()
+    for name, path in files.items():
+        kind = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        body += (
+            f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"; filename="{path.name}"\r\n'
+            f"Content-Type: {kind}\r\n\r\n"
+        ).encode()
+        body += path.read_bytes() + b"\r\n"
+    body += f"--{boundary}--\r\n".encode()
+    request = urllib.request.Request(
+        url,
+        data=bytes(body),
+        headers={
+            "Content-Type": f"multipart/form-data; boundary={boundary}", "User-Agent": USER_AGENT, **headers
+        },
         method="POST",
     )
     try:
