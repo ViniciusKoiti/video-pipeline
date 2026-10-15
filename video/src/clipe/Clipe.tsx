@@ -5,35 +5,43 @@ import {
 import antonUrl from "./fonts/Anton-Regular.ttf";
 import cinzelUrl from "./fonts/Cinzel.ttf";
 import plexUrl from "./fonts/IBMPlexMono-Regular.ttf";
-import letra from "./letra.json";
 import brasaoUrl from "./marca/brasao.svg";
+import {type Linha, MUSICAS, type Musica, type Palavra} from "./musicas";
 
-// Clipe de letra (tipografia cinética) de "A Planilha é Tua". Fora do contrato `episode.json`: a única
-// entrada é `letra.json` (tempo por palavra, de `scripts/provisorio/clipe_tempos.py`) e o áudio no publicDir.
+// Clipe de letra (tipografia cinética) das músicas do Nabote ("A Planilha é Tua", "A Vinha Não é Sua"). Fora
+// do contrato `episode.json`: a entrada é a letra com tempo por palavra (de `scripts/provisorio/clipe_tempos.py`),
+// o que muda por música (`musicas.ts`) e o áudio no publicDir.
 // Duas vozes, duas letras: o poder em serifada de inscrição (Cinzel), o eu em condensada pesada (Anton); as
 // falas secas (intro, ponte, outro) em monoespaçada (IBM Plex Mono). Todas SIL OFL 1.1 (`fonts/*-OFL.txt`).
-// O brasão do Nabote (`marca/brasao.svg`, de nabote.com.br/marca/) fica num canto e fecha o clipe com "Nabote.".
+// O brasão do Nabote (`marca/brasao.svg`, de nabote.com.br/marca/) fica num canto e fecha o clipe: com o último
+// verso ("Nabote.") ou numa tela com o título, conforme a música.
 // Nos cortes (`fecho`), `fim` é o tempo forte em que o próximo verso entraria: ali o som passa para o final da
-// própria música (CAUDA) e o último verso se dissolve na tela de fecho (brasão, título, "clipe completo no canal").
+// própria música (`cauda`) e o último verso se dissolve na tela de fecho (brasão, título, "clipe completo no canal").
 
-export type ClipeProps = {inicio: number; fim: number | null; audio: string | null; retrato: boolean; fecho?: boolean};
-type Palavra = {t: string; ini: number; ok: boolean};
-type Linha = {secao: string; vez: number; texto: string; ini: number; fim: number; palavras: Palavra[]};
+export type ClipeProps = {
+  inicio: number; fim: number | null; audio: string | null; retrato: boolean; fecho?: boolean; musica?: string;
+};
 
-const LINHAS = letra.linhas as Linha[];
 export const CLIPE_FPS = 30;
-export const CLIPE_PADRAO: ClipeProps = {inicio: 0, fim: null, audio: null, retrato: false, fecho: false};
-// Os últimos segundos da faixa: a textura cai em 192,8 s e a música para sozinha em ~195,2 s. O final entra
-// nesse ponto, sem antecipar a passagem: antes dele a parte final é alta e soaria como estalo.
-const CAUDA = 192.8;
+export const CLIPE_PADRAO: ClipeProps = {
+  inicio: 0, fim: null, audio: null, retrato: false, fecho: false, musica: "planilha",
+};
+const musicaDe = (props: ClipeProps): Musica => {
+  const musica = MUSICAS[props.musica ?? "planilha"];
+  if (!musica) throw new Error(`música desconhecida: ${props.musica}; há ${Object.keys(MUSICAS).join(", ")}`);
+  return musica;
+};
 const comFecho = (props: ClipeProps) => Boolean(props.fecho && props.fim !== null);
-export const clipeMetadata = ({props}: {props: ClipeProps}) => ({
-  fps: CLIPE_FPS,
-  width: props.retrato ? 1080 : 1920,
-  height: props.retrato ? 1920 : 1080,
-  durationInFrames: Math.max(1, Math.round(
-    ((props.fim ?? letra.duracao) - props.inicio + (comFecho(props) ? letra.duracao - CAUDA : 0)) * CLIPE_FPS)),
-});
+export const clipeMetadata = ({props}: {props: ClipeProps}) => {
+  const m = musicaDe(props);
+  return {
+    fps: CLIPE_FPS,
+    width: props.retrato ? 1080 : 1920,
+    height: props.retrato ? 1920 : 1080,
+    durationInFrames: Math.max(1, Math.round(
+      ((props.fim ?? m.duracao) - props.inicio + (comFecho(props) ? m.duracao - m.cauda : 0)) * CLIPE_FPS)),
+  };
+};
 
 // Cores do site do Nabote (nabote.com.br, lidas em 2026-10-08): fundo, texto, dourado (`--gold`, a cor primária)
 // e vermelho (`--destructive`) dos temas escuro e claro. O dourado é a voz do poder; o vermelho, só o sangue.
@@ -47,11 +55,6 @@ const TEMA = {
 const ANTON = "Anton, 'DejaVu Sans Condensed', sans-serif";
 const CINZEL = "Cinzel, 'DejaVu Serif', serif";
 const MONO = "'IBM Plex Mono', 'DejaVu Sans Mono', monospace";
-const PODER = new Set([
-  "estado", "perito", "toga", "tribunal", "stf", "marmore", "altar", "cargo", "divindade", "guardiao", "plano",
-  "tecnica", "calculo", "tradicao", "destino", "gloria", "paraiso", "planilha", "relatorio", "grafico", "acabe",
-]);
-const SANGUE = new Set(["sangra", "mataste", "nabote", "terror"]);
 const MONO_SECOES = new Set(["intro", "ponte", "outro"]);
 const POP = 4; // quadros da entrada de cada palavra (escala e opacidade, sem quique)
 const SEGURA = 1.0; // s que um verso fica depois do fim, quando o próximo demora (no outro, até o próximo)
@@ -64,14 +67,10 @@ const saida = (x: number) => 1 - (1 - clamp(x)) ** 3;
 const quadro = (s: number) => Math.round(s * CLIPE_FPS);
 
 // Efeito próprio de alguns versos, escolhido pelo texto (a letra é fixa).
-const efeito = (linha: Linha): string | null => {
+const efeito = (m: Musica, linha: Linha): string | null => {
   const texto = norm(linha.texto);
   if (MONO_SECOES.has(linha.secao)) return null;
-  if (texto.startsWith("oplanoecego")) return "apaga";
-  if (texto.startsWith("setudoepolitico")) return "mosaico";
-  if (texto.startsWith("tuescreve")) return "tacha";
-  if (texto.startsWith("queliberdadeeessa")) return "contorno";
-  return null;
+  return m.efeitos.find(([inicio]) => texto.startsWith(inicio))?.[1] ?? null;
 };
 
 // Quebra em fileiras: na pontuação e no limite de caracteres. Cada fileira é escalada para a largura da caixa.
@@ -94,14 +93,16 @@ const fileiras = (palavras: Palavra[], indices: number[], maxc: number): number[
   return out.filter((row) => row.length > 0);
 };
 
-// Cada verso usa um dos três temas: escuro (padrão), claro (pré-refrão alternado e segunda vez) e sangue ("Mataste").
-const paleta = (linha: Linha, indice: number) => {
+// Cada verso usa um dos três temas: escuro (padrão), claro (pré-refrão alternado, segunda vez e a quebra) e sangue
+// (os versos do refrão em `refraoSangue`, como "Mataste").
+const paleta = (m: Musica, linha: Linha, indice: number) => {
   const invertida = linha.vez === 2;
   if (linha.secao === "refrao") {
-    if (norm(linha.texto).startsWith("mataste")) return TEMA.sangue;
+    if (m.refraoSangue.some((inicio) => norm(linha.texto).startsWith(inicio))) return TEMA.sangue;
     return invertida ? TEMA.claro : TEMA.escuro;
   }
   if (linha.secao === "pre") return (indice % 2 === 0) !== invertida ? TEMA.claro : TEMA.escuro;
+  if (linha.secao === "quebra") return TEMA.claro;
   return TEMA.escuro;
 };
 
@@ -121,6 +122,8 @@ const useFontes = () => {
 
 export const Clipe: React.FC<ClipeProps> = (props) => {
   const {inicio, fim, audio} = props;
+  const m = musicaDe(props);
+  const LINHAS = m.linhas;
   useFontes();
   const local = useCurrentFrame();
   const {width, height, durationInFrames} = useVideoConfig();
@@ -154,7 +157,8 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
   });
   const linha = indice >= 0 ? LINHAS[indice] : null;
   const proxima = indice + 1 < LINHAS.length ? LINHAS[indice + 1] : null;
-  const ultima = linha !== null && proxima === null; // "Nabote." fica até o fim
+  // Na música que fecha com o verso ("Nabote."), ele fica até o fim com o brasão grande.
+  const ultima = m.fim.tipo === "verso" && linha !== null && proxima === null;
   const segura = linha?.secao === "outro" ? Infinity : SEGURA;
   // No corte, o verso que termina no corte fica até a tela de fecho.
   const ateOCorte = fechando && fim !== null && proxima !== null && proxima.ini >= fim - 0.05;
@@ -168,7 +172,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
           volume={(f) => Math.min(1, (f + 1) / 3, (corteLocal - f) / EMENDA)} />
       </Sequence>
       <Sequence from={corteLocal - EMENDA} layout="none">
-        <Audio src={staticFile(audio)} trimBefore={quadro(CAUDA)}
+        <Audio src={staticFile(audio)} trimBefore={quadro(m.cauda)}
           volume={(f) => Math.min(1, (f + 1) / EMENDA)} />
       </Sequence>
     </>
@@ -176,29 +180,36 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
     <Audio src={staticFile(audio)} trimBefore={quadro(inicio)}
       volume={(f) => Math.min(1, (f + 1) / 3, (durationInFrames - f) / 10)} />
   );
-  // Tela de fecho dos cortes: brasão, título e chamada para o clipe completo, sobre o último verso parado.
-  const tela = fechando && local >= corteLocal ? (
-    <AbsoluteFill style={{background: COR.preto, opacity: clamp((local - corteLocal + 1) / DISSOLVE),
+  // Tela de fecho: brasão e título sobre o último verso parado. Nos cortes leva a chamada para o clipe completo;
+  // no clipe completo da música que fecha com o título, entra em `fechoEm` e fica até o fim.
+  const telaDe = (desde: number, chamada: boolean) => (
+    <AbsoluteFill style={{background: COR.preto, opacity: clamp((local - desde + 1) / DISSOLVE),
       display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
       paddingBottom: retrato ? (500 - 288) * k : 0}}>
       <Img src={brasaoUrl} style={{height: retrato ? 560 * k : height * 0.5, margin: `${-60 * k}px 0`}} />
-      <div style={{fontFamily: ANTON, color: COR.osso, fontSize: Math.min(width * 0.8, 1300 * k) / (16 * 0.48),
-        textTransform: "uppercase", letterSpacing: "0.01em", lineHeight: 1.1}}>A Planilha é Tua</div>
-      <div style={{fontFamily: MONO, color: COR.ouro, fontSize: retrato ? 54 * k : height * 0.045,
-        marginTop: 24 * k}}>clipe completo no canal</div>
+      <div style={{fontFamily: ANTON, color: COR.osso,
+        fontSize: Math.min(width * 0.8, 1300 * k) / (Math.max(16, m.titulo.length) * 0.48),
+        textTransform: "uppercase", letterSpacing: "0.01em", lineHeight: 1.1}}>{m.titulo}</div>
+      {chamada && (
+        <div style={{fontFamily: MONO, color: COR.ouro, fontSize: retrato ? 54 * k : height * 0.045,
+          marginTop: 24 * k}}>clipe completo no canal</div>
+      )}
     </AbsoluteFill>
-  ) : null;
+  );
+  const fechoEm = !fechando && m.fim.tipo === "titulo" ? quadro(m.fim.fechoEm) - quadro(inicio) : null;
+  const tela = fechando && local >= corteLocal ? telaDe(corteLocal, true)
+    : fechoEm !== null && local >= fechoEm ? telaDe(fechoEm, false) : null;
   if (!linha || !visivel) return <AbsoluteFill style={{background: COR.preto}}>{som}{selo}{tela}</AbsoluteFill>;
 
   const lf = frame - quadro(linha.ini);
   const mono = MONO_SECOES.has(linha.secao) && !ultima;
-  const fx = efeito(linha);
+  const fx = efeito(m, linha);
   const final = linha.secao === "refrao" && linha.vez === 3;
-  const cores = paleta(linha, indice);
+  const cores = paleta(m, linha, indice);
   const anterior = indice > 0 ? LINHAS[indice - 1] : null;
   // No pré-refrão a tarja cobre a tela no 4º quadro: até lá o fundo ainda é o do verso anterior.
   const tarja = linha.secao === "pre" && lf < 8;
-  const fundo = tarja && lf < 4 && anterior ? paleta(anterior, indice - 1).bg : cores.bg;
+  const fundo = tarja && lf < 4 && anterior ? paleta(m, anterior, indice - 1).bg : cores.bg;
 
   // Quais palavras estão na tela (o mosaico troca a primeira metade pela pergunta).
   let indices = linha.palavras.map((_, i) => i);
@@ -221,7 +232,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
   const largura = (row: number[]) => row.reduce((sum, i) => {
     const chave = norm(linha.palavras[i].t);
     const tachada = corteTacha > 0 && i < corteTacha;
-    const peso = chave === "stf" ? 1.9 : tachada ? 1.7 : PODER.has(chave) ? 1.25 : 1;
+    const peso = chave === "stf" ? 1.9 : tachada ? 1.7 : m.poder.has(chave) ? 1.25 : 1;
     return sum + linha.palavras[i].t.length * peso;
   }, row.length - 1);
   const teto = boxH * (ultima ? 0.26 : linha.secao === "refrao" ? 0.42 : 0.3);
@@ -231,7 +242,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
   if (total > boxH) sizes = sizes.map((size) => (size * boxH) / total);
 
   // Movimento do bloco: deriva lenta, tremor nas batidas do refrão e empurrão de saída para o próximo verso.
-  const duracao = Math.max(1, quadro((proxima ? proxima.ini : letra.duracao) - linha.ini));
+  const duracao = Math.max(1, quadro((proxima ? proxima.ini : m.duracao) - linha.ini));
   const deriva = mono ? 1 : 1 + 0.04 * clamp(lf / duracao);
   const direcao = indice % 2 === 0 ? 1 : -1;
   const contiguo = proxima !== null && proxima.ini <= linha.fim + SEGURA;
@@ -252,7 +263,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
     const p = linha.palavras[i];
     const wf = frame - quadro(p.ini);
     const chave = norm(p.t);
-    const poder = !mono && !ultima && (PODER.has(chave) || (corteTacha > 0 && i < corteTacha));
+    const poder = !mono && !ultima && (m.poder.has(chave) || (corteTacha > 0 && i < corteTacha));
     const fachada = chave === "stf";
     const tachada = corteTacha > 0 && i < corteTacha ? clamp((frame - quadro(linha.palavras[corteTacha].ini)) / 5) : 0;
     let transform = `scale(${wf < 0 ? 1 : 1.25 - 0.25 * saida(wf / POP)})`;
@@ -264,7 +275,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
       fontWeight: poder ? 700 : 400,
       fontSize: poder ? (fachada ? "1em" : tachada > 0 || (corteTacha > 0 && i < corteTacha) ? "0.84em" : "0.62em") : undefined,
       letterSpacing: poder ? "0.06em" : mono ? 0 : "0.01em",
-      color: SANGUE.has(chave) ? cores.forte : poder ? cores.poder : cores.fg,
+      color: m.sangue.has(chave) ? cores.forte : poder ? cores.poder : cores.fg,
     };
     if (fx === "contorno") {
       style.color = "transparent";
