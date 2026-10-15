@@ -64,3 +64,15 @@ TELA        S07 network aresta banco-b→empresa-a "empresta a" — source-02#E7
 
 Para cada linha, sugira a correção mínima (trocar a palavra, tirar a causa, citar outra ficha). No fim,
 diga quantas frases e planos conferiu e quantos passaram. Não reescreva os arquivos.
+
+## Parecer
+
+Feche com este JSON, que a sessão principal grava com `vp checagem <id> parecer.json` e que o gate 2 exige
+(sem ele, o dono só aprova com `--sem-checagem "motivo"`):
+
+```json
+{"verdict": "rejected", "problems": ["DIVERGE S03 \"No ano seguinte...\" — source-02#E9 diz \"em 1927\""]}
+```
+
+`approved` só sem nenhuma linha de problema; qualquer `DIVERGE`, `SEM SUPORTE`, `EXAGERO` ou `TELA` é
+`rejected`, com as linhas do relatório em `problems`.

@@ -275,8 +275,8 @@ lacuna fica registrada.
 
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
-`vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `approve`, `reject` e
-`status`. `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
+`vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
+`reject`, `status` e `postiz`. `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
 saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem fonte, voz e render
 até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`). Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
@@ -383,7 +383,8 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; contexto limpo, só leitura |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 
-Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador →
+Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
+(parecer gravado por `vp checagem`, exigido pelo gate 2) →
 voz + render → gate 2. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
 que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
 pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).

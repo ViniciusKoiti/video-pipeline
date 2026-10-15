@@ -1005,6 +1005,28 @@ class ReviewLog(Model):
         return input_hash is None or entry.input_hash == input_hash
 
 
+class CheckVerdict(StrEnum):
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
+class CheckEntry(Model):
+    """Parecer do agente verificador sobre fichas e roteiro (skill `checagem`), gravado por `vp checagem`."""
+
+    verdict: CheckVerdict
+    problems: list[NonEmpty] = []  # uma linha por problema, no formato do relatório da skill
+    reviewer: NonEmpty
+    at: AwareDatetime
+    input_hash: str  # hash de facts.json + scenes.json + outline.md no momento do parecer
+
+
+class CheckLog(Model):
+    """`checagem.json`: pareceres do verificador, só acrescentados (ADR 009, emenda da cadeia de provas)."""
+
+    episode_id: EpisodeId
+    entries: list[CheckEntry] = []
+
+
 # --- episode.json (contrato do render) ----------------------------------------------------------
 
 
