@@ -12,6 +12,7 @@ from app.bootstrap import (
     Registration,
     Registry,
     build_context,
+    build_postiz,
 )
 from app.pipeline.schemas import EpisodeFormat, Provider
 from app.providers.errors import PaidApiBlocked
@@ -61,6 +62,27 @@ def test_secrets_only_from_environment_and_never_in_repr(tmp_path: Path) -> None
     root = make_root(tmp_path / "leak", CONFIG + '\n[secrets]\npexels_api_key = "s3cr3t"\n')
     with pytest.raises(ValueError, match="segredos"):
         load_settings(root, environ={})
+
+
+def test_postiz_loads_dotenv_with_environment_precedence_and_hides_key(tmp_path: Path) -> None:
+    root = make_root(tmp_path)
+    (root / ".env").write_text(
+        "POSTIZ_API_URL=https://postiz.example/api\nPOSTIZ_API_KEY='private-dotenv-value'\n"
+    )
+    settings = load_settings(root, environ={"POSTIZ_API_URL": "https://override.example/api"})
+    assert settings.postiz_api_url == "https://override.example/api"
+    assert settings.secrets.postiz_api_key is not None
+    assert settings.secrets.postiz_api_key.get_secret_value() == "private-dotenv-value"
+    assert "private-dotenv-value" not in repr(settings)
+
+
+def test_postiz_requires_its_configuration_only_when_used(tmp_path: Path) -> None:
+    settings = load_settings(make_root(tmp_path), environ={})
+    with pytest.raises(ConfigurationError, match="POSTIZ_API_URL ausente"):
+        build_postiz(settings)
+    settings = settings.model_copy(update={"postiz_api_url": "https://postiz.example/api"})
+    with pytest.raises(ConfigurationError, match="POSTIZ_API_KEY ausente"):
+        build_postiz(settings)
 
 
 # --- Troca de implementação ---------------------------------------------------------------------

@@ -127,6 +127,7 @@ class Secrets(_Model):
     cloudflare_api_token: SecretStr | None = None
     groq_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
+    postiz_api_key: SecretStr | None = None
 
 
 class Settings(_Model):
@@ -141,10 +142,12 @@ class Settings(_Model):
     budget: Budget = Budget()
     data_dir: Path = Path("data")
     secrets: Secrets = Secrets()
+    postiz_api_url: str | None = None
 
 
 # Variável de ambiente -> caminho no dicionário de configuração.
 ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
+    "POSTIZ_API_URL": ("postiz_api_url",),
     "OLLAMA_BASE_URL": ("ollama", "base_url"),
     "OLLAMA_MODEL": ("ollama", "model"),
     "WORKERS_AI_MODEL": ("workers_ai", "model"),
@@ -158,6 +161,7 @@ ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
     "MAX_CLOUD_REQUESTS_PER_EPISODE": ("limits", "max_cloud_requests_per_episode"),
 }
 SECRET_VARS: dict[str, str] = {
+    "POSTIZ_API_KEY": "postiz_api_key",
     "PEXELS_API_KEY": "pexels_api_key",
     "PIXABAY_API_KEY": "pixabay_api_key",
     "UNSPLASH_ACCESS_KEY": "unsplash_access_key",
