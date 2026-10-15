@@ -171,6 +171,9 @@ revela:
 - **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
   (`event_date`, `question`, `thesis` + `thesis_by`). Opinião é dita como opinião e nunca vira dado na tela;
   notícia com mais de 30 dias gera alerta; roteiro sem objetivo também.
+- **Funil (ADR 026):** `funnel.stage` (`topo` | `meio` | `fundo`, decidido pelo dono na pauta), `cta` (a chamada
+  final, dita na última cena) e `offer` (só e sempre no fundo: a planilha ou o modelo oferecido). O `vp check`
+  avisa quando falta o estágio, quando a chamada não pede o que o estágio pede e quando ela não está na narração.
 - **`sources.json`:** mínimo de 2 fontes independentes para os fatos principais. `Source.interested` marca fonte
   interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só.
   `kind: declared` é material do próprio dono (receita, nota de compra), sem URL: o `vp check` avisa e o dono

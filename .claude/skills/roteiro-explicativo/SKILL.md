@@ -192,6 +192,28 @@ depois de assistir. Toda cena serve à promessa; cena que não serve sai.
 - **No `outline.md`**, logo no começo: os tipos, a promessa e, para cada cena, a que parte ela pertence.
 - Se as fichas não sustentam a promessa, pare e devolva ao dono: trocar a promessa é decisão dele.
 
+## Estágio do funil (ADR 026)
+
+O estágio vem da pauta ou do dono, como o objetivo; se não veio, pergunte. Ele muda a forma e a chamada final:
+
+```text
+"funnel": {
+  "stage": "meio",
+  "cta": "Salva pra conferir na próxima encomenda."
+}
+```
+
+| Estágio | Forma | A chamada final pede | Campo a mais |
+|---|---|---|---|
+| `topo` | tema amplo e gancho forte; pouco método, uma ideia só | seguir ou compartilhar | — |
+| `meio` | a conta ou o método inteiro, com fonte, como nos reels da série 1 | salvar ou comentar a dúvida | — |
+| `fundo` | o problema e a planilha ou o modelo que resolve, mostrado funcionando | pedir: comentar a palavra, link na bio | `offer`: o que é oferecido |
+
+- A `cta` é dita na **última cena**, com as mesmas palavras do campo; o `vp check` confere.
+- Uma chamada só. Pedir para seguir, salvar e comentar no mesmo fim dilui as três.
+- No fundo, nesta fase, a oferta é grátis: preço e venda não entram no roteiro sem decisão do dono.
+- No `outline.md`, logo depois do objetivo: o estágio e a chamada.
+
 ## Resumo do radar: forma, nunca fato (ADR 018)
 
 Se a pasta do episódio tem `radar-brief.json`, leia-o **antes** de escrever. É o resumo do reels-radar: o que
