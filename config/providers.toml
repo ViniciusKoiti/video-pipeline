@@ -53,6 +53,11 @@ invite = { exaggeration = 0.6, cfg_weight = 0.4 }
 neutral = { exaggeration = 0.5, cfg_weight = 0.5 }
 calm = { exaggeration = 0.4, cfg_weight = 0.6 }
 
+[chatterbox_modal]  # a mesma voz numa GPU do Modal (ADR 024); modelo, entrega e gravação vêm de [chatterbox]
+python = "~/.local/share/uv/tools/modal/bin/python"  # o Python da CLI do Modal (uv tool install modal)
+app = "voz-dono"  # publicado com `modal deploy deploy/modal_chatterbox.py`
+reference_name = "referencia.wav"  # no volume privado voz-dono-referencia, enviado pelo dono
+
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"
 

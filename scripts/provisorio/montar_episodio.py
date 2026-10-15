@@ -8,7 +8,8 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
   O hash cobre o texto, o modelo, a voz
   e a direção de fala: a fala só é gerada de novo quando um deles muda, e uma voz não apaga as falas da outra.
 - `--voz=<nome>` usa uma voz registrada pelo nome, fora da escolha do `providers.toml`: `gemini` (Charon,
-  ADR 012; é a do vídeo-régua), `chatterbox` ou `kokoro`.
+  ADR 012; é a do vídeo-régua), `chatterbox`, `chatterbox_modal` (a mesma voz numa GPU do Modal, ADR 024) ou
+  `kokoro`.
 - A voz clonada gera uma cena por vez, dezenas de vezes mais devagar que o tempo real. O Gemini gera as cenas
   que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
   pode ser cortado com segurança é gerado cena a cena. Cota esgotada: o script para, as falas já geradas ficam
@@ -70,6 +71,8 @@ from app.settings import Settings  # noqa: E402
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
 
 
+# A voz clonada do dono: na máquina (ADR 016) ou numa GPU do Modal (ADR 024).
+CLONED = ("chatterbox", "chatterbox_modal")
 BATCH_CHARS = 1200  # ~90 s de fala por chamada num lote da voz final (ADR 012)
 
 
@@ -78,11 +81,11 @@ def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
     if provider == "gemini":
         gemini = settings.gemini_tts
         return f"gemini|{gemini.model}|{gemini.voices.get(language)}|{gemini.styles.get(language, '')}"
-    if provider == "chatterbox":
+    if provider in CLONED:  # a mesma voz local ou no Modal (ADR 024); o nome do WAV separa as duas
         box = settings.chatterbox
         reference = box.reference.expanduser() if box.reference else None
         voice = reference_hash(reference) if reference and reference.is_file() else None
-        return f"chatterbox|{box.model}|{box.language_ids.get(language)}|{voice}"
+        return f"{provider}|{box.model}|{box.language_ids.get(language)}|{voice}"
     return f"{provider}|{settings.kokoro.voices.get(language)}"
 
 
@@ -207,13 +210,13 @@ def main() -> None:
     wavs, missing = {}, []
     for scene in scenes.scenes:
         # Cena com pausa: o silêncio do Kokoro entra na chave (ADR 015); sem pausa a chave não muda.
-        pauses = {"kokoro": settings.kokoro.pause_ms, "chatterbox": settings.chatterbox.pause_ms}
+        pauses = {"kokoro": settings.kokoro.pause_ms, **dict.fromkeys(CLONED, settings.chatterbox.pause_ms)}
         pause_ms = pauses.get(provider)
         tagged = pause_ms is not None and has_pauses(scene.narration)
         pause = f"|pausa{pause_ms}" if tagged else ""
         # Entrega da fala (ADR 022): só a voz clonada obedece; a chave muda só quando a entrega não é neutra.
         delivery = scene.delivery or "neutral"
-        entrega = f"|entrega:{delivery}" if provider == "chatterbox" and delivery != "neutral" else ""
+        entrega = f"|entrega:{delivery}" if provider in CLONED and delivery != "neutral" else ""
         key = hashlib.sha256(f"{fingerprint}{pause}{entrega}|{scene.narration}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():

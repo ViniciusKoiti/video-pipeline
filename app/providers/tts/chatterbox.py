@@ -24,6 +24,8 @@ from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest, SpeechResult
 
 WORKER = Path(__file__).with_name("chatterbox_worker.py")
+# A mesma fala numa GPU do Modal (ADR 024): um cliente com o protocolo do worker.
+MODAL_CLIENT = Path(__file__).with_name("chatterbox_modal_client.py")
 MODEL_PREFIX = "chatterbox-multilingual-"
 # Entrega da fala (ADR 022): padrão do modelo na fala neutra; ênfase alta e cfg baixo no chamado.
 DEFAULT_DELIVERY: dict[str, dict[str, float]] = {
@@ -47,11 +49,13 @@ class Worker(Protocol):
 class SubprocessWorker:
     """O processo do modelo: uma linha de JSON por pedido, uma linha por resposta."""
 
-    def __init__(self, python: Path, model: str, num_threads: int) -> None:
+    def __init__(
+        self, python: Path, model: str, num_threads: int, *, command: list[str] | None = None
+    ) -> None:
         # Avisos e barras de progresso do modelo; lido só em falha e aberto enquanto o processo vive.
         self._log = tempfile.TemporaryFile()  # noqa: SIM115
         self._process = subprocess.Popen(
-            [str(python), str(WORKER), model, str(num_threads)],
+            command or [str(python), str(WORKER), model, str(num_threads)],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self._log, text=True, encoding="utf-8",
         )
         ready = self._read()
@@ -94,8 +98,11 @@ class ChatterboxTTS:
         pause_ms: int = 400,
         delivery: Mapping[str, Mapping[str, float]] | None = None,
         start: Callable[[Path, str, int], Worker] = SubprocessWorker,
+        provider: str = "chatterbox",
+        remote: bool = False,
     ) -> None:
-        self.info = ProviderInfo("chatterbox", remote=False)
+        # `chatterbox_modal` (ADR 024): o mesmo adapter com a síntese numa GPU do Modal; muda só o processo.
+        self.info = ProviderInfo(provider, remote=remote)
         # Entrega da fala (ADR 022): ênfase e cfg por nome; entrega desconhecida cai na neutra.
         self._delivery = {name: dict(params) for name, params in (delivery or DEFAULT_DELIVERY).items()}
         self._python = python  # o Python do ambiente em que o Chatterbox está instalado
@@ -109,7 +116,8 @@ class ChatterboxTTS:
 
     def _ready(self) -> tuple[Worker, Path]:
         if self._python is None or not self._python.is_file():
-            raise ModelUnavailable(self.info.name, "ambiente do modelo ausente (CHATTERBOX_PYTHON no .env)")
+            where = "a CLI do Modal (uv tool install modal)" if self.info.remote else "CHATTERBOX_PYTHON"
+            raise ModelUnavailable(self.info.name, f"ambiente do modelo ausente ({where})")
         if self._reference is None or not self._reference.is_file():
             raise ModelUnavailable(self.info.name, "gravação de referência ausente (CHATTERBOX_REFERENCE)")
         if self._worker is None:
@@ -151,3 +159,13 @@ class ChatterboxTTS:
         if close is not None:
             close()
         self._worker = None
+
+
+def modal_starter(app: str, reference_name: str) -> Callable[[Path, str, int], Worker]:
+    """O processo do cliente do Modal (ADR 024): `python` é o da CLI do Modal, que tem o pacote e o token."""
+
+    def start(python: Path, model: str, num_threads: int) -> Worker:
+        command = [str(python), str(MODAL_CLIENT), app, model, reference_name]
+        return SubprocessWorker(python, model, num_threads, command=command)
+
+    return start
