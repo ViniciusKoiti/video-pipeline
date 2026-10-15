@@ -72,6 +72,14 @@ def _secret(settings: Settings, env_name: str) -> str:
     return secret.get_secret_value()
 
 
+def build_postiz(settings: Settings) -> Any:
+    from app.providers.postiz import PostizClient
+
+    if not settings.postiz_api_url:
+        raise ConfigurationError("POSTIZ_API_URL ausente no .env")
+    return PostizClient(settings.postiz_api_url, _secret(settings, "POSTIZ_API_KEY"))
+
+
 def _archive_cache(settings: Settings) -> Path:
     return settings.data_dir / "cache" / "archives"
 

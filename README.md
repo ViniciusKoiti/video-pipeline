@@ -2,7 +2,8 @@
 
 Pipeline local, retomável e auditável para produzir vídeos narrados em inglês ou pt-BR a partir de fontes
 verificáveis e imagens com licença registrada. O piloto documental aborda expedições e desastres de
-1880–1930; o formato explicativo também aceita vídeos verticais. Publicação sempre manual, após revisão humana.
+1880–1930; o formato explicativo também aceita vídeos verticais. Agendamento e publicação dependem de revisão
+e autorização humanas.
 
 - Contexto e regras: [CLAUDE.md](CLAUDE.md)
 - Agentes Codex/OpenAI e skills do workspace: [AGENT.MD](AGENT.MD)
@@ -54,6 +55,22 @@ uv run vp bench --models qwen3.5:4b,qwen3.5:9b --runs 2   # rodar com a máquina
 uv run pytest && uv run ruff check .
 uv run pytest -m slow      # contratos com modelos locais pesados (Kokoro)
 ```
+
+## Agendamento pelo Postiz
+
+A CLI lê `POSTIZ_API_KEY` e `POSTIZ_API_URL` do `.env`, com precedência das variáveis do ambiente.
+Os comandos retornam JSON para facilitar o uso por ferramentas e agentes:
+
+```bash
+.venv/bin/vp postiz integrations
+.venv/bin/vp postiz connect instagram-standalone
+.venv/bin/vp postiz posts --start 2026-10-15T00:00:00-03:00 --end 2026-10-20T00:00:00-03:00
+.venv/bin/vp postiz upload renders/clipe/v3/reel-1-quem-sangra-e-refrao.mp4
+.venv/bin/vp postiz schedule post.json
+```
+
+`schedule` cria agendamentos reais. Use após autorização do dono; o login do Instagram é feito por ele.
+Configuração, formato do JSON e limites: [docs/postiz.md](docs/postiz.md).
 
 ## Uso com agentes Codex/OpenAI
 

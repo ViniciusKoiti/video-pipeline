@@ -10,7 +10,7 @@ Pipeline local, retomável e auditável para produzir vídeos narrados em inglê
 idioma), 5–7 min, 16:9, H.264/AAC, até 1080p, sobre histórias reais. Cada episódio nasce de fontes verificáveis,
 usa imagens de acervo com licença registrada, gera ilustrações apenas para lacunas, narra com TTS e sai como
 `final.mp4` + `captions.srt` + `description.txt` + `credits.txt`.
-**Publicação é sempre manual, após revisão humana.**
+**Publicação só após revisão humana (gate 4) e autorização do dono**; o agendamento pode passar pelo Postiz (§2.8).
 
 - **Recorte da validação:** expedições e desastres de 1880–1930, janela com fotografia em domínio público,
   jornais digitalizados gratuitos e memórias em DP. Piloto: expedição polar de cauda longa (Greely 1881–84,
@@ -68,8 +68,11 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
    nunca sobrescreve.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
-   multiagente **no código**, segundo editor visual, render em nuvem. Fichas, roteiro e checagem podem
-   ser feitos por agentes do Claude Code definidos no repo; o código só valida (`vp check`, ADR 009).
+   multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
+   (`docs/postiz.md`) envia mídia e cria agendamentos no Postiz do dono, só depois do gate 4 e com a
+   autorização do dono para aquele agendamento; sem esse pedido nada é agendado, e a conexão das redes usa o
+   login do dono. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
+   o código só valida (`vp check`, ADR 009).
    **Um motor de render por formato de episódio** (ADR 001): `archival_documentary` com ffmpeg (piloto) e
    `explainer` com Remotion (protótipo da #48).
 9. **Nenhuma dependência nova sem justificativa no commit e licença verificada.**
@@ -125,8 +128,9 @@ Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) �
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
 (**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
 áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado) → prévia e descrição (**gate 4**) →
-export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual,
-métricas aos 7 e 28 dias e a decisão após 4 vídeos no mesmo recorte (§12).
+export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
+ou agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no
+mesmo recorte (§12).
 Diagrama completo: `docs/pipeline-flowchart.mermaid`.
 
 ## 5. Estados, cache e invalidação

@@ -127,6 +127,7 @@ Execute da raiz; `.venv/bin/` usa o ambiente já instalado sem instalar pacotes.
 .venv/bin/vp status <id>
 .venv/bin/vp excerpts <id>
 .venv/bin/vp check <id>
+.venv/bin/vp postiz --help
 .venv/bin/python -m pytest
 .venv/bin/ruff check .
 ```
@@ -146,6 +147,9 @@ invalida comparação. Um trabalho pesado por vez. Não encerre processos do don
 Testes são offline; não rode modelos pesados, gere TTS ou renderize para validar uma
 mudança apenas de documentação. Para mudanças de prompts, verifique payloads/contratos
 com testes offline; qualidade semântica exige rodada local medida separadamente.
+
+`vp postiz` lê a credencial local e oferece consultas, conexão de canal, upload e agendamento com saída JSON.
+Agendar exige instrução do dono; a conexão do Instagram exige o login dele. Consulte [docs/postiz.md](docs/postiz.md).
 
 ## Mapa e entregas
 
