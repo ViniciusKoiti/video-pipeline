@@ -25,6 +25,11 @@ from app.providers.tts.base import SpeechRequest, SpeechResult
 
 WORKER = Path(__file__).with_name("chatterbox_worker.py")
 MODEL_PREFIX = "chatterbox-multilingual-"
+# Entrega da fala (ADR 022): padrão do modelo na fala neutra; ênfase alta e cfg baixo no chamado.
+DEFAULT_DELIVERY: dict[str, dict[str, float]] = {
+    "neutral": {"exaggeration": 0.5, "cfg_weight": 0.5},
+    "hook": {"exaggeration": 0.8, "cfg_weight": 0.3},
+}
 
 
 def reference_hash(reference: Path) -> str:
@@ -84,9 +89,12 @@ class ChatterboxTTS:
         language_ids: Mapping[str, str],
         num_threads: int = 12,
         pause_ms: int = 400,
+        delivery: Mapping[str, Mapping[str, float]] | None = None,
         start: Callable[[Path, str, int], Worker] = SubprocessWorker,
     ) -> None:
         self.info = ProviderInfo("chatterbox", remote=False)
+        # Entrega da fala (ADR 022): ênfase e cfg por nome; entrega desconhecida cai na neutra.
+        self._delivery = {name: dict(params) for name, params in (delivery or DEFAULT_DELIVERY).items()}
         self._python = python  # o Python do ambiente em que o Chatterbox está instalado
         self._reference = reference  # gravação da voz a clonar
         self._model = model
@@ -114,12 +122,15 @@ class ChatterboxTTS:
             raise ModelUnavailable(self.info.name, f"sem código de idioma para {request.language!r}")
         worker, reference = self._ready()
         request.out_path.parent.mkdir(parents=True, exist_ok=True)
+        params = self._delivery.get(request.delivery) or self._delivery.get("neutral") or {}
         job = {
             "parts": split_pauses(request.text) or [request.text],
             "language_id": language_id,
             "reference": str(reference),
             "out_path": str(request.out_path),
             "pause_ms": self._pause_ms,
+            "exaggeration": params.get("exaggeration", 0.5),
+            "cfg_weight": params.get("cfg_weight", 0.5),
         }
         try:
             answer = worker.ask(job)

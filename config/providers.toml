@@ -38,6 +38,11 @@ language_ids = { "pt-BR" = "pt", "en" = "en" }
 num_threads = 12
 chars_per_second = 14.0  # provisório: duas falas medidas em 2026-10-12 (12,9 e 14,4)
 pause_ms = 400
+# Entrega da fala por cena (ADR 022): `delivery: "hook"` no scenes.json usa `hook`; sem o campo, `neutral`.
+# exaggeration = ênfase (padrão do modelo 0,5); cfg_weight: quanto menor, mais vivo e rápido (padrão 0,5).
+[chatterbox.delivery]
+neutral = { exaggeration = 0.5, cfg_weight = 0.5 }
+hook = { exaggeration = 0.8, cfg_weight = 0.3 }
 
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"

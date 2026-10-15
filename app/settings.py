@@ -64,6 +64,17 @@ class GeminiTTSSettings(_Model):
     chars_per_second: float = Field(default=13.0, gt=0)
 
 
+class DeliveryParams(_Model):
+    """Controles de expressividade do Chatterbox para uma entrega (ADR 022)."""
+
+    exaggeration: float = Field(default=0.5, ge=0, le=2)  # ênfase; o modelo usa 0,5 por padrão
+    cfg_weight: float = Field(default=0.5, ge=0, le=1)  # quanto menor, mais vivo e rápido
+
+
+def _default_delivery() -> dict[str, DeliveryParams]:
+    return {"neutral": DeliveryParams(), "hook": DeliveryParams(exaggeration=0.8, cfg_weight=0.3)}
+
+
 class ChatterboxSettings(_Model):
     """Voz clonada local (ADR 016, proposta). O ambiente do modelo e a gravação de referência vêm do .env."""
 
@@ -74,6 +85,7 @@ class ChatterboxSettings(_Model):
     num_threads: int = Field(default=12, gt=0)
     chars_per_second: float = Field(default=14.0, gt=0)
     pause_ms: int = Field(default=400, ge=0)  # silêncio no lugar de cada `<short pause>` (ADR 015)
+    delivery: dict[str, DeliveryParams] = Field(default_factory=_default_delivery)  # por entrega (ADR 022)
 
 
 class WorkersAISettings(_Model):

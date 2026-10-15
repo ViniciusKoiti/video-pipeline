@@ -154,6 +154,9 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
    - sigla por extenso na primeira vez; nomes próprios vão para `voice/glossary.json` se a pronúncia
      falhar;
    - sem "nesse vídeo", "você não vai acreditar", "fica até o final", "e isso muda tudo".
+   - **Entrega (ADR 022):** a cena de abertura e a da pergunta final levam `"delivery": "hook"` e um texto curto, em
+     pergunta ou chamado ("Você sabe quanto custa um docinho?"); a ênfase vem da voz clonada. As outras cenas não
+     levam o campo. Explicação longa não cabe numa cena `hook`.
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
 

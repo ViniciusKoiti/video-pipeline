@@ -238,6 +238,8 @@ lacuna fica registrada.
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
   silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
+- **Entrega da fala por cena (ADR 022):** `delivery: "hook"` na cena que chama (abertura, pergunta final); o resto é
+  neutro. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`); Kokoro e Gemini ignoram.
 - Legendas geradas após aprovação da voz, por alinhamento do texto com o áudio; nomes próprios sempre revisados.
   `captions.srt` é editável.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
