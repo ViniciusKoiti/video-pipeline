@@ -29,3 +29,6 @@ data/benchmarks/voz-gemini/
 
 # Node (somente se Remotion for escolhido)
 node_modules/
+
+# Índice exportado opcional do codebase-memory; o cache principal fica fora do repo.
+.codebase-memory/

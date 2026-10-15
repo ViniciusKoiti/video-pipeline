@@ -4,9 +4,16 @@ O `review.json` é a fonte da verdade (§5). Cada decisão guarda o `input_hash`
 conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
 
 - gate 1 (`sources`): `sources.json` + `facts.json`;
-- gate 2 (`script`): `scenes.json` + `outline.md`;
+- gate 2 (`script`): `scenes.json` + `outline.md`. Aprovar exige um parecer "approved" do verificador
+  (`checagem.json`, gravado por `vp checagem`) sobre as fichas e o roteiro atuais; sem ele, só com o motivo
+  do dono (`--sem-checagem`), que vai para as notas da decisão;
 - gate 3 (`assets`), por ativo: o arquivo de mídia em `assets/<id>.<ext>`. Aprovar reflete `review_status`
-  no `assets/<id>.json`, e o schema recusa sem licença, crédito, `sha256` ou conferência (ADR 007).
+  no `assets/<id>.json`, e o schema recusa sem licença, crédito, `sha256` ou conferência (ADR 007);
+- gate 4 (`preview`): o render mais acabado (`renders/final.mp4`, senão `renders/preview.mp4`), o
+  `episode.json`, a legenda e o texto do post, quando existem. Aprovar a prévia e depois renderizar o final
+  (voz final, legenda refeita) faz o gate mudar: a versão final é revista de novo (#120).
+
+`missing_pieces` lista o que falta para o vídeo estar pronto e não é gate: hoje, a legenda do vertical.
 """
 
 from __future__ import annotations
@@ -17,16 +24,30 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from app.pipeline.ports import ManifestStore, ReviewGate
-from app.pipeline.schemas import Asset, Decision, ReviewEntry, Status, Step
+from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
+from app.pipeline.schemas import (
+    Asset,
+    CheckEntry,
+    CheckLog,
+    CheckVerdict,
+    Decision,
+    EpisodeManifest,
+    ReviewEntry,
+    Status,
+    Step,
+)
 from app.pipeline.state import Clock, compute_input_hash
 
 GATE_FILES: dict[Step, tuple[str, ...]] = {
     Step.SOURCES: ("sources.json", "facts.json"),
     Step.SCRIPT: ("scenes.json", "outline.md"),
 }
-GATED_STEPS = (*GATE_FILES, Step.ASSETS)
+RENDERS = ("renders/final.mp4", "renders/preview.mp4")  # o gate 4 revê o mais acabado
+PREVIEW_FILES = ("episode.json", "captions.srt", "legenda-post.txt")  # entram no gate 4 quando existem
+GATED_STEPS = (*GATE_FILES, Step.ASSETS, Step.PREVIEW)
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
+CHECK_FILE = "checagem.json"
+CHECKED_FILES = ("facts.json", "scenes.json", "outline.md")  # o que o verificador confere contra os trechos
 
 
 class GateError(ValueError):
@@ -53,6 +74,8 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
         return "sha256:" + _file_sha256(_media_path(store, episode_id, asset_id))
     if asset_id is not None:
         raise GateError("--asset só vale para a etapa assets")
+    if step is Step.PREVIEW:
+        return compute_input_hash(_preview_paths(store, episode_id), {}, base=store.path(episode_id, ""))
     names = GATE_FILES.get(step)
     if names is None:
         raise GateError(f"a etapa {step.value} ainda não tem gate por comando")
@@ -74,10 +97,21 @@ def record_decision(
     now: Clock,
     asset_id: str | None = None,
     notes: str = "",
+    skip_check: str | None = None,
 ) -> ReviewEntry:
-    """Grava a decisão humana no review.json; aprovar um ativo também reflete `review_status` no JSON dele."""
+    """Grava a decisão humana no review.json; aprovar um ativo também reflete `review_status` no JSON dele.
+
+    Aprovar o gate 2 pede o parecer do verificador sobre o conteúdo atual, ou o motivo em `skip_check`.
+    """
     with store.lock(episode_id):
         input_hash = gate_hash(store, episode_id, step, asset_id)
+        if step is Step.SCRIPT and decision is Decision.APPROVED and not check_is_current(store, episode_id):
+            if not (skip_check and skip_check.strip()):
+                raise GateError(
+                    f"{episode_id}: o gate 2 pede o parecer do verificador sobre as fichas e o roteiro "
+                    'atuais (rode o agente verificador e `vp checagem`), ou --sem-checagem "motivo"'
+                )
+            notes = "; ".join(filter(None, [notes, f"sem checagem: {skip_check.strip()}"]))
         approved_asset = None
         if asset_id is not None and decision is Decision.APPROVED:
             approved_asset = _approved(store, episode_id, asset_id, input_hash)
@@ -96,6 +130,58 @@ def record_decision(
         return entry
 
 
+def check_hash(store: ManifestStore, episode_id: str) -> str:
+    paths = [store.path(episode_id, name) for name in CHECKED_FILES]
+    present = [p for p in paths if p.is_file()]
+    if not any(p.name == "scenes.json" for p in present):
+        raise GateError(f"{episode_id}: falta scenes.json para o parecer do verificador")
+    return compute_input_hash(present, {}, base=store.path(episode_id, ""))
+
+
+def check_log(store: ManifestStore, episode_id: str) -> CheckLog:
+    try:
+        return store.read(episode_id, CHECK_FILE, CheckLog)
+    except ManifestNotFound:
+        return CheckLog(episode_id=episode_id)
+
+
+def record_check(
+    store: ManifestStore,
+    episode_id: str,
+    verdict: CheckVerdict,
+    problems: list[str],
+    *,
+    reviewer: str,
+    now: Clock,
+) -> CheckEntry:
+    """Acrescenta o parecer do verificador ao `checagem.json`, carimbado com o conteúdo conferido."""
+    with store.lock(episode_id):
+        input_hash = check_hash(store, episode_id)
+        entry = CheckEntry(
+            verdict=verdict, problems=problems, reviewer=reviewer, at=now(), input_hash=input_hash
+        )
+        log = check_log(store, episode_id)
+        store.write(episode_id, CHECK_FILE, log.model_copy(update={"entries": [*log.entries, entry]}))
+        return entry
+
+
+def latest_check(store: ManifestStore, episode_id: str) -> tuple[CheckEntry | None, bool]:
+    """Último parecer e se ele ainda vale (mesmas fichas e roteiro)."""
+    entries = check_log(store, episode_id).entries
+    if not entries:
+        return None, False
+    entry = max(entries, key=lambda e: e.at)
+    try:
+        return entry, entry.input_hash == check_hash(store, episode_id)
+    except GateError:
+        return entry, False
+
+
+def check_is_current(store: ManifestStore, episode_id: str) -> bool:
+    entry, valid = latest_check(store, episode_id)
+    return entry is not None and entry.verdict is CheckVerdict.APPROVED and valid
+
+
 def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> list[GateStatus]:
     """Última decisão de cada gate e de cada ativo (os que existem e os que só estão no review.json)."""
     log = review.log(episode_id)
@@ -103,10 +189,31 @@ def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> li
     on_disk = {p.stem for p in store.path(episode_id, "assets").glob("*.json")}
     decided = {e.asset_id for e in log.entries if e.step is Step.ASSETS and e.asset_id}
     targets += [(Step.ASSETS, asset_id) for asset_id in sorted(on_disk | decided)]
+    targets.append((Step.PREVIEW, None))
     return [
         GateStatus(step, asset, log.latest(step, asset_id=asset), _current(store, episode_id, step, asset))
         for step, asset in targets
     ]
+
+
+def missing_pieces(store: ManifestStore, episode_id: str) -> list[str]:
+    """O que falta no vídeo montado, fora dos gates: no vertical, a legenda queimada (ADR 014 e 021)."""
+    path = store.path(episode_id, "episode.json")
+    if not path.is_file():
+        return []
+    episode = EpisodeManifest.model_validate_json(path.read_text())
+    captions = episode.captions and store.path(episode_id, episode.captions)
+    if episode.video.portrait and not (captions and captions.is_file()):
+        return ["legenda (captions.srt)"]
+    return []
+
+
+def _preview_paths(store: ManifestStore, episode_id: str) -> list[Path]:
+    render = next((store.path(episode_id, r) for r in RENDERS if store.path(episode_id, r).is_file()), None)
+    if render is None:
+        raise GateError(f"{episode_id}: nenhum render em renders/ para o gate da prévia")
+    extras = [store.path(episode_id, name) for name in PREVIEW_FILES]
+    return [render, *(p for p in extras if p.is_file())]
 
 
 def _approved(store: ManifestStore, episode_id: str, asset_id: str, input_hash: str) -> Asset:

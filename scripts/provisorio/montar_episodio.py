@@ -8,7 +8,8 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
   O hash cobre o texto, o modelo, a voz
   e a direção de fala: a fala só é gerada de novo quando um deles muda, e uma voz não apaga as falas da outra.
 - `--voz=<nome>` usa uma voz registrada pelo nome, fora da escolha do `providers.toml`: `gemini` (Charon,
-  ADR 012; é a do vídeo-régua), `chatterbox` ou `kokoro`.
+  ADR 012; é a do vídeo-régua), `chatterbox`, `chatterbox_modal` (a mesma voz numa GPU do Modal, ADR 024) ou
+  `kokoro`.
 - A voz clonada gera uma cena por vez, dezenas de vezes mais devagar que o tempo real. O Gemini gera as cenas
   que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
   pode ser cortado com segurança é gerado cena a cena. Cota esgotada: o script para, as falas já geradas ficam
@@ -17,6 +18,12 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
 - Render pelo motor do formato explicativo (Remotion), com cache por cena.
 - A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>` (jpg, png, webp, mp4, webm).
 - Com `sources.json` na pasta, cada plano com claims ganha a fonte do rodapé (ADR 011).
+- Legenda por frase em `captions.srt` (#17, ADR 021), com o tempo tirado dos WAVs; o arquivo é editável e só
+  é refeito quando a fala muda. Um SRT com intervalo inválido ou além do áudio para o script antes do render.
+- `--legenda-palavra`: legenda palavra a palavra (ADR 023). Manda o WAV de cada cena ainda não reconhecida ao
+  Whisper da Groq (remoto, camada gratuita: só com pedido do dono na sessão) e guarda o resultado em
+  `captions.words.json`. Sem a opção, o arquivo que já existe é reaproveitado; cena sem ele fica na legenda
+  por frase.
 """
 
 from __future__ import annotations
@@ -31,9 +38,21 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.bootstrap import build_context  # noqa: E402
-from app.media.narration import has_pauses  # noqa: E402
+from app.bootstrap import LazyContext, build_context  # noqa: E402
+from app.media.captions import (  # noqa: E402
+    CAPTIONS,
+    SceneAudio,
+    captions_key,
+    episode_cues,
+    parse_srt,
+    review_hints,
+    sync_captions,
+    timing_problems,
+)
+from app.media.narration import has_pauses, strip_pauses  # noqa: E402
+from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
+from app.media.word_captions import WORDS, SceneSpeech, sync_words  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
     EpisodeManifest,
@@ -52,6 +71,8 @@ from app.settings import Settings  # noqa: E402
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
 
 
+# A voz clonada do dono: na máquina (ADR 016) ou numa GPU do Modal (ADR 024).
+CLONED = ("chatterbox", "chatterbox_modal")
 BATCH_CHARS = 1200  # ~90 s de fala por chamada num lote da voz final (ADR 012)
 
 
@@ -60,11 +81,11 @@ def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
     if provider == "gemini":
         gemini = settings.gemini_tts
         return f"gemini|{gemini.model}|{gemini.voices.get(language)}|{gemini.styles.get(language, '')}"
-    if provider == "chatterbox":
+    if provider in CLONED:  # a mesma voz local ou no Modal (ADR 024); o nome do WAV separa as duas
         box = settings.chatterbox
         reference = box.reference.expanduser() if box.reference else None
         voice = reference_hash(reference) if reference and reference.is_file() else None
-        return f"chatterbox|{box.model}|{box.language_ids.get(language)}|{voice}"
+        return f"{provider}|{box.model}|{box.language_ids.get(language)}|{voice}"
     return f"{provider}|{settings.kokoro.voices.get(language)}"
 
 
@@ -115,6 +136,52 @@ def media_path(episode_dir: Path, asset_id: str) -> str:
     raise SystemExit(f"ativo {asset_id} sem arquivo de mídia em assets/")
 
 
+def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path], total_ms: int) -> None:
+    """Gera ou mantém `captions.srt` e confere o arquivo que vai para o render (#17)."""
+    audio = [
+        SceneAudio(
+            start_ms=scene.start_ms, duration_ms=scene.duration_ms, narration=scene.narration,
+            silences_ms=[(round(a * 1000), round(b * 1000)) for a, b in silences(wavs[scene.id])],
+        )
+        for scene in scenes
+    ]
+    cues, approximate = episode_cues(audio)
+    note = sync_captions(episode_dir, cues, captions_key([wavs[scene.id].name for scene in scenes]))
+    found, problems = parse_srt((episode_dir / CAPTIONS).read_text())
+    problems += timing_problems(found, total_ms)
+    if problems:
+        raise SystemExit(f"{CAPTIONS}: " + "; ".join(problems))
+    print(f"legenda: {note}; {len(found)} blocos, {approximate} fronteira(s) no tempo proporcional")
+    for n, hint in review_hints(found):
+        print(f"  revisar bloco {n}: {hint}")
+
+
+def word_captions(context: LazyContext, episode_dir: Path, scenes: list[EpisodeScene], language: str) -> None:
+    """Palavras com tempo em `captions.words.json`; reconhece no Whisper remoto só com `--legenda-palavra`."""
+    request = "--legenda-palavra" in sys.argv
+    path = episode_dir / WORDS
+    if not request and not path.is_file():
+        return
+    speech = [SceneSpeech(s.id, s.audio, s.narration, s.duration_ms) for s in scenes]
+    recognize = None
+    if request:
+        aligner = context.word_aligner
+        recognize = lambda scene: aligner.recognize_words(  # noqa: E731
+            episode_dir / scene.audio, language, prompt=strip_pauses(scene.narration)
+        )
+    name = f"{context.settings.providers.word_aligner}/{context.settings.groq_whisper.model}"
+    try:
+        report = sync_words(path, speech, recognize, name)
+    except ProviderError as error:
+        raise SystemExit(f"legenda palavra a palavra: {error.reason}: {error}. As cenas já reconhecidas "
+                         f"ficam em {WORDS}; rode de novo depois.") from error
+    print(f"legenda palavra a palavra: {len(report.with_words)} cena(s), {report.unmatched} palavra(s) com "
+          "tempo dividido entre as vizinhas")
+    if report.without:
+        print(f"  sem reconhecimento (ficam na legenda por frase): {', '.join(report.without)}; "
+              "rode com --legenda-palavra")
+
+
 def main() -> None:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
@@ -143,16 +210,21 @@ def main() -> None:
     wavs, missing = {}, []
     for scene in scenes.scenes:
         # Cena com pausa: o silêncio do Kokoro entra na chave (ADR 015); sem pausa a chave não muda.
-        pauses = {"kokoro": settings.kokoro.pause_ms, "chatterbox": settings.chatterbox.pause_ms}
+        pauses = {"kokoro": settings.kokoro.pause_ms, **dict.fromkeys(CLONED, settings.chatterbox.pause_ms)}
         pause_ms = pauses.get(provider)
         tagged = pause_ms is not None and has_pauses(scene.narration)
         pause = f"|pausa{pause_ms}" if tagged else ""
-        key = hashlib.sha256(f"{fingerprint}{pause}|{scene.narration}".encode()).hexdigest()[:10]
+        # Entrega da fala (ADR 022): só a voz clonada obedece; a chave muda só quando a entrega não é neutra.
+        delivery = scene.delivery or "neutral"
+        entrega = f"|entrega:{delivery}" if provider in CLONED and delivery != "neutral" else ""
+        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}|{scene.narration}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
             for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):
                 stale.unlink()
-            missing.append(SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language))
+            missing.append(
+                SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language, delivery=delivery)
+            )
     if missing:
         generate(tts, missing)
     close = getattr(tts, "close", None)  # a voz clonada mantém um processo com o modelo carregado
@@ -177,10 +249,12 @@ def main() -> None:
         cursor += ms
     print(f"voz: {time.monotonic() - started:.0f} s; total {cursor / 1000:.1f} s")
 
+    captions(episode_dir, episode_scenes, wavs, cursor)
+    word_captions(context, episode_dir, episode_scenes, scenes.language)
     episode = EpisodeManifest(
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
         language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes, host=scenes.host,
-        video=VideoSpec.for_orientation(scenes.orientation),
+        video=VideoSpec.for_orientation(scenes.orientation), captions=CAPTIONS,
     )
     (episode_dir / "episode.json").write_text(episode.model_dump_json(indent=2))
     print("ritmo:", pacing_warnings(episode) or "ok")

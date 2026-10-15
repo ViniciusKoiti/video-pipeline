@@ -1,0 +1,31 @@
+# Código, testes, config e documentação ficam no grafo; dados de produção ficam fora.
+/data/
+/renders/
+/docs/sprites-bruto/
+
+# Ambientes, dependências e índices gerados.
+.venv/
+venv/
+.uv-cache/
+node_modules/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.codebase-memory/
+
+# Inclui somente instruções editoriais do Claude, sem permissões/config privadas.
+!/.claude/
+/.claude/*
+!/.claude/agents/
+!/.claude/skills/
+
+# Configuração privada; não altera as regras de versionamento do Git.
+.env
+.env.*
+*.pem
+*.key
+/.aws/
+/.codex/
+/.claude/settings.json
+/.claude/settings.local.json
+/CLAUDE.local.md

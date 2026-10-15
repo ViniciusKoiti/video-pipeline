@@ -32,6 +32,8 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
      `compare`, `network`, `map`, `keyword`) igual à ficha, e `quote` literal da fonte. Nos planos da
      ADR 011, também:
      - `compare`: os dois valores e rótulos estão nas fichas; razão, variação ou soma só se uma ficha trouxer;
+       ou se for conta dita inteira na narração com insumos e regra em fichas (ADR 020): refaça a conta e confira
+       o arredondamento e a unidade;
      - `network`: cada aresta (quem, verbo, direção, valor) está no trecho das `claims` dela; tracejada só
        onde a fonte descreve relação indireta;
      - `quote` com `style: "document"`: título, emissor e data do cabeçalho correspondem à fonte;
@@ -62,3 +64,15 @@ TELA        S07 network aresta banco-b→empresa-a "empresta a" — source-02#E7
 
 Para cada linha, sugira a correção mínima (trocar a palavra, tirar a causa, citar outra ficha). No fim,
 diga quantas frases e planos conferiu e quantos passaram. Não reescreva os arquivos.
+
+## Parecer
+
+Feche com este JSON, que a sessão principal grava com `vp checagem <id> parecer.json` e que o gate 2 exige
+(sem ele, o dono só aprova com `--sem-checagem "motivo"`):
+
+```json
+{"verdict": "rejected", "problems": ["DIVERGE S03 \"No ano seguinte...\" — source-02#E9 diz \"em 1927\""]}
+```
+
+`approved` só sem nenhuma linha de problema; qualquer `DIVERGE`, `SEM SUPORTE`, `EXAGERO` ou `TELA` é
+`rejected`, com as linhas do relatório em `problems`.

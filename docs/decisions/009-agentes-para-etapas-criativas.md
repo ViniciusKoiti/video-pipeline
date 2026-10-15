@@ -66,3 +66,16 @@ roteiro (§7), e um modelo de 9B em CPU não dá conta de pesquisa nem de narrat
   `vp status` mostra a última decisão de cada gate e ativo e se ela ainda vale. Motivo: na abertura, a ficha F38
   mudou depois da aprovação do gate 1 e ninguém percebeu. As decisões da abertura de 2026-09-26 usaram a mesma
   receita e continuam valendo; as da fatia usaram outra, que não dá para reproduzir, e aparecem como alteradas.
+
+## Emenda (2026-10-15): parecer do verificador exigido no gate 2
+
+Decisão do dono, na cadeia de provas (ADR 025, emenda). O relatório do verificador não ficava guardado, e o gate
+2 podia ser aprovado sem ele.
+
+- `vp checagem <id> parecer.json` acrescenta o parecer (`verdict` approved | rejected, `problems`) ao
+  `checagem.json` do episódio, carimbado com o hash de `facts.json` + `scenes.json` + `outline.md`.
+- `vp approve <id> --step script` recusa sem um parecer `approved` sobre esse mesmo conteúdo. Ficha ou roteiro
+  mudou depois do parecer → nova checagem. Pedir mudança ou reprovar não exige parecer.
+- Saída do dono: `--sem-checagem "motivo"` aprova mesmo assim, e o motivo vai para as notas no `review.json`.
+- `vp status` mostra o último parecer e se ainda vale.
+- O código confere que o parecer existe e vale para o conteúdo atual, não que veio do agente.

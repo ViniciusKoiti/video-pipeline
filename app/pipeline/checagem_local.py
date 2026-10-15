@@ -7,6 +7,7 @@ O veredito é alerta para a revisão humana; quem aprova é o dono (§2.5).
 
 from __future__ import annotations
 
+import json
 import random
 import re
 import statistics
@@ -16,6 +17,8 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
+
+from pydantic import Field
 
 from app.pipeline.excerpts import excerpts_of
 from app.pipeline.schemas import Model, ScenesManifest, SourcesManifest
@@ -40,7 +43,7 @@ SUPERLATIVE = " Foi o maior de todo o país."
 class Veredito(Model):
     """`confronto` vem antes: o modelo escreve a comparação e só depois decide."""
 
-    confronto: str
+    confronto: str = Field(min_length=1, pattern=r"\S")
     veredito: Rotulo
 
 
@@ -75,11 +78,12 @@ def load_prompt(root: Path) -> tuple[str, str]:
 
 
 def render(template: str, case: Case) -> str:
-    return (
-        template.replace("{{afirmacao}}", case.claim)
-        .replace("{{ids}}", ", ".join(case.excerpt_ids))
-        .replace("{{trecho}}", case.excerpt)
+    # Uma substituição: placeholders e quebras de linha das fontes continuam dados literais.
+    data = json.dumps(
+        {"afirmacao": case.claim, "excerpt_ids": case.excerpt_ids, "trecho": case.excerpt},
+        ensure_ascii=False,
     )
+    return template.replace("{{dados}}", data)
 
 
 def clean_claim(text: str) -> str:

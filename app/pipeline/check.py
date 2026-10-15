@@ -8,13 +8,24 @@ alerta vai para a revisão humana.
 
 from __future__ import annotations
 
+import re
+import unicodedata
 from dataclasses import dataclass, field
+from datetime import date
 
 from pydantic import ValidationError
 
-from app.media.narration import timeline_length
+from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.ports import M, ManifestStore
+from app.pipeline.radar import (
+    BRIEF_FILE,
+    CAPTION_FILE,
+    RadarBrief,
+    brief_summary,
+    form_warnings,
+    unmeasured_patterns,
+)
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
     OVERLAY_SHOT_KINDS,
@@ -29,6 +40,7 @@ from app.pipeline.schemas import (
     Scene,
     ScenesManifest,
     Shot,
+    SourceKind,
     SourcesManifest,
     effective_shots,
     number_format_problem,
@@ -90,6 +102,10 @@ def _check_sources(
             report.errors.append(f"sources.json: texto de {source.id} ausente em {source.local_path}")
             continue
         excerpts |= excerpts_of(source, path.read_text(encoding="utf-8"))
+        if source.kind is SourceKind.DECLARED:
+            report.warnings.append(
+                f"{source.id}: fonte declarada pelo dono, sem URL; ele responde por ela no gate 1"
+            )
     report.checked.append(f"sources.json: {len(sources.sources)} fonte(s), {len(excerpts)} trecho(s)")
     return excerpts
 
@@ -288,14 +304,111 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
     return warnings
 
 
+NEWS_MAX_AGE_DAYS = 30  # depois disso o fato não é mais notícia: o vídeo explica ou opina (ADR 019)
+
+
+def objective_warnings(scenes: ScenesManifest, today: date | None = None) -> list[str]:
+    """O objetivo do vídeo (ADR 019): alerta quando falta, e quando o fato noticiado já é velho."""
+    objective = scenes.objective
+    if objective is None:
+        return ["roteiro sem objetivo declarado (noticiar, explicar ou opinar; ADR 019)"]
+    if "noticiar" in objective.kinds and objective.event_date is not None and today is not None:
+        age = (today - objective.event_date).days
+        when = f"{objective.event_date:%d/%m/%Y}"
+        if age < 0:
+            return [f"objetivo noticiar com data no futuro ({when})"]
+        if age > NEWS_MAX_AGE_DAYS:
+            return [
+                f"objetivo noticiar, mas o fato é de {when} ({age} dias): depois de {NEWS_MAX_AGE_DAYS} "
+                "dias não é notícia; o vídeo explica ou opina"
+            ]
+    return []
+
+
+def objective_summary(scenes: ScenesManifest) -> str | None:
+    objective = scenes.objective
+    if objective is None:
+        return None
+    return f"objetivo: {' + '.join(objective.kinds)}: {objective.promise}"
+
+
+# O que a chamada de cada estágio pede (ADR 026), como começo de palavra sem acento: "salva", "salvar" e
+# "salve" valem para "salv". Chamada sem nenhum deles pede outra coisa que o estágio, e gera alerta.
+FUNNEL_ASKS: dict[str, tuple[str, tuple[str, ...]]] = {
+    "topo": ("seguir ou compartilhar", ("segu", "compartilh", "manda", "envia")),
+    "meio": ("salvar ou comentar", ("salv", "coment")),
+    "fundo": ("pedir o que é oferecido", ("coment", "link", "bio", "direct", "ped", "baix", "chama")),
+}
+
+
+def _words(text: str) -> list[str]:
+    decomposed = unicodedata.normalize("NFD", strip_pauses(text).lower())
+    plain = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
+    return re.findall(r"[a-z0-9]+", plain)
+
+
+def _contains(words: list[str], part: list[str]) -> bool:
+    return any(words[i : i + len(part)] == part for i in range(len(words) - len(part) + 1))
+
+
+def funnel_warnings(scenes: ScenesManifest) -> list[str]:
+    """O estágio do funil (ADR 026): alerta quando falta, quando a chamada não pede o que o estágio pede e
+    quando ela não está na narração da última cena."""
+    funnel = scenes.funnel
+    if funnel is None:
+        return ["roteiro sem estágio do funil (topo, meio ou fundo; ADR 026)"]
+    warnings = []
+    asks, starts = FUNNEL_ASKS[funnel.stage]
+    cta = _words(funnel.cta)
+    if not any(word.startswith(starts) for word in cta):
+        warnings.append(f"funil {funnel.stage}: a chamada \"{funnel.cta}\" não pede para {asks}")
+    last = scenes.scenes[-1]
+    if not _contains(_words(last.narration), cta):
+        warnings.append(f"funil: a chamada \"{funnel.cta}\" não está na narração da última cena ({last.id})")
+    return warnings
+
+
+def funnel_summary(scenes: ScenesManifest) -> str | None:
+    funnel = scenes.funnel
+    if funnel is None:
+        return None
+    line = f"funil: {funnel.stage}; chamada: {funnel.cta}"
+    return f"{line}; oferta: {funnel.offer}" if funnel.offer else line
+
+
+def _check_radar(
+    store: ManifestStore,
+    episode_id: str,
+    scenes: ScenesManifest,
+    report: CheckReport,
+    chars_per_second: float,
+    today: date | None,
+) -> None:
+    """Forma do roteiro contra o resumo do reels-radar, se o episódio tiver um (ADR 018). Só alertas: o
+    resumo é observação de amostra pequena e nunca fonte de fato."""
+    brief = _read(store, episode_id, BRIEF_FILE, RadarBrief, report)
+    if brief is None:
+        return
+    caption_path = store.path(episode_id, CAPTION_FILE)
+    caption = caption_path.read_text(encoding="utf-8") if caption_path.is_file() else None
+    line = brief_summary(brief)
+    unmeasured = unmeasured_patterns(scenes, brief, chars_per_second, caption)
+    if unmeasured:
+        line += f"; sem conferência no texto: {', '.join(unmeasured)}"
+    report.checked.append(line)
+    report.warnings += form_warnings(scenes, brief, chars_per_second, caption, today)
+
+
 def check_episode(
     store: ManifestStore,
     episode_id: str,
     region_codes: frozenset[str] | None = None,
     chars_per_second: float = CHARS_PER_SECOND,
+    today: date | None = None,
 ) -> CheckReport:
     """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
-    `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos."""
+    `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos.
+    `today`: a data de hoje: diz se o resumo do radar está velho e se o fato noticiado ainda é notícia."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -308,6 +421,13 @@ def check_episode(
             _check_facts(facts, sources, excerpts, report)
     if scenes is not None:
         _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
+        if (summary := objective_summary(scenes)) is not None:
+            report.checked.append(summary)
+        report.warnings += objective_warnings(scenes, today)
+        if (summary := funnel_summary(scenes)) is not None:
+            report.checked.append(summary)
+        report.warnings += funnel_warnings(scenes)
+        _check_radar(store, episode_id, scenes, report, chars_per_second, today)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
     return report

@@ -15,7 +15,7 @@ from typing import Any
 
 from app.pipeline.ports import ManifestStore, ReviewGate
 from app.pipeline.schemas import EpisodeFormat
-from app.providers.alignment.base import SubtitleAligner
+from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.base import ProviderInfo
 from app.providers.errors import PaidApiBlocked
@@ -72,6 +72,14 @@ def _secret(settings: Settings, env_name: str) -> str:
     return secret.get_secret_value()
 
 
+def build_postiz(settings: Settings) -> Any:
+    from app.providers.postiz import PostizClient
+
+    if not settings.postiz_api_url:
+        raise ConfigurationError("POSTIZ_API_URL ausente no .env")
+    return PostizClient(settings.postiz_api_url, _secret(settings, "POSTIZ_API_KEY"))
+
+
 def _archive_cache(settings: Settings) -> Path:
     return settings.data_dir / "cache" / "archives"
 
@@ -125,7 +133,28 @@ def _chatterbox(settings: Settings) -> Any:
     return ChatterboxTTS(
         box.python and box.python.expanduser(), box.reference and box.reference.expanduser(), model=box.model,
         language_ids=box.language_ids, num_threads=box.num_threads, pause_ms=box.pause_ms,
+        delivery={name: params.model_dump() for name, params in box.delivery.items()},
     )
+
+
+def _chatterbox_modal(settings: Settings) -> Any:
+    from app.providers.tts.chatterbox import ChatterboxTTS, modal_starter
+
+    box, cloud = settings.chatterbox, settings.chatterbox_modal
+    return ChatterboxTTS(
+        cloud.python.expanduser(), box.reference and box.reference.expanduser(), model=box.model,
+        language_ids=box.language_ids, pause_ms=box.pause_ms,
+        delivery={name: params.model_dump() for name, params in box.delivery.items()},
+        start=modal_starter(cloud.app, cloud.reference_name), provider="chatterbox_modal", remote=True,
+    )
+
+
+def _groq_words(settings: Settings) -> Any:
+    from app.providers.alignment.groq import GroqWordAligner
+
+    whisper = settings.groq_whisper
+    key = _secret(settings, "GROQ_API_KEY")
+    return GroqWordAligner(key, model=whisper.model, timeout_s=whisper.timeout_s)
 
 
 Registry = Mapping[str, Mapping[str, Registration]]  # porta -> nome em providers.toml -> registro
@@ -136,6 +165,7 @@ DEFAULT_REGISTRY: Registry = {
         "kokoro": Registration(5, _kokoro),
         "gemini": Registration(15, _gemini_tts),  # ADR 012
         "chatterbox": Registration(15, _chatterbox),  # voz clonada local (ADR 016, proposta)
+        "chatterbox_modal": Registration(15, _chatterbox_modal),  # a mesma voz numa GPU do Modal (ADR 024)
     },
     "image_gen": {"workers_ai": Registration(24)},
     "archives": {
@@ -147,6 +177,7 @@ DEFAULT_REGISTRY: Registry = {
         "unsplash": Registration(21, _unsplash),  # idem; Coverr fica só manual
     },
     "aligner": {"ffprobe": Registration(17)},
+    "word_aligner": {"groq": Registration(17, _groq_words)},
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
         "moneyprinterturbo": Registration(8),
@@ -231,6 +262,10 @@ class LazyContext:
     @cached_property
     def aligner(self) -> SubtitleAligner:
         return self._build("aligner", self._settings.providers.aligner)
+
+    @cached_property
+    def word_aligner(self) -> WordAligner:
+        return self._build("word_aligner", self._settings.providers.word_aligner)
 
     def renderer(self, episode_format: EpisodeFormat) -> RenderEngine:
         if episode_format not in self._renderers:

@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Fichamento"
+  short_description: "Extraia fatos rastreáveis das fontes já baixadas"
+  default_prompt: "Use $vp-fichamento para fichar as fontes do episódio indicado e registrar as lacunas da pauta."

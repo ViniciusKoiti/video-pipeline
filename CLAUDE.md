@@ -10,7 +10,7 @@ Pipeline local, retomável e auditável para produzir vídeos narrados em inglê
 idioma), 5–7 min, 16:9, H.264/AAC, até 1080p, sobre histórias reais. Cada episódio nasce de fontes verificáveis,
 usa imagens de acervo com licença registrada, gera ilustrações apenas para lacunas, narra com TTS e sai como
 `final.mp4` + `captions.srt` + `description.txt` + `credits.txt`.
-**Publicação é sempre manual, após revisão humana.**
+**Publicação só após revisão humana (gate 4) e autorização do dono**; o agendamento pode passar pelo Postiz (§2.8).
 
 - **Recorte da validação:** expedições e desastres de 1880–1930, janela com fotografia em domínio público,
   jornais digitalizados gratuitos e memórias em DP. Piloto: expedição polar de cauda longa (Greely 1881–84,
@@ -37,9 +37,13 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
   `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`. A folha de quadros marca os planos que
   mudaram: um PR de visual deve mudar só os que pretendia.
 - **Voz (ADR 016, aceita em 2026-10-12):** Kokoro nos rascunhos (`tts`), voz clonada do dono no vídeo final
-  (`tts_final = "chatterbox"`, `montar_episodio.py --voz-final`): Chatterbox local, no ambiente próprio dele
+  (`montar_episodio.py --voz-final`). Desde 2026-10-15 a voz final é `tts_final = "chatterbox_modal"` (ADR 024,
+  aprovada pelo dono na escuta: a mesma voz numa GPU do Modal, segundos por cena). A alternativa local
+  (`--voz=chatterbox`) é o Chatterbox na CPU, no ambiente próprio dele
   (`CHATTERBOX_PYTHON` e `CHATTERBOX_REFERENCE` no `.env`), uma cena por vez e ~30 vezes mais lenta que o tempo
-  real. A gravação de referência é dado pessoal: fora do Git, nunca enviada a provedor. Licença em
+  real. A gravação de referência é dado pessoal: fora do Git, nunca enviada a provedor, com uma exceção (ADR 024,
+  2026-10-14): um volume privado da conta do dono no Modal, onde a mesma voz roda numa GPU T4
+  (`--voz=chatterbox_modal`, função em `deploy/modal_chatterbox.py`; quem envia a gravação é o dono). Licença em
   `data/benchmarks/termos-chatterbox.md`. A Charon do Gemini (ADR 012) segue registrada (`--voz=gemini`; 3 chamadas
   por minuto e **10 por dia** na camada gratuita, termos em `data/benchmarks/termos-gemini-tts.md`) e é a voz do
   vídeo-régua, que não troca de voz.
@@ -64,8 +68,13 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
    nunca sobrescreve.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
-   multiagente **no código**, segundo editor visual, render em nuvem. Fichas, roteiro e checagem podem
-   ser feitos por agentes do Claude Code definidos no repo; o código só valida (`vp check`, ADR 009).
+   multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
+   (`docs/postiz.md`) envia mídia e cria agendamentos no Postiz do dono, só depois do gate 4 e com a
+   autorização do dono para aquele agendamento; sem esse pedido nada é agendado, e a conexão das redes usa o
+   login do dono. O `schedule` só aceita um JSON que já passou pelo `vp postiz pacote` e pela dúvida cega
+   (agente `duvida-cega`, gravada por `vp postiz duvida`), pede a confirmação do dono pela regra `ask` do
+   `.claude/settings.json` e grava cada passo em `data/publicacoes/registro.jsonl`. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
+   o código só valida (`vp check`, ADR 009).
    **Um motor de render por formato de episódio** (ADR 001): `archival_documentary` com ffmpeg (piloto) e
    `explainer` com Remotion (protótipo da #48).
 9. **Nenhuma dependência nova sem justificativa no commit e licença verificada.**
@@ -95,7 +104,8 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
 Remotion do `explainer` (ADR 008) · `.claude/agents/` e `.claude/skills/` etapas criativas (§15) · `prompts/local/`
 prompts para modelo local · `config/providers.toml` implementação por função · `scripts/provisorio/` scripts até
 virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
-`outline.md`, `scenes.json`, `review.json`, `sources/`, `excerpts/`, `assets/`, `voice/`, `renders/`) ·
+`outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `pauta.md`, `sources/`, `excerpts/`, `assets/`,
+`voice/`, `renders/`) ·
 `data/benchmarks/` medições e termos dos provedores · `data/cache/` fora do Git. Variáveis de ambiente: nomes e
 exemplos não secretos em `.env.example`.
 
@@ -111,12 +121,18 @@ exemplos não secretos em `.env.example`.
 
 ## 4. Fluxo de trabalho
 
+Nos Reels, antes das fontes: resumo do nicho no reels-radar (`radar_resumo.py`) → pauta (skill `pauta`), que o
+dono aprova (ADR 018). O resumo é forma, nunca fato; o `vp check` avisa onde o roteiro foge dos padrões dele.
+Todo roteiro declara o **objetivo** (`objective` no `scenes.json`, ADR 019): `noticiar`, `explicar` ou `opinar`, de
+um a três na ordem em que aparecem, mais a promessa em uma frase. O objetivo e a tese de uma opinião vêm do dono.
+
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
 (**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
 áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado) → prévia e descrição (**gate 4**) →
-export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual,
-métricas aos 7 e 28 dias e a decisão após 4 vídeos no mesmo recorte (§12).
+export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
+ou agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no
+mesmo recorte (§12).
 Diagrama completo: `docs/pipeline-flowchart.mermaid`.
 
 ## 5. Estados, cache e invalidação
@@ -133,8 +149,11 @@ Diagrama completo: `docs/pipeline-flowchart.mermaid`.
   cena, não o episódio.
 - Aprovação humana é registrada por `vp approve <id> --step <step>` (ou `vp reject`) em `review.json`, nunca
   editando `review_status` à mão no manifesto principal. Nos gates feitos por agente ou pessoa, a decisão carimba
-  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2) ou o arquivo do ativo (gate 3);
-  `vp status` mostra se ela ainda vale (ADR 009, emenda de gates por comando).
+  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2), o arquivo do ativo (gate 3) ou,
+  no gate 4 (`--step preview`), o render mais acabado (`final.mp4`, senão `preview.mp4`) com `episode.json`,
+  legenda e texto do post; renderizar o final depois de aprovar a prévia pede nova decisão. `vp status` mostra se
+  a decisão ainda vale e, nas pendências, a legenda que falta no vertical (ADR 009, emenda de gates por comando;
+  #120).
 - **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
   (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
   (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
@@ -147,11 +166,20 @@ revela:
 - **Cena e planos (ADR 008, 011):** uma cena = um bloco de narração = um WAV, com uma lista de planos tipados
   (tipos em `schemas.py`; método de escolha na skill `roteiro-explicativo`). Cada plano se ancora num trecho da
   narração, e o tempo sai da posição da âncora sobre a duração real do WAV (`app/pipeline/shots.py`). A fonte do
-  rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha.
+  rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha,
+  salvo a conta dita inteira na narração com insumos e regra em fichas (ADR 020, 2026-10-14).
   Cena sem planos = forma v1 (um plano de foto). `visual_need` ∈ `historical_exact | contextual_stock |
   map_or_graphic | illustrative_reconstruction`.
+- **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
+  (`event_date`, `question`, `thesis` + `thesis_by`). Opinião é dita como opinião e nunca vira dado na tela;
+  notícia com mais de 30 dias gera alerta; roteiro sem objetivo também.
+- **Funil (ADR 026):** `funnel.stage` (`topo` | `meio` | `fundo`, decidido pelo dono na pauta), `cta` (a chamada
+  final, dita na última cena) e `offer` (só e sempre no fundo: a planilha ou o modelo oferecido). O `vp check`
+  avisa quando falta o estágio, quando a chamada não pede o que o estágio pede e quando ela não está na narração.
 - **`sources.json`:** mínimo de 2 fontes independentes para os fatos principais. `Source.interested` marca fonte
   interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só.
+  `kind: declared` é material do próprio dono (receita, nota de compra), sem URL: o `vp check` avisa e o dono
+  responde por ele no gate 1 (`scripts/provisorio/fonte_declarada.py`, até `vp sources`, #26).
 - **`facts.json` (ADR 009):** as fichas são a única base do roteiro. Cada evidência traz `excerpt_id` (parágrafo do
   texto extraído, `source-01#E7`) e uma `quote` **literal**, conferida pelo `vp check`; `open_questions` guarda o
   que as fontes não respondem. Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
@@ -167,7 +195,9 @@ revela:
   visual por cena, ADR 001) ou 2 (planos contíguos, ADR 008); `language` `en` | `pt-BR`; `format` decide o motor;
   cenas com `start_ms`/`duration_ms` medidos da voz real e sem sobreposição.
   Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
-  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena.
+  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Pele `dono` (ADR 017,
+  parte A): `"host": {"skin": "dono"}`, com 12 imagens e um `origem.json` em `host/dono/` da pasta do episódio
+  (dado pessoal, fora do Git); sem o registro de origem o render para.
   Perfil vertical 9:16 (`orientation: portrait` em `scenes.json`, só `explainer`; ADR 014): 1080×1920, prévia
   720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare` e `chart` (os outros planos
   são erro de validação), legenda queimada no final e área segura das plataformas para legenda, fonte, tarja e janela.
@@ -178,7 +208,7 @@ revela:
 |---|---|---|---|
 | Fichas, roteiro, cenas, checagem | Agentes do Claude Code + skills + `vp check` (ADR 009; a spec previa Ollama) | Ollama local (#27, checagem já medida em `data/benchmarks/checagem-local.md`); Groq e Gemini gratuitos; outro agente que leia as skills | Fidelidade ao texto-fonte e fatos que prendem, sem custo por chamada. |
 | Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
-| Alinhamento de áudio | ffprobe + revisão manual | Groq Whisper gratuito, quando necessário | Corrigir problema concreto de legenda; não transcrever episódio inteiro sem necessidade. |
+| Alinhamento de áudio | Frase: silêncios do WAV (ADR 021). Palavra: Groq Whisper gratuito com `--legenda-palavra` (ADR 023) | Whisper local (`transformers`, modelo no cache) | O áudio da cena sai da máquina só com pedido do dono na sessão; a tela mostra o texto do roteiro, não o reconhecido. |
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
 | Roteador de modelos | Nenhum | OpenRouter com variante `:free` | Só se o candidato direto falhar. |
 
@@ -224,22 +254,29 @@ lacuna fica registrada.
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
   silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
-- Legendas geradas após aprovação da voz, por alinhamento do texto com o áudio; nomes próprios sempre revisados.
-  `captions.srt` é editável.
+- **Entrega da fala por cena (ADR 022):** `delivery` em `hook` (abertura), `turn` (virada), `calm` (a conta), `invite`
+  (pergunta final); sem o campo, neutra. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`);
+  Kokoro e Gemini ignoram.
+- Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
+  `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
+  quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.
+  Palavra a palavra no vertical (ADR 023): `--legenda-palavra` manda o WAV de cada cena nova ao Whisper da Groq e
+  guarda o tempo em `captions.words.json`; a tela mostra o texto do roteiro em caixa alta, com contorno e a
+  palavra falada em amarelo (`WordCaption` do motion-kit). Cena sem palavras fica na legenda por frase.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
   (`app/render/ffmpeg.py`); `explainer` → **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o
   template em `video/`; peças do kit editorial, tema `editorial`, mapa com contornos do Natural Earth em domínio
-  público, cache por cena). O apresentador (ADR 013) vem de `video/src/HostWindow.tsx`; sem `host`, nada muda.
+  público, cache por cena). O apresentador (ADR 013) vem de `video/src/HostWindow.tsx` (pele do dono em `donoSkin.ts`); sem `host`, nada muda.
   MoneyPrinterTurbo reprovado (branch `experimento-mpt`). Cena gráfica animada num documentário = clipe do
   motion-kit como ativo `Original` (#42). Comparação dos motores em
   `data/benchmarks/README.md`; entrada de teste em `tests/fixtures/episodes/engine-test/`.
 
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
-`vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `approve`, `reject` e
-`status`. `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
+`vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
+`reject`, `status` e `postiz`. `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
 saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem fonte, voz e render
 até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`). Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
@@ -321,6 +358,9 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   perguntar ao dono; em conflito valem as ADRs.
 - Etapas criativas: agentes em `.claude/agents/` com o método nas skills de `.claude/skills/`; o que eles escrevem
   passa pelo `vp check` e pelos gates humanos (ADR 009). Ver §15.
+- Reels: o resumo do reels-radar (`~/projetos/radar-de-reels`, `RADAR_DIR` no `.env`) entra como cópia datada no
+  episódio e orienta só a forma (ADR 018). Gerar ou atualizar o resumo é no outro projeto; coleta que gasta
+  crédito só com decisão do dono. Nenhuma afirmação do roteiro sai do resumo.
 - **Instruções a agentes, notas de fonte e exemplos:** só o que está nos trechos baixados. Citar fichas por id
   (F08) e trechos (`source-02#E46`) em vez de reescrever o fato; conferir na página antes de escrever uma nota;
   pedir gancho e promessa como pergunta neutra. Um fato ou enquadramento meu no prompt vira roteiro, e o
@@ -341,10 +381,13 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; contexto limpo, só leitura |
+| `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 
-Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador →
+Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
+(parecer gravado por `vp checagem`, exigido pelo gate 2) →
 voz + render → gate 2. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
-que muda faz o gate 1 voltar ao dono.
+que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
+pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).
 
 **Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
 unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),

@@ -55,3 +55,24 @@ def test_preview_carries_captions_per_scene() -> None:
 def test_template_hash_covers_sources_and_fonts() -> None:
     assert len(template_hash(PROJECT)) == 64
     assert any(PROJECT.glob("src/fonts/*.woff2"))
+
+
+def test_portrait_scene_with_recognized_words_carries_them(tmp_path: Path) -> None:
+    from app.media.word_captions import WORDS, SceneSpeech, sync_words
+    from app.pipeline.schemas import VideoSpec
+    from app.providers.alignment.base import TimedWord
+
+    (tmp_path / "assets").mkdir()
+    (tmp_path / "assets" / "f.jpg").write_bytes(
+        (FIXTURE / "assets" / "commons-lc-usz62-136192.jpg").read_bytes()
+    )
+    episode = EpisodeManifest.model_validate(v2_episode())
+    (scene,) = episode.scenes
+    speech = [SceneSpeech(scene.id, scene.audio, scene.narration, scene.duration_ms)]
+    sync_words(tmp_path / WORDS, speech, lambda s: [TimedWord("x", 0, 500)], "fake")
+    (landscape,) = RemotionEngine().scene_props(episode, tmp_path, preview=True)
+    assert "words" not in landscape  # paisagem: só a legenda por frase
+    portrait = episode.model_copy(update={"video": VideoSpec.for_orientation("portrait")})
+    (props,) = RemotionEngine().scene_props(portrait, tmp_path, preview=True)
+    assert props["words"] and props["words"][0]["from"] == 0
+    assert all(0 <= w["from"] <= w["to"] <= props["frames"] for w in props["words"])

@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Pauta"
+  short_description: "Defina público, pergunta e evidência antes de pesquisar"
+  default_prompt: "Use $vp-pauta para preparar a pauta do episódio indicado a partir do meu objetivo e do radar disponível."

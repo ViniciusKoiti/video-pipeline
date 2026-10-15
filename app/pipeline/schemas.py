@@ -7,6 +7,7 @@ Os modelos validam o que dá para garantir olhando um arquivo só. Regras que cr
 from __future__ import annotations
 
 import re
+from datetime import date
 from enum import StrEnum
 from pathlib import PurePosixPath
 from typing import Annotated, Literal, Self
@@ -85,18 +86,25 @@ class SourceKind(StrEnum):
     SECONDARY = "secondary"
     NEWSPAPER = "newspaper"
     ARCHIVE = "archive"
+    DECLARED = "declared"  # material do próprio dono (receita, nota de compra), sem URL; ele responde por ele
 
 
 class Source(Model):
     id: SourceId
     title: NonEmpty
-    url: HttpUrl
+    url: HttpUrl | None = None  # obrigatória, salvo na fonte declarada (`kind: declared`)
     kind: SourceKind
     retrieved_at: AwareDatetime
     local_path: RelPath  # texto extraído; um parágrafo = um trecho numerado (ADR 009)
     notes: str = ""
     interested: bool = False  # fonte interessada (a própria empresa ou família): nenhum fato só com ela
     authors: list[str] = []  # fontes que compartilham autor contam como uma só para independência (ADR 009)
+
+    @model_validator(mode="after")
+    def _url_unless_declared(self) -> Self:
+        if self.url is None and self.kind is not SourceKind.DECLARED:
+            raise ValueError(f"{self.id}: fonte {self.kind.value} sem url; só `declared` dispensa a URL")
+        return self
 
 
 class SourcesManifest(Model):
@@ -390,7 +398,8 @@ class CompareSide(Model):
 
 
 class CompareShot(_FactualShot):
-    """Dois valores lado a lado; a tela não calcula razão nem variação (ADR 011, decisão 7)."""
+    """Dois valores lado a lado; a tela não calcula razão nem variação (ADR 011, decisão 7). Um valor
+    calculado pelo roteiro entra só como conta dita inteira, com insumos e regra em fichas (ADR 020)."""
 
     kind: Literal["compare"] = "compare"
     left: CompareSide
@@ -567,10 +576,21 @@ class HostIdentity(Model):
 
 class HostSpec(Model):
     """O apresentador do episódio: um personagem numa janela que muda de canto a cada cena (ADR 013).
-    A boca segue o áudio de cada cena; o canto sai de uma regra sobre os planos (`app/media/host.py`)."""
+    A boca segue o áudio de cada cena; o canto sai de uma regra sobre os planos (`app/media/host.py`).
 
-    skin: Literal["notionists"] = "notionists"
-    identity: HostIdentity
+    Pele `notionists`: personagem montado de peças (`identity`). Pele `dono` (ADR 017, parte A): o desenho
+    do dono, em imagens na pasta do episódio (`app/media/host.py`), sem peças."""
+
+    skin: Literal["notionists", "dono"] = "notionists"
+    identity: HostIdentity | None = None
+
+    @model_validator(mode="after")
+    def _identity_matches_skin(self) -> Self:
+        if self.skin == "notionists" and self.identity is None:
+            raise ValueError("a pele notionists precisa de identity (as peças do personagem)")
+        if self.skin != "notionists" and self.identity is not None:
+            raise ValueError(f"a pele {self.skin} é um desenho pronto: não leva identity")
+        return self
     width: float | None = Field(default=None, ge=0.1, le=0.5)  # fração do quadro; padrão por perfil
 
     def width_for(self, *, portrait: bool) -> float:
@@ -578,12 +598,20 @@ class HostSpec(Model):
         return self.width if self.width is not None else (0.28 if portrait else 0.16)
 
 
+# Entrega da fala (ADR 022), do mais ao menos enfático: `hook` abertura e chamado; `turn` a virada ("mas…");
+# `invite` a pergunta final; `neutral` explicação; `calm` a conta, pausada e clara.
+Delivery = Literal["hook", "turn", "invite", "neutral", "calm"]
+
+
 class Scene(Model):
     """Uma cena = um bloco de narração = um WAV (ADR 007), com uma lista de planos (ADR 008).
-    Sem planos, vale a forma v1: um único plano de foto com os campos visuais da própria cena."""
+    Sem planos, vale a forma v1: um único plano de foto com os campos visuais da própria cena.
+    `delivery` diz como a voz entrega a cena (ADR 022): sem o campo, neutra; `hook`, `turn`, `invite` e `calm`
+    variam a ênfase ao longo do vídeo. Só a voz clonada obedece hoje; o Kokoro ignora."""
 
     id: SceneId
     narration: NonEmpty
+    delivery: Delivery | None = None  # ADR 022
     claims: list[Claim] = []
     visual_need: VisualNeed | None = None  # forma v1
     search_query: NonEmpty | None = None  # forma v1
@@ -655,9 +683,87 @@ def effective_shots(scene: Scene) -> list[Shot]:
     ]
 
 
+# --- objetivo do vídeo (ADR 019) -----------------------------------------------------------------
+
+ObjectiveKind = Literal["noticiar", "explicar", "opinar"]
+# o que cada tipo exige a mais; um campo só existe quando o tipo dele está no vídeo
+_OBJECTIVE_FIELDS: dict[str, tuple[str, ...]] = {
+    "noticiar": ("event_date",),
+    "explicar": ("question",),
+    "opinar": ("thesis", "thesis_by"),
+}
+
+
+class Objective(Model):
+    """O que o vídeo se propõe a fazer, declarado antes do roteiro (ADR 019).
+
+    `kinds` traz de um a três tipos, na ordem em que aparecem no vídeo; o primeiro é o principal e manda na
+    estrutura. Um vídeo pode só explicar, ou noticiar, explicar e opinar no fim: depende da pauta.
+
+    - `noticiar`: conta um fato novo; `event_date` diz quando ele aconteceu.
+    - `explicar`: responde a uma pergunta; `question` é a pergunta, e o vídeo a responde.
+    - `opinar`: defende uma tese, dita como opinião; `thesis` e de quem ela é (`thesis_by`). A tese vem do
+      dono, nunca do agente; os fatos que a apoiam seguem com fonte (§2.2)."""
+
+    kinds: list[ObjectiveKind] = Field(min_length=1, max_length=3)
+    promise: NonEmpty  # uma frase: o que a pessoa sabe, entende ou pensa depois de assistir
+    event_date: date | None = None
+    question: NonEmpty | None = None
+    thesis: NonEmpty | None = None
+    thesis_by: NonEmpty | None = None
+
+    @property
+    def main(self) -> ObjectiveKind:
+        return self.kinds[0]
+
+    @model_validator(mode="after")
+    def _fields_match_kinds(self) -> Self:
+        _unique(self.kinds, "tipos de objetivo")
+        for kind, names in _OBJECTIVE_FIELDS.items():
+            given = [name for name in names if getattr(self, name) is not None]
+            if kind in self.kinds and len(given) < len(names):
+                missing = ", ".join(name for name in names if name not in given)
+                raise ValueError(f"objetivo {kind} precisa de {missing}")
+            if kind not in self.kinds and given:
+                raise ValueError(f"{', '.join(given)} só existe com o objetivo {kind}")
+        if self.question is not None and not self.question.rstrip().endswith("?"):
+            raise ValueError("question é uma pergunta: termina com '?'")
+        return self
+
+
+# --- estágio do funil (ADR 026) ------------------------------------------------------------------
+
+FunnelStage = Literal["topo", "meio", "fundo"]
+
+
+class Funnel(Model):
+    """Em que estágio do funil o vídeo trabalha e o que ele pede a quem assiste (ADR 026).
+
+    - `topo`: alcance. Tema amplo, gancho forte, pouco método; a chamada pede para seguir ou compartilhar.
+    - `meio`: confiança. Ensina a conta ou o método, com fonte; a chamada pede para salvar ou comentar a
+      dúvida.
+    - `fundo`: ação. Oferece a planilha ou o modelo (`offer`); a chamada diz como pedir.
+
+    O estágio vem do dono, pela pauta, como o objetivo."""
+
+    stage: FunnelStage
+    cta: NonEmpty  # a chamada final, como a narração a diz
+    offer: NonEmpty | None = None  # o que o vídeo oferece: obrigatório no fundo, e só existe nele
+
+    @model_validator(mode="after")
+    def _offer_only_at_the_bottom(self) -> Self:
+        if self.stage == "fundo" and self.offer is None:
+            raise ValueError("funil fundo precisa de offer: o que o vídeo oferece")
+        if self.stage != "fundo" and self.offer is not None:
+            raise ValueError("offer só existe no funil fundo")
+        return self
+
+
 class ScenesManifest(Model):
     episode_id: EpisodeId
     language: Language
+    objective: Objective | None = None  # o que o vídeo se propõe a fazer (ADR 019); sem ele, alerta
+    funnel: Funnel | None = None  # estágio do funil e a chamada final (ADR 026); sem ele, alerta
     scenes: list[Scene] = Field(min_length=1)
     host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
     orientation: Orientation = "landscape"  # `portrait`: 9:16, só com PORTRAIT_SHOT_KINDS (ADR 014)
@@ -897,6 +1003,28 @@ class ReviewLog(Model):
         if entry is None or entry.decision is not Decision.APPROVED:
             return False
         return input_hash is None or entry.input_hash == input_hash
+
+
+class CheckVerdict(StrEnum):
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
+class CheckEntry(Model):
+    """Parecer do agente verificador sobre fichas e roteiro (skill `checagem`), gravado por `vp checagem`."""
+
+    verdict: CheckVerdict
+    problems: list[NonEmpty] = []  # uma linha por problema, no formato do relatório da skill
+    reviewer: NonEmpty
+    at: AwareDatetime
+    input_hash: str  # hash de facts.json + scenes.json + outline.md no momento do parecer
+
+
+class CheckLog(Model):
+    """`checagem.json`: pareceres do verificador, só acrescentados (ADR 009, emenda da cadeia de provas)."""
+
+    episode_id: EpisodeId
+    entries: list[CheckEntry] = []
 
 
 # --- episode.json (contrato do render) ----------------------------------------------------------

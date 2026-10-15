@@ -145,15 +145,104 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 8. **Toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena; plano que mostra número,
    data, nome, cargo, citação ou gráfico → `claims` no plano. Use `source_ids` e `excerpt_ids` das
    evidências das fichas usadas; cada aresta de `network` tem as suas próprias `claims`. O texto na tela
-   repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz.
+   repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz. **Conta feita na tela (ADR 020):** só em `explicar`, com a narração dizendo a conta
+   inteira, cada insumo e a regra em fichas, e a claim do plano escrevendo a expressão com o resultado
+   ("18,44 ÷ 395 × 195 = R$ 9,10").
 9. **Narração para ser falada** em pt-BR (voz Kokoro `pm_alex`):
    - frases de até ~20 palavras, uma ideia por frase, alternando curtas e longas;
    - anos em algarismos; outros números escritos como devem ser ditos ("mil e quinhentos operários");
    - sigla por extenso na primeira vez; nomes próprios vão para `voice/glossary.json` se a pronúncia
      falhar;
    - sem "nesse vídeo", "você não vai acreditar", "fica até o final", "e isso muda tudo".
+   - **Entrega (ADR 022):** marque `delivery` pelo que a cena faz, para o tom variar ao longo do vídeo: `hook` na
+     abertura (texto curto, em pergunta ou chamado: "Você sabe quanto custa um docinho?"), `turn` na virada ("mas…"),
+     `calm` na conta dita inteira, `invite` na pergunta final; cena de explicação não leva o campo. A ênfase vem da
+     voz clonada. Explicação longa não cabe numa cena `hook`.
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
+
+## Objetivo do vídeo (ADR 019)
+
+Todo roteiro declara, no `scenes.json`, o que o vídeo se propõe a fazer. O objetivo vem da pauta ou do dono;
+se não veio, pergunte antes de escrever. Não escolha por ele.
+
+```text
+"objective": {
+  "kinds": ["explicar"],
+  "promise": "A pessoa entende o que o contrato compra.",
+  "question": "O que o governo comprou com esse contrato?"
+}
+```
+
+`kinds` traz de um a três tipos, na ordem em que aparecem no vídeo. O primeiro é o principal e manda na
+estrutura; os outros entram como partes menores. `promise` é uma frase: o que a pessoa sabe, entende ou pensa
+depois de assistir. Toda cena serve à promessa; cena que não serve sai.
+
+| Tipo | Campo a mais | Estrutura quando é o principal | O que não cabe |
+|---|---|---|---|
+| `noticiar` | `event_date`: quando o fato aconteceu | o fato novo e quem diz → o que muda → o que ainda não se sabe | opinião; fato com mais de 30 dias (o `vp check` avisa: aí o vídeo explica) |
+| `explicar` | `question`: a pergunta que o vídeo responde | a pergunta → o mecanismo em passos, ligados por causa → a resposta | terminar sem responder à pergunta |
+| `opinar` | `thesis` e `thesis_by`: a tese e de quem ela é | a tese → os fatos que a apoiam, com fonte → o melhor argumento contrário → a tese de novo | tese escrita pelo agente; opinião dita como fato |
+
+- **A opinião é do dono.** `thesis` chega pronta, nas palavras dele. A narração a diz como opinião, na
+  primeira pessoa ou atribuída ("eu acho", "para mim"), e nunca vira número, data ou citação na tela. Os fatos
+  em volta dela seguem as fichas, como sempre.
+- **Tipos combinados.** Num vídeo que noticia e depois opina, a parte de notícia termina antes de a opinião
+  começar, e o `outline.md` diz em que cena a opinião entra. Não misture as duas na mesma frase.
+- **No `outline.md`**, logo no começo: os tipos, a promessa e, para cada cena, a que parte ela pertence.
+- Se as fichas não sustentam a promessa, pare e devolva ao dono: trocar a promessa é decisão dele.
+
+## Estágio do funil (ADR 026)
+
+O estágio vem da pauta ou do dono, como o objetivo; se não veio, pergunte. Ele muda a forma e a chamada final:
+
+```text
+"funnel": {
+  "stage": "meio",
+  "cta": "Salva pra conferir na próxima encomenda."
+}
+```
+
+| Estágio | Forma | A chamada final pede | Campo a mais |
+|---|---|---|---|
+| `topo` | tema amplo e gancho forte; pouco método, uma ideia só | seguir ou compartilhar | — |
+| `meio` | a conta ou o método inteiro, com fonte, como nos reels da série 1 | salvar ou comentar a dúvida | — |
+| `fundo` | o problema e a planilha ou o modelo que resolve, mostrado funcionando | pedir: comentar a palavra, link na bio | `offer`: o que é oferecido |
+
+- A `cta` é dita na **última cena**, com as mesmas palavras do campo; o `vp check` confere.
+- Uma chamada só. Pedir para seguir, salvar e comentar no mesmo fim dilui as três.
+- No fundo, nesta fase, a oferta é grátis: preço e venda não entram no roteiro sem decisão do dono.
+- No `outline.md`, logo depois do objetivo: o estágio e a chamada.
+
+## Resumo do radar: forma, nunca fato (ADR 018)
+
+Se a pasta do episódio tem `radar-brief.json`, leia-o **antes** de escrever. É o resumo do reels-radar: o que
+anda com mais ou menos na medida do nicho (`measure`: compartilhamentos por visualização no Instagram; curtidas
+por visualização no YouTube Shorts, que não mostra compartilhamentos). Resumo sem `measure` é antigo, e a medida
+fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco não se aplica.
+
+- **O que ele é.** Observação de amostra pequena, sem causa: cada item traz `n_with`, `n_without` e `chance`.
+  `strength: "pattern"` é o que tem base (5+ Reels de cada lado, acaso até 10%); `hint` é hipótese a testar;
+  o que está em `no_basis` não diz nada; corte nulo em `thresholds` é "sem base", não zero. Com menos de 30
+  Reels lidos (`analysed`), tudo é hipótese. Leia também `caveats`.
+- **Para que serve.** Decidir a **forma**: tipo e tamanho da abertura, se ela fala com quem assiste, duração,
+  título na tela nos primeiros segundos, pedido de comentário e tamanho da legenda do post. Os cortes estão em
+  `thresholds` e o perfil dos melhores em `top`.
+- **Para que não serve.** Nenhuma afirmação sai dele. As palavras de `themes` são temas que andaram bem nas
+  legendas, não fatos: só entram no roteiro se uma ficha sustentar a frase que as usa. Não invente a cena
+  concreta ("o seu celular…") para caber num tema. Não copie frase, título nem imagem dos Reels citados em
+  `evidence` e `top.watch`.
+- **"Você" continua preso às fichas.** O resumo pode dizer que falar com quem assiste anda melhor; isso não
+  libera afirmar algo sobre o espectador. Sem ficha de `impact_today`, a abertura fala com ele em forma de
+  pergunta.
+- **Quando a forma e as fichas brigam, as fichas vencem.** Se seguir um padrão exigiria um fato que não existe,
+  não siga, e diga isso.
+- **No `outline.md`**, uma seção "Radar" com uma linha por padrão do resumo: seguido, ou não seguido e por quê,
+  e **uma hipótese de forma** para o episódio: a característica escolhida, a medida (`measure`), o corte usado
+  e `resultado: pendente` até existir métrica própria (AP-10). É o que a publicação testa, não promessa de
+  alcance.
+  O `vp check` compara o roteiro e a legenda com os padrões que dá para medir no texto e avisa; trate cada
+  alerta `radar` como os de ritmo: corrija ou justifique na seção.
 
 ## Fechamento
 

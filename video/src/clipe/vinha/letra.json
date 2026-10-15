@@ -1,0 +1,2357 @@
+{
+ "duracao": 201.6,
+ "linhas": [
+  {
+   "secao": "intro",
+   "vez": 1,
+   "texto": "Essa terra tem nome.",
+   "ini": 0.0,
+   "fim": 5.54,
+   "palavras": [
+    {
+     "t": "Essa",
+     "ini": 0.0,
+     "ok": true
+    },
+    {
+     "t": "terra",
+     "ini": 4.38,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 4.66,
+     "ok": true
+    },
+    {
+     "t": "nome.",
+     "ini": 5.04,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "intro",
+   "vez": 1,
+   "texto": "E o nome não é do rei.",
+   "ini": 5.8,
+   "fim": 10.44,
+   "palavras": [
+    {
+     "t": "E",
+     "ini": 5.8,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 8.78,
+     "ok": true
+    },
+    {
+     "t": "nome",
+     "ini": 8.98,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 9.16,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 9.32,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 9.5,
+     "ok": true
+    },
+    {
+     "t": "rei.",
+     "ini": 9.74,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Nabote ouviu o rei falar de negociação,",
+   "ini": 12.32,
+   "fim": 15.3,
+   "palavras": [
+    {
+     "t": "Nabote",
+     "ini": 12.32,
+     "ok": false
+    },
+    {
+     "t": "ouviu",
+     "ini": 12.88,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 13.28,
+     "ok": true
+    },
+    {
+     "t": "rei",
+     "ini": 13.4,
+     "ok": true
+    },
+    {
+     "t": "falar",
+     "ini": 13.76,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 14.0,
+     "ok": true
+    },
+    {
+     "t": "negociação,",
+     "ini": 14.34,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Mas o chão dos seus pais não cabia na avaliação.",
+   "ini": 15.3,
+   "fim": 18.02,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 15.3,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 15.44,
+     "ok": true
+    },
+    {
+     "t": "chão",
+     "ini": 15.6,
+     "ok": true
+    },
+    {
+     "t": "dos",
+     "ini": 15.84,
+     "ok": true
+    },
+    {
+     "t": "seus",
+     "ini": 16.06,
+     "ok": true
+    },
+    {
+     "t": "pais",
+     "ini": 16.3,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 16.48,
+     "ok": true
+    },
+    {
+     "t": "cabia",
+     "ini": 16.84,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 17.26,
+     "ok": true
+    },
+    {
+     "t": "avaliação.",
+     "ini": 17.62,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Disse não. O palácio respondeu com acusação,",
+   "ini": 18.7,
+   "fim": 21.76,
+   "palavras": [
+    {
+     "t": "Disse",
+     "ini": 18.7,
+     "ok": true
+    },
+    {
+     "t": "não.",
+     "ini": 19.12,
+     "ok": false
+    },
+    {
+     "t": "O",
+     "ini": 19.12,
+     "ok": false
+    },
+    {
+     "t": "palácio",
+     "ini": 19.44,
+     "ok": true
+    },
+    {
+     "t": "respondeu",
+     "ini": 20.12,
+     "ok": true
+    },
+    {
+     "t": "com",
+     "ini": 20.6,
+     "ok": true
+    },
+    {
+     "t": "acusação,",
+     "ini": 20.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Duas vozes mentirosas encenando condenação.",
+   "ini": 21.76,
+   "fim": 25.42,
+   "palavras": [
+    {
+     "t": "Duas",
+     "ini": 21.76,
+     "ok": true
+    },
+    {
+     "t": "vozes",
+     "ini": 22.0,
+     "ok": true
+    },
+    {
+     "t": "mentirosas",
+     "ini": 22.5,
+     "ok": true
+    },
+    {
+     "t": "encenando",
+     "ini": 23.36,
+     "ok": true
+    },
+    {
+     "t": "condenação.",
+     "ini": 24.1,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Vestiram a cobiça de sentença e autoridade,",
+   "ini": 25.44,
+   "fim": 28.64,
+   "palavras": [
+    {
+     "t": "Vestiram",
+     "ini": 25.44,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 26.12,
+     "ok": true
+    },
+    {
+     "t": "cobiça",
+     "ini": 26.28,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 26.86,
+     "ok": true
+    },
+    {
+     "t": "sentença",
+     "ini": 27.22,
+     "ok": true
+    },
+    {
+     "t": "e",
+     "ini": 27.5,
+     "ok": true
+    },
+    {
+     "t": "autoridade,",
+     "ini": 27.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Como se uma assinatura fabricasse a verdade.",
+   "ini": 28.64,
+   "fim": 31.9,
+   "palavras": [
+    {
+     "t": "Como",
+     "ini": 28.64,
+     "ok": true
+    },
+    {
+     "t": "se",
+     "ini": 28.9,
+     "ok": true
+    },
+    {
+     "t": "uma",
+     "ini": 29.12,
+     "ok": true
+    },
+    {
+     "t": "assinatura",
+     "ini": 29.38,
+     "ok": true
+    },
+    {
+     "t": "fabricasse",
+     "ini": 30.34,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 30.9,
+     "ok": true
+    },
+    {
+     "t": "verdade.",
+     "ini": 31.4,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Tomaram sua vinha, calaram quem dizia não;",
+   "ini": 32.1,
+   "fim": 35.3,
+   "palavras": [
+    {
+     "t": "Tomaram",
+     "ini": 32.1,
+     "ok": true
+    },
+    {
+     "t": "sua",
+     "ini": 32.76,
+     "ok": true
+    },
+    {
+     "t": "vinha,",
+     "ini": 33.02,
+     "ok": true
+    },
+    {
+     "t": "calaram",
+     "ini": 33.42,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 33.88,
+     "ok": true
+    },
+    {
+     "t": "dizia",
+     "ini": 34.2,
+     "ok": true
+    },
+    {
+     "t": "não;",
+     "ini": 34.82,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Sobrou uma pergunta atravessando geração.",
+   "ini": 35.3,
+   "fim": 38.7,
+   "palavras": [
+    {
+     "t": "Sobrou",
+     "ini": 35.3,
+     "ok": true
+    },
+    {
+     "t": "uma",
+     "ini": 35.86,
+     "ok": true
+    },
+    {
+     "t": "pergunta",
+     "ini": 36.42,
+     "ok": true
+    },
+    {
+     "t": "atravessando",
+     "ini": 36.74,
+     "ok": true
+    },
+    {
+     "t": "geração.",
+     "ini": 37.64,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Eu cresci ouvindo: “O futuro vai chegar”.",
+   "ini": 38.8,
+   "fim": 41.64,
+   "palavras": [
+    {
+     "t": "Eu",
+     "ini": 38.8,
+     "ok": true
+    },
+    {
+     "t": "cresci",
+     "ini": 38.98,
+     "ok": true
+    },
+    {
+     "t": "ouvindo:",
+     "ini": 39.52,
+     "ok": true
+    },
+    {
+     "t": "“O",
+     "ini": 40.02,
+     "ok": true
+    },
+    {
+     "t": "futuro",
+     "ini": 40.52,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 40.82,
+     "ok": true
+    },
+    {
+     "t": "chegar”.",
+     "ini": 41.3,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Vi cartaz perder a cor, vi promessa se gastar.",
+   "ini": 41.64,
+   "fim": 44.96,
+   "palavras": [
+    {
+     "t": "Vi",
+     "ini": 41.64,
+     "ok": true
+    },
+    {
+     "t": "cartaz",
+     "ini": 41.88,
+     "ok": false
+    },
+    {
+     "t": "perder",
+     "ini": 42.44,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 42.72,
+     "ok": true
+    },
+    {
+     "t": "cor,",
+     "ini": 43.0,
+     "ok": true
+    },
+    {
+     "t": "vi",
+     "ini": 43.28,
+     "ok": true
+    },
+    {
+     "t": "promessa",
+     "ini": 43.58,
+     "ok": true
+    },
+    {
+     "t": "se",
+     "ini": 44.08,
+     "ok": true
+    },
+    {
+     "t": "gastar.",
+     "ini": 44.36,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Quantas vidas cabem num discurso de eleição?",
+   "ini": 44.96,
+   "fim": 48.62,
+   "palavras": [
+    {
+     "t": "Quantas",
+     "ini": 44.96,
+     "ok": true
+    },
+    {
+     "t": "vidas",
+     "ini": 45.38,
+     "ok": true
+    },
+    {
+     "t": "cabem",
+     "ini": 45.82,
+     "ok": true
+    },
+    {
+     "t": "num",
+     "ini": 46.16,
+     "ok": true
+    },
+    {
+     "t": "discurso",
+     "ini": 46.48,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 46.98,
+     "ok": true
+    },
+    {
+     "t": "eleição?",
+     "ini": 47.26,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Quem devolve o tempo dessa geração?",
+   "ini": 48.62,
+   "fim": 51.72,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 48.62,
+     "ok": true
+    },
+    {
+     "t": "devolve",
+     "ini": 48.92,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 49.26,
+     "ok": true
+    },
+    {
+     "t": "tempo",
+     "ini": 49.56,
+     "ok": true
+    },
+    {
+     "t": "dessa",
+     "ini": 49.98,
+     "ok": true
+    },
+    {
+     "t": "geração?",
+     "ini": 50.48,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "A vinha não é sua!",
+   "ini": 51.72,
+   "fim": 53.58,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 51.72,
+     "ok": true
+    },
+    {
+     "t": "vinha",
+     "ini": 51.86,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 52.32,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 52.52,
+     "ok": true
+    },
+    {
+     "t": "sua!",
+     "ini": 53.08,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Meu não não vai mudar.",
+   "ini": 54.96,
+   "fim": 56.94,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 54.96,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 55.16,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 55.34,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 55.6,
+     "ok": true
+    },
+    {
+     "t": "mudar.",
+     "ini": 56.44,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Teu cargo não te dá",
+   "ini": 58.12,
+   "fim": 59.98,
+   "palavras": [
+    {
+     "t": "Teu",
+     "ini": 58.12,
+     "ok": true
+    },
+    {
+     "t": "cargo",
+     "ini": 58.56,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 58.8,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 59.0,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 59.48,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "O direito de tomar.",
+   "ini": 61.26,
+   "fim": 63.02,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 61.26,
+     "ok": true
+    },
+    {
+     "t": "direito",
+     "ini": 61.74,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 62.04,
+     "ok": true
+    },
+    {
+     "t": "tomar.",
+     "ini": 62.52,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Lula, três mandatos. Quanto tempo é suficiente?",
+   "ini": 64.86,
+   "fim": 67.76,
+   "palavras": [
+    {
+     "t": "Lula,",
+     "ini": 64.86,
+     "ok": true
+    },
+    {
+     "t": "três",
+     "ini": 65.34,
+     "ok": true
+    },
+    {
+     "t": "mandatos.",
+     "ini": 65.62,
+     "ok": true
+    },
+    {
+     "t": "Quanto",
+     "ini": 66.24,
+     "ok": true
+    },
+    {
+     "t": "tempo",
+     "ini": 66.6,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 66.74,
+     "ok": true
+    },
+    {
+     "t": "suficiente?",
+     "ini": 67.34,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quem te ouviu quando criança hoje cobra o presidente.",
+   "ini": 67.76,
+   "fim": 71.26,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 67.76,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 67.88,
+     "ok": true
+    },
+    {
+     "t": "ouviu",
+     "ini": 68.06,
+     "ok": true
+    },
+    {
+     "t": "quando",
+     "ini": 68.48,
+     "ok": true
+    },
+    {
+     "t": "criança",
+     "ini": 69.1,
+     "ok": true
+    },
+    {
+     "t": "hoje",
+     "ini": 69.5,
+     "ok": true
+    },
+    {
+     "t": "cobra",
+     "ini": 69.9,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 70.06,
+     "ok": true
+    },
+    {
+     "t": "presidente.",
+     "ini": 70.64,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Com Dilma, teu partido continuou na direção;",
+   "ini": 71.26,
+   "fim": 74.02,
+   "palavras": [
+    {
+     "t": "Com",
+     "ini": 71.26,
+     "ok": false
+    },
+    {
+     "t": "Dilma,",
+     "ini": 71.26,
+     "ok": false
+    },
+    {
+     "t": "teu",
+     "ini": 71.72,
+     "ok": false
+    },
+    {
+     "t": "partido",
+     "ini": 72.28,
+     "ok": true
+    },
+    {
+     "t": "continuou",
+     "ini": 72.7,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 73.22,
+     "ok": true
+    },
+    {
+     "t": "direção;",
+     "ini": 73.52,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Se o projeto era de vocês, quem responde à recessão?",
+   "ini": 74.02,
+   "fim": 77.66,
+   "palavras": [
+    {
+     "t": "Se",
+     "ini": 74.02,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 74.12,
+     "ok": true
+    },
+    {
+     "t": "projeto",
+     "ini": 74.5,
+     "ok": true
+    },
+    {
+     "t": "era",
+     "ini": 74.8,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 75.04,
+     "ok": true
+    },
+    {
+     "t": "vocês,",
+     "ini": 75.54,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 75.86,
+     "ok": true
+    },
+    {
+     "t": "responde",
+     "ini": 76.22,
+     "ok": true
+    },
+    {
+     "t": "à",
+     "ini": 76.48,
+     "ok": true
+    },
+    {
+     "t": "recessão?",
+     "ini": 76.82,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "No mensalão, dirigentes acabaram condenados;",
+   "ini": 77.6,
+   "fim": 80.74,
+   "palavras": [
+    {
+     "t": "No",
+     "ini": 77.6,
+     "ok": false
+    },
+    {
+     "t": "mensalão,",
+     "ini": 77.54,
+     "ok": true
+    },
+    {
+     "t": "dirigentes",
+     "ini": 78.42,
+     "ok": true
+    },
+    {
+     "t": "acabaram",
+     "ini": 79.26,
+     "ok": true
+    },
+    {
+     "t": "condenados;",
+     "ini": 79.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Trocar o tom do palanque não apaga esse passado.",
+   "ini": 80.74,
+   "fim": 84.14,
+   "palavras": [
+    {
+     "t": "Trocar",
+     "ini": 80.74,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 81.16,
+     "ok": true
+    },
+    {
+     "t": "tom",
+     "ini": 81.36,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 81.5,
+     "ok": true
+    },
+    {
+     "t": "palanque",
+     "ini": 81.86,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 82.36,
+     "ok": true
+    },
+    {
+     "t": "apaga",
+     "ini": 82.7,
+     "ok": true
+    },
+    {
+     "t": "esse",
+     "ini": 83.08,
+     "ok": true
+    },
+    {
+     "t": "passado.",
+     "ini": 83.68,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "No terceiro mandato, I O F pra arrecadar;",
+   "ini": 84.14,
+   "fim": 87.2,
+   "palavras": [
+    {
+     "t": "No",
+     "ini": 84.14,
+     "ok": true
+    },
+    {
+     "t": "terceiro",
+     "ini": 84.46,
+     "ok": true
+    },
+    {
+     "t": "mandato,",
+     "ini": 85.08,
+     "ok": true
+    },
+    {
+     "t": "I",
+     "ini": 85.42,
+     "ok": false
+    },
+    {
+     "t": "O",
+     "ini": 85.54,
+     "ok": true
+    },
+    {
+     "t": "F",
+     "ini": 85.72,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 86.06,
+     "ok": true
+    },
+    {
+     "t": "arrecadar;",
+     "ini": 86.38,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quanto mais dessa promessa a gente ainda vai pagar?",
+   "ini": 87.2,
+   "fim": 90.4,
+   "palavras": [
+    {
+     "t": "Quanto",
+     "ini": 87.2,
+     "ok": true
+    },
+    {
+     "t": "mais",
+     "ini": 87.66,
+     "ok": true
+    },
+    {
+     "t": "dessa",
+     "ini": 87.98,
+     "ok": true
+    },
+    {
+     "t": "promessa",
+     "ini": 88.28,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 88.72,
+     "ok": true
+    },
+    {
+     "t": "gente",
+     "ini": 88.9,
+     "ok": true
+    },
+    {
+     "t": "ainda",
+     "ini": 89.32,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 89.62,
+     "ok": true
+    },
+    {
+     "t": "pagar?",
+     "ini": 90.02,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Você pede mais um prazo, mais confiança na gestão;",
+   "ini": 90.4,
+   "fim": 93.68,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 90.4,
+     "ok": true
+    },
+    {
+     "t": "pede",
+     "ini": 90.82,
+     "ok": true
+    },
+    {
+     "t": "mais",
+     "ini": 91.28,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 91.48,
+     "ok": true
+    },
+    {
+     "t": "prazo,",
+     "ini": 91.64,
+     "ok": true
+    },
+    {
+     "t": "mais",
+     "ini": 91.92,
+     "ok": true
+    },
+    {
+     "t": "confiança",
+     "ini": 92.38,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 92.84,
+     "ok": true
+    },
+    {
+     "t": "gestão;",
+     "ini": 93.18,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quem devolve os anos que perdeu minha geração?",
+   "ini": 93.68,
+   "fim": 97.08,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 93.68,
+     "ok": true
+    },
+    {
+     "t": "devolve",
+     "ini": 93.98,
+     "ok": true
+    },
+    {
+     "t": "os",
+     "ini": 94.42,
+     "ok": true
+    },
+    {
+     "t": "anos",
+     "ini": 94.64,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 94.96,
+     "ok": true
+    },
+    {
+     "t": "perdeu",
+     "ini": 95.38,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 95.8,
+     "ok": true
+    },
+    {
+     "t": "geração?",
+     "ini": 96.22,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Governar não te faz dono do que eu vim construir;",
+   "ini": 97.08,
+   "fim": 100.16,
+   "palavras": [
+    {
+     "t": "Governar",
+     "ini": 97.08,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 97.52,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 97.68,
+     "ok": true
+    },
+    {
+     "t": "faz",
+     "ini": 97.96,
+     "ok": true
+    },
+    {
+     "t": "dono",
+     "ini": 98.16,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 98.52,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 98.72,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 98.98,
+     "ok": true
+    },
+    {
+     "t": "vim",
+     "ini": 99.12,
+     "ok": true
+    },
+    {
+     "t": "construir;",
+     "ini": 99.72,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Meu futuro não é teu pra prometer e não cumprir.",
+   "ini": 100.16,
+   "fim": 103.38,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 100.16,
+     "ok": true
+    },
+    {
+     "t": "futuro",
+     "ini": 100.66,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 100.96,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 101.16,
+     "ok": true
+    },
+    {
+     "t": "teu",
+     "ini": 101.36,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 101.56,
+     "ok": true
+    },
+    {
+     "t": "prometer",
+     "ini": 101.74,
+     "ok": true
+    },
+    {
+     "t": "e",
+     "ini": 102.38,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 102.54,
+     "ok": true
+    },
+    {
+     "t": "cumprir.",
+     "ini": 102.72,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "A criança do comício já cresceu, já tem sua voz.",
+   "ini": 103.38,
+   "fim": 106.62,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 103.38,
+     "ok": true
+    },
+    {
+     "t": "criança",
+     "ini": 103.86,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 104.18,
+     "ok": true
+    },
+    {
+     "t": "comício",
+     "ini": 104.5,
+     "ok": true
+    },
+    {
+     "t": "já",
+     "ini": 104.96,
+     "ok": true
+    },
+    {
+     "t": "cresceu,",
+     "ini": 105.16,
+     "ok": true
+    },
+    {
+     "t": "já",
+     "ini": 105.56,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 105.78,
+     "ok": true
+    },
+    {
+     "t": "sua",
+     "ini": 106.0,
+     "ok": true
+    },
+    {
+     "t": "voz.",
+     "ini": 106.42,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "O futuro do cartaz envelheceu junto de nós.",
+   "ini": 106.62,
+   "fim": 109.98,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 106.62,
+     "ok": true
+    },
+    {
+     "t": "futuro",
+     "ini": 107.12,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 107.4,
+     "ok": true
+    },
+    {
+     "t": "cartaz",
+     "ini": 107.68,
+     "ok": true
+    },
+    {
+     "t": "envelheceu",
+     "ini": 108.1,
+     "ok": true
+    },
+    {
+     "t": "junto",
+     "ini": 108.94,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 109.22,
+     "ok": true
+    },
+    {
+     "t": "nós.",
+     "ini": 109.56,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Você conta seus mandatos; nós contamos o que passou.",
+   "ini": 109.98,
+   "fim": 113.06,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 109.98,
+     "ok": true
+    },
+    {
+     "t": "conta",
+     "ini": 110.36,
+     "ok": true
+    },
+    {
+     "t": "seus",
+     "ini": 110.66,
+     "ok": true
+    },
+    {
+     "t": "mandatos;",
+     "ini": 110.94,
+     "ok": true
+    },
+    {
+     "t": "nós",
+     "ini": 111.46,
+     "ok": true
+    },
+    {
+     "t": "contamos",
+     "ini": 111.74,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 112.1,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 112.22,
+     "ok": true
+    },
+    {
+     "t": "passou.",
+     "ini": 112.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Quem responde pelo tempo que promessa nenhuma honrou?",
+   "ini": 113.06,
+   "fim": 116.58,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 113.06,
+     "ok": true
+    },
+    {
+     "t": "responde",
+     "ini": 113.42,
+     "ok": true
+    },
+    {
+     "t": "pelo",
+     "ini": 114.0,
+     "ok": true
+    },
+    {
+     "t": "tempo",
+     "ini": 114.4,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 114.66,
+     "ok": true
+    },
+    {
+     "t": "promessa",
+     "ini": 115.0,
+     "ok": true
+    },
+    {
+     "t": "nenhuma",
+     "ini": 115.82,
+     "ok": false
+    },
+    {
+     "t": "honrou?",
+     "ini": 116.18,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "A vinha não é sua!",
+   "ini": 116.58,
+   "fim": 119.76,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 116.58,
+     "ok": true
+    },
+    {
+     "t": "vinha",
+     "ini": 116.7,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 117.12,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 117.3,
+     "ok": true
+    },
+    {
+     "t": "sua!",
+     "ini": 119.36,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Meu não não vai mudar.",
+   "ini": 119.76,
+   "fim": 121.46,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 119.76,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 119.96,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 120.14,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 120.36,
+     "ok": true
+    },
+    {
+     "t": "mudar.",
+     "ini": 120.96,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Teu cargo não te dá",
+   "ini": 122.88,
+   "fim": 124.76,
+   "palavras": [
+    {
+     "t": "Teu",
+     "ini": 122.88,
+     "ok": true
+    },
+    {
+     "t": "cargo",
+     "ini": 123.3,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 123.56,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 123.74,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 124.26,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "O direito de tomar.",
+   "ini": 125.98,
+   "fim": 127.62,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 125.98,
+     "ok": true
+    },
+    {
+     "t": "direito",
+     "ini": 126.46,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 126.76,
+     "ok": true
+    },
+    {
+     "t": "tomar.",
+     "ini": 127.12,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Elias perguntou ao rei:",
+   "ini": 129.5,
+   "fim": 131.42,
+   "palavras": [
+    {
+     "t": "Elias",
+     "ini": 129.5,
+     "ok": true
+    },
+    {
+     "t": "perguntou",
+     "ini": 130.08,
+     "ok": true
+    },
+    {
+     "t": "ao",
+     "ini": 130.6,
+     "ok": true
+    },
+    {
+     "t": "rei:",
+     "ini": 130.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Mataste, e ainda tomas posse?",
+   "ini": 132.66,
+   "fim": 135.62,
+   "palavras": [
+    {
+     "t": "Mataste,",
+     "ini": 132.66,
+     "ok": true
+    },
+    {
+     "t": "e",
+     "ini": 134.0,
+     "ok": true
+    },
+    {
+     "t": "ainda",
+     "ini": 134.22,
+     "ok": true
+    },
+    {
+     "t": "tomas",
+     "ini": 134.46,
+     "ok": true
+    },
+    {
+     "t": "posse?",
+     "ini": 134.84,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Hoje eu pergunto:",
+   "ini": 137.68,
+   "fim": 138.92,
+   "palavras": [
+    {
+     "t": "Hoje",
+     "ini": 137.68,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 137.8,
+     "ok": true
+    },
+    {
+     "t": "pergunto:",
+     "ini": 138.08,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem te deu o direito?",
+   "ini": 140.42,
+   "fim": 142.16,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 140.42,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 140.6,
+     "ok": true
+    },
+    {
+     "t": "deu",
+     "ini": 140.86,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 141.4,
+     "ok": false
+    },
+    {
+     "t": "direito?",
+     "ini": 141.44,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "quebra",
+   "vez": 1,
+   "texto": "Mais quatro anos no palanque.",
+   "ini": 142.16,
+   "fim": 145.36,
+   "palavras": [
+    {
+     "t": "Mais",
+     "ini": 142.16,
+     "ok": true
+    },
+    {
+     "t": "quatro",
+     "ini": 142.8,
+     "ok": true
+    },
+    {
+     "t": "anos",
+     "ini": 143.56,
+     "ok": true
+    },
+    {
+     "t": "no",
+     "ini": 144.06,
+     "ok": true
+    },
+    {
+     "t": "palanque.",
+     "ini": 144.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "quebra",
+   "vez": 1,
+   "texto": "Mais uma chance, vocês pedem.",
+   "ini": 145.36,
+   "fim": 148.6,
+   "palavras": [
+    {
+     "t": "Mais",
+     "ini": 145.36,
+     "ok": true
+    },
+    {
+     "t": "uma",
+     "ini": 145.94,
+     "ok": true
+    },
+    {
+     "t": "chance,",
+     "ini": 146.72,
+     "ok": true
+    },
+    {
+     "t": "vocês",
+     "ini": 147.44,
+     "ok": true
+    },
+    {
+     "t": "pedem.",
+     "ini": 147.92,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "quebra",
+   "vez": 1,
+   "texto": "Mas os anos da nossa vida",
+   "ini": 148.6,
+   "fim": 151.82,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 148.6,
+     "ok": false
+    },
+    {
+     "t": "os",
+     "ini": 148.9,
+     "ok": false
+    },
+    {
+     "t": "anos",
+     "ini": 149.6,
+     "ok": true
+    },
+    {
+     "t": "da",
+     "ini": 150.06,
+     "ok": true
+    },
+    {
+     "t": "nossa",
+     "ini": 150.64,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 151.34,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "quebra",
+   "vez": 1,
+   "texto": "Não voltam quando vocês querem.",
+   "ini": 151.82,
+   "fim": 155.04,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 151.82,
+     "ok": true
+    },
+    {
+     "t": "voltam",
+     "ini": 152.26,
+     "ok": true
+    },
+    {
+     "t": "quando",
+     "ini": 153.16,
+     "ok": true
+    },
+    {
+     "t": "vocês",
+     "ini": 153.96,
+     "ok": true
+    },
+    {
+     "t": "querem.",
+     "ini": 154.22,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "A vinha não é sua!",
+   "ini": 155.04,
+   "fim": 156.86,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 155.04,
+     "ok": true
+    },
+    {
+     "t": "vinha",
+     "ini": 155.18,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 155.6,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 155.82,
+     "ok": true
+    },
+    {
+     "t": "sua!",
+     "ini": 156.36,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Meu não não vai mudar.",
+   "ini": 158.2,
+   "fim": 160.02,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 158.2,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 158.4,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 158.58,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 158.82,
+     "ok": true
+    },
+    {
+     "t": "mudar.",
+     "ini": 159.52,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Teu cargo não te dá",
+   "ini": 161.34,
+   "fim": 163.2,
+   "palavras": [
+    {
+     "t": "Teu",
+     "ini": 161.34,
+     "ok": true
+    },
+    {
+     "t": "cargo",
+     "ini": 161.74,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 162.0,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 162.18,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 162.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "O direito de tomar.",
+   "ini": 164.38,
+   "fim": 166.1,
+   "palavras": [
+    {
+     "t": "O",
+     "ini": 164.38,
+     "ok": true
+    },
+    {
+     "t": "direito",
+     "ini": 164.88,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 165.16,
+     "ok": true
+    },
+    {
+     "t": "tomar.",
+     "ini": 165.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "A vinha não é sua!",
+   "ini": 167.78,
+   "fim": 169.62,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 167.78,
+     "ok": true
+    },
+    {
+     "t": "vinha",
+     "ini": 167.96,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 168.38,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 168.62,
+     "ok": true
+    },
+    {
+     "t": "sua!",
+     "ini": 169.12,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Nem o tempo que passou.",
+   "ini": 170.78,
+   "fim": 172.82,
+   "palavras": [
+    {
+     "t": "Nem",
+     "ini": 170.78,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 170.98,
+     "ok": true
+    },
+    {
+     "t": "tempo",
+     "ini": 171.3,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 171.56,
+     "ok": true
+    },
+    {
+     "t": "passou.",
+     "ini": 172.32,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Quem te entregou um mandato",
+   "ini": 173.76,
+   "fim": 176.1,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 173.76,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 173.92,
+     "ok": true
+    },
+    {
+     "t": "entregou",
+     "ini": 174.3,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 174.78,
+     "ok": false
+    },
+    {
+     "t": "mandato",
+     "ini": 175.08,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Não te entregou o que sonhou.",
+   "ini": 176.92,
+   "fim": 179.14,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 176.92,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 177.1,
+     "ok": true
+    },
+    {
+     "t": "entregou",
+     "ini": 177.46,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 177.84,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 177.92,
+     "ok": true
+    },
+    {
+     "t": "sonhou.",
+     "ini": 178.2,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "Meu pai ouviu a promessa.",
+   "ini": 182.74,
+   "fim": 184.7,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 182.74,
+     "ok": true
+    },
+    {
+     "t": "pai",
+     "ini": 182.98,
+     "ok": true
+    },
+    {
+     "t": "ouviu",
+     "ini": 183.18,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 183.42,
+     "ok": true
+    },
+    {
+     "t": "promessa.",
+     "ini": 183.68,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "Eu cresci ouvindo também.",
+   "ini": 185.7,
+   "fim": 187.38,
+   "palavras": [
+    {
+     "t": "Eu",
+     "ini": 185.7,
+     "ok": true
+    },
+    {
+     "t": "cresci",
+     "ini": 185.92,
+     "ok": true
+    },
+    {
+     "t": "ouvindo",
+     "ini": 186.38,
+     "ok": true
+    },
+    {
+     "t": "também.",
+     "ini": 186.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "Meu filho não te deve",
+   "ini": 189.14,
+   "fim": 192.94,
+   "palavras": [
+    {
+     "t": "Meu",
+     "ini": 189.14,
+     "ok": true
+    },
+    {
+     "t": "filho",
+     "ini": 189.48,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 189.64,
+     "ok": true
+    },
+    {
+     "t": "te",
+     "ini": 189.82,
+     "ok": true
+    },
+    {
+     "t": "deve",
+     "ini": 192.54,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "Mais uma vida de espera.",
+   "ini": 192.94,
+   "fim": 194.46,
+   "palavras": [
+    {
+     "t": "Mais",
+     "ini": 192.94,
+     "ok": true
+    },
+    {
+     "t": "uma",
+     "ini": 193.2,
+     "ok": true
+    },
+    {
+     "t": "vida",
+     "ini": 193.6,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 194.06,
+     "ok": false
+    },
+    {
+     "t": "espera.",
+     "ini": 194.06,
+     "ok": false
+    }
+   ]
+  }
+ ]
+}

@@ -8,7 +8,9 @@ título do gráfico em cima à esquerda. Mudou o template, muda a tabela daqui.
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Sequence
+from pathlib import Path
 
 from app.pipeline.schemas import (
     HOST_CORNERS,
@@ -17,6 +19,32 @@ from app.pipeline.schemas import (
     EpisodeScene,
     HostCorner,
 )
+
+# --- pele `dono` (ADR 017, parte A) ------------------------------------------------------------------
+
+SPRITES_DIR = "host/dono"  # dentro da pasta do episódio, que é a pasta pública do render e fica fora do Git
+VISEMES = ("rest", "mbp", "ei", "a", "ou", "fv")  # o vocabulário do `<Host>` do motion-kit
+ORIGIN_FILE = "origem.json"  # de onde veio o desenho: autor, gerador e licença (§2.3)
+
+
+def sprite_files(episode_dir: Path) -> list[Path]:
+    """As 12 imagens da pele `dono`: cada visema de olho aberto e de olho fechado (`<visema>-piscada.png`)."""
+    folder = episode_dir / SPRITES_DIR
+    return [folder / f"{viseme}{blink}.png" for viseme in VISEMES for blink in ("", "-piscada")]
+
+
+def sprites_hash(episode_dir: Path) -> str:
+    """Hash das imagens e do registro de origem; entra nas props da cena, e com isso no cache do render.
+    Falta de imagem ou de registro é erro: ativo sem origem registrada não entra no render (§2.3)."""
+    files = [*sprite_files(episode_dir), episode_dir / SPRITES_DIR / ORIGIN_FILE]
+    missing = [f.name for f in files if not f.is_file()]
+    if missing:
+        raise FileNotFoundError(f"pele dono: faltam em {SPRITES_DIR}/: {', '.join(missing)}")
+    digest = hashlib.sha256()
+    for file in files:
+        digest.update(file.name.encode())
+        digest.update(file.read_bytes())
+    return digest.hexdigest()[:16]
 
 
 def blocked_corners(scene: EpisodeScene, *, portrait: bool = False) -> set[HostCorner]:

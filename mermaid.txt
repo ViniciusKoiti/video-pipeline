@@ -1,0 +1,45 @@
+flowchart TD
+    subgraph P0["Fase 0 — Setup e decisão do motor"]
+        A0["Ambiente WSL2: venv, ffmpeg, Ollama, Kokoro, .wslconfig, .env"] --> A1["Benchmark da máquina: RAM, CPU, tok/s do LLM, tempo de TTS"]
+        A1 --> A2["Experimento 30–60 s com o mesmo roteiro: ffmpeg puro vs MoneyPrinterTurbo vs Remotion"]
+        A2 --> A3{"Um motor atende qualidade, revisão por cena e proveniência?"}
+        A3 -- "não" --> A2
+        A3 -- "sim" --> A4["ADR: motor único escolhido; episode.json fixado como contrato"]
+    end
+
+    subgraph P1["Pipeline por episódio — manifestos JSON, retomável por hash"]
+        B0["Escolher o caso pela disponibilidade de fontes e imagens em DP"] --> B1["Coletar fontes: buscar, baixar, extrair texto → sources.json"]
+        B1 --> R1{"Revisão 1: tema e fontes (≥ 2 independentes)"}
+        R1 -- "reprovado" --> B0
+        R1 -- "aprovado" --> B2["Roteiro em inglês: LLM escreve só a partir dos trechos-fonte; JSON Schema; claims → source_id"]
+        B2 --> V1{"Toda claim relevante tem source_id?"}
+        V1 -- "não" --> B2
+        V1 -- "sim" --> R2{"Revisão 2: roteiro"}
+        R2 -- "reprovado" --> B2
+        R2 -- "aprovado" --> B3["Dividir em cenas: visual_need + search_query → scenes.json"]
+        B3 --> B4["Busca visual em cascata: acervo interno → Commons/LoC/Flickr Commons → Pexels → Workers AI → gráfico original"]
+        B4 --> B5["Galeria HTML estática por cena com origem, licença e créditos"]
+        B5 --> R3{"Revisão 3: ativos e direitos"}
+        R3 -- "trocar" --> B4
+        R3 -- "aprovado" --> B6["Voz Kokoro por bloco → WAV; duração real via ffprobe"]
+        B6 --> B7["Legendas alinhadas ao áudio; revisão de nomes próprios"]
+        B7 --> B8["Montagem no motor escolhido → prévia MP4 (720p se preciso)"]
+        B8 --> C1["Checks automáticos: abre no ffprobe, duração = voz, áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado"]
+        C1 --> R4{"Revisão 4: prévia e descrição"}
+        R4 -- "ajustar imagem" --> B4
+        R4 -- "ajustar texto" --> B2
+        R4 -- "aprovado" --> B9["Export: final.mp4, captions.srt, description.txt, credits.txt"]
+    end
+
+    subgraph P2["Validação — sem API paga, sem promoção paga"]
+        D0["Upload manual no YouTube com divulgação de IA quando aplicável"] --> D1["Métricas manuais no Studio aos 7 e 28 dias"]
+        D1 --> D2{"4 vídeos no mesmo recorte publicados?"}
+        D2 -- "não" --> B0
+        D2 -- "sim" --> D3{"Decisão"}
+        D3 -- "sinais orgânicos e qualidade ok" --> D4["Continuar sem pagar"]
+        D3 -- "interesse, mas gargalo mensurável" --> D5["Gasto pequeno e delimitado em 1 componente, com teto por episódio/mês"]
+        D3 -- "público não chega ou sai cedo" --> D6["Mudar assunto, embalagem ou formato; uma hipótese por vez"]
+    end
+
+    A4 --> B0
+    B9 --> D0

@@ -11,7 +11,7 @@ from pydantic import ValidationError
 
 from app.cli import main
 from app.pipeline.check import check_episode
-from app.pipeline.excerpts import excerpts_of, quote_in_excerpt, split_excerpts
+from app.pipeline.excerpts import excerpts_of, numbered_view, quote_in_excerpt, split_excerpts
 from app.pipeline.schemas import FactsManifest, Source
 from app.storage.json_files import JsonFileStore
 from tests.fakes import make_root
@@ -52,11 +52,25 @@ def fact(fid: str = "F01", **extra: Any) -> dict[str, Any]:
     }
 
 
+# um roteiro limpo declara o que se propõe a fazer (ADR 019)
+OBJECTIVE = {
+    "kinds": ["explicar"],
+    "promise": "A pessoa entende como a fábrica mudou de dono.",
+    "question": "Como uma fábrica falida mudou de dono?",
+}
+FUNNEL = {"stage": "topo", "cta": "Segue."}
+
+
 def scenes(**claim: Any) -> dict[str, Any]:
-    narration = "Em 1918, uma fábrica de tecidos falida mudou de dono, comprada num leilão perto de Sorocaba."
+    narration = (
+        "Em 1918, uma fábrica de tecidos falida mudou de dono, comprada num leilão perto de Sorocaba. "
+        "Segue."
+    )
     return {
         "episode_id": EP,
         "language": "pt-BR",
+        "objective": OBJECTIVE,
+        "funnel": FUNNEL,
         "scenes": [
             {
                 "id": "S01",
@@ -166,6 +180,24 @@ def test_single_and_interested_sources_are_warnings(tmp_path: Path) -> None:
     report = check_episode(store, EP)
     assert report.ok
     assert report.warnings == ["F01: uma fonte só (source-01)", "F02: só fontes interessadas (source-02)"]
+
+
+def test_declared_source_may_omit_url_but_others_may_not() -> None:
+    declared = Source.model_validate(source(3, kind="declared", url=None))
+    assert declared.url is None
+    with pytest.raises(ValidationError, match="sem url"):
+        Source.model_validate(source(3, url=None))
+
+
+def test_declared_source_is_a_warning_and_says_so_in_the_excerpts(tmp_path: Path) -> None:
+    declared = source(2, kind="declared", url=None)
+    report = check_episode(episode(tmp_path, facts=facts_file(), sources=[source(1), declared]), EP)
+    assert report.ok
+    assert report.warnings == [
+        "source-02: fonte declarada pelo dono, sem URL; ele responde por ela no gate 1"
+    ]
+    view = numbered_view(Source.model_validate(declared), "Um trecho.")
+    assert "Fonte declarada pelo dono" in view and "[source-02#E1] Um trecho." in view
 
 
 def test_script_may_only_cite_fact_cards(tmp_path: Path) -> None:

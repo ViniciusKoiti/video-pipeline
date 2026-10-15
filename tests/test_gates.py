@@ -9,8 +9,26 @@ from pathlib import Path
 import pytest
 
 from app.cli import main
-from app.pipeline.gates import GateError, gate_hash, gate_report, record_decision
-from app.pipeline.schemas import Asset, Decision, Status, Step
+from app.pipeline.gates import (
+    GateError,
+    gate_hash,
+    gate_report,
+    latest_check,
+    missing_pieces,
+    record_check,
+    record_decision,
+)
+from app.pipeline.schemas import (
+    Asset,
+    CheckVerdict,
+    Decision,
+    EpisodeFormat,
+    EpisodeManifest,
+    EpisodeScene,
+    Status,
+    Step,
+    VideoSpec,
+)
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
 
@@ -62,8 +80,13 @@ def test_gate_1_stamps_sources_and_facts(tmp_path: Path) -> None:
     assert gate_hash(store, EPISODE, Step.SOURCES) != before
 
 
+def checked(store: JsonFileStore, verdict: CheckVerdict = CheckVerdict.APPROVED, *problems: str) -> None:
+    record_check(store, EPISODE, verdict, list(problems), reviewer="verificador", now=lambda: FIXED_TIME)
+
+
 def test_decision_is_valid_until_the_content_changes(tmp_path: Path) -> None:
     store, review, folder = episode(tmp_path)
+    checked(store)
     decide(store, review, Step.SCRIPT, Decision.APPROVED)
     [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.SCRIPT]
     assert row.entry is not None and row.entry.reviewer == "Dono" and row.valid
@@ -143,7 +166,7 @@ def test_cli_approve_reject_and_status(
     out = capsys.readouterr().out
     assert "gate  sources" in out and "aprovado" in out and "vale" in out
     assert "mudanças pedidas" in out
-    assert out.strip().endswith("pendências: script")
+    assert out.strip().endswith("pendências: script, preview")  # sem render ainda
     log = json.loads((folder / "review.json").read_text())
     assert [e["decision"] for e in log["entries"]] == ["approved", "changes_requested", "approved"]
     assert log["entries"][1]["notes"] == "gancho sem imagem"
@@ -155,3 +178,111 @@ def test_cli_reports_gate_errors(
     episode(tmp_path)
     assert run(tmp_path, monkeypatch, "approve", EPISODE, "--step", "assets", "--reviewer", "Dono") == 1
     assert "informe --asset" in capsys.readouterr().err
+
+
+def rendered(folder: Path, name: str = "preview.mp4", content: bytes = b"previa") -> Path:
+    (folder / "renders").mkdir(exist_ok=True)
+    (folder / "renders" / name).write_bytes(content)
+    return folder / "renders" / name
+
+
+def test_preview_gate_needs_a_render(tmp_path: Path) -> None:
+    store, review, _ = episode(tmp_path)
+    with pytest.raises(GateError, match="nenhum render"):
+        decide(store, review, Step.PREVIEW, Decision.APPROVED)
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.PREVIEW]
+    assert row.entry is None and row.current_hash is None
+
+
+def test_preview_gate_covers_render_captions_and_post_text(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    rendered(folder)
+    before = gate_hash(store, EPISODE, Step.PREVIEW)
+    (folder / "captions.srt").write_text("1\n00:00:00,000 --> 00:00:01,000\nOlá.\n")
+    with_captions = gate_hash(store, EPISODE, Step.PREVIEW)
+    assert with_captions != before
+    (folder / "legenda-post.txt").write_text("Salve para lembrar.\n")
+    assert gate_hash(store, EPISODE, Step.PREVIEW) != with_captions
+
+
+def test_the_final_render_reopens_an_approved_preview(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    rendered(folder)
+    decide(store, review, Step.PREVIEW, Decision.APPROVED)
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.PREVIEW]
+    assert row.valid
+    rendered(folder, "final.mp4", b"final com voz final")
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.PREVIEW]
+    assert not row.valid  # a versão final é revista de novo
+
+
+def _episode_json(folder: Path, *, portrait: bool, captions: str | None) -> None:
+    scene = EpisodeScene.model_validate(
+        {"id": "S01", "start_ms": 0, "duration_ms": 1000, "narration": "Olá.", "audio": "voice/S01.wav",
+         "shots": [{"start_ms": 0, "duration_ms": 1000,
+                    "spec": {"kind": "keyword", "text": "Olá", "anchor": "Olá"}}]}
+    )
+    manifest = EpisodeManifest(
+        schema_version=2, episode_id=EPISODE, title="teste", language="pt-BR", format=EpisodeFormat.EXPLAINER,
+        scenes=[scene], video=VideoSpec.for_orientation("portrait" if portrait else "landscape"),
+        captions=captions,
+    )
+    (folder / "episode.json").write_text(manifest.model_dump_json())
+
+
+def test_missing_captions_are_pending_only_in_portrait(tmp_path: Path) -> None:
+    store, _, folder = episode(tmp_path)
+    assert missing_pieces(store, EPISODE) == []  # sem episode.json ainda
+    _episode_json(folder, portrait=True, captions=None)
+    assert missing_pieces(store, EPISODE) == ["legenda (captions.srt)"]
+    _episode_json(folder, portrait=True, captions="captions.srt")
+    assert missing_pieces(store, EPISODE) == ["legenda (captions.srt)"]  # o arquivo ainda não existe
+    (folder / "captions.srt").write_text("1\n00:00:00,000 --> 00:00:01,000\nOlá.\n")
+    assert missing_pieces(store, EPISODE) == []
+    _episode_json(folder, portrait=False, captions=None)
+    assert missing_pieces(store, EPISODE) == []
+
+
+def test_gate_2_needs_a_current_approving_check(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    with pytest.raises(GateError, match="parecer do verificador"):
+        decide(store, review, Step.SCRIPT, Decision.APPROVED)
+    checked(store, CheckVerdict.REJECTED, "DIVERGE S03 ano")
+    with pytest.raises(GateError, match="parecer do verificador"):
+        decide(store, review, Step.SCRIPT, Decision.APPROVED)
+    checked(store)
+    (folder / "facts.json").write_text('{"F1": "ficha mudou depois do parecer"}')
+    entry, valid = latest_check(store, EPISODE)
+    assert entry is not None and not valid
+    with pytest.raises(GateError, match="parecer do verificador"):
+        decide(store, review, Step.SCRIPT, Decision.APPROVED)
+    decide(store, review, Step.SCRIPT, Decision.CHANGES_REQUESTED)  # pedir mudança não precisa de parecer
+
+
+def test_gate_2_without_check_records_the_owner_reason(tmp_path: Path) -> None:
+    store, review, _ = episode(tmp_path)
+    reason = "roteiro de teste, sem fatos"
+    decide(store, review, Step.SCRIPT, Decision.APPROVED, notes="ok", skip_check=reason)
+    entry = review.log(EPISODE).latest(Step.SCRIPT)
+    assert entry is not None and entry.notes == "ok; sem checagem: roteiro de teste, sem fatos"
+    with pytest.raises(GateError):
+        decide(store, review, Step.SCRIPT, Decision.APPROVED, skip_check="   ")
+
+
+def test_cli_checagem_records_and_status_shows_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _, _, folder = episode(tmp_path)
+    report = tmp_path / "parecer.json"
+    report.write_text(json.dumps({"verdict": "approved", "problems": []}))
+    assert run(tmp_path, monkeypatch, "approve", EPISODE, "--step", "script", "--reviewer", "Dono") == 1
+    assert "parecer do verificador" in capsys.readouterr().err
+    assert run(tmp_path, monkeypatch, "checagem", EPISODE, str(report)) == 0
+    log = json.loads((folder / "checagem.json").read_text())
+    assert [e["verdict"] for e in log["entries"]] == ["approved"]
+    assert run(tmp_path, monkeypatch, "approve", EPISODE, "--step", "script", "--reviewer", "Dono") == 0
+    capsys.readouterr()
+    run(tmp_path, monkeypatch, "status", EPISODE)
+    assert "verificador" in capsys.readouterr().out
+    report.write_text(json.dumps({"verdict": "talvez"}))
+    assert run(tmp_path, monkeypatch, "checagem", EPISODE, str(report)) == 1

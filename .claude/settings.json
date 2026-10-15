@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit *)",
+      "Bash(gh repo *)",
+      "Bash(python3 /tmp/claude-1000/-home-viniciusk-projetos-auto-play/b20c950f-0aae-4c2b-8470-29aabf6739cb/scratchpad/publish.py)",
+      "Bash(gh issue *)"
+    ],
+    "ask": [
+      "Bash(* postiz schedule *)"
+    ]
+  }
+}

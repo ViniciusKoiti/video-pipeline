@@ -146,8 +146,11 @@ export const NumberShot: React.FC<{spec: NumberSpec; overlay?: boolean}> = ({spe
 const COMPARE_TOP = 240;
 
 export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
-  const {u, kit, kitPx, width, portrait} = useFrame();
+  const {u, kit, kitPx, width, portrait, safe} = useFrame();
   const language = useLanguage();
+  // Em retrato a comparação fica entre a janela do apresentador e a zona da legenda (ADR 021 e 023). O
+  // `AbsoluteFill` traz `height: 100%`, que venceria o `bottom`: a altura sai das duas bordas.
+  const area = portrait ? {top: u(COMPARE_TOP), bottom: safe.bottom + u(260), height: "auto"} : undefined;
   const left = screenNumber(spec.left.value, language);
   const right = screenNumber(spec.right.value, language);
   if (left && right) {
@@ -162,7 +165,7 @@ export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
       : {};
     // Em retrato a comparação começa abaixo da janela do apresentador (no alto, abaixo da fonte), não no centro.
     return (
-      <AbsoluteFill style={portrait ? {top: u(COMPARE_TOP)} : undefined}>
+      <AbsoluteFill style={area}>
         <ValueCompare left={side(left, spec.left.label)} right={side(right, spec.right.label)}
           mode={spec.mode ?? "side"} emphasis={spec.emphasis ?? undefined} showRatio={false} at={4} duration={40}
           groupSeparator={group} decimalSeparator={decimal} locale={language}
@@ -181,7 +184,7 @@ export const CompareShot: React.FC<{spec: CompareSpec}> = ({spec}) => {
   return (
     <AbsoluteFill style={{flexDirection: portrait ? "column" : "row", alignItems: "center",
       justifyContent: portrait ? "center" : undefined, gap: portrait ? u(36) : undefined,
-      top: portrait ? u(COMPARE_TOP) : undefined,
+      ...area,
       padding: `0 ${u(portrait ? 70 : 160)}px`, color: theme.text, fontFamily: theme.font}}>
       {column(spec.left)}
       <div style={portrait ? {height: 2, width: u(220), background: theme.line}

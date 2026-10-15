@@ -29,6 +29,7 @@ class ProviderChoice(_Model):
     image_gen: str
     archives: list[str] = Field(min_length=1)  # ordem da cascata (§8)
     aligner: str
+    word_aligner: str = "groq"  # palavras com tempo para a legenda palavra a palavra (ADR 023)
     render: dict[EpisodeFormat, str]  # motor por formato do episódio (ADR 001)
     store: str
     review: str
@@ -64,6 +65,30 @@ class GeminiTTSSettings(_Model):
     chars_per_second: float = Field(default=13.0, gt=0)
 
 
+class GroqWhisperSettings(_Model):
+    """Whisper da Groq na camada gratuita, só para o tempo das palavras da legenda (ADR 023)."""
+
+    model: str = "whisper-large-v3-turbo"
+    timeout_s: float = Field(default=120.0, gt=0)
+
+
+class DeliveryParams(_Model):
+    """Controles de expressividade do Chatterbox para uma entrega (ADR 022)."""
+
+    exaggeration: float = Field(default=0.5, ge=0, le=2)  # ênfase; o modelo usa 0,5 por padrão
+    cfg_weight: float = Field(default=0.5, ge=0, le=1)  # quanto menor, mais vivo e rápido
+
+
+def _default_delivery() -> dict[str, DeliveryParams]:
+    return {
+        "hook": DeliveryParams(exaggeration=0.8, cfg_weight=0.3),
+        "turn": DeliveryParams(exaggeration=0.7, cfg_weight=0.4),
+        "invite": DeliveryParams(exaggeration=0.6, cfg_weight=0.4),
+        "neutral": DeliveryParams(),
+        "calm": DeliveryParams(exaggeration=0.4, cfg_weight=0.6),
+    }
+
+
 class ChatterboxSettings(_Model):
     """Voz clonada local (ADR 016, proposta). O ambiente do modelo e a gravação de referência vêm do .env."""
 
@@ -74,6 +99,16 @@ class ChatterboxSettings(_Model):
     num_threads: int = Field(default=12, gt=0)
     chars_per_second: float = Field(default=14.0, gt=0)
     pause_ms: int = Field(default=400, ge=0)  # silêncio no lugar de cada `<short pause>` (ADR 015)
+    delivery: dict[str, DeliveryParams] = Field(default_factory=_default_delivery)  # por entrega (ADR 022)
+
+
+class ChatterboxModalSettings(_Model):
+    """A mesma voz clonada numa GPU do Modal (ADR 024). Modelo, idioma, pausa, entrega e gravação de
+    referência vêm de `[chatterbox]`; aqui fica só o que é da nuvem."""
+
+    python: Path = Path("~/.local/share/uv/tools/modal/bin/python")  # o Python da CLI do Modal
+    app: str = "voz-dono"  # nome publicado por `modal deploy deploy/modal_chatterbox.py`
+    reference_name: str = "referencia.wav"  # a gravação no volume privado `voz-dono-referencia`
 
 
 class WorkersAISettings(_Model):
@@ -109,6 +144,7 @@ class Secrets(_Model):
     cloudflare_api_token: SecretStr | None = None
     groq_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
+    postiz_api_key: SecretStr | None = None
 
 
 class Settings(_Model):
@@ -117,16 +153,20 @@ class Settings(_Model):
     kokoro: KokoroSettings
     gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
     chatterbox: ChatterboxSettings = ChatterboxSettings()
+    chatterbox_modal: ChatterboxModalSettings = ChatterboxModalSettings()
+    groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()
     budget: Budget = Budget()
     data_dir: Path = Path("data")
     secrets: Secrets = Secrets()
+    postiz_api_url: str | None = None
 
 
 # Variável de ambiente -> caminho no dicionário de configuração.
 ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
+    "POSTIZ_API_URL": ("postiz_api_url",),
     "OLLAMA_BASE_URL": ("ollama", "base_url"),
     "OLLAMA_MODEL": ("ollama", "model"),
     "WORKERS_AI_MODEL": ("workers_ai", "model"),
@@ -140,6 +180,7 @@ ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
     "MAX_CLOUD_REQUESTS_PER_EPISODE": ("limits", "max_cloud_requests_per_episode"),
 }
 SECRET_VARS: dict[str, str] = {
+    "POSTIZ_API_KEY": "postiz_api_key",
     "PEXELS_API_KEY": "pexels_api_key",
     "PIXABAY_API_KEY": "pixabay_api_key",
     "UNSPLASH_ACCESS_KEY": "unsplash_access_key",
@@ -187,6 +228,7 @@ def speech_chars_per_second(settings: Settings) -> float:
         "kokoro": settings.kokoro.chars_per_second,
         "gemini": settings.gemini_tts.chars_per_second,
         "chatterbox": settings.chatterbox.chars_per_second,
+        "chatterbox_modal": settings.chatterbox.chars_per_second,  # a mesma voz (ADR 024)
     }
     voice = settings.providers.tts_final or settings.providers.tts
     return rates.get(voice, settings.kokoro.chars_per_second)
