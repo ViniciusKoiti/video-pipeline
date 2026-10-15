@@ -14,7 +14,6 @@ Este arquivo roda no Modal (o pacote `modal` vem da CLI instalada com `uv tool i
 nada de `app`.
 """
 
-from __future__ import annotations
 
 import hashlib
 import io
@@ -24,6 +23,7 @@ from typing import Any
 import modal
 
 APP_NAME = "voz-dono"
+CHATTERBOX = "chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git@5de7a54aa4e5e2baadb0182dde554908b48b85c2"
 REFERENCE_DIR = "/voz"
 HF_HOME = "/cache/hf"
 
@@ -34,6 +34,9 @@ image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("git", "ffmpeg", "libsndfile1")
     .pip_install_from_requirements(str(Path(__file__).with_name("chatterbox-requirements.txt")))
+    # Por último e sem resolver dependências: ele pede o Perth do `master`, e a lista acima já fixa o mesmo
+    # commit do Perth e todas as outras dependências do `lab-voz`.
+    .pip_install(CHATTERBOX, extra_options="--no-deps")
     .env({"HF_HOME": HF_HOME})
 )
 
