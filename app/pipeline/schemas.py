@@ -731,10 +731,39 @@ class Objective(Model):
         return self
 
 
+# --- estágio do funil (ADR 026) ------------------------------------------------------------------
+
+FunnelStage = Literal["topo", "meio", "fundo"]
+
+
+class Funnel(Model):
+    """Em que estágio do funil o vídeo trabalha e o que ele pede a quem assiste (ADR 026).
+
+    - `topo`: alcance. Tema amplo, gancho forte, pouco método; a chamada pede para seguir ou compartilhar.
+    - `meio`: confiança. Ensina a conta ou o método, com fonte; a chamada pede para salvar ou comentar a
+      dúvida.
+    - `fundo`: ação. Oferece a planilha ou o modelo (`offer`); a chamada diz como pedir.
+
+    O estágio vem do dono, pela pauta, como o objetivo."""
+
+    stage: FunnelStage
+    cta: NonEmpty  # a chamada final, como a narração a diz
+    offer: NonEmpty | None = None  # o que o vídeo oferece: obrigatório no fundo, e só existe nele
+
+    @model_validator(mode="after")
+    def _offer_only_at_the_bottom(self) -> Self:
+        if self.stage == "fundo" and self.offer is None:
+            raise ValueError("funil fundo precisa de offer: o que o vídeo oferece")
+        if self.stage != "fundo" and self.offer is not None:
+            raise ValueError("offer só existe no funil fundo")
+        return self
+
+
 class ScenesManifest(Model):
     episode_id: EpisodeId
     language: Language
     objective: Objective | None = None  # o que o vídeo se propõe a fazer (ADR 019); sem ele, alerta
+    funnel: Funnel | None = None  # estágio do funil e a chamada final (ADR 026); sem ele, alerta
     scenes: list[Scene] = Field(min_length=1)
     host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
     orientation: Orientation = "landscape"  # `portrait`: 9:16, só com PORTRAIT_SHOT_KINDS (ADR 014)

@@ -16,6 +16,8 @@ Use público, ângulo e objetivo já fornecidos pelo dono. Se faltarem, apresent
 agrupe as dúvidas sem escolher objetivo ou tese por ele. `objective.kinds` contém
 `noticiar`, `explicar`, `opinar` na ordem do vídeo; campos em
 [schemas.py](../../../app/pipeline/schemas.py) e [ADR 019](../../../docs/decisions/019-objetivo-do-video.md).
+O estágio do funil (`topo`, `meio`, `fundo`) e o que a chamada final pede também são do dono;
+no fundo, nomeie a oferta. Ver [ADR 026](../../../docs/decisions/026-estagio-do-funil.md).
 
 Com `radar-brief.json`, leia `how_to_read`, `caveats`, data, nicho e amostra antes das
 recomendações. Separe padrões de indícios; temas viram perguntas neutras às fontes.

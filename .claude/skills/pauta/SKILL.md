@@ -30,6 +30,9 @@ O resumo é observação de amostra pequena (`analysed` diz quantos Reels), nunc
 3. **Objetivo (ADR 019).** O que o dono quer que o vídeo faça: `noticiar`, `explicar`, `opinar`, ou mais de
    um, na ordem. Mais a promessa em uma frase. Se ele não disse, este item fica como pergunta ao dono, com as
    opções; não escolha por ele. Para `opinar`, a tese é dele e vem escrita por ele.
+   **Funil (ADR 026):** o estágio (`topo`, `meio` ou `fundo`) e o que a chamada final pede (seguir ou
+   compartilhar; salvar ou comentar; pedir a planilha ou o modelo, que no fundo é obrigatório nomear). Também é
+   do dono: sem a resposta dele, fica como pergunta.
 4. **Tema concreto.** Dos `themes` com `strength: "pattern"`, quais têm a ver com o ângulo do dono. Para cada
    um, a pergunta que as fontes precisam responder para o tema poder entrar. Tema `avoid` ou `hint` vai numa
    linha à parte, como hipótese.

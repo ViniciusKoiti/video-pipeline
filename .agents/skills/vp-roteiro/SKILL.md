@@ -19,6 +19,10 @@ O dono define tipos e tese. Preserve ordem; notícia requer `event_date`, explic
 requer `question`, opinião requer `thesis` e `thesis_by`. Não transforme opinião em
 número ou fato na tela. Se faltarem definições ou evidência para a promessa, devolva
 a lacuna ao dono; não troque o objetivo para aproveitar fichas disponíveis.
+`Funnel` traz o estágio do dono, a `cta` dita na última cena com as mesmas palavras e,
+só no fundo, a `offer`. Uma chamada só; forma por estágio em
+[roteiro-explicativo](../../../.claude/skills/roteiro-explicativo/SKILL.md) e
+[ADR 026](../../../docs/decisions/026-estagio-do-funil.md).
 
 Para explainer, siga [roteiro-explicativo](../../../.claude/skills/roteiro-explicativo/SKILL.md);
 carregue [planos](../../../.claude/skills/roteiro-explicativo/planos.md) só quando escolher
