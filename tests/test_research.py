@@ -58,14 +58,19 @@ OBJECTIVE = {
     "promise": "A pessoa entende como a fábrica mudou de dono.",
     "question": "Como uma fábrica falida mudou de dono?",
 }
+FUNNEL = {"stage": "topo", "cta": "Segue."}
 
 
 def scenes(**claim: Any) -> dict[str, Any]:
-    narration = "Em 1918, uma fábrica de tecidos falida mudou de dono, comprada num leilão perto de Sorocaba."
+    narration = (
+        "Em 1918, uma fábrica de tecidos falida mudou de dono, comprada num leilão perto de Sorocaba. "
+        "Segue."
+    )
     return {
         "episode_id": EP,
         "language": "pt-BR",
         "objective": OBJECTIVE,
+        "funnel": FUNNEL,
         "scenes": [
             {
                 "id": "S01",

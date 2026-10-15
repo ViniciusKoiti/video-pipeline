@@ -8,12 +8,14 @@ alerta vai para a revisão humana.
 
 from __future__ import annotations
 
+import re
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import date
 
 from pydantic import ValidationError
 
-from app.media.narration import timeline_length
+from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.ports import M, ManifestStore
 from app.pipeline.radar import (
@@ -330,6 +332,50 @@ def objective_summary(scenes: ScenesManifest) -> str | None:
     return f"objetivo: {' + '.join(objective.kinds)}: {objective.promise}"
 
 
+# O que a chamada de cada estágio pede (ADR 026), como começo de palavra sem acento: "salva", "salvar" e
+# "salve" valem para "salv". Chamada sem nenhum deles pede outra coisa que o estágio, e gera alerta.
+FUNNEL_ASKS: dict[str, tuple[str, tuple[str, ...]]] = {
+    "topo": ("seguir ou compartilhar", ("segu", "compartilh", "manda", "envia")),
+    "meio": ("salvar ou comentar", ("salv", "coment")),
+    "fundo": ("pedir o que é oferecido", ("coment", "link", "bio", "direct", "ped", "baix", "chama")),
+}
+
+
+def _words(text: str) -> list[str]:
+    decomposed = unicodedata.normalize("NFD", strip_pauses(text).lower())
+    plain = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
+    return re.findall(r"[a-z0-9]+", plain)
+
+
+def _contains(words: list[str], part: list[str]) -> bool:
+    return any(words[i : i + len(part)] == part for i in range(len(words) - len(part) + 1))
+
+
+def funnel_warnings(scenes: ScenesManifest) -> list[str]:
+    """O estágio do funil (ADR 026): alerta quando falta, quando a chamada não pede o que o estágio pede e
+    quando ela não está na narração da última cena."""
+    funnel = scenes.funnel
+    if funnel is None:
+        return ["roteiro sem estágio do funil (topo, meio ou fundo; ADR 026)"]
+    warnings = []
+    asks, starts = FUNNEL_ASKS[funnel.stage]
+    cta = _words(funnel.cta)
+    if not any(word.startswith(starts) for word in cta):
+        warnings.append(f"funil {funnel.stage}: a chamada \"{funnel.cta}\" não pede para {asks}")
+    last = scenes.scenes[-1]
+    if not _contains(_words(last.narration), cta):
+        warnings.append(f"funil: a chamada \"{funnel.cta}\" não está na narração da última cena ({last.id})")
+    return warnings
+
+
+def funnel_summary(scenes: ScenesManifest) -> str | None:
+    funnel = scenes.funnel
+    if funnel is None:
+        return None
+    line = f"funil: {funnel.stage}; chamada: {funnel.cta}"
+    return f"{line}; oferta: {funnel.offer}" if funnel.offer else line
+
+
 def _check_radar(
     store: ManifestStore,
     episode_id: str,
@@ -378,6 +424,9 @@ def check_episode(
         if (summary := objective_summary(scenes)) is not None:
             report.checked.append(summary)
         report.warnings += objective_warnings(scenes, today)
+        if (summary := funnel_summary(scenes)) is not None:
+            report.checked.append(summary)
+        report.warnings += funnel_warnings(scenes)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
