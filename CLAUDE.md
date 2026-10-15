@@ -124,8 +124,9 @@ Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) �
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
 (**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
 áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado) → prévia e descrição (**gate 4**) →
-export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual ou
-agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no mesmo recorte (§12).
+export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
+ou agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no
+mesmo recorte (§12).
 Diagrama completo: `docs/pipeline-flowchart.mermaid`.
 
 ## 5. Estados, cache e invalidação
