@@ -64,7 +64,7 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
    nunca sobrescreve.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
-   multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload: `vp postiz`
+   multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
    (`docs/postiz.md`) envia mídia e cria agendamentos no Postiz do dono, só depois do gate 4 e com a
    autorização do dono para aquele agendamento; sem esse pedido nada é agendado, e a conexão das redes usa o
    login do dono. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;

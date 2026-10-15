@@ -65,7 +65,7 @@ normalizando HTML e espaços. O Postiz
 não fornece idempotência documentada para essa operação: chamadas concorrentes ainda podem duplicar posts.
 Não há repetição automática de POST. Em caso de timeout, consulte a fila antes de tentar novamente.
 
-A autorização para publicar continua sendo do dono. A camada não aprova gates editoriais nem altera
+A autorização para publicar continua sendo do dono ([ADR 025](decisions/025-agendamento-pelo-postiz.md)). A camada não aprova gates editoriais nem altera
 `review.json`. [Agenda do Nabote](../renders/clipe/agenda-instagram.md).
 
 Contratos oficiais: [API pública](https://docs.postiz.com/public-api/introduction),
