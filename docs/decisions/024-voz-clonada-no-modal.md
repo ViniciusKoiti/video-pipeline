@@ -1,6 +1,7 @@
 # 024 — Voz clonada numa GPU do Modal, com a gravação num volume privado
 
-- **Status:** aceito pelo dono em 2026-10-14 ("pode", na sessão, depois de ver as opções de nuvem)
+- **Status:** aceito pelo dono em 2026-10-14 ("pode", na sessão, depois de ver as opções de nuvem); voz final
+  padrão desde 2026-10-15, depois da escuta comparada ("pode deixar a nuvem como voz final")
 - **Data:** 2026-10-14
 - **Etapa do roadmap:** voz (#16), voz final dos Reels
 - **Relaciona-se com:** ADR 016 (voz clonada do dono; emendada aqui), ADR 022 (entrega da fala por cena),
@@ -34,8 +35,18 @@ compartilhada).
    uma não reaproveita a outra.
 4. **Custo:** a conta usa o crédito gratuito mensal do Modal, com limite de gasto definido pelo dono no painel.
    O adapter declara custo zero por chamada, como a Groq e o Gemini na camada gratuita.
-5. **A voz local continua.** `tts_final` segue `chatterbox` até o dono comparar a mesma cena gerada nos dois
-   lugares; trocar para `chatterbox_modal` é uma linha no `providers.toml`.
+5. **A voz local continua como alternativa** (`--voz=chatterbox`). Em 2026-10-15 o dono ouviu as cenas S01 e S02
+   do reel `confeitaria-docinho-pt` geradas nos dois lugares e aprovou a nuvem: `tts_final = "chatterbox_modal"`.
+
+## Medição (2026-10-14, reel `confeitaria-docinho-pt`)
+
+| Cena | CPU (notebook) | Modal T4 |
+|---|---|---|
+| S01 (`hook`, 81 caracteres) | ~2 min | 101,6 s, primeira chamada (contêiner, modelo e pesos) |
+| S02 (neutra, 127 caracteres) | ~15 min | 9,2 s |
+
+As durações das falas diferem um pouco entre as duas (7,04 × 5,40 s na S01; 9,00 × 8,68 s na S02), como entre
+duas gerações locais: o Chatterbox sorteia a entonação. Volume parecido (−19,1 × −19,9 LUFS na S01).
 
 ## Consequências
 

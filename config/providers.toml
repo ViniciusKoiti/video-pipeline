@@ -5,7 +5,8 @@
 [providers]
 text = "ollama"
 tts = "kokoro"        # rascunhos e prévias de revisão: local, sem limite
-tts_final = "chatterbox"  # vídeo final: voz clonada do dono, local (ADR 016); "gemini" = Charon (ADR 012)
+tts_final = "chatterbox_modal"  # vídeo final: voz clonada do dono numa GPU do Modal (ADR 024); "chatterbox" = a
+                                # mesma voz na CPU (ADR 016); "gemini" = Charon (ADR 012)
 image_gen = "workers_ai"
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"

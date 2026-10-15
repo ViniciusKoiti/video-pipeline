@@ -197,7 +197,7 @@ def test_paths_come_from_the_environment_and_drafts_stay_on_kokoro(tmp_path: Pat
     assert settings.chatterbox.python == Path("/opt/voz/bin/python")
     assert settings.chatterbox.reference == Path("~/voz/referencia.wav")
     # ADR 016: a voz clonada é a do vídeo final; os rascunhos seguem no Kokoro, que é rápido
-    assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "chatterbox")
+    assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "chatterbox_modal")  # ADR 024
     (tmp_path / CONFIG_FILE.parent).mkdir()  # sem `.env` ao lado, para não depender do desta máquina
     (tmp_path / CONFIG_FILE).write_text((REPO_ROOT / CONFIG_FILE).read_text())
     assert load_settings(tmp_path, {}).chatterbox.python is None
