@@ -37,7 +37,7 @@ Os três diretórios existem ao lado do auto-play, dentro de `/home/viniciusk/pr
 |---|---|---|---|
 | `motion-kit/` | Dependência direta: `video/` importa `@viniciusk/motion-kit`, instalado pelo SHA fixado em `package.json` | Render do explicativo; imports em `Editorial`, `Scene` e `HostWindow` | O checkout vizinho não é importado diretamente em tempo de render; sua alteração precisa chegar ao pacote consumido |
 | `radar-de-reels/` | Entrada por arquivo: `radar_resumo.py` copia `briefs/<nicho>.json` para `radar-brief.json` do episódio | Antes da pauta/roteiro; `vp check` também compara a forma com o brief | Não inicia coleta nem mineração automaticamente; gerar o brief é trabalho do radar |
-| `lab-voz/` | Bancada de teste do Chatterbox, documentada na ADR 016; pode fornecer seu ambiente Python ao adapter | Produção de voz final: adapter usa o executável definido em `CHATTERBOX_PYTHON`; o Python `.venv/bin/python` do laboratório existe | Não chama `lab-voz/falar.py`; executa `chatterbox_worker.py` do próprio auto-play com o Python externo configurado |
+| `lab-voz/` | Bancada de teste do Chatterbox, documentada na ADR 016; fornece o ambiente Python da voz local e a gravação de referência | Voz final desde 2026-10-15: `chatterbox_modal` (ADR 024), o mesmo Chatterbox numa GPU T4 do Modal, com a gravação num volume privado do dono; voz local (`--voz=chatterbox`) usa o executável de `CHATTERBOX_PYTHON` | Não chama `lab-voz/falar.py`; local executa `chatterbox_worker.py` com o Python externo; nuvem executa `chatterbox_modal_client.py` no Python da CLI do Modal |
 
 **Uso observado:** `thiel-empresa-pt` e `thiel-contrato-pt` têm briefs locais e arquivos WAV com nome Chatterbox. Isso confirma artefatos compatíveis com uso dessas etapas, mas nomes de arquivo não certificam configuração ou execução histórica. A seleção padrão de voz final é Chatterbox; rascunhos usam Kokoro. O radar é opcional por episódio e o motion-kit pertence ao formato explicativo; não participam obrigatoriamente de toda peça.
 
@@ -91,7 +91,7 @@ A pauta tem revisão manual. A prévia tem gate por comando desde a #120: `vp ap
 | Função | Implementação disponível | Limite atual |
 |---|---|---|
 | Texto | Ollama | Groq/Gemini de texto estão registrados sem fábrica |
-| Voz | Kokoro, Chatterbox e Gemini TTS | Padrões no TOML: Kokoro para rascunho e Chatterbox para final; `.env` pode sobrescrever configuração |
+| Voz | Kokoro, Chatterbox (local e no Modal) e Gemini TTS | Padrões no TOML: Kokoro para rascunho e `chatterbox_modal` para final (ADR 024, ~10 s por cena contra ~15 min na CPU); `.env` pode sobrescrever configuração |
 | Bancos de imagem | Pexels, Pixabay, Unsplash | Uso depende de credenciais e autorização; testes não fazem chamadas reais |
 | Acervo histórico | Scripts provisórios e trabalho manual | Commons/LoC/Flickr na registry não têm fábrica de adapter |
 | Geração de imagem | Porta e configuração para Workers AI | Registry sem fábrica: não é serviço operacional completo |

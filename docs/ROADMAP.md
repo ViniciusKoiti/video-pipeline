@@ -66,6 +66,10 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
     Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `montar_episodio.py --voz-final`), várias
     cenas por chamada cortadas nas pausas. Termos, limites e resultado em `data/benchmarks/termos-gemini-tts.md`.
     Próximos: as 3 falas que faltam do vídeo-régua (S08–S10, um lote) e a v5; depois, o volume (-14 LUFS) como v6.
+  - **Voz (2026-10-12 e 2026-10-15):** a voz clonada do dono virou a voz final (ADR 016, Chatterbox na CPU, ~15 min
+    por cena). Em 2026-10-15, depois da escuta comparada, ela passou a rodar numa GPU do Modal (ADR 024,
+    `tts_final = "chatterbox_modal"`, ~10 s por cena), com a gravação de referência num volume privado do dono.
+    A Charon segue registrada (`--voz=gemini`) e a voz local também (`--voz=chatterbox`).
 
   Frentes candidatas, a escolher com o dono (cada uma gera uma versão nova do vídeo-régua):
   - ver e ajustar os planos no Remotion Studio (navegador em 127.0.0.1), sem render;
