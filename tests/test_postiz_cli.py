@@ -55,13 +55,17 @@ def test_schedule_reads_native_payload(
     }
     path = tmp_path / "schedule.json"
     path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    postiz.check_schedule.return_value = {"date": payload["date"], "integrations": {}}
     postiz.schedule.return_value = [{"postId": "post-1"}]
+    assert cli.main(["postiz", "pacote", str(path)]) == 0
+    capsys.readouterr()
     assert cli.main(["postiz", "schedule", str(path)]) == 0
     postiz.schedule.assert_called_once_with(payload)
     assert json.loads(capsys.readouterr().out) == [{"postId": "post-1"}]
 
 
-def test_upload_passes_path(postiz: Mock, capsys: pytest.CaptureFixture[str]) -> None:
+def test_upload_passes_path(postiz: Mock, tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    (tmp_path / "video.mp4").write_bytes(b"video")
     postiz.upload.return_value = {"id": "media-1", "path": "https://example.test/video.mp4"}
     assert cli.main(["postiz", "upload", "video.mp4"]) == 0
     postiz.upload.assert_called_once_with(Path("video.mp4"))

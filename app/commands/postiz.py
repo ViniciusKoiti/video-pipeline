@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from app.bootstrap import ConfigurationError, build_postiz
+from app.commands import postiz_cadeia
 from app.pipeline.ports import Context
 from app.providers.errors import ProviderError
 
@@ -24,7 +25,14 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     settings.add_argument("integration_id")
     upload = commands.add_parser("upload", help="envia um arquivo de mídia ao Postiz")
     upload.add_argument("file", type=Path)
-    schedule = commands.add_parser("schedule", help="agenda posts com o JSON nativo do Postiz")
+    package = commands.add_parser(
+        "pacote", help="confere o agendamento sem criar nada e grava o pacote de decisão para o dono"
+    )
+    package.add_argument("payload", type=Path)
+    package.add_argument("--episode", help="episódio cujo gate 4 (prévia) precisa estar aprovado")
+    schedule = commands.add_parser(
+        "schedule", help="agenda o JSON nativo do Postiz que já tem pacote; pede a confirmação do dono"
+    )
     schedule.add_argument("payload", type=Path)
 
 
@@ -46,14 +54,20 @@ def run(args: argparse.Namespace, context: Context) -> int:
             case "settings":
                 result = client.integration_settings(args.integration_id)
             case "upload":
+                digest = postiz_cadeia.file_sha256(args.file)  # antes do envio: o registro não falha depois
                 result = client.upload(args.file)
+                postiz_cadeia.record_upload(context, args.file, digest, result)
+            case "pacote":
+                payload = json.loads(args.payload.read_text(encoding="utf-8"))
+                result = postiz_cadeia.package(context, client, payload, args.episode)
             case "schedule":
-                result = client.schedule(json.loads(args.payload.read_text(encoding="utf-8")))
+                payload = json.loads(args.payload.read_text(encoding="utf-8"))
+                result = postiz_cadeia.schedule(context, client, payload)
         print(json.dumps(result, ensure_ascii=False))
         return 0
     except ConfigurationError:
         error = "Configure POSTIZ_API_KEY e POSTIZ_API_URL no .env."
-    except ProviderError as exc:
+    except (ProviderError, postiz_cadeia.ChainError) as exc:
         error = str(exc)
     except json.JSONDecodeError:
         error = "O arquivo de agendamento precisa conter JSON válido."

@@ -183,13 +183,23 @@ class PostizClient:
             raise _error()
         return {"id": data["id"], "path": data["path"]}
 
-    def schedule(self, payload: dict) -> list[dict]:
+    def check_schedule(self, payload: dict) -> dict:
+        """Todas as defesas do agendamento, só com consultas: nada é criado (pacote de decisão)."""
         instant, requested = validate_schedule(payload, datetime.now(UTC))
-        require_active_integrations(requested, self.integrations())
+        integrations = self.integrations()
+        require_active_integrations(requested, integrations)
         queued = self.posts(
             (instant - timedelta(days=1)).isoformat(), (instant + timedelta(days=1)).isoformat()
         )
         reject_queued_duplicates(requested, queued["posts"])
+        used = {integration_id for integration_id, _, _ in requested}
+        return {
+            "date": instant.isoformat(),
+            "integrations": {i["id"]: i.get("name", i["id"]) for i in integrations if i["id"] in used},
+        }
+
+    def schedule(self, payload: dict) -> list[dict]:
+        instant = parse_instant(self.check_schedule(payload)["date"])
         # shortcut: consulta/criação não são atômicas; usar idempotência do servidor com vários escritores.
         require_future_date(instant, datetime.now(UTC))
         data = self._post("/posts", payload)
