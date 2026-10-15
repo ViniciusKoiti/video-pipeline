@@ -9,6 +9,7 @@ tts_final = "chatterbox"  # vídeo final: voz clonada do dono, local (ADR 016); 
 image_gen = "workers_ai"
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"
+word_aligner = "groq"  # tempo por palavra da legenda (ADR 023); remoto, só com --legenda-palavra
 # Motor por formato do episódio (ADR 001). O MVP só produz archival_documentary.
 render = { archival_documentary = "ffmpeg", explainer = "remotion" }  # remotion: etapa 43
 store = "json_files"
@@ -31,6 +32,10 @@ voices = { "pt-BR" = "Charon", "en" = "Charon" }
 styles = { "pt-BR" = "narração de documentário em português do Brasil, com sotaque brasileiro; tom calmo, informativo e neutro; ritmo moderado", "en" = "documentary narration in American English; calm, informative and neutral tone; moderate pace" }
 requests_per_minute = 3  # camada gratuita (erro 429 em 2026-09-29)
 chars_per_second = 13.0  # Charon: 12 a 14 caracteres por segundo no teste
+
+[groq_whisper]  # camada gratuita; o áudio da cena sai da máquina, só quando o dono pede (ADR 023)
+model = "whisper-large-v3-turbo"
+timeout_s = 120
 
 [chatterbox]  # voz clonada local (ADR 016); ambiente e gravação de referência no .env
 model = "v3"

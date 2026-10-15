@@ -1,6 +1,6 @@
 # Guia de animação de texto nos Reels (referência para quem implementa e para os agentes)
 
-- **Estado:** rascunho para aprovação do dono (2026-10-07). **Nada aqui está implementado.** Em conflito, valem `CLAUDE.md`, as ADRs e o `AGENTS.md` do motion-kit. Onde diz **decisão aberta**, o agente não decide: pergunta ao dono.
+- **Estado:** rascunho para aprovação do dono (2026-10-07). Desde 2026-10-14 a legenda palavra a palavra (§3) está decidida e implementada pela ADR 023; o resto segue rascunho. Em conflito, valem `CLAUDE.md`, as ADRs e o `AGENTS.md` do motion-kit. Onde diz **decisão aberta**, o agente não decide: pergunta ao dono.
 - **Origem:** o Reel de referência de `@brock11johnson` (2026-10-04), lido em quadros, e um conselho de modelos. Registro, ranking e conferências em `docs/pesquisa/animacao-reel-referencia-2026-10.md`; quadros em `data/cache/referencias/DeFFzgiCQOe/` (fora do Git).
 - **Prioridade do dono:** legenda palavra a palavra (a opção "c" da mensagem de 2026-10-07). O vocabulário da seção 2 vale para o resto.
 - **Escopo:** Reels 9:16 do `explainer` (ADR 014). O motion-kit é quem anima; o template (`video/`) só liga as peças aos planos.
@@ -55,7 +55,7 @@
 
 - **Regra: proibido fingir destaque com o modelo proporcional.** Ele já errou ~0,8 s no início de um plano (ADR 015). Sem tempo por palavra, a cena usa legenda por frase ou bloco estático, sem destaque.
 - **Ordem de trabalho para a opção "c" [I]:** (1) #17: alinhar o áudio e gerar o SRT; (2) decidir onde mora o tempo por palavra; (3) `WordCaption` no kit, com demo e tempos de exemplo, o que **não depende** da #17; (4) integração no `Scene.tsx` e pin novo, que esperam a #17.
-- **Decisão aberta:** o tempo por palavra é derivado no adaptador a partir do áudio ou gravado no `episode.json`? Gravar exige ADR (`CLAUDE.md` §6).
+- **Decidido (ADR 023, 2026-10-14):** o tempo por palavra vem do Whisper da Groq e mora em `captions.words.json`, ao lado do SRT; o `episode.json` não muda e o adaptador converte ms em quadros.
 
 ## 4. Gancho por palavra (`keyword` com `pop`)
 
@@ -102,6 +102,6 @@
 
 1. Primeira entrega: confirmar a leitura da opção "c" (legenda) e se o `pop` e o `cut` entram junto, já que não dependem da #17.
 2. Nomes dos tokens e da prop de entrada; escala inicial do `pop`.
-3. Onde mora o tempo por palavra (adaptador ou `episode.json`, com ADR) e quem faz o alinhamento (#17); provedor externo só se o dono pedir.
-4. Haverá uma segunda identidade visual? Clara ou enérgica (contorno, caixa alta, amarelo)? O conselho de estilos por vertical (`docs/pesquisa/estilos-por-vertical-2026-10.md`) achou que o `editorial` basta em 9 das 10 verticais e que um modo claro custa mais do que trocar cores.
+3. ~~Onde mora o tempo por palavra e quem faz o alinhamento.~~ Decidido em 2026-10-14 (ADR 023): `captions.words.json` e Whisper da Groq, com `--legenda-palavra`.
+4. Haverá uma segunda identidade visual? Clara ou enérgica (contorno, caixa alta, amarelo)? **Na legenda, decidido em 2026-10-14 (ADR 023): enérgica.** O resto do template segue `editorial`. O conselho de estilos por vertical (`docs/pesquisa/estilos-por-vertical-2026-10.md`) achou que o `editorial` basta em 9 das 10 verticais e que um modo claro custa mais do que trocar cores.
 5. Ligado em 2026-10-07 ao `CLAUDE.md` (§14) e à skill `roteiro-explicativo`. Falta ligar à skill `componentes-do-kit`, que é a de quem implementa no kit e no template.

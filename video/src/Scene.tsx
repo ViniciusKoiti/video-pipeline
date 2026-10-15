@@ -1,7 +1,7 @@
 import React from "react";
 import {AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
 import {SLIDE_EXIT_FRAMES, SceneSlide} from "@viniciusk/motion-kit";
-import {SourceTag} from "@viniciusk/motion-kit/editorial";
+import {SourceTag, WordCaption} from "@viniciusk/motion-kit/editorial";
 import {SceneBackground} from "@viniciusk/motion-kit/fx";
 import {CameraRig} from "@viniciusk/motion-kit/motion";
 import {MotionThemeProvider} from "@viniciusk/motion-kit/theme";
@@ -10,7 +10,7 @@ import {LABELS} from "./labels";
 import {LanguageProvider, useLanguage} from "./language";
 import {ShotView} from "./ShotView";
 import {motionTheme, theme, useFrame} from "./theme";
-import type {SceneProps, ShotProps} from "./types";
+import type {SceneProps, ShotProps, Word} from "./types";
 
 // Uma cena = um bloco de narração (ADR 008), com as camadas da ADR 011 (decisão 5): a foto ou o B-roll continua
 // por baixo dos planos seguintes da cena até a próxima mídia; tarja, carimbo, número e frase entram por cima
@@ -83,6 +83,19 @@ const Source: React.FC<{shot: Planned}> = ({shot}) => {
   return <div style={{position: "absolute", left: 0, right: 0, top: portrait ? safe.top : 0, height: u(150)}}>{tag}</div>;
 };
 
+// Legenda palavra a palavra (ADR 023): caixa alta, contorno e a palavra falada em amarelo, na base da área segura.
+// Corpo 56 (px de quadro de 1080 de altura, ~100 px no 1920): duas linhas cabem na reserva de `u(260)` que os
+// planos deixam acima da área segura.
+const ACTIVE_WORD = "#FFD400";
+const WORD_SIZE = 56;
+const WordCaptions: React.FC<{words: Word[]}> = ({words}) => {
+  const {kitPx, safe} = useFrame();
+  return (
+    <WordCaption words={words} position="bottom" offset={kitPx(safe.bottom)} activeColor={ACTIVE_WORD}
+      fontSize={WORD_SIZE} />
+  );
+};
+
 const Caption: React.FC<{text: string}> = ({text}) => {
   const {u, portrait, safe} = useFrame();
   return (
@@ -136,7 +149,7 @@ const SceneBody: React.FC<SceneProps> = (props) => {
         </AbsoluteFill>
         {/* A legenda fica na tela também durante o `keyword`: sem som, a fala inteira continua legível (ADR 021). */}
         <AbsoluteFill>
-          {props.cues.map((cue) => (
+          {props.words?.length ? <WordCaptions words={props.words} /> : props.cues.map((cue) => (
             <Sequence key={`${cue.from}-${cue.text}`} from={cue.from} durationInFrames={Math.max(cue.to - cue.from, 1)}>
               <Caption text={cue.text} />
             </Sequence>

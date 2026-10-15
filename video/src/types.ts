@@ -80,6 +80,8 @@ export type ShotProps = {
   stepFrames?: number[]; // só network: quadro de entrada de cada passo, relativo ao plano
 };
 export type Cue = {from: number; to: number; text: string};
+// Palavra com tempo (quadros relativos à cena), da legenda palavra a palavra (ADR 023).
+export type Word = {from: number; to: number; text: string};
 
 // Apresentador em janela flutuante (ADR 013): o motor já resolve o canto de cada cena e o envelope da boca.
 export type HostCorner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
@@ -104,6 +106,7 @@ export type SceneProps = {
   fadeFrames: number;
   shots: ShotProps[];
   cues: Cue[];
+  words?: Word[]; // só no vertical, quando a cena tem palavras reconhecidas
   host?: HostProps;
   language?: Language;
 };

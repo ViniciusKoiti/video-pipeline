@@ -195,7 +195,7 @@ revela:
 |---|---|---|---|
 | Fichas, roteiro, cenas, checagem | Agentes do Claude Code + skills + `vp check` (ADR 009; a spec previa Ollama) | Ollama local (#27, checagem já medida em `data/benchmarks/checagem-local.md`); Groq e Gemini gratuitos; outro agente que leia as skills | Fidelidade ao texto-fonte e fatos que prendem, sem custo por chamada. |
 | Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
-| Alinhamento de áudio | ffprobe + revisão manual | Groq Whisper gratuito, quando necessário | Corrigir problema concreto de legenda; não transcrever episódio inteiro sem necessidade. |
+| Alinhamento de áudio | Frase: silêncios do WAV (ADR 021). Palavra: Groq Whisper gratuito com `--legenda-palavra` (ADR 023) | Whisper local (`transformers`, modelo no cache) | O áudio da cena sai da máquina só com pedido do dono na sessão; a tela mostra o texto do roteiro, não o reconhecido. |
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
 | Roteador de modelos | Nenhum | OpenRouter com variante `:free` | Só se o candidato direto falhar. |
 
@@ -247,6 +247,9 @@ lacuna fica registrada.
 - Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
   `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
   quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.
+  Palavra a palavra no vertical (ADR 023): `--legenda-palavra` manda o WAV de cada cena nova ao Whisper da Groq e
+  guarda o tempo em `captions.words.json`; a tela mostra o texto do roteiro em caixa alta, com contorno e a
+  palavra falada em amarelo (`WordCaption` do motion-kit). Cena sem palavras fica na legenda por frase.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
