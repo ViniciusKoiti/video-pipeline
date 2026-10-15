@@ -1,5 +1,42 @@
 # Tarefa: conectar o Instagram ao Postiz (instalação própria)
 
+## Estado (conferido em 2026-10-14)
+
+**Concluída.** O canal Instagram (Standalone) está conectado com duas contas. Conferido pela API pública com a CLI
+`postiz` 2.0.16, só leitura (`integrations:list`, `analytics:platform`, `posts:list`):
+
+| Canal no Postiz | Provedor (`identifier`) | Perfil | Ativo |
+|---|---|---|---|
+| MEI \| Faz bolo | `instagram-standalone` | @bolo.mei | sim |
+| Desenvolvedor Plen | `instagram-standalone` | @koiti.dev | sim |
+| Vinicius Koiti Nakahara | `linkedin` | — | sim |
+| Nabote Songs | `youtube` | @movimentonabote | sim |
+| baixo.nivel.dev.s | `youtube` | @baixo.nivel.dev.s | sim |
+| Vinicius Koiti Nakahara | `youtube` | @viniciusnakahara | sim |
+
+- A API devolve só `disabled` como estado. Para saber se o token do Instagram ainda vale, `analytics:platform <id>`
+  precisa responder com dados (em 2026-10-14 as duas contas do Instagram responderam: alcance e curtidas zerados nos
+  últimos 7 dias, contas novas).
+- Os posts no Postiz até agora são todos do Nabote Songs (clipe "A Planilha é Tua"): cinco publicados e um na fila
+  para 2026-10-15 15:30 UTC. Nenhum post nas contas do Instagram.
+- **Os reels das séries de confeitaria e MEI são publicados à mão pelo dono por enquanto** (decisão de 2026-10-14).
+  O pipeline entrega o pacote (mp4 com legenda queimada, texto do post e créditos) e para aí; agendar pelo Postiz
+  só com nova decisão do dono.
+
+Para conferir de novo, de dentro do `auto-play`, sem mostrar a chave:
+
+```bash
+set -a; . <(grep -E '^POSTIZ_API_(KEY|URL)=' .env); set +a
+postiz integrations:list            # canais e `disabled`
+postiz analytics:platform <id>      # o token do canal responde?
+postiz posts:list                   # o que está publicado ou na fila
+```
+
+O roteiro abaixo fica como registro de como a conexão foi feita e serve para conectar outra conta.
+
+---
+
+
 Você é um agente encarregado de conectar uma conta do Instagram ao Postiz instalado pelo dono em
 `https://postizis.duckdns.org`. Faça tudo o que puder sozinho e **chame o dono só nos pontos marcados com 🛑**.
 Quando chamar, diga em uma ou duas frases o que precisa e o que ele deve fazer; depois continue de onde parou.
@@ -87,7 +124,8 @@ Ao final, o canal **Instagram (Standalone)** aparece em Postiz › canais conect
   - No relatório, escreva "configurado" em vez do valor.
 - **Coisas que você não faz:**
   - Não publique, não agende e não apague posts.
-  - Não desconecte canais existentes: LinkedIn e três canais do YouTube, entre eles o Nabote Songs.
+  - Não desconecte canais existentes: LinkedIn, três canais do YouTube (entre eles o Nabote Songs) e as duas contas
+    do Instagram (@bolo.mei e @koiti.dev).
 - Não mude configurações da conta do Instagram, do Facebook ou do Postiz além do descrito aqui.
 - Não aceite pagamento, plano pago, verificação de empresa nem envio do app para análise. Se a Meta exigir algum
   desses para seguir, pare e 🛑 chame o dono.
