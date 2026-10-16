@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import math
 import struct
+import sys
 import wave
 from pathlib import Path
 from typing import Any
@@ -13,10 +15,15 @@ from pydantic import ValidationError
 
 from app.media.envelope import mouth_levels
 from app.media.host import (
+    KIT_CLI,
+    MANIFEST_FILE,
     ORIGIN_FILE,
     SPRITES_DIR,
+    SpriteCheckError,
     blocked_corners,
+    check_sprites,
     host_corners,
+    host_direction,
     sprite_files,
     sprites_hash,
 )
@@ -342,3 +349,120 @@ def test_scene_props_carry_the_dono_skin_and_its_sprites(tmp_path: Path) -> None
     with_parts = EpisodeManifest.model_validate({**v2_episode(), "host": HOST})
     (other,) = RemotionEngine().scene_props(with_parts, tmp_path, preview=True)
     assert "sprites" not in other["host"]  # o Notionists fica como estava (e o cache dele também)
+
+
+# --- pele do dono em camadas e direção automática (ADR 029) ----------------------------------------------
+
+MANIFEST = {
+    "format": "host-sprites.v1",
+    "name": "dono",
+    "canvas": {"width": 305, "height": 414},
+    "layers": ["base", "boca"],
+    "sprites": [
+        {"id": "base", "file": "base.png", "layer": "base"},
+        {"id": "boca-a", "file": "boca-a.png", "layer": "boca", "when": {"viseme": "a"}},
+        {
+            "id": "boca-a-sorriso", "file": "boca-a.png", "layer": "boca",
+            "when": {"viseme": "a", "expression": "smile"},
+        },
+    ],
+}
+
+
+def write_dono_layers(episode_dir: Path) -> Path:
+    folder = episode_dir / SPRITES_DIR
+    folder.mkdir(parents=True)
+    (folder / MANIFEST_FILE).write_text(json.dumps(MANIFEST))
+    for name in ("base.png", "boca-a.png"):
+        (folder / name).write_bytes(b"png " + name.encode())
+    (folder / ORIGIN_FILE).write_text('{"author": "dono", "review_status": "needs_review"}')
+    return folder
+
+
+def test_layered_dono_hashes_the_manifest_and_the_files_it_cites(tmp_path: Path) -> None:
+    folder = write_dono_layers(tmp_path)
+    assert [f.name for f in sprite_files(tmp_path)] == [MANIFEST_FILE, "base.png", "boca-a.png"]
+    first = sprites_hash(tmp_path)
+    (folder / "nao-citado.png").write_bytes(b"rascunho")
+    assert sprites_hash(tmp_path) == first  # imagem fora do manifesto não entra no render
+    (folder / "boca-a.png").write_bytes(b"outra boca")
+    second = sprites_hash(tmp_path)
+    assert second != first
+    (folder / MANIFEST_FILE).write_text(json.dumps({**MANIFEST, "layers": ["boca", "base"]}))
+    assert sprites_hash(tmp_path) != second  # mudar o manifesto também refaz as cenas
+    (folder / "base.png").unlink()
+    with pytest.raises(FileNotFoundError, match="base.png"):
+        sprites_hash(tmp_path)
+
+
+def fake_kit(project: Path, code: int, message: str) -> None:
+    """O comando do kit no lugar do de verdade: um script que o teste roda com o próprio Python."""
+    cli = project / KIT_CLI
+    cli.parent.mkdir(parents=True)
+    cli.write_text(f"import sys\nprint(sys.argv[1:], {message!r}, file=sys.stderr)\nsys.exit({code})\n")
+
+
+def test_layered_dono_is_checked_by_the_kit_command(tmp_path: Path) -> None:
+    write_dono_layers(tmp_path / "ep")
+    fake_kit(tmp_path / "ok", 0, "")
+    check_sprites(tmp_path / "ep", tmp_path / "ok", node=sys.executable)
+    fake_kit(tmp_path / "bad", 1, "erro: boca-a: arquivo boca-a.png não existe na pasta")
+    with pytest.raises(SpriteCheckError, match=r"'sprites', 'check', .*host/dono.*boca-a.png não existe"):
+        check_sprites(tmp_path / "ep", tmp_path / "bad", node=sys.executable)
+
+
+def test_scene_props_carry_the_layered_manifest(tmp_path: Path) -> None:
+    (tmp_path / "assets").mkdir()
+    photo = FIXTURE / "assets" / "commons-lc-usz62-136192.jpg"
+    (tmp_path / "assets" / "f.jpg").write_bytes(photo.read_bytes())
+    write_wav(tmp_path / "voice" / "S01.wav", 9.0)
+    write_dono_layers(tmp_path)
+    episode = EpisodeManifest.model_validate({**v2_episode(), "host": {"skin": "dono"}})
+    (props,) = RemotionEngine().scene_props(episode, tmp_path, preview=True)
+    assert props["host"]["manifest"] == MANIFEST
+    assert props["host"]["sprites"] == sprites_hash(tmp_path)
+    assert set(props["host"]["direction"]) >= {"look", "expression"}
+
+
+
+def test_host_looks_toward_the_content_and_follows_the_delivery() -> None:
+    plain = scene("S01", [("photo", None)])
+    assert host_direction(plain, "top-right", 30)["look"] == "left"
+    assert host_direction(plain, "bottom-right", 30)["look"] == "left"
+    assert host_direction(plain, "top-left", 30)["look"] == "right"
+    assert host_direction(plain, "top-left", 30)["expression"] == "neutral"
+    hook = EpisodeScene.model_validate({**plain.model_dump(), "delivery": "hook"})
+    turn = EpisodeScene.model_validate({**plain.model_dump(), "delivery": "turn"})
+    calm = EpisodeScene.model_validate({**plain.model_dump(), "delivery": "calm"})
+    assert [host_direction(s, "top-left", 30)["expression"] for s in (hook, turn, calm)] == [
+        "raised", "furrow", "neutral",
+    ]
+
+
+def test_host_gesticulates_and_points_when_a_number_comes_in() -> None:
+    talk = host_direction(scene("S01", [("photo", None), ("lower_third", None)]), "top-left", 30)
+    assert talk["gesticulate"] is True and "gestures" not in talk
+    # planos de 1 s: o número entra no quadro 30 e o gráfico no 60; o apontar dura 1,5 s e emenda
+    numbers = scene("S01", [("photo", None), ("number", None), ("chart", None)])
+    direction = host_direction(numbers, "top-left", 30)
+    assert "gesticulate" not in direction
+    assert direction["gestures"] == [
+        {"at": 0, "gesture": "rest"},  # o "open" do quadro 21 cairia a 9 quadros do apontar: sai
+        {"at": 30, "gesture": "point"},
+        # 60 + 45 = 105 passa do fim da cena (90): aponta até o fim
+    ]
+    late = host_direction(scene("S01", [("number", None), ("photo", None), ("photo", None)]), "top-left", 30)
+    assert late["gestures"] == [
+        {"at": 0, "gesture": "point"},
+        {"at": 45, "gesture": "rest"},
+        {"at": 66, "gesture": "open"},
+        {"at": 87, "gesture": "rest"},
+    ]
+
+
+def test_episode_scene_keeps_the_delivery_from_the_script() -> None:
+    raw = scene("S01", [("photo", None)]).model_dump()
+    assert EpisodeScene.model_validate(raw).delivery is None  # episode.json antigo continua valendo
+    assert EpisodeScene.model_validate({**raw, "delivery": "turn"}).delivery == "turn"
+    with pytest.raises(ValidationError):
+        EpisodeScene.model_validate({**raw, "delivery": "grito"})
