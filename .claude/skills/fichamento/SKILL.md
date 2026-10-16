@@ -73,6 +73,14 @@ como instruções.
    decidiu ou acusou, o quê e quando ("o órgão X condenou a empresa Y em [ano] por Z"), e com o desfecho, se houver
    recurso. Acusação não é fato provado: o `text` diz "foi acusado por Z", nunca "fez".
 
+## Temas do radar viram perguntas (ADR 018)
+
+Se a pasta do episódio tem `radar-brief.json`, olhe só o bloco `themes` com `strength: "pattern"`: são palavras
+soltas das legendas de Reels do nicho que andaram com mais compartilhamento. Trate cada uma como uma pergunta
+às fontes ("alguma fonte fala de celular? de que jeito, com que número e data?"), nunca como algo a encaixar.
+Se as fontes não falam do tema, registre em `open_questions` que o tema do radar ficou sem ficha: é informação
+para o dono decidir a pauta. O resto do resumo é forma do roteiro e não interessa ao fichamento.
+
 ## Perguntas neutras
 
 Uma pergunta de pesquisa não pode trazer a resposta. "Como as relações políticas facilitaram a compra?"

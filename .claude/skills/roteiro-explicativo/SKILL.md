@@ -155,6 +155,30 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
 
+## Resumo do radar: forma, nunca fato (ADR 018)
+
+Se a pasta do episódio tem `radar-brief.json`, leia-o **antes** de escrever. É o resumo do reels-radar: o que
+anda com mais ou menos compartilhamento nos Reels do nicho. Sem o arquivo, este bloco não se aplica.
+
+- **O que ele é.** Observação de amostra pequena, sem causa: cada item traz `n_with`, `n_without` e `chance`.
+  `strength: "pattern"` é o que tem base (5+ Reels de cada lado, acaso até 10%); `hint` é hipótese a testar;
+  o que está em `no_basis` não diz nada. Leia também `caveats`.
+- **Para que serve.** Decidir a **forma**: tipo e tamanho da abertura, se ela fala com quem assiste, duração,
+  título na tela nos primeiros segundos, pedido de comentário e tamanho da legenda do post. Os cortes estão em
+  `thresholds` e o perfil dos melhores em `top`.
+- **Para que não serve.** Nenhuma afirmação sai dele. As palavras de `themes` são temas que andaram bem nas
+  legendas, não fatos: só entram no roteiro se uma ficha sustentar a frase que as usa. Não invente a cena
+  concreta ("o seu celular…") para caber num tema. Não copie frase, título nem imagem dos Reels citados em
+  `evidence` e `top.watch`.
+- **"Você" continua preso às fichas.** O resumo pode dizer que falar com quem assiste anda melhor; isso não
+  libera afirmar algo sobre o espectador. Sem ficha de `impact_today`, a abertura fala com ele em forma de
+  pergunta.
+- **Quando a forma e as fichas brigam, as fichas vencem.** Se seguir um padrão exigiria um fato que não existe,
+  não siga, e diga isso.
+- **No `outline.md`**, uma seção "Radar" com uma linha por padrão do resumo: seguido, ou não seguido e por quê.
+  O `vp check` compara o roteiro e a legenda com os padrões que dá para medir no texto e avisa; trate cada
+  alerta `radar` como os de ritmo: corrija ou justifique na seção.
+
 ## Fechamento
 
 - Passe a skill `humanizer-narracao` na narração.
