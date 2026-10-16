@@ -1,5 +1,7 @@
 // Espelho dos planos do contrato (app/pipeline/schemas.py, ADR 008). Chaves em snake_case como no JSON.
 
+import type {SpriteManifest} from "@viniciusk/motion-kit/host";
+
 export type Crop = {x: number; y: number; width: number; height: number};
 export type Motion = "push_in" | "pull_out" | "pan_left" | "pan_right" | "pan_up" | "pan_down" | "still";
 
@@ -110,10 +112,21 @@ export type HostProps = {
   // `skin` e as peças do Notionists, como o <Host> do motion-kit as lê; a pele `dono` só tem o `skin`
   identity: Record<string, unknown>;
   sprites?: string; // só na pele `dono`: hash das imagens, para o cache da cena acompanhar o desenho
+  manifest?: SpriteManifest; // só na pele `dono` em camadas (ADR 029): o `host/dono/sprites.json`
   width: number; // largura da janela, fração do quadro
   corner: HostCorner;
   fromCorner: HostCorner | null; // canto da cena anterior; null na primeira
   levels: number[]; // energia da fala por quadro, de 0 a 1
+  direction?: HostSceneDirection; // ADR 029; ausente nas props antigas
+};
+
+// Direção automática do apresentador (ADR 029, app/media/host.py), em quadros relativos à cena: para onde
+// olha, a expressão pela entrega da fala e os gestos (o ciclo de gesticular, ou ele com o apontar por cima).
+export type HostSceneDirection = {
+  look: "front" | "left" | "right";
+  expression: string;
+  gesticulate?: boolean;
+  gestures?: {at: number; gesture: string}[];
 };
 
 // Idioma do episódio (episode.json). Ausente nas props = pt-BR: o adaptador só o envia fora do padrão.
