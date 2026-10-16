@@ -1279,6 +1279,8 @@ class EpisodeScene(Model):
     image: RelPath | None = None  # v1
     shots: list[EpisodeShot] = []  # v2: planos cobrindo a cena inteira
     host_corner: HostCorner | None = None  # ajuste do canto do apresentador (ADR 013)
+    # Entrega da fala (ADR 022), copiada do roteiro: dá a expressão do apresentador (ADR 029).
+    delivery: Delivery | None = None
 
     @property
     def end_ms(self) -> int:

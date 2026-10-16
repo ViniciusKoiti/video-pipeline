@@ -9,8 +9,11 @@ título do gráfico em cima à esquerda. Mudou o template, muda a tabela daqui.
 from __future__ import annotations
 
 import hashlib
+import json
+import subprocess
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 from app.pipeline.schemas import (
     HOST_CORNERS,
@@ -27,15 +30,51 @@ VISEMES = ("rest", "mbp", "ei", "a", "ou", "fv")  # o vocabulário do `<Host>` d
 ORIGIN_FILE = "origem.json"  # de onde veio o desenho: autor, gerador e licença (§2.3)
 
 
-def sprite_files(episode_dir: Path) -> list[Path]:
-    """As 12 imagens da pele `dono`: cada visema de olho aberto e de olho fechado (`<visema>-piscada.png`)."""
+# Pele em camadas (ADR 029): com `sprites.json` na pasta, valem as camadas que ele cita, no formato
+# `host-sprites.v1` do motion-kit; sem ele, as 12 imagens inteiras da ADR 017.
+MANIFEST_FILE = "sprites.json"
+KIT_CLI = Path("node_modules/@viniciusk/motion-kit/bin/motion-kit.mjs")  # dentro de `video/`
+
+
+class SpriteCheckError(RuntimeError):
+    """A pasta da pele não passou na conferência do motion-kit."""
+
+
+def sprites_manifest(episode_dir: Path) -> dict[str, Any] | None:
+    """O `sprites.json` da pele `dono`, ou `None` na pele de 12 imagens."""
+    file = episode_dir / SPRITES_DIR / MANIFEST_FILE
+    return json.loads(file.read_text()) if file.is_file() else None
+
+
+def check_sprites(episode_dir: Path, project: Path, *, node: str = "node") -> None:
+    """Confere a pasta pelo comando do kit instalado em `video/` (`motion-kit sprites check`): o formato é
+    do kit, e o Python não o reimplementa. Para com a mensagem do comando."""
     folder = episode_dir / SPRITES_DIR
+    result = subprocess.run(
+        [node, str(project / KIT_CLI), "sprites", "check", str(folder)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise SpriteCheckError(f"pele dono: {(result.stderr or result.stdout).strip()}")
+
+
+def sprite_files(episode_dir: Path) -> list[Path]:
+    """As imagens da pele `dono`. Com `sprites.json`, o manifesto e os arquivos que ele cita; sem ele, cada
+    visema de olho aberto e de olho fechado (`<visema>-piscada.png`)."""
+    folder = episode_dir / SPRITES_DIR
+    manifest = sprites_manifest(episode_dir)
+    if manifest is not None:
+        cited = sorted({str(sprite["file"]) for sprite in manifest.get("sprites", [])})
+        return [folder / MANIFEST_FILE, *(folder / name for name in cited)]
     return [folder / f"{viseme}{blink}.png" for viseme in VISEMES for blink in ("", "-piscada")]
 
 
 def sprites_hash(episode_dir: Path) -> str:
-    """Hash das imagens e do registro de origem; entra nas props da cena, e com isso no cache do render.
-    Falta de imagem ou de registro é erro: ativo sem origem registrada não entra no render (§2.3)."""
+    """Hash das imagens (e do manifesto) e do registro de origem; entra nas props da cena, e com isso no cache
+    do render. Falta de imagem ou de registro é erro: ativo sem origem registrada não entra no render
+    (§2.3)."""
     files = [*sprite_files(episode_dir), episode_dir / SPRITES_DIR / ORIGIN_FILE]
     missing = [f.name for f in files if not f.is_file()]
     if missing:
@@ -102,3 +141,57 @@ def host_corners(scenes: Sequence[EpisodeScene], *, portrait: bool = False) -> l
         corners.append(chosen)
         previous = chosen
     return corners
+
+
+# --- direção automática (ADR 029) --------------------------------------------------------------------
+
+# Planos em que o apresentador aponta para o conteúdo quando entram.
+POINT_SHOT_KINDS = frozenset({"number", "compare", "calculation", "receipt", "chart"})
+POINT_MS = 1500
+# Expressão pela entrega da fala (ADR 022); as outras entregas ficam na neutra.
+DELIVERY_EXPRESSIONS = {"hook": "raised", "turn": "furrow"}
+# O ciclo de gesticular do `<Host>` (repouso ↔ explicando, 21 quadros por gesto), escrito por extenso nas
+# cenas em que ele aponta: o kit não mistura gesto agendado com o ciclo.
+GESTURE_CYCLE = ("rest", "open")
+GESTURE_EVERY = 21
+
+
+def host_direction(scene: EpisodeScene, corner: HostCorner, fps: int) -> dict[str, Any]:
+    """A direção do apresentador na cena, sem campo no roteiro: olha para o lado do conteúdo (janela à
+    direita olha para a esquerda), aponta por ~1,5 s quando entra um número, uma comparação, uma conta, uma
+    nota ou um gráfico, gesticula no resto da fala, e a expressão segue a entrega (`hook` ergue a
+    sobrancelha, `turn` franze). O que a pele não desenha cai no repouso. Quadros relativos à cena."""
+    frames = max(1, round(scene.duration_ms * fps / 1000))
+    direction: dict[str, Any] = {
+        "look": "left" if corner.endswith("right") else "right",
+        "expression": DELIVERY_EXPRESSIONS.get(scene.delivery or "neutral", "neutral"),
+    }
+    windows: list[tuple[int, int]] = []
+    for shot in scene.shots:
+        if shot.spec.kind not in POINT_SHOT_KINDS:
+            continue
+        start = round(shot.start_ms * fps / 1000)
+        end = min(frames, start + round(POINT_MS * fps / 1000))
+        if windows and start <= windows[-1][1]:  # apontar de novo emenda com o anterior
+            windows[-1] = (windows[-1][0], max(windows[-1][1], end))
+        else:
+            windows.append((start, end))
+    if not windows:
+        direction["gesticulate"] = True
+        return direction
+    cues: list[dict[str, Any]] = []
+    cursor = 0
+    for start, end in windows:
+        # o ciclo para meia volta antes de apontar: um gesto de poucos quadros antes do apontar só pisca
+        cues += [
+            {"at": at, "gesture": GESTURE_CYCLE[i % len(GESTURE_CYCLE)]}
+            for i, at in enumerate(range(cursor, start - GESTURE_EVERY // 2, GESTURE_EVERY))
+        ]
+        cues.append({"at": start, "gesture": "point"})
+        cursor = end
+    cues += [
+        {"at": at, "gesture": GESTURE_CYCLE[i % len(GESTURE_CYCLE)]}
+        for i, at in enumerate(range(cursor, frames, GESTURE_EVERY))
+    ]
+    direction["gestures"] = cues
+    return direction

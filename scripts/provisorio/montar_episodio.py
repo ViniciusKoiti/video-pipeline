@@ -242,6 +242,7 @@ def main() -> None:
             EpisodeScene(
                 id=scene.id, start_ms=cursor, duration_ms=ms, narration=scene.narration,
                 audio=f"voice/{wav.name}", shots=shots, host_corner=scene.host_corner,
+                delivery=scene.delivery,
             )
         )
         summary = ", ".join(f"{s.spec.kind} {s.duration_ms / 1000:.1f}" for s in shots)
