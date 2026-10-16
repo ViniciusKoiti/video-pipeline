@@ -352,7 +352,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   global, um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.
 - Template do `explainer` (`video/`): consultar o kit pelo MCP `motion-kit` (skill `componentes-do-kit`) antes de
-  escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com o SHA do pin.
+  escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com a versão
+  instalada, o tarball de `video/vendor/` (ADR 027).
 - Animação de texto nos Reels (entrada, legenda palavra a palavra, lista que acumula): ler
   `docs/guia-animacao-de-texto.md` antes de propor ou implementar. É rascunho (2026-10-07): onde diz *decisão aberta*,
   perguntar ao dono; em conflito valem as ADRs.

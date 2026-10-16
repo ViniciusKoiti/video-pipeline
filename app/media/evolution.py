@@ -33,7 +33,10 @@ MARK, MARK_PX = "0xF2B134", 6  # borda do quadro que mudou (a cor de destaque do
 # Um quadro por plano: abaixo disto, o plano mudou. O mesmo template dá quadros idênticos (PSNR infinito).
 CHANGE_PSNR_DB = 50.0
 VERSION = re.compile(r"^v(\d+)$")
+# O kit fixado: um commit do GitLab (`...archive.tar.gz?sha=<sha>`, até a 0.3.0) ou o tarball versionado em
+# `video/vendor/` (`file:vendor/viniciusk-motion-kit-<versão>.tgz`, ADR 027).
 MOTION_KIT_SHA = re.compile(r"motion-kit[^\"]*\"\s*:\s*\"[^\"]*sha=([0-9a-f]{7,40})")
+MOTION_KIT_TARBALL = re.compile(r"motion-kit\"\s*:\s*\"file:[^\"]*motion-kit-(\d+\.\d+\.\d+[^\"]*)\.tgz\"")
 
 REGISTRY_HEADER = """# Evolução do template (vídeo-régua)
 
@@ -96,11 +99,13 @@ def samples(episode: EpisodeManifest) -> list[Sample]:
     return found
 
 
-def motion_kit_sha(package_json: str) -> str:
-    match = MOTION_KIT_SHA.search(package_json)
-    if match is None:
-        raise EvolutionError("package.json sem o sha do @viniciusk/motion-kit")
-    return match.group(1)[:7]
+def motion_kit_pin(package_json: str) -> str:
+    """O kit fixado no `package.json`: o sha curto do commit ou a versão do tarball versionado."""
+    if match := MOTION_KIT_TARBALL.search(package_json):
+        return match.group(1)
+    if match := MOTION_KIT_SHA.search(package_json):
+        return match.group(1)[:7]
+    raise EvolutionError("package.json sem o sha nem o tarball do @viniciusk/motion-kit")
 
 
 def versions(folder: Path) -> list[str]:
