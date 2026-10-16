@@ -34,6 +34,9 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
      - `compare`: os dois valores e rótulos estão nas fichas; razão, variação ou soma só se uma ficha trouxer;
        ou se for conta dita inteira na narração com insumos e regra em fichas (ADR 020): refaça a conta e confira
        o arredondamento e a unidade;
+     - `calculation` e `receipt` (ADR 028): cada termo e cada linha estão numa ficha; o `vp check` já refaz a
+       conta e a soma, então confira o que ele não vê: a regra da conta numa ficha, a unidade de cada termo e
+       que a narração diz a conta inteira (na nota, o total);
      - `network`: cada aresta (quem, verbo, direção, valor) está no trecho das `claims` dela; tracejada só
        onde a fonte descreve relação indireta;
      - `quote` com `style: "document"`: título, emissor e data do cabeçalho correspondem à fonte;

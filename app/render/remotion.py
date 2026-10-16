@@ -209,6 +209,12 @@ class RemotionEngine:
                 }
                 if episode.host.skin == "dono":  # trocar o desenho refaz as cenas (cache por props)
                     props[-1]["host"]["sprites"] = sprites_hash(episode_dir)
+            if episode.series is not None:  # selo do cartão final (ADR 028)
+                for shot in props[-1]["shots"]:
+                    if shot["spec"]["kind"] == "end_card":
+                        shot["series"] = episode.series.model_dump(mode="json")
+        # O vídeo começa sem fade (ADR 028, decisão 1): o primeiro quadro é a capa e o gancho, não o preto.
+        props[0]["fadeIn"] = False
         return props
 
     # --- render -------------------------------------------------------------------------------

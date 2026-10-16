@@ -254,6 +254,7 @@ def main() -> None:
     episode = EpisodeManifest(
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
         language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes, host=scenes.host,
+        series=scenes.series,
         video=VideoSpec.for_orientation(scenes.orientation), captions=CAPTIONS,
     )
     (episode_dir / "episode.json").write_text(episode.model_dump_json(indent=2))

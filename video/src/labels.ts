@@ -10,6 +10,9 @@ export type Labels = {
   quote: string; // plano `quote`
   ratioWord: string; // `ValueCompare` em escala: "8 vezes" / "8 times" (a tela não calcula razão; o kit pede a palavra)
   clampNote: string; // `ValueCompare` em escala: aviso de quadrado ampliado
+  total: string; // total da nota (`receipt`) sem rótulo próprio
+  part: string; // selo da série no cartão final: "Parte 2 de 3"
+  of: string;
 };
 
 export const LABELS: Record<Language, Labels> = {
@@ -20,6 +23,9 @@ export const LABELS: Record<Language, Labels> = {
     quote: "Citação",
     ratioWord: "vezes",
     clampNote: "o quadrado menor foi ampliado para continuar visível",
+    total: "Total",
+    part: "Parte",
+    of: "de",
   },
   en: {
     source: "Source",
@@ -28,5 +34,8 @@ export const LABELS: Record<Language, Labels> = {
     quote: "Quote",
     ratioWord: "times",
     clampNote: "the smaller square was enlarged to stay visible",
+    total: "Total",
+    part: "Part",
+    of: "of",
   },
 };

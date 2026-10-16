@@ -420,7 +420,10 @@ def test_shot_examples_in_the_skill_follow_the_contract() -> None:
 
     blocks = _json_blocks(SKILL / "planos.md")
     kinds = [SHOT.validate_python(json.loads(block)).kind for block in blocks]
-    assert set(kinds) == {"compare", "network", "chart", "quote", "map", "timeline", "keyword"}
+    assert set(kinds) == {
+        "compare", "network", "chart", "quote", "map", "timeline", "keyword",
+        "hook", "calculation", "receipt", "end_card",
+    }
     (example,) = _json_blocks(SKILL / "SKILL.md")
     from app.pipeline.schemas import ScenesManifest
 

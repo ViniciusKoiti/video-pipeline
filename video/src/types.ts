@@ -63,9 +63,29 @@ export type NetworkSpec = Base & {
 };
 export type KeywordSpec = Base & {kind: "keyword"; text: string; highlight?: string};
 
+// Planos dos Reels (ADR 028). As partes com `anchor` entram no quadro de `stepFrames`, na ordem em que aparecem.
+export type Operator = "+" | "−" | "×" | "÷";
+export type CalculationSpec = Base & {
+  kind: "calculation";
+  terms: {text: string; label?: string; op?: Operator | null; anchor?: string | null}[];
+  result: {text: string; label?: string; anchor: string};
+};
+export type ReceiptSpec = Base & {
+  kind: "receipt";
+  title?: string;
+  items: {label: string; value: string; detail?: string; anchor?: string | null}[];
+  total?: {label?: string; value: string; anchor: string} | null;
+};
+export type HookSpec = Base & {kind: "hook"; text: string; highlight?: string};
+export type EndCardSpec = Base & {kind: "end_card"; variant: "save" | "follow" | "next"; text: string; sub?: string};
+
 export type ShotSpec =
   | PhotoSpec | BrollSpec | NumberSpec | ChartSpec | QuoteSpec | MapSpec | StampSpec | LowerThirdSpec
-  | TimelineSpec | FamilyTreeSpec | CompareSpec | NetworkSpec | KeywordSpec;
+  | TimelineSpec | FamilyTreeSpec | CompareSpec | NetworkSpec | KeywordSpec
+  | CalculationSpec | ReceiptSpec | HookSpec | EndCardSpec;
+
+// Série do vídeo, no selo do cartão final (ADR 028).
+export type Series = {name: string; part: number; total: number};
 
 export type ShotProps = {
   from: number;
@@ -77,7 +97,8 @@ export type ShotProps = {
   overlay?: boolean; // tarja ou número sobre a foto ou o B-roll anterior (calculado em Scene.tsx, não vem do contrato)
   source?: string; // "Fonte: …" do rodapé, derivado das claims (ADR 011)
   sourceFlag?: string; // ressalva ao lado da fonte ("fonte interessada")
-  stepFrames?: number[]; // só network: quadro de entrada de cada passo, relativo ao plano
+  stepFrames?: number[]; // network, calculation e receipt: quadro de entrada de cada parte, relativo ao plano
+  series?: Series; // só end_card, quando o episódio tem série
 };
 export type Cue = {from: number; to: number; text: string};
 // Palavra com tempo (quadros relativos à cena), da legenda palavra a palavra (ADR 023).
@@ -104,6 +125,7 @@ export type SceneProps = {
   fps: number;
   frames: number;
   fadeFrames: number;
+  fadeIn?: boolean; // false na primeira cena: o vídeo começa sem fade (ADR 028)
   shots: ShotProps[];
   cues: Cue[];
   words?: Word[]; // só no vertical, quando a cena tem palavras reconhecidas
