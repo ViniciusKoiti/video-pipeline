@@ -69,7 +69,8 @@ erro.
 
 - **Kit 0.6.0** em `video/vendor/`, pelo processo da ADR 027, do commit `4556fa7` do motion-kit (branch
   `feat/sprite-cli`, MR !32). O MR foi mesclado no `main` em `d5ba5c4`, com `packages/motion-kit` idêntico ao
-  do `4556fa7`: o arquivo vale como está.
+  do `4556fa7`: o arquivo vale como está. Depois o kit subiu para a 0.7.0 (`9b9561a`, MR !33), que só muda o
+  catálogo de estilos do vídeo por JSON; o template não usa o catálogo, e nenhum quadro muda.
 - **Conferência:** `app/media/host.py` roda `node video/node_modules/@viniciusk/motion-kit/bin/motion-kit.mjs
   sprites check host/dono` antes do render (`RemotionEngine.render`), só quando há `sprites.json`; o erro para o
   render com a mensagem do comando. Sem `npx`, para não depender de rede.
