@@ -68,7 +68,8 @@ erro.
 ## Implementação (2026-10-16)
 
 - **Kit 0.6.0** em `video/vendor/`, pelo processo da ADR 027, do commit `4556fa7` do motion-kit (branch
-  `feat/sprite-cli`, MR !32, ainda não mesclado). Se a árvore mesclada mudar, o arquivo é gerado de novo.
+  `feat/sprite-cli`, MR !32). O MR foi mesclado no `main` em `d5ba5c4`, com `packages/motion-kit` idêntico ao
+  do `4556fa7`: o arquivo vale como está.
 - **Conferência:** `app/media/host.py` roda `node video/node_modules/@viniciusk/motion-kit/bin/motion-kit.mjs
   sprites check host/dono` antes do render (`RemotionEngine.render`), só quando há `sprites.json`; o erro para o
   render com a mensagem do comando. Sem `npx`, para não depender de rede.
