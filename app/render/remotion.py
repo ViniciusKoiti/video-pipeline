@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from app.media.envelope import mouth_levels
-from app.media.host import host_corners, sprites_hash
+from app.media.host import check_sprites, host_corners, host_direction, sprites_hash, sprites_manifest
 from app.media.narration import strip_pauses
 from app.media.probe import dimensions, duration_ms
 from app.media.word_captions import WORDS, scene_word_frames
@@ -206,9 +206,19 @@ class RemotionEngine:
                     "corner": corners[i],
                     "fromCorner": corners[i - 1] if i > 0 else None,
                     "levels": mouth_levels(episode_dir / scene.audio, fps, frames),
+                    "direction": host_direction(scene, corners[i], fps),  # ADR 029
                 }
                 if episode.host.skin == "dono":  # trocar o desenho refaz as cenas (cache por props)
                     props[-1]["host"]["sprites"] = sprites_hash(episode_dir)
+                    manifest = sprites_manifest(episode_dir)
+                    if manifest is not None:  # pele em camadas (ADR 029); sem ele, as 12 imagens
+                        props[-1]["host"]["manifest"] = manifest
+            if episode.series is not None:  # selo do cartão final (ADR 028)
+                for shot in props[-1]["shots"]:
+                    if shot["spec"]["kind"] == "end_card":
+                        shot["series"] = episode.series.model_dump(mode="json")
+        # O vídeo começa sem fade (ADR 028, decisão 1): o primeiro quadro é a capa e o gancho, não o preto.
+        props[0]["fadeIn"] = False
         return props
 
     # --- render -------------------------------------------------------------------------------
@@ -225,6 +235,8 @@ class RemotionEngine:
         template = template_hash(self._project)
         self.last_run = RunStats()
         segments, jobs = [], []
+        if episode.host is not None and episode.host.skin == "dono" and sprites_manifest(episode_dir):
+            check_sprites(episode_dir, self._project, node=node)  # a conferência é do kit (ADR 029)
         all_props = self.scene_props(episode, episode_dir, preview=preview)
         for scene, props in zip(episode.scenes, all_props, strict=True):
             media_hashes = sorted(

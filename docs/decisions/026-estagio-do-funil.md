@@ -65,3 +65,11 @@ episódios do pipeline (composição `Clipe`, fora do contrato do `episode.json`
 - O `episode.json` não muda: o estágio é do roteiro, não do render.
 - `metrics.json` ainda não existe no código (D6 do spec da fila, com plano próprio); quando entrar, cada leitura
   se compara com as outras do mesmo estágio, nunca entre estágios.
+
+## Emenda (2026-10-16, ADR 028)
+
+- O `episode.json` ganha `series` (nome, parte e total), só para o selo do cartão final. O estágio do funil
+  continua só no roteiro.
+- O plano `end_card` mostra a chamada: `follow` no topo, `save` no meio, `next` quando a série continua. O `vp
+  check` avisa quando a variante não é a do estágio e quando a `cta` não é dita durante o cartão. No fundo ainda
+  não há cartão final.

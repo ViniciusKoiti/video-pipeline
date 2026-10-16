@@ -512,6 +512,126 @@ class KeywordShot(_Shot):
         return self
 
 
+# --- Planos de Reels: conta, gancho, nota e cartão final (ADR 028) ---------------------------------
+
+Operator = Literal["+", "−", "×", "÷"]
+
+
+class _Step(Model):
+    """Parte de um plano que entra quando a narração a diz: na `anchor`, em ordem, dentro do trecho do plano.
+    Só a primeira pode ficar sem `anchor`: entra com o plano."""
+
+    anchor: NonEmpty | None = None
+
+
+def _later_steps_anchored(steps: list[_Step], what: str) -> None:
+    missing = [i + 1 for i, step in enumerate(steps) if i > 0 and step.anchor is None]
+    if missing:
+        raise ValueError(f"{what} {', '.join(map(str, missing))} sem anchor: entra quando a narração o diz")
+
+
+class CalculationTerm(_Step):
+    text: NonEmpty  # pronto, como a ficha traz: "R$ 18,44", "395 g"
+    label: str = ""  # o que o termo é: "a embalagem"
+    op: Operator | None = None  # antes do termo: obrigatório a partir do segundo, e só neles
+
+
+class CalculationResult(Model):
+    text: NonEmpty  # escrito pelo roteirista, arredondado como se fala; o `vp check` refaz a conta
+    label: str = ""
+    anchor: NonEmpty  # o resultado entra quando é dito
+
+
+class CalculationShot(_FactualShot):
+    """Conta animada (`Equation` do kit). A tela não calcula: termos e resultado vêm escritos, a narração diz
+    a conta inteira e o `vp check` a refaz (ADR 020 e 028). Só em vídeo que explica."""
+
+    kind: Literal["calculation"] = "calculation"
+    terms: list[CalculationTerm] = Field(min_length=2)
+    result: CalculationResult
+
+    @model_validator(mode="after")
+    def _operators_and_anchors(self) -> Self:
+        if self.terms[0].op is not None:
+            raise ValueError("o primeiro termo da conta não tem operador")
+        missing = [i + 1 for i, term in enumerate(self.terms) if i > 0 and term.op is None]
+        if missing:
+            raise ValueError(f"termo {', '.join(map(str, missing))} da conta sem operador (op)")
+        _later_steps_anchored(list(self.terms), "termo")
+        return self
+
+
+class ReceiptItem(_Step):
+    label: NonEmpty
+    value: NonEmpty  # pronto, como a ficha traz, na mesma moeda das outras linhas
+    detail: str = ""  # linha pequena embaixo: "2 latas de 395 g"
+
+
+class ReceiptTotal(Model):
+    label: str = ""  # vazio: "Total" no idioma do episódio
+    value: NonEmpty  # a soma das linhas, escrita pelo roteirista; o `vp check` refaz (ADR 028, decisão 2)
+    anchor: NonEmpty  # o total entra quando é dito
+
+
+class ReceiptShot(_FactualShot):
+    """Nota ou orçamento (`Receipt` do kit): uma linha por item, no ritmo da narração, e o total opcional.
+    Serve ao dinheiro, um valor por linha na mesma moeda (ADR 028, decisão 3)."""
+
+    kind: Literal["receipt"] = "receipt"
+    title: str = ""
+    items: list[ReceiptItem] = Field(min_length=2)
+    total: ReceiptTotal | None = None
+
+    @model_validator(mode="after")
+    def _anchors(self) -> Self:
+        _later_steps_anchored(list(self.items), "linha")
+        return self
+
+
+HOOK_MAX_WORDS = 14  # cabe em 3 linhas do HookCard no vertical
+
+
+class HookShot(_Shot):
+    """Gancho (`HookCard` do kit), legível já no primeiro quadro: só no primeiro plano do vídeo (ADR 028). O
+    texto é cópia literal da narração, como o `keyword`; número, data ou nome nele pede claims (§2.2)."""
+
+    kind: Literal["hook"] = "hook"
+    text: NonEmpty
+    highlight: str = ""  # trecho do `text` em destaque
+
+    @model_validator(mode="after")
+    def _short_and_sourced(self) -> Self:
+        if len(self.text.split()) > HOOK_MAX_WORDS:
+            raise ValueError(f"gancho com mais de {HOOK_MAX_WORDS} palavras: {self.text!r}")
+        if self.highlight and _fold(self.highlight) not in _fold(self.text):
+            raise ValueError(f"destaque {self.highlight!r} fora do gancho {self.text!r}")
+        if any(c.isdigit() for c in self.text) and not self.claims:
+            raise ValueError(f"gancho com número precisa de claims (§2.2): {self.text!r}")
+        return self
+
+
+class EndCardShot(_Shot):
+    """Cartão final (`EndCta` do kit, com o selo da série): só no último plano do vídeo. A `variant` segue o
+    estágio do funil (ADR 026): `follow` no topo, `save` no meio, `next` quando a série continua (ADR 028)."""
+
+    kind: Literal["end_card"] = "end_card"
+    variant: Literal["save", "follow", "next"]
+    text: NonEmpty  # a chamada na tela, curta: "Salve para fazer a sua conta"
+    sub: str = ""  # linha menor embaixo: "Parte 2: o docinho"
+
+
+def step_anchors(shot: Shot) -> list[str | None]:
+    """Âncora de cada parte que entra no ritmo da narração: passos da rede, termos e resultado da conta,
+    linhas e total da nota. Sem âncora (só a primeira), a parte entra com o plano."""
+    if isinstance(shot, NetworkShot):
+        return [step.anchor for step in shot.steps]
+    if isinstance(shot, CalculationShot):
+        return [term.anchor for term in shot.terms] + [shot.result.anchor]
+    if isinstance(shot, ReceiptShot):
+        return [item.anchor for item in shot.items] + ([shot.total.anchor] if shot.total else [])
+    return []
+
+
 Shot = Annotated[
     PhotoShot
     | BrollShot
@@ -525,14 +645,20 @@ Shot = Annotated[
     | FamilyTreeShot
     | CompareShot
     | NetworkShot
-    | KeywordShot,
+    | KeywordShot
+    | CalculationShot
+    | ReceiptShot
+    | HookShot
+    | EndCardShot,
     Field(discriminator="kind"),
 ]
 MEDIA_SHOT_KINDS = frozenset({"photo", "broll"})  # visual vem de um ativo
+# Planos dos Reels (ADR 028): só no vertical até o vídeo-régua em 16:9.
+REELS_SHOT_KINDS = frozenset({"calculation", "receipt", "hook", "end_card"})
 GRAPHIC_SHOT_KINDS = frozenset(
     {"number", "chart", "quote", "map", "stamp", "lower_third", "timeline", "family_tree", "compare",
      "network", "keyword"}
-)
+) | REELS_SHOT_KINDS
 # Desenhados por cima da foto ou do B-roll anterior da mesma cena; os outros gráficos ficam em tela cheia
 # (ADR 011, decisão 5).
 OVERLAY_SHOT_KINDS = frozenset({"lower_third", "stamp", "number", "keyword"})
@@ -541,7 +667,22 @@ Orientation = Literal["landscape", "portrait"]  # 16:9 ou 9:16 (ADR 014)
 # Planos com layout em retrato; rede, mapa, linha do tempo, árvore e documento dependem de canvas largo.
 PORTRAIT_SHOT_KINDS = frozenset(
     {"photo", "broll", "number", "keyword", "stamp", "lower_third", "compare", "chart"}
-)
+) | REELS_SHOT_KINDS
+
+
+def reels_shot_problems(scenes: list[tuple[str, list[str]]], *, portrait: bool) -> list[str]:
+    """Onde ficam os planos dos Reels (ADR 028): só no vertical; o gancho só no primeiro plano do vídeo e o
+    cartão final só no último, um de cada. `scenes`: (id da cena, tipos dos planos), em ordem."""
+    problems: list[str] = []
+    flat = [(scene_id, kind) for scene_id, kinds in scenes for kind in kinds]
+    for scene_id, kind in flat:
+        if kind in REELS_SHOT_KINDS and not portrait:
+            problems.append(f"{scene_id}: plano {kind} só no vertical por enquanto (ADR 028)")
+    for kind, where, expected in (("hook", "primeiro", 0), ("end_card", "último", len(flat) - 1)):
+        misplaced = [i for i, (_, k) in enumerate(flat) if k == kind and i != expected]
+        if misplaced:
+            problems.append(f"{flat[misplaced[0]][0]}: {kind} só no {where} plano do vídeo (ADR 028)")
+    return problems
 
 
 def portrait_problems(scene_id: str, kinds: list[str]) -> list[str]:
@@ -646,22 +787,29 @@ class Scene(Model):
             cursor = position + 1
         ends = [*positions[1:], len(spoken)]
         for shot, start, end in zip(self.shots, positions, ends, strict=True):
-            if isinstance(shot, KeywordShot) and _fold(shot.text) not in _fold(spoken):
-                raise ValueError(f"{self.id}: frase na tela {shot.text!r} não está na narração")
-            if isinstance(shot, NetworkShot):
-                step_positions(spoken, shot, start, end, scene_id=self.id)
+            if isinstance(shot, KeywordShot | HookShot) and _fold(shot.text) not in _fold(spoken):
+                what = "gancho" if isinstance(shot, HookShot) else "frase na tela"
+                raise ValueError(f"{self.id}: {what} {shot.text!r} não está na narração")
+            step_positions(spoken, shot, start, end, scene_id=self.id)
         return self
 
 
-def step_positions(narration: str, shot: NetworkShot, start: int, end: int, *, scene_id: str) -> list[int]:
-    """Posição, na narração, da âncora de cada passo da rede: em ordem, dentro do trecho do plano
-    ([`start`, `end`), até a âncora do plano seguinte)."""
+_STEP_NAMES = {"network": "passo", "calculation": "termo", "receipt": "linha"}
+
+
+def step_positions(narration: str, shot: Shot, start: int, end: int, *, scene_id: str) -> list[int]:
+    """Posição, na narração, da âncora de cada parte do plano (`step_anchors`): em ordem, dentro do trecho do
+    plano ([`start`, `end`), até a âncora do plano seguinte). Parte sem âncora entra com o plano."""
     cursor, positions = start, []
-    for step in shot.steps:
-        position = narration.find(step.anchor, cursor)
+    for anchor in step_anchors(shot):
+        if anchor is None:
+            positions.append(start)
+            continue
+        position = narration.find(anchor, cursor)
         if position < 0 or position >= end:
+            where = "da rede" if shot.kind == "network" else f"do plano {shot.kind}"
             raise ValueError(
-                f"{scene_id}: passo {step.anchor!r} da rede não aparece na narração, em ordem, "
+                f"{scene_id}: {_STEP_NAMES[shot.kind]} {anchor!r} {where} não aparece na narração, em ordem, "
                 "dentro do trecho do plano"
             )
         positions.append(position)
@@ -759,11 +907,26 @@ class Funnel(Model):
         return self
 
 
+class Series(Model):
+    """A série do vídeo, para o selo do cartão final ("Parte 2 de 3"; ADR 028)."""
+
+    name: NonEmpty
+    part: int = Field(ge=1)
+    total: int = Field(ge=2)
+
+    @model_validator(mode="after")
+    def _part_inside(self) -> Self:
+        if self.part > self.total:
+            raise ValueError(f"série: parte {self.part} de {self.total}")
+        return self
+
+
 class ScenesManifest(Model):
     episode_id: EpisodeId
     language: Language
     objective: Objective | None = None  # o que o vídeo se propõe a fazer (ADR 019); sem ele, alerta
     funnel: Funnel | None = None  # estágio do funil e a chamada final (ADR 026); sem ele, alerta
+    series: Series | None = None  # série do vídeo, no selo do cartão final (ADR 028)
     scenes: list[Scene] = Field(min_length=1)
     host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
     orientation: Orientation = "landscape"  # `portrait`: 9:16, só com PORTRAIT_SHOT_KINDS (ADR 014)
@@ -771,6 +934,21 @@ class ScenesManifest(Model):
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        return self
+
+    @model_validator(mode="after")
+    def _reels_shots(self) -> Self:
+        kinds = [(scene.id, [shot.kind for shot in effective_shots(scene)]) for scene in self.scenes]
+        problems = reels_shot_problems(kinds, portrait=self.orientation == "portrait")
+        end_cards = [shot for scene in self.scenes for shot in scene.shots if isinstance(shot, EndCardShot)]
+        if end_cards and self.funnel is not None and self.funnel.stage == "fundo":
+            problems.append("cartão final ainda sem a chamada do fundo do funil (ADR 028, decisão 4)")
+        series = self.series
+        last_part = series is None or series.part == series.total
+        if any(card.variant == "next" for card in end_cards) and last_part:
+            problems.append("cartão final next pede a série com uma parte depois desta (series)")
+        if problems:
+            raise ValueError("; ".join(problems))
         return self
 
     @model_validator(mode="after")
@@ -1068,7 +1246,9 @@ class EpisodeShot(Model):
     media: RelPath | None = None  # arquivo do ativo, para foto e B-roll
     source: str | None = None  # "Fonte: …" do rodapé, derivado das claims e do sources.json (ADR 011)
     source_flag: str | None = None  # ressalva ao lado da fonte ("fonte interessada")
-    steps_ms: list[int] = []  # só `network`: entrada de cada passo, relativa ao início do plano
+    # Entrada de cada parte do plano (`step_anchors`), relativa ao início dele: passos da rede, termos e
+    # resultado da conta, linhas e total da nota. Vazio nos outros planos.
+    steps_ms: list[int] = []
 
     @property
     def end_ms(self) -> int:
@@ -1078,14 +1258,14 @@ class EpisodeShot(Model):
     def _media_when_needed(self) -> Self:
         if (self.spec.kind in MEDIA_SHOT_KINDS) != (self.media is not None):
             raise ValueError(f"plano {self.spec.kind}: media é obrigatório para foto/B-roll e só para eles")
-        expected = len(self.spec.steps) if isinstance(self.spec, NetworkShot) else 0
+        expected = len(step_anchors(self.spec))
         if len(self.steps_ms) != expected:
             raise ValueError(
                 f"plano {self.spec.kind}: {len(self.steps_ms)} tempos de passo, esperado {expected}"
             )
         outside = any(not 0 <= ms < self.duration_ms for ms in self.steps_ms)
         if self.steps_ms != sorted(self.steps_ms) or outside:
-            raise ValueError("tempos dos passos da rede fora de ordem ou fora do plano")
+            raise ValueError(f"tempos dos passos do plano {self.spec.kind} fora de ordem ou fora do plano")
         return self
 
 
@@ -1099,6 +1279,8 @@ class EpisodeScene(Model):
     image: RelPath | None = None  # v1
     shots: list[EpisodeShot] = []  # v2: planos cobrindo a cena inteira
     host_corner: HostCorner | None = None  # ajuste do canto do apresentador (ADR 013)
+    # Entrega da fala (ADR 022), copiada do roteiro: dá a expressão do apresentador (ADR 029).
+    delivery: Delivery | None = None
 
     @property
     def end_ms(self) -> int:
@@ -1134,6 +1316,7 @@ class EpisodeManifest(Model):
     scenes: list[EpisodeScene] = Field(min_length=1)
     captions: RelPath | None = None  # captions.srt editável
     host: HostSpec | None = None  # apresentador em janela flutuante (ADR 013); só `explainer`
+    series: Series | None = None  # selo do cartão final (ADR 028, emenda à ADR 026); só `explainer`
 
     @property
     def duration_ms(self) -> int:
@@ -1149,6 +1332,8 @@ class EpisodeManifest(Model):
             raise ValueError("schema_version 2 exige planos em todas as cenas")
         if self.host is not None and self.format != EpisodeFormat.EXPLAINER:
             raise ValueError("host (apresentador) só existe no formato explainer (ADR 013)")
+        if self.series is not None and self.format != EpisodeFormat.EXPLAINER:
+            raise ValueError("series (selo do cartão final) só existe no formato explainer (ADR 028)")
         if self.video.portrait:
             if self.format != EpisodeFormat.EXPLAINER:
                 raise ValueError("o perfil vertical (9:16) só existe no formato explainer (ADR 014)")
@@ -1159,6 +1344,9 @@ class EpisodeManifest(Model):
             ]
             if problems:
                 raise ValueError("; ".join(problems))
+        kinds = [(scene.id, [shot.spec.kind for shot in scene.shots]) for scene in self.scenes]
+        if problems := reels_shot_problems(kinds, portrait=self.video.portrait):
+            raise ValueError("; ".join(problems))
         for previous, current in zip(self.scenes, self.scenes[1:], strict=False):
             if current.start_ms < previous.end_ms:
                 raise ValueError(f"cena {current.id} começa antes do fim de {previous.id}")

@@ -36,10 +36,11 @@ A lista é curada à mão no kit; um objetivo fora dela vira erro. Trate a recom
 2. **Conhecer.** Chame `describe_component` com o nome. Anote importação, props, defaults e o exemplo mais
    próximo do uso. Pronto quando **toda prop que você vai passar** consta no tipo devolvido ou no arquivo do
    componente; prop que o kit não tem se resolve num PR dele, e não no `video/`.
-3. **Cruzar com o pin.** O servidor responde pelo checkout; o `video/` renderiza o SHA de
-   `video/package.json` (`sha=` da URL do `@viniciusk/motion-kit`). Compare com
-   `git -C ~/projetos/motion-kit rev-parse HEAD`. Pronto quando os SHAs são iguais, ou quando a diferença está
-   dita no PR e você conferiu no `git diff <pin> HEAD` que a prop usada existe nas duas versões.
+3. **Cruzar com a versão instalada.** O servidor responde pelo checkout; o `video/` renderiza o tarball de
+   `video/vendor/` (ADR 027), cuja versão está em `video/package.json`. Compare com a versão de
+   `~/projetos/motion-kit/packages/motion-kit/package.json`. Pronto quando as versões são iguais, ou quando a
+   diferença está dita no PR e você conferiu nos tipos de `video/node_modules/@viniciusk/motion-kit/dist/` que
+   a prop usada existe na versão instalada.
 4. **Escrever.** Altere o template; render e comparação seguem a regra do vídeo-régua (CLAUDE.md §1): um PR de
    visual gera uma versão nova e muda só os planos que pretendia.
 

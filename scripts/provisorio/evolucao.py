@@ -59,7 +59,7 @@ def template_info(ref: str | None) -> tuple[str, str, str]:
 
 
 def project_info(project: Path) -> tuple[str, str]:
-    return template_hash(project), evolution.motion_kit_sha((project / "package.json").read_text())
+    return template_hash(project), evolution.motion_kit_pin((project / "package.json").read_text())
 
 
 def save(episode_dir: Path, note: str, ref: str | None, render_s: float | None, probe: float | None) -> None:

@@ -61,11 +61,13 @@ def test_one_sample_per_shot_at_seventy_percent() -> None:
     ]
 
 
-def test_motion_kit_sha_comes_from_package_json() -> None:
+def test_motion_kit_pin_comes_from_package_json() -> None:
     package = '{"dependencies": {"@viniciusk/motion-kit": "https://x/archive.tar.gz?sha=2af5a7eaacc5349b2b70"}}'
-    assert evolution.motion_kit_sha(package) == "2af5a7e"
+    assert evolution.motion_kit_pin(package) == "2af5a7e"
+    package = '{"dependencies": {"@viniciusk/motion-kit": "file:vendor/viniciusk-motion-kit-0.4.0.tgz"}}'
+    assert evolution.motion_kit_pin(package) == "0.4.0"
     with pytest.raises(evolution.EvolutionError):
-        evolution.motion_kit_sha('{"dependencies": {}}')
+        evolution.motion_kit_pin('{"dependencies": {}}')
 
 
 def test_versions_are_numbered_and_sorted_numerically(tmp_path: Path) -> None:

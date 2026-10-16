@@ -28,15 +28,19 @@ from app.pipeline.radar import (
 )
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
+    NUMBER_SEPARATORS,
     OVERLAY_SHOT_KINDS,
+    CalculationShot,
     ChartShot,
     CompareShot,
+    EndCardShot,
     FactKind,
     FactsManifest,
     Language,
     MapShot,
     NumberShot,
     QuoteShot,
+    ReceiptShot,
     Scene,
     ScenesManifest,
     Shot,
@@ -44,6 +48,8 @@ from app.pipeline.schemas import (
     SourcesManifest,
     effective_shots,
     number_format_problem,
+    screen_number,
+    screen_parts,
     unknown_source_refs,
 )
 from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
@@ -58,7 +64,7 @@ MAX_GRAPHIC_RUN = 4  # planos gráficos seguidos sem foto nem B-roll na tela
 MAX_STAMP_SHARE = 0.10
 MIN_SHOTS_FOR_SHARE = 10  # porcentagem de poucos planos não diz nada
 READING_MS = 4000  # tempo mínimo de leitura de gráfico, comparação, rede, cronologia e documento
-READING_KINDS = frozenset({"chart", "compare", "network", "timeline"})
+READING_KINDS = frozenset({"chart", "compare", "network", "timeline", "calculation", "receipt"})
 LONG_KINDS = frozenset({"network", "timeline"})  # a câmera percorre o plano: sem teto de duração
 # O BarChart do motion-kit fixado formata os valores em pt-BR (sem prop `locale`): em inglês só serve onde as
 # duas convenções coincidem, que é inteiro abaixo de mil. Retirar quando o kit ganhar a prop e o pin subir.
@@ -170,6 +176,8 @@ def _check_scenes(
     if sources is not None:
         report.errors += unknown_source_refs(scenes, sources)
     fact_excerpts = {e.excerpt_id for f in facts.facts for e in f.evidence} if facts else set()
+    # sem objetivo declarado (já é alerta), a conta não é recusada por ele
+    explains = scenes.objective is None or "explicar" in scenes.objective.kinds
     total_ms, shots = 0.0, 0
     for scene in scenes.scenes:
         claims = scene.claims + [c for shot in scene.shots for c in shot.claims]
@@ -196,6 +204,13 @@ def _check_scenes(
                 scene.id, shot, ms, media_before and shot.kind in OVERLAY_SHOT_KINDS
             )
             report.errors += number_errors(scene.id, shot, scenes.language)
+            report.errors += arithmetic_errors(scene.id, shot, scenes.language)
+            computed = isinstance(shot, CalculationShot) or (isinstance(shot, ReceiptShot) and shot.total)
+            if computed and not explains:
+                report.errors.append(
+                    f"{scene.id}: {shot.kind} ({shot.anchor!r}): conta na tela só em vídeo que explica "
+                    "(ADR 020)"
+                )
             media_before = media_before or shot.kind in MEDIA_SHOT_KINDS
             too_long = ms > MAX_SHOT_MS and shot.kind not in LONG_KINDS
             if ms < MIN_SHOT_MS or too_long:
@@ -236,6 +251,10 @@ def number_errors(scene_id: str, shot: Shot, language: Language) -> list[str]:
         values = [shot.value]
     elif isinstance(shot, CompareShot):
         values = [shot.left.value, shot.right.value]
+    elif isinstance(shot, CalculationShot):
+        values = [term.text for term in shot.terms] + [shot.result.text]
+    elif isinstance(shot, ReceiptShot):
+        values = [item.value for item in shot.items] + ([shot.total.value] if shot.total else [])
     errors = [
         f"{scene_id}: {shot.kind} ({shot.anchor!r}): {problem}"
         for value in values
@@ -252,6 +271,86 @@ def number_errors(scene_id: str, shot: Shot, language: Language) -> list[str]:
             "formata em pt-BR; use inteiros abaixo de mil ou outro tipo de gráfico"
         )
     return errors
+
+
+def _amount(text: str, language: Language) -> tuple[float, int, str, str] | None:
+    """(valor, casas decimais, prefixo, sufixo) de um número na tela; "20%" vale 0,2 numa conta."""
+    parts, number = screen_parts(text), screen_number(text, language)
+    if parts is None or number is None:
+        return None
+    prefix, value, suffix = number
+    _, separator, fraction = parts[1].partition(NUMBER_SEPARATORS[language][1])
+    decimals = len(fraction) if separator else 0
+    return (value / 100 if suffix.startswith("%") else value), decimals, prefix, suffix
+
+
+def _written(value: float, decimals: int, language: Language) -> str:
+    """Número com as casas e o separador decimal do idioma, para a mensagem."""
+    return f"{value:.{decimals}f}".replace(".", NUMBER_SEPARATORS[language][1])
+
+
+def _evaluate(values: list[float], operators: list[str]) -> float:
+    """A conta como se escreve: × e ÷ antes de + e −, da esquerda para a direita."""
+    terms, signs = [values[0]], []
+    for op, value in zip(operators, values[1:], strict=True):
+        if op == "×":
+            terms[-1] *= value
+        elif op == "÷":
+            terms[-1] /= value
+        else:
+            signs.append(op)
+            terms.append(value)
+    total = terms[0]
+    for op, value in zip(signs, terms[1:], strict=True):
+        total = total + value if op == "+" else total - value
+    return total
+
+
+def _shown(value: float, decimals: int, suffix: str) -> float:
+    """O valor como a tela o escreve: em porcentagem, ×100; arredondado nas casas que ela mostra."""
+    return round(value * 100 if suffix.startswith("%") else value, decimals)
+
+
+def arithmetic_errors(scene_id: str, shot: Shot, language: Language) -> list[str]:
+    """A tela não calcula, mas o `vp check` refaz a conta (ADR 020, item 4; ADR 028): o resultado da conta e
+    o total da nota têm de ser o que os números escritos dão, arredondados como a tela mostra."""
+    where = f"{scene_id}: {shot.kind} ({shot.anchor!r})"
+    if isinstance(shot, CalculationShot):
+        texts = [term.text for term in shot.terms] + [shot.result.text]
+        amounts = [_amount(text, language) for text in texts]
+        missing = [text for text, amount in zip(texts, amounts, strict=True) if amount is None]
+        if missing:
+            return [f"{where}: sem número para refazer a conta: {', '.join(map(repr, missing))}"]
+        values = [a[0] for a in amounts if a is not None]
+        try:
+            got = _evaluate(values[:-1], [term.op or "" for term in shot.terms[1:]])
+        except ZeroDivisionError:
+            return [f"{where}: divisão por zero"]
+        _, decimals, _, suffix = amounts[-1]  # type: ignore[misc]
+        expected = _shown(got, decimals, suffix)
+        if abs(expected - _shown(values[-1], decimals, suffix)) > 10**-decimals / 2:
+            expression = " ".join(
+                [shot.terms[0].text] + [f"{term.op} {term.text}" for term in shot.terms[1:]]
+            )
+            return [f"{where}: {expression} dá {_written(expected, decimals, language)}, e a tela mostra "
+                    f"{shot.result.text}"]
+        return []
+    if isinstance(shot, ReceiptShot):
+        rows = [item.value for item in shot.items] + ([shot.total.value] if shot.total else [])
+        amounts = [_amount(text, language) for text in rows]
+        if any(amount is None for amount in amounts):
+            return [f"{where}: linha da nota sem número"]
+        units = {(a[2], a[3]) for a in amounts if a is not None}
+        if len(units) > 1:
+            return [f"{where}: linhas em unidades diferentes: {', '.join(map(repr, rows))}"]
+        if shot.total is not None:
+            *items, (total, decimals, _, _) = [a for a in amounts if a is not None]
+            got = round(sum(item[0] for item in items), decimals)
+            if abs(got - round(total, decimals)) > 10**-decimals / 2:
+                return [f"{where}: as linhas somam {_written(got, decimals, language)}, e o total mostra "
+                        f"{shot.total.value}"]
+        return []
+    return []
 
 
 def variety_warnings(scenes: list[Scene]) -> list[str]:
@@ -339,6 +438,9 @@ FUNNEL_ASKS: dict[str, tuple[str, tuple[str, ...]]] = {
     "meio": ("salvar ou comentar", ("salv", "coment")),
     "fundo": ("pedir o que é oferecido", ("coment", "link", "bio", "direct", "ped", "baix", "chama")),
 }
+# A variante do cartão final por estágio (ADR 028); `next` vale em qualquer um, quando a série continua. O
+# fundo ainda não tem variante (decisão 4): o contrato recusa o cartão final nele.
+END_CARD_VARIANTS = {"topo": "follow", "meio": "save"}
 
 
 def _words(text: str) -> list[str]:
@@ -365,6 +467,16 @@ def funnel_warnings(scenes: ScenesManifest) -> list[str]:
     last = scenes.scenes[-1]
     if not _contains(_words(last.narration), cta):
         warnings.append(f"funil: a chamada \"{funnel.cta}\" não está na narração da última cena ({last.id})")
+    card = last.shots[-1] if last.shots and isinstance(last.shots[-1], EndCardShot) else None
+    if card is not None:
+        expected = END_CARD_VARIANTS.get(funnel.stage)
+        if card.variant != "next" and card.variant != expected:
+            warnings.append(f"funil {funnel.stage}: cartão final {card.variant}; o estágio pede {expected}")
+        spoken = strip_pauses(last.narration)
+        if not _contains(_words(spoken[spoken.find(card.anchor):]), cta):
+            warnings.append(
+                f"funil: a chamada \"{funnel.cta}\" não é dita durante o cartão final ({last.id})"
+            )
     return warnings
 
 

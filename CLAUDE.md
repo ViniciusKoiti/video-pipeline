@@ -168,6 +168,10 @@ revela:
   narração, e o tempo sai da posição da âncora sobre a duração real do WAV (`app/pipeline/shots.py`). A fonte do
   rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha,
   salvo a conta dita inteira na narração com insumos e regra em fichas (ADR 020, 2026-10-14).
+  Planos dos Reels (ADR 028, só no vertical): `hook` (primeiro plano do vídeo), `calculation` (a conta, cada
+  termo na sua âncora; o `vp check` refaz a aritmética), `receipt` (itens na mesma moeda; o total é conferido) e
+  `end_card` (último plano; `follow` no topo, `save` no meio, `next` com `series`; ainda não no fundo). O vídeo
+  começa sem fade, para o primeiro quadro ser a capa.
   Cena sem planos = forma v1 (um plano de foto). `visual_need` ∈ `historical_exact | contextual_stock |
   map_or_graphic | illustrative_reconstruction`.
 - **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
@@ -197,10 +201,16 @@ revela:
   Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
   muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Pele `dono` (ADR 017,
   parte A): `"host": {"skin": "dono"}`, com 12 imagens e um `origem.json` em `host/dono/` da pasta do episódio
-  (dado pessoal, fora do Git); sem o registro de origem o render para.
+  (dado pessoal, fora do Git); sem o registro de origem o render para. Com um `sprites.json` na pasta (ADR 029),
+  a pele é de camadas: o manifesto sai de `npx motion-kit sprites init host/dono` (dentro de `video/`, apontando
+  para a pasta do episódio) e é conferido pelo kit antes do render. Direção automática (ADR 029, `host.py`): o
+  apresentador olha para o lado do conteúdo, aponta quando entra número, comparação, conta, nota ou gráfico, e a
+  expressão segue a `delivery` da cena (copiada para o `episode.json`); o que a pele não desenha cai no repouso.
   Perfil vertical 9:16 (`orientation: portrait` em `scenes.json`, só `explainer`; ADR 014): 1080×1920, prévia
-  720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare` e `chart` (os outros planos
-  são erro de validação), legenda queimada no final e área segura das plataformas para legenda, fonte, tarja e janela.
+  720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare`, `chart` e os planos dos
+  Reels (`hook`, `calculation`, `receipt`, `end_card`; ADR 028) (os outros planos são erro de validação), legenda
+  queimada no final e área segura das plataformas para legenda, fonte, tarja e janela. `series` (nome, parte e
+  total) vai do `scenes.json` ao `episode.json` só para o selo do cartão final (ADR 028, emenda à ADR 026).
 
 ## 7. Provedores e política de escolha
 
@@ -352,7 +362,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   global, um adapter por provedor em `app/providers/<função>/<provedor>.py` implementando o `Protocol` da função,
   logging estruturado sem segredos.
 - Template do `explainer` (`video/`): consultar o kit pelo MCP `motion-kit` (skill `componentes-do-kit`) antes de
-  escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com o SHA do pin.
+  escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com a versão
+  instalada, o tarball de `video/vendor/` (ADR 027).
 - Animação de texto nos Reels (entrada, legenda palavra a palavra, lista que acumula): ler
   `docs/guia-animacao-de-texto.md` antes de propor ou implementar. É rascunho (2026-10-07): onde diz *decisão aberta*,
   perguntar ao dono; em conflito valem as ADRs.
