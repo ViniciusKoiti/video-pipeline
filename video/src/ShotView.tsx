@@ -2,8 +2,8 @@ import React from "react";
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
 import {useSpringIn} from "@viniciusk/motion-kit";
 import {
-  ArchivalShot, BrollShot, ChartShot, CompareShot, DocumentShot, KeywordShot, LowerThirdShot, MapShot, NetworkShot,
-  NumberShot, StampShot, StockShot, TimelineShot,
+  ArchivalShot, BrollShot, CalculationShot, ChartShot, CompareShot, DocumentShot, EndCardShot, HookShot, KeywordShot,
+  LowerThirdShot, MapShot, NetworkShot, NumberShot, ReceiptShot, StampShot, StockShot, TimelineShot,
 } from "./Editorial";
 import {LABELS} from "./labels";
 import {useLanguage} from "./language";
@@ -123,7 +123,9 @@ const FamilyTree: React.FC<{spec: FamilyTreeSpec}> = ({spec}) => {
 
 // --- Despacho por tipo (ADR 008 e ADR 011) -------------------------------------------------------
 
-export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit, aspect, overlay, stepFrames}) => {
+export const ShotView: React.FC<ShotProps> = ({
+  spec, media: path, frames, credit, aspect, overlay, stepFrames, series,
+}) => {
   switch (spec.kind) {
     case "photo":
       return spec.visual_need && spec.visual_need !== "historical_exact" ? (
@@ -159,5 +161,13 @@ export const ShotView: React.FC<ShotProps> = ({spec, media: path, frames, credit
       return <NetworkShot spec={spec} stepFrames={stepFrames} />;
     case "keyword":
       return <KeywordShot spec={spec} overlay={overlay} />;
+    case "calculation":
+      return <CalculationShot spec={spec} stepFrames={stepFrames} />;
+    case "receipt":
+      return <ReceiptShot spec={spec} stepFrames={stepFrames} />;
+    case "hook":
+      return <HookShot spec={spec} />;
+    case "end_card":
+      return <EndCardShot spec={spec} series={series} />;
   }
 };

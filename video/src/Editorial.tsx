@@ -3,7 +3,8 @@ import {AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig} fr
 import {Odometer} from "@viniciusk/motion-kit";
 import {BarChart, LineChart, ShareChart, ValueCompare, YearTimeline} from "@viniciusk/motion-kit/charts";
 import {
-  ArchivalPhoto, DateStamp, DocumentPage, KineticHeadline, LowerThird as KitLowerThird, fitCard,
+  ArchivalPhoto, DateStamp, DocumentPage, EndCta, Equation, HookCard, KineticHeadline, LowerThird as KitLowerThird,
+  Receipt, fitCard,
 } from "@viniciusk/motion-kit/editorial";
 import {FootageBackground, ImageBackground} from "@viniciusk/motion-kit/fx";
 import {GeoMap} from "@viniciusk/motion-kit/geo";
@@ -17,8 +18,8 @@ import {useLanguage} from "./language";
 import {SEPARATORS, screenNumber} from "./numbers";
 import {theme, useFrame} from "./theme";
 import type {
-  ChartSpec, CompareSpec, KeywordSpec, LowerThirdSpec, MapSpec, NetworkSpec, NumberSpec, PhotoSpec, QuoteSpec,
-  StampSpec, TimelineSpec,
+  CalculationSpec, ChartSpec, CompareSpec, EndCardSpec, HookSpec, KeywordSpec, LowerThirdSpec, MapSpec, NetworkSpec,
+  NumberSpec, PhotoSpec, QuoteSpec, ReceiptSpec, Series, StampSpec, TimelineSpec,
 } from "./types";
 
 // Planos da ADR 011 com as peças do motion-kit 0.2 (tema `editorial` injetado em Scene.tsx). Tempos em quadros
@@ -411,6 +412,74 @@ export const LowerThirdShot: React.FC<{spec: LowerThirdSpec; overlay?: boolean}>
   return (
     <AbsoluteFill>
       <KitLowerThird name={spec.name} role={spec.role} at={0} {...tall} />
+    </AbsoluteFill>
+  );
+};
+
+// --- Reels: conta, nota, gancho e cartão final (ADR 028) ----------------------------------------
+
+// Só no vertical (o contrato recusa em 16:9). As peças do kit medem as margens a partir da área segura `vertical`;
+// em cima fica a fonte do plano (`u(150)` abaixo da área segura, Scene.tsx) e embaixo a legenda (`u(260)`).
+const useReelBox = () => {
+  const {u, kitPx} = useFrame();
+  return {safeArea: "vertical" as const, insets: {top: kitPx(u(150)), right: 48, bottom: kitPx(u(260)), left: 48}};
+};
+
+// A tela não calcula (ADR 020): termos e resultado são os textos do roteiro; o valor só faz os dígitos rolarem até
+// o mesmo texto. Cada parte entra no quadro em que a narração a diz (`stepFrames`).
+export const CalculationShot: React.FC<{spec: CalculationSpec; stepFrames?: number[]}> = ({spec, stepFrames = []}) => {
+  const language = useLanguage();
+  const {group, decimal} = SEPARATORS[language];
+  const box = useReelBox();
+  const at = (i: number) => stepFrames[i] ?? 0;
+  const value = (text: string) => screenNumber(text, language)?.value;
+  return (
+    <AbsoluteFill>
+      <Equation
+        terms={spec.terms.map((t, i) => ({text: t.text, label: t.label || undefined, value: value(t.text), at: at(i),
+          op: t.op ?? undefined}))}
+        result={{text: spec.result.text, label: spec.result.label || undefined, value: value(spec.result.text),
+          at: at(spec.terms.length)}}
+        groupSeparator={group} decimalSeparator={decimal} {...box} />
+    </AbsoluteFill>
+  );
+};
+
+// Nota ou orçamento: a peça não soma; o total é o do roteiro, conferido pelo `vp check` (ADR 028, decisão 2).
+export const ReceiptShot: React.FC<{spec: ReceiptSpec; stepFrames?: number[]}> = ({spec, stepFrames = []}) => {
+  const labels = LABELS[useLanguage()];
+  const box = useReelBox();
+  const at = (i: number) => stepFrames[i] ?? 0;
+  return (
+    <AbsoluteFill>
+      <Receipt title={spec.title || undefined}
+        items={spec.items.map((item, i) => ({label: item.label, value: item.value, detail: item.detail || undefined,
+          at: at(i)}))}
+        total={spec.total ? {label: spec.total.label || labels.total, value: spec.total.value,
+          at: at(spec.items.length)} : undefined}
+        {...box} />
+    </AbsoluteFill>
+  );
+};
+
+// Gancho no primeiro plano do vídeo: legível já no quadro 0 (a primeira cena começa sem fade, Scene.tsx).
+export const HookShot: React.FC<{spec: HookSpec}> = ({spec}) => (
+  <AbsoluteFill>
+    <HookCard text={spec.text} highlight={spec.highlight || undefined} bg="transparent" {...useReelBox()} />
+  </AbsoluteFill>
+);
+
+// Cartão final com o selo da série. Sem fade próprio: a cena já termina com o dela.
+export const EndCardShot: React.FC<{spec: EndCardSpec; series?: Series}> = ({spec, series}) => {
+  const labels = LABELS[useLanguage()];
+  const badge = series
+    ? {text: `${series.name} · ${labels.part} ${series.part} ${labels.of} ${series.total}`, part: series.part,
+      total: series.total}
+    : undefined;
+  return (
+    <AbsoluteFill>
+      <EndCta variant={spec.variant} text={spec.text} sub={spec.sub || undefined} series={badge} bg="transparent"
+        fadeFrames={0} {...useReelBox()} />
     </AbsoluteFill>
   );
 };

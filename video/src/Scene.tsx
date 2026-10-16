@@ -43,9 +43,10 @@ const plan = (shots: ShotProps[], sceneFrames: number): Planned[] => {
   }));
 };
 
-// Rede, mapa, cronologia e documento têm câmera própria; os outros cartões ganham um avanço lento (#71).
+// Rede, mapa, cronologia e documento têm câmera própria; as peças dos Reels (ADR 028) medem a área segura e
+// não podem crescer para fora dela; os outros cartões ganham um avanço lento (#71).
 const ownCamera = (shot: ShotProps) =>
-  ["network", "map", "timeline"].includes(shot.spec.kind) ||
+  ["network", "map", "timeline", "calculation", "receipt", "hook", "end_card"].includes(shot.spec.kind) ||
   (shot.spec.kind === "quote" && (shot.spec.style === "document" || shot.spec.style === "headline"));
 
 const StageBg: React.FC = () => {
@@ -117,13 +118,10 @@ export const Scene: React.FC<SceneProps> = (props) => (
 const SceneBody: React.FC<SceneProps> = (props) => {
   const frame = useCurrentFrame();
   const fade = Math.min(props.fadeFrames, Math.floor(props.frames / 2));
+  // A primeira cena entra sem fade (ADR 028): o quadro 0 é a capa, com o gancho já legível.
+  const fadeIn = props.fadeIn === false ? 1 : interpolate(frame, [0, fade], [0, 1], clamp);
   const opacity =
-    fade > 0
-      ? Math.min(
-          interpolate(frame, [0, fade], [0, 1], clamp),
-          interpolate(frame, [props.frames - fade, props.frames], [1, 0], clamp),
-        )
-      : 1;
+    fade > 0 ? Math.min(fadeIn, interpolate(frame, [props.frames - fade, props.frames], [1, 0], clamp)) : 1;
   const planned = plan(props.shots, props.frames);
   return (
     <MotionThemeProvider theme={motionTheme}>
