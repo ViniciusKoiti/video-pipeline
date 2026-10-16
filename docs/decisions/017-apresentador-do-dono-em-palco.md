@@ -108,3 +108,10 @@ a janela de hoje. As métricas manuais de 7 e 28 dias decidem; com poucos pares,
   entrada para ativo de autoria do dono.
 - **Kit:** a fábrica `createImageSkin` foi escrita no motion-kit (branch `feat/sprite-skin`, ainda não publicada);
   quando entrar num pin, `donoSkin.ts` passa a usá-la.
+
+## Emenda (2026-10-16, ADR 029)
+
+A pasta `host/dono/` pode ter camadas e um `sprites.json` (formato `host-sprites.v1` do motion-kit 0.6.0), gerado
+por `motion-kit sprites init` e conferido por `motion-kit sprites check` antes do render. Com ele, o apresentador
+vira o rosto, gesticula e muda de expressão, se a arte tiver esses estados. Sem ele, continuam as 12 imagens
+desta ADR. O `origem.json` continua obrigatório, e a origem e a licença da arte continuam pendentes.

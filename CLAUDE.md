@@ -201,7 +201,11 @@ revela:
   Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
   muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Pele `dono` (ADR 017,
   parte A): `"host": {"skin": "dono"}`, com 12 imagens e um `origem.json` em `host/dono/` da pasta do episódio
-  (dado pessoal, fora do Git); sem o registro de origem o render para.
+  (dado pessoal, fora do Git); sem o registro de origem o render para. Com um `sprites.json` na pasta (ADR 029),
+  a pele é de camadas: o manifesto sai de `npx motion-kit sprites init host/dono` (dentro de `video/`, apontando
+  para a pasta do episódio) e é conferido pelo kit antes do render. Direção automática (ADR 029, `host.py`): o
+  apresentador olha para o lado do conteúdo, aponta quando entra número, comparação, conta, nota ou gráfico, e a
+  expressão segue a `delivery` da cena (copiada para o `episode.json`); o que a pele não desenha cai no repouso.
   Perfil vertical 9:16 (`orientation: portrait` em `scenes.json`, só `explainer`; ADR 014): 1080×1920, prévia
   720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare`, `chart` e os planos dos
   Reels (`hook`, `calculation`, `receipt`, `end_card`; ADR 028) (os outros planos são erro de validação), legenda

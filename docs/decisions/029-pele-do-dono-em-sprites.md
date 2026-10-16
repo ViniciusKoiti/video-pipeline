@@ -1,7 +1,7 @@
 # 029 — Pele do dono em sprites por manifesto, com direção automática
 
-- **Status:** proposta, aguardando o dono (2026-10-16). Nada implementado; onde diz **decisão aberta**, o agente
-  não decide.
+- **Status:** aceita pelo dono em 2026-10-16 e implementada (seção "Implementação"). As decisões abertas 3 e 4
+  seguem a proposta; 1, 2 e 5 continuam com o dono e não travam o código, só o vídeo final com a pele nova.
 - **Data:** 2026-10-16
 - **Etapa do roadmap:** frente do apresentador (continuação da ADR 017, parte A)
 - **Relaciona-se com:** ADR 007 (licenças), ADR 013 (apresentador em janela), ADR 014 (vertical), ADR 017 (pele
@@ -64,6 +64,35 @@ erro.
    - 4 expressões (neutra, `raised`, `furrow`, riso);
    - 5 gestos (repouso, apontar, mão aberta, contar, dar de ombros);
    - olhos fechados por ângulo.
+
+## Implementação (2026-10-16)
+
+- **Kit 0.6.0** em `video/vendor/`, pelo processo da ADR 027, do commit `4556fa7` do motion-kit (branch
+  `feat/sprite-cli`, MR !32, ainda não mesclado). Se a árvore mesclada mudar, o arquivo é gerado de novo.
+- **Conferência:** `app/media/host.py` roda `node video/node_modules/@viniciusk/motion-kit/bin/motion-kit.mjs
+  sprites check host/dono` antes do render (`RemotionEngine.render`), só quando há `sprites.json`; o erro para o
+  render com a mensagem do comando. Sem `npx`, para não depender de rede.
+- **Hash:** com `sprites.json`, cobre o manifesto, os arquivos que ele cita e o `origem.json`. Imagem da pasta
+  fora do manifesto não entra no render nem no hash.
+- **Props:** o manifesto vai em `host.manifest`, não em `host.sprites` como dizia o item 3: `host.sprites` já era
+  o hash das imagens, e continua sendo. A direção vai em `host.direction` (`look`, `expression` e `gesticulate`
+  ou `gestures`).
+- **Gestos:** o `<Host>` não mistura gesto agendado com o ciclo de gesticular. Numa cena em que o apresentador
+  aponta, o Python escreve o ciclo por extenso (repouso ↔ mão aberta a cada 21 quadros, os números do kit) com o
+  apontar por cima. O ciclo para meia volta antes de apontar, para não piscar um gesto de poucos quadros. Dois
+  planos de apontar a menos de 1,5 s um do outro emendam.
+- **Entrega no `episode.json` (emenda ao contrato):** a entrega da fala só existia no roteiro, e o motor lê só o
+  `episode.json`. `EpisodeScene` ganha `delivery` opcional (os mesmos valores da ADR 022), copiado por
+  `scripts/provisorio/montar_episodio.py`. `schema_version` não muda: um `episode.json` antigo vale como está,
+  com a expressão neutra.
+- **Template:** `donoSpriteSkin(manifesto)` em `video/src/donoSkin.ts` (`createSpriteSkin` com
+  `staticFile('host/dono/' + arquivo)`); `HostWindow.tsx` escolhe a pele pelo manifesto e passa a direção ao
+  `<Host>`. Props sem direção (cache antigo) se comportam como antes.
+- **Conferido:** com as 8 camadas reais numa cópia temporária, o `sprites init` do kit instalado gera o manifesto
+  (8 sprites, 3 camadas, um aviso esperado: a camada "olhos" só tem o olho fechado), o `check` passa e a cena em
+  retrato monta a pele. Na Notionists, com gancho e número, a sobrancelha sobe, a mão aponta e o olhar vai para o
+  conteúdo. A cópia foi apagada.
+- **Efeito no cache:** toda cena com apresentador ganha `direction` nas props e é renderizada de novo.
 
 ## O que não muda
 
