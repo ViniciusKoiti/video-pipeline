@@ -101,3 +101,57 @@ Exemplos só de formato, com dados neutros: nenhum valor aqui é fato. No roteir
 
 - Palavras copiadas da narração, com o mesmo sentido da frase inteira: quem disse, a negação e a ressalva
   ficam dentro do trecho.
+
+# Planos dos Reels (ADR 028): só no vertical
+
+## `hook`: o gancho no primeiro quadro
+
+```json
+{"kind": "hook", "anchor": "Você está cobrando", "text": "Você está cobrando o docinho errado.", "highlight": "errado"}
+```
+
+- Só no primeiro plano do vídeo, e um só. `text` copiado da narração da primeira cena, até 14 palavras.
+- Número, data ou nome no `text` leva `claims`, como qualquer coisa na tela.
+
+## `calculation`: a conta dita inteira
+
+```json
+{"kind": "calculation", "anchor": "A embalagem custa",
+ "terms": [{"text": "R$ 18,44", "label": "a embalagem", "anchor": "dezoito e quarenta e quatro"},
+           {"op": "÷", "text": "395 g", "label": "o peso", "anchor": "trezentos e noventa e cinco"},
+           {"op": "×", "text": "195 g", "label": "a receita", "anchor": "cento e noventa e cinco"}],
+ "result": {"text": "R$ 9,10", "label": "custo na receita", "anchor": "dá nove e dez"},
+ "claims": [{"text": "18,44 ÷ 395 × 195 = R$ 9,10", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E3"]}]}
+```
+
+- Só em vídeo que explica (ADR 020). Cada termo e o resultado entram quando a narração os diz: `anchor` literal,
+  em ordem, dentro do trecho do plano; só o primeiro termo pode ficar sem, e entra com o plano.
+- `op` em todo termo a partir do segundo: `+`, `−`, `×` ou `÷`. A tela não calcula: o `vp check` refaz a conta
+  (× e ÷ antes de + e −; "20%" vale 0,2) e recusa o resultado que não bate nas casas escritas.
+- Substitui o `number` com a conta no rótulo; o `number` fica para o valor que a ficha traz pronto.
+
+## `receipt`: nota ou orçamento
+
+```json
+{"kind": "receipt", "anchor": "No pote entram", "title": "Bolo de pote",
+ "items": [{"label": "Farinha", "value": "R$ 2,10", "detail": "200 g"},
+           {"label": "Manteiga", "value": "R$ 4,80", "anchor": "manteiga"}],
+ "total": {"value": "R$ 6,90", "anchor": "no total"},
+ "claims": [{"text": "2,10 + 4,80 = 6,90", "source_ids": ["source-01"], "excerpt_ids": ["source-01#E5"]}]}
+```
+
+- Uma linha por item, todas na mesma moeda; a primeira pode entrar com o plano, as outras na sua `anchor`.
+- O `total` é a soma das linhas: a claim escreve a soma inteira, a narração diz o total e o `vp check` refaz a
+  conta (ADR 028, decisão 2). Sem `total`, a nota é só a lista.
+
+## `end_card`: o cartão final
+
+```json
+{"kind": "end_card", "anchor": "Salva pra conferir", "variant": "save", "text": "Salve para fazer a sua conta",
+ "sub": "Parte 3: o preço final"}
+```
+
+- Só no último plano do vídeo. `variant`: `follow` no topo, `save` no meio (ADR 026); `next` quando a série
+  continua (`series` no roteiro, com uma parte depois desta). No fundo ainda não há cartão final.
+- A `cta` do `funnel` é dita no trecho do cartão. `series: {"name": ..., "part": 2, "total": 3}` no `scenes.json`
+  desenha o selo "Parte 2 de 3".

@@ -111,6 +111,13 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
    | conta uma sequência de eventos | `timeline`, com `when` (ano ou data ISO) em cada evento |
    | tem uma frase-chave | `keyword`: até 8 palavras copiadas da narração, uma por cena |
    | fala de parentesco | `family_tree` |
+   | abre o Reel (primeiro plano do vídeo vertical) | `hook`: a frase do gancho copiada da narração |
+   | diz uma conta inteira (só em `explicar`) | `calculation`: um termo por número dito e o resultado |
+   | lista custos ou itens com valor, e talvez o total | `receipt`: uma linha por item, na mesma moeda |
+   | fecha o vídeo com a chamada do funil | `end_card`: `follow` no topo, `save` no meio, `next` na série |
+
+   Os quatro últimos são dos Reels (ADR 028): só no vertical; `hook` só no primeiro plano do vídeo e `end_card` só
+   no último.
 
    - **Imagem por baixo:** a foto ou o B-roll de uma cena continua por baixo da tarja, do carimbo, do número
      e da frase que vêm depois dele. Planeje pelo menos um `photo` ou `broll` por cena, com `visual_need`

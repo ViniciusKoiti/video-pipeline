@@ -37,3 +37,10 @@ peça cujo objetivo é a conta, o resultado é o conteúdo, e proibir a conta ma
 - CLAUDE.md §6 e ADR 011 (decisão 7) ganham a ressalva com a data; as skills `roteiro-explicativo` e `checagem`
   ganham uma linha cada.
 - O primeiro reel da série (`confeitaria-ingrediente-pt`) usa a regra nas cenas S04 e S05.
+
+## Emenda (2026-10-16, ADR 028)
+
+- **O item 4 saiu do papel:** a conta ganhou plano próprio (`calculation`), e o `vp check` refaz a aritmética dele
+  e recusa o resultado que não bate nas casas escritas.
+- **Total da nota:** no plano `receipt`, a soma das linhas vai à tela sem a narração dizer cada parcela, desde que
+  a claim escreva a soma inteira, o `vp check` a refaça e a narração diga o total.

@@ -195,3 +195,9 @@ Achado ao ler o código para as verticais em inglês (`docs/pesquisa/nichos-glob
 - Em inglês, números maiores que mil em barras esperam o PR do kit; `number`, `compare`, `line` e `share` já servem.
 - Conferido nos pacotes do kit fixado (`527c708`) que o Reel usa (`editorial`, `charts`, `host`, `fx`, `motion`, `theme`): os únicos textos em português visíveis na tela são o "Fonte" do `SourceTag` e as duas frases do `ValueCompare`, todos com prop. As outras peças (rede, mapa, cronologia, documento) não foram auditadas.
 - A skill `roteiro-explicativo` traz a regra para o roteirista.
+
+## Emenda (2026-10-16, ADR 028): planos dos Reels e o começo sem fade
+
+- **Decisão 5 (camadas):** `hook`, `calculation`, `receipt` e `end_card` ficam em tela cheia, sobre o fundo do
+  tema, sem o avanço lento da câmera do template (as peças medem a área segura).
+- **Fade:** a primeira cena do vídeo entra sem fade; as outras bordas de cena continuam com o de 0,3 s.

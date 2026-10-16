@@ -1,7 +1,6 @@
 # 028 — Planos de conta, gancho, nota e cartão final
 
-- **Status:** proposta, aguardando o dono (2026-10-16). Nada do contrato está implementado; onde diz **decisão
-  aberta**, o agente não decide.
+- **Status:** aceito pelo dono em 2026-10-16, como proposto (decisões abaixo); implementado no mesmo dia.
 - **Data:** 2026-10-16
 - **Etapa do roadmap:** roteiro (#28), checagem (#31) e template do `explainer`
 - **Relaciona-se com:** ADR 008 (planos), ADR 011 (planos editoriais; decisões 5 e 7), ADR 014 (perfil
@@ -27,7 +26,7 @@ Os três primeiros reels da série da confeitaria contornaram o que o template n
 O motion-kit 0.4.0 (ADR 027) trouxe as peças: `Equation`, `HookCard`, `Receipt`, `EndCta` e `SeriesBadge`, com
 área segura do Reels e modo capa (`SettledEntrances`). Falta o contrato que as liga ao roteiro.
 
-## Proposta
+## Decisão
 
 Quatro planos novos no `scenes.json` e no `episode.json`, com o espelho em `video/src/types.ts`. Todos entram
 primeiro no vertical (`PORTRAIT_SHOT_KINDS`); no 16:9, só depois do vídeo-régua.
@@ -94,19 +93,18 @@ primeiro no vertical (`PORTRAIT_SHOT_KINDS`); no 16:9, só depois do vídeo-rég
   montagem copia para o `episode.json`, que desenha o selo "Parte 2 de 3". É emenda à ADR 026 ("o `episode.json`
   não muda"): o estágio continua só no roteiro.
 
-## Decisões abertas (do dono)
+## Decisões (do dono, 2026-10-16: "como você propôs")
 
-1. **Fade da primeira cena:** tirar sempre (proposta) ou só quando houver `hook`. Tirar sempre muda o
-   `template_hash` e o primeiro quadro de todo vídeo renderizado de novo.
-2. **Total da nota:** a soma dos itens pode ir à tela sem a narração dizer cada parcela? Proposta: pode, se a
-   claim escreve a soma inteira ("2,10 + 4,80 = 6,90"), o `vp check` refaz a conta e a narração diz o total. É
-   emenda à ADR 020, que hoje exige a conta inteira dita.
-3. **`receipt` e a spec `value-table`:** a proposta é a nota servir ao dinheiro (um valor por linha, mesma moeda)
-   e a tabela continuar como rascunho para unidades misturadas. Ou a nota substitui a tabela.
-4. **Chamada do fundo:** variante nova no kit (`comment`, com a palavra) antes do primeiro vídeo de fundo, ou o
-   cartão final fica fora do fundo por enquanto.
-5. **Ordem:** a proposta é implementar `hook`, `calculation` e `end_card` primeiro, para o
-   `confeitaria-erro-2-pt` nascer neles (gate 1 pendente), e o `receipt` depois, para o `prestador-hora-pt`.
+1. **Fade da primeira cena: sai sempre**, com ou sem `hook`. Muda o `template_hash` e o primeiro quadro de todo
+   vídeo renderizado de novo.
+2. **Total da nota:** a soma dos itens vai à tela sem a narração dizer cada parcela, quando a claim escreve a soma
+   inteira ("2,10 + 4,80 = 6,90"), o `vp check` refaz a conta e a narração diz o total. Emenda à ADR 020.
+3. **`receipt` serve ao dinheiro** (um valor por linha, mesma moeda); a spec `value-table` continua rascunho para
+   unidades misturadas.
+4. **Chamada do fundo:** a proposta não escolheu um lado. Ficou o reversível: o contrato recusa o cartão final num
+   roteiro de fundo até o kit ganhar a variante (`comment`, com a palavra). Não há vídeo de fundo ainda.
+5. **Ordem:** os quatro planos entraram juntos, para o `confeitaria-erro-2-pt` (gate 1 pendente) nascer neles e o
+   `prestador-hora-pt` ter a nota.
 
 ## O que não muda
 
@@ -123,11 +121,21 @@ primeiro no vertical (`PORTRAIT_SHOT_KINDS`); no 16:9, só depois do vídeo-rég
 - `locale` no `BarChart` do kit, que já existe na 0.4.0. A ligação no template tira o limite temporário do
   `chart` em inglês (ADR 011, emenda "número por idioma", item 5), num PR à parte.
 
-## Consequências, se aceita
+## Implementação (2026-10-16)
 
-- `app/pipeline/schemas.py` (`CalculationShot`, `HookShot`, `ReceiptShot`, `EndCardShot`, `Series`; grupos de
-  planos), `app/pipeline/check.py` (aritmética da conta e da nota, posição do gancho e do cartão final, texto na
-  narração, cartão final e `cta`), `app/pipeline/shots.py` (âncoras dos termos e itens), adaptador
-  (`app/render/remotion.py`), template (`video/src/types.ts`, `ShotView.tsx`, `Editorial.tsx`, `Scene.tsx`).
-- Skills `roteiro-explicativo` e `checagem`, CLAUDE.md §6 e as ADRs 011, 020 e 026 com a emenda datada.
-- Vídeo-régua com a versão nova e a sonda de CPU antes do render.
+- **Contrato** (`app/pipeline/schemas.py`): `CalculationShot`, `ReceiptShot`, `HookShot`, `EndCardShot`,
+  `Series`, `REELS_SHOT_KINDS` e `reels_shot_problems` (só no vertical; gancho só no primeiro plano, cartão final
+  só no último; `next` pede a série com parte seguinte; fundo sem cartão final). `step_anchors` e `step_positions`
+  valem para a rede, a conta e a nota: só a primeira parte pode ficar sem âncora, e entra com o plano.
+  `EpisodeShot.steps_ms` traz um tempo por parte; `EpisodeManifest.series` leva o selo.
+- **`vp check`** (`app/pipeline/check.py`): `arithmetic_errors` refaz a conta (× e ÷ antes de + e −, "20%" vale
+  0,2) e a soma da nota, e recusa unidades misturadas; conta e total só em vídeo que explica; o cartão final é
+  conferido contra o funil (`END_CARD_VARIANTS` e a `cta` dita durante ele).
+- **Montagem e adaptador:** `series` vai do roteiro ao `episode.json` (`montar_episodio.py`) e às props do cartão
+  final; a primeira cena leva `fadeIn: false` (`app/render/remotion.py`).
+- **Template** (`video/src`): `CalculationShot`, `ReceiptShot`, `HookShot` e `EndCardShot` em `Editorial.tsx`, na
+  área segura `vertical`, com a fonte em cima e a legenda embaixo livres; sem câmera própria do template
+  (`Scene.tsx`); "Total" e "Parte 2 de 3" nos dois idiomas (`labels.ts`).
+- **Skills** `roteiro-explicativo` (tabela e exemplos em `planos.md`) e `checagem`; CLAUDE.md §6; emendas datadas
+  nas ADRs 011, 020 e 026. Testes em `tests/test_reels_shots.py`.
+- **Antes do primeiro vídeo:** vídeo-régua com a versão nova do template e a sonda de CPU antes do render.

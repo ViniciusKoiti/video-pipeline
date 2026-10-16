@@ -168,6 +168,10 @@ revela:
   narração, e o tempo sai da posição da âncora sobre a duração real do WAV (`app/pipeline/shots.py`). A fonte do
   rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha,
   salvo a conta dita inteira na narração com insumos e regra em fichas (ADR 020, 2026-10-14).
+  Planos dos Reels (ADR 028, só no vertical): `hook` (primeiro plano do vídeo), `calculation` (a conta, cada
+  termo na sua âncora; o `vp check` refaz a aritmética), `receipt` (itens na mesma moeda; o total é conferido) e
+  `end_card` (último plano; `follow` no topo, `save` no meio, `next` com `series`; ainda não no fundo). O vídeo
+  começa sem fade, para o primeiro quadro ser a capa.
   Cena sem planos = forma v1 (um plano de foto). `visual_need` ∈ `historical_exact | contextual_stock |
   map_or_graphic | illustrative_reconstruction`.
 - **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
@@ -199,8 +203,10 @@ revela:
   parte A): `"host": {"skin": "dono"}`, com 12 imagens e um `origem.json` em `host/dono/` da pasta do episódio
   (dado pessoal, fora do Git); sem o registro de origem o render para.
   Perfil vertical 9:16 (`orientation: portrait` em `scenes.json`, só `explainer`; ADR 014): 1080×1920, prévia
-  720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare` e `chart` (os outros planos
-  são erro de validação), legenda queimada no final e área segura das plataformas para legenda, fonte, tarja e janela.
+  720×1280, só `photo`, `broll`, `number`, `keyword`, `stamp`, `lower_third`, `compare`, `chart` e os planos dos
+  Reels (`hook`, `calculation`, `receipt`, `end_card`; ADR 028) (os outros planos são erro de validação), legenda
+  queimada no final e área segura das plataformas para legenda, fonte, tarja e janela. `series` (nome, parte e
+  total) vai do `scenes.json` ao `episode.json` só para o selo do cartão final (ADR 028, emenda à ADR 026).
 
 ## 7. Provedores e política de escolha
 
