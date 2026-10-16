@@ -17,7 +17,6 @@ from app.pipeline.schemas import (
     EpisodeManifest,
     EpisodeShot,
     Language,
-    NetworkShot,
     RelPath,
     Scene,
     Shot,
@@ -70,10 +69,9 @@ def episode_shots(
         has_source = sources and shot.claims
         source, flag = shot_attribution(shot.claims, sources, language) if has_source else (None, None)
         steps_ms = []
-        if isinstance(shot, NetworkShot):
-            for step in step_positions(spoken, shot, position, end, scene_id=scene.id):
-                at = round(timeline_position(scene.narration, step) / total * duration_ms) - start
-                steps_ms.append(min(max(at, 0), duration - 1))
+        for step in step_positions(spoken, shot, position, end, scene_id=scene.id):
+            at = round(timeline_position(scene.narration, step) / total * duration_ms) - start
+            steps_ms.append(min(max(at, 0), duration - 1))
         result.append(
             EpisodeShot(
                 start_ms=start,
