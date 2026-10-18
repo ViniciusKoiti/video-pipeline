@@ -188,10 +188,16 @@ revela:
   texto extraído, `source-01#E7`) e uma `quote` **literal**, conferida pelo `vp check`; `open_questions` guarda o
   que as fontes não respondem. Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
 - **Ativo** (`assets/<id>.json`): só chega a `approved` com licença da lista fechada da ADR 007 (PD, CC0, CC-BY
-  incl. 3.0 BR, Flickr-NKCR, Pexels, Pixabay, Unsplash, Coverr, Generated, Original — **sem** CC-BY-SA e NC),
+  incl. 3.0 BR, Flickr-NKCR, Pexels, Pixabay, Unsplash, Coverr, Generated, Original, Citacao — **sem** CC-BY-SA e NC),
   `sha256`, e `usage_notes` para domínio público ou `author` + `attribution_text` para CC-BY. Ativo de banco de
   imagem leva a licença do próprio banco (ou CC0), `author`, `attribution_text` e, em `usage_notes`, a conferência
   de pessoas, marcas e texto (emenda de bancos de imagem). Imagem gerada tem também `generation`.
+  Quadro de obra citada para crítica (`Citacao`, emenda de citação da ADR 007, 2026-10-17):
+  - só material oficial público do detentor (`provider: official`), com `work`, crédito e a justificativa em
+    `usage_notes`;
+  - no vídeo, só quadro parado, até 10 por vídeo e 8 s cada (`vp check`);
+  - a miniatura com quadro da obra é decisão do dono no gate 4;
+  - um strike suspende a série.
 - **`review.json`:** fonte única das decisões humanas; entradas só acrescentadas, com `input_hash` do conteúdo
   revisado (mudou o conteúdo, a aprovação cai) e `choice` quando o humano troca a recomendação.
 - **`episode.json`:** contrato do render; **mudar exige nova ADR**. É a única entrada do motor de montagem; se o

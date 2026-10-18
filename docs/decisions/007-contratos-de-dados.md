@@ -82,3 +82,90 @@ Votorantim, #48). Os termos foram lidos nas páginas oficiais em 2026-09-26 e es
    marcados "AI Generated".
 7. **Áudio:** o B-roll de banco entra sem som. O template já faz isso; os termos do Pexels e do Pixabay citam
    "audio or video samples" entre os possíveis direitos de terceiros.
+
+## Emenda proposta — 2026-10-17 (programa de criadores do detentor)
+
+**Status:** proposta, sem decisão. Depende da resposta da KADOKAWA ao e-mail sobre o CSP e da decisão do dono. Até
+lá, nada muda no código nem na lista acima. Contexto: `docs/pesquisa/reports/Nicho recap de anime.md` (adendo CSP) e
+`docs/pesquisa/research_notes/Nicho recap de anime/csp_kadokawa.md`.
+
+1. **Licença nova `Holder-Program`.** Cobre trecho de vídeo ou quadro de uma obra de terceiros usado sob um
+   programa oficial do próprio detentor (o primeiro caso é o Creator Support Program da KADOKAWA). Vale só para os
+   títulos cuja diretriz publicada cubra o uso. Título sem diretriz continua fora.
+2. **Para aprovar o ativo**, além de `sha256` e `page_url`:
+   - `program` (ex.: `KADOKAWA-CSP`) e a obra: título, episódio e o `source_sha256` da importação (#156);
+   - cópia datada da página da diretriz guardada no episódio, com URL, data e `sha256`. As diretrizes somem sem
+     aviso; a de *Mattan* já sumiu;
+   - limite da diretriz em segundos por episódio de origem e por vídeo publicado. O `vp check` soma os trechos de
+     cada episódio, pelos PTS do índice da #156, e barra o que passar do limite;
+   - `attribution_text` exigido pela diretriz, copiado para a descrição e o `credits.txt`;
+   - `usage_notes` com a conferência humana de música, miniatura, voz e plataforma, e a data do pré-registro do canal.
+3. **Só YouTube.** O vídeo com ativo `Holder-Program` não pode ser agendado em outra rede pelo `vp postiz`
+   (ADR 025). Nas outras redes, só material próprio que leve ao vídeo do YouTube, se a diretriz permitir.
+4. **Fora até haver resposta escrita do detentor:** personagem gerado por IA, fan art, música do anime e imagem de
+   episódio na miniatura.
+5. **Diretriz que muda ou some:** a cópia guardada prova a permissão na data. Ativo ainda não aprovado volta a
+   `needs_review`; vídeo já publicado mantém o registro.
+6. **Reivindicação esperada:** o detentor reivindica o vídeo e fica com parte ou toda a receita. A reivindicação não
+   pode ser contestada, e isso deve constar no pacote do gate 4.
+
+Decisão do dono do projeto, não parecer jurídico. Ao ser aceita, a emenda exige o schema novo em
+`app/pipeline/schemas.py`, o check de tempo por episódio, o bloqueio no `vp postiz` e a atualização do §6 do CLAUDE.md
+no mesmo commit.
+
+## Emenda proposta — 2026-10-17 (citação para crítica: quadros e miniatura)
+
+**Status:** aceita pelo dono em 2026-10-17 ("sim, aceito a emenda"), com as opções 3 (quadros parados como
+citação dentro do vídeo) e 4 (quadro da obra na miniatura) e os limites abaixo. **Implementação pendente:** até o
+schema e o check entrarem, nenhum ativo `Citacao` chega a `approved`.
+
+**Implementada em 2026-10-17:**
+- em `app/pipeline/schemas.py`: `Provider.OFFICIAL`, a licença `Citacao` e o campo `work`;
+- no `vp check`: `citation_violations` (quadros por vídeo, tempo de tela estimado e proibição de B-roll);
+- testes em `tests/test_citation.py`;
+- §6 do CLAUDE.md atualizado.
+
+O tempo real só existe depois da voz. A miniatura, as franquias fora e o strike ficam no gate, sem regra em
+código. Contexto:
+`docs/pesquisa/reports/Nicho recap de anime.md`, adendos de demanda e franquias. Decisão de risco do dono, não
+parecer jurídico. A base é a citação para crítica (Lei 9.610/98, art. 46, III: "na medida justificada para o fim a
+atingir") e o exemplo do YPP "Using clips for a critical review".
+
+1. **Licença nova `Citacao`.** Cobre só quadro parado de uma obra que é assunto do argumento do vídeo (ensaio,
+   análise, crítica). Ficam fora: trecho de vídeo, áudio da obra, painel em sequência que reproduza uma cena e
+   arte promocional (pôster, key visual).
+2. **Dentro do vídeo:**
+   - até **10 quadros** por vídeo;
+   - cada quadro na tela **só enquanto a narração comenta aquele quadro**, até **8 s**;
+   - quadros seguidos não podem imitar movimento;
+   - recorte e zoom para destacar o que se comenta são permitidos;
+   - o quadro não pode ser espelhado nem disfarçado para escapar da detecção.
+3. **Miniatura:** um quadro da obra, sem arte promocional, com texto ou gráfico nosso ocupando parte relevante da
+   imagem. O dono confirma o risco da miniatura a cada vídeo, no gate 4.
+4. **Origem do quadro: só material oficial público do detentor** (decisão do dono em 2026-10-17): trailer, PV,
+   episódio publicado pelo próprio detentor ou licenciado no canal oficial dele, e site oficial. Mídia comprada
+   fica para uma decisão futura. O print de streaming fica fora: a Crunchyroll limita o uso de capturas a fins não
+   comerciais. A extração pode usar a #156 (frames com PTS) sobre essa origem, e o `page_url` aponta a publicação
+   oficial. Para *Death Note* (2006; © D.N. Dream Partners, VAP, Shueisha, Madhouse, NTV), os candidatos são:
+   - o trailer distribuído pela VIZ Media;
+   - os 37 episódios que a VIZ publicou no próprio canal do YouTube, segundo a imprensa em 2022, só nos EUA. Isso
+     falta conferir.
+5. **Para aprovar o ativo:**
+   - `sha256` e `page_url` (ou a descrição da mídia própria);
+   - a obra (título, estúdio e detentor conhecido);
+   - `usage_notes` com a **justificativa**: que trecho da narração o quadro ilustra e por quê;
+   - `attribution_text` para a descrição e o `credits.txt`.
+
+   Cada quadro passa pelo gate 3.
+6. **Franquias fora** até haver evidência de como o detentor trata ensaios: obras da Toei (*One Piece*, *Dragon
+   Ball*) e da ShoPro (*Pokémon*), que já tem strike por imagem parada.
+7. **Reivindicação ou strike:**
+   - registro no `review.json`;
+   - nenhuma contestação sem decisão do dono;
+   - **um strike suspende a série** até o dono revisar esta emenda.
+8. **Contagem em código, quando aceita:** o `vp check` conta os quadros `Citacao` e o tempo de tela de cada um.
+
+Ao ser aceita, a emenda pede no mesmo commit:
+- a licença e os campos novos em `app/pipeline/schemas.py`;
+- o check;
+- a atualização do §2.3 e do §6 do CLAUDE.md.
