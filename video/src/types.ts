@@ -101,6 +101,10 @@ export type ShotProps = {
   sourceFlag?: string; // ressalva ao lado da fonte ("fonte interessada")
   stepFrames?: number[]; // network, calculation e receipt: quadro de entrada de cada parte, relativo ao plano
   series?: Series; // só end_card, quando o episódio tem série
+  // Só broll como textura (ADR 031): quadro do clipe em que o plano começa (continua da mídia anterior) e
+  // tamanho do clipe, quando o plano é mais longo que ele e o vídeo recomeça
+  startFrom?: number;
+  loopFrames?: number;
 };
 export type Cue = {from: number; to: number; text: string};
 // Palavra com tempo (quadros relativos à cena), da legenda palavra a palavra (ADR 023).
@@ -139,6 +143,7 @@ export type SceneProps = {
   frames: number;
   fadeFrames: number;
   fadeIn?: boolean; // false na primeira cena: o vídeo começa sem fade (ADR 028)
+  fadeOut?: boolean; // false quando o mesmo B-roll continua na cena seguinte (ADR 031)
   shots: ShotProps[];
   cues: Cue[];
   words?: Word[]; // só no vertical, quando a cena tem palavras reconhecidas

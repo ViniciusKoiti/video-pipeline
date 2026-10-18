@@ -1,5 +1,5 @@
 import React from "react";
-import {AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import {AbsoluteFill, Loop, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
 import {Odometer} from "@viniciusk/motion-kit";
 import {BarChart, LineChart, ShareChart, ValueCompare, YearTimeline} from "@viniciusk/motion-kit/charts";
 import {
@@ -82,7 +82,15 @@ export const StockShot: React.FC<{spec: PhotoSpec; src: string}> = ({spec, src})
   return <ImageBackground src={src} motion={spec.motion ?? "push_in"} focus={focus} scrim={0.12} />;
 };
 
-export const BrollShot: React.FC<{src: string}> = ({src}) => <FootageBackground src={src} scrim={0.12} />;
+// B-roll como textura (ADR 031): continua do quadro `startFrom` do clipe (a mídia anterior era o mesmo vídeo) e
+// recomeça a cada `loopFrames` quando o plano é mais longo que o clipe. Sem os dois, toca do início.
+export const BrollShot: React.FC<{src: string; startFrom?: number; loopFrames?: number}> = ({
+  src, startFrom = 0, loopFrames,
+}) => {
+  const footage = <FootageBackground src={src} scrim={0.12} />;
+  const looped = loopFrames ? <Loop durationInFrames={loopFrames}>{footage}</Loop> : footage;
+  return startFrom > 0 ? <Sequence from={-startFrom}>{looped}</Sequence> : looped;
+};
 
 // --- Números ------------------------------------------------------------------------------------
 

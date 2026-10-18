@@ -65,7 +65,9 @@ MAX_STAMP_SHARE = 0.10
 MIN_SHOTS_FOR_SHARE = 10  # porcentagem de poucos planos não diz nada
 READING_MS = 4000  # tempo mínimo de leitura de gráfico, comparação, rede, cronologia e documento
 READING_KINDS = frozenset({"chart", "compare", "network", "timeline", "calculation", "receipt"})
-LONG_KINDS = frozenset({"network", "timeline"})  # a câmera percorre o plano: sem teto de duração
+# Sem teto de duração: a câmera percorre o plano (rede, cronologia) ou o vídeo se move sozinho e segurar a
+# textura é o ritmo do formato (B-roll, ADR 031)
+LONG_KINDS = frozenset({"network", "timeline", "broll"})
 # O BarChart do motion-kit fixado formata os valores em pt-BR (sem prop `locale`): em inglês só serve onde as
 # duas convenções coincidem, que é inteiro abaixo de mil. Retirar quando o kit ganhar a prop e o pin subir.
 BAR_TYPES = frozenset({"bar", "bar_horizontal"})

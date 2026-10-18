@@ -326,6 +326,16 @@ def test_short_chart_warns_about_reading_time(tmp_path: Path) -> None:
     assert report.warnings == ["S01: chart ('Em 1918') com ~3.6 s; precisa de 4 s para ser lido"]
 
 
+@pytest.mark.parametrize(("kind", "warns"), [("photo", True), ("broll", False)])
+def test_long_broll_is_texture_not_a_slow_shot(tmp_path: Path, kind: str, warns: bool) -> None:
+    raw = scenes()
+    claims = raw["scenes"][0]["shots"][0]["claims"]
+    raw["scenes"][0]["shots"] = [{"kind": kind, "anchor": "Em 1918", "visual_need": "contextual_stock",
+                                  "search_query": "tear", "claims": claims}]
+    report = check_episode(episode(tmp_path, facts=facts_file(), scenes_json=raw), EP)
+    assert (report.warnings == [f"S01: plano {kind} ('Em 1918') com ~6.6 s"]) is warns, report.warnings
+
+
 WORDS = ["alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliet"]
 MAKERS: dict[str, Any] = {
     "photo": lambda a: photo(a),

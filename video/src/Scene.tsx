@@ -120,8 +120,9 @@ const SceneBody: React.FC<SceneProps> = (props) => {
   const fade = Math.min(props.fadeFrames, Math.floor(props.frames / 2));
   // A primeira cena entra sem fade (ADR 028): o quadro 0 é a capa, com o gancho já legível.
   const fadeIn = props.fadeIn === false ? 1 : interpolate(frame, [0, fade], [0, 1], clamp);
-  const opacity =
-    fade > 0 ? Math.min(fadeIn, interpolate(frame, [props.frames - fade, props.frames], [1, 0], clamp)) : 1;
+  // B-roll que continua na cena seguinte (ADR 031): corte sem fade, para a textura não piscar.
+  const fadeOut = props.fadeOut === false ? 1 : interpolate(frame, [props.frames - fade, props.frames], [1, 0], clamp);
+  const opacity = fade > 0 ? Math.min(fadeIn, fadeOut) : 1;
   const planned = plan(props.shots, props.frames);
   return (
     <MotionThemeProvider theme={motionTheme}>

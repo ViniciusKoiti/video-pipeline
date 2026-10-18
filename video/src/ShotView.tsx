@@ -124,7 +124,7 @@ const FamilyTree: React.FC<{spec: FamilyTreeSpec}> = ({spec}) => {
 // --- Despacho por tipo (ADR 008 e ADR 011) -------------------------------------------------------
 
 export const ShotView: React.FC<ShotProps> = ({
-  spec, media: path, frames, credit, aspect, overlay, stepFrames, series,
+  spec, media: path, frames, credit, aspect, overlay, stepFrames, series, startFrom, loopFrames,
 }) => {
   switch (spec.kind) {
     case "photo":
@@ -134,7 +134,7 @@ export const ShotView: React.FC<ShotProps> = ({
         <ArchivalShot spec={spec} src={media(path ?? "")} credit={credit} aspect={aspect} />
       );
     case "broll":
-      return <BrollShot src={media(path ?? "")} />;
+      return <BrollShot src={media(path ?? "")} startFrom={startFrom} loopFrames={loopFrames} />;
     case "number":
       return <NumberShot spec={spec} overlay={overlay} />;
     case "quote":
