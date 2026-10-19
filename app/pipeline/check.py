@@ -30,6 +30,8 @@ from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
     NUMBER_SEPARATORS,
     OVERLAY_SHOT_KINDS,
+    Asset,
+    BrollShot,
     CalculationShot,
     ChartShot,
     CompareShot,
@@ -39,6 +41,7 @@ from app.pipeline.schemas import (
     Language,
     MapShot,
     NumberShot,
+    PhotoShot,
     QuoteShot,
     ReceiptShot,
     Scene,
@@ -46,6 +49,7 @@ from app.pipeline.schemas import (
     Shot,
     SourceKind,
     SourcesManifest,
+    citation_violations,
     effective_shots,
     number_format_problem,
     screen_number,
@@ -96,6 +100,19 @@ def _read(
         )
         report.errors.append(f"{name}: {problems}")
         return None
+
+
+def _assets(
+    store: ManifestStore, episode_id: str, planned: list[tuple[str, Shot, float]], report: CheckReport
+) -> dict[str, Asset]:
+    """Ativos já registrados (`assets/<id>.json`) dos planos de foto e B-roll; o não escolhido fica fora."""
+    media = (shot for _, shot, _ in planned if isinstance(shot, PhotoShot | BrollShot))
+    ids = {shot.asset_id for shot in media if shot.asset_id}
+    found = {}
+    for asset_id in sorted(ids):
+        if (asset := _read(store, episode_id, f"assets/{asset_id}.json", Asset, report)) is not None:
+            found[asset_id] = asset
+    return found
 
 
 def _check_sources(
@@ -172,7 +189,9 @@ def _check_scenes(
     report: CheckReport,
     region_codes: frozenset[str] | None = None,
     chars_per_second: float = CHARS_PER_SECOND,
-) -> None:
+) -> list[tuple[str, Shot, float]]:
+    """Valida as cenas e devolve cada plano com a duração estimada, para as regras que dependem dos ativos."""
+    planned_ms: list[tuple[str, Shot, float]] = []
     if sources is not None:
         report.errors += unknown_source_refs(scenes, sources)
     fact_excerpts = {e.excerpt_id for f in facts.facts for e in f.evidence} if facts else set()
@@ -200,6 +219,7 @@ def _check_scenes(
             continue
         media_before = False  # foto ou B-roll da cena já na tela: tarja, número e carimbo vão por cima
         for shot, (_, ms) in zip(planned, bounds, strict=True):
+            planned_ms.append((scene.id, shot, ms))
             report.warnings += text_fit_warnings(
                 scene.id, shot, ms, media_before and shot.kind in OVERLAY_SHOT_KINDS
             )
@@ -237,6 +257,7 @@ def _check_scenes(
         f"scenes.json: {len(scenes.scenes)} cena(s), {shots} plano(s), ~{total_ms / 1000:.0f} s de narração "
         f"(média ~{total_ms / shots / 1000:.1f} s por plano, estimada)"
     )
+    return planned_ms
 
 
 def _needs_reading_time(shot: Shot) -> bool:
@@ -532,7 +553,8 @@ def check_episode(
         else:
             _check_facts(facts, sources, excerpts, report)
     if scenes is not None:
-        _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
+        planned = _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
+        report.errors += citation_violations(planned, _assets(store, episode_id, planned, report))
         if (summary := objective_summary(scenes)) is not None:
             report.checked.append(summary)
         report.warnings += objective_warnings(scenes, today)

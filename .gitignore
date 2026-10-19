@@ -32,3 +32,10 @@ node_modules/
 
 # Índice exportado opcional do codebase-memory; o cache principal fica fora do repo.
 .codebase-memory/
+
+# Cookies exportados do navegador (credencial do dono, nunca no Git)
+cookies.txt
+*cookies*.txt
+
+# Faixas da Biblioteca de áudio do YouTube: licença de uso em vídeo, não de redistribuição
+MUSICAS/

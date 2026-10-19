@@ -7,6 +7,7 @@ Os modelos validam o que dá para garantir olhando um arquivo só. Regras que cr
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from datetime import date
 from enum import StrEnum
 from pathlib import PurePosixPath
@@ -1028,6 +1029,7 @@ class Provider(StrEnum):
     COVERR = "coverr"  # só clipes baixados à mão pelo site (ADR 007, emenda de bancos de imagem)
     WORKERS_AI = "workers_ai"
     ORIGINAL = "original"  # mapa, cronologia ou tela gráfica feitos pelo projeto
+    OFFICIAL = "official"  # material oficial público do detentor da obra (emenda de citação, ADR 007)
 
 
 # Lista fechada de licenças que podem chegar ao render (ADR 007). Qualquer outra — inclusive
@@ -1042,11 +1044,15 @@ STOCK_LICENSES = {
     Provider.UNSPLASH: "Unsplash",
     Provider.COVERR: "Coverr",
 }
+# Quadro parado de obra citada para crítica, só de material oficial público (emenda de citação, ADR 007).
+CITATION_LICENSE = "Citacao"
+MAX_CITATION_FRAMES = 10  # quadros por vídeo
+MAX_CITATION_MS = 8000  # na tela, só enquanto a narração comenta o quadro
 ACCEPTED_LICENSES = (
     PUBLIC_DOMAIN_LICENSES
     | ATTRIBUTION_LICENSES
     | set(STOCK_LICENSES.values())
-    | {"CC0-1.0", "Flickr-NKCR", "Generated", "Original"}
+    | {"CC0-1.0", "Flickr-NKCR", "Generated", "Original", CITATION_LICENSE}
 )
 
 
@@ -1073,6 +1079,7 @@ class Asset(Model):
     review_status: Status = Status.PENDING
     used_in_scenes: list[SceneId] = []  # plural: um mapa pode voltar em várias cenas (§9)
     generation: Generation | None = None  # obrigatório para imagem gerada
+    work: str | None = None  # obra citada: título, estúdio e detentor conhecido (licença Citacao)
 
     @property
     def is_synthetic(self) -> bool:
@@ -1103,6 +1110,15 @@ class Asset(Model):
             problems.append("CC-BY exige author e attribution_text")
         if self.provider not in (Provider.WORKERS_AI, Provider.ORIGINAL) and not self.page_url:
             problems.append("ativo de acervo exige page_url")
+        if (self.license_id == CITATION_LICENSE) != (self.provider is Provider.OFFICIAL):
+            problems.append("citação só de material oficial público do detentor (provider official)")
+        if self.license_id == CITATION_LICENSE:
+            if not (self.work and self.work.strip()):
+                problems.append("citação exige work (título, estúdio e detentor da obra)")
+            if not self.attribution_text.strip():
+                problems.append("citação exige attribution_text (crédito da obra na descrição)")
+            if not self.usage_notes.strip():
+                problems.append("citação exige usage_notes: o trecho que o quadro ilustra e por quê")
         own = STOCK_LICENSES.get(self.provider)
         if own is None and self.license_id in STOCK_LICENSES.values():
             problems.append(f"licença {self.license_id!r} só vale para ativos do próprio banco")
@@ -1371,6 +1387,30 @@ def unknown_source_refs(scenes: ScenesManifest, sources: SourcesManifest) -> lis
 
 # §2.4: stock (os bancos de STOCK_LICENSES) e imagem gerada são ilustração, nunca registro do fato.
 _NOT_A_RECORD = frozenset({*STOCK_LICENSES, Provider.WORKERS_AI})
+
+
+def citation_violations(planned: Sequence[tuple[str, Shot, float]], assets: dict[str, Asset]) -> list[str]:
+    """Quadros citados (licença Citacao) fora dos limites da emenda: só imagem parada, no máximo
+    MAX_CITATION_FRAMES por vídeo e MAX_CITATION_MS na tela cada. `planned`: (cena, plano, duração em ms)."""
+    problems, frames = [], 0
+    for scene_id, shot, ms in planned:
+        if not isinstance(shot, PhotoShot | BrollShot) or shot.asset_id is None:
+            continue
+        asset = assets.get(shot.asset_id)
+        if asset is None or asset.license_id != CITATION_LICENSE:
+            continue
+        if isinstance(shot, BrollShot):
+            problems.append(f"{scene_id}: citação {shot.asset_id} só como quadro parado, nunca B-roll")
+            continue
+        frames += 1
+        if ms > MAX_CITATION_MS:
+            problems.append(
+                f"{scene_id}: citação {shot.asset_id} com ~{ms / 1000:.1f} s na tela "
+                f"(máximo {MAX_CITATION_MS / 1000:.0f} s)"
+            )
+    if frames > MAX_CITATION_FRAMES:
+        problems.append(f"{frames} quadros citados no vídeo (máximo {MAX_CITATION_FRAMES})")
+    return problems
 
 
 def visual_need_violations(scenes: ScenesManifest, assets: dict[str, Asset]) -> list[str]:
