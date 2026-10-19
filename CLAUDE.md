@@ -281,6 +281,8 @@ lacuna fica registrada.
   palavra falada em amarelo (`WordCaption` do motion-kit). Cena sem palavras fica na legenda por frase.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
+  B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre
+  cenas e sem fade, e recomeça quando o clipe acaba; o `vp check` não põe teto de duração no `broll`.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
   (`app/render/ffmpeg.py`); `explainer` → **Remotion + @viniciusk/motion-kit** (`app/render/remotion.py` e o
   template em `video/`; peças do kit editorial, tema `editorial`, mapa com contornos do Natural Earth em domínio

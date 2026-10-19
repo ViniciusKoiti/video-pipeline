@@ -12,13 +12,14 @@ import hashlib
 import json
 import shutil
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 from app.media.envelope import mouth_levels
 from app.media.host import check_sprites, host_corners, host_direction, sprites_hash, sprites_manifest
 from app.media.narration import strip_pauses
-from app.media.probe import dimensions, duration_ms
+from app.media.probe import ProbeError, dimensions, duration_ms
 from app.media.word_captions import WORDS, scene_word_frames
 from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
 from app.providers.base import ProviderInfo
@@ -74,6 +75,41 @@ def _editorial(shot: EpisodeShot, fps: int) -> dict[str, Any]:
     if shot.steps_ms:
         extra["stepFrames"] = [round(ms * fps / 1000) for ms in shot.steps_ms]
     return extra
+
+
+MEDIA_KINDS = frozenset({"photo", "broll"})
+
+
+def _media_frames(shots: list[dict[str, Any]], index: int, scene_frames: int) -> int:
+    """Quadros em que a mídia fica na tela: até a próxima mídia da cena, como em `Scene.tsx` (ADR 011)."""
+    later = (s["from"] for s in shots[index + 1 :] if s["spec"]["kind"] in MEDIA_KINDS)
+    return next(later, scene_frames) - shots[index]["from"]
+
+
+def footage_continuity(props: list[dict[str, Any]], clip_frames: Callable[[str], int]) -> None:
+    """B-roll como textura (ADR 031): o mesmo vídeo em mídias seguidas continua de onde parou (`startFrom`),
+    também de uma cena para a outra, sem o fade entre elas; e recomeça quando o clipe acaba (`loopFrames`).
+    Só acrescenta campos quando precisa: as props (e o cache) dos outros planos ficam como estavam."""
+    playing: tuple[str, int] | None = None  # vídeo da última mídia e quadros já tocados dele
+    for i, scene in enumerate(props):
+        for j, shot in enumerate(scene["shots"]):
+            if shot["spec"]["kind"] not in MEDIA_KINDS:
+                continue
+            shown = _media_frames(scene["shots"], j, scene["frames"])
+            if shot["spec"]["kind"] != "broll" or not shot["media"]:
+                playing = None
+                continue
+            offset = playing[1] if playing and playing[0] == shot["media"] else 0
+            if offset and i > 0 and j == 0 and shot["from"] == 0:  # a textura atravessa o corte de cena
+                props[i - 1]["fadeOut"] = False
+                scene["fadeIn"] = False
+            length = clip_frames(shot["media"])
+            if length > 0 and offset + shown > length:
+                shot["loopFrames"] = length
+            start = offset % length if length > 0 else offset
+            if start:
+                shot["startFrom"] = start
+            playing = (shot["media"], offset + shown)
 
 
 def _host_identity(host: HostSpec) -> dict[str, Any]:
@@ -217,6 +253,17 @@ class RemotionEngine:
                 for shot in props[-1]["shots"]:
                     if shot["spec"]["kind"] == "end_card":
                         shot["series"] = episode.series.model_dump(mode="json")
+        clips: dict[str, int] = {}
+
+        def clip_frames(media: str) -> int:
+            if media not in clips:
+                try:
+                    clips[media] = duration_ms(episode_dir / media) * fps // 1000
+                except ProbeError:  # sem duração (imagem parada no lugar do vídeo): sem laço
+                    clips[media] = 0
+            return clips[media]
+
+        footage_continuity(props, clip_frames)
         # O vídeo começa sem fade (ADR 028, decisão 1): o primeiro quadro é a capa e o gancho, não o preto.
         props[0]["fadeIn"] = False
         return props
