@@ -11,6 +11,7 @@ import pytest
 from app.cli import main
 from app.pipeline.gates import (
     GateError,
+    GateStatus,
     gate_hash,
     gate_report,
     latest_check,
@@ -25,10 +26,12 @@ from app.pipeline.schemas import (
     EpisodeFormat,
     EpisodeManifest,
     EpisodeScene,
+    ReviewEntry,
     Status,
     Step,
     VideoSpec,
 )
+from app.pipeline.state import compute_input_hash
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
 
@@ -93,6 +96,42 @@ def test_decision_is_valid_until_the_content_changes(tmp_path: Path) -> None:
     (folder / "outline.md").write_text("# roteiro mudou\n")
     [row] = [r for r in gate_report(store, review, EPISODE) if r.step is Step.SCRIPT]
     assert not row.valid
+
+
+SCENES = '{"scenes": [{"id": "S01", "narration": "Fala.", "shots": [{"anchor": "Fala", "asset_id": %s}]}]}'
+
+
+def script_row(store: JsonFileStore, review: JsonReviewGate) -> GateStatus:
+    return next(r for r in gate_report(store, review, EPISODE) if r.step is Step.SCRIPT)
+
+
+def test_choosing_an_image_keeps_the_script_decision_and_the_check(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    (folder / "scenes.json").write_text(SCENES % "null")
+    checked(store)
+    decide(store, review, Step.SCRIPT, Decision.APPROVED)
+    (folder / "scenes.json").write_text(SCENES % '"pexels-photo-1"')  # a imagem é do gate 3 (§5)
+    assert script_row(store, review).valid and latest_check(store, EPISODE)[1]
+    (folder / "scenes.json").write_text((SCENES % '"pexels-photo-1"').replace("Fala.", "Fala nova."))
+    assert not script_row(store, review).valid and not latest_check(store, EPISODE)[1]
+
+
+def test_decisions_stamped_with_the_whole_file_still_hold(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    (folder / "scenes.json").write_text(SCENES % '"pexels-photo-1"')
+    whole = compute_input_hash(
+        [folder / "scenes.json", folder / "outline.md"], {}, base=store.path(EPISODE, "")
+    )
+    assert gate_hash(store, EPISODE, Step.SCRIPT) != whole
+    review.record(
+        EPISODE,
+        ReviewEntry(
+            step=Step.SCRIPT, decision=Decision.APPROVED, reviewer="Dono", at=FIXED_TIME, input_hash=whole
+        ),
+    )
+    assert script_row(store, review).valid  # decisão gravada antes desta regra
+    (folder / "outline.md").write_text("# roteiro mudou\n")
+    assert not script_row(store, review).valid
 
 
 def test_approving_an_asset_reflects_review_status(tmp_path: Path) -> None:
