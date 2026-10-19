@@ -1,0 +1,8 @@
+# Dados públicos do canal (não são segredo: aparecem nos links e na página do canal).
+[canal]
+nome = "Cena e Conceito"
+handle = "@cenaeconceito"
+
+# Programa de Associados da Amazon.com.br: a tag vai em todo link de livro citado (scripts/provisorio/livros_afiliado.py)
+[amazon]
+tag = "viniciuscode-20"
