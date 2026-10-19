@@ -11,7 +11,7 @@ from tests.fakes import make_root
 SPEC_COMMANDS = {
     "bench", "new", "sources", "script", "scenes", "assets", "gallery",
     "voice", "subs", "render", "export", "approve", "reject", "status", "reopen", "excerpts", "check",
-    "checagem",
+    "checagem", "numeros",
 }
 
 

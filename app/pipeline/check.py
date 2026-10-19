@@ -15,10 +15,23 @@ from datetime import date
 
 from pydantic import ValidationError
 
-from app.media.narration import strip_pauses, timeline_length
+from app.media.narration import strip_pauses
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.molde import MOLDE_FILE, Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
+from app.pipeline.numbers import (
+    FORMAT_FILE,
+    LONG_KINDS,
+    MAX_SHOT_MS,
+    FormatBrief,
+    current_block,
+    format_warnings,
+    render_block,
+    scene_duration_ms,
+    scene_timings,
+    script_numbers,
+    used_in_scenes_mismatches,
+)
 from app.pipeline.ports import M, ManifestStore
 from app.pipeline.radar import (
     BRIEF_FILE,
@@ -61,22 +74,18 @@ from app.pipeline.schemas import (
     screen_parts,
     unknown_source_refs,
 )
-from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
+from app.pipeline.shots import MIN_SHOT_MS
 from app.pipeline.text_fit import text_fit_warnings
 
 # Ritmo de fala padrão, medido no exemplo com pm_alex (150 caracteres em 9,95 s); a CLI passa o da voz
 # configurada. Só estimativa: o tempo real vem do WAV (§9).
 CHARS_PER_SECOND = 15.0
-MAX_SHOT_MS = 6000
 # Alertas de variedade (ADR 011, decisão 9): a revisão humana decide.
 MAX_GRAPHIC_RUN = 4  # planos gráficos seguidos sem foto nem B-roll na tela
 MAX_STAMP_SHARE = 0.10
 MIN_SHOTS_FOR_SHARE = 10  # porcentagem de poucos planos não diz nada
 READING_MS = 4000  # tempo mínimo de leitura de gráfico, comparação, rede, cronologia e documento
 READING_KINDS = frozenset({"chart", "compare", "network", "timeline", "calculation", "receipt"})
-# Sem teto de duração: a câmera percorre o plano (rede, cronologia) ou o vídeo se move sozinho e segurar a
-# textura é o ritmo do formato (B-roll, ADR 031)
-LONG_KINDS = frozenset({"network", "timeline", "broll"})
 # O BarChart do motion-kit fixado formata os valores em pt-BR (sem prop `locale`): em inglês só serve onde as
 # duas convenções coincidem, que é inteiro abaixo de mil. Retirar quando o kit ganhar a prop e o pin subir.
 BAR_TYPES = frozenset({"bar", "bar_horizontal"})
@@ -215,17 +224,15 @@ def _check_scenes(
                     report.errors.append(f"{scene.id}: trecho {excerpt_id} não existe")
                 elif facts is not None and excerpt_id not in fact_excerpts:
                     report.errors.append(f"{scene.id}: trecho {excerpt_id} não está em nenhuma ficha")
-        duration_ms = timeline_length(scene.narration) / chars_per_second * 1000
-        total_ms += duration_ms
-        planned = effective_shots(scene)
-        shots += len(planned)
+        total_ms += scene_duration_ms(scene, chars_per_second)
+        shots += len(effective_shots(scene))
         try:
-            bounds = shot_bounds(scene.narration, planned, round(duration_ms))
+            timed = scene_timings(scene, chars_per_second)  # a mesma conta do bloco de números (#170)
         except ValueError as error:
             report.errors.append(f"{scene.id}: {error}")
             continue
         media_before = False  # foto ou B-roll da cena já na tela: tarja, número e carimbo vão por cima
-        for shot, (_, ms) in zip(planned, bounds, strict=True):
+        for shot, _, ms in timed:
             planned_ms.append((scene.id, shot, ms))
             report.warnings += text_fit_warnings(
                 scene.id, shot, ms, media_before and shot.kind in OVERLAY_SHOT_KINDS
@@ -539,6 +546,47 @@ def _check_radar(
     report.warnings += form_warnings(scenes, brief, chars_per_second, caption, today)
 
 
+def episode_assets(store: ManifestStore, episode_id: str) -> dict[str, Asset]:
+    """Todos os `assets/*.json` legíveis; o que não passa no schema fica de fora sem virar erro aqui."""
+    folder = store.path(episode_id, "assets")
+    found = {}
+    for path in sorted(folder.glob("*.json")) if folder.is_dir() else []:
+        try:
+            found[path.stem] = store.read(episode_id, f"assets/{path.name}", Asset)
+        except ValidationError:
+            continue
+    return found
+
+
+def _check_numbers(
+    store: ManifestStore,
+    episode_id: str,
+    scenes: ScenesManifest,
+    report: CheckReport,
+    chars_per_second: float,
+) -> None:
+    """Bloco de números do outline (#170), `used_in_scenes` dos ativos e o perfil do nicho (ADR 031, D)."""
+    assets = episode_assets(store, episode_id)
+    brief = _read(store, episode_id, FORMAT_FILE, FormatBrief, report)
+    try:
+        numbers = script_numbers(scenes, assets, chars_per_second)
+    except ValueError:
+        return  # âncora fora de ordem: o erro já está no relatório
+    outline = store.path(episode_id, "outline.md")
+    block = current_block(outline.read_text(encoding="utf-8")) if outline.is_file() else None
+    shots = (shot for scene in scenes.scenes for shot in effective_shots(scene))
+    chosen = any(getattr(shot, "asset_id", None) for shot in shots)
+    command = f"rode `vp numeros {episode_id} --escrever`"
+    if block is not None and block != render_block(numbers, brief, chars_per_second):
+        report.warnings.append(f"outline.md: bloco de números desatualizado ({command})")
+    elif block is None and chosen and outline.is_file():
+        report.warnings.append(f"outline.md: sem o bloco de números ({command})")
+    for asset_id, right in used_in_scenes_mismatches(numbers, assets).items():
+        listed = list(assets[asset_id].used_in_scenes)
+        report.warnings.append(f"assets/{asset_id}.json: used_in_scenes diz {listed}, o roteiro usa {right}")
+    report.warnings += format_warnings(numbers, brief)
+
+
 def _check_molde(
     store: ManifestStore,
     episode_id: str,
@@ -617,6 +665,7 @@ def check_episode(
         report.warnings += funnel_warnings(scenes)
         report.warnings += claimless_statements(scenes)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
+        _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)
         _check_music(store, episode_id, scenes, music_catalog, report, chars_per_second)
     if not report.checked and not report.errors:

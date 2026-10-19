@@ -1,10 +1,11 @@
 # 031 — Perfil de formato do nicho como entrada do roteiro longo
 
-- **Status:** proposto (rascunho para o dono, 2026-10-18). A parte A (B-roll como textura) está implementada no
-  PR que traz este texto. A parte B está implementada (2026-10-22) como `molde.json` + `partitura.md`, com
-  prevalência e quartis no lugar da correlação com views (emenda abaixo); as partes C e D estão implementadas
-  (2026-10-22: o roteirista lê a `partitura.md`; o `vp check` avisa pelo `molde.json`); a parte E espera a
-  aprovação do dono.
+- **Status:** partes A, B, C e D implementadas; E espera a aprovação do dono. A (B-roll como textura) em 2026-10-18
+  (#166). B e D aceitas pelo dono em 2026-10-19. B tem duas formas que se completam: o perfil por correlação com
+  views (`brief.py`, `formato_resumo.py`, `vp numeros` e o alerta `formato:` do `vp check`, #170; `pattern` só com
+  n >= 20, |ρ| >= 0,4 e os terços na direção do ρ, decisão D5 de `docs/specs/outline-numeros.md`) e o molde por
+  prevalência e quartis (`molde.json` + `partitura.md`, 2026-10-22, emenda abaixo). C e D do molde em 2026-10-22
+  (o roteirista lê a `partitura.md`; o `vp check` avisa pelo `molde.json`).
 - **Data:** 2026-10-18
 - **Etapa do roadmap:** roteiro (#28), épico #164 (piloto `death-note-fins-meios`)
 - **Relaciona-se com:** ADR 009 (agentes e `vp check`), ADR 011 (planos editoriais), ADR 018 (resumo do radar nos

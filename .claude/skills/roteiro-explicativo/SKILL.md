@@ -330,4 +330,10 @@ fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco n
 - Passe a skill `humanizer-narracao` na narração.
 - Rode `.venv/bin/vp check <id>` até zero erros; trate os alertas de ritmo, de variedade e de texto que não
   cabe na tela.
+- **Números do roteiro:** não escreva à mão cenas, planos, pausas, "você", duração, ritmo, alertas nem a tabela
+  dos quadros citados. Rode `.venv/bin/vp numeros <id> --escrever`: ele grava o bloco gerado no `outline.md` e o
+  `plano-imagens.md`. Fora do bloco, o outline só traz o que é escrito à mão (decisões, espinha, ligações,
+  lacunas, a palavra que pesa). Com `formato-brief.json` no episódio (o perfil do nicho, ADR 031), leia a tabela
+  "Formato × nicho" do bloco: é forma, nunca fonte; um alerta `formato:` do `vp check` é um padrão forte do nicho
+  que o roteiro não segue, para você seguir ou explicar no outline por que não.
 - Entregue para o agente `verificador` (contexto limpo) antes do gate 2.

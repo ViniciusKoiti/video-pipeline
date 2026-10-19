@@ -20,7 +20,7 @@ from pathlib import Path
 from app.bootstrap import build_context
 from app.commands import postiz
 from app.pipeline.bench import run_bench, summary
-from app.pipeline.check import check_episode
+from app.pipeline.check import check_episode, episode_assets
 from app.pipeline.excerpts import numbered_view
 from app.pipeline.gates import (
     GATED_STEPS,
@@ -33,8 +33,27 @@ from app.pipeline.gates import (
     record_decision,
 )
 from app.pipeline.music import load_music_catalog
+from app.pipeline.numbers import (
+    FORMAT_FILE,
+    IMAGE_PLAN_FILE,
+    FormatBrief,
+    current_block,
+    render_block,
+    render_image_plan,
+    replace_block,
+    script_numbers,
+    used_in_scenes_mismatches,
+)
 from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
-from app.pipeline.schemas import CheckVerdict, Decision, EpisodeFormat, SourcesManifest, Step
+from app.pipeline.schemas import (
+    CheckVerdict,
+    Decision,
+    EpisodeFormat,
+    ScenesManifest,
+    SourcesManifest,
+    Status,
+    Step,
+)
 from app.render.remotion import region_codes
 from app.settings import CONFIG_FILE, speech_chars_per_second
 
@@ -115,6 +134,18 @@ def _reject_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--changes", action="store_true", help="mudanças pedidas em vez de reprovação")
 
 
+def _numeros_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--escrever", action="store_true", help="grava o bloco no outline.md e regrava o plano-imagens.md"
+    )
+    parser.add_argument(
+        "--used-in-scenes",
+        dest="used_in_scenes",
+        action="store_true",
+        help="acerta o used_in_scenes dos ativos ainda não aprovados (ativo aprovado não muda, §2.6)",
+    )
+
+
 COMMANDS: tuple[Command, ...] = (
     Command(
         "bench", "RAM, CPU, tok/s do modelo local, tempo de TTS", 5, takes_episode=False,
@@ -142,6 +173,10 @@ COMMANDS: tuple[Command, ...] = (
     Command(
         "checagem", "grava o parecer do verificador sobre fichas e roteiro -> checagem.json (gate 2)", 48,
         add_arguments=_checagem_arguments,
+    ),
+    Command(
+        "numeros", "números do roteiro e comparação com o nicho -> bloco do outline.md (#170)", 170,
+        add_arguments=_numeros_arguments,
     ),
 )
 
@@ -299,6 +334,58 @@ def _pending(row: GateStatus) -> bool:
 
 
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
+def _write_if_changed(path: Path, text: str) -> bool:
+    if path.is_file() and path.read_text(encoding="utf-8") == text:
+        return False
+    path.write_text(text, encoding="utf-8")
+    return True
+
+
+def _numeros(args: argparse.Namespace, context: Context) -> int:
+    store, episode_id = context.store, args.episode_id
+    chars_per_second = speech_chars_per_second(context.settings)
+    scenes = store.read(episode_id, "scenes.json", ScenesManifest)
+    assets = episode_assets(store, episode_id)
+    brief = None
+    if store.exists(episode_id, FORMAT_FILE):
+        brief = store.read(episode_id, FORMAT_FILE, FormatBrief)
+    try:
+        numbers = script_numbers(scenes, assets, chars_per_second)
+    except ValueError as error:
+        print(f"vp numeros: {error} (rode vp check)", file=sys.stderr)
+        return 1
+    block = render_block(numbers, brief, chars_per_second)
+    plan = render_image_plan(scenes, numbers, assets, chars_per_second)
+    outline, plan_path = store.path(episode_id, "outline.md"), store.path(episode_id, IMAGE_PLAN_FILE)
+    print(block)
+    if not outline.is_file():
+        print("outline.md: não existe", file=sys.stderr)
+        return 1
+    text = outline.read_text(encoding="utf-8")
+    current = current_block(text)
+    state = "em dia" if current == block else ("desatualizado" if current else "sem o bloco")
+    plan_ok = plan_path.is_file() and plan_path.read_text(encoding="utf-8") == plan
+    print(f"outline.md: {state}; {IMAGE_PLAN_FILE}: {'em dia' if plan_ok else 'diferente'}")
+    with store.lock(episode_id):
+        if args.escrever:
+            targets = (
+                ("outline.md", outline, replace_block(text, block)),
+                (IMAGE_PLAN_FILE, plan_path, plan),
+            )
+            wrote = [name for name, path, new in targets if _write_if_changed(path, new)]
+            print("gravado: " + (", ".join(wrote) if wrote else "nada mudou"))
+        if args.used_in_scenes:
+            for asset_id, used in used_in_scenes_mismatches(numbers, assets).items():
+                asset = assets[asset_id]
+                if asset.review_status is Status.APPROVED:
+                    print(f"{asset_id}: aprovado, não mudo (o roteiro usa {used})")
+                    continue
+                updated = asset.model_copy(update={"used_in_scenes": used})
+                store.write(episode_id, f"assets/{asset_id}.json", updated)
+                print(f"{asset_id}: used_in_scenes -> {used}")
+    return 0
+
+
 HANDLERS: dict[str, Handler] = {
     "bench": _bench,
     "excerpts": _excerpts,
@@ -307,6 +394,7 @@ HANDLERS: dict[str, Handler] = {
     "reject": _reject,
     "status": _status,
     "checagem": _checagem,
+    "numeros": _numeros,
     "postiz": postiz.run,
 }
 

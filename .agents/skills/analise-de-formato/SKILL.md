@@ -107,6 +107,20 @@ uv run --no-project --with pandas python -I .agents/skills/analise-de-formato/an
 
 Pronto quando `analise/resumo.md` existe e o tamanho de cada grupo está escrito nele.
 
+**Perfil para o roteiro (ADR 031, parte B).** Depois da análise, grave o perfil de cada grupo e leve o do grupo
+certo para o episódio:
+
+```
+python3 -I .agents/skills/analise-de-formato/brief.py data/cache/nicho/<Título>/analise --nicho "<nicho>"
+.venv/bin/python scripts/provisorio/formato_resumo.py <episódio> data/cache/nicho/<Título>/analise/formato-brief-<grupo>.json
+```
+
+O perfil leva, por medida, o terço de cima e o de baixo, o `n`, o ρ e a força (`pattern` só com n >= 20,
+|ρ| >= 0,4 e os terços na direção do ρ). O `vp numeros` compara o roteiro com ele, e o `vp check` só alerta um
+`pattern`.
+O perfil (correlação com views, terços) e o molde do passo 4c (prevalência e quartis) se completam: o perfil
+diz o que anda com mais views; o molde diz o que a amostra faz. A partitura do episódio sai do molde.
+
 ## 4. Fichas
 
 - Um subagente para cada 2 vídeos, todos na mesma mensagem.

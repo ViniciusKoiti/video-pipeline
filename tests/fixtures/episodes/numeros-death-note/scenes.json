@@ -1,0 +1,739 @@
+{
+  "episode_id": "numeros-death-note",
+  "language": "pt-BR",
+  "objective": {
+    "kinds": [
+      "explicar",
+      "opinar"
+    ],
+    "promise": "Entender por que parte do público torce por Light mesmo com o autor dizendo que ele é mau, e o que isso diz sobre a ideia de que os fins justificam os meios.",
+    "question": "Se o próprio autor diz que Light é mau e que ninguém deve brincar de Deus, por que parte do público torce por ele e defende as intenções dele?",
+    "thesis": "O Light, vivendo em uma sociedade muito mais segura e organizada que a brasileira, quando obteve poder já botou sua sede de 'justiça' em prática. O povo brasileiro convive com muito mais insegurança e injustiça e aguenta calado.",
+    "thesis_by": "dono"
+  },
+  "funnel": {
+    "stage": "topo",
+    "cta": "Segue o canal e comenta a sua resposta: por que parte do público torce por Light?"
+  },
+  "scenes": [
+    {
+      "id": "S115",
+      "delivery": "turn",
+      "narration": "Agora, você lembra dos doze agentes do FBI do episódio cinco?",
+      "claims": [
+        {
+          "text": "episódio 5: os 12 agentes do FBI no Japão, mortos por Light",
+          "source_ids": [
+            "source-06",
+            "source-10"
+          ],
+          "excerpt_ids": [
+            "source-06#E1",
+            "source-10#E24"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Agora, você lembra",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        }
+      ]
+    },
+    {
+      "id": "S036",
+      "narration": "Há quem lembre que Raye Penber, o agente que escreveu os nomes, não era culpado de crime nenhum por nenhum dos critérios de Kira. E que não foi nem legítima defesa.",
+      "claims": [
+        {
+          "text": "Chapman: 'He isn't guilty of any crime under any of Kira's standards'; 'it isn't even self-defense'",
+          "source_ids": [
+            "source-01"
+          ],
+          "excerpt_ids": [
+            "source-01#E7"
+          ]
+        },
+        {
+          "text": "Raye escreve os nomes dos 12 agentes",
+          "source_ids": [
+            "source-06"
+          ],
+          "excerpt_ids": [
+            "source-06#E1"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Há quem lembre",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        },
+        {
+          "kind": "broll",
+          "anchor": "não era culpado de crime nenhum",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        }
+      ]
+    },
+    {
+      "id": "S145",
+      "narration": "No episódio sete, Light tenta descobrir o nome verdadeiro de Naomi Misora, ex-agente do FBI e companheira de Raye Penber.",
+      "claims": [
+        {
+          "text": "Naomi, ex-agente do FBI, companheira de Raye (NTV: 恋人; VIZ: noiva)",
+          "source_ids": [
+            "source-06",
+            "source-10"
+          ],
+          "excerpt_ids": [
+            "source-06#E1",
+            "source-10#E24"
+          ]
+        },
+        {
+          "text": "sinopse do ep. 7: Light quer o nome verdadeiro de Naomi",
+          "source_ids": [
+            "source-07"
+          ],
+          "excerpt_ids": [
+            "source-07#E1"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "No episódio sete",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        },
+        {
+          "kind": "photo",
+          "anchor": "ex-agente do FBI",
+          "visual_need": "historical_exact",
+          "search_query": "quadro parado de Death Note (trailer oficial da Crunchyroll): Naomi Misora; retrato da personagem, não a cena do ep. 7",
+          "asset_id": "crunchyroll-trailer-naomi",
+          "motion": "still"
+        }
+      ]
+    },
+    {
+      "id": "S045",
+      "narration": "Light mente que é da força-tarefa e consegue o nome verdadeiro dela. Depois, escreve esse nome no caderno, para que ela não leve o que sabe à investigação.",
+      "claims": [
+        {
+          "text": "Light se diz da força-tarefa, obtém o nome verdadeiro de Naomi e o escreve na Death Note para calá-la (ep. 7)",
+          "source_ids": [
+            "source-07"
+          ],
+          "excerpt_ids": [
+            "source-07#E1"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Light mente que é da força-tarefa",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        },
+        {
+          "kind": "broll",
+          "anchor": "Depois, escreve esse nome",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        }
+      ]
+    },
+    {
+      "id": "S117",
+      "delivery": "turn",
+      "narration": "Se você quer uma régua para esse caso, ela vem de Immanuel Kant.",
+      "claims": [
+        {
+          "text": "Kant, Fundamentação: a fórmula da humanidade",
+          "source_ids": [
+            "source-20",
+            "source-22"
+          ],
+          "excerpt_ids": [
+            "source-20#E120",
+            "source-22#E76"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "photo",
+          "anchor": "Se você quer uma régua",
+          "visual_need": "historical_exact",
+          "search_query": "retrato de Immanuel Kant, pintura em domínio público, Wikimedia Commons",
+          "asset_id": "commons-kant-c1790",
+          "motion": "push_in"
+        },
+        {
+          "kind": "lower_third",
+          "anchor": "ela vem de Immanuel Kant",
+          "name": "Immanuel Kant",
+          "role": "filósofo, autor da Fundamentação",
+          "claims": [
+            {
+              "text": "Kant, Fundamentação",
+              "source_ids": [
+                "source-20",
+                "source-22"
+              ],
+              "excerpt_ids": [
+                "source-20#E120",
+                "source-22#E76"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S039",
+      "delivery": "calm",
+      "narration": "Na Fundamentação, ele escreve assim: age de modo a tratar a humanidade, na tua pessoa e na de qualquer outro, sempre também como fim, e nunca só como meio.",
+      "claims": [
+        {
+          "text": "imperativo da humanidade",
+          "source_ids": [
+            "source-20",
+            "source-22"
+          ],
+          "excerpt_ids": [
+            "source-20#E120",
+            "source-22#E76"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "photo",
+          "anchor": "Na Fundamentação",
+          "visual_need": "historical_exact",
+          "search_query": "retrato de Immanuel Kant, pintura em domínio público, Wikimedia Commons",
+          "asset_id": "commons-kant-c1790",
+          "motion": "push_in"
+        },
+        {
+          "kind": "quote",
+          "anchor": "age de modo a tratar",
+          "text": "So act as to treat humanity, whether in thine own person or in that of any other, in every case as an end withal, never as means only.",
+          "attribution": "Immanuel Kant, Fundamentação (trad. T. K. Abbott)",
+          "claims": [
+            {
+              "text": "Kant, Fundamentação, segunda seção",
+              "source_ids": [
+                "source-20"
+              ],
+              "excerpt_ids": [
+                "source-20#E120"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S040",
+      "delivery": "calm",
+      "narration": "O que quer dizer usar alguém só como meio? Kant dá um exemplo do dia a dia: a promessa mentirosa.",
+      "claims": [
+        {
+          "text": "Kant: o exemplo da promessa mentirosa",
+          "source_ids": [
+            "source-20"
+          ],
+          "excerpt_ids": [
+            "source-20#E124"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "O que quer dizer",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        }
+      ]
+    },
+    {
+      "id": "S041",
+      "delivery": "calm",
+      "narration": "Quem promete algo sem intenção de cumprir usa o outro como mero meio. Porque o enganado não pode concordar com o jeito como está sendo tratado.",
+      "claims": [
+        {
+          "text": "a promessa mentirosa usa o outro como mero meio; o enganado não pode concordar",
+          "source_ids": [
+            "source-20"
+          ],
+          "excerpt_ids": [
+            "source-20#E124"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Quem promete algo",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        },
+        {
+          "kind": "broll",
+          "anchor": "Porque o enganado",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        }
+      ]
+    },
+    {
+      "id": "S046",
+      "delivery": "calm",
+      "narration": "Como na promessa mentirosa de Kant, com uma morte no fim. Naomi só deu o nome porque foi enganada. E o motivo era calá-la.",
+      "claims": [
+        {
+          "text": "Light obtém o nome de Naomi com uma mentira e o escreve na Death Note; a Wikipedia diz que ele a forçou ao suicídio",
+          "source_ids": [
+            "source-07",
+            "source-03"
+          ],
+          "excerpt_ids": [
+            "source-07#E1",
+            "source-03#E76"
+          ]
+        },
+        {
+          "text": "sinopse do ep. 7 (NTV): Light escreve o nome para calá-la (口封じの為)",
+          "source_ids": [
+            "source-07"
+          ],
+          "excerpt_ids": [
+            "source-07#E1"
+          ]
+        },
+        {
+          "text": "a promessa mentirosa usa o outro como mero meio",
+          "source_ids": [
+            "source-20"
+          ],
+          "excerpt_ids": [
+            "source-20#E124"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Como na promessa mentirosa",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: chuva no vidro à noite, luzes desfocadas",
+          "asset_id": "pexels-video-15161525"
+        }
+      ]
+    },
+    {
+      "id": "S119",
+      "delivery": "turn",
+      "narration": "Anos depois, os seguidores de Kira passam a adorá-lo como uma divindade.",
+      "claims": [
+        {
+          "text": "'Over four years later': seguidores passam a adorar Kira como divindade (Wikipedia)",
+          "source_ids": [
+            "source-03"
+          ],
+          "excerpt_ids": [
+            "source-03#E50"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Anos depois",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S067",
+      "narration": "No episódio trinta, uma multidão inflamada pela imprensa cerca o prédio da SPK.",
+      "claims": [
+        {
+          "text": "sinopse do ep. 30 (NTV): multidão inflamada pela imprensa cerca o prédio da SPK",
+          "source_ids": [
+            "source-34"
+          ],
+          "excerpt_ids": [
+            "source-34#E1"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "No episódio trinta",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S120",
+      "narration": "E se alguém se achasse acima das regras? Fiódor Dostoiévski escreveu um romance sobre isso: Crime e Castigo.",
+      "claims": [
+        {
+          "text": "Crime e Castigo: o artigo de Raskólnikov sobre homens extraordinários",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E1966"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "E se alguém",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        },
+        {
+          "kind": "photo",
+          "anchor": "Fiódor Dostoiévski",
+          "visual_need": "historical_exact",
+          "search_query": "retrato de Fiódor Dostoiévski por Vasily Perov, 1872, pintura em domínio público, Wikimedia Commons",
+          "asset_id": "commons-dostoievski-perov-1872",
+          "motion": "push_in"
+        },
+        {
+          "kind": "lower_third",
+          "anchor": "escreveu um romance",
+          "name": "Fiódor Dostoiévski",
+          "role": "autor de Crime e Castigo",
+          "claims": [
+            {
+              "text": "Dostoiévski, Crime e Castigo",
+              "source_ids": [
+                "source-24"
+              ],
+              "excerpt_ids": [
+                "source-24#E1966"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S051",
+      "delivery": "calm",
+      "narration": "No livro, Raskólnikov escreveu um artigo. Porfíri, outro personagem, o resume assim: os homens se dividem em ordinários e extraordinários.",
+      "claims": [
+        {
+          "text": "Porfíri resume o artigo de Raskólnikov: ordinários e extraordinários",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E1966"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "photo",
+          "anchor": "No livro",
+          "visual_need": "historical_exact",
+          "search_query": "Crime e Castigo de Dostoiévski, primeira edição em livro, página de rosto, domínio público",
+          "asset_id": "commons-crime-castigo-1867-rosto",
+          "motion": "push_in"
+        },
+        {
+          "kind": "broll",
+          "anchor": "Porfíri, outro personagem",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S052",
+      "delivery": "calm",
+      "narration": "E os extraordinários teriam o direito de cometer qualquer crime, só por serem extraordinários.",
+      "claims": [
+        {
+          "text": "Porfíri resume: os extraordinários teriam o direito de cometer qualquer crime",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E1966"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "E os extraordinários",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S141",
+      "delivery": "calm",
+      "narration": "Raskólnikov faz uma ressalva. É um direito íntimo, de decidir em consciência passar por cima de certos obstáculos, e só quando isso for essencial para realizar a sua ideia.",
+      "claims": [
+        {
+          "text": "Raskólnikov: 'not an official right, but an inner right to decide in his own conscience to overstep... certain obstacles, and only in case it is essential for the practical fulfilment of his idea'",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E1969"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Raskólnikov faz uma ressalva",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        },
+        {
+          "kind": "broll",
+          "anchor": "e só quando isso",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S055",
+      "narration": "Raskólnikov dá um exemplo. Imagine que as descobertas de Kepler e Newton só pudessem ser conhecidas se uma dúzia ou cem homens fossem sacrificados.",
+      "claims": [
+        {
+          "text": "o exemplo de Kepler e Newton e da dúzia ou cem homens",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E1969"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "photo",
+          "anchor": "Raskólnikov dá um exemplo",
+          "visual_need": "historical_exact",
+          "search_query": "Crime e Castigo de Dostoiévski, primeira edição em livro, página de rosto, domínio público",
+          "asset_id": "commons-crime-castigo-1867-rosto",
+          "motion": "pan_left"
+        },
+        {
+          "kind": "photo",
+          "anchor": "Imagine que as descobertas",
+          "visual_need": "historical_exact",
+          "search_query": "retrato de Johannes Kepler, pintura, domínio público",
+          "asset_id": "commons-kepler-1627",
+          "motion": "push_in"
+        }
+      ]
+    },
+    {
+      "id": "S056",
+      "narration": "Para ele, Newton teria o direito de eliminar a dúzia ou os cem homens, para tornar suas descobertas conhecidas de toda a humanidade. E teria até o dever.",
+      "claims": [
+        {
+          "text": "Newton teria o direito, e até o dever, de eliminar a dúzia ou os cem homens para tornar suas descobertas conhecidas de toda a humanidade",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E1969"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "photo",
+          "anchor": "Para ele, Newton",
+          "visual_need": "historical_exact",
+          "search_query": "retrato de Isaac Newton por Godfrey Kneller, pintura em domínio público, Wikimedia Commons",
+          "asset_id": "commons-newton-kneller-1689",
+          "motion": "push_in"
+        },
+        {
+          "kind": "quote",
+          "anchor": "de eliminar a dúzia",
+          "text": "Newton would have had the right, would indeed have been in duty-bound... to eliminate the dozen or the hundred men",
+          "attribution": "Raskólnikov, em Crime e Castigo, de Dostoiévski, Parte III, cap. V (trad. C. Garnett)",
+          "claims": [
+            {
+              "text": "Crime e Castigo, Parte III, cap. V",
+              "source_ids": [
+                "source-24"
+              ],
+              "excerpt_ids": [
+                "source-24#E1969"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S057",
+      "delivery": "calm",
+      "narration": "Soa parecido com Light? No primeiro episódio, ele prometeu um mundo novo, livre de injustiça, e disse que valia a pena.",
+      "claims": [
+        {
+          "text": "Light, no episódio 1: um novo mundo livre de injustiça; 'it's worth it'",
+          "source_ids": [
+            "source-01"
+          ],
+          "excerpt_ids": [
+            "source-01#E7"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "photo",
+          "anchor": "Soa parecido com Light?",
+          "visual_need": "historical_exact",
+          "search_query": "quadro parado de Death Note (trailer da Crunchyroll): Light de camisa e gravata; retrato do personagem, sem episódio",
+          "asset_id": "crunchyroll-de-trailer-light-gravata",
+          "motion": "still"
+        },
+        {
+          "kind": "broll",
+          "anchor": "No primeiro episódio",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S058",
+      "delivery": "turn",
+      "narration": "Mas o romance não para no argumento. Mais adiante, numa confissão, Raskólnikov admite que não matou para virar benfeitor da humanidade.",
+      "claims": [
+        {
+          "text": "Raskólnikov confessa que não matou para virar benfeitor da humanidade",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E3180"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Mas o romance",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        },
+        {
+          "kind": "broll",
+          "anchor": "Mais adiante",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S059",
+      "narration": "Matou por si mesmo. <short pause> Queria descobrir se era um piolho, como todo mundo, ou um homem.",
+      "claims": [
+        {
+          "text": "matou por si mesmo, para descobrir se era um piolho ou um homem",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E3180"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Matou por si mesmo",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        }
+      ]
+    },
+    {
+      "id": "S060",
+      "narration": "Isso deixa uma pergunta para Light. <short pause> O mundo novo era o fim, ou o fim era ele mesmo?",
+      "claims": [
+        {
+          "text": "Raskólnikov admite que matou por si mesmo, não para virar benfeitor da humanidade",
+          "source_ids": [
+            "source-24"
+          ],
+          "excerpt_ids": [
+            "source-24#E3180"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "kind": "broll",
+          "anchor": "Isso deixa uma pergunta",
+          "visual_need": "contextual_stock",
+          "search_query": "textura: fumaça sobre fundo preto",
+          "asset_id": "pexels-video-4320605"
+        },
+        {
+          "kind": "photo",
+          "anchor": "O mundo novo era o fim",
+          "visual_need": "historical_exact",
+          "search_query": "quadro parado de Death Note (trailer oficial da Crunchyroll): close dos olhos de Light; retrato do personagem, sem episódio",
+          "asset_id": "crunchyroll-trailer-light-olhos",
+          "motion": "still"
+        }
+      ]
+    }
+  ]
+}

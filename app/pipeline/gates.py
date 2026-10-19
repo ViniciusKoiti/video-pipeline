@@ -7,7 +7,8 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
 - gate 2 (`script`): `scenes.json` + `outline.md`. Aprovar exige um parecer "approved" do verificador
   (`checagem.json`, gravado por `vp checagem`) sobre as fichas e o roteiro atuais; sem ele, só com o motivo
   do dono (`--sem-checagem`), que vai para as notas da decisão. A escolha da imagem de cada plano
-  (`asset_id`) fica fora do carimbo e do parecer: trocar uma imagem invalida só a montagem e a prévia (§5);
+  (`asset_id`) e o bloco de números gerado no `outline.md` (`vp numeros`) ficam fora do carimbo e do parecer:
+  trocar uma imagem invalida só a montagem e a prévia (§5), e o bloco sai do `scenes.json`, já carimbado;
 - gate 3 (`assets`), por ativo: o arquivo de mídia em `assets/<id>.<ext>`. Aprovar reflete `review_status`
   no `assets/<id>.json`, e o schema recusa sem licença, crédito, `sha256` ou conferência (ADR 007);
 - gate 4 (`preview`): o render mais acabado (`renders/final.mp4`, senão `renders/preview.mp4`), o
@@ -27,6 +28,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from app.pipeline.numbers import strip_block
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
 from app.pipeline.schemas import (
     Asset,
@@ -94,13 +96,16 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
 
 
 def content_hash(paths: list[Path], *, base: Path) -> str:
-    """Como `compute_input_hash`, sem a imagem escolhida de cada plano: no `scenes.json`, todo `asset_id`
-    conta como `null`. Um roteiro ainda sem imagens tem o mesmo hash de antes."""
+    """Como `compute_input_hash`, sem o que é derivado ou escolhido depois do roteiro: no `scenes.json`, todo
+    `asset_id` conta como `null`; no `outline.md`, o bloco de números gerado (`vp numeros`) não conta. Um
+    roteiro sem imagens e sem bloco tem o mesmo hash de antes."""
     digest = hashlib.sha256()
     for path in sorted(paths):
         data = path.read_bytes()
         if path.name == "scenes.json":
             data = ASSET_ID.sub(rb"\1null", data)
+        elif path.name == "outline.md":
+            data = strip_block(data)  # os números gerados saem do scenes.json, já carimbado (#170)
         digest.update(path.relative_to(base).as_posix().encode() + b"\0")
         digest.update(hashlib.sha256(data).digest())
     digest.update(json.dumps({}).encode())

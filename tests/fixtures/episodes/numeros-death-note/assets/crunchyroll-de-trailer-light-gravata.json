@@ -1,0 +1,20 @@
+{
+ "id": "crunchyroll-de-trailer-light-gravata",
+ "provider": "official",
+ "provider_id": "youtube:9BxbETVKSLk@74.9s",
+ "original_url": "https://www.youtube.com/watch?v=9BxbETVKSLk&t=74s",
+ "page_url": "https://www.youtube.com/watch?v=9BxbETVKSLk",
+ "author": null,
+ "license_id": "Citacao",
+ "license_url": null,
+ "attribution_text": "Death Note (anime) — Death Note (Anime-Trailer), Crunchyroll Extras Deutschland",
+ "usage_notes": "Quadro parado do trailer publicado pela Crunchyroll Alemanha (distribuidora licenciada) no próprio canal do YouTube; disponível só em 480p, ampliado para 1080p; trecho baixado em 2026-10-19 com autorização do dono, só para tirar o quadro. Light Yagami de camisa branca e gravata, a mão erguida. O trailer não identifica o episódio. À esquerda, de costas e cortada, uma segunda figura de cabelo preto (personagem do anime). Fica em S057 ('Soa parecido com Light?'), fala só sobre o personagem, sem episódio. Sem crédito sobreposto no quadro (escolha do dono, 2026-10-19: quadros sem a marca do canal); a obra é creditada no rodapé e em credits.txt. Quadro parado, sem movimento, até 8 s na tela (emenda de citação da ADR 007).",
+ "retrieved_at": "2026-10-19T12:30:00-03:00",
+ "sha256": "5aa4ebbf896e5e6776833d3f3ddb241f852147a8af58e136f50ce0446acd33e6",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S057"
+ ],
+ "generation": null,
+ "work": "Death Note (série de anime, 2006–2007), Madhouse; Death Note (Anime-Trailer) (Crunchyroll Extras Deutschland)"
+}

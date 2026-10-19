@@ -1,0 +1,20 @@
+{
+ "id": "commons-dostoievski-perov-1872",
+ "provider": "wikimedia_commons",
+ "provider_id": "File:Vasily Perov - Портрет Ф.М.Достоевского - Google Art Project.jpg",
+ "original_url": "https://upload.wikimedia.org/wikipedia/commons/7/78/Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg",
+ "page_url": "https://commons.wikimedia.org/wiki/File:Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg",
+ "author": "Vasily Perov",
+ "license_id": "PD-old",
+ "license_url": null,
+ "attribution_text": "Vasily Perov, Retrato de F. M. Dostoiévski (1872), Galeria Tretyakov, via Wikimedia Commons (Google Arts & Culture), domínio público",
+ "usage_notes": "Pintura de 1872; Perov morreu em 1882: domínio público em toda parte. Reprodução fiel (Google Art Project), sem direito novo. Usar só onde a fala é sobre Dostoiévski (S120), nunca sobre o personagem Raskólnikov (checagem rodada 16–18). Conferência de pessoas, marcas e texto: só o retratado; sem marca; no canto inferior direito, a assinatura e a data do pintor ('В. Перов 1872 Май'), parte da própria obra. Conferido em 2026-10-18.",
+ "retrieved_at": "2026-10-18T21:01:36-03:00",
+ "sha256": "fa5e0569b15e2c06131908caaf072bcc37d732d4ddc6cbd196e4e2d658572334",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S120"
+ ],
+ "generation": null,
+ "work": null
+}

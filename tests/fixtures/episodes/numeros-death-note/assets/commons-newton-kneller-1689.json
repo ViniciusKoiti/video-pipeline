@@ -1,0 +1,20 @@
+{
+ "id": "commons-newton-kneller-1689",
+ "provider": "wikimedia_commons",
+ "provider_id": "File:Portrait of Sir Isaac Newton, 1689.jpg",
+ "original_url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Portrait_of_Sir_Isaac_Newton%2C_1689.jpg",
+ "page_url": "https://commons.wikimedia.org/wiki/File:Portrait_of_Sir_Isaac_Newton,_1689.jpg",
+ "author": "Godfrey Kneller",
+ "license_id": "PD-old",
+ "license_url": null,
+ "attribution_text": "Godfrey Kneller, Retrato de Isaac Newton (1689), via Wikimedia Commons, domínio público",
+ "usage_notes": "Pintura de 1689; Kneller morreu em 1723: domínio público em toda parte. Reprodução fiel (fonte: Universidade de Cambridge, exposição Lines of Thought), sem direito novo. Ilustra Newton no exemplo de Raskólnikov (S056), sem atribuir a tese a Newton. Conferência de pessoas, marcas e texto: só o retratado; sem marca nem texto. Conferido em 2026-10-18.",
+ "retrieved_at": "2026-10-18T21:01:36-03:00",
+ "sha256": "0118a1bb149f460304febce783f4da28ea13f88780e78e7719236404cd378e03",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S056"
+ ],
+ "generation": null,
+ "work": null
+}

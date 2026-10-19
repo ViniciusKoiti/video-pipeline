@@ -1,0 +1,33 @@
+{
+ "id": "pexels-video-4320605",
+ "provider": "pexels",
+ "provider_id": "4320605",
+ "original_url": "https://videos.pexels.com/video-files/4320605/4320605-hd_1920_1080_30fps.mp4",
+ "page_url": "https://www.pexels.com/video/a-smoke-in-a-dark-room-4320605/",
+ "author": "Miguel Á. Padriñán",
+ "license_id": "Pexels",
+ "license_url": "https://www.pexels.com/license/",
+ "attribution_text": "Miguel Á. Padriñán via Pexels",
+ "usage_notes": "Textura (ADR 031): fumaça sobre fundo preto, 30 s, 1920×1080. Conferência de 8 quadros em 2026-10-19: sem pessoa, marca ou texto. Ilustração, não registro.",
+ "retrieved_at": "2026-10-19T13:59:38Z",
+ "sha256": "03c61930e3850f8c57920d37d948dfed0c0d17d3721fa21bbdbae914400a0d5f",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S119",
+  "S067",
+  "S120",
+  "S051",
+  "S052",
+  "S141",
+  "S057",
+  "S058",
+  "S059",
+  "S060",
+  "S063",
+  "S064",
+  "S065",
+  "S069"
+ ],
+ "generation": null,
+ "work": null
+}

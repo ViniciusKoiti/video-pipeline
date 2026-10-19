@@ -1,0 +1,26 @@
+{
+ "id": "pexels-video-15161525",
+ "provider": "pexels",
+ "provider_id": "15161525",
+ "original_url": "https://videos.pexels.com/video-files/15161525/15161525-hd_1920_1080_24fps.mp4",
+ "page_url": "https://www.pexels.com/video/raindrops-flowing-on-glass-15161525/",
+ "author": "Phil Desforges",
+ "license_id": "Pexels",
+ "license_url": "https://www.pexels.com/license/",
+ "attribution_text": "Phil Desforges via Pexels",
+ "usage_notes": "Textura (ADR 031): chuva no vidro à noite, luzes desfocadas ao fundo, 15 s, 1920×1080. Conferência de 8 quadros em 2026-10-19: sem pessoa, marca ou texto. Ilustração, não registro.",
+ "retrieved_at": "2026-10-19T13:59:32Z",
+ "sha256": "a99de13213bc2941658f3e5da1fb9d0e43aadcf1d5e1cda362d47be47342cd73",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S115",
+  "S036",
+  "S145",
+  "S045",
+  "S040",
+  "S041",
+  "S046"
+ ],
+ "generation": null,
+ "work": null
+}
