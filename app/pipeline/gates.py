@@ -6,7 +6,8 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
 - gate 1 (`sources`): `sources.json` + `facts.json`;
 - gate 2 (`script`): `scenes.json` + `outline.md`. Aprovar exige um parecer "approved" do verificador
   (`checagem.json`, gravado por `vp checagem`) sobre as fichas e o roteiro atuais; sem ele, só com o motivo
-  do dono (`--sem-checagem`), que vai para as notas da decisão;
+  do dono (`--sem-checagem`), que vai para as notas da decisão. A escolha da imagem de cada plano
+  (`asset_id`) fica fora do carimbo e do parecer: trocar uma imagem invalida só a montagem e a prévia (§5);
 - gate 3 (`assets`), por ativo: o arquivo de mídia em `assets/<id>.<ext>`. Aprovar reflete `review_status`
   no `assets/<id>.json`, e o schema recusa sem licença, crédito, `sha256` ou conferência (ADR 007);
 - gate 4 (`preview`): o render mais acabado (`renders/final.mp4`, senão `renders/preview.mp4`), o
@@ -19,6 +20,8 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
 from __future__ import annotations
 
 import hashlib
+import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -48,6 +51,7 @@ GATED_STEPS = (*GATE_FILES, Step.ASSETS, Step.PREVIEW)
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
 CHECK_FILE = "checagem.json"
 CHECKED_FILES = ("facts.json", "scenes.json", "outline.md")  # o que o verificador confere contra os trechos
+ASSET_ID = re.compile(rb'("asset_id"\s*:\s*)"(?:[^"\\]|\\.)*"')  # a imagem escolhida para o plano
 
 
 class GateError(ValueError):
@@ -60,10 +64,12 @@ class GateStatus:
     asset_id: str | None
     entry: ReviewEntry | None  # última decisão; None = nenhuma
     current_hash: str | None  # None = o que foi revisto não existe mais
+    legacy_hash: str | None = None  # carimbo de antes de a imagem sair do gate 2 (decisões já gravadas)
 
     @property
     def valid(self) -> bool:
-        return self.entry is not None and self.entry.input_hash == self.current_hash
+        accepted = {self.current_hash, self.legacy_hash} - {None}
+        return self.entry is not None and self.entry.input_hash in accepted
 
 
 def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str:
@@ -83,7 +89,21 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
     missing = [p.name for p in paths if not p.is_file()]
     if missing:
         raise GateError(f"{episode_id}: faltam {', '.join(missing)} para o gate de {step.value}")
-    return compute_input_hash(paths, {}, base=store.path(episode_id, ""))
+    return content_hash(paths, base=store.path(episode_id, ""))
+
+
+def content_hash(paths: list[Path], *, base: Path) -> str:
+    """Como `compute_input_hash`, sem a imagem escolhida de cada plano: no `scenes.json`, todo `asset_id`
+    conta como `null`. Um roteiro ainda sem imagens tem o mesmo hash de antes."""
+    digest = hashlib.sha256()
+    for path in sorted(paths):
+        data = path.read_bytes()
+        if path.name == "scenes.json":
+            data = ASSET_ID.sub(rb"\1null", data)
+        digest.update(path.relative_to(base).as_posix().encode() + b"\0")
+        digest.update(hashlib.sha256(data).digest())
+    digest.update(json.dumps({}).encode())
+    return "sha256:" + digest.hexdigest()
 
 
 def record_decision(
@@ -135,6 +155,11 @@ def check_hash(store: ManifestStore, episode_id: str) -> str:
     present = [p for p in paths if p.is_file()]
     if not any(p.name == "scenes.json" for p in present):
         raise GateError(f"{episode_id}: falta scenes.json para o parecer do verificador")
+    return content_hash(present, base=store.path(episode_id, ""))
+
+
+def _legacy_check_hash(store: ManifestStore, episode_id: str) -> str:
+    present = [p for p in (store.path(episode_id, name) for name in CHECKED_FILES) if p.is_file()]
     return compute_input_hash(present, {}, base=store.path(episode_id, ""))
 
 
@@ -172,9 +197,10 @@ def latest_check(store: ManifestStore, episode_id: str) -> tuple[CheckEntry | No
         return None, False
     entry = max(entries, key=lambda e: e.at)
     try:
-        return entry, entry.input_hash == check_hash(store, episode_id)
+        current = check_hash(store, episode_id)
     except GateError:
         return entry, False
+    return entry, entry.input_hash in (current, _legacy_check_hash(store, episode_id))
 
 
 def check_is_current(store: ManifestStore, episode_id: str) -> bool:
@@ -191,7 +217,13 @@ def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> li
     targets += [(Step.ASSETS, asset_id) for asset_id in sorted(on_disk | decided)]
     targets.append((Step.PREVIEW, None))
     return [
-        GateStatus(step, asset, log.latest(step, asset_id=asset), _current(store, episode_id, step, asset))
+        GateStatus(
+            step,
+            asset,
+            log.latest(step, asset_id=asset),
+            _current(store, episode_id, step, asset),
+            _legacy(store, episode_id, step),
+        )
         for step, asset in targets
     ]
 
@@ -234,6 +266,15 @@ def _current(store: ManifestStore, episode_id: str, step: Step, asset_id: str | 
         return gate_hash(store, episode_id, step, asset_id)
     except GateError:
         return None
+
+
+def _legacy(store: ManifestStore, episode_id: str, step: Step) -> str | None:
+    """O hash dos arquivos inteiros, como era gravado antes (decisões antigas continuam valendo)."""
+    names = GATE_FILES.get(step)
+    paths = [store.path(episode_id, name) for name in names or ()]
+    if not paths or not all(p.is_file() for p in paths):
+        return None
+    return compute_input_hash(paths, {}, base=store.path(episode_id, ""))
 
 
 def _media_path(store: ManifestStore, episode_id: str, asset_id: str) -> Path:

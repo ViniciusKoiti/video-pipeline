@@ -152,11 +152,11 @@ Diagrama completo: `docs/pipeline-flowchart.mermaid`.
   cena, não o episódio.
 - Aprovação humana é registrada por `vp approve <id> --step <step>` (ou `vp reject`) em `review.json`, nunca
   editando `review_status` à mão no manifesto principal. Nos gates feitos por agente ou pessoa, a decisão carimba
-  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2), o arquivo do ativo (gate 3) ou,
-  no gate 4 (`--step preview`), o render mais acabado (`final.mp4`, senão `preview.mp4`) com `episode.json`,
-  legenda e texto do post; renderizar o final depois de aprovar a prévia pede nova decisão. `vp status` mostra se
-  a decisão ainda vale e, nas pendências, a legenda que falta no vertical (ADR 009, emenda de gates por comando;
-  #120).
+  `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2; o `asset_id` dos planos fica fora,
+  porque é escolha do gate 3), o arquivo do ativo (gate 3) ou, no gate 4 (`--step preview`), o render mais acabado
+  (`final.mp4`, senão `preview.mp4`) com `episode.json`, legenda e texto do post; renderizar o final depois de
+  aprovar a prévia pede nova decisão. `vp status` mostra se a decisão ainda vale e, nas pendências, a legenda que
+  falta no vertical (ADR 009, emenda de gates por comando; #120).
 - **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
   (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
   (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
