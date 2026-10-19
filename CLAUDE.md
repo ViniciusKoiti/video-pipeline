@@ -96,6 +96,9 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
   `app/pipeline/bench.py` (acima de 0,3 s = limitada) vem antes de benchmark, render longo ou rodada de modelo
   local; medida com a máquina limitada é inválida. Nunca encerrar processos do dono.
 - Interfaces de teste só em `127.0.0.1`. Um render por vez; tempo e memória de cada etapa em `data/benchmarks/`.
+- O `/tmp` do WSL fica em memória (~6 GB). O render do Remotion põe os temporários em `data/cache/remotion-tmp/` e
+  os apaga ao fim; os scripts de quadros apagam o pacote do template. Sobras antigas: `find /tmp -maxdepth 1
+  -name 'remotion-*' -user $USER -mmin +60 -exec rm -rf {} +`.
 
 ### Mapa do repositório
 

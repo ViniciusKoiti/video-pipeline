@@ -131,3 +131,20 @@ def test_scene_props_loop_a_clip_shorter_than_the_shot(tmp_path: Path) -> None:
     (broll,) = [s for s in scene["shots"] if s["spec"]["kind"] == "broll"]
     assert broll["frames"] > 2 * scene["fps"]  # o plano vai até o fim da cena, mais longo que o clipe de 2 s
     assert broll["loopFrames"] == 2 * scene["fps"] and "startFrom" not in broll
+def test_render_temporaries_go_to_disk_and_are_removed(tmp_path: Path, monkeypatch) -> None:  # noqa: ANN001
+    import subprocess as sp
+
+    from app.render import remotion
+
+    seen: dict[str, Path] = {}
+
+    def fake_run(command, **kwargs):  # noqa: ANN001, ANN202
+        seen["tmp"] = Path(kwargs["env"]["TMPDIR"])
+        (seen["tmp"] / "remotion-webpack-bundle-x").mkdir()  # o pacote que o Remotion deixaria para trás
+        Path(tmp_path / "out.mp4").write_bytes(b"x")
+        return sp.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(remotion.subprocess, "run", fake_run)
+    engine = RemotionEngine(tmp_root=tmp_path / "remotion-tmp")
+    engine._render_scenes("node", tmp_path, [{"out": str(tmp_path / "out.mp4"), "props": {}}], True, tmp_path)
+    assert seen["tmp"].parent == tmp_path / "remotion-tmp" and not seen["tmp"].exists()
