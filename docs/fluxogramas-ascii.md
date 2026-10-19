@@ -12,6 +12,7 @@ Legenda:
 #===========#   gate: decisão do dono (vp approve / vp reject)
 <  ...  >       verificação em código ou por agente; volta se reprovar
 [provisório]    script em scripts/provisorio/, ainda sem comando vp
+[falta]         feito à mão hoje ou ainda não existe no código
 ```
 
 ## 1. Visão geral: do tema ao vídeo publicado
@@ -63,24 +64,58 @@ Legenda:
                                 v
                  <  agente verificador  > -- problema de roteiro --> roteirista
                     vp checagem             -- problema de ficha ----> pesquisador
-                                |                                      (gate 1 de novo)
+                                |                 corrige a ficha, e o DONO
+                                |                 reaprova o gate 1 antes de seguir
                                 v
                  #=============================#
                  #  GATE 2: roteiro            #  vp approve <id> --step script
-                 #=============================#  <== death-note-fins-meios (2026-10-19)
+                 #=============================#
                                 |
  3. IMAGENS E DIREITOS          v
                  +-----------------------------+
-                 | buscar_candidatos.py        |---> candidatos/ + galeria
-                 | baixar_escolhidos.py        |---> assets/<id>.<ext> + assets/<id>.json
-                 | [provisório]                |     (licença, autor, sha256)
+                 | skill plano-de-imagens      |---> plano-imagens.md
+                 | plano por trecho: textura,  |     decisoes-imagens.md
+                 | retrato, página, quadro     |
                  +--------------+--------------+
+                                v
+                 #=============================#
+                 #  DONO valida o plano antes  #  nada é baixado antes disto
+                 #  de baixar                  #
+                 #=============================#
+                                v
+                 +-----------------------------+
+                 | buscar_candidatos.py        |---> candidatos/ + folhas (folhas.py)
+                 | baixar_escolhidos.py        |---> assets/<id>.<ext> + assets/<id>.json
+                 | [provisório]                |     conferência do vídeo inteiro
+                 | Commons e quadros oficiais  |     (conferencia.py); cookies só
+                 | [falta: à mão]              |     com o consentimento do dono
+                 +--------------+--------------+
+                                v
+                 <  vp check e verificador:  >  retrato só na fala sobre o autor;
+                 <  as imagens também        >  quadro da obra nunca sob cena de
+                                |               episódio; texto da imagem = fala
+                                v
+                 #=============================#
+                 #  GATE 2 de novo, se o tipo  #  foto -> vídeo muda o roteiro;
+                 #  de algum plano mudou       #  trocar só a imagem não (PR #169)
+                 #=============================#
                                 v
                  #=============================#
                  #  GATE 3: cada ativo         #  "trocar" volta à busca
                  #=============================#
                                 |
  4. VOZ, LEGENDA E RENDER       v
+                 +-----------------------------+
+                 | prévia de trecho (2–3 min)  |---> data/episodes/<id>-trechoN/
+                 | com a voz final             |     o dono julga voz e visual
+                 | [falta: pasta montada à mão]|     antes do render longo
+                 +--------------+--------------+
+                                v
+                 +-----------------------------+
+                 | trilha (ADR 030, proposta)  |---> só faixa com licença registrada
+                 | [falta]                     |
+                 +--------------+--------------+
+                                v
                  +-----------------------------+
                  | montar_episodio.py          |---> voice/, episode.json,
                  | [provisório] (fluxograma 3) |     captions.srt, renders/
@@ -89,11 +124,18 @@ Legenda:
                                 v
                  <  checks automáticos  >  abre no ffprobe, duração = voz, áudio,
                                 v          sem silêncio longo, 16:9, todo plano com ativo
+                 +-----------------------------+
+                 | créditos e descrição        |---> credits.txt (banco, Commons,
+                 | revisão de direitos e risco |     quadros Citacao), descrição,
+                 | [falta: editor-de-descricao,|     divulgação de IA, risco de
+                 |  revisor-de-risco]          |     Content ID
+                 +--------------+--------------+
+                                v
                  #=============================#
                  #  GATE 4: prévia, descrição  #  "ajustar imagem" -> 3
-                 #           e legenda do post #  "ajustar texto"  -> 2
-                 #=============================#
-                                |
+                 #  legenda do post, miniatura #  "ajustar texto"  -> 2
+                 #=============================#  <== death-note-fins-meios (2026-10-19:
+                                |                    gates 1, 2 e 3 aprovados)
  5. PUBLICAÇÃO                  v
                  +-----------------------------+
                  | upload manual, ou           |
