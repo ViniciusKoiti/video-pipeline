@@ -284,6 +284,7 @@ O dono decide o objetivo, a tese e a opinião (`thesis_by: dono`). O roteirista 
 ```
 
 Material de terceiros fica em `data/cache/`, só para análise; nada dele entra no vídeo.
+As duas skills (`.agents/skills/`) ainda não têm commit em 2026-10-19.
 
 ## 8. Onde entra o motion-kit (ADR 027, 029)
 
