@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
+import tempfile
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -147,9 +149,13 @@ class RemotionEngine:
         burn_captions_preview: bool = True,
         burn_captions_final: bool = False,
         audio_bitrate: str = "192k",
+        tmp_root: Path | None = None,
     ) -> None:
         self.info = ProviderInfo("remotion", remote=False)
         self._project = project
+        # Temporários do Remotion (pacote do template, ~250 MB por render) no disco, não no /tmp em memória do
+        # WSL, e apagados ao fim de cada render: antes eles ficavam e lotavam o /tmp
+        self._tmp_root = tmp_root or project.parent / "data" / "cache" / "remotion-tmp"
         self._node = node
         self._crf = crf
         self._fade_s = fade_s
@@ -328,13 +334,19 @@ class RemotionEngine:
                 }
             )
         )
-        result = subprocess.run(
-            [node, "render-scenes.mjs", str(request.resolve())],
-            cwd=self._project,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        self._tmp_root.mkdir(parents=True, exist_ok=True)
+        tmp = Path(tempfile.mkdtemp(prefix="render-", dir=self._tmp_root))
+        try:
+            result = subprocess.run(
+                [node, "render-scenes.mjs", str(request.resolve())],
+                cwd=self._project,
+                capture_output=True,
+                text=True,
+                check=False,
+                env={**os.environ, "TMPDIR": str(tmp)},
+            )
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
         missing = [job["out"] for job in jobs if not Path(job["out"]).exists()]
         if result.returncode != 0 or missing:
             raise RemotionError(f"Remotion falhou: {(result.stderr or result.stdout).strip()[-800:]}")
