@@ -22,9 +22,12 @@ citação (quadros da obra).
 - `plano-imagens.md`: o plano cena a cena (cena, tempo, âncora, tipo, ativo, licença) e a lista dos ativos usados.
 - `decisoes-imagens.md`: cada escolha do dono, com data. Fica fora do `scenes.json`.
 - `assets/<id>.json` (pelos scripts) e o `usage_notes` de cada um, com a conferência real.
-- No `scenes.json`, o `asset_id` de cada plano, e `photo` → `broll` onde o dono escolheu textura. Trocar a imagem não
-  derruba o gate 2 (o carimbo ignora o `asset_id`, PR #169). Trocar o tipo do plano ou a âncora derruba, e aí o
-  verificador confere e o dono reaprova.
+- No `scenes.json`, o `asset_id` de cada plano, e `photo` → `broll` onde o dono escolheu textura.
+  - **Gate 2 hoje:** o carimbo cobre o `scenes.json` inteiro, então gravar ou trocar `asset_id` derruba o gate 2 e o
+    parecer do verificador. É preciso uma rodada do verificador e a reaprovação do dono (aconteceu no
+    `kira-voto-brasil`).
+  - **Depois do PR #169** (o carimbo passa a ignorar o `asset_id`), trocar a imagem não derruba mais.
+  - **Tipo do plano ou âncora:** trocar derruba sempre, e aí o verificador confere e o dono reaprova.
 
 ## Método
 
