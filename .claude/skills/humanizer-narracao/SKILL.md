@@ -35,7 +35,8 @@ público ainda não tinha.
    cena: o mesmo fecho de efeito em várias cenas é o mesmo vício em escala maior.
 2. **Rascunhe** a reescrita. Pode encurtar, juntar ou separar frases; mantenha a informação.
 3. **Leia em voz alta** e confira: o que ainda soa gerado? Algum fato entrou ou saiu? As âncoras ainda
-   aparecem em ordem?
+   aparecem em ordem? Onde a cena tem uma palavra que pesa, ela cai no fim da frase, numa frase curta ou numa
+   pergunta (veja "Fala, não texto")?
 4. **Versão final** direto no `scenes.json`. Rode `.venv/bin/vp check <id>`.
 
 ## Padrões (os 5 primeiros bastam uma vez para agir)
@@ -72,6 +73,12 @@ público ainda não tinha.
 - A vírgula vira pausa na voz: vírgula demais picota a fala. Travessão e parênteses não existem na fala:
   troque por vírgula, ponto ou outra frase.
 - Números como devem ser ditos; anos em algarismos. Sigla por extenso na primeira vez.
+- **A palavra que pesa.** A voz não aceita marca de ênfase numa palavra, então a ênfase sai da posição da
+  palavra. Quem fala aperta uma ou duas palavras; quem lê espalha o tom pela frase toda. Ponha a palavra da
+  virada, do contraste ou do número no fim da frase ou numa frase curta. Nunca deixe essa palavra no meio de
+  vírgulas. Uma `<short pause>` antes dela só vale onde pesa mais. Caixa alta do dono ("JUSTIÇA") é pedido
+  de ênfase: escreva a palavra em caixa normal e no lugar certo. Método completo: item 9 da skill
+  `roteiro-explicativo`.
 - **Exceção do formato explicativo:** o gancho pode ter uma pergunta ou um contraste deliberado, um por
   vídeo, no começo, e com fato.
 

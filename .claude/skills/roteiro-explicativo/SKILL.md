@@ -165,6 +165,21 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      abertura (texto curto, em pergunta ou chamado: "Você sabe quanto custa um docinho?"), `turn` na virada ("mas…"),
      `calm` na conta dita inteira, `invite` na pergunta final; cena de explicação não leva o campo. A ênfase vem da
      voz clonada. Explicação longa não cabe numa cena `hook`.
+   - **A palavra que pesa (pedido do dono, 2026-10-19).** O `delivery` muda o tom da cena inteira. Ele não
+     aperta uma palavra, e a voz clonada não aceita marca de ênfase. Sem cuidado, a fala soa como alguém lendo.
+     Toda cena que vira, opina, pergunta ou traz um número tem **uma** palavra que pesa: a da virada, do
+     contraste, do número ou do nome. A ênfase sai do lugar onde essa palavra fica:
+     - **no fim da frase**, onde a voz já pousa: "Matou por si mesmo." em vez de "Por si mesmo é que ele
+       matou.";
+     - **numa frase curta, sozinha**: "Mas não foi bem isso que ele disse.";
+     - **depois de uma `<short pause>`**, só onde ela pesa mais. A pausa conta no limite do item 6, e silêncio
+       demais também soa como leitura (o nicho fala sem buraco de som);
+     - **numa pergunta**, porque o tom sobe no fim: "Isso ainda é a justiça que ele prometia?"
+
+     Não enterre essa palavra no meio de uma frase longa, entre vírgulas. Quando o dono escreve uma palavra em
+     CAIXA ALTA ("JUSTIÇA", "HOJE"), isso é um pedido de ênfase, não texto: ponha a palavra num desses lugares e
+     escreva-a em caixa normal na `narration`. No **Mapa de tom** do `outline.md`, anote a palavra que pesa nas
+     cenas com `delivery` e nas opiniões do dono, para ele conferir na leitura.
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
 
