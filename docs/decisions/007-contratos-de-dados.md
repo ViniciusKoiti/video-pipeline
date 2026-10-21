@@ -169,3 +169,18 @@ Ao ser aceita, a emenda pede no mesmo commit:
 - a licença e os campos novos em `app/pipeline/schemas.py`;
 - o check;
 - a atualização do §2.3 e do §6 do CLAUDE.md.
+
+## Emenda — 2026-10-21 (música da YouTube Audio Library)
+
+**Status:** aceita pelo dono em 2026-10-21, junto com a ADR 030.
+
+- A licença `YouTube-Audio-Library` entra na lista fechada. Ela vale só para faixas com `provider:
+  youtube_audio_library`. O dono baixa essas faixas à mão pelo YouTube Studio, preferindo o filtro "Attribution
+  not required".
+- A faixa CC da biblioteca entra com a CC-BY da própria faixa, com `author` e `attribution_text`, como as
+  outras CC-BY.
+- `usage_notes` é obrigatório: título, data do download, tipo de licença mostrado na coluna "License type" e
+  voz cantada (sim ou não).
+- **Só vale em vídeo publicado no YouTube.** A página oficial não cobre o uso fora da plataforma
+  (`data/benchmarks/termos-musica.md`). Corte para Reels, TikTok e afins sai sem essas faixas.
+- Faixas do Pixabay Music e do Suno continuam fora, até uma decisão à parte (ADR 030).

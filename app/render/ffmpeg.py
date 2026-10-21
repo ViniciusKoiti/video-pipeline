@@ -19,8 +19,9 @@ import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from app.media.loudness import TARGET_LUFS, integrated_lufs
 from app.media.probe import dimensions, duration_ms, probe_streams
-from app.pipeline.schemas import EpisodeManifest, EpisodeScene, VideoSpec
+from app.pipeline.schemas import EpisodeManifest, EpisodeMusic, EpisodeScene, VideoSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 
@@ -273,30 +274,33 @@ def assemble(
     audio_bitrate: str = "192k",
 ) -> None:
     """Junta segmentos de vídeo sem recodificar e codifica a narração inteira uma vez (demuxer concat).
-    Usada por qualquer motor que renderize por cena."""
+    Usada por qualquer motor que renderize por cena. Com trilha (ADR 030), a música entra aqui, por baixo
+    da voz: os segmentos de cada cena ficam como estavam, e trocar a faixa refaz só a junção (§5)."""
     video_list = out.parent / f".{out.stem}-video.txt"
     audio_list = out.parent / f".{out.stem}-audio.txt"
     video_list.write_text(_concat_list(segments))
     audio_list.write_text(_concat_list(_audio_parts(episode, episode_dir, out.parent)))
+    concat = ["-f", "concat", "-safe", "0"]
+    audio: list[str] = ["-map", "1:a"]
+    music_inputs: list[str] = []
+    if episode.music:
+        voice_lufs = integrated_lufs(audio_list, input_args=concat)
+        gain = TARGET_LUFS - voice_lufs
+        music_inputs, graph = music_mix(episode.music, episode_dir, spec.audio_sample_rate, gain)
+        audio = ["-filter_complex", graph, "-map", "[a]"]
     tmp = out.with_suffix(".tmp.mp4")
     _run(
         [
-            "-f",
-            "concat",
-            "-safe",
-            "0",
+            *concat,
             "-i",
             str(video_list),
-            "-f",
-            "concat",
-            "-safe",
-            "0",
+            *concat,
             "-i",
             str(audio_list),
+            *music_inputs,
             "-map",
             "0:v",
-            "-map",
-            "1:a",
+            *audio,
             "-c:v",
             "copy",
             "-c:a",
@@ -315,6 +319,47 @@ def assemble(
     tmp.replace(out)
     video_list.unlink()
     audio_list.unlink()
+
+
+# Ducking (ADR 030): a trilha baixa enquanto a voz fala, com a própria voz como chave do compressor.
+DUCKING = "sidechaincompress=threshold=0.02:ratio=8:attack=20:release=500"
+LIMITER = "alimiter=limit=0.89:level=false"  # teto de ~-1 dBFS depois do ganho para o alvo de loudness
+
+
+def music_mix(
+    music: list[EpisodeMusic], episode_dir: Path, sample_rate: int, voice_gain_db: float
+) -> tuple[list[str], str]:
+    """Entradas do ffmpeg (a partir da 2: vídeo e voz vêm antes) e o grafo que põe cada trecho da trilha no
+    lugar, com fade e ganho, e mistura com a voz levada ao alvo de loudness. Saída no rótulo `[a]`."""
+    fmt = f"aformat=sample_rates={sample_rate}:channel_layouts=stereo"
+    inputs: list[str] = []
+    chains = []
+    for i, cue in enumerate(music):
+        inputs += [*(["-stream_loop", "-1"] if cue.loop else []), "-i", str(episode_dir / cue.media)]
+        length = (cue.end_ms - cue.start_ms) / 1000
+        steps = [
+            f"atrim=start={cue.track_offset_ms / 1000:.3f}:duration={length:.3f}",
+            "asetpts=PTS-STARTPTS",
+            fmt,
+            f"volume={cue.gain_db:.1f}dB",
+        ]
+        if cue.fade_in_ms:
+            steps.append(f"afade=t=in:st=0:d={cue.fade_in_ms / 1000:.3f}")
+        if cue.fade_out_ms:
+            fade = cue.fade_out_ms / 1000
+            steps.append(f"afade=t=out:st={length - fade:.3f}:d={fade:.3f}")
+        steps.append(f"adelay={cue.start_ms}:all=1")
+        chains.append(f"[{2 + i}:a]{','.join(steps)}[m{i}]")
+    labels = "".join(f"[m{i}]" for i in range(len(music)))
+    bus = f"{labels}amix=inputs={len(music)}:normalize=0[bus]" if len(music) > 1 else f"{labels}anull[bus]"
+    graph = [
+        *chains,
+        bus,
+        f"[1:a]{fmt},volume={voice_gain_db:.2f}dB,asplit=2[voice][key]",
+        f"[bus][key]{DUCKING}[ducked]",
+        f"[voice][ducked]amix=inputs=2:normalize=0:duration=first,{LIMITER}[a]",
+    ]
+    return inputs, ";".join(graph)
 
 
 def _audio_parts(episode: EpisodeManifest, episode_dir: Path, work: Path) -> list[Path]:

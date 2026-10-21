@@ -1030,6 +1030,7 @@ class Provider(StrEnum):
     WORKERS_AI = "workers_ai"
     ORIGINAL = "original"  # mapa, cronologia ou tela gráfica feitos pelo projeto
     OFFICIAL = "official"  # material oficial público do detentor da obra (emenda de citação, ADR 007)
+    YOUTUBE_AUDIO_LIBRARY = "youtube_audio_library"  # faixa baixada à mão pelo Studio (ADR 030)
 
 
 # Lista fechada de licenças que podem chegar ao render (ADR 007). Qualquer outra — inclusive
@@ -1048,11 +1049,14 @@ STOCK_LICENSES = {
 CITATION_LICENSE = "Citacao"
 MAX_CITATION_FRAMES = 10  # quadros por vídeo
 MAX_CITATION_MS = 8000  # na tela, só enquanto a narração comenta o quadro
+# Música da YouTube Audio Library sem atribuição exigida (emenda de música, ADR 007 e ADR 030): vale só em
+# vídeo publicado no YouTube; a faixa CC dela entra com a licença CC-BY da própria faixa.
+AUDIO_LIBRARY_LICENSE = "YouTube-Audio-Library"
 ACCEPTED_LICENSES = (
     PUBLIC_DOMAIN_LICENSES
     | ATTRIBUTION_LICENSES
     | set(STOCK_LICENSES.values())
-    | {"CC0-1.0", "Flickr-NKCR", "Generated", "Original", CITATION_LICENSE}
+    | {"CC0-1.0", "Flickr-NKCR", "Generated", "Original", CITATION_LICENSE, AUDIO_LIBRARY_LICENSE}
 )
 
 
@@ -1119,6 +1123,14 @@ class Asset(Model):
                 problems.append("citação exige attribution_text (crédito da obra na descrição)")
             if not self.usage_notes.strip():
                 problems.append("citação exige usage_notes: o trecho que o quadro ilustra e por quê")
+        library = self.provider is Provider.YOUTUBE_AUDIO_LIBRARY
+        if self.license_id == AUDIO_LIBRARY_LICENSE and not library:
+            problems.append("licença da Audio Library só com provider youtube_audio_library")
+        if library:
+            if self.license_id not in {AUDIO_LIBRARY_LICENSE} | ATTRIBUTION_LICENSES:
+                problems.append("faixa da Audio Library usa YouTube-Audio-Library ou a CC-BY da faixa")
+            if not self.usage_notes.strip():
+                problems.append("faixa da Audio Library exige usage_notes (só YouTube, sem voz cantada)")
         own = STOCK_LICENSES.get(self.provider)
         if own is None and self.license_id in STOCK_LICENSES.values():
             problems.append(f"licença {self.license_id!r} só vale para ativos do próprio banco")
@@ -1221,6 +1233,81 @@ class CheckLog(Model):
     entries: list[CheckEntry] = []
 
 
+# --- Trilha sonora (ADR 030) ---------------------------------------------------------------------
+
+MusicRole = Literal["bed", "sting", "silence"]  # fundo, transição curta, silêncio proposital
+MusicLevel = Literal["low", "mid"]
+# Ganho sobre o arquivo da faixa, antes do ducking: a voz fica sempre acima da trilha.
+MUSIC_GAIN_DB: dict[str, float] = {"low": -24.0, "mid": -18.0}
+MAX_MUSIC_GAIN_DB = -10.0
+MUSIC_DIR = "music"  # em data/: catálogo, faixas e o ativo de cada uma
+MUSIC_CATALOG_FILE = "catalog.json"  # em data/music/
+MUSIC_PLAN_FILE = "music.json"  # na pasta do episódio
+
+
+class MusicTrack(Model):
+    """Faixa do catálogo. Os direitos ficam no ativo `data/music/<asset_id>.json`, como qualquer ativo (§6); o
+    episódio que a usa ganha uma cópia do ativo e do arquivo em `assets/`, aprovada no gate 3."""
+
+    asset_id: AssetId
+    title: NonEmpty
+    artist: str | None = None
+    file: NonEmpty  # nome do arquivo em data/music/
+    duration_ms: int = Field(gt=0)
+    moods: list[NonEmpty] = Field(min_length=1)  # clima, da fonte e da escuta do dono
+    intensity: int = Field(ge=1, le=5)  # medida localmente pela loudness da faixa
+    bpm: int | None = Field(default=None, gt=0)  # anotado à mão quando importa
+    vocals: bool  # voz cantada: nunca sob a narração
+    loops: bool = False  # o fim emenda no começo sem corte audível
+
+
+class MusicCatalog(Model):
+    """`data/music/catalog.json`: as faixas que o diretor musical pode usar (ADR 030)."""
+
+    tracks: list[MusicTrack] = []
+
+    @model_validator(mode="after")
+    def _unique_ids(self) -> Self:
+        _unique([t.asset_id for t in self.tracks], "faixas do catálogo")
+        return self
+
+    def by_id(self) -> dict[str, MusicTrack]:
+        return {t.asset_id: t for t in self.tracks}
+
+
+class MusicAnchor(Model):
+    """Ponto da narração, como a âncora de um plano (ADR 008): o trecho dentro da cena. Sem `text`, a entrada
+    vale no começo da cena e a saída, no fim dela."""
+
+    scene: SceneId
+    text: str | None = Field(default=None, min_length=1)
+
+
+class MusicCue(Model):
+    role: MusicRole
+    track: AssetId | None = None  # o silêncio não tem faixa
+    start: MusicAnchor
+    end: MusicAnchor
+    level: MusicLevel = "low"
+    fade_in_ms: int = Field(default=1500, ge=0)
+    fade_out_ms: int = Field(default=2500, ge=0)
+    track_offset_ms: int = Field(default=0, ge=0)  # de onde a faixa começa a tocar
+    why: NonEmpty  # o motivo: a entrega da cena, a virada, a frase que decide
+
+    @model_validator(mode="after")
+    def _track_unless_silence(self) -> Self:
+        if (self.role == "silence") != (self.track is None):
+            raise ValueError("o silêncio não tem faixa; fundo e transição têm")
+        return self
+
+
+class MusicPlan(Model):
+    """`music.json`: o plano da trilha, escrito pelo agente diretor-musical (ADR 030)."""
+
+    episode_id: EpisodeId
+    cues: list[MusicCue] = []
+
+
 # --- episode.json (contrato do render) ----------------------------------------------------------
 
 
@@ -1319,6 +1406,29 @@ class EpisodeScene(Model):
         return self
 
 
+class EpisodeMusic(Model):
+    """Trecho da trilha com o tempo resolvido sobre os WAVs reais (ADR 030), relativo ao início do vídeo."""
+
+    asset_id: AssetId
+    media: RelPath  # arquivo da faixa na pasta do episódio
+    role: Literal["bed", "sting"]
+    start_ms: int = Field(ge=0)
+    end_ms: int = Field(gt=0)
+    track_offset_ms: int = Field(default=0, ge=0)
+    gain_db: float = Field(le=MAX_MUSIC_GAIN_DB)
+    fade_in_ms: int = Field(default=0, ge=0)
+    fade_out_ms: int = Field(default=0, ge=0)
+    loop: bool = False  # a faixa recomeça quando acaba
+
+    @model_validator(mode="after")
+    def _inside(self) -> Self:
+        if self.end_ms <= self.start_ms:
+            raise ValueError(f"trilha {self.asset_id}: termina antes de começar")
+        if self.fade_in_ms + self.fade_out_ms > self.end_ms - self.start_ms:
+            raise ValueError(f"trilha {self.asset_id}: fades maiores que o trecho")
+        return self
+
+
 class EpisodeManifest(Model):
     """Única entrada do motor de montagem (§6). Timing vem da duração real dos WAVs.
     Versões: 1 (ADR 001, um visual por cena) e 2 (ADR 008, lista de planos). Mudar exige nova ADR."""
@@ -1333,6 +1443,7 @@ class EpisodeManifest(Model):
     captions: RelPath | None = None  # captions.srt editável
     host: HostSpec | None = None  # apresentador em janela flutuante (ADR 013); só `explainer`
     series: Series | None = None  # selo do cartão final (ADR 028, emenda à ADR 026); só `explainer`
+    music: list[EpisodeMusic] = []  # trilha sonora (ADR 030); só `explainer`; vazio = sem trilha
 
     @property
     def duration_ms(self) -> int:
@@ -1350,6 +1461,15 @@ class EpisodeManifest(Model):
             raise ValueError("host (apresentador) só existe no formato explainer (ADR 013)")
         if self.series is not None and self.format != EpisodeFormat.EXPLAINER:
             raise ValueError("series (selo do cartão final) só existe no formato explainer (ADR 028)")
+        if self.music:
+            if self.format != EpisodeFormat.EXPLAINER:
+                raise ValueError("music (trilha) só existe no formato explainer (ADR 030)")
+            if (last := max(m.end_ms for m in self.music)) > self.duration_ms:
+                raise ValueError(f"trilha termina em {last} ms, depois do fim do vídeo")
+            beds = sorted((m for m in self.music if m.role == "bed"), key=lambda m: m.start_ms)
+            for previous, current in zip(beds, beds[1:], strict=False):
+                if current.start_ms < previous.end_ms:
+                    raise ValueError(f"fundos sobrepostos: {previous.asset_id} e {current.asset_id}")
         if self.video.portrait:
             if self.format != EpisodeFormat.EXPLAINER:
                 raise ValueError("o perfil vertical (9:16) só existe no formato explainer (ADR 014)")

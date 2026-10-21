@@ -17,6 +17,7 @@ from pydantic import ValidationError
 
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
+from app.pipeline.music import plan_problems
 from app.pipeline.ports import M, ManifestStore
 from app.pipeline.radar import (
     BRIEF_FILE,
@@ -28,6 +29,7 @@ from app.pipeline.radar import (
 )
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
+    MUSIC_PLAN_FILE,
     NUMBER_SEPARATORS,
     OVERLAY_SHOT_KINDS,
     Asset,
@@ -40,6 +42,8 @@ from app.pipeline.schemas import (
     FactsManifest,
     Language,
     MapShot,
+    MusicCatalog,
+    MusicPlan,
     NumberShot,
     PhotoShot,
     QuoteShot,
@@ -534,16 +538,47 @@ def _check_radar(
     report.warnings += form_warnings(scenes, brief, chars_per_second, caption, today)
 
 
+def _check_music(
+    store: ManifestStore,
+    episode_id: str,
+    scenes: ScenesManifest,
+    catalog: MusicCatalog | None,
+    report: CheckReport,
+    chars_per_second: float,
+) -> None:
+    """Plano da trilha (ADR 030), quando o episódio tem `music.json`."""
+    plan = _read(store, episode_id, MUSIC_PLAN_FILE, MusicPlan, report)
+    if plan is None:
+        return
+    if catalog is None:
+        report.errors.append("music.json sem catálogo de faixas (data/music/catalog.json)")
+        return
+    minutes = sum(timeline_length(s.narration) for s in scenes.scenes) / chars_per_second / 60
+    errors, warnings = plan_problems(plan, scenes.scenes, catalog, minutes)
+    report.errors += errors
+    report.warnings += warnings
+    tracks = sorted({cue.track for cue in plan.cues if cue.track})
+    report.warnings += [
+        f"music.json: faixa {t} ainda sem cópia no episódio (assets/{t}.json, gate 3)"
+        for t in tracks
+        if not store.exists(episode_id, f"assets/{t}.json")
+    ]
+    if not errors:
+        report.checked.append(f"trilha: {len(plan.cues)} entrada(s), {len(tracks)} faixa(s)")
+
+
 def check_episode(
     store: ManifestStore,
     episode_id: str,
     region_codes: frozenset[str] | None = None,
     chars_per_second: float = CHARS_PER_SECOND,
     today: date | None = None,
+    music_catalog: MusicCatalog | None = None,
 ) -> CheckReport:
     """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
     `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos.
-    `today`: a data de hoje: diz se o resumo do radar está velho e se o fato noticiado ainda é notícia."""
+    `today`: a data de hoje: diz se o resumo do radar está velho e se o fato noticiado ainda é notícia.
+    `music_catalog`: as faixas que o plano da trilha pode usar (ADR 030)."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -564,6 +599,7 @@ def check_episode(
             report.checked.append(summary)
         report.warnings += funnel_warnings(scenes)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
+        _check_music(store, episode_id, scenes, music_catalog, report, chars_per_second)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
     return report

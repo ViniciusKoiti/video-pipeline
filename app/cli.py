@@ -32,6 +32,7 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
+from app.pipeline.music import load_music_catalog
 from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
 from app.pipeline.schemas import CheckVerdict, Decision, EpisodeFormat, SourcesManifest, Step
 from app.render.remotion import region_codes
@@ -177,6 +178,7 @@ def _check(args: argparse.Namespace, context: Context) -> int:
     report = check_episode(
         context.store, args.episode_id, region_codes=region_codes(),
         chars_per_second=speech_chars_per_second(context.settings), today=date.today(),
+        music_catalog=load_music_catalog(context.settings.data_dir),
     )
     for line in report.checked:
         print(f"ok      {line}")

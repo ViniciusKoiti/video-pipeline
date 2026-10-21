@@ -16,6 +16,8 @@ data/episodes/*
 !data/episodes/.gitkeep
 data/cache/*
 !data/cache/.gitkeep
+# Faixas de música, ativos e catálogo do dono (ADR 030): baixados à mão, fora do Git
+data/music/*
 
 # Mídia pesada (exceto fixtures pequenas e revisadas)
 *.mp4
