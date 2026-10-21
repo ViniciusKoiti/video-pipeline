@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Validação de nicho"
+  short_description: "Avalie público, direitos e caminho legítimo de um nicho antes da pauta"
+  default_prompt: "Use $validacao-de-nicho para avaliar o nicho ou o canal de referência que eu indicar, com relatório em docs/pesquisa/reports/."
