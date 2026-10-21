@@ -134,7 +134,7 @@ def record_decision(
             notes = "; ".join(filter(None, [notes, f"sem checagem: {skip_check.strip()}"]))
         approved_asset = None
         if asset_id is not None and decision is Decision.APPROVED:
-            approved_asset = _approved(store, episode_id, asset_id, input_hash)
+            approved_asset = _approved(store, review, episode_id, asset_id, input_hash)
         entry = ReviewEntry(
             step=step,
             asset_id=asset_id,
@@ -248,12 +248,22 @@ def _preview_paths(store: ManifestStore, episode_id: str) -> list[Path]:
     return [render, *(p for p in extras if p.is_file())]
 
 
-def _approved(store: ManifestStore, episode_id: str, asset_id: str, input_hash: str) -> Asset:
+def _approved(
+    store: ManifestStore, review: ReviewGate, episode_id: str, asset_id: str, input_hash: str
+) -> Asset | None:
+    """O ativo aprovado para gravar, ou None quando o JSON já vem aprovado de outro episódio (ativo
+    reaproveitado): o arquivo fica como está (§2.6) e só a decisão deste episódio vai para o review.json."""
     asset = store.read(episode_id, f"assets/{asset_id}.json", Asset)
-    if asset.review_status is Status.APPROVED:
-        raise GateError(f"{asset_id} já está aprovado")
     if asset.sha256 is None or f"sha256:{asset.sha256}" != input_hash:
         raise GateError(f"{asset_id}: o arquivo de mídia não bate com o sha256 do JSON (baixado de novo?)")
+    if asset.review_status is Status.APPROVED:
+        here = any(
+            e.asset_id == asset_id and e.decision is Decision.APPROVED and e.input_hash == input_hash
+            for e in review.log(episode_id).entries
+        )
+        if here:
+            raise GateError(f"{asset_id} já está aprovado")
+        return None
     try:
         return Asset.model_validate({**asset.model_dump(), "review_status": Status.APPROVED})
     except ValidationError as error:
