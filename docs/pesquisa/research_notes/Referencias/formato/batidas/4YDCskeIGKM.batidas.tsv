@@ -1,0 +1,50 @@
+# assunto: pensador
+# tese: Maquiavel descreveu o poder como ele funciona, e o vilão que o mundo conhece foi fabricado depois
+# mensagem: para quem assiste: estude o jogo do poder mesmo decidido a jogar limpo; leia o livro
+00:00	CASO	0		atentado contra os Médici e enforcados expostos durante a infância dele
+01:10	PROMESSA	0		mostrar de onde saíram as ideias do livro mais odiado
+01:18	CASO	0		pai endividado troca meses de índice por um exemplar de Lívio
+01:51	GANCHO-PLANTA	0	g1	o livro de Tito Lívio voltará no final
+01:54	CASO	1		república de fachada com sorteio de cargos manipulado pelos Médici
+02:37	CONCEITO	1		a distância entre o mundo declarado e o mundo real
+02:47	CASO	1		Savonarola queima vaidades, briga com o papa e acaba na fogueira
+03:06	CONCEITO	1		rótulo do profeta sem armas para obrigar a crença
+03:17	CASO	1		jovem sem padrinho nomeado para chancelaria e guerra, enigma histórico
+03:52	CASO	2		invasão espanhola, queda da república, demissão, prisão e tortura
+04:59	CASO	2		exílio no sítio e a carta sobre o ritual noturno com livros
+05:59	CONCEITO	3		rompimento com os manuais morais de governante; verdade efetiva
+07:16	OPINIAO	3		admiração pela recusa em suavizar o tom do livro
+07:44	GANCHO-PLANTA	3	g2	o preço dessa franqueza fica para o fim
+07:48	PONTE	3		voltar à missão de 1502 para explicar a frieza
+07:53	CASO	4		missão junto a César Borgia e o corpo de Remirro na praça
+10:34	CONCEITO	4		Borgia como modelo: crueldade com alvo, prazo e resultado
+11:22	CASO	4		morte do papa e febre derrubam o reino de Borgia
+11:45	GANCHO-PLANTA	4	g3	imagem do mosquito e do calendário para guardar
+11:47	CONCEITO	5		amor contra medo, e o ódio como erro fatal
+13:18	APLICA	5		partilha de herança em família confirma a observação
+13:26	CONCEITO	5		basta parecer virtuoso; o público vê imagem e resultado
+13:58	APLICA	5		candidatos que só aparecem na feira em época de eleição
+14:28	CONCEITO	5		quebrar a palavra como vantagem num jogo de mentirosos
+14:51	CONFISSAO	5		narrador perde na venda do carro por avisar defeito
+15:14	CONCEITO	5		franqueza unilateral vira prejuízo, não conselho para mentir
+15:28	PONTE	6		sair do governante e falar de quem assiste
+15:32	CONCEITO	6		centauro, leão e raposa: duas naturezas que se alternam
+16:15	APLICA	6		o colega só força e o colega só astúcia
+16:49	CONCEITO	7		virtù e fortuna: metade da vida fora do controle
+17:38	CONCEITO	7		metáfora do rio em cheia e diques feitos na seca
+18:15	GANCHO-PAGA	7	g3	Borgia de volta como limite do próprio esforço
+18:28	APLICA	7		sua responsabilidade é inteira sobre a parte que resta
+18:47	CASO	8		livro dedicado ao Médici como pedido de emprego ignorado
+19:30	PERGUNTA	8		você contrataria o autor de um manual desses?
+19:42	GANCHO-PAGA	8	g2	a conta chega: ideias públicas arruinaram a carreira dele
+19:57	CASO	8		sem cargo, muralhas inúteis, morte suspeito pelos dois lados
+20:29	CASO	8		sucesso em vida como autor de comédia de traição
+20:55	PONTE	8		como ele virou sinônimo de maldade
+21:00	CASO	9		proibição, massacre em Paris e panfleto que espalhou a fama
+22:04	CASO	9		teatro inglês transforma o nome em xingamento
+22:20	GANCHO-PAGA	9	g1	os Discursos sobre Lívio, livro republicano do mesmo autor
+22:42	OPINIAO	9		concorda com Rousseau: o livro ensina os povos
+23:01	FECHO-CONTRA-SI	10		narrador confia nas pessoas e se vê como o ingênuo
+23:23	APLICA	10		mundo não se ajusta à bondade, aprenda as regras
+23:32	CHAMADA	10		leia o livro para não ser a vítima
+23:37	FIM	10		
