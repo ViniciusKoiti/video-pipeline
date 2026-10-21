@@ -81,6 +81,14 @@ público ainda não tinha.
   `roteiro-explicativo`.
 - **Exceção do formato explicativo:** o gancho pode ter uma pergunta ou um contraste deliberado, um por
   vídeo, no começo, e com fato.
+- **Exceções do ensaio com obra de ficção** (seção do mesmo nome em `roteiro-explicativo`):
+  - frase marcada [DONO, aprovada em <data>] no `outline.md` não é reescrita;
+  - "essa frase volta no fim" e o "guarda esse nome" valem quando o nome ou a frase volta mais tarde no vídeo,
+    com o pagamento numa cena (o padrão 2 continua valendo para o resto);
+  - o título do bloco dito na fala e a ponte curta que diz para onde o vídeo vai são forma do ensaio, não
+    anúncio (padrão 4);
+  - "você" em pergunta ou hipótese marcada e "a gente" ficam; o padrão 5 vale para "muita gente acha" sem
+    quem ache.
 
 ## Quando não agir
 
