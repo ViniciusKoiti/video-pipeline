@@ -24,6 +24,9 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
   Whisper da Groq (remoto, camada gratuita: só com pedido do dono na sessão) e guarda o resultado em
   `captions.words.json`. Sem a opção, o arquivo que já existe é reaproveitado; cena sem ele fica na legenda
   por frase.
+- Trilha (ADR 030): com `music.json` na pasta, cada entrada vira um trecho de `music` no `episode.json`, com o
+  tempo tirado dos WAVs; a faixa é `assets/<asset_id>.<ext>` (mp3, m4a, wav, ogg), copiada do catálogo por
+  `scripts/provisorio/catalogo_musica.py usar`. Depois do render, a loudness final é medida (alvo −14 LUFS).
 """
 
 from __future__ import annotations
@@ -49,14 +52,19 @@ from app.media.captions import (  # noqa: E402
     sync_captions,
     timing_problems,
 )
+from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.narration import has_pauses, strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.word_captions import WORDS, SceneSpeech, sync_words  # noqa: E402
+from app.pipeline.music import load_music_catalog, resolve_music  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
+    MUSIC_PLAN_FILE,
     EpisodeFormat,
     EpisodeManifest,
+    EpisodeMusic,
     EpisodeScene,
+    MusicPlan,
     ScenesManifest,
     SourcesManifest,
     VideoSpec,
@@ -69,6 +77,7 @@ from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
+MUSIC_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")
 
 
 # A voz clonada do dono: na máquina (ADR 016) ou numa GPU do Modal (ADR 024).
@@ -134,6 +143,27 @@ def media_path(episode_dir: Path, asset_id: str) -> str:
         if (episode_dir / "assets" / f"{asset_id}{suffix}").is_file():
             return f"assets/{asset_id}{suffix}"
     raise SystemExit(f"ativo {asset_id} sem arquivo de mídia em assets/")
+
+
+def music(settings: Settings, episode_dir: Path, episode: EpisodeManifest) -> list[EpisodeMusic]:
+    """Trechos da trilha (ADR 030) com o tempo dos WAVs; sem `music.json`, nenhum."""
+    plan_path = episode_dir / MUSIC_PLAN_FILE
+    if not plan_path.is_file():
+        return []
+    catalog = load_music_catalog(settings.data_dir)
+    if catalog is None:
+        raise SystemExit("music.json sem catálogo de faixas (data/music/catalog.json)")
+
+    def track_file(asset_id: str) -> str:
+        if not (episode_dir / "assets" / f"{asset_id}.json").is_file():
+            raise SystemExit(f"faixa {asset_id} sem ativo no episódio (catalogo_musica.py usar)")
+        for suffix in MUSIC_SUFFIXES:
+            if (episode_dir / "assets" / f"{asset_id}{suffix}").is_file():
+                return f"assets/{asset_id}{suffix}"
+        raise SystemExit(f"faixa {asset_id} sem arquivo de áudio em assets/")
+
+    plan = MusicPlan.model_validate_json(plan_path.read_text())
+    return resolve_music(plan, episode, catalog, track_file)
 
 
 def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path], total_ms: int) -> None:
@@ -258,6 +288,9 @@ def main() -> None:
         series=scenes.series,
         video=VideoSpec.for_orientation(scenes.orientation), captions=CAPTIONS,
     )
+    if tracks := music(settings, episode_dir, episode):
+        episode = EpisodeManifest.model_validate({**episode.model_dump(), "music": tracks})
+        print(f"trilha: {len(tracks)} trecho(s), {len({m.asset_id for m in tracks})} faixa(s)")
     (episode_dir / "episode.json").write_text(episode.model_dump_json(indent=2))
     print("ritmo:", pacing_warnings(episode) or "ok")
     if "--no-render" in sys.argv:
@@ -267,6 +300,10 @@ def main() -> None:
     out = episode_dir / "renders" / ("preview.mp4" if preview else "final.mp4")
     result = RemotionEngine().render(episode, episode_dir, out, preview=preview)
     print(f"render: {time.monotonic() - started:.0f} s -> {result.path} ({result.duration_ms / 1000:.1f} s)")
+    if episode.music:
+        lufs = integrated_lufs(result.path)
+        problem = loudness_problem(lufs)
+        print(f"volume: {lufs:.1f} LUFS", f"— alerta: {problem}" if problem else "ok")
 
 
 if __name__ == "__main__":

@@ -284,6 +284,10 @@ lacuna fica registrada.
   palavra falada em amarelo (`WordCaption` do motion-kit). Cena sem palavras fica na legenda por frase.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
+  Trilha (ADR 030): faixas da YouTube Audio Library baixadas à mão pelo dono, catálogo em `data/music/`
+  (`scripts/provisorio/catalogo_musica.py`), plano em `music.json` do agente `diretor-musical` (âncoras na
+  narração, como os planos). A música entra na junção, por baixo da voz (ducking), com o volume final perto de
+  −14 LUFS, e trocar a faixa refaz só a junção. A licença só vale no YouTube.
   B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre
   cenas e sem fade, e recomeça quando o clipe acaba; o `vp check` não põe teto de duração no `broll`.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
@@ -404,10 +408,11 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; contexto limpo, só leitura |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
+| `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `catalogo_musica.py`) |
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →
-voz + render → gate 2. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
+voz + render → gate 2 → diretor musical (`music.json`, se o vídeo tem trilha) → render → gate 4. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
 que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
 pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).
 
