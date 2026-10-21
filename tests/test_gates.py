@@ -146,6 +146,21 @@ def test_approving_an_asset_reflects_review_status(tmp_path: Path) -> None:
         decide(store, review, Step.ASSETS, Decision.APPROVED, asset_id="pexels-video-1")
 
 
+def test_reused_asset_already_approved_gets_this_episode_decision_only(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    asset = stock_asset(folder)
+    copied = asset.model_copy(update={"review_status": Status.APPROVED})  # aprovado em outro episódio
+    path = folder / "assets" / "pexels-video-1.json"
+    path.write_text(copied.model_dump_json(indent=2))
+    before = path.read_bytes()
+    decide(store, review, Step.ASSETS, Decision.APPROVED, asset_id="pexels-video-1", notes="reaproveitado")
+    assert path.read_bytes() == before  # o arquivo aprovado fica como está (§2.6)
+    [row] = [r for r in gate_report(store, review, EPISODE) if r.asset_id]
+    assert row.entry is not None and row.entry.decision is Decision.APPROVED and row.valid
+    with pytest.raises(GateError, match="já está aprovado"):
+        decide(store, review, Step.ASSETS, Decision.APPROVED, asset_id="pexels-video-1")
+
+
 def test_asset_without_rights_check_is_refused_and_nothing_is_recorded(tmp_path: Path) -> None:
     store, review, folder = episode(tmp_path)
     stock_asset(folder, usage_notes="")
