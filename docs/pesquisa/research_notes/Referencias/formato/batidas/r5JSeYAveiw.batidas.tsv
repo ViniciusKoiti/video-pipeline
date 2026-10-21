@@ -1,0 +1,72 @@
+# assunto: obra
+# tese: largar o passado não basta; importa o que sustenta quem o carrega
+# mensagem: para fãs e quem assiste: veja como a série pensa o passado e pese o seu
+00:00	CASO	1		cena da obra: a frase final na tela e sua origem
+00:04	GANCHO-PLANTA	1	g1	a frase da tela que o fim vai retomar
+00:04	PERGUNTA	1		a tela pergunta se quem assiste aguenta o peso
+00:08	CASO	1		cena da obra: letra dos Beatles escolhida pelo diretor
+00:15	PROMESSA	1		mostrar do que a série realmente tratava além da caçada
+00:26	PONTE	1		ao rever adulto, o cenário chamou mais atenção
+00:33	CASO	2		cena da obra: acidente do portal, lua quebrada, êxodo para Marte
+01:13	OPINIAO	2		o cenário é a tese: todos pagam por erro antigo
+01:31	CASO	2		cena da obra: identidades diluídas, desigualdade e lei terceirizada
+02:00	CASO	3		cena da obra: a nave de pesca e seus moradores feridos
+02:26	OPINIAO	3		episódios avulsos não enchem linguiça, revelam quem são
+02:48	CONCEITO	4		sessão: gravação de jazz sem partitura fechada
+03:01	GANCHO-PLANTA	4	g2	o lema de esquecer o passado repetido na nave
+03:01	CONCEITO	4		o lema que todos repetem uns aos outros
+03:11	GANCHO-PLANTA	4	g3	Faye vai devolver o lema a Spike no final
+03:11	CASO	4		cena da obra: cada adulto falha no lema; só o cão consegue
+03:28	PONTE	4		só o dono da nave seguiu o manual
+03:32	CASO	5		cena da obra: Jet, a polícia, Alisa partindo e o braço perdido
+04:31	CONCEITO	5		o estilo bebop: tema curto e improviso longo
+04:50	OPINIAO	5		ironia: o batizador é o menos improvisador da nave
+04:58	CASO	5		cena da obra: relógio parado, reencontro com Alisa no bar
+06:08	CONCEITO	6		Nietzsche: o rebanho sem memória e a força plástica
+06:50	CASO	7		cena da obra: Fad volta e confessa o tiro no braço
+07:29	CASO	8		cena da obra: Faye congelada, sem registro, endividada e enganada
+08:59	OPINIAO	8		o jeito dela vem de uma confiança traída, não de temperamento
+09:11	CASO	8		cena da obra: a fita da escola e a colega idosa
+09:55	OPINIAO	8		ela busca o passado como documento, não como vida
+10:04	CASO	8		cena da obra: memória volta e Singapura está vazia
+10:22	CONFISSAO	8		narrador volta à rua da infância e se sente bobo
+10:49	OPINIAO	8		Faye prova que o passado recuperado não tem endereço
+11:04	CASO	9		cena da obra: Ed acha o pai e deixa lembrança a Jet
+11:39	CASO	10		cena da obra: o olho falso e a fala de Spike sobre ele
+12:05	CASO	10		cena da obra: Spike órfão, Red Dragon, Vicious, Julia, cemitério
+13:32	CONCEITO	11		Freud distingue luto de melancolia
+14:09	PONTE	11		narrador retoma algo que passou depressa
+14:13	CASO	11		cena da obra: queda pela janela com close no olho do passado
+14:32	CASO	11		cena da obra: Spike dorme, sonha e cuida do que odeia
+14:54	OPINIAO	11		Spike espera reencontrar quem ele mesmo foi
+15:23	CAPITULO	12		Vicious, Gren e a pergunta sem resposta
+15:25	CASO	12		cena da obra: Gren traído, preso e medicado por Vicious
+16:25	OPINIAO	12		Gren quer o motivo como se fosse cura
+16:35	CASO	12		cena da obra: Vicious nega qualquer razão para crer
+16:56	CONFISSAO	12		narrador só notou o detalhe depois de rever tudo
+17:00	CASO	12		cena da obra: Lin morre protegendo Vicious, lealdade negada
+17:12	CONFISSAO	13		narrador admite que vai desmontar a própria tese
+17:19	OPINIAO	13		o único livre do passado é o pior personagem
+17:41	GANCHO-PAGA	13	g2	o lema volta, agora julgado como conselho falho
+17:41	OPINIAO	13		quem seguiu o lema até o fim virou monstro
+17:57	OPINIAO	13		defesa incômoda de Vicious: age, mas ninguém sente falta
+18:19	CAPITULO	14		Julia, o vazio no centro do anime
+18:19	CASO	14		cena da obra: Julia quase ausente e a pergunta sem resposta
+18:40	CASO	14		outra coisa: a série live action que explicou Julia e piorou
+18:57	OPINIAO	14		vazio explicado deixa de ser vazio e Spike teria cura
+19:10	CASO	15		cena da obra: Spike e Jet no bar e o ataque
+19:42	CASO	15		cena da obra: fuga com Julia, morte no telhado, volta à nave
+20:11	CASO	16		cena da obra: jantar silencioso e a fábula do gato
+21:05	CASO	16		outra coisa: o livro infantil real que Spike recita
+21:24	GANCHO-PAGA	16	g3	Faye devolve o lema com arma na mão
+21:24	CASO	16		cena da obra: Faye tenta segurá-lo, ele parte para se testar
+21:49	CONCEITO	17		Hagakure: agir como quem já está morto
+22:10	CASO	17		cena da obra: duelo final, olho direito com Julia, saída sorrindo
+22:47	OPINIAO	18		a diferença entre os dois é o que os esperava
+23:04	CONFISSAO	18		narrador trava nesse ponto a cada revisão
+23:08	OPINIAO	18		recapitula como Jet, Faye e Spike lidaram com o passado
+23:27	CONFISSAO	18		narrador não sabe dizer quem acertou
+23:29	GANCHO-PAGA	18	g1	a frase da tela retomada no fim
+23:29	FECHO-VOLTA	18		a frase final só avisa que algo será carregado
+23:33	FECHO-CONTRA-SI	18		narrador pergunta o que ele próprio carrega e o sustenta
+23:42	FIM	18		

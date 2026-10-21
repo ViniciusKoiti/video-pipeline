@@ -128,8 +128,13 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      episódio: em pt-BR `1.500` e `4,2`; em inglês `1,500` e `4.2`. O `vp check` recusa a convenção trocada
      ("47,6" num episódio em inglês). Em inglês, o `chart` de barras só leva valores inteiros abaixo de mil
      (o `BarChart` do kit formata em pt-BR); para valores maiores use `number`, `compare` ou `line`.
-   - **Quem disse** vai na narração ("segundo o relatório da empresa"); a fonte de cada plano com `claims`
-     aparece sozinha no rodapé, e o `label` fica só com o que o valor mede.
+   - **A fonte fica no rodapé, não na fala (decisão do dono, 2026-10-18).** A narração não diz "segundo…",
+     nem o nome do site, do jornal ou do autor de um estudo; a fonte de cada plano com `claims` aparece
+     sozinha no rodapé, e o `label` fica só com o que o valor mede. Pesquisa entra pelo que mediu ("uns
+     pesquisadores olharam os dados de 232 mil usuários"); leitura de crítico entra sem nome ("há quem leia
+     que…"); fala de personagem entra como fala ("diz ele"). Pensador e autor de obra entram pelo nome, como
+     personagem. Exceção por risco: controvérsia atribuída no perfil de poder ("o órgão X acusou…") e fonte
+     interessada quando o dono pedir que a fala diga de onde vem.
    - **Variedade:** alterne os tipos e mantenha imagem na tela; os alertas do `vp check` apontam as
      repetições.
    - **Texto que cabe na tela:** a narração explica; a tela mostra o essencial. O `vp check` alerta quando
@@ -165,8 +170,58 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      abertura (texto curto, em pergunta ou chamado: "Você sabe quanto custa um docinho?"), `turn` na virada ("mas…"),
      `calm` na conta dita inteira, `invite` na pergunta final; cena de explicação não leva o campo. A ênfase vem da
      voz clonada. Explicação longa não cabe numa cena `hook`.
+   - **A palavra que pesa (pedido do dono, 2026-10-19).** O `delivery` muda o tom da cena inteira. Ele não
+     aperta uma palavra, e a voz clonada não aceita marca de ênfase. Sem cuidado, a fala soa como alguém lendo.
+     Toda cena que vira, opina, pergunta ou traz um número tem **uma** palavra que pesa: a da virada, do
+     contraste, do número ou do nome. A ênfase sai do lugar onde essa palavra fica:
+     - **no fim da frase**, onde a voz já pousa: "Matou por si mesmo." em vez de "Por si mesmo é que ele
+       matou.";
+     - **numa frase curta, sozinha**: "Mas não foi bem isso que ele disse.";
+     - **depois de uma `<short pause>`**, só onde ela pesa mais. A pausa conta no limite do item 6, e silêncio
+       demais também soa como leitura (o nicho fala sem buraco de som);
+     - **numa pergunta**, porque o tom sobe no fim: "Isso ainda é a justiça que ele prometia?"
+
+     Não enterre essa palavra no meio de uma frase longa, entre vírgulas. Quando o dono escreve uma palavra em
+     CAIXA ALTA ("JUSTIÇA", "HOJE"), isso é um pedido de ênfase, não texto: ponha a palavra num desses lugares e
+     escreva-a em caixa normal na `narration`. No **Mapa de tom** do `outline.md`, anote a palavra que pesa nas
+     cenas com `delivery` e nas opiniões do dono, para ele conferir na leitura.
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
+
+## Ensaio com obra de ficção (anime e filosofia)
+
+Vale para o ensaio de filosofia com uma obra de ficção (Death Note, Cowboy Bebop…). Nele, estas regras tomam o
+lugar dos itens 2 (gancho) e 5 (fecho) do método. A base é a análise dos canais de referência
+(`docs/pesquisa/roteiro-referencias-2026-10-20.md`); um roteiro feito assim está em
+`docs/pesquisa/exemplo-roteiro-ensaio-voce-2026-10-20.md`.
+
+- **O assunto é quem assiste (decisão do dono, 2026-10-20).** A obra é um caso entre outros: um pensador, um
+  experimento, uma história de época. A pergunta do vídeo é sobre quem assiste ("quando você julga alguém,
+  julga o que ele fez ou quem ganhou?").
+- **"Você" sem afirmar nada sobre quem assiste.** Nenhuma ficha diz o que o espectador faz. "Você" entra de
+  três jeitos: pergunta ("Você se inclui?"), hipótese marcada ("Pensa num nome que você admira…") ou frase do
+  dono. Marque cada uma no `outline.md` como [PERGUNTA], [HIPÓTESE] ou [DONO].
+- **Abertura sem dado nem mapa das partes.** Abra com uma cena com lugar e objeto, uma confissão do dono ou
+  uma provocação. A promessa vem depois, como pergunta ou paradoxo. Nos canais de referência, a abertura dura
+  de 1 a 3 min.
+- **Blocos com título dito.** Cada bloco começa pelo título na fala (um `keyword` na âncora). Dentro dele, o
+  caso contado como cena, devagar (de 1 a 2,5 min, quando as fichas dão detalhe para isso), o conceito com o
+  pensador como personagem, a volta a quem assiste e uma ponte para o próximo bloco.
+- **A voz do dono ao longo do vídeo.** Nos 10 vídeos mais vistos do Filosofatos, opinião e confissão ocupam
+  cerca de 20% do tempo, espalhadas pelo vídeo, e não só na abertura e no fecho. Só o dono escreve essas
+  frases (ADR 019), mas o roteirista pode propor: de 2 a 3 opções por posição, na forma do canal (uma
+  confissão pequena e cotidiana ligada ao tema; o roteiro que muda, "eu ia abrir dizendo… e não está lá"; a
+  tese virada contra o narrador no fecho), sem copiar frase de ninguém. O dono escolhe e confirma que é
+  verdade. A frase aprovada entra palavra por palavra, sem humanizer e sem claim, marcada no `outline.md` como
+  [DONO, aprovada em <data>]. Sem aprovação, a cena fica como lacuna.
+- **Gancho plantado e pago.** "Essa frase volta no fim" só quando ela volta, com o pagamento numa cena.
+- **Fecho.** Volte à cena ou à frase da abertura (9 dos 10 mais vistos fazem isso). A tese virada contra o
+  narrador é opção, do dono.
+- **Uma chamada só** (ADR 026), e nada de pedido de membro ou de "coquinha".
+- **Sem buraco de som.** No máximo uma `<short pause>` por minuto, nenhuma no fim de cena. Junte frases curtas
+  seguidas numa cena só.
+- **Imagem.** Da obra, só quadro oficial parado (`Citacao`: até 10 por vídeo, 8 s cada); o resto é B-roll de
+  textura (ADR 031), `keyword` e citação curta. Cena em movimento da obra não entra.
 
 ## Objetivo do vídeo (ADR 019)
 
