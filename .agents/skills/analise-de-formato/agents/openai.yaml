@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Análise de formato"
+  short_description: "Baixe, meça e analise como os vídeos de um nicho são feitos, e o que levar ao roteiro"
+  default_prompt: "Use $analise-de-formato para analisar a amostra de vídeos do nicho que eu indicar e comparar com o roteiro do episódio."
