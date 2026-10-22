@@ -97,8 +97,8 @@ def forca(com: int, n: int) -> str:
     return "padrao" if n >= MIN_PADRAO_N and 100 * com / n >= MIN_PADRAO_PCT else "indicio"
 
 
-def ler_amostra(pasta: Path) -> dict[str, dict[str, str]]:
-    caminho = pasta / "amostra.tsv"
+def ler_amostra(pasta: Path, amostra: Path | None = None) -> dict[str, dict[str, str]]:
+    caminho = amostra or pasta / "amostra.tsv"
     if not caminho.exists():
         return {}
     with caminho.open(encoding="utf-8") as arquivo:
@@ -148,8 +148,10 @@ def estrutura_dos_blocos(marcacao: narrativa.Marcacao) -> tuple[int, int, int, i
     return len(blocos), abre_caso, com_conceito, caso_antes
 
 
-def construir(pasta: Path, notas: Path | None, grupos: list[str], assunto: str | None) -> dict:
-    amostra = ler_amostra(pasta)
+def construir(
+    pasta: Path, notas: Path | None, grupos: list[str], assunto: str | None, amostra_tsv: Path | None = None
+) -> dict:
+    amostra = ler_amostra(pasta, amostra_tsv)
     medidas_csv = {linha["video_id"]: linha for linha in ler_csv(pasta / "medidas.csv")}
     janelas: dict[str, list[dict[str, str]]] = defaultdict(list)
     for linha in ler_csv(pasta / "janelas.csv"):
@@ -297,6 +299,7 @@ def construir(pasta: Path, notas: Path | None, grupos: list[str], assunto: str |
     return {
         "gerado_em": date.today().isoformat(),
         "pasta": str(pasta),
+        "amostra": str(amostra_tsv) if amostra_tsv else str(pasta / "amostra.tsv"),
         "grupos": grupos,
         "assunto": assunto,
         "videos": {"n": len(ids), "ids": sorted(ids), "com_batidas": len(marcacoes), "canais": dict(canais)},
@@ -318,9 +321,13 @@ def main(argv: list[str] | None = None) -> int:
         "--assunto", choices=sorted(narrativa.ASSUNTOS), help="só os vídeos com batidas desse assunto",
     )
     parser.add_argument("--saida", type=Path, help="padrão: <pasta>/analise/molde.json")
+    parser.add_argument(
+        "--amostra", type=Path,
+        help="outro TSV de amostra (video_id, grupo, canal, views…); padrão: <pasta>/amostra.tsv",
+    )
     args = parser.parse_args(argv)
 
-    molde = construir(args.pasta, args.notas, args.grupo, args.assunto)
+    molde = construir(args.pasta, args.notas, args.grupo, args.assunto, args.amostra)
     if molde["videos"]["n"] == 0:
         print(f"nenhum vídeo em {args.pasta} com esses filtros", file=sys.stderr)
         return 1

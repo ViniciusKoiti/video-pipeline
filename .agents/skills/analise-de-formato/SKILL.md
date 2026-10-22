@@ -20,6 +20,7 @@ Saídas:
 - material baixado em `data/cache/nicho/<Título>/`, fora do Git;
 - fichas em `docs/pesquisa/research_notes/<Título>/formato/<video_id>.md`;
 - o molde do nicho em números (`analise/molde.json`) e a partitura de um episódio (`partitura.md`, passo 4c);
+- o veredito de reproduzível por vídeo e a amostra do topo reproduzível (`analise/reproduzivel/`, passo 4d);
 - síntese como seção "Adendo: como o nicho faz os vídeos" no relatório do nicho em `docs/pesquisa/reports/`.
 
 ## 1. Amostra
@@ -158,7 +159,17 @@ python3 -I .agents/skills/analise-de-formato/partitura.py data/cache/nicho/<Tít
 ```
 
 - `--grupo` escolhe o canal de referência do formato (o molde do ensaio é o grupo do Filosofatos, não a amostra
-  inteira); `--assunto` restringe aos vídeos com batidas daquele assunto.
+  inteira); `--assunto` restringe aos vídeos com batidas daquele assunto; `--amostra` troca o TSV de amostra
+  (por exemplo o `amostra-topo.tsv` do passo 4d).
+- **Dois moldes, não um.** O do canal de referência diz a forma que escolhemos; o do topo reproduzível do nicho
+  (passo 4d) diz o que os vídeos mais vistos que a pipeline consegue refazer têm em comum. `comparar_moldes.py`
+  põe os dois lado a lado: o que é `padrao` nos dois vai para a partitura sem discussão; o que diverge é
+  decisão do dono.
+
+```
+python3 -I .agents/skills/analise-de-formato/comparar_moldes.py <a.molde.json> <b.molde.json> \
+  --nomes Filosofatos Topo --saida data/cache/nicho/<Título>/analise/moldes-lado-a-lado.md
+```
 - A partitura escala o molde para a duração do episódio: marcos dos primeiros segundos absolutos, abertura e
   blocos proporcionais, blocos do tamanho do molde (menos blocos, não blocos menores; `--blocos` fixa), último
   décimo como fecho. Traz a linha do tempo com as casas, o que vale dentro de cada bloco, as curvas por décimo já
@@ -171,6 +182,36 @@ python3 -I .agents/skills/analise-de-formato/partitura.py data/cache/nicho/<Tít
 
 Pronto quando `analise/molde.json` existe com o n de cada medida, e o episódio em curso tem `partitura.md` e
 `molde.json` na pasta.
+
+## 4d. Reproduzível: quem do nicho a pipeline consegue imitar
+
+Views medem tema e tamanho do canal tanto quanto forma, e parte do nicho vive de coisa que a gente não faz:
+pessoa falando para a câmera, cena de anime em movimento, gameplay. Antes de medir "o topo do nicho", separa-se
+o que é reproduzível. A leitura é por subagente, nas folhas de quadros; a regra é código.
+
+- **Leitura:** um subagente para cada 6 vídeos, todos na mesma mensagem, lendo só a folha de 32 quadros e as
+  duas folhas densas de cada um (lista de ids e caminhos, sem canal nem views). Grava um TSV com as colunas
+  `video_id`, `apresentador` (`nenhum` | `real` | `desenhado` | `avatar`; personagem de anime ou foto histórica
+  não é apresentador), `quadros_com_apresentador` (0–32), `base_principal` (`anime_movimento` | `anime_parado` |
+  `gameplay` | `filme_live_action` | `banco_de_imagens` | `foto_arquivo` | `ilustracao_propria` |
+  `texto_grafico` | `pintura` | `misto`), `pct_base_principal`, `base_secundaria`, `texto_na_tela`
+  (`legenda_queimada`, `palavra_chave`, `citacao`, `titulo_de_bloco`, separados por `;`), `movimento`
+  (`em_movimento` | `parado_zoom` | `misto`, pelas folhas densas) e `nota`.
+- **Regra:** reproduzível é sem apresentador e com base em banco, foto de arquivo, pintura, texto, ilustração
+  própria ou quadro parado; anime em movimento, gameplay e filme não são; `misto` é parcial. Ilustração própria
+  é reproduzível em princípio, mas custa arte (Workers AI tem teto editorial de 12 imagens por episódio):
+  separe pintura e foto de arquivo de ilustração na síntese.
+
+```
+python3 -I .agents/skills/analise-de-formato/reproduzivel.py data/cache/nicho/<Título>/ <leitura-*.tsv> \
+  [--minimo-views 400000] [--grupo TOPO]
+```
+
+Grava `analise/reproduzivel/reproduzivel.tsv` (veredito por vídeo) e `amostra-topo.tsv`, a amostra dos
+reproduzíveis em português acima do mínimo de views, para o `molde.py --amostra`. As batidas (4b) desses vídeos
+dão a estrutura do segundo molde.
+
+Pronto quando cada vídeo da amostra tem veredito e o `amostra-topo.tsv` lista o topo reproduzível com o motivo.
 
 ## 5. Síntese
 
