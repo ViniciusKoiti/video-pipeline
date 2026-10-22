@@ -276,6 +276,25 @@ O estágio vem da pauta ou do dono, como o objetivo; se não veio, pergunte. Ele
 - No fundo, nesta fase, a oferta é grátis: preço e venda não entram no roteiro sem decisão do dono.
 - No `outline.md`, logo depois do objetivo: o estágio e a chamada.
 
+## Partitura do episódio: o molde do nicho no tamanho do vídeo (ADR 031)
+
+Se a pasta do episódio tem `partitura.md` (e a cópia `molde.json`), leia a partitura **antes** do outline. Ela
+vem da skill `analise-de-formato` (passo 4c): o canal de referência medido em mediana, quartis e prevalência,
+escalado para a duração pedida. Sem o arquivo, este bloco não se aplica e o método segue como está.
+
+- **A linha do tempo é o esqueleto.** As casas (abertura, blocos, gancho, confissão, fecho) entram na ordem e
+  na proporção da partitura; o que é `padrao` (8 ou mais vídeos e 80% ou mais) só sai com motivo escrito; o
+  que é `indicio` é escolha sua. "Dentro de cada bloco" diz como o bloco abre e quando o conceito entra.
+- **Curvas e alvos.** As curvas por décimo dizem onde "você" e "eu" sobem e onde a imagem troca mais; os alvos
+  (q1–q3) são para medir o rascunho depois, com as batidas cegas e o `narrativa.py`, não para forçar número
+  na escrita.
+- **No `outline.md`**, uma seção "Formato" com uma linha por casa da partitura: seguida, ou não seguida e por
+  quê. O `vp check` avisa onde o roteiro foge do molde (duração, planos por minuto, "você", fecho, confissão,
+  fim que retoma a abertura); trate cada alerta `molde` como os de ritmo: corrija ou justifique na seção.
+- **Forma, nunca fato.** Nenhuma frase, número ou imagem dos vídeos medidos entra no roteiro. "Você" continua
+  preso às fichas e às três formas do ensaio (pergunta, hipótese marcada, frase do dono); a confissão só o dono
+  escreve (ADR 019). Quando a partitura e as fichas brigam, as fichas vencem, e a seção "Formato" diz isso.
+
 ## Resumo do radar: forma, nunca fato (ADR 018)
 
 Se a pasta do episódio tem `radar-brief.json`, leia-o **antes** de escrever. É o resumo do reels-radar: o que

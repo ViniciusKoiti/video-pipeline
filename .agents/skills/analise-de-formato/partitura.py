@@ -8,8 +8,8 @@ Uso:
 Escreve `partitura.md`: uma linha do tempo com as casas que o molde ocupa (abertura, blocos, confissão,
 gancho, fecho), o que vale dentro de cada bloco, as curvas por décimo já no tamanho deste episódio e os alvos
 para medir o rascunho depois (batidas cegas + `narrativa.py`). Com `--episodio`, grava a partitura na pasta do
-episódio e copia o molde datado para lá (`molde.json`), no desenho da ADR 018. Não sobrescreve sem
-`--sobrescrever`.
+episódio e copia o molde datado para lá (`molde.json`), com as casas pedidas em `episodio`, no desenho da
+ADR 018; o `vp check` lê essa cópia (ADR 031, parte D). Não sobrescreve sem `--sobrescrever`.
 
 Regra de escala: os marcos dos primeiros segundos são absolutos (o molde os mede em segundos desde o início);
 a abertura e os blocos são proporcionais à duração, com blocos do tamanho do molde (menos blocos, não blocos
@@ -308,6 +308,11 @@ def main(argv: list[str] | None = None) -> int:
             copia = dict(molde)
             copia["copiado_em"] = date.today().isoformat()
             copia["copiado_de"] = str(args.molde)
+            casas = plano(molde, args.duracao, args.blocos)
+            copia["episodio"] = {  # o que a partitura pediu; o `vp check` compara o roteiro com isto
+                "titulo": titulo, "duracao_min": args.duracao, "assunto": args.assunto,
+                **{k: (round(v, 1) if isinstance(v, float) else v) for k, v in casas.items()},
+            }
             gravar(args.episodio / "molde.json", json.dumps(copia, ensure_ascii=False, indent=2) + "\n",
                    args.sobrescrever)
             gravar(args.episodio / "partitura.md", texto, args.sobrescrever)

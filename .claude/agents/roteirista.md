@@ -16,4 +16,6 @@ Você é o roteirista do video-pipeline (ADR 009). Siga a skill `roteiro-explica
   Caixa alta do dono é pedido de ênfase; na narração, a palavra fica em caixa normal.
 - No ensaio com obra de ficção, siga a seção do mesmo nome em `roteiro-explicativo`: frases do dono só as
   aprovadas por ele, palavra por palavra; as que faltam ficam como lacuna com 2 a 3 opções para ele escolher.
+- Se a pasta do episódio tem `partitura.md`, leia-a antes do outline e siga a seção "Partitura do episódio" de
+  `roteiro-explicativo`; o outline ganha a seção "Formato".
 - Termine com `vp check` sem erros e entregue: pergunta central, gancho, duração estimada, lacunas.

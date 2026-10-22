@@ -108,8 +108,8 @@ associado da Amazon (pública) · `app/render/` motor por formato · `video/` te
 Remotion do `explainer` (ADR 008) · `.claude/agents/` e `.claude/skills/` etapas criativas (§15) · `prompts/local/`
 prompts para modelo local · `config/providers.toml` implementação por função · `scripts/provisorio/` scripts até
 virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
-`outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `pauta.md`, `sources/`, `excerpts/`, `assets/`,
-`voice/`, `renders/`) ·
+`outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `molde.json`, `partitura.md`, `pauta.md`, `sources/`,
+`excerpts/`, `assets/`, `voice/`, `renders/`) ·
 `data/benchmarks/` medições e termos dos provedores · `data/cache/` fora do Git. Variáveis de ambiente: nomes e
 exemplos não secretos em `.env.example`.
 
@@ -127,6 +127,8 @@ exemplos não secretos em `.env.example`.
 
 Nos Reels, antes das fontes: resumo do nicho no reels-radar (`radar_resumo.py`) → pauta (skill `pauta`), que o
 dono aprova (ADR 018). O resumo é forma, nunca fato; o `vp check` avisa onde o roteiro foge dos padrões dele.
+No vídeo longo, o mesmo desenho com o molde do nicho (ADR 031): a skill `analise-de-formato` gera `molde.json` e
+a `partitura.md` do episódio, o roteirista lê a partitura antes do outline e o `vp check` avisa pelo molde.
 Todo roteiro declara o **objetivo** (`objective` no `scenes.json`, ADR 019): `noticiar`, `explicar` ou `opinar`, de
 um a três na ordem em que aparecem, mais a promessa em uma frase. O objetivo e a tese de uma opinião vêm do dono.
 
