@@ -266,8 +266,10 @@ lacuna fica registrada.
 ## 9. Voz, legendas e montagem
 
 - Roteiro escrito diretamente no idioma do episódio (en ou pt-BR), com um WAV curto por bloco narrativo para
-  trocar uma frase isolada. Glossário de pronúncia por episódio em `voice/glossary.json` (o Kokoro aceita
-  fonemas customizados; o Gemini TTS e o Chatterbox não).
+  trocar uma frase isolada. Glossário de pronúncia por episódio em `voice/glossary.json`
+  (`{"termos": [{"escrita": "FBI", "fala": "efe bê i"}]}`, `app/media/pronunciation.py`): troca a grafia só no
+  texto enviado à voz, por palavra inteira, e vale para qualquer voz; tela, legenda e âncoras ficam com a do
+  roteiro, e o `scenes.json` não muda.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca

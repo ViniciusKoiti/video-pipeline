@@ -5,7 +5,7 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
 
 - Narração por cena, em `voice/<cena>-<provedor>-<hash>.wav`: a voz dos rascunhos (`tts`, Kokoro) ou, com
   `--voz-final`, a do vídeo final (`tts_final`: a voz clonada do dono, ADR 016).
-  O hash cobre o texto, o modelo, a voz
+  O hash cobre o texto falado, o modelo, a voz
   e a direção de fala: a fala só é gerada de novo quando um deles muda, e uma voz não apaga as falas da outra.
 - `--voz=<nome>` usa uma voz registrada pelo nome, fora da escolha do `providers.toml`: `gemini` (Charon,
   ADR 012; é a do vídeo-régua), `chatterbox`, `chatterbox_modal` (a mesma voz numa GPU do Modal, ADR 024) ou
@@ -14,6 +14,8 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
   que faltam em lotes (várias cenas por chamada, cortadas nas pausas); lote que não
   pode ser cortado com segurança é gerado cena a cena. Cota esgotada: o script para, as falas já geradas ficam
   no cache e a próxima execução continua.
+- Glossário de pronúncia (`voice/glossary.json`, opcional): a voz lê "FBI" como "efe bê i"; tela, legenda e
+  âncoras mantêm a grafia do roteiro, e só as cenas com um termo do glossário ganham fala nova.
 - Duração real de cada WAV (ffprobe) → tempo dos planos (app/pipeline/shots.py) → episode.json v2.
 - Render pelo motor do formato explicativo (Remotion), com cache por cena.
 - A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>` (jpg, png, webp, mp4, webm).
@@ -56,6 +58,7 @@ from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.narration import has_pauses, strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
+from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.media.word_captions import WORDS, SceneSpeech, sync_words  # noqa: E402
 from app.pipeline.music import load_music_catalog, resolve_music  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
@@ -235,6 +238,7 @@ def main() -> None:
     fingerprint = voice_fingerprint(settings, provider, scenes.language)
     voice_dir = episode_dir / "voice"
     voice_dir.mkdir(exist_ok=True)
+    glossary = load_glossary(episode_dir)
 
     started = time.monotonic()
     wavs, missing = {}, []
@@ -247,13 +251,14 @@ def main() -> None:
         # Entrega da fala (ADR 022): só a voz clonada obedece; a chave muda só quando a entrega não é neutra.
         delivery = scene.delivery or "neutral"
         entrega = f"|entrega:{delivery}" if provider in CLONED and delivery != "neutral" else ""
-        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}|{scene.narration}".encode()).hexdigest()[:10]
+        text = respell(scene.narration, glossary)  # a grafia que a voz lê; sem termo, o texto do roteiro
+        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}|{text}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
             for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):
                 stale.unlink()
             missing.append(
-                SpeechRequest(text=scene.narration, out_path=wav, language=scenes.language, delivery=delivery)
+                SpeechRequest(text=text, out_path=wav, language=scenes.language, delivery=delivery)
             )
     if missing:
         generate(tts, missing)
