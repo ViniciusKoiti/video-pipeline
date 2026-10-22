@@ -1,7 +1,9 @@
 # 031 — Perfil de formato do nicho como entrada do roteiro longo
 
 - **Status:** proposto (rascunho para o dono, 2026-10-18). A parte A (B-roll como textura) está implementada no
-  PR que traz este texto; as partes B a E esperam a aprovação do dono.
+  PR que traz este texto. A parte B está implementada (2026-10-22) como `molde.json` + `partitura.md`, com
+  prevalência e quartis no lugar da correlação com views (emenda abaixo); as partes C a E esperam a aprovação do
+  dono.
 - **Data:** 2026-10-18
 - **Etapa do roadmap:** roteiro (#28), épico #164 (piloto `death-note-fins-meios`)
 - **Relaciona-se com:** ADR 009 (agentes e `vp check`), ADR 011 (planos editoriais), ADR 018 (resumo do radar nos
@@ -54,6 +56,14 @@ valor dos vídeos de mais views, o do terço de baixo, `n` e a força (`pattern`
 sustentem; o resto é `hint`): duração, ritmo da fala, trocas de imagem por minuto na abertura e depois, "você" e
 "eu" por mil palavras no meio e no fecho, fonte citada na fala, texto na tela e o tipo de espinha.
 
+*Emenda (2026-10-22, implementação da parte B).* O perfil é o `molde.json` gerado por `molde.py`, e a entrada do
+roteiro é a `partitura.md` gerada por `partitura.py` (passo 4c da skill). Mudanças em relação ao texto acima:
+a força sai da **prevalência** ("11 de 13 têm confissão"), não da correlação com views, porque com 13 a 20
+vídeos a correlação quase nunca sustenta um `pattern` e prevalência é o que o roteiro consegue seguir; cada
+medida leva mediana, q1, q3 e n, mais o terço de cima e o de baixo quando há 6 ou mais vídeos; entram as
+medidas de estrutura das batidas (parte 4b) e as curvas por décimo; a partitura escala o molde para a duração
+do episódio. `padrao` = 8 ou mais vídeos e 80% ou mais; o resto é `indicio`.
+
 **C. Skill do roteiro lê o perfil.** Com o arquivo, o ritmo de planos e a duração vêm dele, não da regra fixa de
 2 a 4 s; entram a regra do fio único (o conceito entra na cena que ele explica) e a textura em B-roll depois da
 abertura. O `outline.md` ganha a seção "Formato": cada padrão seguido, ou não e por quê. Sem o arquivo, a skill
@@ -81,6 +91,7 @@ não reabrir o gate depois do roteiro.
   testes em `tests/test_remotion_props.py` e `tests/test_editorial_shots.py`. O vídeo-régua não muda (nenhum plano
   dele ganha `startFrom`, `loopFrames` ou corte sem fade). Cinco rascunhos de Reels com B-roll mais longo que o
   clipe passam a repetir o clipe em vez de parar no fim.
-- Partes B a E: `.agents/skills/analise-de-formato/` (gera o perfil), skills `roteiro-explicativo`, `pauta` e
-  `checagem`, `app/pipeline/check.py` e um módulo do perfil no molde de `app/pipeline/radar.py`. Um PR por parte.
+- Parte B: `.agents/skills/analise-de-formato/molde.py` e `partitura.py`, testes em
+  `tests/test_molde_partitura.py`. Partes C a E: skills `roteiro-explicativo`, `pauta` e `checagem`,
+  `app/pipeline/check.py` e um módulo do perfil no molde de `app/pipeline/radar.py`. Um PR por parte.
 - B-roll longo pesa mais no render: medir o tempo no primeiro trecho, com a sonda de CPU antes.
