@@ -261,6 +261,8 @@ def test_cli_grava_no_episodio_sem_sobrescrever(tmp_path: Path, capsys: pytest.C
     assert (episodio / "partitura.md").exists()
     copia = json.loads((episodio / "molde.json").read_text(encoding="utf-8"))
     assert copia["copiado_de"] == str(molde_path) and "copiado_em" in copia
+    assert copia["episodio"]["duracao_min"] == 12 and copia["episodio"]["blocos"] == 2
+    assert copia["episodio"]["assunto"] == "obra" and copia["episodio"]["fecho_inicio_s"] == 648.0
     assert "ep-01" in (episodio / "partitura.md").read_text(encoding="utf-8")
 
     assert partitura_mod.main(args) == 1

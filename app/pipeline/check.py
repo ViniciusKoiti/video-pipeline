@@ -17,6 +17,7 @@ from pydantic import ValidationError
 
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
+from app.pipeline.molde import MOLDE_FILE, Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
 from app.pipeline.ports import M, ManifestStore
 from app.pipeline.radar import (
@@ -538,6 +539,22 @@ def _check_radar(
     report.warnings += form_warnings(scenes, brief, chars_per_second, caption, today)
 
 
+def _check_molde(
+    store: ManifestStore,
+    episode_id: str,
+    scenes: ScenesManifest,
+    report: CheckReport,
+    chars_per_second: float,
+) -> None:
+    """Forma do roteiro longo contra o molde do nicho copiado no episódio pela partitura (ADR 031). Só
+    alertas: o molde é descrição de amostra e nunca fonte de fato."""
+    molde = _read(store, episode_id, MOLDE_FILE, Molde, report)
+    if molde is None:
+        return
+    report.checked.append(molde_summary(molde))
+    report.warnings += molde_warnings(scenes, molde, chars_per_second)
+
+
 def _check_music(
     store: ManifestStore,
     episode_id: str,
@@ -598,7 +615,9 @@ def check_episode(
         if (summary := funnel_summary(scenes)) is not None:
             report.checked.append(summary)
         report.warnings += funnel_warnings(scenes)
+        report.warnings += claimless_statements(scenes)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
+        _check_molde(store, episode_id, scenes, report, chars_per_second)
         _check_music(store, episode_id, scenes, music_catalog, report, chars_per_second)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")

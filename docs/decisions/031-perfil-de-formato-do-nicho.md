@@ -2,8 +2,9 @@
 
 - **Status:** proposto (rascunho para o dono, 2026-10-18). A parte A (B-roll como textura) está implementada no
   PR que traz este texto. A parte B está implementada (2026-10-22) como `molde.json` + `partitura.md`, com
-  prevalência e quartis no lugar da correlação com views (emenda abaixo); as partes C a E esperam a aprovação do
-  dono.
+  prevalência e quartis no lugar da correlação com views (emenda abaixo); as partes C e D estão implementadas
+  (2026-10-22: o roteirista lê a `partitura.md`; o `vp check` avisa pelo `molde.json`); a parte E espera a
+  aprovação do dono.
 - **Data:** 2026-10-18
 - **Etapa do roadmap:** roteiro (#28), épico #164 (piloto `death-note-fins-meios`)
 - **Relaciona-se com:** ADR 009 (agentes e `vp check`), ADR 011 (planos editoriais), ADR 018 (resumo do radar nos
@@ -73,6 +74,17 @@ segue como hoje. "Você" continua preso às fichas (ADR 018): o perfil não libe
 abertura e depois, "você" por mil palavras e no fecho. São alertas, nunca erros. Mais um alerta geral, com ou sem
 perfil: frase afirmativa em cena sem `claims` (duas rodadas deste piloto foram isso).
 
+*Emenda (2026-10-22, implementação das partes C e D).* `app/pipeline/molde.py` lê a cópia `molde.json` (com
+as casas pedidas pela partitura em `episodio`) e avisa: duração estimada fora de 20% da pedida; planos que
+trocam a tela nos primeiros 60 s acima do q3 do molde e, depois da abertura, acima do dobro do que o molde
+troca por minuto; "você" por mil palavras fora de q1–q3; "você" e "eu" que o molde sobe no último décimo e o
+roteiro não; e, só para traços `padrao`, confissão do narrador sem nenhuma frase de confissão no texto e fim
+que não repete nenhuma expressão do primeiro minuto (os dois por expressão regular: são indícios, e a revisão
+humana decide). O alerta geral de frase afirmativa em cena sem `claims` conta só frases com número ou nome
+próprio e seis ou mais palavras, uma por cena, fora perguntas e primeira pessoa. Molde com menos de 8 vídeos
+avisa que é só descrição. A skill `roteiro-explicativo` ganhou a seção "Partitura do episódio" e o
+`outline.md`, a seção "Formato".
+
 **E. Antes do roteiro.** A skill `pauta` pergunta ao dono se ele quer dizer algo seu no fecho (vai como opinião
 marcada, ADR 019). O verificador confere as fichas logo depois do fichamento, antes do gate 1, para erro de ficha
 não reabrir o gate depois do roteiro.
@@ -92,6 +104,7 @@ não reabrir o gate depois do roteiro.
   dele ganha `startFrom`, `loopFrames` ou corte sem fade). Cinco rascunhos de Reels com B-roll mais longo que o
   clipe passam a repetir o clipe em vez de parar no fim.
 - Parte B: `.agents/skills/analise-de-formato/molde.py` e `partitura.py`, testes em
-  `tests/test_molde_partitura.py`. Partes C a E: skills `roteiro-explicativo`, `pauta` e `checagem`,
-  `app/pipeline/check.py` e um módulo do perfil no molde de `app/pipeline/radar.py`. Um PR por parte.
+  `tests/test_molde_partitura.py`. Partes C e D: `app/pipeline/molde.py` (no molde de `app/pipeline/radar.py`),
+  `app/pipeline/check.py`, skill `roteiro-explicativo` e agente `roteirista`, testes em
+  `tests/test_molde_check.py`. Parte E: skills `pauta` e `checagem`, em PR próprio.
 - B-roll longo pesa mais no render: medir o tempo no primeiro trecho, com a sonda de CPU antes.

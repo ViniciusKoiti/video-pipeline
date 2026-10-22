@@ -164,8 +164,9 @@ python3 -I .agents/skills/analise-de-formato/partitura.py data/cache/nicho/<Tít
   décimo como fecho. Traz a linha do tempo com as casas, o que vale dentro de cada bloco, as curvas por décimo já
   no tamanho do episódio e os alvos (q1–q3) para medir o rascunho depois.
 - Com `--episodio`, grava `partitura.md` e a cópia datada do molde (`molde.json`) na pasta do episódio, no
-  desenho do `radar-brief.json` (ADR 018). Não sobrescreve sem `--sobrescrever`. A leitura pelo roteirista e os
-  alertas do `vp check` são as partes C e D da ADR 031, em PR próprio.
+  desenho do `radar-brief.json` (ADR 018). Não sobrescreve sem `--sobrescrever`. O roteirista lê a partitura
+  antes do outline (seção "Partitura do episódio" da skill `roteiro-explicativo`) e o `vp check` compara o
+  roteiro com o molde copiado (ADR 031, partes C e D).
 - Forma, nunca fato: nada do molde vira afirmação no roteiro; "você" continua preso às fichas.
 
 Pronto quando `analise/molde.json` existe com o n de cada medida, e o episódio em curso tem `partitura.md` e
