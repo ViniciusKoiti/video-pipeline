@@ -19,6 +19,7 @@ Os passos 1 a 3 são determinísticos: mesma entrada, mesma saída. O julgamento
 Saídas:
 - material baixado em `data/cache/nicho/<Título>/`, fora do Git;
 - fichas em `docs/pesquisa/research_notes/<Título>/formato/<video_id>.md`;
+- o molde do nicho em números (`analise/molde.json`) e a partitura de um episódio (`partitura.md`, passo 4c);
 - síntese como seção "Adendo: como o nicho faz os vídeos" no relatório do nicho em `docs/pesquisa/reports/`.
 
 ## 1. Amostra
@@ -140,6 +141,35 @@ python3 -I .agents/skills/analise-de-formato/narrativa.py comparar <a.batidas.ts
 
 Pronto quando cada vídeo da amostra e o nosso episódio têm o `.batidas.tsv`, e a concordância está escrita na
 síntese.
+
+## 4c. Molde e partitura: o nicho em números, no tamanho do episódio
+
+O molde resume a amostra sem agente: para cada medida dos passos 3 e 4b, mediana, quartis e n (e o terço de mais
+views contra o de menos, com 6 ou mais vídeos); para cada traço (confissão, gancho pago, fecho que volta, título
+dito na fala, promessa explícita, bloco que abre com caso), em quantos vídeos aparece. `padrao` só com 8 ou mais
+vídeos e 80% ou mais; o resto é `indicio`. Prevalência, não correlação com views: "12 de 13 fazem" é o que o
+roteiro consegue seguir.
+
+```
+python3 -I .agents/skills/analise-de-formato/molde.py data/cache/nicho/<Título>/ \
+  --notas docs/pesquisa/research_notes/<Título>/formato --grupo <grupo> [--assunto voce|obra|mundo|pensador]
+python3 -I .agents/skills/analise-de-formato/partitura.py data/cache/nicho/<Título>/analise/molde.json \
+  --duracao <min> --assunto <assunto> --episodio data/episodes/<id>
+```
+
+- `--grupo` escolhe o canal de referência do formato (o molde do ensaio é o grupo do Filosofatos, não a amostra
+  inteira); `--assunto` restringe aos vídeos com batidas daquele assunto.
+- A partitura escala o molde para a duração do episódio: marcos dos primeiros segundos absolutos, abertura e
+  blocos proporcionais, blocos do tamanho do molde (menos blocos, não blocos menores; `--blocos` fixa), último
+  décimo como fecho. Traz a linha do tempo com as casas, o que vale dentro de cada bloco, as curvas por décimo já
+  no tamanho do episódio e os alvos (q1–q3) para medir o rascunho depois.
+- Com `--episodio`, grava `partitura.md` e a cópia datada do molde (`molde.json`) na pasta do episódio, no
+  desenho do `radar-brief.json` (ADR 018). Não sobrescreve sem `--sobrescrever`. A leitura pelo roteirista e os
+  alertas do `vp check` são as partes C e D da ADR 031, em PR próprio.
+- Forma, nunca fato: nada do molde vira afirmação no roteiro; "você" continua preso às fichas.
+
+Pronto quando `analise/molde.json` existe com o n de cada medida, e o episódio em curso tem `partitura.md` e
+`molde.json` na pasta.
 
 ## 5. Síntese
 
