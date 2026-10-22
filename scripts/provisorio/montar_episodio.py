@@ -55,7 +55,7 @@ from app.media.captions import (  # noqa: E402
     timing_problems,
 )
 from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
-from app.media.narration import has_pauses, strip_pauses  # noqa: E402
+from app.media.narration import has_pauses, split_pauses, strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
@@ -75,7 +75,7 @@ from app.pipeline.schemas import (  # noqa: E402
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
 from app.providers.errors import InvalidOutput, ProviderError  # noqa: E402
 from app.providers.tts.base import SpeechRequest, TTSProvider  # noqa: E402
-from app.providers.tts.chatterbox import reference_hash  # noqa: E402
+from app.providers.tts.chatterbox import MAX_PART_CHARS, reference_hash  # noqa: E402
 from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
@@ -99,6 +99,15 @@ def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
         voice = reference_hash(reference) if reference and reference.is_file() else None
         return f"{provider}|{box.model}|{box.language_ids.get(language)}|{voice}"
     return f"{provider}|{settings.kokoro.voices.get(language)}"
+
+
+def long_speech_tag(provider: str, text: str) -> str:
+    """Entra na chave da fala clonada longa (#186): ela sai em grupos de frases, e a de antes, gerada numa
+    chamada só, foi cortada em ~40 s sem erro. Fala curta e as outras vozes não mudam de chave."""
+    if provider not in CLONED:
+        return ""
+    long = any(len(part) > MAX_PART_CHARS for part in split_pauses(text) or [text])
+    return f"|frases{MAX_PART_CHARS}" if long else ""
 
 
 def batches(requests: list[SpeechRequest], limit: int = BATCH_CHARS) -> list[list[SpeechRequest]]:
@@ -252,7 +261,8 @@ def main() -> None:
         delivery = scene.delivery or "neutral"
         entrega = f"|entrega:{delivery}" if provider in CLONED and delivery != "neutral" else ""
         text = respell(scene.narration, glossary)  # a grafia que a voz lê; sem termo, o texto do roteiro
-        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}|{text}".encode()).hexdigest()[:10]
+        frases = long_speech_tag(provider, text)
+        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}{frases}|{text}".encode()).hexdigest()[:10]
         wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
         if not wav.exists():
             for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):

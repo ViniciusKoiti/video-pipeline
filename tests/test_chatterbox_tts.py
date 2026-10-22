@@ -309,3 +309,14 @@ def test_a_failure_in_one_part_of_a_long_scene_is_a_provider_error(tmp_path: Pat
             SpeechRequest(text=LONG, out_path=tmp_path / "S01.wav", language="pt-BR")
         )
     assert not (tmp_path / "S01.wav").exists()
+
+
+def test_long_cloned_speech_gets_its_own_cache_key_so_cut_wavs_are_redone() -> None:
+    path = REPO_ROOT / "scripts" / "provisorio" / "montar_episodio.py"
+    spec = importlib.util.spec_from_file_location("montar_episodio_chave", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.long_speech_tag("chatterbox_modal", LONG) == "|frases300"
+    assert module.long_speech_tag("chatterbox", f"Curta. {SP} Também curta.") == ""
+    assert module.long_speech_tag("kokoro", LONG) == ""  # as outras vozes não mudam de chave
