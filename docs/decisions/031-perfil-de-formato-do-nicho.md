@@ -63,7 +63,11 @@ a força sai da **prevalência** ("11 de 13 têm confissão"), não da correlaç
 vídeos a correlação quase nunca sustenta um `pattern` e prevalência é o que o roteiro consegue seguir; cada
 medida leva mediana, q1, q3 e n, mais o terço de cima e o de baixo quando há 6 ou mais vídeos; entram as
 medidas de estrutura das batidas (parte 4b) e as curvas por décimo; a partitura escala o molde para a duração
-do episódio. `padrao` = 8 ou mais vídeos e 80% ou mais; o resto é `indicio`.
+do episódio. `padrao` = 8 ou mais vídeos e 80% ou mais; o resto é `indicio`. São dois moldes (2026-10-22):
+o do canal de referência, que é a forma escolhida pelo dono, e o do topo reproduzível do nicho (vídeos mais
+vistos sem apresentador e com base de imagem que a pipeline faz; passo 4d da skill, `reproduzivel.py`), postos
+lado a lado por `comparar_moldes.py`. O que é `padrao` nos dois vale sem discussão; o que diverge é decisão do
+dono.
 
 **C. Skill do roteiro lê o perfil.** Com o arquivo, o ritmo de planos e a duração vêm dele, não da regra fixa de
 2 a 4 s; entram a regra do fio único (o conceito entra na cena que ele explica) e a textura em B-roll depois da
