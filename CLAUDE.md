@@ -103,7 +103,8 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
 ### Mapa do repositório
 
 `app/pipeline/` etapas, estados e schemas · `app/providers/<função>/` porta (`base.py`) + um adapter por provedor ·
-`app/bootstrap.py` único módulo que conhece adapters concretos · `app/render/` motor por formato · `video/` template
+`app/bootstrap.py` único módulo que conhece adapters concretos · `config/canal.toml` nome do canal e tag de
+associado da Amazon (pública) · `app/render/` motor por formato · `video/` template
 Remotion do `explainer` (ADR 008) · `.claude/agents/` e `.claude/skills/` etapas criativas (§15) · `prompts/local/`
 prompts para modelo local · `config/providers.toml` implementação por função · `scripts/provisorio/` scripts até
 virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
@@ -133,7 +134,9 @@ Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) �
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
 (**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
 áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado) → prévia e descrição (**gate 4**) →
-export. No gate 4, "ajustar imagem" volta à busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
+export. Na descrição, os livros citados levam o link de afiliado da Amazon com o aviso exigido pelo contrato
+(`scripts/provisorio/livros_afiliado.py`, a partir de `livros.json` do episódio). No gate 4, "ajustar imagem" volta à
+busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
 ou agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no
 mesmo recorte (§12).
 Diagrama completo: `docs/pipeline-flowchart.mermaid`.
