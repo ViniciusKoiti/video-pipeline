@@ -161,6 +161,26 @@ def test_reused_asset_already_approved_gets_this_episode_decision_only(tmp_path:
         decide(store, review, Step.ASSETS, Decision.APPROVED, asset_id="pexels-video-1")
 
 
+def test_music_track_is_approved_in_gate_3(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    (folder / "assets" / "ytal-faixa.mp3").write_bytes(b"audio")
+    track = Asset(
+        id="ytal-faixa",
+        provider="youtube_audio_library",
+        provider_id="Faixa",
+        page_url="https://www.youtube.com/audiolibrary",
+        license_id="YouTube-Audio-Library",
+        usage_notes="Só YouTube; sem voz cantada.",
+        retrieved_at=FIXED_TIME,
+        sha256=hashlib.sha256(b"audio").hexdigest(),
+        review_status=Status.NEEDS_REVIEW,
+    )
+    (folder / "assets" / "ytal-faixa.json").write_text(track.model_dump_json(indent=2))
+    decide(store, review, Step.ASSETS, Decision.APPROVED, asset_id="ytal-faixa")
+    [entry] = review.log(EPISODE).entries
+    assert entry.asset_id == "ytal-faixa" and entry.input_hash == f"sha256:{track.sha256}"
+
+
 def test_asset_without_rights_check_is_refused_and_nothing_is_recorded(tmp_path: Path) -> None:
     store, review, folder = episode(tmp_path)
     stock_asset(folder, usage_notes="")
