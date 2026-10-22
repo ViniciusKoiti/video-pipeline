@@ -254,3 +254,58 @@ def test_real_model_writes_a_wav(tmp_path: Path) -> None:
         tts.close()
     with wave.open(str(out), "rb") as wav:
         assert wav.getnframes() > 0
+
+
+# --- Fala longa: o modelo para em ~40 s por chamada (max_new_tokens=1000) ---------------------------------
+
+FRASE = "Esta é a frase número {n}, que fala de um corte antigo entre o que depende e o que não."
+LONG = " ".join(FRASE.format(n=n) for n in range(12))
+
+
+def test_split_long_keeps_every_word_in_order_and_respects_the_limit() -> None:
+    from app.providers.tts.chatterbox import MAX_PART_CHARS, split_long
+
+    groups = split_long(LONG)
+    assert len(groups) > 1
+    assert all(len(group) <= MAX_PART_CHARS for group in groups)
+    assert " ".join(groups).split() == LONG.split()
+    assert all(group.endswith(".") for group in groups)  # corta no fim da frase
+
+
+def test_split_long_breaks_a_huge_sentence_at_commas_then_words() -> None:
+    from app.providers.tts.chatterbox import split_long
+
+    sentence = ", ".join(f"item {n} da lista" for n in range(60)) + "."
+    groups = split_long(sentence, limit=80)
+    assert all(len(group) <= 80 for group in groups)
+    assert " ".join(groups).split() == sentence.split()
+    assert split_long("Curta.") == ["Curta."]
+    assert split_long('Ele disse “basta.” Depois saiu.', limit=20) == ["Ele disse “basta.”", "Depois saiu."]
+
+
+def test_short_scene_is_still_one_job_and_long_scene_is_joined_with_the_pauses(tmp_path: Path) -> None:
+    from app.providers.tts.chatterbox import SENTENCE_GAP_MS
+
+    worker = FakeWorker()
+    tts = make_tts(worker, tmp_path)
+    out = tmp_path / "voice" / "S02.wav"
+    text = f"{LONG} {SP} Fim curto."
+    tts.synthesize_speech(SpeechRequest(text=text, out_path=out, language="pt-BR"))
+    assert len(worker.jobs) == 2  # um pedido por trecho entre pausas
+    first, second = worker.jobs
+    assert len(first["parts"]) > 1 and first["pause_ms"] == SENTENCE_GAP_MS
+    assert second["parts"] == ["Fim curto."]
+    assert " ".join(first["parts"]).split() == LONG.split()
+    assert first["out_path"] != str(out) and not Path(first["out_path"]).exists()  # trechos temporários
+    with wave.open(str(out), "rb") as wav:  # dois WAVs de 2400 quadros + 400 ms de pausa a 24 kHz
+        assert wav.getnframes() == 2400 * 2 + 9600
+    assert sorted(p.name for p in out.parent.iterdir()) == ["S02.wav"]
+
+
+def test_a_failure_in_one_part_of_a_long_scene_is_a_provider_error(tmp_path: Path) -> None:
+    worker = FakeWorker(answer={"ok": False, "error": "CUDA out of memory"})
+    with pytest.raises(ProviderError, match="CUDA"):
+        make_tts(worker, tmp_path).synthesize_speech(
+            SpeechRequest(text=LONG, out_path=tmp_path / "S01.wav", language="pt-BR")
+        )
+    assert not (tmp_path / "S01.wav").exists()
