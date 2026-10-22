@@ -1,0 +1,86 @@
+{
+  "schema": "formato_brief.v1",
+  "nicho": "Ensaio de conceito com anime (pt-BR)",
+  "grupo": "H",
+  "data": "2026-10-18",
+  "n": 20,
+  "medidas": {
+    "duracao_s": {
+      "alto": 549.0,
+      "baixo": 698.0,
+      "rho": -0.01,
+      "n": 20,
+      "forca": "hint"
+    },
+    "palavras_min": {
+      "alto": 180.0,
+      "baixo": 155.0,
+      "rho": 0.16,
+      "n": 20,
+      "forca": "hint"
+    },
+    "cortes_min": {
+      "alto": 14.9,
+      "baixo": 19.0,
+      "rho": -0.22,
+      "n": 20,
+      "forca": "hint"
+    },
+    "plano_medio_s": {
+      "alto": 4.0,
+      "baixo": 3.2,
+      "rho": 0.2,
+      "n": 19,
+      "forca": "hint"
+    },
+    "voce_por_mil": {
+      "alto": 7.9,
+      "baixo": 4.6,
+      "rho": 0.28,
+      "n": 20,
+      "forca": "hint"
+    },
+    "nos_por_mil": {
+      "alto": 3.6,
+      "baixo": 4.2,
+      "rho": -0.06,
+      "n": 20,
+      "forca": "hint"
+    },
+    "eu_por_mil": {
+      "alto": 2.2,
+      "baixo": 3.2,
+      "rho": 0.11,
+      "n": 20,
+      "forca": "hint"
+    },
+    "fonte_por_mil": {
+      "alto": 1.1,
+      "baixo": 0.0,
+      "rho": 0.22,
+      "n": 20,
+      "forca": "hint"
+    },
+    "palavras_60s": {
+      "alto": 161.0,
+      "baixo": 169.5,
+      "rho": 0.13,
+      "n": 20,
+      "forca": "hint"
+    },
+    "voce_60s": {
+      "alto": 2.0,
+      "baixo": 1.0,
+      "rho": -0.07,
+      "n": 20,
+      "forca": "hint"
+    },
+    "cortes_60s": {
+      "alto": 13.0,
+      "baixo": 20.5,
+      "rho": -0.08,
+      "n": 20,
+      "forca": "hint"
+    }
+  }
+}

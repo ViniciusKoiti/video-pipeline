@@ -1,0 +1,21 @@
+{
+ "id": "commons-crime-castigo-1867-rosto",
+ "provider": "wikimedia_commons",
+ "provider_id": "File:Cover of the first edition of Crime and Punishment.jpg",
+ "original_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cover_of_the_first_edition_of_Crime_and_Punishment.jpg",
+ "page_url": "https://commons.wikimedia.org/wiki/File:Cover_of_the_first_edition_of_Crime_and_Punishment.jpg",
+ "author": "Fiódor Dostoiévski (texto); edição de São Petersburgo, 1867",
+ "license_id": "PD-old",
+ "license_url": null,
+ "attribution_text": "Página de rosto da primeira edição em livro de Crime e Castigo (São Petersburgo, 1867), via Wikimedia Commons, domínio público",
+ "usage_notes": "Página de rosto da primeira edição em livro de Crime e Castigo, 1867 (Commons: Public domain; conferido em 2026-10-19). Publicada em 1867, autor morto em 1881: domínio público nos EUA e na Rússia. Conferência de pessoas, marcas e texto: só o título e os dados impressos da obra, em russo, que é o próprio objeto citado; sem pessoa nem marca. Imagem pequena (441×613).",
+ "retrieved_at": "2026-10-19T12:45:00-03:00",
+ "sha256": "c8c9161d329795211545083eb8fc3058ea1e3f710be057c52d6f2d52fe95d4e3",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S051",
+  "S055"
+ ],
+ "generation": null,
+ "work": null
+}

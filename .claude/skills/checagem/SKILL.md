@@ -17,6 +17,11 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
 
 `data/episodes/<id>/facts.json`, `scenes.json`, `outline.md` e `excerpts/*.md` (trechos numerados).
 
+O bloco do `outline.md` que começa em `<!-- números: gerado por …` e termina em `<!-- números: fim -->` é gerado
+do `scenes.json` pelo código, com as contas do `vp check`: não reconte nem cobre esses números. Se o `vp check`
+avisar que o bloco está desatualizado, é um aviso para quem escreve, não um problema de fato. Confira o resto do
+outline, escrito à mão.
+
 ## O que conferir
 
 1. **Fichas.** Para cada fato, leia o trecho inteiro de cada evidência, não só a citação. O `text` do

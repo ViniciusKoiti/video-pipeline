@@ -1,0 +1,20 @@
+{
+ "id": "crunchyroll-trailer-naomi",
+ "provider": "official",
+ "provider_id": "youtube:NlJZ-YgAt-c@4.6s",
+ "original_url": "https://www.youtube.com/watch?v=NlJZ-YgAt-c&t=4s",
+ "page_url": "https://www.youtube.com/watch?v=NlJZ-YgAt-c",
+ "author": null,
+ "license_id": "Citacao",
+ "license_url": null,
+ "attribution_text": "Death Note (anime) — Death Note | OFFICIAL TRAILER, Crunchyroll",
+ "usage_notes": "Quadro parado do trailer oficial publicado pela Crunchyroll (distribuidora licenciada) no próprio canal do YouTube; trecho baixado em 2026-10-19 com autorização do dono, só para tirar o quadro. Naomi Misora segurando um guarda-chuva fechado. O trailer não identifica o episódio. Entra em S145 em 'ex-agente do FBI e companheira de Raye Penber', aposto só sobre a personagem; a cena do ep. 7 (S045) fica sobre a textura. Sem crédito sobreposto no quadro (escolha do dono, 2026-10-19: quadros sem a marca do canal); a obra é creditada no rodapé e em credits.txt. Quadro parado, sem movimento, até 8 s na tela (emenda de citação da ADR 007).",
+ "retrieved_at": "2026-10-19T12:30:00-03:00",
+ "sha256": "fa50c9c0cd606038c172893041dbba3670f0bc018142f2ded352b38e85179912",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S145"
+ ],
+ "generation": null,
+ "work": "Death Note (série de anime, 2006–2007), Madhouse; Death Note | OFFICIAL TRAILER (Crunchyroll)"
+}

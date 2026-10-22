@@ -308,7 +308,9 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `status` e `postiz`. `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
+`reject`, `status`, `numeros` e `postiz`. `vp numeros <id> --escrever` gera a parte numérica do `outline.md` (bloco
+entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o
+roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
 saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem fonte, voz e render
 até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`). Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.

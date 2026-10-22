@@ -1,0 +1,20 @@
+{
+ "id": "commons-kepler-1627",
+ "provider": "wikimedia_commons",
+ "provider_id": "File:Jean Keppler.jpg",
+ "original_url": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Jean_Keppler.jpg",
+ "page_url": "https://commons.wikimedia.org/wiki/File:Jean_Keppler.jpg",
+ "author": "Pintor desconhecido; reprodução de Claude Truong-Ngoc",
+ "license_id": "PD-old",
+ "license_url": null,
+ "attribution_text": "Retrato de Johannes Kepler (oferecido em 1627 à Universidade de Estrasburgo), reprodução de Claude Truong-Ngoc, via Wikimedia Commons, domínio público",
+ "usage_notes": "Pintura a óleo do início do séc. XVII (oferecida em 1627 por Matthias Bernegger à biblioteca da universidade de Estrasburgo, segundo a página): domínio público. A página marca domínio público para a reprodução fotográfica de obra bidimensional. Evitado o famoso 'Johannes Kepler 1610', que o Commons hoje identifica como retrato confundido com Kepler. Conferência de pessoas, marcas e texto: só o retratado; sem marca; no alto à esquerda, legenda pintada de época, legível, em latim ('IOANNIS KEPPLERI Mathematici Caesarei… MATTHIAS BERNECCERUS… M.DC.XXVII'), parte da própria obra. Conferido em 2026-10-18.",
+ "retrieved_at": "2026-10-18T21:01:36-03:00",
+ "sha256": "9b2d6d9888e5a91cbe46a414c328b21570136a50c8bad8a0c5ac4587f19f0196",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S055"
+ ],
+ "generation": null,
+ "work": null
+}

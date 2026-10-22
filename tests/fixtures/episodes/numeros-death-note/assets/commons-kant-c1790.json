@@ -1,0 +1,23 @@
+{
+ "id": "commons-kant-c1790",
+ "provider": "wikimedia_commons",
+ "provider_id": "File:Immanuel Kant portrait c1790.jpg",
+ "original_url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Immanuel_Kant_portrait_c1790.jpg",
+ "page_url": "https://commons.wikimedia.org/wiki/File:Immanuel_Kant_portrait_c1790.jpg",
+ "author": "Desconhecido (talvez Elisabeth von Stägemann, escola de Anton Graff)",
+ "license_id": "PD-old",
+ "license_url": null,
+ "attribution_text": "Retrato de Immanuel Kant (c. 1790), autor desconhecido, via Wikimedia Commons, domínio público",
+ "usage_notes": "Pintura de c. 1790; Kant morreu em 1804 e o autor, desconhecido, é da mesma época: domínio público em toda parte. A página marca domínio público (fonte NDLA). Reprodução fiel de obra bidimensional, sem direito novo. Retrato de época: ilustra a pessoa citada na fala. Conferência de pessoas, marcas e texto: só o retratado; sem marca nem texto. Conferido em 2026-10-18.",
+ "retrieved_at": "2026-10-18T21:01:36-03:00",
+ "sha256": "a7d8fbe6ac769d5b0c9ec7c9def92cbc108133fed935a370216ef7eeaa8623a6",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S117",
+  "S039",
+  "S048",
+  "S132"
+ ],
+ "generation": null,
+ "work": null
+}

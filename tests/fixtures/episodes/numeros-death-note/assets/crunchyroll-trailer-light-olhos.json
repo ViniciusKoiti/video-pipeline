@@ -1,0 +1,20 @@
+{
+ "id": "crunchyroll-trailer-light-olhos",
+ "provider": "official",
+ "provider_id": "youtube:NlJZ-YgAt-c@11.7s",
+ "original_url": "https://www.youtube.com/watch?v=NlJZ-YgAt-c&t=11s",
+ "page_url": "https://www.youtube.com/watch?v=NlJZ-YgAt-c",
+ "author": null,
+ "license_id": "Citacao",
+ "license_url": null,
+ "attribution_text": "Death Note (anime) — Death Note | OFFICIAL TRAILER, Crunchyroll",
+ "usage_notes": "Quadro parado do trailer oficial publicado pela Crunchyroll (distribuidora licenciada) no próprio canal do YouTube; trecho baixado em 2026-10-19 com autorização do dono, só para tirar o quadro. Close dos olhos de Light Yagami. O trailer não identifica o episódio. Fica em S060 ('O mundo novo era o fim, ou o fim era ele mesmo?'), fala só sobre o personagem, sem episódio. Sem crédito sobreposto no quadro (escolha do dono, 2026-10-19: quadros sem a marca do canal); a obra é creditada no rodapé e em credits.txt. Quadro parado, sem movimento, até 8 s na tela (emenda de citação da ADR 007).",
+ "retrieved_at": "2026-10-19T12:30:00-03:00",
+ "sha256": "a5c6cd855a4f675cf9368a38eff10258558921a0132418737d794a9dda0fd9f8",
+ "review_status": "approved",
+ "used_in_scenes": [
+  "S060"
+ ],
+ "generation": null,
+ "work": "Death Note (série de anime, 2006–2007), Madhouse; Death Note | OFFICIAL TRAILER (Crunchyroll)"
+}
