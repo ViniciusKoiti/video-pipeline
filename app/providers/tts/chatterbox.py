@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 import tempfile
+import wave
 from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any, Protocol
@@ -27,6 +29,13 @@ WORKER = Path(__file__).with_name("chatterbox_worker.py")
 # A mesma fala numa GPU do Modal (ADR 024): um cliente com o protocolo do worker.
 MODAL_CLIENT = Path(__file__).with_name("chatterbox_modal_client.py")
 MODEL_PREFIX = "chatterbox-multilingual-"
+# O Chatterbox gera no máximo 1.000 tokens de fala por chamada (`max_new_tokens` fixo no `generate`), uns
+# 40 s: passou disso, a fala sai cortada sem erro. A fala longa vai em grupos de frases até este tamanho, uma
+# chamada por grupo, com um silêncio curto entre eles; as `<short pause>` seguem com o `pause_ms` (ADR 015).
+MAX_PART_CHARS = 300
+SENTENCE_GAP_MS = 150
+_SENTENCE_END = re.compile(r"(?<=[.!?…])\s+|(?<=[.!?…][”\"’)])\s+")
+_CLAUSE_END = re.compile(r"(?<=[,;:])\s+")
 # Entrega da fala (ADR 022): padrão do modelo na fala neutra; ênfase alta e cfg baixo no chamado.
 DEFAULT_DELIVERY: dict[str, dict[str, float]] = {
     "hook": {"exaggeration": 0.8, "cfg_weight": 0.3},
@@ -35,6 +44,59 @@ DEFAULT_DELIVERY: dict[str, dict[str, float]] = {
     "neutral": {"exaggeration": 0.5, "cfg_weight": 0.5},
     "calm": {"exaggeration": 0.4, "cfg_weight": 0.6},
 }
+
+
+def _pack(pieces: list[str], limit: int) -> list[str]:
+    groups: list[str] = []
+    current = ""
+    for piece in pieces:
+        joined = f"{current} {piece}" if current else piece
+        if current and len(joined) > limit:
+            groups.append(current)
+            current = piece
+        else:
+            current = joined
+    return [*groups, current] if current else groups
+
+
+def _split_sentence(sentence: str, limit: int) -> list[str]:
+    """Frase maior que o limite: parte nas vírgulas, e a oração ainda maior, nas palavras."""
+    pieces: list[str] = []
+    for clause in _CLAUSE_END.split(sentence):
+        pieces.extend(_pack(clause.split(), limit) if len(clause) > limit else [clause])
+    return _pack(pieces, limit)
+
+
+def split_long(text: str, limit: int = MAX_PART_CHARS) -> list[str]:
+    """Os grupos de frases, cada um com até `limit` caracteres, na ordem do texto; o texto curto
+    fica inteiro."""
+    text = text.strip()
+    if len(text) <= limit:
+        return [text] if text else []
+    pieces: list[str] = []
+    for sentence in _SENTENCE_END.split(text):
+        sentence = sentence.strip()
+        if sentence:
+            pieces.extend(_split_sentence(sentence, limit) if len(sentence) > limit else [sentence])
+    return _pack(pieces, limit)
+
+
+def join_wavs(pieces: list[Path], gap_ms: int, out_path: Path) -> None:
+    """Junta WAVs PCM do mesmo formato, com `gap_ms` de silêncio entre eles."""
+    with wave.open(str(pieces[0]), "rb") as first:
+        params = first.getparams()
+    gap = b"\x00" * (round(params.framerate * gap_ms / 1000) * params.sampwidth * params.nchannels)
+    with wave.open(str(out_path), "wb") as out:
+        out.setnchannels(params.nchannels)
+        out.setsampwidth(params.sampwidth)
+        out.setframerate(params.framerate)
+        for i, piece in enumerate(pieces):
+            with wave.open(str(piece), "rb") as wav:
+                if (wav.getnchannels(), wav.getsampwidth(), wav.getframerate()) != params[:3]:
+                    raise ValueError(f"formato diferente em {piece.name}")
+                if i:
+                    out.writeframes(gap)
+                out.writeframes(wav.readframes(wav.getnframes()))
 
 
 def reference_hash(reference: Path) -> str:
@@ -134,25 +196,40 @@ class ChatterboxTTS:
         worker, reference = self._ready()
         request.out_path.parent.mkdir(parents=True, exist_ok=True)
         params = self._delivery.get(request.delivery) or self._delivery.get("neutral") or {}
-        job = {
-            "parts": split_pauses(request.text) or [request.text],
+        base = {
             "language_id": language_id,
             "reference": str(reference),
-            "out_path": str(request.out_path),
-            "pause_ms": self._pause_ms,
             "exaggeration": params.get("exaggeration", 0.5),
             "cfg_weight": params.get("cfg_weight", 0.5),
         }
+        parts = split_pauses(request.text) or [request.text]
+        groups = [split_long(part) or [part] for part in parts]
+        if all(len(group) == 1 for group in groups):
+            self._ask(worker, {**base, "parts": parts, "out_path": str(request.out_path),
+                               "pause_ms": self._pause_ms}, request.out_path)
+        else:
+            # Fala longa (mais que ~40 s numa chamada): um pedido por trecho entre pausas, cada um com os
+            # grupos de frases; os trechos se juntam aqui com o silêncio das pausas.
+            with tempfile.TemporaryDirectory(dir=request.out_path.parent) as folder:
+                pieces = []
+                for i, group in enumerate(groups):
+                    piece = Path(folder) / f"trecho-{i:02d}.wav"
+                    self._ask(worker, {**base, "parts": group, "out_path": str(piece),
+                                       "pause_ms": SENTENCE_GAP_MS}, piece)
+                    pieces.append(piece)
+                join_wavs(pieces, self._pause_ms, request.out_path)
+        voice = f"clone:{reference_hash(reference)}"
+        return SpeechResult(path=request.out_path, model=MODEL_PREFIX + self._model, voice=voice)
+
+    def _ask(self, worker: Worker, job: Mapping[str, Any], out_path: Path) -> None:
         try:
             answer = worker.ask(job)
         except (OSError, RuntimeError, ValueError) as error:
             self._worker = None  # o próximo pedido sobe o processo de novo
             raise ProviderError(self.info.name, f"o processo do modelo falhou: {error}") from error
-        if not answer.get("ok") or not request.out_path.is_file():
+        if not answer.get("ok") or not out_path.is_file():
             reason = answer.get("error") or "nenhum áudio gerado para o texto"
             raise ProviderError(self.info.name, str(reason))
-        voice = f"clone:{reference_hash(reference)}"
-        return SpeechResult(path=request.out_path, model=MODEL_PREFIX + self._model, voice=voice)
 
     def close(self) -> None:
         close = getattr(self._worker, "close", None)
