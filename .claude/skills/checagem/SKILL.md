@@ -2,8 +2,9 @@
 name: checagem
 description: |
   Confere, sem editar nada, se fichas e roteiro de um episódio dizem só o que os trechos citados das
-  fontes dizem: números, datas, nomes, relações, causas, superlativos. Use depois do roteiro e depois de
-  qualquer reescrita, antes do gate 2 (ADR 009).
+  fontes dizem (números, datas, nomes, relações, causas, superlativos) e se os temas do roteiro se
+  conectam e se consolidam na resposta. Use depois do roteiro e depois de qualquer reescrita, antes do
+  gate 2 (ADR 009).
 argument-hint: "<episode-id>"
 ---
 
@@ -52,6 +53,19 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
    - pergunta retórica ou insinuação que sugere algo que as fichas não dizem ("coincidência?") → `EXAGERO`.
 5. **Ponte com o espectador:** frase em 2ª pessoa ("você usa", "você paga") precisa de ficha
    `impact_today` com escala e data; sem ela → `SEM SUPORTE`.
+6. **Conexão e consolidação** (pedido do dono, 2026-10-21: roteiro que "joga um tema em cima do outro" não
+   passa). Leia só a narração, em ordem, como quem ouve o vídeo uma vez:
+   - cada autor, obra ou caso entra por uma frase que nasce do bloco anterior e sai voltando à obra
+     principal ou à pergunta (`objective.question`); se quem ouve não sabe por que ele está ali → `CONEXÃO`;
+   - cada bloco acrescenta uma parte da resposta à pergunta; bloco que não acrescenta ou repete outro →
+     `CONSOLIDAÇÃO`;
+   - os resumos e o fecho juntam as peças que de fato apareceram, com os mesmos nomes, e a tese decorre
+     delas; peça anunciada que não volta, ou que volta sem ter sido apresentada → `CONSOLIDAÇÃO`;
+   - a história principal anda na ordem que o roteiro promete; desvio sem aviso → `FIO`;
+   - o que é plantado ("isso volta no fim") é pago; gancho sem pagamento → `GANCHO`.
+
+   Correção só de forma (ponte, ordem, corte), nunca fato novo. No relatório, junte uma tabela curta dos
+   blocos: cenas, parte da resposta que cada um acrescenta, ponte de entrada e ponte de saída.
 
 ## Relatório
 
@@ -63,6 +77,7 @@ SEM SUPORTE S04 "por isso decidiu entrar no cimento" — nenhuma ficha afirma a 
 EXAGERO     S01 plano number "47 anos no comando" — F02 dá 1926–1973 como diretor, não "no comando"
 TELA        S02 lower_third "comprador da fábrica" — F01 diz "adquiriu o controle"
 TELA        S07 network aresta banco-b→empresa-a "empresta a" — source-02#E7 diz "avalizou o empréstimo"
+CONEXÃO     S29 "Volta à taverna." — o bloco anterior não diz por que Raskólnikov volta; a ligação só vem na S31
 ```
 
 Para cada linha, sugira a correção mínima (trocar a palavra, tirar a causa, citar outra ficha). No fim,
@@ -77,5 +92,5 @@ Feche com este JSON, que a sessão principal grava com `vp checagem <id> parecer
 {"verdict": "rejected", "problems": ["DIVERGE S03 \"No ano seguinte...\" — source-02#E9 diz \"em 1927\""]}
 ```
 
-`approved` só sem nenhuma linha de problema; qualquer `DIVERGE`, `SEM SUPORTE`, `EXAGERO` ou `TELA` é
-`rejected`, com as linhas do relatório em `problems`.
+`approved` só sem nenhuma linha de problema; qualquer `DIVERGE`, `SEM SUPORTE`, `EXAGERO`, `TELA`,
+`CONEXÃO`, `CONSOLIDAÇÃO`, `FIO` ou `GANCHO` é `rejected`, com as linhas do relatório em `problems`.
