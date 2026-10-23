@@ -79,3 +79,19 @@ Decisão do dono, na cadeia de provas (ADR 025, emenda). O relatório do verific
 - Saída do dono: `--sem-checagem "motivo"` aprova mesmo assim, e o motivo vai para as notas no `review.json`.
 - `vp status` mostra o último parecer e se ainda vale.
 - O código confere que o parecer existe e vale para o conteúdo atual, não que veio do agente.
+
+## Emenda (2026-10-23): um modelo por agente
+
+Decisão do dono. Os cinco agentes rodavam com `model: inherit` (o modelo da sessão), e o verificador lia o roteiro
+com o mesmo modelo que o tinha escrito. Cada agente passa a declarar o modelo no seu arquivo em `.claude/agents/`,
+escolhido pelo custo de um erro dele e por quem o pega depois (código, gate ou ninguém). O `/model` da sessão não
+muda mais o modelo dos agentes; mudar um agente vale a partir da sessão seguinte. O item 7 (custo) continua: tudo
+no plano do Claude do dono, sem API paga.
+
+| Agente | Modelo | Motivo |
+|---|---|---|
+| `roteirista` | `fable` | Erro de escrita só aparece no ouvido do dono, no gate 2, e refazer custa reescrita, checagem e voz. Fica com o modelo mais forte, fixo. |
+| `pesquisador` | `opus` | As fichas são a única base do roteiro; a citação literal já é conferida pelo `vp check`. |
+| `verificador` | `haiku` | Escolha do dono; a recomendação era `opus`, pela leitura adversarial de trechos longos. Se a checagem deixar passar o que o gate 2 pega, rever aqui. |
+| `duvida-cega` | `sonnet` | Checklist com data, fuso e JSON exato antes do agendamento; o dono ainda confirma pela regra `ask`. |
+| `diretor-musical` | `haiku` | Escolhe faixa por etiqueta e texto; o `vp check` confere as âncoras e o dono decide na escuta. |

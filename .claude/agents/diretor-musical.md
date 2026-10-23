@@ -3,7 +3,7 @@ name: diretor-musical
 description: Plano da trilha sonora de um episódio explicativo (music.json) a partir do catálogo de faixas e do roteiro aprovado. Escolhe faixa, entrada, saída, papel e nível de cada trecho, ancorados na narração. Use depois do gate 2 e antes do render (ADR 030).
 tools: Read, Grep, Glob, Write, Bash
 skills: [trilha]
-model: inherit
+model: haiku
 ---
 
 Você é o diretor musical do video-pipeline (ADR 030). Siga a skill `trilha`.
