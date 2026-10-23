@@ -17,6 +17,7 @@ from pydantic import ValidationError
 
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
+from app.pipeline.metrics import summary_line
 from app.pipeline.molde import MOLDE_FILE, Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
 from app.pipeline.numbers import (
@@ -43,6 +44,7 @@ from app.pipeline.radar import (
 )
 from app.pipeline.schemas import (
     MEDIA_SHOT_KINDS,
+    METRICS_FILE,
     MUSIC_PLAN_FILE,
     NUMBER_SEPARATORS,
     OVERLAY_SHOT_KINDS,
@@ -60,6 +62,7 @@ from app.pipeline.schemas import (
     MusicPlan,
     NumberShot,
     PhotoShot,
+    PublicationMetrics,
     QuoteShot,
     ReceiptShot,
     Scene,
@@ -632,6 +635,21 @@ def _check_music(
         report.checked.append(f"trilha: {len(plan.cues)} entrada(s), {len(tracks)} faixa(s)")
 
 
+def _check_metrics(
+    store: ManifestStore, episode_id: str, report: CheckReport, today: date | None
+) -> None:
+    """Métricas de publicação (§12), quando o episódio tem `metrics.json`: contrato e janelas vencidas."""
+    metrics = _read(store, episode_id, METRICS_FILE, PublicationMetrics, report)
+    if metrics is None:
+        return
+    today = today or date.today()
+    report.checked.append(f"métricas: {summary_line(metrics, today)}")
+    report.warnings += [
+        f"metrics.json: {w} vencida em {metrics.due_date(w):%Y-%m-%d} e não lida"
+        for w in metrics.pending(today)
+    ]
+
+
 def check_episode(
     store: ManifestStore,
     episode_id: str,
@@ -668,6 +686,7 @@ def check_episode(
         _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)
         _check_music(store, episode_id, scenes, music_catalog, report, chars_per_second)
+    _check_metrics(store, episode_id, report, today)
     if not report.checked and not report.errors:
         report.errors.append(f"nada para validar em {episode_id} (sources.json, facts.json, scenes.json)")
     return report

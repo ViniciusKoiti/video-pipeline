@@ -32,6 +32,7 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
+from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
 from app.pipeline.numbers import (
     FORMAT_FILE,
@@ -300,8 +301,22 @@ def _status(args: argparse.Namespace, context: Context) -> int:
             print(_check_line(context, args.episode_id))
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
     pending += missing_pieces(context.store, args.episode_id)
+    pending += _metrics_status(context, args.episode_id)
     print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
     return 0
+
+
+def _metrics_status(context: Context, episode_id: str) -> list[str]:
+    """Depois de publicado (§12): mostra as janelas de 7 e 28 dias e devolve as vencidas sem leitura."""
+    path = metrics_path(context.settings.data_dir, episode_id)
+    if not path.is_file():
+        return []
+    try:
+        metrics = load_metrics(path)
+    except ValueError:
+        return ["metrics.json inválido (ver vp check)"]
+    print(f"{'métricas':38} {summary_line(metrics, date.today())}")
+    return pending_lines(metrics, date.today())
 
 
 def _status_line(row: GateStatus) -> str:
