@@ -15,7 +15,7 @@ from datetime import date
 
 from pydantic import ValidationError
 
-from app.media.narration import strip_pauses
+from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.molde import MOLDE_FILE, Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
