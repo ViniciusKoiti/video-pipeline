@@ -1,0 +1,13 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: 2026-10-25T19:30-03:00 (22:30 UTC), igual ao pacote e ao README. Pacote gravado às 20:47 UTC; sobram cerca de 1h40 para apagar no Postiz, depois só no YouTube.",
+    "Canal: integration cmr030qdh000glw83on440hxi, youtube, baixo.nivel.dev.s. Ids não conferidos contra a lista viva do Postiz (sem rede).",
+    "Mídia: c4315948-691f-4cba-8782-c45d72a4ab53 bate com o upload de 20:19 UTC (cofre-en-voz.mp4, sha256 daec6cf8…). Conteúdo do vídeo não aberto pela dúvida.",
+    "Gate 4: episódio short-engenharia-reversa-en, gate_4 aprovado, nota 'assisti ao cofre-en-voz.mp4' no review.json. Hash conferido; a aprovação é do dono.",
+    "Repetição: nenhum agendado anterior para este canal, dia ou mídia; o do teaser (19:15 UTC) teve 'não segue' e não foi agendado.",
+    "Legenda: bate com o pacote. A pauta confere os números, mas omite -fno-inline -no-pie na compilação; omissão pequena. Link github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/cofre não testado.",
+    "Conteúdo sintético: voz clonada e apresentador desenhado a partir de fotos; a legenda avisa. Marcar 'conteúdo alterado ou sintético' à mão no Studio. Pele em needs_review sem gerador registrado: risco que o dono pode aceitar."
+  ],
+  "revisor": "duvida-cega"
+}

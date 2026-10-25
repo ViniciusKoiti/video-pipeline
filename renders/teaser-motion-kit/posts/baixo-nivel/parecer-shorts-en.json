@@ -1,0 +1,15 @@
+{
+  "veredito": "não segue",
+  "riscos": [
+    "Horário: o_que.data 2026-10-25T19:15:00+00:00 equivale a domingo 25/10/2026, 16h15 de Brasília (o JSON traz -03:00, então não há erro de fuso). Não há agenda escrita ao lado do JSON, só o README em renders/teaser-motion-kit/posts/, que não fixa horário, então não deu para cruzar. O README diz que o horário é escolha do dono.",
+    "Pouco tempo para desfazer: o pacote foi gravado às 18:42 UTC e a publicação é às 19:15 UTC, uma janela de cerca de 33 minutos no máximo. Sobra pouco tempo para apagar o post no Postiz se algo estiver errado.",
+    "Canal possivelmente errado: o post vai para o canal 'baixo.nivel.dev.s' (id cmr030qdh000glw83on440hxi, settings.__type youtube). O README (renders/teaser-motion-kit/posts/README.md) diz que o YouTube escolhido é o pessoal 'Vinicius Koiti Nakahara' (@viniciusnakahara, id cmqudfb0h0001lw83k1b8ugi7), e o post-shorts-en.json original usa esse canal. Este JSON está na subpasta baixo-nivel/ e muda o id sem registro da decisão. Confirmar com o dono que o destino é esse canal antes de agendar.",
+    "Link da legenda: o README afirma que o repositório é privado e que o kit não está no npm, e que o [LINK] estava pendente. A legenda agora aponta para https://gitlab.com/ViniciusKoiti/motion-kit e diz 'Open source (MIT)'. Nada nos arquivos prova que o repositório ficou público. Se continuar privado, a afirmação 'open source' e o link ficam inválidos e só se corrigem depois de publicado.",
+    "Divulgação de conteúdo sintético: a voz é clonada e o apresentador é um desenho feito a partir de fotos do dono. A legenda avisa ('the voice is mine, cloned by AI'), mas a API do Postiz não marca 'conteúdo alterado ou sintético' no YouTube. Marcar à mão no Studio depois de publicar. O README ainda lista como pendência a pele do apresentador em needs_review, com gerador não registrado e licença pendente (origem.json).",
+    "Mídia: midia[0] tem id b20cd2f8-… e sha256 cf9dd310…, e o registro tem upload em 2026-10-25T18:41:52Z para renders/teaser-motion-kit/teaser-D-en-voz.mp4 com o mesmo sha256 e o mesmo path. Bate com a legenda em inglês. Não consegui conferir o conteúdo do vídeo (18,8 s, versão en com voz clonada, citada no README). O README diz que a escuta do dono da versão pt v2 ainda estava pendente; não há registro de que ele ouviu a versão en.",
+    "Gate 4: evidencia.gate_4 = 'sem episódio'. Só o dono viu o vídeo, e o código não conferiu nada.",
+    "Fatos da legenda: 312 commits em 104 dias (12/07 a 24/10 dá 104 dias, confere), 2 em julho e 272 em outubro, 47 estilos, 15 tipos de cena. Não consegui verificar esses números no repositório do kit, que está fora do que pude ler. O README os cita como vindos do git log de 25/10. Os tipos de cena foram '10 em 10/10 e 15 hoje'. A soma 2+272=274 deixa 38 commits para agosto e setembro, o que é plausível.",
+    "Repetição: não há linha 'agendado' anterior no registro para este canal, este dia ou esta mídia. O último agendamento é o montaigne-desapego, em 26/10 21:00 UTC, em outro canal. Título com 96 caracteres e 4 tags, sem erro de digitação visível."
+  ],
+  "revisor": "duvida-cega"
+}

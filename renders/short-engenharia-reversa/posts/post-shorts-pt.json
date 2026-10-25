@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "Pedi ao Claude Code para abrir um cofre sem a senha e sem o código-fonte. Ele abriu em cinco passos, todos na tela: o que o binário entrega de graça (file, strings), onde ele decide (objdump da função que confere: o tamanho tem de ser 10, cada letra passa por XOR com 0x4b), a tabela de dez bytes em .rodata, o XOR desfeito letra a letra, e o cofre aberto.\n\nO cofre é um programa de 16 KB que eu escrevi para o vídeo (cofre.c), compilado com gcc -O1 sem símbolos de depuração. Tudo que aparece na tela é saída real dos comandos. Nenhuma ferramenta além de file, strings e objdump.\n\nEngenharia reversa é ler o que o compilador deixou. Só em binário seu, ou de CTF.\n\nCódigo e binário: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/cofre\n\nO apresentador é um desenho feito a partir de fotos minhas; a voz é a minha, clonada por IA.\n\n#Shorts #EngenhariaReversa #ClaudeCode #Assembly #Linux #Programação",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Engenharia reversa com o Claude: a senha estava no binário",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "engenharia reversa",
+            "label": "engenharia reversa"
+          },
+          {
+            "value": "claude code",
+            "label": "claude code"
+          },
+          {
+            "value": "assembly",
+            "label": "assembly"
+          },
+          {
+            "value": "objdump",
+            "label": "objdump"
+          }
+        ]
+      }
+    }
+  ]
+}

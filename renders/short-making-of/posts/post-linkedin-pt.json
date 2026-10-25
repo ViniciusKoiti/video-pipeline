@@ -1,0 +1,27 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmqhdiv470001qy75pqct6dnu"
+      },
+      "value": [
+        {
+          "content": "Este vídeo inteiro saiu de uma frase.\n\nEu escrevi a frase no Claude Code. Ele escreveu um JSON de seis cenas, com os números do meu repositório. A minha biblioteca, o motion-kit, renderizou: número, gráfico, linha do tempo, comparação. A voz é a minha, clonada numa GPU, e a boca da janela segue cada fala.\n\nO que está por trás, em uma frase cada:\n• Uma biblioteca de componentes de vídeo para Remotion, com 47 estilos visuais prontos.\n• Uma ferramenta que monta o vídeo vertical a partir de um JSON com 15 tipos de cena, confere o JSON antes de renderizar (inspect) e gera um quadro de revisão por cena (review).\n• Um fluxo em que o agente escreve o dado e o código renderiza, sem editor de vídeo.\n\nOs números da tela vêm do git log do próprio kit: 312 commits em 104 dias.\n\nÉ código aberto (MIT). O link vai no primeiro comentário.\n\nApresentador desenhado a partir de fotos minhas; voz clonada da minha por IA.\n\n#Remotion #ClaudeCode #motiongraphics #opensource #TypeScript",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "linkedin"
+      }
+    }
+  ]
+}

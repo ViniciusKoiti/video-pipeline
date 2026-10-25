@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Este vídeo inteiro saiu de uma frase. Eu escrevi a frase no Claude Code, ele escreveu o JSON, e a minha biblioteca renderizou: número, gráfico, linha do tempo, comparação, com a minha voz clonada e eu numa janela.\n\nO que aparece: o motion-kit, uma biblioteca de componentes de vídeo para Remotion, com 47 estilos visuais prontos e uma ferramenta que monta o vídeo vertical a partir de um JSON com 15 tipos de cena. O inspect confere o JSON antes de renderizar e o review gera um quadro por cena. A biblioteca desenha mais do que o JSON pede hoje: mapa, grafo, foto de arquivo, documento, tela dividida, janela flutuante.\n\nOs números na tela são do repositório do kit (git log de 25/10/2026): 312 commits em 104 dias; 6 cenas em 19,6 s; 3 avisos do inspect; −15,3 LUFS.\n\nSem o Claude Motion: é o Claude Code com a minha biblioteca, num projeto Remotion.\n\nCódigo aberto, MIT. Link na bio.\n\nO apresentador é um desenho feito a partir de fotos minhas; a voz é a minha, clonada por IA.\n\n#Remotion #ClaudeCode #motiongraphics #IA #videoporcodigo",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

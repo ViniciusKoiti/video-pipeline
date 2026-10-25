@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Descrevi seis cenas em uma frase. O Claude escreveu o JSON e a minha biblioteca renderizou: número, gráfico, linha do tempo, comparação, e eu numa janela no canto. Mesmo conteúdo, 47 estilos.\n\nÉ o motion-kit: componentes de vídeo para Remotion, 47 estilos prontos e um vídeo vertical montado a partir de um JSON com 15 tipos de cena. O agente escreve o JSON; a biblioteca renderiza quadro a quadro.\n\nOs números são do repositório do kit (git log de 25/10/2026): 312 commits em 104 dias.\n\nCódigo aberto, MIT. Link na bio.\n\nApresentador desenhado a partir de fotos minhas; voz clonada da minha por IA.\n\n#motiongraphics #remotion #claudecode #ia #dev #videoporcodigo #opensource",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

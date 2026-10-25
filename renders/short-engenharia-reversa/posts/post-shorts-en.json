@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "I asked Claude Code to open a vault with no password and no source code. It opened it in five steps, all on screen: what the binary gives away for free (file, strings), where it decides (objdump of the checking function: the length has to be 10, each letter is XORed with 0x4b), the ten-byte table in .rodata, the XOR undone letter by letter, and the vault open.\n\nThe vault is a 16 KB program I wrote for the video (vault.c), compiled with gcc -O1 and no debug symbols. Everything on screen is the real output of the commands. No tools beyond file, strings and objdump.\n\nReverse engineering is reading what the compiler left behind. Only on your own binary, or a CTF.\n\nCode and binary: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/cofre\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #ReverseEngineering #ClaudeCode #Assembly #Linux #Programming",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "I asked Claude Code to open a vault without the password",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "reverse engineering",
+            "label": "reverse engineering"
+          },
+          {
+            "value": "claude code",
+            "label": "claude code"
+          },
+          {
+            "value": "assembly",
+            "label": "assembly"
+          },
+          {
+            "value": "objdump",
+            "label": "objdump"
+          }
+        ]
+      }
+    }
+  ]
+}
