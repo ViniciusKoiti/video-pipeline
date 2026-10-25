@@ -1,0 +1,66 @@
+@startuml fluxo-evolucao
+!pragma layout smetana
+title auto-play — fluxo de melhoria por camadas\nProposta de evolução · 22/10/2026
+
+top to bottom direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam ArrowColor #536275
+skinparam ranksep 28
+skinparam nodesep 25
+skinparam roundcorner 8
+
+package "Editorial · dono + IA assistida" #F4EFFC {
+  component "C1 · Intenção editorial\nPúblico, pergunta e promessa\nMelhoria: critério claro de entendimento" as c1 #DDCBF7
+  component "C2 · Conhecimento e evidências\nFontes → trechos → fichas\nMelhoria: busca híbrida rastreável" as c2 #DDCBF7
+  component "C3 · Roteiro e verificação\nArgumento, narração e claims\nMelhoria: progressão e suporte semântico" as c3 #DDCBF7
+}
+
+package "Direção e preparação audiovisual" #FFF8E8 {
+  component "C4 · Direção audiovisual\nPlanos, foco, alvos e ações\nMelhoria: storyboard ligado à fala" as c4 #FFF1CE
+  component "C5 · Personagens e ativos\nArte, poses, pele e origem\nMelhoria: corpo inteiro e atuação 2D" as c5 #FFF1CE
+  component "C6 · Voz, tempo e legendas\nWAV, palavras e pausas\nMelhoria: tempos compartilhados com planos e gestos" as c6 #E7F0FF
+}
+
+package "Produção e aprendizado" #EDF7F1 {
+  component "C7 · Composição e render\nRemotion + motion-kit + FFmpeg\nMelhoria: palco, trajetórias e animação com foco" as c7 #DFF0E7
+  component "C8 · Revisão, publicação e aprendizado\nPrévia, decisão do dono e publicação autorizada\nMelhoria: entendimento, métricas e próximo teste" as c8 #DFF0E7
+}
+
+c1 --> c2 : perguntas às fontes
+c2 --> c3 : fichas e decisão sobre as evidências
+c3 --> c4 : roteiro revisto e decisão humana
+c4 --> c5 : direção e necessidades de arte
+c5 --> c6 : ativos escolhidos e revisados
+c6 --> c7 : tempos reais e direção resolvida
+c7 --> c8 : prévia / final
+
+note right of c2 #F4EFFC
+  Busca propõe trechos com origem.
+  O pesquisador confere e ficha.
+  O roteiro usa fichas aprovadas.
+end note
+
+note right of c5 #FFF1CE
+  Já existe: fala, piscada, olhar e gestos,
+  conforme as capacidades da pele.
+  Próxima frente: palco e ações dirigidas;
+  caminhada exige arte e ciclo dos membros.
+end note
+
+note right of c7 #EDF7F1
+  O frame determina a pose e o movimento.
+  Personagem, gráfico e legenda
+  compartilham a linha do tempo.
+end note
+
+legend bottom
+  A sequência é conduzida pelo operador; os scripts atuais ainda não impõem todos os gates.
+  Base transversal: preservação de arquivos, cache íntegro, locks e decisões humanas.
+  Evoluções e critérios de aceite: evolucao-por-camadas.md. Novos recursos seguem propostos.
+endlegend
+@enduml

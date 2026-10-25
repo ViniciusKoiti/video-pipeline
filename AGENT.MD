@@ -29,6 +29,8 @@ provisórios. O foco vigente é validar o template e o processo editorial; publi
   remotos. Não leia nem exponha `.env`, tokens ou gravações para compor relatórios.
 - Use a arquitetura existente de portas/adaptadores. Não acrescente framework multiagente,
   serviço, banco, dependência ou provedor para executar estes papéis no workspace (ADR 009).
+  Exceção autorizada: SQLite local só para consumo e orçamento editorial (`vp usage`,
+  [ADR 032](docs/decisions/032-sqlite-consumo-agentes.md)); manifestos e gates continuam em arquivos.
 
 Instruções explícitas do dono prevalecem. Para decisões do projeto, consulte as ADRs aceitas;
 para capacidades implementadas, confira o código. Documentos antigos podem descrever planos.
@@ -80,9 +82,19 @@ O [mapa operacional](docs/WORKSPACE-ATUAL-E-COMPONENTES.md) e o
 - **Motion-kit no render:** o template importa o pacote instalado e fixado no `video/package.json`.
   Consultar o checkout vizinho ajuda a escolher componentes, mas mudar seu código não muda
   automaticamente o vídeo. Conferir API e pin antes de integrar um recurso.
+- **Montagem por JSON primeiro no auto-play (ADR 033):** usar e evoluir o contrato e o template
+  existentes antes de propor outro caminho. JSON só expressa recursos integrados; não equivale
+  a qualquer composição React. Validar novas composições em prova curta e extrair para o kit
+  apenas o que for genérico e reutilizável. Avaliar `motion-video` na sequência, sem migração
+  nesta etapa. Direção aceita e limites: [ADR 033](docs/decisions/033-montagem-json-no-auto-play.md).
 
 1. Para Reels, copie o radar se já existir; escreva a pauta com público, pergunta concreta,
    objetivo do dono, promessa e limites de pesquisa. O dono decide a pauta.
+   Para vídeo longo, planeje na própria pauta o título provisório e o conceito da capa
+   antes do roteiro; para vertical, o texto e o conceito do primeiro quadro. Use esboço
+   textual nesta fase. A promessa depende das fontes; a arte final usa ativos registrados
+   e o dono confere sua coerência com o vídeo no gate 4. Método e hipótese de processo:
+   [embalagem antecipada](docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md#4-como-experimentar-a-embalagem-cedo).
 2. Baixe as fontes necessárias e numere trechos. Fiche fatos, tensões, limites e lacunas;
    os fatos principais precisam de fontes independentes. Execute `vp check`; gate 1: dono.
 3. Escreva roteiro e planos a partir das fichas. Ligue abertura, progressão e fechamento
@@ -113,6 +125,13 @@ O roteiro precisa responder uma pergunta ou sustentar o objetivo definido pelo d
 Gancho, título e legenda devem prometer o que o vídeo efetivamente entrega.
 
 Antes de produzir, registre na pauta uma hipótese verificável e a métrica principal.
+Com os metadados reais da publicação disponíveis, copie a hipótese previamente registrada
+para `PublicationMetrics.hypothesis` no `metrics.json`; o contrato exige data com fuso.
+Use o script existente `scripts/provisorio/metricas.py iniciar` para um registro novo.
+O esforço e as revisões de conceito ficam na pauta, com resumo nas notas de D7/D28;
+`duration_s` mede a duração do vídeo. Preserve registros anteriores e não atribua a vídeos
+já produzidos uma hipótese formulada depois. Na H01, medir retrabalho testa eficiência;
+CTR e retenção acompanham audiência, sem provar a causa de uma mudança.
 Após publicação autorizada, use `$vp-engajamento` com dados reais da mesma plataforma,
 formato e janela de observação. Registre numerador/denominador das taxas, tráfego e tempo
 de produção. Compare uma mudança por vez e declare limitações da amostra. Sem dados de
@@ -128,6 +147,7 @@ Execute da raiz; `.venv/bin/` usa o ambiente já instalado sem instalar pacotes.
 .venv/bin/vp excerpts <id>
 .venv/bin/vp check <id>
 .venv/bin/vp postiz --help
+.venv/bin/vp usage --help
 .venv/bin/python -m pytest
 .venv/bin/ruff check .
 ```

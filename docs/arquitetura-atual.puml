@@ -1,0 +1,126 @@
+@startuml arquitetura-atual
+!pragma layout smetana
+title auto-play — arquitetura implementada\nÁrvore local de 22/10/2026 · base Git 313d718
+
+left to right direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 12
+skinparam ArrowColor #536275
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam roundcorner 8
+skinparam nodesep 35
+skinparam ranksep 55
+skinparam noteBackgroundColor #FFF4D6
+skinparam noteBorderColor #C98C1C
+
+actor "Dono\ndecide e aprova" as owner #FFF4D6
+actor "Agentes / skills\nedição assistida" as agents #E7F0FF
+component "radar-de-reels\nbrief disponível (opcional)" as radar #EEE8FA
+
+rectangle "Workspace auto-play · Python + Node.js · operação local" {
+  package "Entradas" #F4F7FA {
+    component "CLI vp\napp/cli.py" as cli #E7F0FF
+    component "Scripts provisórios\nfontes, radar, ativos, montagem" as scripts #FFF4D6
+  }
+
+  package "Núcleo Python" #F4F7FA {
+    component "Composição sob demanda\nbootstrap.py + settings.py\nproviders.toml / ambiente" as boot #E7F0FF
+    component "Domínio e portas\napp/pipeline\nschemas · check · gates · state" as core #E5F3EA
+    component "Mídia e tempos\napp/media + pipeline/shots\nWAV · SRT · palavras · planos" as media #E5F3EA
+  }
+
+  package "Adaptadores" #F4F7FA {
+    component "Armazenamento JSON\nJsonFileStore / JsonReviewGate\nlocks + gravação atômica no store" as store #E5F3EA
+    component "Texto, acervo e voz\napp/providers\nOllama · stock · TTS · Groq" as providers #E5F3EA
+    component "Motores de render\napp/render\nffmpeg: documental\nRemotion: explicativo" as render #E5F3EA
+    component "Publicação autorizada\napp/commands/postiz*\nPostizClient + validação" as posting #E5F3EA
+  }
+
+  package "Template de vídeo · video/" #F4F7FA {
+    component "Remotion + React\nrender-scenes.mjs → Scene\nShot: prévia de plano\nClipe: composição independente" as template #E7F0FF
+    component "@viniciusk/motion-kit 0.7.1\nvendor/*.tgz + package-lock.json" as kit #EEE8FA
+  }
+
+  folder "Artefatos locais" as files #F4F7FA {
+    artifact "data/episodes/<id>/\npauta · fontes · facts · scenes\noutline · review · checagem\nassets · voice · captions · episode\nrenders e cache por cena" as episode
+    artifact "data/publicacoes/registro.jsonl\nupload · pacote · dúvida · envio" as registry
+  }
+}
+
+component "Serviços e modelos locais\nOllama · Kokoro\nChatterbox em Python externo" as local #EEE8FA
+cloud "Serviços remotos, conforme uso\nPexels · Pixabay · Unsplash\nGemini TTS · Modal · Groq" as remote #EEE8FA
+component "FFmpeg / ffprobe\nmedição e montagem final" as ffmpeg #EEE8FA
+cloud "Postiz\ncanais e agendamentos" as postiz #EEE8FA
+
+owner --> cli : comandos / decisões humanas
+owner --> scripts : produção assistida
+agents --> episode : escreve artefatos editoriais
+radar --> scripts : copia brief por arquivo
+
+cli --> boot : monta contexto
+scripts --> boot : obtém provedores
+cli --> core : valida / registra decisões
+cli --> posting : postiz
+boot ..> store : instancia
+boot ..> providers : instancia
+boot ..> render : instancia quando solicitado
+core --> store : lê / grava / confere hashes
+store --> episode : filesystem
+
+scripts --> episode : lê e também grava diretamente
+scripts --> media : voz, legenda e tempos
+scripts --> providers : solicita síntese / alinhamento
+scripts --> render : montagem chama RemotionEngine
+media --> ffmpeg : mede WAV / silêncios
+providers --> local : chamadas locais / worker
+providers --> remote : HTTP / cliente Modal
+
+render --> episode : entrada e saídas / cache
+render --> template : Node + props JSON
+render --> ffmpeg : segmentos / concatenação / áudio
+template ..> kit : importa pacote instalado
+owner ..> template : Clipe via CLI Remotion
+
+posting --> store : consulta gate preview, se episódio informado
+posting --> episode : upload do arquivo escolhido
+posting --> registry : acrescenta eventos
+posting --> postiz : consultas / upload / schedule
+
+note top of cli
+  G6: 11 comandos ainda retornam código 3.
+  checagem, numeros e postiz já têm handlers.
+end note
+
+note top of core
+  Gates reais: sources, script, assets, preview.
+  G2: vp check falha com music.json + catálogo.
+  state.py existe; a montagem não usa run_step.
+end note
+
+note bottom of scripts
+  G1: apaga WAV anterior antes da nova síntese.
+  G4: montagem sem checar gates / lock do episódio.
+  G5: cache ignora valores da entrega da voz.
+end note
+
+note bottom of render
+  G3: arquivo parcial pode entrar no cache Remotion.
+  A montagem ffmpeg publica o final por rename.
+end note
+
+note bottom of template
+  G7: npm run render pede Episode, inexistente.
+  Scene, Shot e Clipe são as composições reais.
+end note
+
+legend bottom left
+  |= Convenção |= Significado |
+  | Seta contínua | Execução, leitura, gravação ou transferência indicada no rótulo |
+  | Seta tracejada | Composição, dependência ou acionamento direto do operador |
+  | G1 a G7 | Achados detalhados em analise-gaps-tecnicos.md |
+  A ordem editorial depende de decisões humanas e de comandos separados.
+endlegend
+@enduml
