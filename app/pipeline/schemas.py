@@ -926,6 +926,9 @@ class ScenesManifest(Model):
     episode_id: EpisodeId
     language: Language
     objective: Objective | None = None  # o que o vídeo se propõe a fazer (ADR 019); sem ele, alerta
+    # título provisório da pauta (ADR 031, emenda de 2026-10-23): o `vp check` compara o tamanho com o molde e
+    # avisa quando a fala demora a dizer o assunto do título; o título publicado é decisão do gate 4
+    title: str | None = Field(default=None, min_length=1, max_length=100)
     funnel: Funnel | None = None  # estágio do funil e a chamada final (ADR 026); sem ele, alerta
     series: Series | None = None  # série do vídeo, no selo do cartão final (ADR 028)
     scenes: list[Scene] = Field(min_length=1)

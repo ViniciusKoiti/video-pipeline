@@ -70,9 +70,14 @@ def cache(tmp_path: Path) -> tuple[Path, Path]:
     notas = tmp_path / "notas"
     (notas / "batidas").mkdir(parents=True)
     videos = [("vidA", "FILO", 1000, 600), ("vidB", "FILO", 500, 360), ("vidC", "OUTRO", 2000, 480)]
+    titulos = {
+        "vidA": "O navio de Teseu e a caixa da avó",  # 33 caracteres, 9 palavras; "caixa" é dita aos 0 s
+        "vidB": "Por que você torceu pelo vilão?",  # 31 caracteres, 6 palavras, pergunta; "torceu" aos 40 s
+        "vidC": "Title C",
+    }
     (pasta / "amostra.tsv").write_text(
         "video_id\tgrupo\tcanal\tviews\tduracao_s\tmotivo\ttitulo\n"
-        + "".join(f"{v}\t{g}\t@canal\t{views}\t{dur}\ttop\tTítulo {v}\n" for v, g, views, dur in videos),
+        + "".join(f"{v}\t{g}\t@canal\t{views}\t{dur}\ttop\t{titulos[v]}\n" for v, g, views, dur in videos),
         encoding="utf-8",
     )
     cabecalho = ("video_id,canal,idioma,inscritos,views,publicado,duracao_s,legenda,arquivo_legenda,palavras,"
@@ -135,6 +140,17 @@ def test_molde_resume_medidas_prevalencia_e_curvas(cache: tuple[Path, Path]) -> 
     # "As caixas" não é dito (a fala diz "caixa"); "navio" e "psicólogo" são
     assert molde["prevalencia"]["titulo_dito"]["com"] == 2 and molde["prevalencia"]["titulo_dito"]["n"] == 3
 
+    # título do vídeo: tamanho, pergunta e quando a fala diz o assunto (metade das palavras de conteúdo)
+    chars = molde["medidas"]["titulo_video_chars"]
+    assert chars["mediana"] == 32.0 and chars["n"] == 2 and chars["origem"] == "amostra"
+    assert molde["medidas"]["titulo_video_palavras"]["mediana"] == 7.5
+    assert molde["prevalencia"]["titulo_video_pergunta"] == {
+        "com": 1, "n": 2, "pct": 50, "forca": "indicio", "unidade": "videos",
+    }
+    dito = molde["medidas"]["titulo_video_dito_s"]
+    assert dito["mediana"] == 20.0 and dito["n"] == 2 and dito["origem"] == "transcricao"  # 0 s e 40 s
+    assert molde["prevalencia"]["titulo_video_dito"]["com"] == 2
+
     # transcrição: marcos da abertura e promessa explícita
     assert molde["medidas"]["primeiro_eu_s"]["mediana"] == 0.0
     assert molde["medidas"]["primeiro_voce_s"]["mediana"] == 30.0  # mediana de 20 e 40
@@ -187,6 +203,43 @@ def test_forca(com: int, n: int, esperado: str) -> None:
     assert molde_mod.forca(com, n) == esperado
 
 
+@pytest.mark.parametrize(
+    ("titulo", "linhas", "esperado"),
+    [
+        # 7 palavras de conteúdo ("teria" é de função): metade = 3; aos 12 s já foram ditas 4
+        (
+            "Kira teria voto no Brasil? Death Note, o medo e a justiça",
+            [(0, "O Kira tinha voto?"), (12, "No Brasil, o medo decide."), (30, "Death Note.")],
+            12,
+        ),
+        # 1 de 3 palavras basta
+        ("O navio de Teseu e a caixa da avó", [(0, "Eu abri a caixa da minha avó em 2019.")], 0),
+        # só "bíblia" e "inteira" são de conteúdo
+        ("a bíblia inteira em 33 minutos, mais ou menos", [(0, "hoje eu li a bíblia")], 0),
+        ("O navio", [(0, "os navios de Teseu")], 0),  # prefixo: "navio" vale por "navios"
+        ("O navio", [(0, "nenhum barco aqui")], None),  # nunca dito
+        ("Como ouvir", [(0, "oi")], None),  # título sem palavra de conteúdo
+    ],
+)
+def test_titulo_video_dito_em(titulo: str, linhas: list[tuple[int, str]], esperado: int | None) -> None:
+    assert molde_mod.titulo_video_dito_em(titulo, linhas) == esperado
+
+
+def test_regra_do_assunto_do_titulo_e_a_mesma_no_vp_check() -> None:
+    """O molde mede o nicho e o `vp check` mede o roteiro com a mesma lista e a mesma regra (ADR 031)."""
+    from app.pipeline import molde as pipeline_molde
+
+    assert pipeline_molde.TITLE_STOP == molde_mod.STOP_TITULO
+    assert pipeline_molde.TITLE_MIN_LETTERS == molde_mod.MIN_LETRAS_TITULO
+    for titulo in (
+        "Kira teria voto no Brasil? Death Note, o medo e a justiça",
+        "O Que Não Está na Sua Mão | Epicteto e a única coisa que você controla",
+        "a bíblia inteira em 33 minutos, mais ou menos",
+        "Como ouvir",
+    ):
+        assert pipeline_molde.title_words(titulo) == molde_mod.assunto_do_titulo(titulo)
+
+
 def _molde_exemplo() -> dict[str, Any]:
     return {
         "gerado_em": "2026-10-22", "grupos": ["FILO"], "assunto": None,
@@ -204,8 +257,13 @@ def _molde_exemplo() -> dict[str, Any]:
             "batidas_confissoes": {"mediana": 3.0, "q1": 1.0, "q3": 9.0, "n": 13, "origem": "batidas"},
             "batidas_pct_caso": {"mediana": 38.8, "q1": 21.4, "q3": 53.9, "n": 13, "origem": "batidas"},
             "palavras_min": {"mediana": 184.0, "q1": 179.0, "q3": 193.0, "n": 13, "origem": "medidas.csv"},
+            "titulo_video_chars": {"mediana": 44.0, "q1": 36.0, "q3": 58.0, "n": 13, "origem": "amostra"},
+            "titulo_video_palavras": {"mediana": 8.0, "q1": 6.0, "q3": 10.0, "n": 13, "origem": "amostra"},
+            "titulo_video_dito_s": {"mediana": 14.0, "q1": 4.0, "q3": 40.0, "n": 11, "origem": "transcricao"},
         },
         "prevalencia": {
+            "titulo_video_pergunta": {"com": 6, "n": 13, "pct": 46, "forca": "indicio", "unidade": "videos"},
+            "titulo_video_dito": {"com": 11, "n": 13, "pct": 85, "forca": "padrao", "unidade": "videos"},
             "confissao": {"com": 11, "n": 13, "pct": 85, "forca": "padrao", "unidade": "videos"},
             "gancho_pago": {"com": 7, "n": 13, "pct": 54, "forca": "indicio", "unidade": "videos"},
             "fecho_volta": {"com": 11, "n": 13, "pct": 85, "forca": "padrao", "unidade": "videos"},
@@ -250,6 +308,26 @@ def test_render_traz_casas_curvas_e_alvos() -> None:
     assert "Forma, nunca fato" in texto
     # marcos em ordem de tempo
     assert texto.index('primeiro "eu"') < texto.index('primeiro "você"') < texto.index("primeira pergunta")
+    # título do vídeo: seção própria antes da linha do tempo e marco de quando a fala diz o assunto
+    assert "## Título do vídeo" in texto
+    assert texto.index("## Título do vídeo") < texto.index("## Linha do tempo")
+    assert "tamanho: mediana 44 caracteres, q1 36, q3 58, n 13; mediana 8 palavras" in texto
+    assert "título em forma de pergunta em 6 de 13 videos (46%, indicio)" in texto
+    assert (
+        "| até 0:14 | a fala diz o assunto do título | mediana 14 s, q1 4, q3 40, n 11; "
+        "acontece em 11 de 13 videos (85%, padrao) |"
+    ) in texto
+    assert texto.index('primeiro "você"') < texto.index("a fala diz o assunto do título | mediana 14 s")
+
+
+def test_render_sem_medidas_de_titulo_nao_abre_a_secao() -> None:
+    molde = _molde_exemplo()
+    for chave in ("titulo_video_chars", "titulo_video_palavras", "titulo_video_dito_s"):
+        del molde["medidas"][chave]
+    for chave in ("titulo_video_pergunta", "titulo_video_dito"):
+        del molde["prevalencia"][chave]
+    texto = partitura_mod.render(molde, 12, None, "antigo", "molde.json")
+    assert "## Título do vídeo" not in texto and "assunto do título" not in texto
 
 
 def test_cli_grava_no_episodio_sem_sobrescrever(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:

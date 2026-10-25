@@ -70,8 +70,9 @@ citação (quadros da obra).
    - Recalcule o `used_in_scenes` de todos os ativos a partir do `scenes.json`.
    - Rode `vp check`. Atualize `plano-imagens.md`, `decisoes-imagens.md` e, no outline, a tabela de quadros, os
      números e as lacunas.
-8. **Checar.** Mande o verificador conferir as imagens com as regras abaixo, abrindo os arquivos. Grave o parecer com
-   `vp checagem`. Depois vêm o gate 2 de novo, se o tipo de algum plano mudou, e o gate 3, ativo por ativo
+8. **Checar.** Mande o verificador conferir as imagens com as regras abaixo, abrindo os arquivos, **na mesma conversa
+   em que ele já checou o texto** (retome o agente; não abra outro: skill `checagem`, "Rodadas e contexto"). Grave o
+   parecer com `vp checagem`. Depois vêm o gate 2 de novo, se o tipo de algum plano mudou, e o gate 3, ativo por ativo
    (`vp approve <id> --step assets --asset <asset-id>`).
 
 ## Onde cada imagem pode ficar

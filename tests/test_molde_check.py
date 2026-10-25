@@ -62,12 +62,17 @@ def molde(**changes: Any) -> Molde:
     return Molde.model_validate(raw)
 
 
-def scenes(*narrations: str, language: str = "pt-BR", claims: bool = False) -> ScenesManifest:
+def scenes(
+    *narrations: str, language: str = "pt-BR", claims: bool = False, title: str | None = None
+) -> ScenesManifest:
     extra = {"claims": [CLAIM]} if claims else {}
     raw = [
         {"id": f"S{i:02d}", "narration": text, **V1, **extra} for i, text in enumerate(narrations, start=1)
     ]
-    return ScenesManifest.model_validate({"episode_id": "ep", "language": language, "scenes": raw})
+    manifest: dict[str, Any] = {"episode_id": "ep", "language": language, "scenes": raw}
+    if title is not None:
+        manifest["title"] = title
+    return ScenesManifest.model_validate(manifest)
 
 
 def long_script(n: int = 24, first: str = OPENING, last: str = CLOSING) -> ScenesManifest:
@@ -130,6 +135,44 @@ def test_viewer_address_per_thousand_words_outside_the_molde_range() -> None:
         *[FILLER] * 11,
     )
     assert not any("por mil palavras" in w for w in molde_warnings(in_range, molde(), CPS))
+
+
+def test_title_length_is_compared_with_the_molde_quartiles() -> None:
+    sized = molde(medidas={"titulo_video_chars": medida(71.0, 61.5, 80.5)})
+    short = scenes(OPENING, *[FILLER] * 11, title="E se o Light tivesse ganhado?")
+    (warning,) = [w for w in molde_warnings(short, sized, CPS) if "título com" in w]
+    assert "título com 29 caracteres; o molde fica entre 61.5 e 80.5 caracteres (mediana 71, n 13)" in warning
+    long_title = "O Que Não Está na Sua Mão | Epicteto e a única coisa que você controla"  # 70 caracteres
+    fits = scenes(OPENING, *[FILLER] * 11, title=long_title)
+    assert not any("título" in w for w in molde_warnings(fits, sized, CPS))
+    # molde antigo, sem a medida: o título não gera alerta nenhum
+    assert not any("título" in w for w in molde_warnings(short, molde(), CPS))
+    # sem title, mas com a medida no molde: um aviso de que falta o que comparar
+    (missing,) = [w for w in molde_warnings(scenes(OPENING, FILLER), sized, CPS) if "sem title" in w]
+    assert "scenes.json sem title; o molde mede o título do vídeo" in missing
+    assert not any("title" in w for w in molde_warnings(scenes(OPENING, FILLER), molde(), CPS))
+
+
+def test_title_subject_must_be_said_before_the_molde_q3() -> None:
+    said = molde(
+        medidas={"titulo_video_dito_s": medida(40.0, 9.0, 82.0, n=36)},
+        prevalencia={"titulo_video_dito": traco(36, 40)},
+    )
+    # "caixa" está na primeira frase: 1 de 3 palavras de conteúdo basta
+    early = scenes(OPENING, *[FILLER] * 11, title="O navio de Teseu e a caixa da avó")
+    assert not any("assunto do título" in w for w in molde_warnings(early, said, CPS))
+    # "navio" só na última cena, depois de ~20 cenas de ~6 s: passa do q3 de 82 s
+    late = scenes(*[FILLER] * 20, CLOSING, title="O navio de Teseu")
+    (warning,) = [w for w in molde_warnings(late, said, CPS) if "assunto do título" in w]
+    assert "a fala só diz o assunto do título aos ~1" in warning
+    assert "o molde diz entre 9 e 82 s (mediana 40, n 36)" in warning
+    # nunca dito: o aviso traz as palavras procuradas e a prevalência do molde
+    never = scenes(*[FILLER] * 5, title="Epicteto e a liberdade")
+    (warning,) = [w for w in molde_warnings(never, said, CPS) if "assunto do título" in w]
+    assert "nunca diz o assunto do título (epicteto, liberdade); o molde diz em 36 de 40 vídeos" in warning
+    # título só de palavras de função: não há assunto a procurar
+    only_function_words = never.model_copy(update={"title": "Como ouvir"})
+    assert not any("assunto do título" in w for w in molde_warnings(only_function_words, said, CPS))
 
 
 def test_closing_rise_of_you_and_i_is_checked_in_the_last_tenth() -> None:

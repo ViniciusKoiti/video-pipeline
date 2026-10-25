@@ -12,6 +12,11 @@ Saída: `molde.json` com, para cada medida, mediana, q1, q3 e n (e o valor do te
 menos, quando a amostra tem 6 ou mais vídeos); a prevalência de cada traço (quantos vídeos o têm) com a força
 (`padrao` só com 8 ou mais vídeos e 80% ou mais; o resto é `indicio`); e as curvas por décimo. É forma, nunca
 fato: nada daqui vira afirmação no roteiro.
+
+Título do vídeo (coluna `titulo` da amostra, senão de `medidas.csv`; 2026-10-23): `titulo_video_chars` e
+`titulo_video_palavras` medem o tamanho, `titulo_video_pergunta` conta os títulos com "?", e
+`titulo_video_dito_s` diz em que segundo a fala já disse metade das palavras de conteúdo do título (traço
+`titulo_video_dito`: em quantos vídeos isso acontece). `titulo_palavras` e `titulo_dito` são dos CAPÍTULOS.
 """
 
 from __future__ import annotations
@@ -39,6 +44,17 @@ PROMESSA = re.compile(
     re.I,
 )
 JANELA_TITULO_S = 20
+MIN_LETRAS_TITULO = 4  # palavra de conteúdo do título: 4 letras ou mais, fora da lista abaixo
+STOP_TITULO = frozenset({
+    "como", "para", "pelo", "pela", "pelos", "pelas", "você", "voce", "vocês", "voces", "isso", "isto",
+    "esse", "essa", "este", "esta", "aquele", "aquela", "mais", "menos", "muito", "tudo", "nada", "quando",
+    "onde", "porque", "então", "ainda", "sobre", "entre", "até", "depois", "antes", "mesmo", "cada", "sempre",
+    "nunca", "quem", "qual", "quais", "coisa", "coisas", "vídeo", "video", "parte", "episódio", "episodio",
+    "minutos", "pode", "podem", "deve", "devem", "está", "estão", "foram", "sendo", "tinha", "teria", "fazer",
+    "ouvir", "enquanto", "outra", "outro", "outras", "outros", "também", "assim", "aqui", "agora", "hoje",
+    "anos", "todo", "toda", "todos", "todas", "primeiro", "primeira", "deveria", "devia", "deviam", "estava",
+    "estavam", "gente", "certo", "certa", "nosso", "nossa", "ninguém", "ninguem", "alguém", "alguem",
+})
 DECIMOS = 10
 MIN_PADRAO_N = 8
 MIN_PADRAO_PCT = 80
@@ -50,10 +66,12 @@ MEDIDAS_CSV = (
 )
 ORIGEM = {
     "duracao_min": "amostra",
-    "capitulos_n": "capitulos", "capitulo_min": "capitulos", "titulo_palavras": "capitulos",
-    "abertura_capitulo_s": "capitulos",
+    "titulo_video_chars": "amostra", "titulo_video_palavras": "amostra",  # o título do VÍDEO
+    "capitulos_n": "capitulos", "capitulo_min": "capitulos", "abertura_capitulo_s": "capitulos",
+    "titulo_palavras": "capitulos",  # mediana de palavras dos títulos dos CAPÍTULOS, não do vídeo
     "primeiro_eu_s": "transcricao", "primeira_pergunta_s": "transcricao", "primeiro_voce_s": "transcricao",
     "primeiro_ano_s": "transcricao", "promessa_explicita_s": "transcricao",
+    "titulo_video_dito_s": "transcricao",
 }
 MEDIDAS_BATIDAS = (
     "abertura_s", "blocos", "pct_caso", "pct_conceito", "pct_voce", "pct_narrador", "caso_antes_conceito_s",
@@ -119,6 +137,31 @@ def abertura_por_capitulos(capitulos: list[dict]) -> float | None:
     if float(primeiro_cap["start_time"]) == 0:
         return float(primeiro_cap["end_time"])
     return float(primeiro_cap["start_time"])
+
+
+def assunto_do_titulo(titulo: str) -> list[str]:
+    """Palavras de conteúdo do título do vídeo: 4 letras ou mais e fora da lista de palavras de função."""
+    vistas: list[str] = []
+    for w in re.findall(r"\w+", titulo.lower()):
+        if len(w) >= MIN_LETRAS_TITULO and w not in STOP_TITULO and w not in vistas:
+            vistas.append(w)
+    return vistas
+
+
+def titulo_video_dito_em(titulo: str, linhas: list[tuple[float, str]]) -> float | None:
+    """Segundo em que a fala já disse metade das palavras de conteúdo do título (ao menos uma); None se não
+    diz. Uma palavra conta quando a fala tem uma palavra que começa por ela ("navio" vale por "navios")."""
+    palavras = assunto_do_titulo(titulo)
+    if not palavras or not linhas:
+        return None
+    alvo = max(1, len(palavras) // 2)
+    padroes = [re.compile(r"\b" + re.escape(w)) for w in palavras]
+    fala = ""
+    for tempo, texto in linhas:
+        fala += " " + texto.lower()
+        if sum(1 for p in padroes if p.search(fala)) >= alvo:
+            return tempo
+    return None
 
 
 def titulo_dito(capitulo: dict, linhas: list[tuple[float, str]]) -> bool:
@@ -190,6 +233,12 @@ def construir(
         duracao = float(linha_amostra.get("duracao_s") or medida.get("duracao_s") or 0)
         if duracao:
             valores["duracao_min"][vid] = duracao / 60
+        titulo = (linha_amostra.get("titulo") or medida.get("titulo") or "").strip()
+        if titulo:
+            valores["titulo_video_chars"][vid] = len(titulo)
+            valores["titulo_video_palavras"][vid] = len(titulo.split())
+            contagens["titulo_video_pergunta"][1] += 1
+            contagens["titulo_video_pergunta"][0] += int("?" in titulo)
         for chave in MEDIDAS_CSV:
             if medida.get(chave, "") != "":
                 valores[chave][vid] = float(medida[chave])
@@ -243,6 +292,12 @@ def construir(
             if tempo is not None:
                 contagens["promessa_explicita"][0] += 1
                 valores["promessa_explicita_s"][vid] = tempo
+            if titulo:
+                contagens["titulo_video_dito"][1] += 1
+                tempo = titulo_video_dito_em(titulo, linhas)
+                if tempo is not None:
+                    contagens["titulo_video_dito"][0] += 1
+                    valores["titulo_video_dito_s"][vid] = tempo
 
         # batidas
         marcacao = marcacoes.get(vid)

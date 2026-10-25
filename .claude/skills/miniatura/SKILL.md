@@ -9,6 +9,12 @@ A miniatura segue o **canal de referência do nicho**, não o episódio anterior
 `kira-voto-brasil` (olho do Kira + "TERIA VOTO?") repetiu o piloto e foi reprovada. A aprovada saiu de olhar o
 Filosofatos (`docs/pesquisa/miniaturas-filosofatos-2026-10-20.md`) e de duas trocas pedidas pelo dono.
 
+Leia primeiro `pauta.md`: o título provisório, a promessa e o conceito da capa são planejados antes do roteiro
+(AGENT.MD, fluxo editorial). Aqui se produz a arte a partir desse conceito e do conteúdo efetivamente sustentado
+pelas fichas. Se faltarem esses itens ou a promessa tiver mudado, registre a lacuna e prepare a proposta antes
+de compor; não registre uma escolha do dono que ele ainda não fez. Reutilize a análise existente do canal quando
+ela ainda servir ao recorte, declarando sua data. A coerência do conjunto é revista no gate 4.
+
 Regras de base: CLAUDE.md §2.3 e §6 (licença registrada; quadro da obra só oficial, `Citacao`), a emenda de
 citação da ADR 007 (a miniatura com quadro da obra é decisão do dono no gate 4) e a skill `plano-de-imagens` (registro
 de ativos, conferência em resolução cheia).
@@ -24,7 +30,8 @@ de ativos, conferência em resolução cheia).
 
 ## Método
 
-1. **Olhar o canal de referência.** Pergunte ao dono qual canal é a referência do nicho. Liste os 30 vídeos recentes,
+1. **Olhar o canal de referência.** Use o canal definido na pauta; se faltar, pergunte ao dono. Quando uma análise
+   nova for necessária e solicitada, liste os 30 vídeos recentes,
    com as visualizações, e monte folhas das miniaturas (a página do canal e as miniaturas em `i.ytimg.com` são
    públicas). É acesso externo: só com pedido do dono na sessão.
    - **O que anotar:** quantos personagens, tipo de fundo por tema, texto (quantas palavras, fonte, posição) e

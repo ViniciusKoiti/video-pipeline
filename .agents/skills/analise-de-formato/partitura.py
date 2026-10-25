@@ -107,12 +107,16 @@ def linha_do_tempo(molde: dict, p: dict) -> list[tuple[str, str, str]]:
         ("primeira_pergunta_s", "primeira pergunta"),
         ("primeiro_voce_s", 'primeiro "você"'),
         ("primeiro_ano_s", "primeiro ano ou data"),
+        ("titulo_video_dito_s", "a fala diz o assunto do título"),
     ]
     teto = p["total_s"] / 4
     com_dado = [(chave, nome, medida(molde, chave)) for chave, nome in marcos]
-    for _chave, nome, item in sorted((m for m in com_dado if m[2]), key=lambda m: float(m[2]["mediana"])):
+    for chave, nome, item in sorted((m for m in com_dado if m[2]), key=lambda m: float(m[2]["mediana"])):
         tempo = min(float(item["mediana"]), teto)
-        linhas.append((f"até {mmss(tempo)}", nome, descreve(item, " s")))
+        texto = descreve(item, " s")
+        if chave == "titulo_video_dito_s":
+            texto += f"; acontece em {descreve_traco(traco(molde, 'titulo_video_dito'))}"
+        linhas.append((f"até {mmss(tempo)}", nome, texto))
     linhas.append((
         f"0:00–{mmss(p['abertura_s'])}", "abertura: o caso que abre, antes do primeiro bloco",
         f"abertura do molde {descreve(medida(molde, 'abertura_capitulo_s'), ' s')}; "
@@ -172,6 +176,24 @@ def dentro_do_bloco(molde: dict) -> list[str]:
     bloco = medida(molde, "capitulo_min")
     if bloco:
         itens.append(f"bloco do molde: {descreve(bloco, ' min')}")
+    return itens
+
+
+def titulo_do_video(molde: dict) -> list[str]:
+    """O que o molde sabe do título do vídeo: tamanho, se é pergunta e se a fala o diz (2026-10-23)."""
+    itens = []
+    chars, palavras = medida(molde, "titulo_video_chars"), medida(molde, "titulo_video_palavras")
+    if chars or palavras:
+        itens.append(f"tamanho: {descreve(chars, ' caracteres')}; {descreve(palavras, ' palavras')}")
+    pergunta = traco(molde, "titulo_video_pergunta")
+    if pergunta:
+        itens.append(f"título em forma de pergunta em {descreve_traco(pergunta)}")
+    dito = traco(molde, "titulo_video_dito")
+    if dito:
+        itens.append(
+            f"a fala diz o assunto do título (metade das palavras de conteúdo) em {descreve_traco(dito)}; "
+            f"quando diz, {descreve(medida(molde, 'titulo_video_dito_s'), ' s')} desde o início"
+        )
     return itens
 
 
@@ -235,6 +257,17 @@ def render(molde: dict, duracao_min: float, assunto: str | None, titulo: str, or
         " fato só das fichas. `padrao` = 8 ou mais vídeos e 80% ou mais; `indicio` = o resto. Escala: marcos"
         " iniciais absolutos, abertura e blocos proporcionais, blocos do tamanho do molde.",
         "",
+    ]
+    if itens_titulo := titulo_do_video(molde):
+        cab += [
+            "## Título do vídeo",
+            "",
+            "Para o título provisório e o conceito da capa na pauta, e para a primeira cena do roteiro.",
+            "",
+            *[f"- {item}" for item in itens_titulo],
+            "",
+        ]
+    cab += [
         "## Linha do tempo",
         "",
         "| tempo | casa | o molde diz |",
