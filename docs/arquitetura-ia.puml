@@ -1,0 +1,68 @@
+@startuml arquitetura-ia
+!pragma layout smetana
+title auto-play — onde entra a inteligência artificial\nVisão para apresentação · implementação conferida em 22/10/2026
+
+left to right direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam ArrowColor #536275
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam roundcorner 10
+skinparam nodesep 30
+skinparam ranksep 40
+
+actor "Dono\nobjetivo e decisões" as owner #FFF1CE
+artifact "Fontes verificáveis\ntextos e trechos baixados" as sources #F3F5F8
+
+package "IA editorial · sessão assistida no workspace" #F0E9FC {
+  component "Assistente de IA + skills\npauta e fichamento\nroteiro e planos\nverificação independente" as editorial #DDCBF7
+}
+
+rectangle "Aplicação Python + template de vídeo" #F7F9FB {
+  component "Validação e decisões\nvp check: schemas e citações\ncontratos JSON e hashes\ngates registrados pelo dono" as validation #DFF0E7
+
+  component "Produção e render por código\nCLI + scripts: planos e mídia\nRemotion + React + motion-kit\nFFmpeg: áudio e montagem final" as production #DFF0E7
+}
+
+package "IA integrada por adapters · local ou remota" #F0E9FC {
+  component "Síntese de voz — TTS\nKokoro: rascunho local\nChatterbox: local ou Modal\nGemini TTS: alternativa remota" as tts #DDCBF7
+
+  component "Reconhecimento de palavras\nWhisper pela Groq\náudio → palavras + tempos\nopcional: --legenda-palavra" as asr #DDCBF7
+
+  component "Apoio experimental\nOllama / Qwen local\nchecagem de amostras e benchmark\nsaída: alertas para leitura humana" as ollama #DDCBF7
+}
+
+artifact "Vídeo + legendas\nprévia / final MP4 + SRT\nrevisão final do dono" as output #FFF1CE
+
+owner --> editorial : objetivo
+sources --> editorial : evidências
+editorial --> validation : arquivos editoriais\nfacts / scenes / parecer
+owner --> validation : decisões humanas
+validation .down.> production : sequência conduzida\npelo operador
+production <--> tts : texto / narração WAV
+production <--> asr : WAV / tempos\nquando solicitado
+editorial ..> ollama : avaliação de amostra\nvia script separado
+production -down-> output : gera MP4 + legendas
+
+note bottom of editorial #F0E9FC
+  As skills orientam o assistente.
+  A passagem para a aplicação ocorre por arquivos.
+end note
+
+note bottom of production #FFF1CE
+  A produção usa comandos separados.
+  A ordem e as aprovações dependem do operador;
+  os scripts ainda não impõem todo esse fluxo.
+end note
+
+legend bottom left
+  |= Cor |= Responsabilidade |
+  | <back:#DDCBF7> Roxo </back> | IA: criação editorial, voz, palavras e apoio experimental |
+  | <back:#DFF0E7> Verde </back> | Código: contratos, validação, estado e renderização |
+  | <back:#FFF1CE> Amarelo </back> | Controle humano: objetivo, aprovação e revisão |
+  Setas tracejadas: execução opcional ou passagem conduzida pelo operador.
+endlegend
+@enduml

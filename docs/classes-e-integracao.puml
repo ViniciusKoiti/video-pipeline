@@ -1,0 +1,180 @@
+@startuml classes-e-integracao
+!pragma layout smetana
+title auto-play — classes, contratos e componentes\nOrganização proposta · 23/10/2026 · amarelo indica novos recursos
+top to bottom direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #536275
+skinparam classBackgroundColor #E5F3EA
+skinparam classBackgroundColor<<proposto>> #FFF1CE
+skinparam interfaceBackgroundColor #E7F0FF
+skinparam interfaceBackgroundColor<<proposto>> #FFF1CE
+skinparam roundcorner 8
+
+package "Composição e regras · Python" {
+  interface "Context\napp/pipeline/ports.py" as Context {
+    store
+    review
+    renderer(format)
+    embeddings : extensão proposta
+  }
+  class "LazyContext\napp/bootstrap.py" as LazyContext {
+    constrói adapters sob demanda
+  }
+  class "production.py\napp/pipeline/production.py" as Production <<proposto>> {
+    módulo de funções
+    produce_episode(context, id)
+  }
+  class "retrieval.py\napp/pipeline/retrieval.py" as Retrieval <<proposto>> {
+    módulo de funções
+    search_excerpts(...)
+  }
+  interface "EmbeddingProvider\napp/providers/text/base.py" as Embeddings <<proposto>> {
+    embed(texts)
+  }
+  class "OllamaEmbeddings\napp/providers/text/ollama.py" as OllamaEmbed <<proposto>> {
+    adapter local
+    embed(texts)
+  }
+}
+
+package "Contratos · app/pipeline/schemas.py" as Contracts {
+  class Scene {
+    narration
+    shots
+    host_actions : extensão proposta
+  }
+  class HostAction <<proposto>> {
+    intenção
+    âncora da fala
+    alvo / posição
+  }
+  class EpisodeManifest {
+    video
+    host
+    scenes
+  }
+  class EpisodeScene {
+    audio
+    duration_ms
+    shots
+    host_actions : extensão proposta
+  }
+  class ResolvedHostAction <<proposto>> {
+    ação e alvo
+    intervalo em ms da cena
+  }
+}
+
+package "Adapter de render · Python" {
+  class "RemotionEngine\napp/render/remotion.py" as Renderer {
+    render(episode, ...)
+    scene_props(episode, ...)
+  }
+}
+
+package "Template · React / TypeScript" {
+  class "Scene\nvideo/src/Scene.tsx" as ReactScene <<componente>>
+  class "HostWindow\nvideo/src/HostWindow.tsx" as Window <<componente>>
+  class "HostStage\nvideo/src/HostStage.tsx" as Stage <<proposto>> {
+    componente React
+    posição e pose por frame
+  }
+  class "Host + pele\n@viniciusk/motion-kit" as Host <<componente>>
+}
+
+LazyContext ..|> Context
+LazyContext ..> OllamaEmbed : extensão da fábrica
+OllamaEmbed ..|> Embeddings
+Retrieval ..> Embeddings : recebe porta
+Production ..> Context : recebe contexto
+Production ..> Scene : consome roteiro
+Production ..> EpisodeManifest : produz manifesto
+Scene "1" *-- "0..*" HostAction : campo proposto
+EpisodeManifest "1" *-- "1..*" EpisodeScene
+EpisodeScene "1" *-- "0..*" ResolvedHostAction : campo proposto
+HostAction ..> ResolvedHostAction : resolução contra o áudio
+Production ..> Renderer : via context.renderer()
+Renderer ..> EpisodeManifest : entrada atual
+Renderer ..> ReactScene : JSON de SceneProps\nms convertidos em frames
+ReactScene --> Window : modo atual
+ReactScene --> Stage : modo proposto
+Window --> Host : usa pele
+Stage --> Host : reutiliza pele
+
+legend bottom
+  Verde/azul: base existente; amarelo: proposta, ainda sem implementação.
+  Scene e EpisodeScene receberiam ações opcionais. O fluxo usa funções e componentes onde já cabe.
+  Remotion recebe props JSON; a passagem Python/Node não é uma chamada direta de classes.
+endlegend
+@enduml
+
+@startuml execucao-proposta
+title auto-play — como as peças se reúnem\nSequência proposta · comandos e decisões humanas separados · 23/10/2026
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 12
+
+actor "Dono / operador" as Owner
+participant "Assistente editorial\n+ skills" as Agent
+participant "CLI + bootstrap\nLazyContext" as CLI
+participant "retrieval.py\nproposto" as Retrieval #FFF1CE
+participant "Porta de embeddings\nOllama local · proposto" as Embed #FFF1CE
+database "Arquivos do episódio\nJsonFileStore / JsonReviewGate" as Files
+participant "production.py\nproposto" as Production #FFF1CE
+participant "Voz + palavras\n+ resolução de tempos" as Timing
+participant "RemotionEngine" as Renderer
+participant "Node / Scene\nHostStage + Host" as Video
+
+== Pesquisa e roteiro assistidos ==
+Owner -> Agent : objetivo e perguntas
+Agent -> CLI : solicitar busca (integração proposta)
+CLI -> Retrieval : search_excerpts(...)
+Retrieval -> Files : ler fontes e cache do episódio
+Retrieval -> Embed : gerar vetores necessários
+Embed --> Retrieval : embeddings
+Retrieval -> Files : gravar cache quando reconstruído
+Retrieval --> CLI : candidatos com trecho e origem
+CLI --> Agent : resultado da busca
+Agent -> Files : escrever fichas / roteiro
+Agent -> CLI : parecer independente, registrado por vp checagem
+note over Agent,Files
+  Passagens editoriais incluem decisões humanas.
+  O assistente entrega arquivos; a CLI não instancia os papéis.
+end note
+Owner -> CLI : revisar / conferir / registrar decisões dos gates
+CLI -> Files : registrar decisão efetivamente dada
+
+== Produção compartilhada · proposta ==
+Owner -> CLI : produzir episódio com entradas revisadas
+CLI -> Production : produce_episode(context, id)
+Production -> Files : ler entradas e conferir pré-requisitos
+note over Production,Timing
+  Etapas com hash e lock pelo mecanismo de estado.
+  A integração deve evitar locks aninhados do mesmo episódio.
+end note
+Production -> Timing : gerar/reutilizar WAV e resolver planos/ações
+note over Timing
+  Reconhecimento remoto de palavras é opcional
+  e depende de solicitação/autorização.
+end note
+Timing --> Production : áudio, planos e ações com tempo
+Production -> Files : gravar EpisodeManifest com proteção
+Production -> Renderer : context.renderer(format).render(episode, ...)
+Renderer -> Video : jobs + SceneProps em JSON
+Video --> Renderer : segmentos por cena
+Renderer -> Renderer : montagem final com FFmpeg
+Renderer --> Production : RenderResult
+Production --> CLI : resultado da produção
+CLI --> Owner : prévia/final para revisão humana
+
+note over Owner,Video
+  Esta sequência é o desenho de integração futura.
+  Busca, ações de palco e função compartilhada de produção ainda não estão ligadas desse modo.
+end note
+@enduml

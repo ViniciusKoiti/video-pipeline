@@ -72,6 +72,27 @@ outline, escrito à mão.
    Correção só de forma (ponte, ordem, corte), nunca fato novo. No relatório, junte uma tabela curta dos
    blocos: cenas, parte da resposta que cada um acrescenta, ponte de entrada e ponte de saída.
 
+## Rodadas e contexto (decisão do dono, 2026-10-24)
+
+A checagem custa mais que o roteiro quando cada rodada relê as fontes do zero. O episódio `montaigne-desapego`
+precisou de quatro rodadas em contexto limpo (~1,15 M tokens, metade do custo dos agentes). Regras:
+
+1. **Rodada 1, contexto limpo:** o verificador lê tudo (fichas, roteiro, trechos, e os planos com `asset_id`, se o
+   plano de imagens já existir) e devolve o parecer completo.
+2. **Rodadas seguintes, no mesmo contexto:** a sessão principal **retoma o mesmo agente** (não abre outro) e manda só
+   a lista do que mudou: a seção "Revisão da checagem (rodada N)" do `outline.md` e as cenas ou fichas tocadas. O
+   verificador confere cada item contra o trecho que já leu, relê fonte só se a correção citar trecho novo, e
+   responde curto: item fechado ou não, e só problemas **novos** trazidos pela correção. O cache do contexto paga a
+   releitura; um contexto novo pagaria as fontes inteiras de novo.
+3. **Teto de duas rodadas por versão do roteiro.** Se a rodada 2 ainda reprovar, o parecer lista o que falta e a
+   sessão principal leva ao dono: ele decide entre uma rodada 3 curta, só daquilo, ou aprovar com
+   `--sem-checagem "motivo"`. Não há rodada 3 automática.
+4. **Imagens na mesma conversa:** quando o plano de imagens chega depois do texto, a conferência das imagens (passo 8
+   da skill `plano-de-imagens`) é uma mensagem a mais ao mesmo verificador, com os planos e os `assets/*.json`,
+   nunca um agente novo.
+5. **O que reduz rodadas vem antes da rodada 1:** a autoconferência do roteirista (seção "Fechamento" da skill
+   `roteiro-explicativo`) contra os erros que se repetem.
+
 ## Relatório
 
 Uma linha por problema, do mais grave ao menos grave (exemplo só de formato):

@@ -184,6 +184,13 @@ python3 -I .agents/skills/analise-de-formato/partitura.py data/cache/nicho/<Tít
 python3 -I .agents/skills/analise-de-formato/comparar_moldes.py <a.molde.json> <b.molde.json> \
   --nomes Filosofatos Topo --saida data/cache/nicho/<Título>/analise/moldes-lado-a-lado.md
 ```
+- **Título do vídeo (2026-10-23).** `titulo_video_chars`, `titulo_video_palavras` e o traço `titulo_video_pergunta`
+  saem da coluna `titulo` da amostra; `titulo_video_dito_s` (com o traço `titulo_video_dito`) marca o segundo em
+  que a fala já disse metade das palavras de conteúdo do título (4 letras ou mais, fora das palavras de função;
+  "navio" vale por "navios"). A partitura mostra os dois na seção "Título do vídeo" e o segundo como marco da
+  linha do tempo. `titulo_palavras` e `titulo_dito` continuam sendo dos **capítulos**. Servem para conferir contra
+  o nicho as hipóteses H05 e H06 de `docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md` antes
+  de testá-las contra o público.
 - A partitura escala o molde para a duração do episódio: marcos dos primeiros segundos absolutos, abertura e
   blocos proporcionais, blocos do tamanho do molde (menos blocos, não blocos menores; `--blocos` fixa), último
   décimo como fecho. Traz a linha do tempo com as casas, o que vale dentro de cada bloco, as curvas por décimo já

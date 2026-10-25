@@ -27,6 +27,19 @@ CUT_RATIO = 2.0  # planos por minuto acima do dobro do molde viram alerta
 CLOSING_RISE = 1.3  # o molde "sobe" uma palavra no fecho quando o último décimo tem 30% a mais que o corpo
 MIN_VIDEOS = 8  # abaixo disso o molde é descrição, e o alerta diz isso
 STATEMENT_MIN_WORDS = 6  # frase curta sem claims (ponte, pergunta retórica) não é afirmação de fato
+TITLE_MIN_LETTERS = 4  # palavra de conteúdo do título: 4 letras ou mais, fora de TITLE_STOP
+# A mesma lista de `STOP_TITULO` em `.agents/skills/analise-de-formato/molde.py`: o molde mede o nicho com
+# ela e o check mede o roteiro com ela (um teste confere que as duas são iguais).
+TITLE_STOP = frozenset({
+    "como", "para", "pelo", "pela", "pelos", "pelas", "você", "voce", "vocês", "voces", "isso", "isto",
+    "esse", "essa", "este", "esta", "aquele", "aquela", "mais", "menos", "muito", "tudo", "nada", "quando",
+    "onde", "porque", "então", "ainda", "sobre", "entre", "até", "depois", "antes", "mesmo", "cada", "sempre",
+    "nunca", "quem", "qual", "quais", "coisa", "coisas", "vídeo", "video", "parte", "episódio", "episodio",
+    "minutos", "pode", "podem", "deve", "devem", "está", "estão", "foram", "sendo", "tinha", "teria", "fazer",
+    "ouvir", "enquanto", "outra", "outro", "outras", "outros", "também", "assim", "aqui", "agora", "hoje",
+    "anos", "todo", "toda", "todos", "todas", "primeiro", "primeira", "deveria", "devia", "deviam", "estava",
+    "estavam", "gente", "certo", "certa", "nosso", "nossa", "ninguém", "ninguem", "alguém", "alguem",
+})
 
 _VOCE = re.compile(r"\bvoc[êe]s?\b", re.IGNORECASE)
 _EU = re.compile(r"\beu\b", re.IGNORECASE)
@@ -158,6 +171,65 @@ def _rate_per_10min(count: int, seconds: float) -> float:
     return 600 * count / seconds if seconds > 0 else 0.0
 
 
+def title_words(title: str) -> list[str]:
+    """Palavras de conteúdo do título, na ordem e sem repetição: a regra de `assunto_do_titulo` da skill."""
+    seen: list[str] = []
+    for word in _WORD.findall(title.lower()):
+        if len(word) >= TITLE_MIN_LETTERS and word not in TITLE_STOP and word not in seen:
+            seen.append(word)
+    return seen
+
+
+def _title_said_at(timed: list[tuple[Scene, float, float]], words: list[str]) -> float | None:
+    """Segundo estimado em que a narração já disse metade das palavras de conteúdo do título (ao menos uma),
+    na precisão da frase; None se nunca diz. A regra de `titulo_video_dito_em` da skill: uma palavra conta
+    quando a fala tem uma palavra que começa por ela ("navio" vale por "navios")."""
+    target = max(1, len(words) // 2)
+    patterns = [re.compile(r"\b" + re.escape(word)) for word in words]
+    spoken = ""
+    for scene, start, end in timed:
+        text = strip_pauses(scene.narration)
+        offset = 0
+        for sentence in _SENTENCE_END.split(text):
+            offset += len(sentence) + 1
+            spoken += " " + sentence.lower()
+            if sum(1 for pattern in patterns if pattern.search(spoken)) >= target:
+                return start + (end - start) * min(offset, len(text)) / max(1, len(text))
+    return None
+
+
+def _title_warnings(
+    scenes: ScenesManifest, molde: Molde, timed: list[tuple[Scene, float, float]], tag: str
+) -> list[str]:
+    """Título provisório (`title`) contra o molde: tamanho fora de q1–q3 e assunto do título dito tarde."""
+    chars = molde.medidas.get("titulo_video_chars")
+    said = molde.medidas.get("titulo_video_dito_s")
+    said_trait = molde.prevalencia.get("titulo_video_dito")
+    if scenes.title is None:
+        if chars is not None or said is not None:
+            return [f"{tag}: scenes.json sem title; o molde mede o título do vídeo e não há o que comparar"]
+        return []
+    warnings: list[str] = []
+    if chars is not None and chars.q1 is not None and chars.q3 is not None:
+        length = len(scenes.title)
+        if length < chars.q1 or length > chars.q3:
+            warnings.append(
+                f"{tag}: título com {length} caracteres; o molde fica {_range(chars, ' caracteres')}"
+            )
+    words = title_words(scenes.title)
+    if words and (said is not None or said_trait is not None):
+        at = _title_said_at(timed, words)
+        if at is None:
+            shown = ", ".join(words[:4])
+            prevalence = f"; o molde diz em {said_trait.com} de {said_trait.n} vídeos" if said_trait else ""
+            warnings.append(f"{tag}: a narração nunca diz o assunto do título ({shown}){prevalence}")
+        elif said is not None and said.q3 is not None and at > said.q3:
+            warnings.append(
+                f"{tag}: a fala só diz o assunto do título aos ~{at:.0f} s; o molde diz {_range(said, ' s')}"
+            )
+    return warnings
+
+
 def _range(item: Medida, unit: str = "") -> str:
     if item.q1 is None or item.q3 is None:
         return f"mediana {item.mediana:g}{unit}, n {item.n}"
@@ -166,9 +238,10 @@ def _range(item: Medida, unit: str = "") -> str:
 
 def molde_warnings(scenes: ScenesManifest, molde: Molde, chars_per_second: float) -> list[str]:
     """Onde o roteiro foge do molde, no que o código sabe medir: duração pedida pela partitura, planos por
-    minuto na abertura e depois, "você" por mil palavras, "você" e "eu" no fecho, e os dois traços que o molde
-    sustenta como padrão e uma expressão regular alcança (confissão do narrador, fim que retoma a abertura).
-    Alertas, nunca erros; o molde mede fala em português."""
+    minuto na abertura e depois, "você" por mil palavras, "você" e "eu" no fecho, os dois traços que o molde
+    sustenta como padrão e uma expressão regular alcança (confissão do narrador, fim que retoma a abertura) e,
+    com `title` no scenes.json, o tamanho do título e o segundo em que a fala diz o assunto dele (emenda de
+    2026-10-23 da ADR 031). Alertas, nunca erros; o molde mede fala em português."""
     if scenes.language != "pt-BR" or not scenes.scenes:
         return []
     warnings: list[str] = []
@@ -225,6 +298,8 @@ def molde_warnings(scenes: ScenesManifest, molde: Molde, chars_per_second: float
                 f'{tag}: o molde sobe "{nome}" no fecho ({curve[9]:g} por 10 min contra {body_median:g} no '
                 f"corpo); o roteiro tem {ours_last:.0f} no último décimo contra {ours_before:.0f} antes"
             )
+
+    warnings += _title_warnings(scenes, molde, timed, tag)
 
     if (confissao := molde.padrao("confissao")) is not None and not _CONFISSAO.search(text):
         warnings.append(

@@ -184,3 +184,24 @@ Ao ser aceita, a emenda pede no mesmo commit:
 - **Só vale em vídeo publicado no YouTube.** A página oficial não cobre o uso fora da plataforma
   (`data/benchmarks/termos-musica.md`). Corte para Reels, TikTok e afins sai sem essas faixas.
 - Faixas do Pixabay Music e do Suno continuam fora, até uma decisão à parte (ADR 030).
+
+## Emenda (2026-10-23): `metrics.json`, as métricas de publicação
+
+Decisão do dono em 2026-10-23, sobre o contrato D6 que ele aceitou em 2026-10-14 (spec do workspace, "Medir e
+fechar o ciclo"). Os vídeos começaram a sair em outubro e não havia onde registrar os números do §12.
+
+- `data/episodes/<id>/metrics.json` (`PublicationMetrics`): `platform`, `channel`, `format` (`longo`, `reel`,
+  `clipe`, `story`), `published_at` com fuso, `url`, `post_id` do Postiz, `series`, `duration_s`, `hypothesis` (a
+  hipótese de forma, #122), `readings` nas janelas `d7` e `d28` e `requests` (pedidos vistos nos comentários,
+  resumidos, sem dado pessoal). Publicação sem pasta de episódio (clipe, story) fica em
+  `data/publicacoes/metricas/<id>.json`.
+- Uma leitura traz `read_at` e os números lidos à mão: `views`, `likes`, `shares`, `comments`, `saves` (D6) e, no
+  YouTube, `impressions`, `ctr_percent`, `avg_view_duration_s`, `retention_30s_percent`, `subscribers_gained` e
+  `traffic_sources`. **O que não foi lido fica `null`, nunca zero.** Leitura antes de a janela fechar é erro; cada
+  janela é lida uma vez (refazer é explícito).
+- A data, o canal e o id do post vêm de `data/publicacoes/registro.jsonl` (ADR 025), que passa a ser versionado.
+  Os números entram por `scripts/provisorio/metricas.py` (`iniciar`, `ler`, `pendentes`, `tabela`), até virar
+  `vp metricas`. Sem API do YouTube nesta fase (§12).
+- `vp status` mostra as janelas e lista as vencidas sem leitura nas pendências; `vp check` valida o arquivo e avisa.
+- A tabela consolidada (`data/publicacoes/metricas.csv`, uma linha por janela) é gerada, nunca editada à mão, e só
+  compara iguais com iguais (longo com longo, Reel com Reel).

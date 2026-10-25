@@ -150,6 +150,7 @@ class RemotionEngine:
         burn_captions_final: bool = False,
         audio_bitrate: str = "192k",
         tmp_root: Path | None = None,
+        timeout_ms: int = 90_000,
     ) -> None:
         self.info = ProviderInfo("remotion", remote=False)
         self._project = project
@@ -164,6 +165,10 @@ class RemotionEngine:
         self._presets = {True: preset_preview, False: preset_final}
         self._burn = {True: burn_captions_preview, False: burn_captions_final}
         self._audio_bitrate = audio_bitrate
+        # Espera por imagem ou vídeo em cada quadro (Remotion `timeoutInMilliseconds`, padrão 30 s): com 8
+        # abas decodificando B-roll ao mesmo tempo, o padrão estourou num JPEG grande e num clipe de 31 MB
+        # (2026-10-24).
+        self._timeout_ms = timeout_ms
         self.last_run = RunStats()
 
     # --- props --------------------------------------------------------------------------------
@@ -330,6 +335,7 @@ class RemotionEngine:
                     "x264Preset": self._presets[preview],
                     "jpegQuality": self._jpeg_quality,
                     "concurrency": self._concurrency,
+                    "timeoutMs": self._timeout_ms,
                     "jobs": jobs,
                 }
             )

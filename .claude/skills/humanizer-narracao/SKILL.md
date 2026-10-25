@@ -69,7 +69,12 @@ público ainda não tinha.
 
 ## Fala, não texto
 
-- Frases de até ~20 palavras, alternando curtas e longas. Uma ideia por frase.
+- Frases de 12 a 18 palavras em média, até ~22, alternando curtas e longas. Uma ideia por frase.
+- **Frase curta só quando pesa, nunca em série.** Cada ponto final vira uma pausa de meio segundo na voz
+  clonada. Medido em 2026-10-23 (`data/benchmarks/voz-ritmo-2026-10-23/`): o roteiro do Epicteto saiu com 55
+  frases de até 6 palavras, 17 a 20 pausas por minuto e 176 palavras por minuto; o vídeo mais visto do topo do
+  nicho tem 15,5 palavras por frase, quase nenhuma pausa audível e 130 por minuto. Duas ideias curtas se ligam
+  com "e", "que", "porque" ou uma vírgula, não com ponto final. Alvo da voz final: 130 a 150 palavras por minuto.
 - A vírgula vira pausa na voz: vírgula demais picota a fala. Travessão e parênteses não existem na fala:
   troque por vírgula, ponto ou outra frase.
 - Números como devem ser ditos; anos em algarismos. Sigla por extenso na primeira vez.

@@ -1,0 +1,12 @@
+flowchart LR
+    subgraph A[Máquina A]
+        CA[Controlador e ingestão] --> CLA[Claude Code e agentes]
+        CLA -.->|Eventos de uso| CA
+    end
+    subgraph B[Máquina B]
+        CB[Controlador e ingestão] --> CLB[Claude Code e agentes]
+        CLB -.->|Eventos de uso| CB
+    end
+    CA <-->|Reserva e consumo| PG[(PostgreSQL central)]
+    CB <-->|Reserva e consumo| PG
+    PG --> R[Relatório consolidado]

@@ -11,6 +11,7 @@ idioma), 5–7 min, 16:9, H.264/AAC, até 1080p, sobre histórias reais. Cada ep
 usa imagens de acervo com licença registrada, gera ilustrações apenas para lacunas, narra com TTS e sai como
 `final.mp4` + `captions.srt` + `description.txt` + `credits.txt`.
 **Publicação só após revisão humana (gate 4) e autorização do dono**; o agendamento pode passar pelo Postiz (§2.8).
+Canal: **Cena e Conceito** (`@cenaeconceito`; nome e tag de afiliado em `config/canal.toml`).
 
 - **Recorte da validação:** expedições e desastres de 1880–1930, janela com fotografia em domínio público,
   jornais digitalizados gratuitos e memórias em DP. Piloto: expedição polar de cauda longa (Greely 1881–84,
@@ -20,17 +21,26 @@ usa imagens de acervo com licença registrada, gera ilustrações apenas para la
   Money Works, com tom crítico e documentado (nem herói, nem vilão). Modelo em
   `docs/pesquisa/modelo-perfil-de-poder.md`. Primeiro caso: Grupo Votorantim / família Ermírio de Moraes, em
   pt-BR. O piloto documentário continua no roteiro.
+- **Ensaio (épico #164, desde 2026-10):** vídeo longo (~12 min) em pt-BR no molde do nicho de ensaio sobre filosofia
+  (ADR 031): título e miniatura falam do pensador ou da ideia; o anime entra só como caso dentro. Canais de referência
+  Filosofatos e Inferno de Dante (`docs/pesquisa/roteiro-referencias-2026-10-20.md`); piloto `death-note-fins-meios`.
+  É a linha dos episódios agendados em outubro.
 - **Evitar:** sobrevivência recente (fotos de agência, vira 100% ilustração gerada), true crime,
   Titanic/Hindenburg/Everest 1996 (saturados), Segunda Guerra (oceano de concorrentes).
 
-### Estado atual (2026-10-05)
+### Estado atual (2026-10-22)
 
-Nenhum vídeo publicado; nada de produção em escala. Roteiro nas issues #1–#31, #41–#43, #48 e #69–#82.
-Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa atual e pendências").
+Primeiros agendamentos pelo Postiz em outubro de 2026, todos pela cadeia do §2.8 (clipes do Nabote em 17/10; o Reel
+`confeitaria-erro-2-pt` em 19/10; `death-note-fins-meios`, `kira-voto-brasil`, `historia-vencedores` e
+`epicteto-na-sua-mao` no Cena e Conceito, de 20 a 23/10; trilha em `data/publicacoes/registro.jsonl`). Agendado não
+é publicado: conferir no YouTube Studio antes de reenviar. Métricas aos 7 e 28 dias ainda por registrar; nada de
+produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #164. Histórico e pendências:
+`docs/ROADMAP.md` ("Etapa atual e pendências", escrita em 2026-09-30).
 
-- **Foco (decisão do dono, 2026-09-29):** o vídeo não será publicado por enquanto; o trabalho é o template do
-  formato explicativo (`video/`, Remotion + motion-kit), com calma, uma frente por vez. Em pausa: #11 e M2–M7 do
-  piloto documentário.
+- **Foco (decisão do dono, 2026-10-22):** a cadência do Cena e Conceito, um ensaio longo por dia mais Reels, com
+  pautas aprovadas em lote e o molde do nicho e a partitura antes de cada roteiro (ADR 031, §4). O visual segue a
+  decisão de 2026-09-29: com calma, uma frente por vez, e toda mudança de template ou de motion-kit sai pelo
+  vídeo-régua abaixo. Em pausa: #11 e M2–M7 do piloto documentário.
 - **Vídeo-régua:** o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
   visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Script
   `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar`, `lado-a-lado`), vídeos em
@@ -75,6 +85,8 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
    (agente `duvida-cega`, gravada por `vp postiz duvida`), pede a confirmação do dono pela regra `ask` do
    `.claude/settings.json` e grava cada passo em `data/publicacoes/registro.jsonl`. Fichas, roteiro e checagem podem ser feitos por agentes do Claude Code definidos no repo;
    o código só valida (`vp check`, ADR 009).
+   **Exceção de armazenamento (ADR 032, 2026-10-24):** SQLite local para consumo e orçamento editorial
+   (`vp usage`, `docs/usage.md`). Os artefatos e gates do episódio continuam em arquivos.
    **Um motor de render por formato de episódio** (ADR 001): `archival_documentary` com ffmpeg (piloto) e
    `explainer` com Remotion (protótipo da #48).
 9. **Nenhuma dependência nova sem justificativa no commit e licença verificada.**
@@ -83,9 +95,10 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
 
 ## 3. Ambiente
 
-- Windows + WSL2/Ubuntu. Python 3.12 em `.venv` (criado com `uv`; Kokoro exige < 3.13), PyTorch só-CPU,
-  `ffmpeg`/`ffprobe`, `espeak-ng`, Ollama local só em `127.0.0.1` (detalhes na ADR 004). Node.js LTS (via `nvm`)
-  só para o `explainer`: `cd video && npm ci` instala Remotion, @viniciusk/motion-kit e o Chrome headless pelo lock.
+- Windows + WSL2/Ubuntu. Python 3.12 em `.venv` (`uv sync --extra tts`; sem o extra, só CLI e testes; Kokoro exige
+  < 3.13), PyTorch só-CPU, `ffmpeg`/`ffprobe`, `espeak-ng`, Ollama local só em `127.0.0.1` (detalhes na ADR 004).
+  Node.js LTS (via `nvm`) só para o `explainer`: `cd video && npm ci` instala Remotion, @viniciusk/motion-kit e o
+  Chrome headless pelo lock.
 - `scripts/check_env.sh` valida o ambiente; rodar após mudança de máquina ou `.wslconfig`.
 - O projeto vive em `~/projetos/auto-play` (filesystem Linux do WSL), nunca em `/mnt/c` ou `/mnt/e`; exports
   frios opcionais em `/mnt/e/VideoPipeline/exports`, copiados após o render.
@@ -104,14 +117,22 @@ Histórico, frentes candidatas e passos até publicar: `docs/ROADMAP.md` ("Etapa
 
 `app/pipeline/` etapas, estados e schemas · `app/providers/<função>/` porta (`base.py`) + um adapter por provedor ·
 `app/bootstrap.py` único módulo que conhece adapters concretos · `config/canal.toml` nome do canal e tag de
-associado da Amazon (pública) · `app/render/` motor por formato · `video/` template
-Remotion do `explainer` (ADR 008) · `.claude/agents/` e `.claude/skills/` etapas criativas (§15) · `prompts/local/`
-prompts para modelo local · `config/providers.toml` implementação por função · `scripts/provisorio/` scripts até
+associado da Amazon (pública) · `app/render/` motor por formato · `app/media/` áudio, legenda e apresentador
+(pausas, loudness, ffprobe, pronúncia, janela do host) · `app/commands/` subcomandos `vp` com verbos próprios (hoje
+`postiz`) · `app/storage/` leitura e escrita dos JSON do episódio · `video/` template Remotion do `explainer`
+(ADR 008; o adapter chama `render-scenes.mjs`; testes em `video/tests`) · `.claude/agents/` e `.claude/skills/`
+etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (guia em `AGENT.MD`, apontado por `AGENTS.md`;
+`analise-de-formato` e `validacao-de-nicho` moram aqui, e `.claude/skills/` só as aponta por symlink) ·
+`prompts/local/` prompts para modelo local · `config/providers.toml` implementação por função ·
+`scripts/provisorio/` scripts até
 virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
 `outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `molde.json`, `partitura.md`, `pauta.md`, `sources/`,
 `excerpts/`, `assets/`, `voice/`, `renders/`) ·
-`data/benchmarks/` medições e termos dos provedores · `data/cache/` fora do Git. Variáveis de ambiente: nomes e
-exemplos não secretos em `.env.example`.
+`data/benchmarks/` medições e termos dos provedores · `data/publicacoes/registro.jsonl` trilha dos agendamentos
+(§2.8) · `data/cache/` fora do Git · `tests/fakes/` fakes de todas as portas e `FakeContext` ·
+`tests/fixtures/episodes/` (`pilot-example` v1, `engine-test`, `numeros-death-note`) · `deploy/` função do Modal
+(ADR 024) · `docs/pesquisa/` análises de nicho, formato e canais de referência · `docs/specs/` specs de componentes
+do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não secretos em `.env.example`.
 
 ### Arquitetura (ADR 006, diagrama em `docs/arquitetura.md`)
 
@@ -131,6 +152,12 @@ No vídeo longo, o mesmo desenho com o molde do nicho (ADR 031): a skill `analis
 a `partitura.md` do episódio, o roteirista lê a partitura antes do outline e o `vp check` avisa pelo molde.
 Todo roteiro declara o **objetivo** (`objective` no `scenes.json`, ADR 019): `noticiar`, `explicar` ou `opinar`, de
 um a três na ordem em que aparecem, mais a promessa em uma frase. O objetivo e a tese de uma opinião vêm do dono.
+
+Na pauta, antes do roteiro, planejar **título provisório e conceito da capa** (no vertical, texto e conceito do
+primeiro quadro), ligados à promessa e às perguntas às fontes. Esboço textual basta; a arte final depende dos
+ativos registrados, e o conjunto é revisto pelo dono no gate 4. Registrar uma hipótese principal antes do teste,
+mais sua variável e medida; copiá-la para `metrics.json.hypothesis` quando houver metadados reais de publicação.
+Método, hipótese H01 e limites: `docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md`, §§4–5.
 
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
@@ -185,6 +212,11 @@ revela:
 - **Objetivo (ADR 019):** `objective.kinds` (o primeiro manda na estrutura), `promise` e o campo de cada tipo
   (`event_date`, `question`, `thesis` + `thesis_by`). Opinião é dita como opinião e nunca vira dado na tela;
   notícia com mais de 30 dias gera alerta; roteiro sem objetivo também.
+- **Título provisório (`title` no `scenes.json`, opcional; emenda de 2026-10-23 da ADR 031):** o título planejado
+  na pauta, copiado pelo roteirista. O `vp check` compara o tamanho com os quartis do molde (`titulo_video_chars`)
+  e avisa quando a fala demora a dizer o assunto do título (metade das palavras de conteúdo) além do q3 do nicho
+  (`titulo_video_dito_s`); a regra de palavras de conteúdo é a mesma na skill e no check. O título publicado é
+  decisão do gate 4.
 - **Funil (ADR 026):** `funnel.stage` (`topo` | `meio` | `fundo`, decidido pelo dono na pauta), `cta` (a chamada
   final, dita na última cena) e `offer` (só e sempre no fundo: a planilha ou o modelo oferecido). O `vp check`
   avisa quando falta o estágio, quando a chamada não pede o que o estágio pede e quando ela não está na narração.
@@ -308,11 +340,14 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `status`, `numeros` e `postiz`. `vp numeros <id> --escrever` gera a parte numérica do `outline.md` (bloco
+`reject`, `status`, `numeros`, `postiz` e `usage`. `vp usage` registra consumo e reservas em SQLite local
+(`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
+do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o
 roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
 saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem fonte, voz e render
-até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`). Cada
+até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
+comando com subcomandos próprios vira módulo em `app/commands/` com `add_arguments` e `run`, como o `postiz`. Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
 
 ## 11. Ordem de implementação e critérios de aceite do piloto
@@ -321,7 +356,7 @@ Ordem: **(A)** experimento de motor da Fase 0 → **(B)** fixar `episode.json` e
 **(C)** CLI + Kokoro por bloco + timing + legendas → **(D)** adapters de busca/licença + galeria → **(E)** geração
 condicional via Cloudflare + medidor de cota → **(F)** pesquisa assistida e revisão de roteiro com LLM →
 **(G)** comparação pequena dos remotos, só para gargalo demonstrado. FastAPI e SQLite só quando arquivos e galeria
-virarem obstáculo real.
+virarem obstáculo real, com a exceção de telemetria editorial da ADR 032.
 
 Piloto aceito quando:
 
@@ -340,10 +375,15 @@ Piloto aceito quando:
 - Métricas manuais no YouTube Studio aos 7 e 28 dias: impressões orgânicas e origem do tráfego; CTR com contexto;
   retenção nos 30 s iniciais e duração média; retorno e comentários espontâneos (amigos não contam); tempo e custo
   por episódio. Sem integração com a API do YouTube nesta fase.
-- **Política de conteúdo inautêntico (YPP, jul/2025):** o YouTube cita como exemplo de conteúdo mass-produced
-  "histórias narradas com variações mínimas" e "slideshows com narração idêntica". É exatamente o risco deste
-  formato. Defesa: pesquisa original, roteiro próprio por episódio, variação visual e de estrutura, edição real.
-  Tratar isso como critério de aceite, não como risco genérico.
+- **Política de conteúdo não original (YPP, 15/07/2025; "inauthentic content" em inglês, antes "conteúdo
+  repetitivo"):** inclui conteúdo "repetitivo ou produzido em massa". Exemplos literais do que não monetiza:
+  "conteúdo repetitivo ou similar com baixo valor educativo, analítico, narrativo ou com pouca variação entre os
+  vídeos", "personagens colocados na mesma situação várias vezes com o mesmo resultado" e "apresentações de slides
+  com imagens, histórias com modelos ou texto com pouco ou nenhum valor narrativo, analítico ou educativo".
+  Permitido: mesma abertura e fecho se o corpo varia. É exatamente o risco deste formato. Defesa: pesquisa
+  original, roteiro próprio por episódio, variação visual e de estrutura, edição real. Tratar isso como critério
+  de aceite, não como risco genérico. Texto oficial em `support.google.com/youtube/answer/1311392` (en e pt-BR);
+  conferido em 2026-10-23 (`docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md`, OF14).
 - Uso de IA continua monetizável quando o conteúdo é original e a divulgação de conteúdo sintético é feita.
 
 ## 13. Decisões pendentes e ajustes propostos sobre a spec v0.4
@@ -375,9 +415,10 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Arquivos em `data/episodes/*/` com `review_status: approved` ficam como estão; se um ajuste exigir mexer neles,
   parar e perguntar.
 - Em dúvida sobre licença de um ativo ou termos de um provedor, parar e perguntar.
-- Antes de encerrar qualquer tarefa, rodar `pytest` e `ruff check .`. Testes novos para toda etapa nova. Testes
-  com modelos locais pesados levam `@pytest.mark.slow` e ficam fora da rodada padrão (`pytest -m slow`; usam
-  `HF_HUB_OFFLINE=1`, sem rede).
+- Antes de encerrar qualquer tarefa, rodar `uv run pytest` e `uv run ruff check .`; se o template mudou, também
+  `npm test` em `video/`. Um arquivo ou um teste: `uv run pytest tests/test_shots.py -k nome`. Testes novos para
+  toda etapa nova, com os fakes das portas de `tests/fakes/`. Testes com modelos locais pesados levam
+  `@pytest.mark.slow` e ficam fora da rodada padrão (`uv run pytest -m slow`; usam `HF_HUB_OFFLINE=1`, sem rede).
 - Commits pequenos e descritivos. Decisões de arquitetura viram `docs/decisions/NNN-titulo.md`. Ao mudar uma
   decisão registrada aqui, atualizar este arquivo no mesmo commit.
 - Dependências só via `uv add` (com licença no comentário do `pyproject.toml`) e `uv.lock` versionado.
@@ -388,6 +429,9 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Template do `explainer` (`video/`): consultar o kit pelo MCP `motion-kit` (skill `componentes-do-kit`) antes de
   escolher componente ou passar prop. O servidor lê o checkout `~/projetos/motion-kit`; cruzar com a versão
   instalada, o tarball de `video/vendor/` (ADR 027).
+- Exploração estrutural do código: skill `codebase-memory` (projeto `home-viniciusk-projetos-auto-play`); conferir
+  `index_status` e `check_index_coverage` antes de confiar no grafo, e ler o arquivo quando for Mermaid, import
+  dinâmico ou integração por arquivos. Guia e fallback em `docs/opencode-codebase-memory-mcp.md`.
 - Animação de texto nos Reels (entrada, legenda palavra a palavra, lista que acumula): ler
   `docs/guia-animacao-de-texto.md` antes de propor ou implementar. É rascunho (2026-10-07): onde diz *decisão aberta*,
   perguntar ao dono; em conflito valem as ADRs.
@@ -400,7 +444,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
   (F08) e trechos (`source-02#E46`) em vez de reescrever o fato; conferir na página antes de escrever uma nota;
   pedir gancho e promessa como pergunta neutra. Um fato ou enquadramento meu no prompt vira roteiro, e o
   `vp check` não pega.
-- O escopo do MVP é o do §2.8; Docker, banco, fila, API web, framework multiagente no código e provedor pago ficam
+- O escopo do MVP é o do §2.8; Docker, banco fora da ADR 032, fila, API web, framework multiagente no código
+  e provedor pago ficam
   fora, e o motivo está em §2.
 
 ## 15. Agentes das etapas criativas (ADR 009)
@@ -415,7 +460,7 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 |---|---|---|---|
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
-| `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; contexto limpo, só leitura |
+| `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 | `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `catalogo_musica.py`) |
 
@@ -424,6 +469,12 @@ Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → rotei
 voz + render → gate 2 → diretor musical (`music.json`, se o vídeo tem trilha) → render → gate 4. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
 que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
 pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).
+
+**Skills sem agente próprio** (rodam como `/nome`): `validacao-de-nicho` e `analise-de-formato` antes da pauta de
+um nicho ou formato novo (a segunda mede a amostra e gera `molde.json` e `partitura.md`, ADR 031); `pauta` nos
+Reels; `plano-de-imagens` entre os gates 2 e 3 (o dono valida o plano antes de qualquer download); `miniatura`
+produz a arte entre os gates 3 e 4, partindo do conceito planejado na pauta e do canal de referência;
+`componentes-do-kit` ao mexer no template (§14).
 
 **Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
 unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),

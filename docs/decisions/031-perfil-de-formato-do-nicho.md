@@ -70,6 +70,18 @@ vistos sem apresentador e com base de imagem que a pipeline faz; passo 4d da ski
 lado a lado por `comparar_moldes.py`. O que é `padrao` nos dois vale sem discussão; o que diverge é decisão do
 dono.
 
+*Emenda (2026-10-23, título do vídeo).* O molde ganha o tamanho do título do vídeo (`titulo_video_chars`,
+`titulo_video_palavras`, traço `titulo_video_pergunta`) e o segundo em que a fala diz o assunto do título
+(`titulo_video_dito_s`, traço `titulo_video_dito`: metade das palavras de conteúdo do título já ditas), para
+conferir contra o nicho as hipóteses H05 e H06 da pesquisa de crescimento
+(`docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md`, §§13–14) antes de testá-las contra o
+público. A partitura traz os dois na seção "Título do vídeo" e na linha do tempo. Para o `vp check` comparar, o
+dono decidiu no mesmo dia: `scenes.json` ganha `title` opcional (1 a 100 caracteres), o título provisório da pauta
+copiado pelo roteirista; o check avisa quando o tamanho sai de q1–q3 de `titulo_video_chars` e quando a narração
+só diz o assunto do título depois do q3 de `titulo_video_dito_s` (ou nunca). A regra de palavras de conteúdo
+(4 letras ou mais, fora da mesma lista de palavras de função) vive nos dois lugares, e um teste confere que são
+iguais. `episode.json` não muda: o título publicado continua sendo decisão do gate 4, fora do contrato do render.
+
 **C. Skill do roteiro lê o perfil.** Com o arquivo, o ritmo de planos e a duração vêm dele, não da regra fixa de
 2 a 4 s; entram a regra do fio único (o conceito entra na cena que ele explica) e a textura em B-roll depois da
 abertura. O `outline.md` ganha a seção "Formato": cada padrão seguido, ou não e por quê. Sem o arquivo, a skill

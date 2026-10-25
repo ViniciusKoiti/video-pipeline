@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
-from datetime import date
+from datetime import date, timedelta
 from enum import StrEnum
 from pathlib import PurePosixPath
 from typing import Annotated, Literal, Self
@@ -926,6 +926,9 @@ class ScenesManifest(Model):
     episode_id: EpisodeId
     language: Language
     objective: Objective | None = None  # o que o vídeo se propõe a fazer (ADR 019); sem ele, alerta
+    # título provisório da pauta (ADR 031, emenda de 2026-10-23): o `vp check` compara o tamanho com o molde e
+    # avisa quando a fala demora a dizer o assunto do título; o título publicado é decisão do gate 4
+    title: str | None = Field(default=None, min_length=1, max_length=100)
     funnel: Funnel | None = None  # estágio do funil e a chamada final (ADR 026); sem ele, alerta
     series: Series | None = None  # série do vídeo, no selo do cartão final (ADR 028)
     scenes: list[Scene] = Field(min_length=1)
@@ -1486,6 +1489,104 @@ class EpisodeManifest(Model):
         for previous, current in zip(self.scenes, self.scenes[1:], strict=False):
             if current.start_ms < previous.end_ms:
                 raise ValueError(f"cena {current.id} começa antes do fim de {previous.id}")
+        return self
+
+
+# --- Métricas de publicação (§12; contrato D6 de 2026-10-14, emenda da ADR 007 de 2026-10-23) ----
+
+METRICS_FILE = "metrics.json"
+WINDOW_DAYS: dict[str, int] = {"d7": 7, "d28": 28}
+READING_NUMBERS = (
+    "views", "likes", "shares", "comments", "saves", "impressions", "ctr_percent",
+    "avg_view_duration_s", "retention_30s_percent", "subscribers_gained",
+)
+
+Platform = Literal["youtube", "instagram", "tiktok"]
+PublicationFormat = Literal["longo", "reel", "clipe", "story"]
+Window = Literal["d7", "d28"]
+RequestKind = Literal["planilha", "modelo", "duvida", "outro"]
+Count = Annotated[int, Field(ge=0)]
+Percent = Annotated[float, Field(ge=0, le=100)]
+Slug = Annotated[str, Field(pattern=r"^[a-z0-9]+(-[a-z0-9]+)*$")]
+
+
+class TrafficSource(Model):
+    """Uma origem de tráfego, com o rótulo do Studio ("Navegação", "Sugeridos", "Pesquisa do YouTube")."""
+
+    name: NonEmpty
+    percent: Percent
+
+
+class AudienceRequest(Model):
+    """Pedido visto nos comentários, resumido e sem dado pessoal (D6)."""
+
+    date: date
+    kind: RequestKind
+    summary: NonEmpty
+
+
+class MetricsReading(Model):
+    """Uma leitura manual (YouTube Studio ou Instagram). O que não foi lido fica `null`, nunca zero."""
+
+    read_at: date
+    views: Count | None = None
+    likes: Count | None = None
+    shares: Count | None = None
+    comments: Count | None = None
+    saves: Count | None = None
+    impressions: Count | None = None  # só YouTube
+    ctr_percent: Percent | None = None  # cliques por impressão, em %
+    avg_view_duration_s: Annotated[float, Field(ge=0)] | None = None
+    retention_30s_percent: Percent | None = None  # público que passa dos 30 s iniciais
+    subscribers_gained: int | None = None  # líquido; pode ser negativo
+    traffic_sources: list[TrafficSource] = []
+    notes: str = ""
+
+    @model_validator(mode="after")
+    def _has_numbers(self) -> Self:
+        if all(getattr(self, name) is None for name in READING_NUMBERS) and not self.traffic_sources:
+            raise ValueError("leitura sem nenhum número: o que não foi lido fica fora, não zero")
+        _unique([source.name for source in self.traffic_sources], "origens de tráfego")
+        total = sum(source.percent for source in self.traffic_sources)
+        if total > 100.5:
+            raise ValueError(f"origens de tráfego somam {total:g}%, acima de 100%")
+        return self
+
+
+class PublicationMetrics(Model):
+    """Uma publicação medida à mão aos 7 e aos 28 dias (§12). Vive em `metrics.json` na pasta do episódio;
+    sem episódio (clipe, story), em `data/publicacoes/metricas/<id>.json`."""
+
+    schema_version: Literal[1] = 1
+    id: Slug
+    platform: Platform
+    channel: NonEmpty
+    format: PublicationFormat
+    published_at: AwareDatetime
+    url: HttpUrl | None = None
+    post_id: str | None = None  # id do post no Postiz
+    series: str | None = None
+    duration_s: Annotated[float, Field(gt=0)] | None = None
+    hypothesis: str | None = None  # hipótese de forma (#122): o que se espera ver e em que medida
+    readings: dict[Window, MetricsReading] = {}
+    requests: list[AudienceRequest] = []
+
+    def due_date(self, window: str) -> date:
+        """Dia em que a janela fecha, no fuso gravado em `published_at`."""
+        return (self.published_at + timedelta(days=WINDOW_DAYS[window])).date()
+
+    def pending(self, today: date) -> list[str]:
+        """Janelas já fechadas e ainda não lidas."""
+        return [w for w in WINDOW_DAYS if w not in self.readings and today >= self.due_date(w)]
+
+    def upcoming(self, today: date) -> list[str]:
+        return [w for w in WINDOW_DAYS if w not in self.readings and today < self.due_date(w)]
+
+    @model_validator(mode="after")
+    def _readings_after_window(self) -> Self:
+        for window, reading in self.readings.items():
+            if reading.read_at < (due := self.due_date(window)):
+                raise ValueError(f"leitura {window} em {reading.read_at}: a janela só fecha em {due}")
         return self
 
 

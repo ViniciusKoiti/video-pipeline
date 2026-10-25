@@ -1,0 +1,11 @@
+flowchart LR
+    subgraph LOCAL[Mesma máquina]
+        U[Dono ou automação] --> C[Controlador de orçamento]
+        C <-->|Reserva e consulta saldo| DB[(SQLite em arquivo local)]
+        C -->|Inicia ou retoma a etapa| CC[Claude Code e subagentes]
+        CC -.->|Eventos de uso| I[Ingestão de metadados]
+        I -->|Registra e concilia| DB
+        DB --> R[Relatório por episódio e modelo]
+        CC --> F[Arquivos do episódio]
+    end
+    CC --> M[Modelos pelo plano Claude]

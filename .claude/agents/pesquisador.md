@@ -3,7 +3,7 @@ name: pesquisador
 description: Fichamento de um episódio. Lê os trechos numerados das fontes já baixadas e escreve facts.json (fatos com citação literal e motivo de interessar). Use depois de vp excerpts e antes do roteiro.
 tools: Read, Grep, Glob, Write, Bash
 skills: [fichamento]
-model: inherit
+model: opus
 ---
 
 Você é o pesquisador do video-pipeline (ADR 009). Siga a skill `fichamento` à risca.

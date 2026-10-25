@@ -16,10 +16,21 @@ e autorização humanas.
 - Plano de entregas (31 etapas): [docs/ROADMAP.md](docs/ROADMAP.md)
 - Questões abertas da análise inicial: [docs/ANALISE.md](docs/ANALISE.md)
 - Arquitetura (portas e adaptadores): [docs/arquitetura.md](docs/arquitetura.md)
+- Arquitetura atual em PlantUML: [fonte](docs/arquitetura-atual.puml) e [diagrama SVG](docs/arquitetura-atual.svg)
+- Visão para apresentação, com a camada de IA destacada: [docs/arquitetura-ia.md](docs/arquitetura-ia.md)
+- Evolução do fluxo por camadas, busca de evidências e atuação 2D: [docs/evolucao-por-camadas.md](docs/evolucao-por-camadas.md)
+- Análise técnica com gaps e verificações: [docs/analise-gaps-tecnicos.md](docs/analise-gaps-tecnicos.md)
+- Pesquisa sobre crescimento no YouTube, embalagem e testes: [afirmações e hipóteses](docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md)
 - Decisões de arquitetura: [docs/decisions/](docs/decisions/)
 
 **Fase atual:** validação do template explicativo e do processo editorial; piloto documental em pausa.
 Custo zero de API. A CLI e os scripts ainda cobrem partes diferentes da produção.
+
+**Direção de montagem:** evoluir primeiro o JSON e o template do auto-play, usando o
+motion-kit já integrado. O fluxo atual é `scenes.json` → produção → `episode.json` →
+props JSON → template React/motion-kit → render. O JSON expressa apenas os recursos
+integrados, não qualquer composição React. Avaliar o `motion-video` na sequência,
+sem migração agora. Decisão e limites: [ADR 033](docs/decisions/033-montagem-json-no-auto-play.md).
 
 ## Ambiente
 
@@ -55,6 +66,20 @@ uv run vp bench --models qwen3.5:4b,qwen3.5:9b --runs 2   # rodar com a máquina
 uv run pytest && uv run ruff check .
 uv run pytest -m slow      # contratos com modelos locais pesados (Kokoro)
 ```
+
+## Consumo dos agentes em SQLite
+
+`vp usage` registra consumo por episódio, etapa e modelo e coordena reservas de orçamento
+em `data/telemetry/usage.sqlite3`, fora do Git. Inicialização e consulta são offline:
+
+```bash
+.venv/bin/vp usage init
+.venv/bin/vp usage --help
+.venv/bin/vp usage report <id>
+```
+
+Importação de eventos e exemplos: [docs/usage.md](docs/usage.md). A coleta automática e o
+bloqueio do lançamento de agentes ainda não estão conectados; o comando controla as reservas.
 
 ## Agendamento pelo Postiz
 

@@ -288,9 +288,20 @@ escalado para a duração pedida. Sem o arquivo, este bloco não se aplica e o m
 - **Curvas e alvos.** As curvas por décimo dizem onde "você" e "eu" sobem e onde a imagem troca mais; os alvos
   (q1–q3) são para medir o rascunho depois, com as batidas cegas e o `narrativa.py`, não para forçar número
   na escrita.
+- **Título provisório.** Copie o título planejado na pauta para `title` no `scenes.json` (opcional no schema;
+  emenda de 2026-10-23 da ADR 031). A seção "Título do vídeo" da partitura diz o tamanho e a forma que o nicho
+  usa e em que segundo a fala costuma dizer o assunto do título; o `vp check` avisa quando o título foge dos
+  quartis do molde e quando a narração demora a dizer o assunto (metade das palavras de conteúdo do título). Se a
+  pauta não tem título, deixe `title` fora e diga isso na seção "Formato". O título publicado é decisão do gate 4.
+- **Ritmo da fala.** A partitura traz `palavras_min` do nicho (130 no topo, 184 no Filosofatos). A voz clonada
+  lê o que está escrito: frase curta vira pausa, e a nossa narração saiu a 176 palavras por minuto com 17 a 20
+  pausas por minuto (medição de 2026-10-23, `data/benchmarks/voz-ritmo-2026-10-23/`). Escreva frases de 12 a 18
+  palavras, ligadas por "e", "que", "porque" ou vírgula, e deixe a frase curta para a palavra que pesa (item 9).
+  O alvo da voz final é 130 a 150 palavras por minuto; o `humanizer-narracao` repete a regra.
 - **No `outline.md`**, uma seção "Formato" com uma linha por casa da partitura: seguida, ou não seguida e por
   quê. O `vp check` avisa onde o roteiro foge do molde (duração, planos por minuto, "você", fecho, confissão,
-  fim que retoma a abertura); trate cada alerta `molde` como os de ritmo: corrija ou justifique na seção.
+  fim que retoma a abertura, tamanho do título e assunto do título dito tarde); trate cada alerta `molde` como os
+  de ritmo: corrija ou justifique na seção.
 - **Forma, nunca fato.** Nenhuma frase, número ou imagem dos vídeos medidos entra no roteiro. "Você" continua
   preso às fichas e às três formas do ensaio (pergunta, hipótese marcada, frase do dono); a confissão só o dono
   escreve (ADR 019). Quando a partitura e as fichas brigam, as fichas vencem, e a seção "Formato" diz isso.
@@ -336,4 +347,26 @@ fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco n
   lacunas, a palavra que pesa). Com `formato-brief.json` no episódio (o perfil do nicho, ADR 031), leia a tabela
   "Formato × nicho" do bloco: é forma, nunca fonte; um alerta `formato:` do `vp check` é um padrão forte do nicho
   que o roteiro não segue, para você seguir ou explicar no outline por que não.
-- Entregue para o agente `verificador` (contexto limpo) antes do gate 2.
+- **Autoconferência antes de entregar** (decisão do dono, 2026-10-24: a checagem vai de quatro rodadas para no
+  máximo duas, então o que ela pegava nas rodadas 1 e 2 tem de cair aqui). Releia a narração inteira uma vez,
+  frase a frase, procurando só isto, que foram os erros das últimas checagens:
+  1. **Exagero sobre o trecho:** "nunca", "nenhum", "tudo", "não controlou nada", "a mais antiga" onde a fonte diz
+     "ainda não", "substancial", "forte"; relato ("ele conta ter feito") onde a fonte diz capacidade ("poderia").
+  2. **Causa que a fonte não afirma:** "porque", "por isso", "então" ligando duas frases que a fonte dá separadas.
+  3. **Nome na fala:** crítico, estudioso ou site nomeado ("Zweig escreveu", "segundo a SEP"): vira "há quem leia
+     que", e o rodapé mostra.
+  4. **"Você" fora das formas:** imperativo ("pensa no", "conta nos comentários") vira pergunta; afirmação sobre quem
+     assiste vira hipótese marcada ou frase do dono. Vale também para a chamada final (`funnel.cta`).
+  5. **Data, número ou nome sem ficha:** apareceu numa correção e não está em `facts.json`? Tira, ou pede ficha
+     (e o gate 1 volta ao dono).
+  6. **Identificação que é da tradução, não do original** (nomes que só a versão moderna dá): fica na claim, não na
+     fala.
+  7. **Imagem ao pé da letra:** se os planos já têm `asset_id`, retrato só sob fala sobre o retratado; página ou
+     manuscrito só sob fala sobre aquele livro; textura de banco nunca ilustra a palavra da fala (porta sob "loja
+     dos fundos", trem sob "mudar de lugar", moedas sob "moeda").
+  8. **Ponte entre blocos:** cada "Segunda parte", "Terceira parte" tem uma frase antes que nasce do bloco
+     anterior; o fecho recolhe, com os mesmos termos, ao menos duas peças apresentadas.
+  Registre no `outline.md` o que a autoconferência mudou.
+- Entregue para o agente `verificador`: contexto limpo na primeira rodada; as rodadas seguintes retomam o mesmo
+  agente com a lista do que mudou (skill `checagem`, "Rodadas e contexto"). Teto de duas rodadas; além disso, o dono
+  decide.

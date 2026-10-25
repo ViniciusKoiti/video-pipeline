@@ -18,7 +18,7 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import postiz
+from app.commands import postiz, usage
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode, episode_assets
 from app.pipeline.excerpts import numbered_view
@@ -32,6 +32,7 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
+from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
 from app.pipeline.numbers import (
     FORMAT_FILE,
@@ -300,8 +301,22 @@ def _status(args: argparse.Namespace, context: Context) -> int:
             print(_check_line(context, args.episode_id))
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
     pending += missing_pieces(context.store, args.episode_id)
+    pending += _metrics_status(context, args.episode_id)
     print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
     return 0
+
+
+def _metrics_status(context: Context, episode_id: str) -> list[str]:
+    """Depois de publicado (§12): mostra as janelas de 7 e 28 dias e devolve as vencidas sem leitura."""
+    path = metrics_path(context.settings.data_dir, episode_id)
+    if not path.is_file():
+        return []
+    try:
+        metrics = load_metrics(path)
+    except ValueError:
+        return ["metrics.json inválido (ver vp check)"]
+    print(f"{'métricas':38} {summary_line(metrics, date.today())}")
+    return pending_lines(metrics, date.today())
 
 
 def _status_line(row: GateStatus) -> str:
@@ -396,6 +411,7 @@ HANDLERS: dict[str, Handler] = {
     "checagem": _checagem,
     "numeros": _numeros,
     "postiz": postiz.run,
+    "usage": usage.run,
 }
 
 
@@ -420,6 +436,9 @@ def build_parser() -> argparse.ArgumentParser:
         if command.add_arguments is not None:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
+    usage.add_arguments(
+        subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")
+    )
     return parser
 
 
@@ -438,9 +457,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         try:
             context = build_context(project_root(Path.cwd()))
         except (ValueError, OSError, SystemExit):
-            if args.command != "postiz":
+            if args.command not in ("postiz", "usage"):
                 raise
-            return postiz.report_error("Não foi possível carregar a configuração do projeto.")
+            command_module = postiz if args.command == "postiz" else usage
+            return command_module.report_error("Não foi possível carregar a configuração do projeto.")
         return handler(args, context)
     step = next(c.step for c in COMMANDS if c.name == args.command)
     print(f"vp {args.command}: ainda não implementado (etapa #{step} do roadmap).", file=sys.stderr)
