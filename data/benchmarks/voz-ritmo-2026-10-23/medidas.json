@@ -1,0 +1,54 @@
+[
+ {
+  "arquivo": "A-atual.wav",
+  "dur_s": 47.2,
+  "palavras_min": 178,
+  "pausas_por_min": 14.0,
+  "pausa_media_s": 0.47,
+  "pausa_max_s": 0.78,
+  "silencio_pct": 10.9,
+  "f0_hz": 134,
+  "f0_desvio_st": 4.21,
+  "f0_p10_p90_st": 11.1,
+  "dinamica_db": 17.2
+ },
+ {
+  "arquivo": "B-cfg06.wav",
+  "dur_s": 44.9,
+  "palavras_min": 187,
+  "pausas_por_min": 13.4,
+  "pausa_media_s": 0.49,
+  "pausa_max_s": 0.77,
+  "silencio_pct": 10.8,
+  "f0_hz": 131,
+  "f0_desvio_st": 4.24,
+  "f0_p10_p90_st": 11.4,
+  "dinamica_db": 17.1
+ },
+ {
+  "arquivo": "C-atempo092.wav",
+  "dur_s": 51.3,
+  "palavras_min": 164,
+  "pausas_por_min": 14.0,
+  "pausa_media_s": 0.49,
+  "pausa_max_s": 0.84,
+  "silencio_pct": 11.4,
+  "f0_hz": 134,
+  "f0_desvio_st": 4.27,
+  "f0_p10_p90_st": 11.5,
+  "dinamica_db": 17.5
+ },
+ {
+  "arquivo": "D-compressor.wav",
+  "dur_s": 47.2,
+  "palavras_min": 178,
+  "pausas_por_min": 12.7,
+  "pausa_media_s": 0.48,
+  "pausa_max_s": 0.78,
+  "silencio_pct": 10.2,
+  "f0_hz": 134,
+  "f0_desvio_st": 4.23,
+  "f0_p10_p90_st": 11.3,
+  "dinamica_db": 10.4
+ }
+]
