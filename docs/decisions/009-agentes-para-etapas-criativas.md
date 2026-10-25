@@ -95,3 +95,14 @@ no plano do Claude do dono, sem API paga.
 | `verificador` | `haiku` | Escolha do dono; a recomendação era `opus`, pela leitura adversarial de trechos longos. Se a checagem deixar passar o que o gate 2 pega, rever aqui. |
 | `duvida-cega` | `sonnet` | Checklist com data, fuso e JSON exato antes do agendamento; o dono ainda confirma pela regra `ask`. |
 | `diretor-musical` | `haiku` | Escolhe faixa por etiqueta e texto; o `vp check` confere as âncoras e o dono decide na escuta. |
+
+## Emenda (2026-10-24): rodadas de checagem no mesmo contexto
+
+Decisão do dono. No `montaigne-desapego` a checagem levou quatro rodadas, cada uma em contexto limpo relendo as
+quinze fontes: ~1,15 M tokens, metade do consumo dos agentes do episódio. A partir daqui: a primeira rodada continua
+em contexto limpo e lê tudo; as rodadas seguintes retomam o **mesmo** verificador com a lista do que mudou, que
+confere só isso contra o que já leu (o cache do contexto paga a releitura); a conferência das imagens entra nessa
+mesma conversa; e há um teto de duas rodadas por versão do roteiro, além do qual o dono decide (rodada curta ou
+`--sem-checagem "motivo"`). Para a primeira rodada vir menor, o roteirista passa a se conferir contra a lista dos
+erros recorrentes antes de entregar (skill `roteiro-explicativo`, "Fechamento"). O `vp checagem` e o gate 2 não
+mudam: o parecer continua carimbado com o hash do conteúdo, e conteúdo que muda depois do parecer pede parecer novo.
