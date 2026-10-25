@@ -18,7 +18,7 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import postiz
+from app.commands import postiz, usage
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode, episode_assets
 from app.pipeline.excerpts import numbered_view
@@ -411,6 +411,7 @@ HANDLERS: dict[str, Handler] = {
     "checagem": _checagem,
     "numeros": _numeros,
     "postiz": postiz.run,
+    "usage": usage.run,
 }
 
 
@@ -435,6 +436,9 @@ def build_parser() -> argparse.ArgumentParser:
         if command.add_arguments is not None:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
+    usage.add_arguments(
+        subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")
+    )
     return parser
 
 
@@ -453,9 +457,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         try:
             context = build_context(project_root(Path.cwd()))
         except (ValueError, OSError, SystemExit):
-            if args.command != "postiz":
+            if args.command not in ("postiz", "usage"):
                 raise
-            return postiz.report_error("Não foi possível carregar a configuração do projeto.")
+            command_module = postiz if args.command == "postiz" else usage
+            return command_module.report_error("Não foi possível carregar a configuração do projeto.")
         return handler(args, context)
     step = next(c.step for c in COMMANDS if c.name == args.command)
     print(f"vp {args.command}: ainda não implementado (etapa #{step} do roadmap).", file=sys.stderr)

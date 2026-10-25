@@ -15,6 +15,7 @@ from typing import Any
 
 from app.pipeline.ports import ManifestStore, ReviewGate
 from app.pipeline.schemas import EpisodeFormat
+from app.pipeline.usage import UsageLedger
 from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.base import ProviderInfo
@@ -78,6 +79,12 @@ def build_postiz(settings: Settings) -> Any:
     if not settings.postiz_api_url:
         raise ConfigurationError("POSTIZ_API_URL ausente no .env")
     return PostizClient(settings.postiz_api_url, _secret(settings, "POSTIZ_API_KEY"))
+
+
+def build_usage(settings: Settings) -> UsageLedger:
+    from app.storage.usage_sqlite import SQLiteUsageLedger
+
+    return SQLiteUsageLedger(settings.data_dir / "telemetry" / "usage.sqlite3")
 
 
 def _archive_cache(settings: Settings) -> Path:

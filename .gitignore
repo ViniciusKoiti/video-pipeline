@@ -18,6 +18,8 @@ data/cache/*
 !data/cache/.gitkeep
 # Faixas de música, ativos e catálogo do dono (ADR 030): baixados à mão, fora do Git
 data/music/*
+# Consumo editorial privado, banco SQLite e arquivos auxiliares (ADR 032)
+data/telemetry/
 
 # Mídia pesada (exceto fixtures pequenas e revisadas)
 *.mp4
