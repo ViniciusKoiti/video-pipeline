@@ -1,0 +1,10 @@
+{
+  "language": "en",
+  "lines": [
+    { "scene": "gancho", "text": "The AI reads the binary and finds the password, with no source code.", "delivery": "hook" },
+    { "scene": "mod", "text": "A Claude Code mod is an instruction file. This one teaches the agent to analyze a binary." },
+    { "scene": "analise", "text": "It runs file, strings and objdump, and every claim points to a line of real output.", "delivery": "turn" },
+    { "scene": "resultado", "text": "The password is paladino twenty. Vault open.", "delivery": "turn" },
+    { "scene": "fecho", "text": "Only on your own binary, or a CTF. Code in the description.", "delivery": "invite" }
+  ]
+}
