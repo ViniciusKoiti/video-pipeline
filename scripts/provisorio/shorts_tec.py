@@ -5,7 +5,9 @@ Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
 - `voz <pasta> <narracao.json> [--voz=<nome>]`: uma fala por linha da narração, em
   `<pasta>/voice/<cena>-<provedor>-<hash>.wav`. A voz padrão é a do vídeo final (`tts_final`, a clonada do
   dono no Modal, ADR 024); `--voz=kokoro` para um rascunho local. O hash cobre o texto, o provedor, o modelo,
-  a gravação de referência e a entrega: a fala só é gerada de novo quando um deles muda.
+  a gravação de referência e a entrega: a fala só é gerada de novo quando um deles muda. Com um
+  `<pasta>/voice/glossary.json` (§9, `app/media/pronunciation.py`), a voz lê a grafia do glossário ("JSON" →
+  "jêison") e o hash cobre esse texto; a tela e a legenda ficam com a grafia da narração.
 - `tempos <pasta> <content.json> <narracao.json>`: escreve `<content>.voz.json` com a duração de cada cena
   esticada até a fala dela caber (`max(duração do JSON, fala + folga)`), sem encurtar nenhuma, e, nas cenas
   com a janela do apresentador, `host.speaking` com o trecho da fala, para a boca parar quando a voz para.
@@ -46,6 +48,7 @@ sys.path.insert(0, str(ROOT))
 
 from app.media.loudness import TARGET_LUFS, integrated_lufs, loudness_problem  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
+from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.providers.errors import ProviderError  # noqa: E402
 from app.providers.tts.base import SpeechRequest  # noqa: E402
 
@@ -81,11 +84,19 @@ def load_lines(path: Path) -> tuple[str, list[Line]]:
     return data.get("language", "pt-BR"), lines
 
 
-def wav_name(line: Line, index: int, provider: str, fingerprint: str, language: str = "pt-BR") -> str:
+def wav_name(
+    line: Line,
+    index: int,
+    provider: str,
+    fingerprint: str,
+    language: str = "pt-BR",
+    spoken: str | None = None,
+) -> str:
     """O nome do WAV da fala: a cena (ou `fora-N`), o provedor, o idioma e o hash do que muda a fala. O idioma
-    no nome separa as falas das duas línguas de uma mesma cena: sem ele, gerar uma apagava a outra."""
+    no nome separa as falas das duas línguas de uma mesma cena: sem ele, gerar uma apagava a outra. `spoken` é
+    o texto que a voz lê (com o glossário); sem termo do glossário, é o da narração e o nome não muda."""
     delivery = f"|entrega:{line.delivery}" if provider in CLONED and line.delivery != "neutral" else ""
-    key = hashlib.sha256(f"{fingerprint}{delivery}|{line.text}".encode()).hexdigest()[:10]
+    key = hashlib.sha256(f"{fingerprint}{delivery}|{spoken or line.text}".encode()).hexdigest()[:10]
     stem = line.stem if line.scene else f"fora-{index}"
     return f"{stem}-{provider}-{language.lower().replace('-', '')}-{key}.wav"
 
@@ -205,18 +216,20 @@ def cmd_voz(folder: Path, narration: Path, named: str | None) -> None:
     fingerprint = voice_fingerprint(settings, provider, language)
     voice_dir = folder / "voice"
     voice_dir.mkdir(parents=True, exist_ok=True)
+    glossary = load_glossary(folder)
     started = time.monotonic()
     manifest = []
     try:
         for index, line in enumerate(lines):
-            wav = voice_dir / wav_name(line, index, provider, fingerprint, language)
+            spoken = respell(line.text, glossary)
+            wav = voice_dir / wav_name(line, index, provider, fingerprint, language, spoken)
             if not wav.exists():
                 # Só as versões antigas desta fala, neste idioma: cena, provedor e idioma vêm antes do hash.
                 for stale in voice_dir.glob(f"{wav.name.rsplit('-', 1)[0]}-*.wav"):
                     stale.unlink()
                 try:
                     tts.synthesize_speech(
-                        SpeechRequest(text=line.text, out_path=wav, language=language, delivery=line.delivery)
+                        SpeechRequest(text=spoken, out_path=wav, language=language, delivery=line.delivery)
                     )
                 except ProviderError as error:
                     raise SystemExit(

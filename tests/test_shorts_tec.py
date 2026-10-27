@@ -117,6 +117,13 @@ def test_nome_do_wav_muda_com_texto_entrega_e_voz_e_fala_fora_do_json_ganha_indi
     assert shorts_tec.wav_name(fora, 3, "kokoro", "k").startswith("fora-3-kokoro-ptbr-")
 
 
+def test_nome_do_wav_segue_o_texto_falado_do_glossario_e_nao_muda_sem_termo(shorts_tec) -> None:
+    line = shorts_tec.Line("gancho", "Um objeto JSON.")
+    plain = shorts_tec.wav_name(line, 0, "chatterbox_modal", "v")
+    assert shorts_tec.wav_name(line, 0, "chatterbox_modal", "v", spoken=line.text) == plain
+    assert shorts_tec.wav_name(line, 0, "chatterbox_modal", "v", spoken="Um objeto jêison.") != plain
+
+
 def test_narracao_lida_do_json_com_entrega_neutra_por_padrao(shorts_tec, tmp_path: Path) -> None:
     path = tmp_path / "narracao.pt.json"
     lines = [{"scene": "gancho", "text": " Oi. "}, {"scene": None, "text": "Fora."}]
