@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmqudfb0h0001lw83k1b8ugi7"
+      },
+      "value": [
+        {
+          "content": "This whole video came from one sentence. I typed the sentence in Claude Code, it wrote the JSON, and my library rendered it: a number, a chart, a timeline, a comparison, with my cloned voice and me in a window.\n\nWhat you see: motion-kit, a library of video components for Remotion, with 47 ready-made visual styles and a tool that builds a vertical video from a JSON with 15 scene types. inspect checks the JSON before rendering and review makes one frame per scene. The library draws more than the JSON asks for today: maps, graphs, archival photos, documents, split screens, floating windows.\n\nThe numbers on screen come from the kit's own repository (git log of 2026-10-25): 312 commits in 104 days; 6 scenes in 19.6 s; 3 inspect warnings; −15.3 LUFS.\n\nNo Claude Motion involved: this is Claude Code plus my library in a Remotion project.\n\nOpen source (MIT): [LINK]\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #Remotion #ClaudeCode #motiongraphics #AI #opensource",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "This whole video came from one sentence. Claude built it with my library",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "remotion",
+            "label": "remotion"
+          },
+          {
+            "value": "claude code",
+            "label": "claude code"
+          },
+          {
+            "value": "motion graphics",
+            "label": "motion graphics"
+          },
+          {
+            "value": "open source",
+            "label": "open source"
+          }
+        ]
+      }
+    }
+  ]
+}

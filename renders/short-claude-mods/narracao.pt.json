@@ -1,0 +1,10 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    { "scene": "gancho", "text": "A IA lê o binário e acha a senha, sem o código.", "delivery": "hook" },
+    { "scene": "mod", "text": "Um mod do Claude Code é um arquivo de instruções. Esse aqui ensina o agente a analisar um binário." },
+    { "scene": "analise", "text": "Ele roda o file, o strings e o objdump, e cada afirmação aponta para uma linha da saída real.", "delivery": "turn" },
+    { "scene": "resultado", "text": "A senha é paladino vinte. Cofre aberto.", "delivery": "turn" },
+    { "scene": "fecho", "text": "Só em binário seu, ou de CTF. Código na descrição.", "delivery": "invite" }
+  ]
+}

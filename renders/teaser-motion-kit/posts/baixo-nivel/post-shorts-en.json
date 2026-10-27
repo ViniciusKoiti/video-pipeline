@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "2026-10-25T16:15:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "I described six scenes in one sentence. Claude wrote the JSON and my library rendered it: a number, a chart, a timeline, a comparison, and me in a window in the corner. Same content, 47 styles.\n\nWhat it is: motion-kit, a library of video components for Remotion, with 47 ready-made visual styles and a tool that builds a vertical video from a JSON with 15 scene types. An agent such as Claude Code can write the JSON; the library renders it frame by frame.\n\nThe numbers in the video come from the kit's own repository (git log of 2026-10-25): 312 commits in 104 days, 2 in July and 272 in October; 10 scene types on Oct 10 and 15 today.\n\nOpen source (MIT): https://gitlab.com/ViniciusKoiti/motion-kit\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #motiongraphics #Remotion #ClaudeCode #AI #opensource",
+          "image": [
+            {
+              "id": "b20cd2f8-f70b-41d0-80ab-9a665463570e",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/25/d910b8a49ad758f1e668eb7d4f3c8d21c.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "I described 6 scenes in one sentence. Claude wrote the JSON, my library rendered it in 47 styles",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "motion graphics",
+            "label": "motion graphics"
+          },
+          {
+            "value": "remotion",
+            "label": "remotion"
+          },
+          {
+            "value": "claude code",
+            "label": "claude code"
+          },
+          {
+            "value": "open source",
+            "label": "open source"
+          }
+        ]
+      }
+    }
+  ]
+}

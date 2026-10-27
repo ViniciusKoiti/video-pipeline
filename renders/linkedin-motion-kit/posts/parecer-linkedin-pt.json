@@ -1,0 +1,14 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: o JSON tem 2026-10-27T16:30:00-03:00. Isso dá terça 27/10/2026, 16h30 de Brasília (19h30 UTC). Bate com o último pacote (registro.jsonl linha 96, o.data 2026-10-27T19:30:00+00:00). Não há agenda escrita ao lado da mídia para comparar. O pacote foi gerado às 17:53 UTC, então sobravam cerca de 1h37 para apagar o post no Postiz. Esse tempo diminui a cada minuto, e a publicação sai ainda hoje. A data anterior, 28/10 às 9h, foi trocada sem que eu veja a decisão registrada.",
+    "Canal: a integração cmqhdiv470001qy75pqct6dnu é 'Vinicius Koiti Nakahara' e o settings.__type é linkedin, então combinam. Esse id não aparece em nenhum evento 'agendado' anterior. Nenhum dos 16 'agendados' do registro tem a mesma mídia ou o mesmo dia no LinkedIn.",
+    "Mídia: o JSON usa o id de1eeac7-0582-4a3c-a389-e71b53d8bcb4 e o caminho .../2026/10/27/c6cbc2189f...mp4. Isso bate com o upload da linha 94 (linkedin-pt-voz-dono-4.mp4, sha256 b3da76b2...) e com a mídia do pacote da linha 96. Há quatro versões do vídeo na pasta. Este é o corte mais novo, e as versões -2 e -3 têm uploads no Postiz que não entram no post.",
+    "Gate 4: a evidencia.gate_4 é 'aprovado' no pacote da linha 96. O roteiro-tecnico.md diz que a aprovação feita antes valia para a -dono-2 e que a -dono-3 pedia nova aprovação. Não encontrei no que li um registro de aprovação específico para a -dono-4, que mudou o fecho e a legenda. Convém o dono confirmar que assistiu a -dono-4 e aprovou esse corte.",
+    "Legenda: o texto do JSON é igual ao do pacote, só com quebras de linha. Não vi erro de digitação. Os fatos técnicos (15 tipos de cena, Zod, −14 LUFS, voz em GPU, cena de 4 s com 8 campos) batem com o roteiro-tecnico.md. Não cita pessoa viva nem empresa. A legenda diz 'O motion-kit é código aberto (MIT); o link está no primeiro comentário'. O roteiro registra o link https://gitlab.com/ViniciusKoiti/motion-kit. O comentário precisa ser postado à mão, porque o agendamento não o cria. Também confirmar que o repositório está mesmo público, senão a legenda promete algo que não existe.",
+    "Apresentador e direitos: a legenda diz 'O apresentador é um desenho meu, feito a partir de fotos minhas'. O roteiro-tecnico.md (pendência 1) registra a pele do dono (origem.json) com gerador null e needs_review, ou seja, sem o gerador da folha informado. Não achei no que li a resolução dessa pendência. Se ainda estiver aberta, o ativo não tem licença registrada e a regra de 'nenhum ativo sem licença' do projeto não está cumprida. O dono responde por isso.",
+    "Divulgação: a legenda avisa que a voz é clonada por IA. A API do Postiz não marca conteúdo sintético, então o dono deve marcar à mão no LinkedIn, se houver a opção.",
+    "Sem horas para desfazer: o Postiz não é idempotente. Se o envio falhar, consultar a fila antes de repetir. Depois das 16h30 de hoje só dá para apagar na rede."
+  ],
+  "revisor": "duvida-cega"
+}

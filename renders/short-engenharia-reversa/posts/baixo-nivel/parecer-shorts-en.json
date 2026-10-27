@@ -1,0 +1,17 @@
+{
+  "veredito": "não segue",
+  "riscos": [
+    "Horário: 2026-10-25T19:30:00-03:00, domingo, igual ao pacote (22:30 UTC); pacote gravado às 20:26 UTC, folga de cerca de 2 h para desfazer. Suficiente.",
+    "Canal: integration.id cmr030qdh000glw83on440hxi, youtube, baixo.nivel.dev.s, igual ao pacote e à decisão do README.",
+    "Mídia: c4315948-691f-4cba-8782-c45d72a4ab53 bate com o pacote (cofre-en-voz.mp4, sha256 daec6cf8…) e com o upload de 20:19 UTC. Conteúdo do vídeo não conferido (não abre arquivo).",
+    "Gate 4: 'sem episódio'; o README lista a escuta do dono da versão em inglês como pendente e não há registro dela nos arquivos.",
+    "Apresentador: pele em needs_review, sem gerador registrado (CLAUDE.md §2.3); a legenda diz 'a drawing made from my photos', mas a origem não está comprovada.",
+    "Conteúdo sintético: voz clonada e apresentador desenhado; a legenda avisa; o Postiz não marca 'conteúdo alterado ou sintético': marcar à mão no Studio depois de publicar.",
+    "Legenda, afirmações verificáveis só pelo dono: 'Everything on screen is the real output of the commands', '16 KB', 'gcc -O1 and no debug symbols', 'No tools beyond file, strings and objdump', 'length has to be 10', 'XOR 0x4b'; a gravação de tela era espaço marcado às 17h19. O link github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/cofre não pôde ser testado.",
+    "Legenda × pacote: só formatação (quebras de parágrafo vs espaços). Aviso de segurança presente. Título com 56 caracteres e 4 tags.",
+    "Repetição: nenhum 'agendado' anterior para este canal, dia ou mídia; o pacote do teaser no mesmo canal (19:15 UTC) tem 'não segue' e não foi agendado; se os dois saírem, ficam a 3h15 no mesmo canal.",
+    "Outros arquivos: o post-shorts-en.json fora da subpasta ainda tem placeholders; usar o de baixo-nivel/ no schedule.",
+    "Resumo: nada indica erro de canal, horário ou mídia. 'Não segue' pela escuta do dono não registrada e pela pele em needs_review. Se o dono confirmar as duas e aceitar marcar o conteúdo sintético à mão no Studio, os riscos restantes são aceitáveis."
+  ],
+  "revisor": "duvida-cega"
+}

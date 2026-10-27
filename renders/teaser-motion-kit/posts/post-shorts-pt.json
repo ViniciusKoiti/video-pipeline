@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "DATA_ISO_COM_FUSO",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmqudfb0h0001lw83k1b8ugi7"
+      },
+      "value": [
+        {
+          "content": "Descrevi seis cenas em uma frase. O Claude escreveu o JSON e a minha biblioteca renderizou: número, gráfico, linha do tempo, comparação, e eu numa janela no canto. Mesmo conteúdo, 47 estilos.\n\nO que é: motion-kit, uma biblioteca de componentes de vídeo para Remotion, com 47 estilos visuais prontos e uma ferramenta que monta o vídeo vertical a partir de um JSON com 15 tipos de cena. Quem escreve o JSON pode ser um agente, como o Claude Code; quem renderiza é a biblioteca, quadro a quadro.\n\nOs números do vídeo são do repositório do kit (git log de 25/10/2026): 312 commits em 104 dias, 2 em julho e 272 em outubro; 10 tipos de cena em 10/10 e 15 hoje.\n\nCódigo aberto (MIT): [LINK]\n\nO apresentador é um desenho feito a partir de fotos minhas; a voz é a minha, clonada por IA.\n\n#Shorts #motiongraphics #Remotion #ClaudeCode #IA #videoporcodigo",
+          "image": [
+            {
+              "id": "ID_DA_MIDIA",
+              "path": "URL_DA_MIDIA"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Descrevi 6 cenas em uma frase. O Claude escreveu o JSON, minha biblioteca renderizou em 47 estilos",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "motion graphics",
+            "label": "motion graphics"
+          },
+          {
+            "value": "remotion",
+            "label": "remotion"
+          },
+          {
+            "value": "claude code",
+            "label": "claude code"
+          },
+          {
+            "value": "vídeo por código",
+            "label": "vídeo por código"
+          }
+        ]
+      }
+    }
+  ]
+}
