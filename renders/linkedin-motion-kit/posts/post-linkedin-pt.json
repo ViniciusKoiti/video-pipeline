@@ -1,0 +1,27 @@
+{
+  "type": "schedule",
+  "date": "2026-10-27T16:30:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmqhdiv470001qy75pqct6dnu"
+      },
+      "value": [
+        {
+          "content": "Como uma cena de 4 segundos sai de um JSON de 8 campos.\n\nEu construí o motion-kit, uma biblioteca de vídeo em React sobre o Remotion, e um fluxo em que o agente escreve o JSON e o código faz o resto. O caminho de uma cena:\n\n1. Um schema em Zod valida o JSON (15 tipos de cena; campo desconhecido é erro).\n2. O inspect calcula, sem renderizar, em que quadro a cena fica legível, com as mesmas constantes do componente que a desenha, e avisa se ela acaba antes.\n3. A fala vira um WAV com a minha voz clonada numa GPU; o nome leva um hash, e fala que não mudou não é gerada de novo.\n4. O ffmpeg mede a fala, e a cena cresce até ela caber.\n5. O Remotion renderiza quadro a quadro num Chrome sem tela.\n6. O ffmpeg põe cada fala no começo da cena dela e normaliza o volume, com alvo de −14 LUFS.\n\nO motion-kit é código aberto (MIT); o link está no primeiro comentário.\n\nO apresentador é um desenho meu, feito a partir de fotos minhas; a voz é a minha, clonada por IA.\n\n#Remotion #TypeScript #React #ffmpeg #ClaudeCode",
+          "image": [
+            {
+              "id": "de1eeac7-0582-4a3c-a389-e71b53d8bcb4",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/27/c6cbc2189f5e3bf63dfb162b9e3100f9e.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "linkedin"
+      }
+    }
+  ]
+}
