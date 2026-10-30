@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Só leitura do repositório; nenhum job precisa de segredo.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  segredos:
+    name: Segredos (gitleaks)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # o histórico inteiro entra na varredura
+          persist-credentials: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+      # `go install` confere o módulo no checksum database do Go: a versão fixada não vem adulterada.
+      # O go.mod do gitleaks ainda declara o caminho antigo (zricethezav); com o novo o Go recusa.
+      - name: Instalar o gitleaks
+        run: go install github.com/zricethezav/gitleaks/v8@v8.30.1
+      - name: Varrer o histórico
+        run: $(go env GOPATH)/bin/gitleaks git --config .gitleaks.toml --redact --verbose --no-banner .
+      - name: Varrer a árvore de trabalho
+        run: $(go env GOPATH)/bin/gitleaks dir --config .gitleaks.toml --redact --verbose --no-banner .
+
+  testes:
+    name: Testes e lint (Python 3.12)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Os testes de render, voz e mídia chamam ffmpeg e ffprobe de verdade; o runner não os traz.
+      - name: Instalar o ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      # Sem o extra `tts` (Kokoro e PyTorch, ~1,3 GB): os testes não precisam dele e não acessam a rede.
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run pytest -q
