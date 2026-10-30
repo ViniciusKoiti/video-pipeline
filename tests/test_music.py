@@ -222,11 +222,10 @@ def ffmpeg(*args: str) -> None:
     subprocess.run(["ffmpeg", "-v", "error", "-y", *args], check=True)
 
 
-def test_assemble_mixes_the_bed_under_the_voice_at_the_target_loudness(tmp_path: Path) -> None:
+def build_inputs(tmp_path: Path, ms: tuple[int, ...]) -> tuple[Path, list[Path]]:
     root = tmp_path / "ep"
     (root / "voice").mkdir(parents=True)
     (root / "assets").mkdir()
-    ms = (1500, 1500, 1000)
     for i, length in enumerate(ms, start=1):  # voz: tom a −30 dBFS, bem abaixo do alvo
         ffmpeg("-f", "lavfi", "-i", f"sine=frequency=220:duration={length / 1000}", "-af", "volume=-30dB",
                "-ar", "24000", "-ac", "1", str(root / "voice" / f"S{i:02d}.wav"))
@@ -237,6 +236,12 @@ def test_assemble_mixes_the_bed_under_the_voice_at_the_target_loudness(tmp_path:
         ffmpeg("-f", "lavfi", "-i", f"color=c=black:s=320x180:r=10:d={length / 1000}", "-c:v", "libx264",
                "-preset", "ultrafast", "-pix_fmt", "yuv420p", str(segment))
         segments.append(segment)
+    return root, segments
+
+
+def test_assemble_mixes_the_bed_under_the_voice_at_the_target_loudness(tmp_path: Path) -> None:
+    ms = (1500, 1500, 1000)
+    root, segments = build_inputs(tmp_path, ms)
     music = [bed(0, 3500, fade_in_ms=500, fade_out_ms=500, loop=True)]  # a faixa de 1 s recomeça
     manifest = episode(ms, music=music)
     out = tmp_path / "out" / "final.mp4"
@@ -247,6 +252,30 @@ def test_assemble_mixes_the_bed_under_the_voice_at_the_target_loudness(tmp_path:
     assert abs(duration_ms(out) - 4000) <= 150
     assert abs(integrated_lufs(out) - TARGET_LUFS) <= 2.0
     assert not list(out.parent.glob(".*.txt"))  # as listas do concat foram apagadas
+
+
+def test_assemble_reuses_the_encoded_audio_until_the_speech_or_the_bed_changes(tmp_path: Path) -> None:
+    ms = (1500, 1500, 1000)
+    root, segments = build_inputs(tmp_path, ms)
+    spec = VideoSpec(width=320, height=180, fps=10)
+    out = tmp_path / "out" / "final.mp4"
+    out.parent.mkdir()
+    manifest = episode(ms, music=[bed(0, 3500, loop=True)])
+    assemble(manifest, root, segments, spec, out)
+    (cached,) = out.parent.glob(".audio-final-*.m4a")
+    stamp = cached.stat().st_mtime_ns
+    assemble(manifest, root, segments, spec, out)  # nada mudou: o AAC não é refeito
+    assert list(out.parent.glob(".audio-final-*.m4a")) == [cached]
+    assert cached.stat().st_mtime_ns == stamp
+    assert abs(duration_ms(out) - 4000) <= 150
+    assemble(episode(ms, music=[bed(0, 3500, gain_db=-30.0, loop=True)]), root, segments, spec, out)
+    (other,) = out.parent.glob(".audio-final-*.m4a")  # trilha nova: áudio novo, o antigo sai
+    assert other != cached
+    ffmpeg("-f", "lavfi", "-i", "sine=frequency=330:duration=1.5", "-af", "volume=-30dB", "-ar", "24000",
+           "-ac", "1", str(root / "voice" / "S01.wav"))
+    assemble(episode(ms, music=[bed(0, 3500, gain_db=-30.0, loop=True)]), root, segments, spec, out)
+    (third,) = out.parent.glob(".audio-final-*.m4a")  # fala nova: áudio novo
+    assert third != other
 
 
 def test_episode_json_without_music_keeps_its_shape() -> None:
