@@ -142,7 +142,7 @@ class RemotionEngine:
         node: str = "node",
         crf: int = 20,
         fade_s: float = 0.3,
-        concurrency: int = 8,
+        concurrency: int = 6,
         jpeg_quality: int = 90,
         preset_final: str = "medium",
         preset_preview: str = "veryfast",
@@ -160,6 +160,9 @@ class RemotionEngine:
         self._node = node
         self._crf = crf
         self._fade_s = fade_s
+        # Abas do Chrome por cena. Rodadas intercaladas no votorantim-dinheiro (prévia, cache vazio,
+        # 2026-10-30): 8 abas 189 s, 4 abas 182 s, 6 abas 180 s. Cena com foto pesada piora com mais abas
+        # (12 abas: 5x mais lenta) e 8 já estourou o tempo de espera em 2026-10-24. Fora da chave de cache.
         self._concurrency = concurrency
         self._jpeg_quality = jpeg_quality
         self._presets = {True: preset_preview, False: preset_final}
