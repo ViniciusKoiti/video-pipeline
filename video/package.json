@@ -2,7 +2,7 @@
   "name": "video-pipeline-remotion",
   "private": true,
   "description": "Experimento da etapa 8: template Remotion dirigido pelo episode.json (via props do adapter)",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "render": "remotion render src/index.ts Episode",
     "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.ts"

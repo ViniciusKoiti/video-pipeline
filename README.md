@@ -113,3 +113,17 @@ $vp-engajamento Analise o episódio <id> com as métricas fornecidas e proponha 
 Sequência: pauta decidida pelo dono → fichamento → gate 1 → roteiro → checagem independente → gate 2 → produção.
 Um episódio já aprovado recebe proposta de alteração separada. As skills não aprovam gates nem publicam vídeos.
 Sem métricas próprias, a análise de engajamento produz hipóteses. Detalhes e limites estão em `AGENT.MD`.
+
+## Licença
+
+O código deste repositório é distribuído sob a [licença MIT](LICENSE). Isso não cobre o que ele usa:
+
+- **Remotion** (motor do formato `explainer`, em `video/`): tem licença própria. É gratuito para pessoas e
+  empresas com fins lucrativos de até 3 pessoas; acima disso exige a Company License
+  ([licença](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md)).
+- **`@viniciusk/motion-kit`** (tarball em `video/vendor/`): MIT, com a licença dentro do pacote.
+- **Imagens e áudio de teste** em `tests/fixtures/`: cada ativo tem a licença registrada no JSON ao lado dele.
+- **Modelos de voz** (Kokoro, Chatterbox) e provedores externos: seguem os próprios termos, resumidos em
+  `data/benchmarks/termos-*.md`.
+- Vídeos, vozes e imagens que você produzir com o pipeline têm direitos próprios: confira a licença de cada
+  ativo antes de publicar.
