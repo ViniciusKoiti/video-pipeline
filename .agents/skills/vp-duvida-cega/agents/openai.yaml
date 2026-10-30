@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Dúvida cega"
+  short_description: "Procure o que pode dar errado antes de um agendamento"
+  default_prompt: "Use $vp-duvida-cega no post.json indicado e devolva só o parecer em JSON."
