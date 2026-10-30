@@ -57,8 +57,19 @@ O arquivo de entrada segue a [documentação de AGENTS.md](https://learn.chatgpt
 | Roteirista — `$vp-roteiro` | Fichas aprovadas, pauta/objetivo → `outline.md`, `scenes.json` | Preservar significado ao humanizar e escolher planos |
 | Verificador — `$vp-checagem` | Fontes, fichas e roteiro → relatório com evidência e prioridade | Só leitura; não escreveu o material revisado |
 | Analista — `$vp-engajamento` | Radar e métricas fornecidas → hipóteses e próximo teste | Não inventar audiência, taxas nem ganho causal |
+| Humanizador — `$vp-humanizer-narracao` | `scenes.json` aprovado em conteúdo → narração em texto falado | Não muda fato, número, nome nem âncora; derruba o gate 2 |
+| Plano de imagens — `$vp-plano-de-imagens` | Roteiro aprovado → `plano-imagens.md`, `decisoes-imagens.md`, ativos | Sem download antes de o dono validar o plano; licença registrada |
+| Diretor musical — `$vp-trilha` | Roteiro e `data/music/catalog.json` → `music.json` | Só faixas do catálogo; não ouve áudio; o dono decide na prévia |
+| Miniatura — `$vp-miniatura` | Pauta, fichas e ativos → versões em `miniatura/` | Segue o canal de referência; a escolha e o quadro de obra são do dono |
+| Dúvida cega — `$vp-duvida-cega` | Só caminhos do `post.json` e do registro → parecer JSON | Só leitura, sem rede; quem grava é `vp postiz duvida` |
+| Shorts tec — `$vp-shorts-tec` | Repositório da ferramenta do dono → Short por JSON e rascunhos | Serviço externo só a pedido; nada agendado sem a autorização do dono |
+| Consulta do kit — `$vp-componentes-do-kit` | Objetivo da cena → componente e props do motion-kit | Só leitura; confirmar na versão que o `video/` renderiza |
 
-`.claude/agents/` e `.claude/skills/` continuam disponíveis para o fluxo existente. As skills
+`.claude/agents/` e `.claude/skills/` continuam disponíveis para o fluxo existente e guardam o
+método de cada etapa: cada skill `vp-*` é um wrapper curto que aponta para a skill de mesmo
+papel em `.claude/skills/` (`analise-de-formato` e `validacao-de-nicho` moram em `.agents/skills/`
+e o `.claude/skills/` as aponta por symlink). `$vp-engajamento` ainda não tem skill própria no
+`.claude`. As skills
 Codex reutilizam referências editoriais úteis sem exigir Claude Code ou os seus nomes de ferramentas.
 
 Quando houver delegação, cada agente recebe episódio, objetivo, arquivos de entrada, saída
