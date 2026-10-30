@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Trilha"
+  short_description: "Planeje a trilha sonora a partir do catálogo e do roteiro"
+  default_prompt: "Use $vp-trilha para escrever o music.json do episódio indicado com as faixas do catálogo."

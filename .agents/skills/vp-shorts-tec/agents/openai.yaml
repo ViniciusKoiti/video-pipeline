@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Shorts tec"
+  short_description: "Monte um Short de tecnologia sobre uma ferramenta do dono"
+  default_prompt: "Use $vp-shorts-tec para montar o Short da pasta indicada a partir do repositório da ferramenta."

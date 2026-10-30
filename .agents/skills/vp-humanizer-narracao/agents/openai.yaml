@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Humanizer da narração"
+  short_description: "Deixe a narração com cara de fala, sem mudar o que ela afirma"
+  default_prompt: "Use $vp-humanizer-narracao no scenes.json do episódio indicado e liste o que mudou cena a cena."

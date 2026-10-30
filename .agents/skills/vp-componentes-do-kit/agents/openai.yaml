@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Componentes do kit"
+  short_description: "Consulte componentes e props do motion-kit antes de usar"
+  default_prompt: "Use $vp-componentes-do-kit para indicar o componente e as props certas para este objetivo de cena."
