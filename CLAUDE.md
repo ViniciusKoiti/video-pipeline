@@ -2,7 +2,7 @@
 
 > Contexto persistente para o Claude Code neste repositório (lido no início de cada sessão). Curto e factual:
 > o que o código, o `--help` e os arquivos já dizem fica fora. Preferências pessoais vão em `CLAUDE.local.md`
-> (gitignored). Em conflito, valem `docs/spec-v0.4.md` e os registros em `docs/decisions/`.
+> (gitignored). Em conflito, valem os registros em `docs/decisions/`.
 
 ## 1. O que é este projeto
 
@@ -497,6 +497,6 @@ concreta. Cada um com skill própria, ferramentas mínimas e validação em cód
 
 ## Referências técnicas verificadas (23–24/09/2026)
 
-Lista completa em `docs/spec-v0.4.md`: WSL, Ollama, Groq, Gemini, OpenRouter, Cloudflare Workers AI, Pexels,
+A spec v0.4 original não está no repositório; itens verificados: WSL, Ollama, Groq, Gemini, OpenRouter, Cloudflare Workers AI, Pexels,
 Wikimedia Commons, Library of Congress, Kokoro-82M, FFmpeg, Remotion e as políticas do YouTube (monetização,
 divulgação de IA, retenção/CTR, YPP).

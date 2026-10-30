@@ -8,7 +8,7 @@ Hoje o auto-play funciona como **workspace local de produção assistida de víd
 
 O núcleo visual tem **13 tipos de plano**, dos quais **8 são permitidos em retrato**. O principal gap visual é permitir que o roteiro expresse listas, mecanismos e evidência em 9:16. O principal gap operacional é completar alinhamento, legendas, export e revisão antes de produzir: vários comandos aparecem no help, mas ainda não executam essas etapas.
 
-As análises complementares são [audiência e engajamento](RELATORIO-GAPS-AUDIENCIA-ENGAJAMENTO.md) e [skills do GitHub e cenas](RELATORIO-SKILLS-GITHUB-MOTION-CENAS.md). As propostas abaixo descrevem implementação futura; este trabalho altera apenas documentação.
+As propostas abaixo descrevem implementação futura; este trabalho altera apenas documentação.
 
 ## Tópico 1 — Como o workspace funciona hoje
 
@@ -300,11 +300,9 @@ Não foram executados TTS, modelos, downloads de ativos, renders, revisão visua
 
 ## Plano de execução — 10 atividades
 
-**Visão conjunta:** [30 atividades e sequência de execução](tarefas/plano-30-atividades.md).
-
 Este bloco transforma as lacunas de componentes e contratos em entregas futuras. **P0**: pré-requisito do piloto; **P1**: base de leitura/explicação; **P2**: conforme pauta e necessidade concreta. Os pré-requisitos de legenda e revisão estão nas atividades AE. **S/M/L** indicam esforço relativo, sem datas. A numeração identifica o trabalho; as dependências definem a ordem.
 
-Os planos [AE — audiência/operação](RELATORIO-GAPS-AUDIENCIA-ENGAJAMENTO.md) e [MC — método/cenas](RELATORIO-SKILLS-GITHUB-MOTION-CENAS.md) cuidam, respectivamente, de alinhamento, gates/métricas e de direção/receitas/revisão. Aqui fica a fabricação ou integração concreta de componentes. Nenhuma atividade implementa ou aprova agora suas decisões abertas.
+Os planos AE (audiência/operação) e MC (método/cenas), que não estão mais neste repositório, cuidavam, respectivamente, de alinhamento, gates/métricas e de direção/receitas/revisão. Aqui fica a fabricação ou integração concreta de componentes. Nenhuma atividade implementa ou aprova agora suas decisões abertas.
 
 **Alcance comum:** componente novo no kit exige API, export, demo neutra, testes úteis, catálogo, build e `dist`; integração no auto-play exige ADR quando muda contrato, schema Python/espelho TS, claims/check, timing/adapter, `ShotView`/`Editorial`/`Scene` e área segura conforme afetados. Pin/lock só mudam quando a API necessária não está no pacote instalado; arquivo novo do template entra no hash de cache. Preservar planos existentes e só atualizar instruções editoriais depois da implementação. Esses passos são etapas da mesma atividade, com entregas separadas em cada repositório.
 
