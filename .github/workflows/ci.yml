@@ -28,8 +28,9 @@ jobs:
           go-version: stable
           cache: false
       # `go install` confere o módulo no checksum database do Go: a versão fixada não vem adulterada.
+      # O go.mod do gitleaks ainda declara o caminho antigo (zricethezav); com o novo o Go recusa.
       - name: Instalar o gitleaks
-        run: go install github.com/gitleaks/gitleaks/v8@v8.30.1
+        run: go install github.com/zricethezav/gitleaks/v8@v8.30.1
       - name: Varrer o histórico
         run: $(go env GOPATH)/bin/gitleaks git --config .gitleaks.toml --redact --verbose --no-banner .
       - name: Varrer a árvore de trabalho
@@ -43,6 +44,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # Os testes de render, voz e mídia chamam ffmpeg e ffprobe de verdade; o runner não os traz.
+      - name: Instalar o ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12"
