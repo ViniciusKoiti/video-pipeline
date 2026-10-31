@@ -42,7 +42,9 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
    (gravação de tela, troca de estilos) com `scene: null`. Entrega da ADR 022: `hook` na abertura, `turn` na
    virada, `invite` no fecho. A voz clonada fala a ~2,5 palavras por segundo: uma linha de 8 palavras ocupa
    3 s, e a cena precisa ter esse tempo depois de pronta para ler. Passe a `humanizer-narracao` antes de gravar.
-   Pronto quando nenhuma linha afirma o que o repositório não mostra.
+   Pronto quando nenhuma linha afirma o que o repositório não mostra. Com medição própria (ADR 034), escreva o
+   `medicao.json` (cada número dito ou mostrado, o trecho literal do `resultado.txt`, os medidos e a tolerância
+   do arredondamento; nome e contagem levam só a `nota`) e rode `vp medicao <id>` até sair limpo: o gate 4 exige.
 3. **O JSON do motion-video.** `safeArea: "shorts"`, `footer` com a origem dos dados, `host` com a pele de
    sprites do dono (dado pessoal: a pasta fica no `.gitignore` do repositório onde o short mora) e `speaking`
    só nas cenas que a narração cobre. Pronto quando `inspect` sai válido e cada aviso `HOST_WINDOW_TIGHT` tem

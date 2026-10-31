@@ -33,6 +33,7 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
+from app.pipeline.medicao import medicao_problems
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
 from app.pipeline.numbers import (
@@ -178,6 +179,7 @@ COMMANDS: tuple[Command, ...] = (
         add_arguments=_checagem_arguments,
     ),
     Command("traducao", "confere a tradução contra o original: cenas, pausas e números (ADR 034)", 0),
+    Command("medicao", "confere os números do Short contra o arquivo de resultado da medição (ADR 034)", 0),
     Command(
         "numeros", "números do roteiro e comparação com o nicho -> bloco do outline.md (#170)", 170,
         add_arguments=_numeros_arguments,
@@ -289,6 +291,16 @@ def _git_user() -> str:
     if not result.stdout.strip():
         raise SystemExit("vp: informe --reviewer (git config user.name está vazio)")
     return result.stdout.strip()
+
+
+def _medicao(args: argparse.Namespace, context: Context) -> int:
+    problems, warnings = medicao_problems(context.store, args.episode_id)
+    for problem in problems:
+        print(f"- {problem}")
+    for warning in warnings:
+        print(f"- aviso: {warning}")
+    print("resultado: " + (f"{len(problems)} problema(s)" if problems else "sem problemas"))
+    return 1 if problems else 0
 
 
 def _traducao(args: argparse.Namespace, context: Context) -> int:
@@ -436,6 +448,7 @@ HANDLERS: dict[str, Handler] = {
     "status": _status,
     "checagem": _checagem,
     "traducao": _traducao,
+    "medicao": _medicao,
     "numeros": _numeros,
     "postiz": postiz.run,
     "usage": usage.run,

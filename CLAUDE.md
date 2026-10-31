@@ -356,8 +356,9 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `status`, `numeros`, `traducao`, `postiz` e `usage`. `vp traducao <id>` confere uma pasta de tradução contra o
-original (ADR 034). `vp usage` registra consumo e reservas em SQLite local
+`reject`, `status`, `numeros`, `traducao`, `medicao`, `postiz` e `usage`. `vp traducao <id>` confere uma pasta de tradução
+contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
+medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
 do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o

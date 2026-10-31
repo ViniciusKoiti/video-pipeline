@@ -6,7 +6,8 @@ cenas, as mesmas entregas e pausas e **os mesmos números**, na narração (por 
 Quem traduz é um agente que escreve só arquivo de dados (ADR 009); aqui só se valida.
 
 Limite conhecido: o "um/uma" e o "one" não entram na conta (são artigo ou pronome com a mesma frequência que
-numeral); números de 2 em diante e as escalas (`mil`, `thousand`, `milhão`, `million`) entram.
+numeral); números de 2 em diante, os dígitos e as escalas (`mil`, `thousand`, `milhão`, `million`) entram, e
+dígitos seguidos de escala formam um número só ("100 mil" é 100000; "1 milhão", 1000000).
 """
 
 from __future__ import annotations
@@ -85,8 +86,12 @@ def spoken_numbers(text: str, language: str) -> list[float | int]:
     total = current = 0
     active = False
     for i, token in enumerate(tokens):
-        if token[0].isdigit():
-            found.append(_digits(token, lang))
+        if token[0].isdigit():  # dígitos entram na conta como uma palavra-número: "100 mil" é 100000
+            if active:
+                found.append(total + current)
+                total = current = 0
+            current = _digits(token, lang)
+            active = True
             continue
         is_scale = token in scales
         is_value = token in values or (lang == "en" and token == _EN_HUNDRED)

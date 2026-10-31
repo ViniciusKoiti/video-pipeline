@@ -59,6 +59,11 @@ a duração do vídeo.
 - Implementado: `app/pipeline/translation.py`, o passo `translation` em `app/pipeline/gates.py`, `vp traducao` e os
   testes em `tests/test_translation.py`. O `vp status` lista o gate só em pasta com `traducao.json`.
 - Piloto: `short-lista-ligada-pt` e `short-lista-ligada-en`.
-- Pendente: skill e agente `tradutor`, os adapters de prova, e a trilha sonora nesses Shorts: o dono acha válida, mas fora do
+- **Adapter "medição própria" implementado em 2026-10-31** (`app/pipeline/medicao.py`, `vp medicao <id>`): o
+  `medicao.json` do Short declara cada número dito ou mostrado com o trecho literal do arquivo de resultado, os
+  valores medidos e a tolerância do arredondamento; o código confere o trecho, os medidos, a tolerância e a
+  cobertura (nenhum número sem entrada), e o gate 4 (`--step preview`) só aprova com a conferência limpa. Fora
+  dela: o `footer` e o `kicker`. Piloto: `renders/short-lista-ligada/medicao.json`.
+- Pendente: skill e agente `tradutor`, o adapter de fontes como adapter (hoje é o `vp check`), e a trilha sonora nesses Shorts: o dono acha válida, mas fora do
   primeiro (2026-10-30), para a hipótese medir só a demonstração. A ADR 030 cobre só o `explainer` com `music.json`;
   a `shorts-tec` deixa a trilha fora da v1 e o `juntar` ainda não faz ducking.

@@ -37,6 +37,9 @@ SOURCE, TARGET = "lista-pt", "lista-en"
         ("26,9 ms e 10.000 nós", "pt-BR", [26.9, 10000]),
         ("26.9 ms and 10,000 nodes", "en", [26.9, 10000]),
         ("Lista 1: <short pause> 2 listas", "pt-BR", [1, 2]),
+        ("1 mil nós, 100 mil nós, 1 milhão de nós", "pt-BR", [1000, 100000, 1000000]),
+        ("10 milhões de nós", "pt-BR", [10000000]),
+        ("1 thousand, 100 thousand, 1.5 million nodes; 3 2", "en", [1000, 100000, 1500000, 3, 2]),
     ],
 )
 def test_spoken_numbers(text: str, language: str, expected: list[float | int]) -> None:
