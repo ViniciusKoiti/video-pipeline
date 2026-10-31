@@ -13,7 +13,9 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
   no `assets/<id>.json`, e o schema recusa sem licença, crédito, `sha256` ou conferência (ADR 007);
 - gate 4 (`preview`): o render mais acabado (`renders/final.mp4`, senão `renders/preview.mp4`), o
   `episode.json`, a legenda e o texto do post, quando existem. Aprovar a prévia e depois renderizar o final
-  (voz final, legenda refeita) faz o gate mudar: a versão final é revista de novo (#120).
+  (voz final, legenda refeita) faz o gate mudar: a versão final é revista de novo (#120);
+- gate de tradução (`translation`, ADR 034), só em pasta com `traducao.json`: a narração traduzida, o vínculo
+  e o original de que ela vem. Aprovar exige que a conferência em código (`vp traducao`) não ache problema.
 
 `missing_pieces` lista o que falta para o vídeo estar pronto e não é gate: hoje, a legenda do vertical.
 """
@@ -42,6 +44,7 @@ from app.pipeline.schemas import (
     Step,
 )
 from app.pipeline.state import Clock, compute_input_hash
+from app.pipeline.translation import LINK_FILE, translation_hash, translation_problems
 
 GATE_FILES: dict[Step, tuple[str, ...]] = {
     Step.SOURCES: ("sources.json", "facts.json"),
@@ -49,7 +52,7 @@ GATE_FILES: dict[Step, tuple[str, ...]] = {
 }
 RENDERS = ("renders/final.mp4", "renders/preview.mp4")  # o gate 4 revê o mais acabado
 PREVIEW_FILES = ("episode.json", "captions.srt", "legenda-post.txt")  # entram no gate 4 quando existem
-GATED_STEPS = (*GATE_FILES, Step.ASSETS, Step.PREVIEW)
+GATED_STEPS = (*GATE_FILES, Step.ASSETS, Step.TRANSLATION, Step.PREVIEW)
 AUDIO_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")  # faixas da trilha, aprovadas no gate 3 (ADR 030)
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", *AUDIO_SUFFIXES)
 CHECK_FILE = "checagem.json"
@@ -85,6 +88,13 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
         raise GateError("--asset só vale para a etapa assets")
     if step is Step.PREVIEW:
         return compute_input_hash(_preview_paths(store, episode_id), {}, base=store.path(episode_id, ""))
+    if step is Step.TRANSLATION:
+        if not store.path(episode_id, LINK_FILE).is_file():
+            raise GateError(f"{episode_id}: sem {LINK_FILE}, não é uma tradução (ADR 034)")
+        try:
+            return translation_hash(store, episode_id)
+        except (ManifestNotFound, ValueError) as error:
+            raise GateError(f"{episode_id}: {LINK_FILE} inválido ou sem o original ({error})") from None
     names = GATE_FILES.get(step)
     if names is None:
         raise GateError(f"a etapa {step.value} ainda não tem gate por comando")
@@ -138,6 +148,13 @@ def record_decision(
                     'atuais (rode o agente verificador e `vp checagem`), ou --sem-checagem "motivo"'
                 )
             notes = "; ".join(filter(None, [notes, f"sem checagem: {skip_check.strip()}"]))
+        if step is Step.TRANSLATION and decision is Decision.APPROVED:
+            problems = translation_problems(store, episode_id)
+            if problems:
+                raise GateError(
+                    f"{episode_id}: a conferência da tradução achou {len(problems)} problema(s), "
+                    f"rode `vp traducao {episode_id}`: " + "; ".join(problems)
+                )
         approved_asset = None
         if asset_id is not None and decision is Decision.APPROVED:
             approved_asset = _approved(store, review, episode_id, asset_id, input_hash)
@@ -221,6 +238,8 @@ def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> li
     on_disk = {p.stem for p in store.path(episode_id, "assets").glob("*.json")}
     decided = {e.asset_id for e in log.entries if e.step is Step.ASSETS and e.asset_id}
     targets += [(Step.ASSETS, asset_id) for asset_id in sorted(on_disk | decided)]
+    if store.path(episode_id, LINK_FILE).is_file():
+        targets.append((Step.TRANSLATION, None))
     targets.append((Step.PREVIEW, None))
     return [
         GateStatus(

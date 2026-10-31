@@ -1,0 +1,91 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Measured 2026-10-30 · gcc 15.2 -O2 · Ryzen 7 5700U · median of 15 runs",
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 3,
+      "kicker": "linked list",
+      "text": "Same list. Same code. Only the memory order.",
+      "highlight": "memory order"
+    },
+    {
+      "id": "codigo",
+      "type": "grid",
+      "durationSec": 9,
+      "layout": "hero-top",
+      "cells": [
+        {
+          "kind": "number",
+          "value": 10000000,
+          "label": "nodes in each list"
+        },
+        {
+          "kind": "text",
+          "text": "List 1: nodes chained in memory order"
+        },
+        {
+          "kind": "text",
+          "text": "List 2: the same nodes, shuffled"
+        }
+      ]
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 9,
+      "mode": "side",
+      "showRatio": true,
+      "left": {
+        "label": "sequential (ms)",
+        "value": 26.9
+      },
+      "right": {
+        "label": "shuffled (ms)",
+        "value": 2420.8
+      }
+    },
+    {
+      "id": "tamanho",
+      "type": "categories",
+      "durationSec": 7,
+      "title": "Shuffled ÷ sequential",
+      "unit": "×",
+      "decimals": 1,
+      "highlight": "10 million nodes",
+      "items": [
+        {
+          "label": "1 thousand nodes",
+          "value": 1.0
+        },
+        {
+          "label": "100 thousand nodes",
+          "value": 13.6
+        },
+        {
+          "label": "1 million nodes",
+          "value": 46.9
+        },
+        {
+          "label": "10 million nodes",
+          "value": 90.1
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 5,
+      "variant": "follow",
+      "text": "low level",
+      "sub": "code in the description"
+    }
+  ],
+  "assets": {}
+}

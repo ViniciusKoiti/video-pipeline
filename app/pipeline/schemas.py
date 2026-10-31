@@ -1160,6 +1160,7 @@ class Step(StrEnum):
     ASSETS = "assets"
     VOICE = "voice"
     SUBS = "subs"
+    TRANSLATION = "translation"  # tradução em pasta própria, derivada de outro episódio (ADR 034)
     PREVIEW = "preview"
     EXPORT = "export"
 

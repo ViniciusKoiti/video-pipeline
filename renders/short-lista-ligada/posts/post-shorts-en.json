@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "2026-10-31T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "I measured this on my own machine: gcc 15.2, -O2, Ryzen 7 5700U, median of 15 runs. With 10 million nodes, the shuffled list took 81 to 90 times longer than the sequential one. With 100 thousand nodes the ratio changes from run to run, but it is above ten times. With a thousand nodes, nothing changes.\n\nThe numbers are from this machine; the video doesn't explain why, it only shows the measurement.\n\nCode: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/lista-ligada\n\nThe voice is mine, cloned with AI.\n\n#Shorts #Programming #C #LinkedList #Performance",
+          "image": [
+            {
+              "id": "ba502fe4-64f8-4fda-8662-6c299ad9c14e",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/31/e9ee4365f32903ac6c68c7f0d985f5ee.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Same linked list, 90x slower",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "linked list",
+            "label": "linked list"
+          },
+          {
+            "value": "C",
+            "label": "C"
+          },
+          {
+            "value": "performance",
+            "label": "performance"
+          },
+          {
+            "value": "memory",
+            "label": "memory"
+          }
+        ]
+      }
+    }
+  ]
+}

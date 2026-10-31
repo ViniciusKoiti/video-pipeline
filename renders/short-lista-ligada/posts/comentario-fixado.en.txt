@@ -1,0 +1,5 @@
+I measured this on my own machine: gcc 15.2, -O2, Ryzen 7 5700U, median of 15 runs. With 10 million nodes, the shuffled list took 81 to 90 times longer than the sequential one. With 100 thousand nodes the ratio changes from run to run, but it is above ten times.
+
+Why do you think this happens? Tell me below.
+
+Code: [LINK]

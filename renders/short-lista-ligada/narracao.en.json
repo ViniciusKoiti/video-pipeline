@@ -1,0 +1,10 @@
+{
+  "language": "en",
+  "lines": [
+    { "scene": "gancho", "text": "Same list. Same code. I only changed where the nodes sit in memory.", "delivery": "hook" },
+    { "scene": "codigo", "text": "Two linked lists, with the same ten million nodes. One chained in memory order, the other shuffled. The code just adds up the values." },
+    { "scene": "resultado", "text": "On the sequential one, the sum takes about thirty milliseconds. On the shuffled one, over two seconds. Eighty to ninety times slower.", "delivery": "turn" },
+    { "scene": "tamanho", "text": "With a thousand nodes, nothing changes. With a hundred thousand, it's already ten times or more." },
+    { "scene": "fecho", "text": "Same sum, same structure. Want to know why? Comment below. Code in the description.", "delivery": "invite" }
+  ]
+}
