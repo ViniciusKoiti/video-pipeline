@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Ativar uma vez por clone: git config core.hooksPath .githooks
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+python3 scripts/check_tamanho.py
+staged=$(git diff --cached --name-only --diff-filter=AM -- '*.py')
+if [ -n "$staged" ]; then
+  # o CI roda `ruff check .` nos arquivos versionados; aqui, nos que entram neste commit
+  echo "$staged" | xargs uv run --no-sync ruff check
+fi

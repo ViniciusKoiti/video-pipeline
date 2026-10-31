@@ -34,6 +34,8 @@ UNDO = (
 FIXED_RISKS = (
     "O Postiz não garante idempotência: se o envio falhar, consultar a fila antes de repetir.",
     "A API não marca conteúdo alterado ou sintético: com voz ou imagem gerada, marcar à mão na rede.",
+    "Depois de publicar: conferir no Studio (ERROR no Postiz não prova falha), fixar o primeiro comentário "
+    "e marcar o conteúdo alterado, tudo à mão.",
 )
 Clock = Callable[[], datetime]
 
