@@ -83,3 +83,12 @@ A autorização para publicar continua sendo do dono ([ADR 025](decisions/025-ag
 Contratos oficiais: [API pública](https://docs.postiz.com/public-api/introduction),
 [criar posts](https://docs.postiz.com/public-api/posts/create),
 [Instagram Standalone](https://docs.postiz.com/public-api/providers/instagram-standalone).
+
+## Depois de publicar
+
+O Postiz não faz estes passos; o `pacote` os lembra entre os riscos:
+
+1. Conferir no YouTube Studio se o vídeo saiu (`ERROR` no Postiz não prova que falhou; não reenvie antes).
+2. Fixar o primeiro comentário, à mão.
+3. Marcar "conteúdo alterado ou sintético" quando houver voz clonada ou imagem gerada.
+4. Registrar a URL e, aos 7 e 28 dias, as leituras no `metrics.json` do episódio.

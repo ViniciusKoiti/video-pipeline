@@ -422,6 +422,8 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 - Arquivos em `data/episodes/*/` com `review_status: approved` ficam como estão; se um ajuste exigir mexer neles,
   parar e perguntar.
 - Em dúvida sobre licença de um ativo ou termos de um provedor, parar e perguntar.
+- Hook de pré-commit (uma vez por clone: `git config core.hooksPath .githooks`): recusa arquivo acima de 50 MB
+  (`scripts/check_tamanho.py`) e roda o `ruff` nos `.py` do commit, como o CI.
 - Antes de encerrar qualquer tarefa, rodar `uv run pytest` e `uv run ruff check .`; se o template mudou, também
   `npm test` em `video/`. Um arquivo ou um teste: `uv run pytest tests/test_shots.py -k nome`. Testes novos para
   toda etapa nova, com os fakes das portas de `tests/fakes/`. Testes com modelos locais pesados levam
