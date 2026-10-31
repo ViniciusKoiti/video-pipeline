@@ -254,7 +254,9 @@ def construir(
                 for chave in ("voce", "eu", "fonte"):
                     total = sum(float(r[chave]) for r in rs)
                     curvas[f"{chave}_por_10min"][decimo].append(10 * total / minutos)
-                curvas["cortes_min"][decimo].append(statistics.mean(float(r["cortes_min"]) for r in rs))
+                cortes = [float(r["cortes_min"]) for r in rs if r["cortes_min"] != ""]  # sem vídeo, sem cortes
+                if cortes:
+                    curvas["cortes_min"][decimo].append(statistics.mean(cortes))
                 curvas["palavras_min"][decimo].append(statistics.mean(float(r["palavras_min"]) for r in rs))
 
         # capítulos e transcrição

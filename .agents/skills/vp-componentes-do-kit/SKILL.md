@@ -8,7 +8,7 @@ description: >
 
 # Componentes do kit antes de escrever
 
-Leia [AGENT.MD](../../../AGENT.MD) e o método em
+Leia [CLAUDE.md](../../../CLAUDE.md) e o método em
 [componentes-do-kit](../../../.claude/skills/componentes-do-kit/SKILL.md). O template
 (`video/src/ShotView.tsx`, `video/src/Editorial.tsx`) usa `@viniciusk/motion-kit`.
 

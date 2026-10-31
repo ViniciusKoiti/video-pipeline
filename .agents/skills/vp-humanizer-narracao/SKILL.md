@@ -8,7 +8,7 @@ description: >
 
 # Narração que soa falada
 
-Leia [AGENT.MD](../../../AGENT.MD) e o método em
+Leia [CLAUDE.md](../../../CLAUDE.md) e o método em
 [humanizer-narracao](../../../.claude/skills/humanizer-narracao/SKILL.md) (adaptação MIT de
 blader/humanizer; a licença está na pasta dessa skill). Só edite o texto de `narration` em
 `data/episodes/<id>/scenes.json`.

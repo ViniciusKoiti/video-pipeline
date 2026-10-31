@@ -8,7 +8,7 @@ description: >
 
 # Short de tecnologia sobre o que o dono construiu
 
-Leia [AGENT.MD](../../../AGENT.MD) e o método em [shorts-tec](../../../.claude/skills/shorts-tec/SKILL.md).
+Leia [CLAUDE.md](../../../CLAUDE.md) e o método em [shorts-tec](../../../.claude/skills/shorts-tec/SKILL.md).
 Episódio do Cena e Conceito segue [`$vp-roteiro`](../vp-roteiro/SKILL.md); Reel de pauta,
 [`$vp-pauta`](../vp-pauta/SKILL.md). A frase do Short é "eu construí", nunca "eu achei":
 conteúdo original ([CLAUDE.md](../../../CLAUDE.md) §12).

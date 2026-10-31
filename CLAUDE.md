@@ -121,7 +121,7 @@ associado da Amazon (pública) · `app/render/` motor por formato · `app/media/
 (pausas, loudness, ffprobe, pronúncia, janela do host) · `app/commands/` subcomandos `vp` com verbos próprios (hoje
 `postiz`) · `app/storage/` leitura e escrita dos JSON do episódio · `video/` template Remotion do `explainer`
 (ADR 008; o adapter chama `render-scenes.mjs`; testes em `video/tests`) · `.claude/agents/` e `.claude/skills/`
-etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (guia em `AGENT.MD`, apontado por `AGENTS.md`;
+etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (apontado por `AGENTS.md`;
 `analise-de-formato` e `validacao-de-nicho` moram aqui, e `.claude/skills/` só as aponta por symlink) ·
 `prompts/local/` prompts para modelo local · `config/providers.toml` implementação por função ·
 `scripts/provisorio/` scripts até

@@ -6,7 +6,7 @@ verificáveis e imagens com licença registrada. O piloto documental aborda expe
 e autorização humanas.
 
 - Contexto e regras: [CLAUDE.md](CLAUDE.md)
-- Agentes Codex/OpenAI e skills do workspace: [AGENT.MD](AGENT.MD)
+- Agentes Codex/OpenAI e skills do workspace: [CLAUDE.md](CLAUDE.md)
 - Exploração estrutural com codebase-memory: [guia e configuração local](docs/opencode-codebase-memory-mcp.md)
 - Análise da pipeline e do processo editorial: [docs/analise-pipeline-agentes.md](docs/analise-pipeline-agentes.md)
 - Prompts locais e limites da validação: [docs/analise-prompts-locais.md](docs/analise-prompts-locais.md)
@@ -100,7 +100,7 @@ Configuração, formato do JSON e limites: [docs/postiz.md](docs/postiz.md).
 ## Uso com agentes Codex/OpenAI
 
 As cinco skills locais estão em [.agents/skills/](.agents/skills/). `AGENTS.md` carrega as instruções de
-[AGENT.MD](AGENT.MD). Use as invocações abaixo como mensagens ao agente dentro deste workspace:
+[CLAUDE.md](CLAUDE.md). Use as invocações abaixo como mensagens ao agente dentro deste workspace:
 
 ```text
 $vp-pauta Prepare a pauta do episódio <id> com o radar disponível. Quero explicar <pergunta> para <público>.
@@ -112,7 +112,7 @@ $vp-engajamento Analise o episódio <id> com as métricas fornecidas e proponha 
 
 Sequência: pauta decidida pelo dono → fichamento → gate 1 → roteiro → checagem independente → gate 2 → produção.
 Um episódio já aprovado recebe proposta de alteração separada. As skills não aprovam gates nem publicam vídeos.
-Sem métricas próprias, a análise de engajamento produz hipóteses. Detalhes e limites estão em `AGENT.MD`.
+Sem métricas próprias, a análise de engajamento produz hipóteses. Detalhes e limites estão em `CLAUDE.md`.
 
 ## Licença
 

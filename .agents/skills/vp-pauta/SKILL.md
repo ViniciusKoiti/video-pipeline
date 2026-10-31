@@ -8,7 +8,7 @@ description: >
 
 # Pauta antes da pesquisa
 
-Leia [AGENT.MD](../../../AGENT.MD) e o pedido do dono. Identifique o episódio em
+Leia [CLAUDE.md](../../../CLAUDE.md) e o pedido do dono. Identifique o episódio em
 `data/episodes/<id>/`. Só escreva `pauta.md`; conteúdo aprovado recebe proposta separada.
 Não edite manifestos, código, gates ou outros episódios.
 

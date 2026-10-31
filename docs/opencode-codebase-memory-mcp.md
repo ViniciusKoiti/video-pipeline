@@ -11,12 +11,12 @@ verifica fatos do roteiro ou aprova gates.
 - Raiz indexada: `/home/viniciusk/projetos/auto-play`.
 - MCP já registrado globalmente no Codex e no Claude; não foi reinstalado.
 - Skill global `codebase-memory` disponível; [AGENTS.md](../AGENTS.md) orienta seu uso.
-- [AGENT.MD](../AGENT.MD) explica os limites do grafo no trabalho editorial.
+- [CLAUDE.md](../CLAUDE.md) explica os limites do grafo no trabalho editorial.
 - Índice criado em modo `full`, usando o cache padrão fora do repositório.
 - [Exclusões locais](../.cbmignore) versionáveis e diretório de export opcional
   `.codebase-memory/` ignorado pelo Git.
 - [Mapeamento local de extensão](../.codebase-memory.json): `.MD` como Markdown,
-  necessário para incluir `AGENT.MD` na versão instalada.
+  necessário para incluir `CLAUDE.md` na versão instalada.
 
 No início da configuração, as ferramentas MCP não estavam expostas e a CLI foi
 usada como alternativa. Na retomada, o servidor já estava disponível nesta sessão:
@@ -129,7 +129,7 @@ de código e instruções incluídos.
 Os caminhos Python, TSX, MJS e as skills consultados tiveram cobertura com
 `metadata_match`, sem problema registrado. As lacunas dos escopos de código
 conferidos foram caches Python e arquivos gráficos/fontes excluídos intencionalmente.
-Após mapear `.MD`, `AGENT.MD` também passou a ter `metadata_match`.
+Após mapear `.MD`, `CLAUDE.md` também passou a ter `metadata_match`.
 Isso confirma a configuração consultada, sem provar resolução de toda chamada dinâmica.
 
 O parser 0.11.0 reportou falha em `docs/pipeline-flowchart.mermaid` e

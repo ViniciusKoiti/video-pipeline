@@ -8,7 +8,7 @@ description: >
 
 # Fichas úteis à pergunta
 
-Leia [AGENT.MD](../../../AGENT.MD), a pauta e
+Leia [CLAUDE.md](../../../CLAUDE.md), a pauta e
 [fichamento](../../../.claude/skills/fichamento/SKILL.md). Use `FactsManifest` em
 [schemas.py](../../../app/pipeline/schemas.py). Só escreva `data/episodes/<id>/facts.json`.
 Consulte `.venv/bin/vp status <id>`: a aprovação de fontes/fichas está no gate `sources`,

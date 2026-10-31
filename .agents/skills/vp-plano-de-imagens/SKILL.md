@@ -8,7 +8,7 @@ description: >
 
 # Plano de imagens antes de qualquer download
 
-Leia [AGENT.MD](../../../AGENT.MD) e o método em
+Leia [CLAUDE.md](../../../CLAUDE.md) e o método em
 [plano-de-imagens](../../../.claude/skills/plano-de-imagens/SKILL.md). Escreva só
 `plano-imagens.md`, `decisoes-imagens.md` e, depois da validação do dono, os
 `assets/<id>.json` e o `asset_id` dos planos. Não mude fala, âncora nem claim.
