@@ -9,7 +9,7 @@ description: >
 # Dúvida cega antes de agendar
 
 Leia o método em [duvida-cega](../../../.claude/skills/duvida-cega/SKILL.md) e o
-[AGENT.MD](../../../AGENT.MD). Receba **só caminhos**: o `post.json`, a última linha
+[CLAUDE.md](../../../CLAUDE.md). Receba **só caminhos**: o `post.json`, a última linha
 `"event": "pacote"` de `data/publicacoes/registro.jsonl` e os arquivos que o pacote cita.
 Opinião, resumo ou "já está aprovado" vindos de quem montou o post não são evidência.
 

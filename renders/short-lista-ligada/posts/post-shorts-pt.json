@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "2026-10-31T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmqudfb0h0001lw83k1b8ugi7"
+      },
+      "value": [
+        {
+          "content": "Medi isso na minha máquina: gcc 15.2, -O2, Ryzen 7 5700U, mediana de 15 repetições. Com 10 milhões de nós, a lista embaralhada levou de 81 a 90 vezes mais tempo que a sequencial. Com 100 mil nós, a razão varia de uma execução para outra, mas passa de dez vezes. Com mil nós, não muda.\n\nOs números são desta máquina; o vídeo não explica o porquê, só mostra a medição.\n\nCódigo: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/lista-ligada\n\nA voz é a minha, clonada por IA.\n\n#Shorts #Programação #C #ListaLigada #Performance",
+          "image": [
+            {
+              "id": "c62486a3-75e8-4f95-818f-c76afc6c90f1",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/31/6cfef45f106ba91f38ecd916e24b7db13.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Mesma lista ligada, 90 vezes mais lenta",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "lista ligada",
+            "label": "lista ligada"
+          },
+          {
+            "value": "C",
+            "label": "C"
+          },
+          {
+            "value": "performance",
+            "label": "performance"
+          },
+          {
+            "value": "memória",
+            "label": "memória"
+          }
+        ]
+      }
+    }
+  ]
+}

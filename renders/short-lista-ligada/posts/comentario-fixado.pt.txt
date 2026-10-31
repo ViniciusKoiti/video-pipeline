@@ -1,0 +1,5 @@
+Medi isso na minha máquina: gcc 15.2, -O2, Ryzen 7 5700U, mediana de 15 repetições. Com 10 milhões de nós, a lista embaralhada levou de 81 a 90 vezes mais tempo que a sequencial. Com 100 mil nós, a razão varia de uma execução para outra, mas passa de dez vezes.
+
+Por que você acha que isso acontece? Comenta aí.
+
+Código: [LINK]

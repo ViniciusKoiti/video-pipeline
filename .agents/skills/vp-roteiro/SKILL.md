@@ -8,7 +8,7 @@ description: >
 
 # Roteiro que entrega a promessa
 
-Leia [AGENT.MD](../../../AGENT.MD), `pauta.md`, `facts.json`, `sources.json` e a decisão
+Leia [CLAUDE.md](../../../CLAUDE.md), `pauta.md`, `facts.json`, `sources.json` e a decisão
 do gate 1 (`.venv/bin/vp status <id>`). Só escreva `outline.md` e `scenes.json` em
 `data/episodes/<id>/`. Verifique gate `script` e status das cenas; não sobrescreva
 conteúdo aprovado, entregue proposta separada. Sem fichas aprovadas, exponha a pendência

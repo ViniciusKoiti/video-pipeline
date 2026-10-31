@@ -55,6 +55,7 @@ from app.pipeline.schemas import (
     Status,
     Step,
 )
+from app.pipeline.translation import translation_problems
 from app.render.remotion import region_codes
 from app.settings import CONFIG_FILE, speech_chars_per_second
 
@@ -106,8 +107,8 @@ def _decision_arguments(parser: argparse.ArgumentParser) -> None:
         "--step",
         required=True,
         choices=[s.value for s in GATED_STEPS],
-        help="gate: sources (fontes e fichas), script (roteiro), assets (um ativo, com --asset) ou preview "
-        "(o render mais acabado, com legenda e texto do post)",
+        help="gate: sources (fontes e fichas), script (roteiro), assets (um ativo, com --asset), translation "
+        "(pasta de tradução, ADR 034) ou preview (o render mais acabado, com legenda e texto do post)",
     )
     parser.add_argument("--asset", help="id do ativo, na etapa assets")
     parser.add_argument("--reviewer", help="quem decide (padrão: git config user.name)")
@@ -175,6 +176,7 @@ COMMANDS: tuple[Command, ...] = (
         "checagem", "grava o parecer do verificador sobre fichas e roteiro -> checagem.json (gate 2)", 48,
         add_arguments=_checagem_arguments,
     ),
+    Command("traducao", "confere a tradução contra o original: cenas, pausas e números (ADR 034)", 0),
     Command(
         "numeros", "números do roteiro e comparação com o nicho -> bloco do outline.md (#170)", 170,
         add_arguments=_numeros_arguments,
@@ -271,6 +273,14 @@ def _git_user() -> str:
     if not result.stdout.strip():
         raise SystemExit("vp: informe --reviewer (git config user.name está vazio)")
     return result.stdout.strip()
+
+
+def _traducao(args: argparse.Namespace, context: Context) -> int:
+    problems = translation_problems(context.store, args.episode_id)
+    for problem in problems:
+        print(f"- {problem}")
+    print("resultado: " + (f"{len(problems)} problema(s)" if problems else "sem problemas"))
+    return 1 if problems else 0
 
 
 def _checagem(args: argparse.Namespace, context: Context) -> int:
@@ -409,6 +419,7 @@ HANDLERS: dict[str, Handler] = {
     "reject": _reject,
     "status": _status,
     "checagem": _checagem,
+    "traducao": _traducao,
     "numeros": _numeros,
     "postiz": postiz.run,
     "usage": usage.run,

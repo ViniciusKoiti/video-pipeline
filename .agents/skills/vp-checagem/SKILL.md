@@ -8,7 +8,7 @@ description: >
 
 # Verificação independente e só leitura
 
-Leia [AGENT.MD](../../../AGENT.MD) e
+Leia [CLAUDE.md](../../../CLAUDE.md) e
 [checagem](../../../.claude/skills/checagem/SKILL.md). Receba pauta, objetivo, outline,
 fichas, cenas, fontes e trechos. Não aceite a justificativa do autor como evidência.
 Prefira contexto separado do agente que escreveu. Não edite episódio, fontes, roteiro,

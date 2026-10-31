@@ -1,0 +1,10 @@
+# 2026-10-30T22:14:08-03:00 | gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0 -O2 | AMD Ryzen 7 5700U with Radeon Graphics | cpu_probe 0.047 s | mediana de 15 repeticoes
+n=1000  sequencial=0.003 ms  embaralhada=0.003 ms  razao=1.0x  soma_igual=sim
+n=100000  sequencial=0.119 ms  embaralhada=1.621 ms  razao=13.6x  soma_igual=sim
+n=1000000  sequencial=3.070 ms  embaralhada=143.878 ms  razao=46.9x  soma_igual=sim
+n=10000000  sequencial=26.877 ms  embaralhada=2420.782 ms  razao=90.1x  soma_igual=sim
+# segunda rodada
+n=1000  sequencial=0.001 ms  embaralhada=0.001 ms  razao=1.0x  soma_igual=sim
+n=100000  sequencial=0.118 ms  embaralhada=1.251 ms  razao=10.6x  soma_igual=sim
+n=1000000  sequencial=2.618 ms  embaralhada=129.677 ms  razao=49.5x  soma_igual=sim
+n=10000000  sequencial=29.856 ms  embaralhada=2434.294 ms  razao=81.5x  soma_igual=sim

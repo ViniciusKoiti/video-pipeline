@@ -8,7 +8,7 @@ description: >
 
 # Miniatura pelo canal de referência
 
-Leia [AGENT.MD](../../../AGENT.MD) e o método em [miniatura](../../../.claude/skills/miniatura/SKILL.md).
+Leia [CLAUDE.md](../../../CLAUDE.md) e o método em [miniatura](../../../.claude/skills/miniatura/SKILL.md).
 Leia antes o `pauta.md` (título provisório, promessa e conceito da capa) e as fichas. A
 miniatura segue o **canal de referência do nicho**, não o episódio anterior. Se faltar o
 conceito ou a promessa tiver mudado, registre a lacuna e prepare a proposta antes de compor.

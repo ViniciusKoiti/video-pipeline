@@ -8,7 +8,7 @@ description: >
 
 # Trilha que segue a virada do roteiro
 
-Leia [AGENT.MD](../../../AGENT.MD) e o método em [trilha](../../../.claude/skills/trilha/SKILL.md).
+Leia [CLAUDE.md](../../../CLAUDE.md) e o método em [trilha](../../../.claude/skills/trilha/SKILL.md).
 Escreva só `data/episodes/<id>/music.json` (`MusicPlan` em
 [schemas.py](../../../app/pipeline/schemas.py), [ADR 030](../../../docs/decisions/030-trilha-por-diretor-musical.md)).
 As faixas vêm só de `data/music/catalog.json`; nenhuma faixa fora dele e nenhuma com voz

@@ -1,0 +1,91 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Medido em 30/10/2026 · gcc 15.2 -O2 · Ryzen 7 5700U · mediana de 15 repetições",
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 3,
+      "kicker": "lista ligada",
+      "text": "Mesma lista. Mesmo código. Só a ordem na memória.",
+      "highlight": "ordem na memória"
+    },
+    {
+      "id": "codigo",
+      "type": "grid",
+      "durationSec": 9,
+      "layout": "hero-top",
+      "cells": [
+        {
+          "kind": "number",
+          "value": 10000000,
+          "label": "nós em cada lista"
+        },
+        {
+          "kind": "text",
+          "text": "Lista 1: nós encadeados na ordem da memória"
+        },
+        {
+          "kind": "text",
+          "text": "Lista 2: os mesmos nós, embaralhados"
+        }
+      ]
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 9,
+      "mode": "side",
+      "showRatio": true,
+      "left": {
+        "label": "sequencial (ms)",
+        "value": 26.9
+      },
+      "right": {
+        "label": "embaralhada (ms)",
+        "value": 2420.8
+      }
+    },
+    {
+      "id": "tamanho",
+      "type": "categories",
+      "durationSec": 7,
+      "title": "Embaralhada ÷ sequencial",
+      "unit": "×",
+      "decimals": 1,
+      "highlight": "10 milhões de nós",
+      "items": [
+        {
+          "label": "1 mil nós",
+          "value": 1.0
+        },
+        {
+          "label": "100 mil nós",
+          "value": 13.6
+        },
+        {
+          "label": "1 milhão de nós",
+          "value": 46.9
+        },
+        {
+          "label": "10 milhões de nós",
+          "value": 90.1
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 5,
+      "variant": "follow",
+      "text": "baixo nível",
+      "sub": "código na descrição"
+    }
+  ],
+  "assets": {}
+}

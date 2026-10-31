@@ -1,0 +1,28 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "A mesma lista, o mesmo código. Só mudei onde os nós ficam na memória.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "codigo",
+      "text": "São duas listas ligadas com os mesmos dez milhões de nós, uma encadeada na ordem da memória e a outra embaralhada. O código só soma os valores."
+    },
+    {
+      "scene": "resultado",
+      "text": "Na sequencial, a soma leva uns trinta milissegundos, e na embaralhada, mais de dois segundos. Oitenta a noventa vezes mais lenta.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "tamanho",
+      "text": "Com mil nós, não muda nada. Com cem mil, já é dez vezes ou mais."
+    },
+    {
+      "scene": "fecho",
+      "text": "Mesma conta, mesma estrutura. Quer saber o porquê? Comenta aqui, que o código está na descrição.",
+      "delivery": "invite"
+    }
+  ]
+}

@@ -121,7 +121,7 @@ associado da Amazon (pública) · `app/render/` motor por formato · `app/media/
 (pausas, loudness, ffprobe, pronúncia, janela do host) · `app/commands/` subcomandos `vp` com verbos próprios (hoje
 `postiz`) · `app/storage/` leitura e escrita dos JSON do episódio · `video/` template Remotion do `explainer`
 (ADR 008; o adapter chama `render-scenes.mjs`; testes em `video/tests`) · `.claude/agents/` e `.claude/skills/`
-etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (guia em `AGENT.MD`, apontado por `AGENTS.md`;
+etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (apontado por `AGENTS.md`;
 `analise-de-formato` e `validacao-de-nicho` moram aqui, e `.claude/skills/` só as aponta por symlink) ·
 `prompts/local/` prompts para modelo local · `config/providers.toml` implementação por função ·
 `scripts/provisorio/` scripts até
@@ -189,6 +189,10 @@ Diagrama completo: `docs/pipeline-flowchart.mermaid`.
   (`final.mp4`, senão `preview.mp4`) com `episode.json`, legenda e texto do post; renderizar o final depois de
   aprovar a prévia pede nova decisão. `vp status` mostra se a decisão ainda vale e, nas pendências, a legenda que
   falta no vertical (ADR 009, emenda de gates por comando; #120).
+- **Tradução em pasta própria (ADR 034, proposta):** `data/episodes/<id>-<idioma>/` com `traducao.json` (aponta para o
+  episódio de origem). O gate `translation` (`vp approve <id>-en --step translation`) carimba a narração traduzida, o
+  vínculo e o original; só aprova se `vp traducao` não achar problema (mesmas cenas, entregas, pausas e números), e a
+  aprovação cai se o original muda.
 - **Modalidade do vídeo** (ADR 001): `app/pipeline/format_decision.py` recomenda o formato pelo tema
   (`vp new`) e pelas cenas (`vp scenes`), com pontuação e motivos; o humano confirma ou troca
   (`step: format`, `choice`). O formato confirmado escolhe o motor de render.
@@ -340,7 +344,8 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `status`, `numeros`, `postiz` e `usage`. `vp usage` registra consumo e reservas em SQLite local
+`reject`, `status`, `numeros`, `traducao`, `postiz` e `usage`. `vp traducao <id>` confere uma pasta de tradução contra o
+original (ADR 034). `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
 do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o

@@ -10,7 +10,7 @@ A miniatura segue o **canal de referência do nicho**, não o episódio anterior
 Filosofatos (`docs/pesquisa/miniaturas-filosofatos-2026-10-20.md`) e de duas trocas pedidas pelo dono.
 
 Leia primeiro `pauta.md`: o título provisório, a promessa e o conceito da capa são planejados antes do roteiro
-(AGENT.MD, fluxo editorial). Aqui se produz a arte a partir desse conceito e do conteúdo efetivamente sustentado
+(CLAUDE.md, fluxo editorial). Aqui se produz a arte a partir desse conceito e do conteúdo efetivamente sustentado
 pelas fichas. Se faltarem esses itens ou a promessa tiver mudado, registre a lacuna e prepare a proposta antes
 de compor; não registre uma escolha do dono que ele ainda não fez. Reutilize a análise existente do canal quando
 ela ainda servir ao recorte, declarando sua data. A coerência do conjunto é revista no gate 4.

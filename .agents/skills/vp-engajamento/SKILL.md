@@ -8,7 +8,7 @@ description: >
 
 # Aprendizado para a próxima pauta
 
-Leia [AGENT.MD](../../../AGENT.MD) e as seções "Direcionamento de temas", "O radar" e
+Leia [CLAUDE.md](../../../CLAUDE.md) e as seções "Direcionamento de temas", "O radar" e
 "Medição" da [análise da pipeline](../../../docs/analise-pipeline-agentes.md).
 Use pauta/objetivo, roteiro, radar e métricas que o dono forneceu. Só leitura nos artefatos
 do episódio; entregue a análise na resposta ou em relatório solicitado. Não chame APIs,
