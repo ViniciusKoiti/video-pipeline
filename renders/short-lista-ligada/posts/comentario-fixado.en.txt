@@ -2,4 +2,4 @@ I measured this on my own machine: gcc 15.2, -O2, Ryzen 7 5700U, median of 15 ru
 
 Why do you think this happens? Tell me below.
 
-Code: [LINK]
+Code: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/lista-ligada

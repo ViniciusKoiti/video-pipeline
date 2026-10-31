@@ -89,6 +89,13 @@ def _default_delivery() -> dict[str, DeliveryParams]:
     }
 
 
+class EarshotSettings(_Model):
+    """Conferência de áudio com o earshot (ADR 035, emenda): o Python do ambiente dele vem do .env."""
+
+    python: Path | None = None  # EARSHOT_PYTHON: o Python do ambiente em que o earshot está instalado
+    threads: int = Field(default=4, gt=0)  # threads do torch; a máquina limitada pede menos
+
+
 class ChatterboxSettings(_Model):
     """Voz clonada local (ADR 016, proposta). O ambiente do modelo e a gravação de referência vêm do .env."""
 
@@ -154,6 +161,7 @@ class Settings(_Model):
     gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
     chatterbox: ChatterboxSettings = ChatterboxSettings()
     chatterbox_modal: ChatterboxModalSettings = ChatterboxModalSettings()
+    earshot: EarshotSettings = EarshotSettings()
     groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
@@ -172,6 +180,7 @@ ENV_OVERRIDES: dict[str, tuple[str, ...]] = {
     "WORKERS_AI_MODEL": ("workers_ai", "model"),
     "CHATTERBOX_PYTHON": ("chatterbox", "python"),
     "CHATTERBOX_REFERENCE": ("chatterbox", "reference"),
+    "EARSHOT_PYTHON": ("earshot", "python"),
     "DATA_DIR": ("data_dir",),
     "MAX_API_SPEND_USD": ("budget", "max_api_spend_usd"),
     "ALLOW_PAID_API": ("budget", "allow_paid_api"),
