@@ -246,3 +246,52 @@ def test_doubt_agent_is_read_only() -> None:
     agent = (Path(__file__).parents[1] / ".claude/agents/duvida-cega.md").read_text(encoding="utf-8")
     tools = next(line for line in agent.splitlines() if line.startswith("tools:"))
     assert tools == "tools: Read, Grep, Glob"
+
+
+
+def package_of(caption: str, fetch) -> dict:
+    from app.commands import postiz_cadeia
+
+    data = payload()
+    data["posts"][0]["value"][0]["content"] = caption
+    check = {"date": "2099-10-15T15:30:00+00:00", "integrations": {"instagram-1": "Nabote"}}
+    return postiz_cadeia.build_package(data, check, [], "aprovado", "ep-teste", fetch)
+
+
+def test_caption_links_drop_trailing_punctuation_and_repeats() -> None:
+    from app.commands import postiz_cadeia
+
+    text = "Código: https://github.com/a/b/tree/main/x. Outra vez https://github.com/a/b/tree/main/x, e https://y.io)"
+    assert postiz_cadeia.caption_links(text) == ["https://github.com/a/b/tree/main/x", "https://y.io"]
+
+
+def test_package_blocks_a_link_that_does_not_exist() -> None:
+    package = package_of("<p>Código: https://github.com/a/b/tree/main/x</p>", lambda _url: 404)
+    assert any("não abre (HTTP 404)" in r for r in package["riscos"])
+    assert package["recomendacao"].startswith("não agendar")
+
+
+def test_package_only_warns_when_a_link_is_unreachable_or_odd() -> None:
+    offline = package_of("<p>https://github.com/a/b</p>", lambda _url: None)
+    assert any("sem resposta, não conferido" in r for r in offline["riscos"])
+    assert offline["recomendacao"].startswith("agendar")
+    forbidden = package_of("<p>https://www.instagram.com/x</p>", lambda _url: 429)
+    assert any("HTTP 429" in r for r in forbidden["riscos"])
+    assert forbidden["recomendacao"].startswith("agendar")
+
+
+def test_package_with_working_link_has_no_link_risk() -> None:
+    package = package_of("<p>https://github.com/a/b</p>", lambda _url: 200)
+    assert not any("Link da legenda" in r for r in package["riscos"])
+    assert package["recomendacao"].startswith("agendar")
+
+
+def test_package_fetches_each_link_once() -> None:
+    calls: list[str] = []
+
+    def fetch(url: str) -> int:
+        calls.append(url)
+        return 200
+
+    package_of("<p>https://github.com/a/b e de novo https://github.com/a/b</p>", fetch)
+    assert calls == ["https://github.com/a/b"]

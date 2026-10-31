@@ -12,6 +12,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import urllib.error
+import urllib.request
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -93,7 +96,58 @@ def gate4(context: Context, episode_id: str | None) -> str:
     return "aprovado" if status.valid else "mudou depois da aprovação"
 
 
-def build_package(payload: dict, check: dict, uploads: list[dict], gate: str, episode_id: str | None) -> dict:
+LINK = re.compile(r"https?://[^\s<>\"')]+")
+LINK_TIMEOUT_S = 8
+GONE = (404, 410)  # o que um repositório privado ou apagado devolve a quem não está logado
+
+LinkFetch = Callable[[str], "int | None"]
+
+
+def link_status(url: str) -> int | None:
+    """Código HTTP do link (HEAD, depois GET se o HEAD não for aceito); None se não houve resposta."""
+    for method in ("HEAD", "GET"):
+        request = urllib.request.Request(url, method=method, headers={"User-Agent": "vp-postiz-pacote"})
+        try:
+            with urllib.request.urlopen(request, timeout=LINK_TIMEOUT_S) as response:
+                return response.status
+        except urllib.error.HTTPError as error:
+            if method == "GET" or error.code not in (403, 405, 501):
+                return error.code
+        except (urllib.error.URLError, TimeoutError, OSError):
+            return None
+    return None
+
+
+def caption_links(text: str) -> list[str]:
+    """Os links da legenda, sem pontuação final e sem repetição, na ordem em que aparecem."""
+    return list(dict.fromkeys(url.rstrip(".,;:!?") for url in LINK.findall(text)))
+
+
+def link_findings(posts: list[dict], fetch: LinkFetch) -> tuple[list[str], list[str]]:
+    """(bloqueios, riscos) dos links das legendas: 404/410 bloqueia; outro erro ou sem resposta é risco."""
+    blocking, risks, seen = [], [], {}
+    for post in posts:
+        for url in caption_links(post["legenda"]):
+            if url not in seen:
+                seen[url] = fetch(url)
+            status = seen[url]
+            if status is None:
+                risks.append(f"Link da legenda de {post['canal']} sem resposta, não conferido: {url}")
+            elif status in GONE:
+                blocking.append(f"Link da legenda de {post['canal']} não abre (HTTP {status}): {url}")
+            elif status >= 400:
+                risks.append(f"Link da legenda de {post['canal']} respondeu HTTP {status}: {url}")
+    return blocking, risks
+
+
+def build_package(
+    payload: dict,
+    check: dict,
+    uploads: list[dict],
+    gate: str,
+    episode_id: str | None,
+    fetch: LinkFetch | None = None,
+) -> dict:
     by_media = {u["midia"]["id"]: u for u in uploads}
     posts, risks, blocking = [], list(FIXED_RISKS), []
     for post in payload["posts"]:
@@ -121,6 +175,10 @@ def build_package(payload: dict, check: dict, uploads: list[dict], gate: str, ep
                 "midia": media,
             }
         )
+    if fetch is not None:
+        link_blocking, link_risks = link_findings(posts, fetch)
+        blocking += link_blocking
+        risks += link_risks
     if gate == "sem episódio":
         risks.append("Sem episódio informado: o gate 4 não foi conferido pelo código, só pelo dono.")
     elif gate != "aprovado":
@@ -138,10 +196,17 @@ def build_package(payload: dict, check: dict, uploads: list[dict], gate: str, ep
     }
 
 
-def package(context: Context, client: Any, payload: dict, episode_id: str | None, now: Clock = _now) -> dict:
+def package(
+    context: Context,
+    client: Any,
+    payload: dict,
+    episode_id: str | None,
+    now: Clock = _now,
+    fetch: LinkFetch | None = link_status,
+) -> dict:
     check = client.check_schedule(payload)
     uploads = [e for e in read(registro_path(context)) if e["event"] == "upload"]
-    result = build_package(payload, check, uploads, gate4(context, episode_id), episode_id)
+    result = build_package(payload, check, uploads, gate4(context, episode_id), episode_id, fetch)
     result = {"payload": payload_hash(payload), **result}
     append(registro_path(context), "pacote", result, now)
     return result

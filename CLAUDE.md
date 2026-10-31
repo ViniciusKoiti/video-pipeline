@@ -182,6 +182,8 @@ Diagrama completo: `docs/pipeline-flowchart.mermaid`.
 - Invalidação: trocar uma imagem invalida **só** montagem e prévia; alterar texto narrado invalida voz do bloco,
   timing, legendas e render; alterar fonte invalida roteiro e tudo abaixo. Erros de rede, cota ou licença param a
   cena, não o episódio.
+- **Quem assina:** `--reviewer`, senão `VP_REVIEWER` (ambiente ou `.env`), senão o `git config user.name`, com aviso; configure
+  `VP_REVIEWER` para o gate 4 não sair como `test`.
 - Aprovação humana é registrada por `vp approve <id> --step <step>` (ou `vp reject`) em `review.json`, nunca
   editando `review_status` à mão no manifesto principal. Nos gates feitos por agente ou pessoa, a decisão carimba
   `sources.json` + `facts.json` (gate 1), `scenes.json` + `outline.md` (gate 2; o `asset_id` dos planos fica fora,
