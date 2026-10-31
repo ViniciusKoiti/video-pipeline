@@ -46,3 +46,6 @@ MUSICAS/
 
 # tabela gerada por scripts/provisorio/metricas.py tabela (os metrics.json são o registro)
 data/publicacoes/metricas.csv
+
+# cache do Remotion (Chrome headless de 200 MB)
+.remotion/
