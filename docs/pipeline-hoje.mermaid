@@ -26,9 +26,9 @@ flowchart TD
             SPA["pauta com ângulos A/B/C, hipótese,<br/>concorrência só como forma"]:::agente
             MED["medição própria: demo/ e resultado.txt<br/>(cpu_probe antes; máquina livre)"]:::script
             ROT["roteiro.md: a origem de cada número;<br/>a fala não explica o que a medição não mostra"]:::agente
-            SCK["vp check do Short: cada número da fala e da tela<br/>contra resultado.txt (adapter 'medição própria', ADR 034)<br/>hoje é conferência à mão"]:::falta
-            S1 --> SPA --> MED --> ROT
-            ROT -.-> SCK
+            SCK{"vp medicao: cada número da fala e da tela<br/>contra o trecho literal do resultado.txt (medicao.json, ADR 034)"}:::cmd
+            S1 --> SPA --> MED --> ROT --> SCK
+            SCK -- "erro" --> ROT
         end
     end
 
@@ -64,8 +64,7 @@ flowchart TD
             SFX["sfx.json: SFX Kit (CC0) ancorado na fala ou no corte<br/>juntar --sfx: estéreo, −14 LUFS (ADR 035)"]:::script
             EAR["conferir_audio.py (earshot): loudness como o YouTube mede,<br/>pico real, batida, ataque em cada corte com efeito"]:::script
             GS["shorts_tec.py gate: renders/final.mp4 e legenda-post.txt<br/>um id por idioma"]:::script
-            ROT --> NAR --> KIT --> TRS --> GT --> VOZ --> TMP --> SFX --> EAR --> GS
-            SCK -.-> NAR
+            SCK -- "ok" --> NAR --> KIT --> TRS --> GT --> VOZ --> TMP --> SFX --> EAR --> GS
             EVT["motion-kit exportar o instante em que cada cartão entra:<br/>hoje o deslocamento do efeito dentro da cena é a olho"]:::falta
             EVT -.-> SFX
             MUSS["música no Short: o juntar não faz ducking;<br/>a grade de batidas do earshot ainda sem uso"]:::falta
@@ -75,7 +74,7 @@ flowchart TD
 
     subgraph SAIDA["3. SAÍDA — a mesma para todos"]
         direction TB
-        G4{{"Gate 4: vp approve id --step preview<br/>final.mp4 + legenda do post; assina VP_REVIEWER"}}:::gate
+        G4{{"Gate 4: vp approve id --step preview<br/>final.mp4 + legenda do post; assina VP_REVIEWER;<br/>no Short, só com vp medicao limpo"}}:::gate
         POST["post.json por canal e idioma: título pontuado,<br/>descrição com a origem dos números, divulgação da voz clonada, link"]:::agente
         PAC["vp postiz upload e pacote: o quê, evidência (gate 4), riscos,<br/>links da legenda conferidos (404 bloqueia), como desfazer"]:::cmd
         DUV["duvida-cega: lê só o pacote, sem a conversa<br/>parecer 'segue' ou 'não segue' gravado por vp postiz duvida"]:::agente
