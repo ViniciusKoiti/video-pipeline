@@ -65,6 +65,15 @@ Três ferramentas foram conferidas na fonte (não só na descrição do vidIQ):
 - Piloto: `renders/short-lista-ligada/sfx.pt.json`, 13 efeitos em 38 s, misturado numa saída nova
   (`renders/final-sfx.mp4` do episódio `-pt`), sem tocar no `final.mp4` carimbado pelo gate 4 nem no vídeo
   publicado. A escuta do dono decide se o próximo Short sai com efeitos.
+- **Emenda de 2026-10-31 (earshot no pipeline, decisão do dono "para vídeos maiores"):** instalado em ambiente
+  próprio (`EARSHOT_PYTHON`; termos e primeira medida em `data/benchmarks/termos-earshot.md`) e registrado como
+  servidor MCP do usuário. Entra como **conferência depois da junção**, nunca como decisor:
+  `scripts/provisorio/conferir_audio.py <mp4> --episodio=<id>` (longo, cortes do `episode.json`) ou
+  `--content=<content.voz.json> [--sfx=<sfx.json>]` (Short), via `app/media/earshot.py`. Devolve a loudness como o
+  YouTube mede, o pico real, a batida da trilha e a sincronia dos cortes; problema = loudness fora do alvo, pico
+  acima de −1 dBTP ou corte com efeito planejado sem ataque a 40 ms. A primeira medida mostrou que o Short mono
+  está a −12 LUFS efetivos enquanto o `ebur128` diz −15; o que fazer com o `juntar` (estéreo ou alvo −3 dB no mono)
+  é decisão pendente do dono.
 - Pendente: o mesmo plano no `-en` (as âncoras de texto mudam de idioma; o gate de tradução da ADR 034 não
   cobre o `sfx.json`), a nota na skill `shorts-tec`, o earshot como check, e a hipótese de retenção com e sem
   efeitos, medida aos 7 e 28 dias.

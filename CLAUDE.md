@@ -337,6 +337,10 @@ lacuna fica registrada.
   `data/sfx/kit/`, lido direto do `sounds.json` dele com o `sha256` conferido; plano `sfx.json` por vídeo
   (som + cena + trecho da fala ou deslocamento), conferido por `app/pipeline/sfx.py` e misturado em
   `shorts_tec.py juntar --sfx=`, cada som no momento menos o `sync.at` do kit e abaixado sob a fala.
+  Conferência de áudio com o earshot (`scripts/provisorio/conferir_audio.py`, `app/media/earshot.py`; ambiente
+  próprio em `EARSHOT_PYTHON`, termos em `data/benchmarks/termos-earshot.md`): só com pedido do dono e a sonda de
+  CPU; mede a loudness como o YouTube mede (mono contado nos dois alto-falantes: o `ebur128` do ffmpeg dá 3 dB a
+  menos num Short mono), o pico real, a batida da trilha e se cada corte com efeito no plano tem um ataque a 40 ms.
   B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre
   cenas e sem fade, e recomeça quando o clipe acaba; o `vp check` não põe teto de duração no `broll`.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
