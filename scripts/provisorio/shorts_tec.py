@@ -12,9 +12,10 @@ Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
   esticada até a fala dela caber (`max(duração do JSON, fala + folga)`), sem encurtar nenhuma, e, nas cenas
   com a janela do apresentador, `host.speaking` com o trecho da fala, para a boca parar quando a voz para.
 - `juntar <pasta> <video.mp4> <content.voz.json> <narracao.json> --saida=<mp4> [--sfx=<sfx.json>]`: põe
-  cada fala no começo da cena dela, sobre o MP4 silencioso do `motion-video render`, com o volume no alvo do
-  projeto (−14 LUFS). Com `--sfx`, mistura também os efeitos do plano (ADR 035, `app/pipeline/sfx.py`): cada
-  um no momento da cena menos o `sync.at` do kit, abaixado onde cai sobre a fala.
+  cada fala no começo da cena dela, sobre o MP4 silencioso do `motion-video render`, em estéreo e com o volume
+  no alvo do projeto (−14 LUFS, medido como o YouTube mede). Com `--sfx`, mistura também os efeitos do plano
+  (ADR 035, `app/pipeline/sfx.py`): cada um no momento da cena menos o `sync.at` do kit, abaixado onde cai
+  sobre a fala.
 - `sfx <pasta> <content.voz.json> <narracao.json> <sfx.json>`: confere o plano de efeitos e lista onde cada
   som cai, sem misturar nada.
 - `gate <mp4> <post.json> --episodio=<id>`: a pasta de gate do Short em `data/episodes/<id>/`
@@ -189,8 +190,9 @@ def mix_filter(
     """O filtro do ffmpeg: cada fala (entradas 1..N) cortada no trecho falado, reamostrada, atrasada até o
     começo da cena dela, somadas sem normalizar (com o áudio que o render já traz, se `video_audio`, e com os
     efeitos, entradas N+1.., cada um `(início em ms, corte do começo em s, ganho em dB)`), com silêncio até o
-    fim do vídeo, o volume no alvo e 48 kHz (o loudnorm sobe a taxa de amostragem; sem o aresample o AAC sai
-    em 96 kHz)."""
+    fim do vídeo, em estéreo antes do loudnorm (o mesmo canal nos dois lados: um Short mono medido num canal
+    só saía 3 dB acima do alvo tocado nos dois alto-falantes, como o YouTube mede; emenda da ADR 035), o
+    volume no alvo e 48 kHz (o loudnorm sobe a taxa de amostragem; sem o aresample o AAC sai em 96 kHz)."""
     parts = []
     if video_audio:
         parts.append("[0:a]aformat=sample_rates=48000:channel_layouts=mono[v0a]")
@@ -213,7 +215,7 @@ def mix_filter(
     count = len(starts_ms) + (1 if video_audio else 0) + len(effects or [])
     parts.append(
         f"{inputs}amix=inputs={count}:normalize=0:dropout_transition=0,apad=whole_dur={video_sec:.3f},"
-        f"loudnorm=I={target_lufs:.0f}:TP=-1.5:LRA=11,aresample=48000[voz]"
+        f"aformat=channel_layouts=stereo,loudnorm=I={target_lufs:.0f}:TP=-1.5:LRA=11,aresample=48000[voz]"
     )
     return ";".join(parts)
 

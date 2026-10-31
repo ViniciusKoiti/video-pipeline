@@ -63,8 +63,9 @@ scratchpad da sessão; os números aqui são os do resumo de cada comando.
 1. **A loudness dos Shorts mono está 3 dB acima do que o nosso check diz.** O `juntar` grava um canal só e o
    `ebur128` do ffmpeg mede esse canal (−15,0). O earshot mede o mono "como se tocado nos dois alto-falantes"
    (BS.1770), que é o que o YouTube faz, e dá −12,0. No vídeo estéreo (Montaigne) os dois concordam (−14,1).
-   Proposta: o `juntar` sair em estéreo (o mesmo canal nos dois lados) ou o alvo do mono descer 3 dB. Os Shorts
-   já publicados estão a −12 efetivos; o YouTube abaixa, não há dano, mas a medida do pipeline estava errada.
+   **Decidido pelo dono em 2026-10-31: o `juntar` sai em estéreo** (o mesmo canal nos dois lados, antes do
+   loudnorm). Os Shorts já publicados estão a −12 efetivos; o YouTube abaixa, não há dano, mas a medida do pipeline
+   estava errada até aqui.
 2. **Sincronia dos efeitos confirmada por medida**, não só pela conta: no Short, 100% dos cortes com ataque a
    1 quadro. É o check que a ADR 035 previa para o earshot; o custo foi 37 s por Short.
 3. **Cortar na batida pede faixa com batida.** `Spirit of Fire` não tem pulso; para o passo "cortes na batida" o

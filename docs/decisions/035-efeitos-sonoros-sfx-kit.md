@@ -72,8 +72,9 @@ Três ferramentas foram conferidas na fonte (não só na descrição do vidIQ):
   `--content=<content.voz.json> [--sfx=<sfx.json>]` (Short), via `app/media/earshot.py`. Devolve a loudness como o
   YouTube mede, o pico real, a batida da trilha e a sincronia dos cortes; problema = loudness fora do alvo, pico
   acima de −1 dBTP ou corte com efeito planejado sem ataque a 40 ms. A primeira medida mostrou que o Short mono
-  está a −12 LUFS efetivos enquanto o `ebur128` diz −15; o que fazer com o `juntar` (estéreo ou alvo −3 dB no mono)
-  é decisão pendente do dono.
+  está a −12 LUFS efetivos enquanto o `ebur128` diz −15. **Decisão do dono (2026-10-31): o `juntar` sai em
+  estéreo** (o mesmo canal nos dois lados, antes do loudnorm), para a medida do ffmpeg e a reprodução baterem sem
+  regra especial. Os Shorts já publicados ficam como estão (o YouTube abaixa o volume sozinho).
 - Pendente: o mesmo plano no `-en` (as âncoras de texto mudam de idioma; o gate de tradução da ADR 034 não
   cobre o `sfx.json`), a nota na skill `shorts-tec`, o earshot como check, e a hipótese de retenção com e sem
   efeitos, medida aos 7 e 28 dias.

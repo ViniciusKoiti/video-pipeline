@@ -340,7 +340,8 @@ lacuna fica registrada.
   Conferência de áudio com o earshot (`scripts/provisorio/conferir_audio.py`, `app/media/earshot.py`; ambiente
   próprio em `EARSHOT_PYTHON`, termos em `data/benchmarks/termos-earshot.md`): só com pedido do dono e a sonda de
   CPU; mede a loudness como o YouTube mede (mono contado nos dois alto-falantes: o `ebur128` do ffmpeg dá 3 dB a
-  menos num Short mono), o pico real, a batida da trilha e se cada corte com efeito no plano tem um ataque a 40 ms.
+  menos num Short mono, por isso o `juntar` sai em estéreo desde 2026-10-31), o pico real, a batida da trilha e se
+  cada corte com efeito no plano tem um ataque a 40 ms.
   B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre
   cenas e sem fade, e recomeça quando o clipe acaba; o `vp check` não põe teto de duração no `broll`.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**

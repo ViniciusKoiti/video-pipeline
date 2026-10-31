@@ -139,3 +139,11 @@ def test_mix_filter_adds_effects_after_the_voices() -> None:
     assert "[3:a]aformat=sample_rates=48000:channel_layouts=mono,volume=-2.0dB,adelay=4900|4900[e0]" in graph
     assert "[4:a]atrim=start=2.000,asetpts=PTS-STARTPTS,aformat" in graph and "adelay=0|0[e1]" in graph
     assert "[v0][v1][e0][e1]amix=inputs=4:" in graph
+
+
+def test_mix_goes_stereo_before_loudnorm_so_the_measure_matches_playback() -> None:
+    from scripts.provisorio.shorts_tec import mix_filter
+
+    graph = mix_filter([0], 5.0, trims=[(0, 4)])
+    tail = graph.split("amix=")[1]
+    assert tail.index("aformat=channel_layouts=stereo") < tail.index("loudnorm=")
