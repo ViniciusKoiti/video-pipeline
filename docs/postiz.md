@@ -20,7 +20,7 @@ O `.env` não deve entrar no Git. Há campos vazios em [.env.example](../.env.ex
 | `vp postiz settings ID` | Regras e campos aceitos pelo canal |
 | `vp postiz posts --start ISO --end ISO` | Posts na janela, com ID, legenda, horário, estado e canal |
 | `vp postiz upload VIDEO.mp4` | ID e caminho da mídia enviada; registra o arquivo e o `sha256` |
-| `vp postiz pacote post.json [--episode ID]` | Pacote de decisão para o dono, sem criar nada |
+| `vp postiz pacote post.json [--episode ID]` | Pacote de decisão para o dono, sem criar nada; confere se os links da legenda abrem (HTTP 404/410 bloqueia, sem resposta ou outro erro vira risco) |
 | `vp postiz duvida post.json parecer.json` | Grava o parecer da dúvida cega sobre o último pacote |
 | `vp postiz schedule post.json` | IDs das postagens criadas; só com pacote, parecer "segue" e a confirmação do dono |
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from collections.abc import Callable, Sequence
@@ -57,7 +58,7 @@ from app.pipeline.schemas import (
 )
 from app.pipeline.translation import translation_problems
 from app.render.remotion import region_codes
-from app.settings import CONFIG_FILE, speech_chars_per_second
+from app.settings import CONFIG_FILE, read_dotenv, speech_chars_per_second
 
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
 
@@ -111,7 +112,7 @@ def _decision_arguments(parser: argparse.ArgumentParser) -> None:
         "(pasta de tradução, ADR 034) ou preview (o render mais acabado, com legenda e texto do post)",
     )
     parser.add_argument("--asset", help="id do ativo, na etapa assets")
-    parser.add_argument("--reviewer", help="quem decide (padrão: git config user.name)")
+    parser.add_argument("--reviewer", help="quem decide (padrão: VP_REVIEWER, senão git config user.name)")
 
 
 def _approve_arguments(parser: argparse.ArgumentParser) -> None:
@@ -254,7 +255,7 @@ def _decide(
             args.episode_id,
             Step(args.step),
             decision,
-            reviewer=args.reviewer or _git_user(),
+            reviewer=args.reviewer or _default_reviewer(),
             now=lambda: datetime.now().astimezone().replace(microsecond=0),
             asset_id=args.asset,
             notes=notes,
@@ -266,6 +267,21 @@ def _decide(
     target = entry.asset_id or entry.step.value
     print(f"{DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})")
     return 0
+
+
+def _default_reviewer() -> str:
+    """`VP_REVIEWER` do ambiente; senão o nome do git, com aviso, porque ele vai assinar a decisão do gate."""
+    root = project_root(Path.cwd())
+    name = (os.environ.get("VP_REVIEWER") or read_dotenv(root / ".env").get("VP_REVIEWER", "")).strip()
+    if name:
+        return name
+    name = _git_user()
+    print(
+        f"vp: decisão assinada como '{name}' (git config user.name); "
+        "use --reviewer ou VP_REVIEWER para assinar com o seu nome",
+        file=sys.stderr,
+    )
+    return name
 
 
 def _git_user() -> str:
