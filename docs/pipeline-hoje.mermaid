@@ -1,54 +1,97 @@
 flowchart TD
-    %% Estado conferido em 2026-10-13. Ordem editorial recomendada, não um orquestrador automático.
-    %% Verde: comando/script implementado. Azul: trabalho do agente. Laranja: decisão humana.
-    %% Roxo: projeto/dependência externa. Cinza tracejado: etapa ainda incompleta.
+    %% Estado conferido em 2026-10-31 (ADRs 001 a 035). Ordem editorial recomendada, não um orquestrador.
+    %% Três faixas: a PROVA muda com o formato (fontes ou medição própria), a PRODUÇÃO muda com o motor
+    %% (Remotion no longo, motion-video no Short) e a SAÍDA é uma só: gate 4, cadeia do Postiz, Studio, métricas.
+    %% Verde: comando ou script implementado. Azul: agente (escreve só dados). Laranja: gate do dono.
+    %% Amarelo: decisão ou ação do dono. Roxo: projeto ou serviço externo. Cinza tracejado: lacuna.
 
-    T["Dono define público, ângulo e objetivo"]:::dono --> PA["Agente escreve pauta.md; dono decide"]:::agente
-    R["Projeto vizinho: radar-de-reels<br/>gera briefs/nicho.json; coleta somente quando autorizada"]:::externo
-    R --> RC["radar_resumo.py copia brief disponível<br/>para radar-brief.json do episódio"]:::script
-    RC --> PA
-    RC -. "forma; nunca fonte de fato" .-> C2
-    PA --> S1["baixar_fonte.py: fontes autorizadas<br/>sources.json + texto extraído"]:::script
-    S1 --> S2["vp excerpts: trechos numerados"]:::cmd
-    S2 --> F1["Agente pesquisador: facts.json<br/>evidências literais e lacunas"]:::agente
-    F1 --> C1{"vp check: fontes e fichas"}:::cmd
-    C1 -- "erro" --> F1
-    C1 -- "ok" --> G1{{"Dono: gate sources<br/>vp approve/reject --step sources"}}:::gate
-    G1 --> R1["Agente roteirista: outline.md e scenes.json<br/>narração + planos tipados"]:::agente
-    R1 --> C2{"vp check: claims, âncoras, forma e objetivo"}:::cmd
-    C2 -- "erro" --> R1
-    C2 -- "ok" --> V1["Verificador independente: evidência e promessa"]:::agente
-    V1 -- "pendência" --> R1
-    V1 -- "conferido" --> G2{{"Dono: gate script antes da produção<br/>vp approve/reject --step script"}}:::gate
-    G2 --> I1["Busca/download: scripts e revisão manual<br/>mídia + assets/id.json"]:::script
-    I1 --> G3{{"Dono: direitos e ativos<br/>vp approve --step assets --asset id"}}:::gate
-    G3 -- "trocar" --> I1
-    G3 --> A1["montar_episodio.py: voz por cena<br/>Kokoro rascunho; Chatterbox final configurado<br/>Gemini continua opção"]:::script
+    subgraph PROVA["1. PROVA — de onde vêm os fatos"]
+        direction TB
+        subgraph PL["Longo (ensaio) e Reel de pauta: fontes verificáveis"]
+            D1["Dono: público, ângulo, objetivo, tese;<br/>pautas aprovadas em lote"]:::dono
+            RAD["radar-de-reels (projeto vizinho)<br/>radar_resumo.py copia o brief do nicho (Reel)"]:::externo
+            MOL["analise-de-formato: molde.json e partitura.md<br/>(ADR 031)"]:::agente
+            PAU["pauta.md: título provisório, conceito da capa,<br/>hipótese, perguntas às fontes"]:::agente
+            SRC["baixar_fonte.py: sources.json e texto extraído<br/>vp excerpts: trechos numerados"]:::script
+            FAC["pesquisador: facts.json<br/>citação literal por fato, lacunas"]:::agente
+            CK1{"vp check: fontes e fichas"}:::cmd
+            G1{{"Gate 1: vp approve --step sources"}}:::gate
+            D1 --> MOL --> PAU --> SRC --> FAC --> CK1
+            RAD -. "forma, nunca fato (ADR 018)" .-> PAU
+            CK1 -- "erro" --> FAC
+            CK1 -- "ok" --> G1
+        end
+        subgraph PS["Short técnico: medição própria"]
+            S1["Dono: ferramenta, ângulo, canais e idiomas<br/>(pt no pessoal, en no baixo.nivel.dev.s)"]:::dono
+            SPA["pauta com ângulos A/B/C, hipótese,<br/>concorrência só como forma"]:::agente
+            MED["medição própria: demo/ e resultado.txt<br/>(cpu_probe antes; máquina livre)"]:::script
+            ROT["roteiro.md: a origem de cada número;<br/>a fala não explica o que a medição não mostra"]:::agente
+            SCK["vp check do Short: cada número da fala e da tela<br/>contra resultado.txt (adapter 'medição própria', ADR 034)<br/>hoje é conferência à mão"]:::falta
+            S1 --> SPA --> MED --> ROT
+            ROT -.-> SCK
+        end
+    end
 
-    LAB["Projeto vizinho: lab-voz<br/>bancada histórica e ambiente Chatterbox"]:::externo
-    LAB -. "quando CHATTERBOX_PYTHON aponta para seu ambiente" .-> W
-    W["Adapter Chatterbox do auto-play<br/>executa seu chatterbox_worker.py<br/>com Python externo + referência local"]:::script
-    W --> A1
-    A1 --> A2["ffprobe: duração real do WAV<br/>episode_shots: âncoras proporcionais"]:::script
-    A2 --> EP["Script monta episode.json"]:::script
-    SUB["Alinhamento/geração de captions.srt<br/>adapter e comando subs ainda incompletos"]:::falta
-    A2 -.-> SUB
-    SUB -. "vínculo captions também falta no script" .-> EP
-    EP --> M1["Adapter Remotion: render por cena<br/>cache e props da composição Scene"]:::script
+    subgraph PROD["2. PRODUÇÃO — muda com o motor"]
+        direction TB
+        subgraph QL["Longo e Reel: Remotion + motion-kit"]
+            ROTL["roteirista + humanizer-narracao: outline.md e scenes.json<br/>título, objetivo, funil, planos tipados ancorados na fala"]:::agente
+            CK2{"vp check: claims, âncoras, pausas,<br/>molde do nicho, título, funil"}:::cmd
+            VER["verificador, até 2 rodadas no mesmo contexto<br/>parecer gravado por vp checagem"]:::agente
+            G2{{"Gate 2: vp approve --step script"}}:::gate
+            IMG["plano-de-imagens (o dono valida antes de baixar)<br/>download e assets/id.json com licença e sha256"]:::agente
+            G3{{"Gate 3: vp approve --step assets --asset id"}}:::gate
+            MUS["diretor-musical: music.json<br/>catálogo da YouTube Audio Library (ADR 030)"]:::agente
+            MON["montar_episodio.py --voz-final: voz clonada no Modal (ADR 024),<br/>captions.srt por frase ou palavra (ADR 021/023),<br/>trilha com ducking, render Remotion por cena, loudness"]:::script
+            MIN["miniatura: arte da capa pelo canal de referência"]:::agente
+            G1 --> ROTL --> CK2
+            CK2 -- "erro" --> ROTL
+            CK2 -- "ok" --> VER
+            VER -- "pendência" --> ROTL
+            VER -- "conferido" --> G2 --> IMG --> G3 --> MUS --> MON --> MIN
+            VPX["vp voice, subs, render e export respondem 'não implementado';<br/>quem faz é montar_episodio.py"]:::falta
+            VPX -.-> MON
+            TRL["tradução do longo em pasta própria com gate translation<br/>(ADR 034): pronta no código, nunca usada num longo"]:::falta
+            G2 -.-> TRL
+        end
+        subgraph QS["Short técnico: motion-video por JSON (ADR 033)"]
+            NAR["narracao.idioma.json + humanizer<br/>content.idioma.json (safeArea shorts, footer com a origem)"]:::agente
+            KIT["motion-video validate, inspect e review<br/>(kit do dono, tarball fixado, ADR 027)"]:::script
+            TRS["tradução: pasta id-en com traducao.json<br/>vp traducao: cenas, entregas, pausas e números ditos"]:::cmd
+            GT{{"Gate translation: vp approve id-en --step translation"}}:::gate
+            VOZ["shorts_tec.py voz: voz clonada no Modal,<br/>só com pedido do dono na sessão"]:::script
+            TMP["shorts_tec.py tempos (cena estica até a fala caber)<br/>motion-video render"]:::script
+            SFX["sfx.json: SFX Kit (CC0) ancorado na fala ou no corte<br/>juntar --sfx: estéreo, −14 LUFS (ADR 035)"]:::script
+            EAR["conferir_audio.py (earshot): loudness como o YouTube mede,<br/>pico real, batida, ataque em cada corte com efeito"]:::script
+            GS["shorts_tec.py gate: renders/final.mp4 e legenda-post.txt<br/>um id por idioma"]:::script
+            ROT --> NAR --> KIT --> TRS --> GT --> VOZ --> TMP --> SFX --> EAR --> GS
+            SCK -.-> NAR
+            EVT["motion-kit exportar o instante em que cada cartão entra:<br/>hoje o deslocamento do efeito dentro da cena é a olho"]:::falta
+            EVT -.-> SFX
+            MUSS["música no Short: o juntar não faz ducking;<br/>a grade de batidas do earshot ainda sem uso"]:::falta
+            MUSS -.-> SFX
+        end
+    end
 
-    KIT["Pacote @viniciusk/motion-kit instalado<br/>SHA fixado em video/package.json"]:::externo
-    CHECKOUT["Projeto vizinho: motion-kit<br/>fonte de desenvolvimento e consulta de API"]:::externo
-    CHECKOUT -. "build e atualização do pin quando houver mudança" .-> KIT
-    KIT --> M1
-    M1 --> FINAL["ffmpeg assemble: vídeo das cenas<br/>+ narração dos WAVs"]:::script
-    FINAL --> G4{{"Dono: prévia, legenda da postagem<br/>descrição, créditos e revisão final manual"}}:::gate
-    G4 -- "ajustar texto; nova decisão" --> R1
-    G4 -- "ajustar mídia" --> I1
-    G4 --> U1["Publicação somente autorizada<br/>e coleta manual de métricas"]:::dono
-
-    X["Ainda sem handlers: voice, subs, render, export, reopen<br/>scripts não impõem todos os gates/locks"]:::falta
-    X -.-> A1
-    X -.-> G4
+    subgraph SAIDA["3. SAÍDA — a mesma para todos"]
+        direction TB
+        G4{{"Gate 4: vp approve id --step preview<br/>final.mp4 + legenda do post; assina VP_REVIEWER"}}:::gate
+        POST["post.json por canal e idioma: título pontuado,<br/>descrição com a origem dos números, divulgação da voz clonada, link"]:::agente
+        PAC["vp postiz upload e pacote: o quê, evidência (gate 4), riscos,<br/>links da legenda conferidos (404 bloqueia), como desfazer"]:::cmd
+        DUV["duvida-cega: lê só o pacote, sem a conversa<br/>parecer 'segue' ou 'não segue' gravado por vp postiz duvida"]:::agente
+        SCH{{"vp postiz schedule: confirmação do dono (regra ask)<br/>trilha em data/publicacoes/registro.jsonl"}}:::gate
+        PZ["Postiz do dono → YouTube, Instagram, LinkedIn"]:::externo
+        STU["Studio à mão: conferir que saiu (ERROR no Postiz não prova falha),<br/>fixar o 1º comentário, marcar conteúdo sintético"]:::dono
+        MET["metrics.json: URL, hipótese, leituras aos 7 e 28 dias;<br/>decisão só depois de 4 vídeos no mesmo recorte"]:::dono
+        MIN --> G4
+        GS --> G4
+        G4 -- "ajustar texto, nova decisão" --> ROTL
+        G4 -- "ajustar imagem" --> IMG
+        G4 --> POST --> PAC --> DUV --> SCH --> PZ --> STU --> MET
+        LEM["lembrete e registro dos passos depois de publicar:<br/>hoje é só um risco listado no pacote; nada cobra"]:::falta
+        LEM -.-> STU
+        MET -- "próxima pauta" --> D1
+    end
 
     classDef cmd fill:#dff5e1,stroke:#2e7d32,color:#000
     classDef script fill:#e8f5e9,stroke:#66bb6a,color:#000
