@@ -6,7 +6,7 @@ Questões encontradas ao organizar o projeto a partir do `CLAUDE.md`, e o que fo
 |---|---|---|---|
 | 1 | Arquivo se chamava `CLAUDE.MD`; o Claude Code procura `CLAUDE.md` e o Linux diferencia maiúsculas. | Resolvida | Renomeado para `CLAUDE.md`. |
 | 2 | §3 dizia que o projeto vive em `~/video-pipeline`; ele está em `~/projetos/auto-play` (também no FS Linux, fora de `/mnt/c`). | Resolvida | Texto do §3 atualizado; repositório no GitHub chama-se `video-pipeline`. |
-| 3 | `docs/spec-v0.4.md` é a "fonte de verdade", mas não existia. | **Aberta** | Placeholder criado. O dono do projeto precisa colar a spec original. |
+| 3 | `docs/spec-v0.4.md` é a "fonte de verdade", mas não existia. | Resolvida | Placeholder removido; a spec original nunca entrou no repositório, e o `CLAUDE.md` e as ADRs são a referência. |
 | 4 | `mermaid.txt` estava vazio; o §4 aponta `docs/pipeline-flowchart.mermaid`. | Resolvida | Diagrama extraído do §4 para `docs/pipeline-flowchart.mermaid`; `mermaid.txt` removido. |
 | 5 | `app/pipeline/schemas.py` e `tests/fixtures/episodes/pilot-example/` são citados no §14 mas não existem. | Resolvida | Etapa 3; decisões na ADR 007. |
 | 6 | Ambiente: Python 3.14 e ffmpeg presentes; **Ollama e Kokoro não instalados**; `.wslconfig` limitava o WSL a 8 GB / 4 CPUs. | Resolvida | Etapa 1: Ollama de usuário, Kokoro no `.venv`, `.wslconfig` 12 GB / 12 CPUs; ADR 004. |

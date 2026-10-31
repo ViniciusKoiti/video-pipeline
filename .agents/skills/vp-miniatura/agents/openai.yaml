@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Miniatura"
+  short_description: "Monte propostas de miniatura no padrão do canal de referência"
+  default_prompt: "Use $vp-miniatura para propor as miniaturas do episódio indicado a partir do conceito da pauta."

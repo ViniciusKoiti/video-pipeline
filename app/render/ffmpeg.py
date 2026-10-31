@@ -264,6 +264,10 @@ class FfmpegEngine:
         assemble(episode, episode_dir, segments, spec, out, audio_bitrate=self._audio_bitrate)
 
 
+CONCAT = ["-f", "concat", "-safe", "0"]
+AUDIO_VERSION = "1"  # mudar invalida o áudio em cache
+
+
 def assemble(
     episode: EpisodeManifest,
     episode_dir: Path,
@@ -273,36 +277,88 @@ def assemble(
     *,
     audio_bitrate: str = "192k",
 ) -> None:
-    """Junta segmentos de vídeo sem recodificar e codifica a narração inteira uma vez (demuxer concat).
-    Usada por qualquer motor que renderize por cena. Com trilha (ADR 030), a música entra aqui, por baixo
-    da voz: os segmentos de cada cena ficam como estavam, e trocar a faixa refaz só a junção (§5)."""
+    """Junta segmentos de vídeo sem recodificar e a narração inteira codificada uma vez (demuxer concat).
+    Usada por qualquer motor que renderize por cena. Com trilha (ADR 030), a música entra no áudio, por
+    baixo da voz: os segmentos de cada cena ficam como estavam, e trocar a faixa refaz só o áudio (§5).
+    O áudio codificado fica em cache (`_encoded_audio`): o AAC da narração inteira leva ~6 s e só muda
+    com a fala."""
     video_list = out.parent / f".{out.stem}-video.txt"
-    audio_list = out.parent / f".{out.stem}-audio.txt"
     video_list.write_text(_concat_list(segments))
-    audio_list.write_text(_concat_list(_audio_parts(episode, episode_dir, out.parent)))
-    concat = ["-f", "concat", "-safe", "0"]
-    audio: list[str] = ["-map", "1:a"]
-    music_inputs: list[str] = []
-    if episode.music:
-        voice_lufs = integrated_lufs(audio_list, input_args=concat)
-        gain = TARGET_LUFS - voice_lufs
-        music_inputs, graph = music_mix(episode.music, episode_dir, spec.audio_sample_rate, gain)
-        audio = ["-filter_complex", graph, "-map", "[a]"]
+    audio = _encoded_audio(episode, episode_dir, spec, out, audio_bitrate)
     tmp = out.with_suffix(".tmp.mp4")
     _run(
         [
-            *concat,
+            *CONCAT,
             "-i",
             str(video_list),
-            *concat,
+            "-i",
+            str(audio),
+            "-map",
+            "0:v",
+            "-map",
+            "1:a",
+            "-c",
+            "copy",
+            "-movflags",
+            "+faststart",
+            str(tmp),
+        ]
+    )
+    tmp.replace(out)
+    video_list.unlink()
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        while block := handle.read(1 << 20):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def audio_key(episode: EpisodeManifest, episode_dir: Path, spec: VideoSpec, audio_bitrate: str) -> str:
+    """Tudo que muda o áudio final: WAVs e o início de cada cena (os buracos viram silêncio), a trilha com as
+    faixas, a taxa e o bitrate, e as constantes da mistura (alvo de loudness, ducking, limiter)."""
+    digest = hashlib.sha256(
+        f"{AUDIO_VERSION}|{spec.audio_sample_rate}|{audio_bitrate}|{TARGET_LUFS}|{DUCKING}|{LIMITER}".encode()
+    )
+    for scene in episode.scenes:
+        digest.update(f"|{scene.start_ms}|{_sha256(episode_dir / scene.audio)}".encode())
+    digest.update(json.dumps([m.model_dump(mode="json") for m in episode.music], sort_keys=True).encode())
+    for media in sorted({m.media for m in episode.music}):
+        digest.update(f"|{media}|{_sha256(episode_dir / media)}".encode())
+    return digest.hexdigest()[:16]
+
+
+def _encoded_audio(
+    episode: EpisodeManifest, episode_dir: Path, spec: VideoSpec, out: Path, audio_bitrate: str
+) -> Path:
+    """Narração (e trilha) em AAC, em `.audio-<saída>-<chave>.m4a` ao lado da saída; reaproveita o arquivo
+    quando a chave é a mesma e apaga os antigos da mesma saída."""
+    cached = out.parent / f".audio-{out.stem}-{audio_key(episode, episode_dir, spec, audio_bitrate)}.m4a"
+    if cached.exists():
+        return cached
+    for stale in out.parent.glob(f".audio-{out.stem}-*.m4a"):
+        stale.unlink()
+    audio_list = out.parent / f".{out.stem}-audio.txt"
+    audio_list.write_text(_concat_list(_audio_parts(episode, episode_dir, out.parent)))
+    audio: list[str] = ["-map", "0:a"]
+    music_inputs: list[str] = []
+    if episode.music:
+        voice_lufs = integrated_lufs(audio_list, input_args=CONCAT)
+        gain = TARGET_LUFS - voice_lufs
+        music_inputs, graph = music_mix(
+            episode.music, episode_dir, spec.audio_sample_rate, gain, voice_input=0
+        )
+        audio = ["-filter_complex", graph, "-map", "[a]"]
+    tmp = cached.with_suffix(".tmp.m4a")
+    _run(
+        [
+            *CONCAT,
             "-i",
             str(audio_list),
             *music_inputs,
-            "-map",
-            "0:v",
             *audio,
-            "-c:v",
-            "copy",
             "-c:a",
             "aac",
             "-b:a",
@@ -311,14 +367,12 @@ def assemble(
             str(spec.audio_sample_rate),
             "-ac",
             "2",
-            "-movflags",
-            "+faststart",
             str(tmp),
         ]
     )
-    tmp.replace(out)
-    video_list.unlink()
+    tmp.replace(cached)
     audio_list.unlink()
+    return cached
 
 
 # Ducking (ADR 030): a trilha baixa enquanto a voz fala, com a própria voz como chave do compressor.
@@ -327,10 +381,11 @@ LIMITER = "alimiter=limit=0.89:level=false"  # teto de ~-1 dBFS depois do ganho 
 
 
 def music_mix(
-    music: list[EpisodeMusic], episode_dir: Path, sample_rate: int, voice_gain_db: float
+    music: list[EpisodeMusic], episode_dir: Path, sample_rate: int, voice_gain_db: float, voice_input: int = 1
 ) -> tuple[list[str], str]:
-    """Entradas do ffmpeg (a partir da 2: vídeo e voz vêm antes) e o grafo que põe cada trecho da trilha no
-    lugar, com fade e ganho, e mistura com a voz levada ao alvo de loudness. Saída no rótulo `[a]`."""
+    """Entradas do ffmpeg (a partir da `voice_input + 1`: a voz vem antes) e o grafo que põe cada trecho da
+    trilha no lugar, com fade e ganho, e mistura com a voz levada ao alvo de loudness.
+    Saída no rótulo `[a]`."""
     fmt = f"aformat=sample_rates={sample_rate}:channel_layouts=stereo"
     inputs: list[str] = []
     chains = []
@@ -349,13 +404,13 @@ def music_mix(
             fade = cue.fade_out_ms / 1000
             steps.append(f"afade=t=out:st={length - fade:.3f}:d={fade:.3f}")
         steps.append(f"adelay={cue.start_ms}:all=1")
-        chains.append(f"[{2 + i}:a]{','.join(steps)}[m{i}]")
+        chains.append(f"[{voice_input + 1 + i}:a]{','.join(steps)}[m{i}]")
     labels = "".join(f"[m{i}]" for i in range(len(music)))
     bus = f"{labels}amix=inputs={len(music)}:normalize=0[bus]" if len(music) > 1 else f"{labels}anull[bus]"
     graph = [
         *chains,
         bus,
-        f"[1:a]{fmt},volume={voice_gain_db:.2f}dB,asplit=2[voice][key]",
+        f"[{voice_input}:a]{fmt},volume={voice_gain_db:.2f}dB,asplit=2[voice][key]",
         f"[bus][key]{DUCKING}[ducked]",
         f"[voice][ducked]amix=inputs=2:normalize=0:duration=first,{LIMITER}[a]",
     ]

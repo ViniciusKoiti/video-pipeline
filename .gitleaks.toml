@@ -1,0 +1,10 @@
+title = "video-pipeline"
+
+[extend]
+useDefault = true
+
+# URLs de teste com usuário e senha de exemplo, em hosts `.example` (nada aqui é credencial real).
+[[allowlists]]
+description = "Credenciais falsas dos testes do Postiz"
+paths = ['''tests/test_postiz\.py''']
+regexes = ['''https://user:password@[a-z.]+\.example/''']

@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Plano de imagens"
+  short_description: "Planeje e confira as imagens de um roteiro aprovado"
+  default_prompt: "Use $vp-plano-de-imagens para montar o plano de imagens do episódio indicado e esperar a minha validação antes de baixar."

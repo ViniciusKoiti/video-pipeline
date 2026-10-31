@@ -30,7 +30,7 @@ sem conferência audiovisual segundo a segundo.
 Fontes locais: [contrato](../../app/pipeline/schemas.py), [leitura e gravação das métricas](../../app/pipeline/metrics.py),
 [script de métricas](../../scripts/provisorio/metricas.py), [testes do contrato](../../tests/test_metrics.py),
 [pauta](../../.agents/skills/vp-pauta/SKILL.md), [miniatura](../../.claude/skills/miniatura/SKILL.md),
-[contexto, §§4, 12 e 15](../../CLAUDE.md), [gaps de 12/10, §3.2](../RELATORIO-GAPS-AUDIENCIA-ENGAJAMENTO.md) e
+[contexto, §§4, 12 e 15](../../CLAUDE.md), gaps de 12/10, §3.2 (relatório removido; está no histórico do Git) e
 [análise de miniaturas de 20/10](miniaturas-filosofatos-2026-10-20.md).
 
 O grafo estava pronto, mas sua geração era de 15/10. A consulta não encontrou os símbolos novos de métricas;
