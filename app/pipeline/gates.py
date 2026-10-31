@@ -30,6 +30,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from app.pipeline.medicao import MEDICAO_FILE, medicao_problems
 from app.pipeline.numbers import strip_block
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
 from app.pipeline.schemas import (
@@ -154,6 +155,13 @@ def record_decision(
                 raise GateError(
                     f"{episode_id}: a conferência da tradução achou {len(problems)} problema(s), "
                     f"rode `vp traducao {episode_id}`: " + "; ".join(problems)
+                )
+        if step is Step.PREVIEW and decision is Decision.APPROVED and store.exists(episode_id, MEDICAO_FILE):
+            problems, _ = medicao_problems(store, episode_id)
+            if problems:
+                raise GateError(
+                    f"{episode_id}: a conferência da medição achou {len(problems)} problema(s), "
+                    f"rode `vp medicao {episode_id}`: " + "; ".join(problems)
                 )
         approved_asset = None
         if asset_id is not None and decision is Decision.APPROVED:

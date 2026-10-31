@@ -1,0 +1,23 @@
+{
+  "arquivo": "renders/short-lista-ligada/demo/resultado.txt",
+  "ambiente": "gcc 15.2.0 -O2, AMD Ryzen 7 5700U, mediana de 15 repetições, cpu_probe 0,047 s, 2026-10-30",
+  "numeros": [
+    {"valor": 10000000, "trechos": ["n=10000000"], "medidos": [10000000]},
+    {"valor": 1000000, "trechos": ["n=1000000  "], "medidos": [1000000], "cenas": ["tamanho"]},
+    {"valor": 100000, "trechos": ["n=100000  "], "medidos": [100000]},
+    {"valor": 1000, "trechos": ["n=1000  "], "medidos": [1000]},
+    {"valor": 30, "trechos": ["sequencial=26.877 ms", "sequencial=29.856 ms"], "medidos": [26.877, 29.856], "tolerancia": 0.12, "cenas": ["resultado"], "nota": "'uns trinta milissegundos' resume as duas rodadas"},
+    {"valor": 2, "trechos": ["embaralhada=2420.782 ms", "embaralhada=2434.294 ms"], "medidos": [2420.782, 2434.294], "fator": 0.001, "tolerancia": 0.22, "cenas": ["resultado"], "nota": "'mais de dois segundos': 2,42 a 2,43 s"},
+    {"valor": 80, "trechos": ["razao=81.5x"], "medidos": [81.5], "tolerancia": 0.02, "cenas": ["resultado"], "nota": "'oitenta a noventa': o piso é a segunda rodada"},
+    {"valor": 90, "trechos": ["razao=90.1x"], "medidos": [90.1], "cenas": ["resultado"], "nota": "'oitenta a noventa': o teto é a primeira rodada"},
+    {"valor": 10, "trechos": ["razao=10.6x", "razao=13.6x"], "medidos": [10.6, 13.6], "tolerancia": 0.06, "cenas": ["tamanho"], "nota": "'dez vezes ou mais': o piso das duas rodadas em 100 mil nós"},
+    {"valor": 26.9, "trechos": ["sequencial=26.877 ms"], "medidos": [26.877], "tolerancia": 0.002, "cenas": ["resultado"]},
+    {"valor": 2420.8, "trechos": ["embaralhada=2420.782 ms"], "medidos": [2420.782], "tolerancia": 0.0001, "cenas": ["resultado"]},
+    {"valor": 1.0, "trechos": ["razao=1.0x"], "medidos": [1.0], "cenas": ["tamanho"]},
+    {"valor": 13.6, "trechos": ["razao=13.6x"], "medidos": [13.6], "cenas": ["tamanho"]},
+    {"valor": 46.9, "trechos": ["razao=46.9x"], "medidos": [46.9], "cenas": ["tamanho"]},
+    {"valor": 90.1, "trechos": ["razao=90.1x"], "medidos": [90.1], "cenas": ["tamanho"]},
+    {"valor": 1, "cenas": ["codigo"], "nota": "'Lista 1' é o nome da lista, não uma medida"},
+    {"valor": 2, "cenas": ["codigo"], "nota": "'Lista 2' é o nome da lista, não uma medida"}
+  ]
+}
