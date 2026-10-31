@@ -11,8 +11,12 @@ Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
 - `tempos <pasta> <content.json> <narracao.json>`: escreve `<content>.voz.json` com a duração de cada cena
   esticada até a fala dela caber (`max(duração do JSON, fala + folga)`), sem encurtar nenhuma, e, nas cenas
   com a janela do apresentador, `host.speaking` com o trecho da fala, para a boca parar quando a voz para.
-- `juntar <pasta> <video.mp4> <content.voz.json> <narracao.json> --saida <mp4>`: põe cada fala no começo da
-  cena dela, sobre o MP4 silencioso do `motion-video render`, com o volume no alvo do projeto (−14 LUFS).
+- `juntar <pasta> <video.mp4> <content.voz.json> <narracao.json> --saida=<mp4> [--sfx=<sfx.json>]`: põe
+  cada fala no começo da cena dela, sobre o MP4 silencioso do `motion-video render`, com o volume no alvo do
+  projeto (−14 LUFS). Com `--sfx`, mistura também os efeitos do plano (ADR 035, `app/pipeline/sfx.py`): cada
+  um no momento da cena menos o `sync.at` do kit, abaixado onde cai sobre a fala.
+- `sfx <pasta> <content.voz.json> <narracao.json> <sfx.json>`: confere o plano de efeitos e lista onde cada
+  som cai, sem misturar nada.
 - `gate <mp4> <post.json> --episodio=<id>`: a pasta de gate do Short em `data/episodes/<id>/`
   (`renders/final.mp4` e `legenda-post.txt` com título e legenda do post), para o dono carimbar o gate 4 com
   `vp approve <id> --step preview` e o `vp postiz pacote --episode <id>` conferir a aprovação, como num
@@ -180,11 +184,13 @@ def mix_filter(
     target_lufs: float = TARGET_LUFS,
     trims: list[tuple[float, float]] | None = None,
     video_audio: bool = False,
+    effects: list[tuple[int, float, float]] | None = None,
 ) -> str:
     """O filtro do ffmpeg: cada fala (entradas 1..N) cortada no trecho falado, reamostrada, atrasada até o
-    começo da cena dela, somadas sem normalizar (com o áudio que o render já traz, se `video_audio`), com
-    silêncio até o fim do vídeo, o volume no alvo e 48 kHz (o loudnorm sobe a taxa de amostragem; sem o
-    aresample o AAC sai em 96 kHz)."""
+    começo da cena dela, somadas sem normalizar (com o áudio que o render já traz, se `video_audio`, e com os
+    efeitos, entradas N+1.., cada um `(início em ms, corte do começo em s, ganho em dB)`), com silêncio até o
+    fim do vídeo, o volume no alvo e 48 kHz (o loudnorm sobe a taxa de amostragem; sem o aresample o AAC sai
+    em 96 kHz)."""
     parts = []
     if video_audio:
         parts.append("[0:a]aformat=sample_rates=48000:channel_layouts=mono[v0a]")
@@ -193,8 +199,18 @@ def mix_filter(
         parts.append(
             f"[{i + 1}:a]{trim}aformat=sample_rates=48000:channel_layouts=mono,adelay={ms}|{ms}[v{i}]"
         )
-    inputs = ("[v0a]" if video_audio else "") + "".join(f"[v{i}]" for i in range(len(starts_ms)))
-    count = len(starts_ms) + (1 if video_audio else 0)
+    for j, (ms, trim_s, gain_db) in enumerate(effects or []):
+        trim = f"atrim=start={trim_s:.3f},asetpts=PTS-STARTPTS," if trim_s > 0 else ""
+        parts.append(
+            f"[{len(starts_ms) + 1 + j}:a]{trim}aformat=sample_rates=48000:channel_layouts=mono,"
+            f"volume={gain_db:.1f}dB,adelay={ms}|{ms}[e{j}]"
+        )
+    inputs = (
+        ("[v0a]" if video_audio else "")
+        + "".join(f"[v{i}]" for i in range(len(starts_ms)))
+        + "".join(f"[e{j}]" for j in range(len(effects or [])))
+    )
+    count = len(starts_ms) + (1 if video_audio else 0) + len(effects or [])
     parts.append(
         f"{inputs}amix=inputs={count}:normalize=0:dropout_transition=0,apad=whole_dur={video_sec:.3f},"
         f"loudnorm=I={target_lufs:.0f}:TP=-1.5:LRA=11,aresample=48000[voz]"
@@ -312,7 +328,45 @@ def cmd_tempos(folder: Path, content_file: Path, narration: Path) -> None:
     )
 
 
-def cmd_juntar(folder: Path, video: Path, content_file: Path, narration: Path, out: Path) -> None:
+def sfx_placed(
+    folder: Path, content: dict[str, Any], narration: Path, plan_file: Path, wavs: dict[str, Speech]
+):
+    """O plano de efeitos conferido e resolvido sobre as cenas e as falas; para no primeiro erro."""
+    from app.bootstrap import build_context
+    from app.pipeline import sfx as sfxmod
+
+    kit = sfxmod.load_kit(build_context(ROOT).settings.data_dir)
+    plan = sfxmod.SfxPlan.model_validate_json(plan_file.read_text(encoding="utf-8"))
+    _, lines = load_lines(narration)
+    narrations = {line.scene: line.text for line in lines if line.scene}
+    speeches = {scene_id: sfxmod.Speech(seconds=speech.seconds) for scene_id, speech in wavs.items()}
+    starts = scene_starts(content)
+    durations = {s["id"]: float(s["durationSec"]) for s in content["scenes"]}
+    errors, warnings = sfxmod.plan_problems(plan, kit, starts, durations, narrations, speeches)
+    for warning in warnings:
+        print(f"sfx: alerta: {warning}")
+    if errors:
+        raise SystemExit("\n".join(f"sfx: {e}" for e in errors))
+    assert kit is not None
+    voice = [integrated_lufs(speech.wav) for speech in wavs.values()]
+    voice_lufs = sum(voice) / len(voice) if voice else None
+    placed = sfxmod.resolve_sfx(plan, kit, starts, narrations, speeches, voice_lufs)
+    return placed, voice_lufs
+
+
+def cmd_sfx(folder: Path, content_file: Path, narration: Path, plan_file: Path) -> None:
+    content = json.loads(content_file.read_text(encoding="utf-8"))
+    placed, voice_lufs = sfx_placed(folder, content, narration, plan_file, voiced(folder, narration))
+    print(f"voz medida: {voice_lufs:.1f} LUFS (o kit assume −16)" if voice_lufs is not None else "sem voz")
+    for p in placed:
+        under = " sob a fala" if p.under_speech else ""
+        print(f"  {p.moment_s:6.2f} s  {p.sound:32} começa em {p.start_s:6.2f} s  {p.gain_db:+.1f} dB{under}")
+    print(f"sfx: {len(placed)} efeito(s), sem erro")
+
+
+def cmd_juntar(
+    folder: Path, video: Path, content_file: Path, narration: Path, out: Path, plan_file: Path | None = None
+) -> None:
     content = json.loads(content_file.read_text(encoding="utf-8"))
     wavs = voiced(folder, narration)
     starts = scene_starts(content)
@@ -332,6 +386,7 @@ def cmd_juntar(folder: Path, video: Path, content_file: Path, narration: Path, o
                 "rode `tempos` e renderize de novo"
             )
     starts_ms = [round(starts[scene_id] * 1000) for scene_id in ordered]
+    effects = sfx_placed(folder, content, narration, plan_file, wavs)[0] if plan_file else []
     # Um render com som dentro (um vídeo tocando na montagem) entra na mistura; sem áudio, só as falas.
     probe = subprocess.run(
         [
@@ -354,10 +409,16 @@ def cmd_juntar(folder: Path, video: Path, content_file: Path, narration: Path, o
     command = ["ffmpeg", "-y", "-v", "error", "-i", str(video)]
     for scene_id in ordered:
         command += ["-i", str(wavs[scene_id].wav)]
+    for effect in effects:
+        command += ["-i", str(effect.file)]
     command += [
         "-filter_complex",
         mix_filter(
-            starts_ms, video_sec, trims=[(wavs[s].begin, wavs[s].end) for s in ordered], video_audio=has_audio
+            starts_ms,
+            video_sec,
+            trims=[(wavs[s].begin, wavs[s].end) for s in ordered],
+            video_audio=has_audio,
+            effects=[(round(e.start_s * 1000), e.trim_s, e.gain_db) for e in effects],
         ),
         "-map",
         "0:v:0",
@@ -378,7 +439,8 @@ def cmd_juntar(folder: Path, video: Path, content_file: Path, narration: Path, o
     problem = loudness_problem(lufs)
     print(
         f"juntar: {out} ({duration_ms(out) / 1000:.1f} s), {len(ordered)} fala(s)"
-        f"{' + o áudio do render' if has_audio else ''}; volume {lufs:.1f} LUFS",
+        f"{' + o áudio do render' if has_audio else ''}"
+        f"{f' + {len(effects)} efeito(s)' if effects else ''}; volume {lufs:.1f} LUFS",
         f"— alerta: {problem}" if problem else "ok",
     )
 
@@ -461,7 +523,13 @@ def main() -> None:
     elif verb == "tempos" and len(rest) == 3:
         cmd_tempos(Path(rest[0]), Path(rest[1]), Path(rest[2]))
     elif verb == "juntar" and len(rest) == 4 and isinstance(flags.get("--saida"), str):
-        cmd_juntar(Path(rest[0]), Path(rest[1]), Path(rest[2]), Path(rest[3]), Path(flags["--saida"]))
+        plan = flags.get("--sfx")
+        cmd_juntar(
+            Path(rest[0]), Path(rest[1]), Path(rest[2]), Path(rest[3]), Path(flags["--saida"]),
+            Path(plan) if isinstance(plan, str) else None,
+        )
+    elif verb == "sfx" and len(rest) == 4:
+        cmd_sfx(Path(rest[0]), Path(rest[1]), Path(rest[2]), Path(rest[3]))
     elif verb == "gate" and len(rest) == 2 and isinstance(flags.get("--episodio"), str):
         cmd_gate(Path(rest[0]), Path(rest[1]), flags["--episodio"])
     elif verb == "boca" and len(rest) == 3 and isinstance(flags.get("--saida"), str):

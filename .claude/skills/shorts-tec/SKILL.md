@@ -55,6 +55,11 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
 6. **Tempos, render e junção.** `shorts_tec.py tempos` estica as cenas até a fala caber; o `render` do kit
    sai do `content.<idioma>.voz.json`; `shorts_tec.py juntar` põe cada fala no começo da cena. Pronto quando o
    `juntar` imprime o volume dentro do alvo e nenhuma fala passa do fim da cena.
+   **Efeitos sonoros (ADR 035, opcional):** um `sfx.<idioma>.json` com um som do SFX Kit (`data/sfx/kit/`,
+   CC0) por momento: no corte de cada cena e nas palavras que pesam (número que cai, item que entra, pedido
+   final), ancorado como os planos (`scene` + `text` ou `offset_s`). Escolha pela tabela "On screen" do
+   `GUIDE.md` do kit; nunca os sons que o kit marca "On top of speech" sobre a fala. `shorts_tec.py sfx` confere
+   e lista onde cada som cai; `juntar --sfx=` mistura numa saída nova, sem tocar no MP4 carimbado. O dono ouve.
 7. **Os posts.** Rascunhos no formato do Postiz para cada canal e idioma (`docs/postiz.md`), com data, mídia e
    link como lacunas explícitas até existir o que preencher, e a hipótese a medir aos 7 e 28 dias (CLAUDE.md
    §4). Pronto quando o `README.md` da pasta lista o que falta antes do `pacote`.
@@ -78,5 +83,5 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
 ## Fora da v1
 
 Legenda queimada (o `motion-video` não tem campo de legenda; a `WordCaption` é do template do auto-play),
-trilha, e a voz em inglês: a decisão entre a voz clonada em inglês e a dublagem automática do YouTube é do
+trilha (efeitos sonoros entraram na ADR 035; música ainda não), e a voz em inglês: a decisão entre a voz clonada em inglês e a dublagem automática do YouTube é do
 dono, numa escuta cega.

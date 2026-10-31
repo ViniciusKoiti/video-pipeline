@@ -1,0 +1,17 @@
+{
+  "cues": [
+    {"sound": "pop-medium-in", "scene": "gancho", "offset_s": 0.05, "note": "o cartão do gancho aparece"},
+    {"sound": "whoosh-medium-soft", "scene": "codigo", "offset_s": 0.2, "note": "corte para a grade; os cartões entram"},
+    {"sound": "data-number-land", "scene": "codigo", "text": "dez milhões", "note": "o 10.000.000 na fala"},
+    {"sound": "pop-small-in", "scene": "codigo", "text": "ordem da memória", "note": "lista 1"},
+    {"sound": "pop-small-in", "scene": "codigo", "text": "embaralhada", "note": "lista 2"},
+    {"sound": "whoosh-medium-soft", "scene": "resultado", "offset_s": 0.2, "note": "corte para a comparação"},
+    {"sound": "data-number-land", "scene": "resultado", "text": "trinta milissegundos", "note": "o 26,9 ms"},
+    {"sound": "impact-light-firm", "scene": "resultado", "text": "dois segundos", "note": "o 2420,8 ms, o número que pesa"},
+    {"sound": "data-chart-reveal", "scene": "tamanho", "offset_s": 0.1, "note": "corte para a tabela de N"},
+    {"sound": "tone-step-1", "scene": "tamanho", "text": "mil nós", "note": "1 mil"},
+    {"sound": "tone-step-2", "scene": "tamanho", "text": "cem mil", "note": "100 mil"},
+    {"sound": "whoosh-medium-soft", "scene": "fecho", "offset_s": 0.2, "note": "corte para o cartão final"},
+    {"sound": "notification-message-in-soft", "scene": "fecho", "text": "Comenta aqui", "note": "o pedido de comentário"}
+  ]
+}

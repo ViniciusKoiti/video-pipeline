@@ -333,6 +333,10 @@ lacuna fica registrada.
   (`scripts/provisorio/catalogo_musica.py`), plano em `music.json` do agente `diretor-musical` (âncoras na
   narração, como os planos). A música entra na junção, por baixo da voz (ducking), com o volume final perto de
   −14 LUFS, e trocar a faixa refaz só a junção. A licença só vale no YouTube.
+  Efeitos sonoros nos Shorts (ADR 035, proposta): o SFX Kit (CC0, sintetizado em código) clonado pelo dono em
+  `data/sfx/kit/`, lido direto do `sounds.json` dele com o `sha256` conferido; plano `sfx.json` por vídeo
+  (som + cena + trecho da fala ou deslocamento), conferido por `app/pipeline/sfx.py` e misturado em
+  `shorts_tec.py juntar --sfx=`, cada som no momento menos o `sync.at` do kit e abaixado sob a fala.
   B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre
   cenas e sem fade, e recomeça quando o clipe acaba; o `vp check` não põe teto de duração no `broll`.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**

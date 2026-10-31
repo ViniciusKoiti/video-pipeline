@@ -2,4 +2,4 @@ Medi isso na minha máquina: gcc 15.2, -O2, Ryzen 7 5700U, mediana de 15 repeti�
 
 Por que você acha que isso acontece? Comenta aí.
 
-Código: [LINK]
+Código: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/lista-ligada
