@@ -15,7 +15,18 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import assets, conferences, decisions, numeros, postiz, reopen, sources, usage
+from app.commands import (
+    assets,
+    briefs,
+    conferences,
+    decisions,
+    music,
+    numeros,
+    postiz,
+    reopen,
+    sources,
+    usage,
+)
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.errors import run
 from app.commands.models.command import Command as Command
@@ -158,6 +169,8 @@ HANDLERS: dict[str, Handler] = {
     "numeros": numeros.run,
     "sources": sources.run,
     "assets": assets.run,
+    "briefs": briefs.run,
+    "music": music.run,
     "postiz": postiz.run,
     "usage": usage.run,
 }
@@ -185,6 +198,8 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
     assets.add_arguments(subparsers.add_parser("assets", help="busca e baixa ativos visuais (ADR 044)"))
+    briefs.add_arguments(subparsers.add_parser("briefs", help="resumo do radar e perfil do nicho (ADR 047)"))
+    music.add_arguments(subparsers.add_parser("music", help="catálogo de música de fundo (ADR 030)"))
     sources.add_arguments(subparsers.add_parser("sources", help="registra uma fonte (ADR 043)"))
     usage.add_arguments(
         subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")

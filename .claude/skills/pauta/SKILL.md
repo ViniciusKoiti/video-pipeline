@@ -3,7 +3,7 @@ name: pauta
 description: |
   Escreve a pauta de um episódio curto (Reel) antes de baixar fontes: público, tema concreto, forma e o que
   as fontes precisam responder, a partir do resumo do reels-radar do nicho. Use no começo de um episódio,
-  depois de `radar_resumo.py` e antes das fontes (ADR 018).
+  depois de `vp briefs radar` e antes das fontes (ADR 018).
 argument-hint: "<episode-id>"
 ---
 
@@ -15,7 +15,7 @@ uma lista de perguntas e escolhas, que o dono aprova antes de qualquer download 
 ## Entrada
 
 - `data/episodes/<id>/radar-brief.json`: cópia do resumo do nicho (`script_brief.v1`), trazida por
-  `scripts/provisorio/radar_resumo.py <id> <nicho>`. Sem o arquivo, pare e diga que falta: não escreva a pauta
+  `vp briefs radar <id> <nicho>`. Sem o arquivo, pare e diga que falta: não escreva a pauta
   de memória.
 - O que o dono disse sobre o tema e o ângulo.
 

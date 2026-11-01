@@ -358,9 +358,14 @@ ficaram para trás e por quê, o `vp status` as lista e retomar continua sendo r
 RF7 começou pelos comandos (2026-11-01). Fatia 1: `baixar_fonte` e `fonte_declarada` viraram `vp sources add|declared`
 (ADR 043, emenda), os dois scripts saíram e o `vp numeros` foi para `app/commands/numeros.py`; `tests/test_sources_command.py`
 cobre o caminho real (parser, `HANDLERS` e handler de erros) e mutações conferidas. Falta o resto do critério "Tests passam a
-importar de `app/`": `catalogo_musica`, `radar_resumo` e `formato_resumo`
-(briefs e música), `montar_episodio` e `shorts_tec` (voz e render).
-Fatia 2: `vp assets search|take` faz o que `buscar_candidatos` e `baixar_escolhidos` faziam (ADR 044, emenda), com a
-busca em `app/pipeline/candidates.py`; `tests/test_assets_command.py` (9, mutações conferidas; uma sobreviveu, a da
-duração mínima só em vídeo, e ganhou teste). **Os scripts ficam** até o dono trocar três referências na skill
-`plano-de-imagens` (`.claude/` é negado para o agente): o critério do RF7 manda não remover script com consumidor.
+importar de `app/`": `montar_episodio` e `shorts_tec` (voz e render).
+Fatia 2: `buscar_candidatos` e `baixar_escolhidos` viraram `vp assets search|take` (ADR 044, emenda), com a busca em
+`app/pipeline/candidates.py`; os scripts saíram e a skill `plano-de-imagens` chama os comandos novos (o dono liberou a
+edição de `.claude/` na sessão). `tests/test_assets_command.py` (9, mutações conferidas; uma sobreviveu, a da duração
+mínima só em vídeo, e ganhou teste). Para o `cli.py` não crescer, `vp medicao` e `vp traducao` foram para
+`app/commands/conferences.py`, com `tests/test_conferences_command.py` (5, antes a saída não tinha teste).
+Fatia 3: `radar_resumo`, `formato_resumo` e `catalogo_musica` viraram `vp briefs radar|formato` e `vp music
+adicionar|usar|listar` (ADR 047, emenda); os scripts saíram e a skill `pauta`, o agente `diretor-musical`, as skills
+`trilha`, `vp-trilha` e `analise-de-formato` chamam os comandos novos. `tests/test_briefs_music_command.py` (8, oito
+mutações conferidas; quatro sobreviveram e ganharam teste). Antes dela, `approve`, `reject` e `checagem` e o
+`project_root` saíram do `cli.py` (172 linhas, fora do baseline) e o `reopen` passou a achar o `.env` pela raiz.

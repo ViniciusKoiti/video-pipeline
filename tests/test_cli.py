@@ -16,7 +16,7 @@ SPEC_COMMANDS = {
     "checagem", "numeros", "traducao",
     "medicao",
 }
-OWN_PARSER_COMMANDS = {"sources", "assets", "postiz", "usage"}  # módulos de app/commands (subcomandos)
+OWN_PARSER_COMMANDS = {"sources", "assets", "briefs", "music", "postiz", "usage"}  # app/commands
 
 
 def test_commands_match_spec() -> None:

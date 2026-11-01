@@ -36,3 +36,15 @@ e lia `catalog.json` inválido com `ValidationError` solta.
 
 A escuta do dono (clima, voz cantada) e a licença da faixa continuam sendo dele; o código só confere o registro.
 `vp`: os comandos continuam sendo scripts provisórios.
+
+## Emenda de 2026-11-01 (RF7, fatia 3): `vp briefs` e `vp music`
+
+Os três scripts viraram comandos, com os mesmos argumentos e saídas: `vp briefs radar <id> <nicho> [--radar] [--atualizar]`
+(era `radar_resumo.py`), `vp briefs formato <id> <perfil> [--atualizar]` (era `formato_resumo.py`) e `vp music
+adicionar|usar|listar` (era `catalogo_musica.py`, com os mesmos nomes de subcomando e de opção em português). O
+serviço continua sendo `install_brief` e `music_library`; os comandos só montam a entrada. Pasta do radar ausente
+e resumo inexistente passam a ser `BriefError` (antes, `SystemExit`): saem com 1 e `vp briefs: ...`. A skill `pauta`, o
+agente `diretor-musical`, as skills `trilha`, `vp-trilha` e `analise-de-formato` e o `brief.py` chamam os comandos
+novos, e os três scripts foram removidos. As permissões de Bash do agente `diretor-musical` apontam para
+`.venv/bin/vp music`.
+

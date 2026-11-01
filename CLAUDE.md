@@ -167,7 +167,7 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
 
 ## 4. Fluxo de trabalho
 
-Nos Reels, antes das fontes: resumo do nicho no reels-radar (`radar_resumo.py`) → pauta (skill `pauta`), que o
+Nos Reels, antes das fontes: resumo do nicho no reels-radar (`vp briefs radar`) → pauta (skill `pauta`), que o
 dono aprova (ADR 018). O resumo é forma, nunca fato; o `vp check` avisa onde o roteiro foge dos padrões dele.
 No vídeo longo, o mesmo desenho com o molde do nicho (ADR 031): a skill `analise-de-formato` gera `molde.json` e
 a `partitura.md` do episódio, o roteirista lê a partitura antes do outline e o `vp check` avisa pelo molde.
@@ -382,7 +382,7 @@ lacuna fica registrada.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
   Trilha (ADR 030): faixas da YouTube Audio Library baixadas à mão pelo dono, catálogo em `data/music/`
-  (`scripts/provisorio/catalogo_musica.py`), plano em `music.json` do agente `diretor-musical` (âncoras na
+  (`vp music`), plano em `music.json` do agente `diretor-musical` (âncoras na
   narração, como os planos). A música entra na junção, por baixo da voz (ducking), com o volume final perto de
   −14 LUFS, e trocar a faixa refaz só a junção. A licença só vale no YouTube.
   Efeitos sonoros nos Shorts (ADR 035, proposta): o SFX Kit (CC0, sintetizado em código) clonado pelo dono em
@@ -415,7 +415,7 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `traducao`, `medicao`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp traducao <id>` confere uma pasta de tradução
+`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `traducao`, `medicao`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp traducao <id>` confere uma pasta de tradução
 contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
 medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
@@ -541,7 +541,7 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
-| `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `catalogo_musica.py`) |
+| `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `vp music`) |
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →

@@ -112,7 +112,7 @@ certo para o episódio:
 
 ```
 python3 -I .agents/skills/analise-de-formato/brief.py data/cache/nicho/<Título>/analise --nicho "<nicho>"
-.venv/bin/python scripts/provisorio/formato_resumo.py <episódio> data/cache/nicho/<Título>/analise/formato-brief-<grupo>.json
+.venv/bin/vp briefs formato <episódio> data/cache/nicho/<Título>/analise/formato-brief-<grupo>.json
 ```
 
 O perfil leva, por medida, o terço de cima e o de baixo, o `n`, o ρ e a força (`pattern` só com n >= 20,

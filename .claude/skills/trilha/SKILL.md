@@ -59,6 +59,6 @@ que a narração faz em cada cena. O dono ouve na prévia e decide no gate 4; "a
 ## Antes de entregar
 
 - `.venv/bin/vp check <id>` sem erro de `music.json`.
-- Para cada faixa usada: `scripts/provisorio/catalogo_musica.py usar <id> <faixa>` copia o ativo para o
+- Para cada faixa usada: `vp music usar <id> <faixa>` copia o ativo para o
   episódio; o gate 3 da faixa é do dono (`vp approve <id> --step assets --asset <faixa>`).
 - Entregue: faixas escolhidas e por quê, onde ficam os silêncios, e o que o dono precisa ouvir com atenção.

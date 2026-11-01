@@ -28,7 +28,7 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
   por frase.
 - Trilha (ADR 030): com `music.json` na pasta, cada entrada vira um trecho de `music` no `episode.json`, com o
   tempo tirado dos WAVs; a faixa é `assets/<asset_id>.<ext>` (mp3, m4a, wav, ogg), copiada do catálogo por
-  `scripts/provisorio/catalogo_musica.py usar`. Depois do render, a loudness final é medida (alvo −14 LUFS).
+  `vp music usar`. Depois do render, a loudness final é medida (alvo −14 LUFS).
 """
 
 from __future__ import annotations
@@ -131,7 +131,7 @@ def music(settings: Settings, episode_dir: Path, episode: EpisodeManifest) -> li
 
     def track_file(asset_id: str) -> str:
         if not (episode_dir / "assets" / f"{asset_id}.json").is_file():
-            raise SystemExit(f"faixa {asset_id} sem ativo no episódio (catalogo_musica.py usar)")
+            raise SystemExit(f"faixa {asset_id} sem ativo no episódio (vp music usar)")
         for suffix in MUSIC_SUFFIXES:
             if (episode_dir / "assets" / f"{asset_id}{suffix}").is_file():
                 return f"assets/{asset_id}{suffix}"
