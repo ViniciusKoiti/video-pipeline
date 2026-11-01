@@ -236,3 +236,15 @@ RF3 foi entregue em seguida (ADR 041): `identity` e `fingerprint(request)` na po
 `closing_tts`, `atomic_wav` nos adapters, `app/media/speech_batches.py` (lote, fallback só no corte recusado, cota
 que para as chamadas) e `app/media/wav.py`. O `chatterbox.py` foi dividido (`chatterbox_text.py`). O próximo
 trabalho da sequência é RF4: operações públicas e direção das dependências.
+
+## 5. Pendências abertas ao fim do RF3 (2026-11-01)
+
+Nenhuma bloqueia o RF4. O dono confirmou em 2026-11-01 que se segue sem decidir agora.
+
+| Pendência | Quem decide | Quando |
+|---|---|---|
+| Nome dos WAVs dos Shorts já aprovados na escuta: manter o nome de hoje (`fingerprint` de um pedido sem texto) ou adotar a identidade completa. Recomendação: manter, porque a voz clonada sorteia a pronúncia e regenerar pode trocar um áudio aprovado. Custo: o nome do Short não acompanha uma mudança de `pause_ms`. | Dono | Ao migrar o `shorts_tec` para a porta (`VoiceKey`) |
+| A entrega não neutra do Chatterbox muda de chave (ADR 041): essas falas são regeradas na próxima vez que a voz de um episódio rodar. Nada dispara isso sozinho; não rodar a voz de episódio aprovado sem necessidade. | Aviso | Contínuo |
+| Escrita atômica do Kokoro só é exercida no teste lento (`uv run pytest -m slow -k kokoro`, extra `tts`). Rodar com a máquina livre, depois da sonda de CPU (`cpu_probe`). | Dono pede | Quando quiser |
+| `data/publicacoes/registro.jsonl` já vinha modificado antes da refatoração e ficou fora dos commits. | Dono | Quando revisar os agendamentos |
+| Scripts `montar_episodio.py` e `shorts_tec.py` ainda usam a lógica própria de chave, lote e fechamento da voz. | Código | Depois da extração de `VoiceKey`, biblioteca e narrador |
