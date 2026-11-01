@@ -50,3 +50,5 @@ data/publicacoes/metricas.csv
 # cache do Remotion (Chrome headless de 200 MB)
 .remotion/
 data/sfx/*
+renders/*/out/
+renders/*/demo/vazamento

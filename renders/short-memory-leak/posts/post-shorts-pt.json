@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "2026-11-07T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0omyy0005l26yggavdqpu"
+      },
+      "value": [
+        {
+          "content": "Medi isso na minha máquina: gcc 15.2, -O2, Ryzen 7 5700U, 15 rodadas de 10 segundos por versão, mediana. O programa pede um bloco de 64 KB a cada milissegundo e escreve nele. Com free, a memória residente fica em 2,1 MB do começo ao fim. Sem free, chega a 491 MB em 10 segundos (de 457 a 507 nas rodadas), e na primeira rodada passou de 42,7 MB no primeiro segundo para 457 MB no décimo.\n\nOs números são desta máquina; o vídeo não explica para onde vai a memória, só mostra a medição.\n\nCódigo: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/memory-leak\n\nA voz é a minha, clonada por IA.\n\n#Shorts #Programação #C #MemoryLeak #Memória",
+          "image": [
+            {
+              "id": "3d8eaa76-656c-4ff7-b735-3fa2f9be2a29",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/01/14ee0a7ba384fce3c64d38c19e1779a8.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Mesmo programa, só esqueci o free",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "memory leak",
+            "label": "memory leak"
+          },
+          {
+            "value": "C",
+            "label": "C"
+          },
+          {
+            "value": "memória",
+            "label": "memória"
+          },
+          {
+            "value": "malloc",
+            "label": "malloc"
+          }
+        ]
+      }
+    }
+  ]
+}

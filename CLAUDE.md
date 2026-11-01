@@ -494,7 +494,8 @@ pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (
 um nicho ou formato novo (a segunda mede a amostra e gera `molde.json` e `partitura.md`, ADR 031); `pauta` nos
 Reels; `plano-de-imagens` entre os gates 2 e 3 (o dono valida o plano antes de qualquer download); `miniatura`
 produz a arte entre os gates 3 e 4, partindo do conceito planejado na pauta e do canal de referência;
-`componentes-do-kit` ao mexer no template (§14); `shorts-tec` para um Short ou teaser de uma ferramenta do dono,
+`componentes-do-kit` ao mexer no template (§14); a rotina do Short diário (ADR 036, proposta; timer desligado e a skill `short-diario` ainda por criar, pelo dono):
+um Short da série até o pacote do Postiz, sem gates; `shorts-tec` para um Short ou teaser de uma ferramenta do dono,
 montado por JSON no `motion-video` do kit com o dono numa janela e a voz clonada (voz, tempos e junção em
 `scripts/provisorio/shorts_tec.py`; primeiro caso: o teaser do motion-kit, 2026-10-25).
 

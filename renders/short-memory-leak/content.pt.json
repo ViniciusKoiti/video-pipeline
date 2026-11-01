@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Medido em 31/10/2026 · gcc 15.2 -O2 · Ryzen 7 5700U · mediana de 15 rodadas de 10 s",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 4,
+      "kicker": "memory leak",
+      "text": "Mesmo programa. Só esqueci o free.",
+      "highlight": "esqueci o free"
+    },
+    {
+      "id": "codigo",
+      "type": "grid",
+      "durationSec": 8,
+      "layout": "hero-top",
+      "cells": [
+        {"kind": "number", "value": 64, "label": "KB por bloco, a cada ms"},
+        {"kind": "text", "text": "Versão 1: malloc, escreve, free"},
+        {"kind": "text", "text": "Versão 2: malloc, escreve"}
+      ]
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 9,
+      "mode": "side",
+      "showRatio": false,
+      "left": {"label": "com free (MB aos 10 s)", "value": 2.1},
+      "right": {"label": "sem free (MB aos 10 s)", "value": 491.0}
+    },
+    {
+      "id": "curva",
+      "type": "categories",
+      "durationSec": 8,
+      "title": "Sem free: memória residente",
+      "unit": "MB",
+      "decimals": 1,
+      "highlight": "10 s",
+      "items": [
+        {"label": "2 s", "value": 83.9},
+        {"label": "4 s", "value": 166.5},
+        {"label": "6 s", "value": 265.5},
+        {"label": "8 s", "value": 364.1},
+        {"label": "10 s", "value": 457.0}
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 6,
+      "variant": "follow",
+      "text": "baixo nível",
+      "sub": "código na descrição"
+    }
+  ]
+}

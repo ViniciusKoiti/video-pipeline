@@ -1,0 +1,5 @@
+Medi na minha máquina: gcc 15.2 -O2, Ryzen 7 5700U, 15 rodadas de 10 s por versão. Sem free, a memória residente foi a 491 MB em 10 s (mediana; de 457 a 507). Com free, ficou em 2,1 MB nas 15 rodadas. Um bloco de 64 KB por milissegundo, escrito antes de ser esquecido.
+
+Para onde você acha que vai essa memória? Comenta aí.
+
+Código: https://github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/memory-leak

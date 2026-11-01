@@ -6,8 +6,9 @@ Uso: `.venv/bin/python scripts/provisorio/conferir_audio.py <video.mp4>
 - `--episodio=<id>`: vídeo longo; os cortes vêm do `episode.json` da pasta do episódio (`start_ms` de cada
   cena).
 - `--content=<content.voz.json>`: Short por JSON do motion-video; os cortes vêm do começo de cada cena, com a
-  mesma conta do `shorts_tec.py`. Com `--sfx`, os cortes em que o plano pôs um som no começo da cena precisam
-  ter um ataque a 40 ms, senão é problema.
+  mesma conta do `shorts_tec.py`. Com `--sfx`, cada som colocado por deslocamento (começo da cena +
+  `offset_s`) precisa ter um ataque a 40 ms de onde o kit diz que o ataque dele cai (momento − `sync.at` +
+  `onset`), senão é problema; os cortes de cena entram na medida como informação.
 - Mede a loudness como o YouTube mede (mono contado nos dois alto-falantes), o pico real e a batida da trilha,
   e grava o JSON do earshot em `--saida` (padrão: `<video>.earshot.json`, ao lado do vídeo).
 
@@ -42,16 +43,26 @@ def cuts_from_content(content_file: Path) -> tuple[list[float], dict[str, float]
     return [round(t, 3) for t in list(starts.values())[1:]], starts
 
 
-def expected_from_sfx(plan_file: Path, starts: dict[str, float]) -> set[float]:
-    """Os cortes em que o plano de efeitos pôs um som no começo da cena (sem âncora de texto, até 0,3 s)."""
-    from app.pipeline.sfx import SfxPlan
+def expected_from_sfx(plan_file: Path, starts: dict[str, float], data_dir: Path) -> set[float]:
+    """Onde o ataque de cada som colocado por deslocamento (começo da cena + `offset_s`, sem âncora de
+    texto) tem de cair: o momento do plano menos o `sync.at` do kit mais o `onset` do som. Num pop é o próprio
+    momento; num whoosh o ataque vem antes do pico, e é isso que o earshot ouve. Os ancorados na fala dependem
+    do WAV e ficam fora desta conferência."""
+    from app.pipeline.sfx import SfxPlan, load_kit
 
     plan = SfxPlan.model_validate_json(plan_file.read_text(encoding="utf-8"))
-    return {
-        round(starts[cue.scene], 3)
-        for cue in plan.cues
-        if cue.text is None and cue.offset_s <= 0.3 and cue.scene in starts and starts[cue.scene] > 0
-    }
+    kit = load_kit(data_dir)
+    if kit is None:
+        raise SystemExit("conferir_audio: falta o SFX Kit em data/sfx/kit/ para ler o sync.at dos sons")
+    moments = set()
+    for cue in plan.cues:
+        if cue.text is not None or cue.scene not in starts or cue.sound not in kit.sounds:
+            continue
+        sound = kit.sounds[cue.sound]
+        onset = starts[cue.scene] + cue.offset_s - sound.sync_at + sound.onset
+        if onset > 0.25:  # o earshot não mede ataque colado no começo do arquivo
+            moments.add(round(onset, 3))
+    return moments
 
 
 def main() -> int:
@@ -74,7 +85,8 @@ def main() -> int:
     else:
         cuts, starts = cuts_from_content(Path(flags["--content"]))
         if "--sfx" in flags:
-            expected = expected_from_sfx(Path(flags["--sfx"]), starts)
+            expected = expected_from_sfx(Path(flags["--sfx"]), starts, settings.data_dir)
+            cuts = sorted(set(cuts) | expected)  # sincronia nos cortes e nos momentos do plano
     probe = cpu_probe()
     if probe > CPU_LIMIT_S:
         raise SystemExit(

@@ -1,0 +1,7 @@
+[Unit]
+Description=Short diário da série "eu medi" até o pacote do Postiz (ADR 036)
+
+[Service]
+Type=oneshot
+ExecStart=%h/projetos/auto-play/deploy/rotina/short-diario.sh
+Nice=10

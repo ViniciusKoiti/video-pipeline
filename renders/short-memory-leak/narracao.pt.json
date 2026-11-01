@@ -1,0 +1,28 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Esse programa faz a mesma coisa sete mil vezes em dez segundos. Olha o que acontece com a memória.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "codigo",
+      "text": "A cada vez ele pede sessenta e quatro kilobytes e escreve neles. Numa versão eu devolvo o bloco com free. Na outra, esqueci."
+    },
+    {
+      "scene": "resultado",
+      "text": "Com o free, a memória fica em dois megabytes do começo ao fim. Sem o free, em dez segundos ela passa de quatrocentos e noventa megabytes.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "curva",
+      "text": "E não para de subir: quarenta e dois megabytes no primeiro segundo, quatrocentos e cinquenta e sete no décimo."
+    },
+    {
+      "scene": "fecho",
+      "text": "Mesmo código, um free a menos. Para onde vai essa memória? Comenta aqui, que o código está na descrição.",
+      "delivery": "invite"
+    }
+  ]
+}

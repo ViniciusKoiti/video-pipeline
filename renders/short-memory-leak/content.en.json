@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Measured 2026-10-31 · gcc 15.2 -O2 · Ryzen 7 5700U · median of 15 runs of 10 s",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 4,
+      "kicker": "memory leak",
+      "text": "Same program. I just forgot the free.",
+      "highlight": "forgot the free"
+    },
+    {
+      "id": "codigo",
+      "type": "grid",
+      "durationSec": 8,
+      "layout": "hero-top",
+      "cells": [
+        {"kind": "number", "value": 64, "label": "KB per block, every ms"},
+        {"kind": "text", "text": "Version 1: malloc, write, free"},
+        {"kind": "text", "text": "Version 2: malloc, write"}
+      ]
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 9,
+      "mode": "side",
+      "showRatio": false,
+      "left": {"label": "with free (MB at 10 s)", "value": 2.1},
+      "right": {"label": "without free (MB at 10 s)", "value": 491.0}
+    },
+    {
+      "id": "curva",
+      "type": "categories",
+      "durationSec": 8,
+      "title": "Without free: resident memory",
+      "unit": "MB",
+      "decimals": 1,
+      "highlight": "10 s",
+      "items": [
+        {"label": "2 s", "value": 83.9},
+        {"label": "4 s", "value": 166.5},
+        {"label": "6 s", "value": 265.5},
+        {"label": "8 s", "value": 364.1},
+        {"label": "10 s", "value": 457.0}
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 6,
+      "variant": "follow",
+      "text": "low level",
+      "sub": "code in the description"
+    }
+  ]
+}

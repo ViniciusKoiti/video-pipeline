@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-11-07T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Same program, I just forgot the free. Measured on my own machine (gcc 15.2 -O2, Ryzen 7 5700U, median of 15 runs of 10 s): a 64 KB block every millisecond; with free, memory stays at 2.1 MB; without it, 491 MB in 10 seconds.\n\nThe video only shows the measurement. Where does the memory go? Tell me below.\n\nCode: github.com/ViniciusKoiti/baixo-nivel-demos/tree/main/memory-leak\n\nThe voice is mine, cloned with AI.\n\n#memoryleak #cprogramming #lowlevel #programming #dev",
+          "image": [
+            {
+              "id": "689bc84c-e21e-4561-9139-1a1033043a4b",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/01/db70c92bd44dfbd10434721f9898836d7.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

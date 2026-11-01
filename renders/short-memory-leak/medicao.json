@@ -1,0 +1,25 @@
+{
+  "arquivo": "renders/short-memory-leak/demo/resultado.txt",
+  "ambiente": "gcc 15.2.0 -O2, AMD Ryzen 7 5700U, cpu_probe 0,05 s, bloco de 64 KB a cada 1 ms, 15 rodadas de 10 s por versão, 2026-10-31",
+  "numeros": [
+    {"valor": 7000, "trechos": ["versao=vaza rodada=1 rss_10s_mb=457.0 iteracoes=7278"], "medidos": [7278], "tolerancia": 0.04, "cenas": ["gancho"], "nota": "'sete mil vezes': arredondado para baixo; as outras rodadas passam de 7.278"},
+    {"valor": 10, "trechos": ["10 s | 15 rodadas", "t=10s rss_mb=457.0"], "medidos": [10], "cenas": ["gancho", "resultado", "curva"], "nota": "os dez segundos da medição"},
+    {"valor": 64, "trechos": ["bloco 64 KB a cada 1 ms"], "medidos": [64], "cenas": ["codigo"]},
+    {"valor": 1, "cenas": ["codigo"], "nota": "'Versão 1' é o nome da versão, não medida"},
+    {"valor": 2, "cenas": ["codigo"], "nota": "'Versão 2' é o nome da versão, não medida"},
+    {"valor": 2, "trechos": ["## resumo versao=libera rss_10s_mb mediana=2.1 minimo=2.1 maximo=2.1"], "medidos": [2.1], "tolerancia": 0.05, "cenas": ["resultado"], "nota": "'dois megabytes': a mediana (e todas as rodadas) é 2,1"},
+    {"valor": 2.1, "trechos": ["## resumo versao=libera rss_10s_mb mediana=2.1"], "medidos": [2.1], "cenas": ["resultado"]},
+    {"valor": 490, "trechos": ["## resumo versao=vaza rss_10s_mb mediana=491.0"], "medidos": [491.0], "tolerancia": 0.005, "cenas": ["resultado"], "nota": "'passa de quatrocentos e noventa': a mediana é 491,0"},
+    {"valor": 491.0, "trechos": ["## resumo versao=vaza rss_10s_mb mediana=491.0"], "medidos": [491.0], "cenas": ["resultado"]},
+    {"valor": 42, "trechos": ["versao=vaza rodada=1 t=1s rss_mb=42.7"], "medidos": [42.7], "tolerancia": 0.02, "cenas": ["curva"], "nota": "'quarenta e dois no primeiro segundo': rodada 1"},
+    {"valor": 457, "trechos": ["versao=vaza rodada=1 t=10s rss_mb=457.0"], "medidos": [457.0], "cenas": ["curva"]},
+    {"valor": 2, "trechos": ["versao=vaza rodada=1 t=2s rss_mb=83.9"], "medidos": [2], "cenas": ["curva"], "nota": "rótulo '2 s' da curva"},
+    {"valor": 4, "trechos": ["versao=vaza rodada=1 t=4s rss_mb=166.5"], "medidos": [4], "cenas": ["curva"]},
+    {"valor": 6, "trechos": ["versao=vaza rodada=1 t=6s rss_mb=265.5"], "medidos": [6], "cenas": ["curva"]},
+    {"valor": 8, "trechos": ["versao=vaza rodada=1 t=8s rss_mb=364.1"], "medidos": [8], "cenas": ["curva"]},
+    {"valor": 83.9, "trechos": ["versao=vaza rodada=1 t=2s rss_mb=83.9"], "medidos": [83.9], "cenas": ["curva"]},
+    {"valor": 166.5, "trechos": ["versao=vaza rodada=1 t=4s rss_mb=166.5"], "medidos": [166.5], "cenas": ["curva"]},
+    {"valor": 265.5, "trechos": ["versao=vaza rodada=1 t=6s rss_mb=265.5"], "medidos": [265.5], "cenas": ["curva"]},
+    {"valor": 364.1, "trechos": ["versao=vaza rodada=1 t=8s rss_mb=364.1"], "medidos": [364.1], "cenas": ["curva"]}
+  ]
+}

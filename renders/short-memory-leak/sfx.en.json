@@ -1,0 +1,17 @@
+{
+  "cues": [
+    {"sound": "pop-medium-in", "scene": "gancho", "offset_s": 0.05, "note": "hook card appears"},
+    {"sound": "whoosh-medium-soft", "scene": "codigo", "offset_s": 0.2, "note": "cut to the grid"},
+    {"sound": "data-number-land", "scene": "codigo", "text": "sixty-four", "note": "the 64 KB"},
+    {"sound": "pop-small-in", "scene": "codigo", "text": "give the block back", "note": "version 1"},
+    {"sound": "pop-small-in", "scene": "codigo", "text": "I forgot", "note": "version 2"},
+    {"sound": "whoosh-medium-soft", "scene": "resultado", "offset_s": 0.2, "note": "cut to the comparison"},
+    {"sound": "data-number-land", "scene": "resultado", "text": "two megabytes", "note": "the 2.1 MB"},
+    {"sound": "impact-light-firm", "scene": "resultado", "text": "four hundred and ninety", "note": "the 491 MB"},
+    {"sound": "data-chart-reveal", "scene": "curva", "offset_s": 0.1, "note": "cut to the curve"},
+    {"sound": "tone-step-1", "scene": "curva", "text": "forty-two", "note": "first point"},
+    {"sound": "tone-step-2", "scene": "curva", "text": "four hundred and fifty", "note": "last point"},
+    {"sound": "whoosh-medium-soft", "scene": "fecho", "offset_s": 0.2, "note": "cut to the end card"},
+    {"sound": "notification-message-in-soft", "scene": "fecho", "text": "Comment below", "note": "the ask"}
+  ]
+}
