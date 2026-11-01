@@ -54,7 +54,6 @@ def test_commands_without_a_handler_exit_with_the_not_implemented_code(
         "scenes",
         "gallery",
         "subs",
-        "render",
     } <= set(stubs)
     assert main(["script", "ep"]) == CliConstants.EXIT_NOT_IMPLEMENTED == 3
     assert "ainda não implementado" in capsys.readouterr().err

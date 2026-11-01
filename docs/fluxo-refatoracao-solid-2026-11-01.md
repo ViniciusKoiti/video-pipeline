@@ -384,4 +384,15 @@ Fatia 6a: a voz do longo virou `vp voice <id> [--voz-final | --voz NOME]` (`app/
 (6: as três escolhas de voz, o relógio por cena, a entrega de cada cena, o relatório de estado, a parada por cota com
 retomada, a falta do `scenes.json`; oito mutações conferidas, quatro sobreviveram e ganharam teste). Falta a 6b, o `vp render`
 (tempo dos planos, legenda, `episode.json` e render).
+Fatia 6b: `montar_episodio.py` virou `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]`
+(`app/commands/render.py`), com o tempo dos planos, a trilha e o `episode.json` em `app/pipeline/episode_build.py` e as
+legendas em `app/pipeline/caption_production.py`; o script saiu. **Prova com dado real:** com o episódio
+`manipulacao-linguagem-politica` (23 cenas, trilha de 6 trechos, voz clonada já em cache, sem rede) copiado por hardlink
+para dois diretórios de dados, o script antigo (versão `f5a3b73`) e o `vp render --no-render` geraram `episode.json`
+(100.791 bytes), `captions.srt` e `captions.key` **byte a byte iguais** e a mesma saída impressa, e iguais também ao
+`episode.json` e ao `captions.srt` reais de produção. Testes: `tests/test_render_command.py` (12), `tests/test_episode_build.py` (7),
+mutações conferidas (três sobreviveram, a proteção da legenda pelo gate 4, a fonte do rodapé e a medição de volume, e ganharam
+teste). O `evolucao.py gerar` (vídeo-régua) passou a chamar `vp render --preview --voz gemini`; **essa chamada não foi
+exercitada**, porque rodaria um render real. O `mypy` (que não cobria o script) achou plano de mídia sem `asset_id`: a mensagem
+agora diz "escolha o ativo no gate 3". Falta no RF7: `shorts_tec`, `conferir_audio` e a classificação dos avulsos.
 

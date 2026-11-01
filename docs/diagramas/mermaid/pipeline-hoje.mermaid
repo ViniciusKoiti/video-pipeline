@@ -42,14 +42,14 @@ flowchart TD
             IMG["plano-de-imagens (o dono valida antes de baixar)<br/>download e assets/id.json com licença e sha256"]:::agente
             G3{{"Gate 3: vp approve --step assets --asset id"}}:::gate
             MUS["diretor-musical: music.json<br/>catálogo da YouTube Audio Library (ADR 030)"]:::agente
-            MON["montar_episodio.py --voz-final: voz clonada no Modal (ADR 024),<br/>captions.srt por frase ou palavra (ADR 021/023),<br/>trilha com ducking, render Remotion por cena, loudness"]:::script
+            MON["vp render --voz-final: voz clonada no Modal (ADR 024),<br/>captions.srt por frase ou palavra (ADR 021/023),<br/>trilha com ducking, render Remotion por cena, loudness"]:::script
             MIN["miniatura: arte da capa pelo canal de referência"]:::agente
             G1 --> ROTL --> CK2
             CK2 -- "erro" --> ROTL
             CK2 -- "ok" --> VER
             VER -- "pendência" --> ROTL
             VER -- "conferido" --> G2 --> IMG --> G3 --> MUS --> MON --> MIN
-            VPX["vp voice, subs, render e export respondem 'não implementado';<br/>quem faz é montar_episodio.py"]:::falta
+            VPX["vp subs e o export completo (vídeo, legenda, créditos) respondem 'não implementado';<br/>a legenda sai de vp render"]:::falta
             VPX -.-> MON
             TRL["tradução do longo em pasta própria com gate translation<br/>(ADR 034): pronta no código, nunca usada num longo"]:::falta
             G2 -.-> TRL

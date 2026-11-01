@@ -47,7 +47,7 @@ class EvolutionConstants:
         "versões. Os vídeos ficam fora do Git, em\n`data/episodes/<id>/renders/evoluc"
         "ao/` (`vN.mp4` e `vN.json`); a folha de quadros e o vídeo lado a lado "
         'saem\nde `scripts/provisorio/evolucao.py`. "Tempo" é o do '
-        "`montar_episodio.py --preview` (voz em cache + render);\na sonda de CPU "
+        "`vp render --preview` (voz em cache + render);\na sonda de CPU "
         'acima de 0,3 s indica máquina limitada (CLAUDE.md §3). "Planos que '
         'mudaram" compara um quadro\npor plano com a versão anterior; um PR de '
         "visual deve mudar só os planos que pretendia.\n\n"

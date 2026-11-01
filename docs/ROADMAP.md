@@ -18,7 +18,7 @@ e as pendências em ordem estão em "Etapa atual e pendências", logo abaixo da 
 | #1–#10 | Fechadas. |
 | #11 | Em pausa até o modelo de planos estabilizar. |
 | #12 | Parcial: `vp approve`, `vp reject` e `vp status` (PR #67); faltam `vp new` e `vp reopen`. |
-| #13, #16 | Script provisório `scripts/provisorio/montar_episodio.py` faz voz e render; os comandos `vp` não existem. |
+| #13, #16 | `vp voice` e `vp render` (RF7, 2026-11-01) fazem voz e render; o script `montar_episodio.py` saiu. |
 | #15 | Adapter Kokoro existe (usado no `vp bench` e no script de voz); falta o glossário de pronúncia. |
 | #19–#22 | Adapters Pexels, Pixabay e Unsplash feitos na #48 (PRs #61–#63); Commons e Arquivo Nacional só pelos scripts provisórios de busca e download; `vp assets` não existe. |
 | #26 | Parcial: script provisório `baixar_fonte.py` (PR #68) e `vp excerpts`. |
@@ -67,7 +67,7 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
 
   - **Voz (2026-09-30):** a Charon (Gemini TTS, camada gratuita) ganhou do Kokoro na escuta às cegas; ADR 012
     proposta, aceite depois da v5 do vídeo-régua com ela. Camada gratuita: 3 chamadas por minuto e **10 por dia**.
-    Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `montar_episodio.py --voz-final`), várias
+    Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `vp render --voz-final`), várias
     cenas por chamada cortadas nas pausas. Termos, limites e resultado em `data/benchmarks/termos-gemini-tts.md`.
     Próximos: as 3 falas que faltam do vídeo-régua (S08–S10, um lote) e a v5; depois, o volume (-14 LUFS) como v6.
   - **Voz (2026-10-12 e 2026-10-15):** a voz clonada do dono virou a voz final (ADR 016, Chatterbox na CPU, ~15 min

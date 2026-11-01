@@ -1,7 +1,7 @@
 """Palavras com tempo pelo Whisper da Groq, na camada gratuita (ADR 023).
 
 Envia o WAV de uma cena e recebe as palavras reconhecidas com início e fim. O áudio sai da máquina: só roda
-quando o dono pede na sessão (`montar_episodio.py --legenda-palavra`, §14). A chave fica no `.env`
+quando o dono pede na sessão (`vp render --legenda-palavra`, §14). A chave fica no `.env`
 (`GROQ_API_KEY`) e vai no cabeçalho, nunca na URL (§2.7).
 """
 

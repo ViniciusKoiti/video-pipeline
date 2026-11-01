@@ -35,6 +35,11 @@ def _voice_arguments(parser: argparse.ArgumentParser) -> None:
 
 def _render_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--preview", action="store_true", help="prévia em 720p")
+    parser.add_argument("--no-render", action="store_true", help="confere a montagem e grava o episode.json")
+    parser.add_argument(
+        "--legenda-palavra", action="store_true", help="legenda palavra a palavra (Whisper remoto)"
+    )
+    _voice_arguments(parser)
 
 def _decision_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(

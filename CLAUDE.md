@@ -354,8 +354,9 @@ lacuna fica registrada.
 - **Estado da voz (ADR 052, `app/pipeline/voice_state.py`):** cada rodada de voz grava no `manifest.json` um registro por
   fala (pronta, ou pendente com o motivo); o `vp status` lista as pendências e um WAV que sumiu. Retomar é rodar de novo:
   o cache são os nomes dos arquivos.
-- **Montagem e render (ADR 051, `app/pipeline/assembly.py`):** `montar_episodio.py` usa `EpisodeRenderer` e o motor da
-  porta por formato (`context.renderer`). Montagem incompleta (WAV ou mídia ausente) não chega ao motor; o render
+- **Montagem e render (ADR 051, `app/pipeline/assembly.py`):** `vp render` (`app/commands/render.py`) usa `EpisodeRenderer` e o
+  motor da porta por formato (`context.renderer`); o tempo dos planos e o `episode.json` saem de
+  `app/pipeline/episode_build.py` e as legendas de `app/pipeline/caption_production.py`. Montagem incompleta (WAV ou mídia ausente) não chega ao motor; o render
   final exige os ativos aprovados (a prévia, não). O gate 4 aprovado recusa render por cima do MP4, do `episode.json`
   e do `captions.srt` carimbados (reabrir libera); prévia e final são arquivos distintos.
 - **Pacote do gate 4 (ADR 050, `app/pipeline/package.py`):** `shorts_tec.py gate` valida o MP4 e o `post.json` antes
@@ -415,15 +416,15 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `traducao`, `medicao`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
+`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `render`, `traducao`, `medicao`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]` faz voz, tempo dos planos, legendas, `episode.json` e render (RF7). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
 contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
 medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
 do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o
-roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `script`, `scenes`, `gallery`, `subs` e `render`
-saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem voz e render
-até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
+roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `script`, `scenes`, `gallery` e `subs`
+saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem o Short e as
+ferramentas avulsas. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
 comando com subcomandos próprios vira módulo em `app/commands/` com `add_arguments` e `run`, como o `postiz`. Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
 

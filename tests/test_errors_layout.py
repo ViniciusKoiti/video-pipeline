@@ -23,7 +23,6 @@ ALLOWED = {
     "app/commands/postiz.py": "contrato de erro em JSON, com mensagens fixas que não vazam segredo",
     "app/commands/usage.py": "contrato de erro em JSON, com mensagens fixas",
     "app/commands/postiz_cadeia.py": "registra a falha do agendamento na trilha e relança (auditoria)",
-    "scripts/provisorio/montar_episodio.py": "parada do reconhecimento de palavras (recuperação por cena)",
 }
 
 

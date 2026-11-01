@@ -2,7 +2,7 @@
 
 Uso: `.venv/bin/python scripts/provisorio/evolucao.py <comando> <episode-id> ...`
 
-  gerar <id> --nota "..."              prévia pelo `montar_episodio.py --preview` e guarda como nova versão
+  gerar <id> --nota "..."              prévia pelo `vp render --preview` e guarda como nova versão
   guardar <id> --nota "..." [--commit REF] [--tempo-s N] [--sonda S]
                                        guarda a prévia que já existe (`renders/preview.mp4`)
   comparar <id> [--versoes v1,v3]      folha de quadros: o mesmo instante de cada plano, uma coluna por
@@ -112,10 +112,10 @@ def main() -> None:
                 "feche os apps pesados e tente de novo"
             )
         started = time.monotonic()
-        script = ROOT / "scripts" / "provisorio" / "montar_episodio.py"
+        vp = Path(sys.executable).with_name("vp")  # o `vp` do mesmo ambiente virtual
         # O vídeo-régua fica com a voz com que foi gravado (Charon, ADR 012), já guardada: só o
         # template muda. A voz final de hoje é outra (ADR 016) e mudaria o tempo de todos os planos.
-        command = [sys.executable, str(script), args.episode_id, "--preview", "--voz=gemini"]
+        command = [str(vp), "render", args.episode_id, "--preview", "--voz", "gemini"]
         subprocess.run(command, cwd=ROOT, check=True)
         save(episode_dir, args.nota, None, round(time.monotonic() - started, 1), probe)
     elif args.command == "guardar":
