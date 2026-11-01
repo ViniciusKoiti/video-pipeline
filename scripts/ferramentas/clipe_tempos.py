@@ -6,7 +6,7 @@ Provisório. Entrada: o MP3 e um ou mais JSON de palavras reconhecidas com tempo
 o reconhecedor não casou recebe tempo interpolado (`ok: false`); o relatório lista os versos cujo início é
 interpolado, para ajuste de ouvido em `AJUSTES`.
 
-Uso: python scripts/provisorio/clipe_tempos.py musica.mp3 saida.json reconhecido.json [outro.json ...]
+Uso: python scripts/ferramentas/clipe_tempos.py musica.mp3 saida.json reconhecido.json [outro.json ...]
 """
 
 from __future__ import annotations

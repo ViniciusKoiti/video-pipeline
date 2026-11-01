@@ -21,7 +21,7 @@ e as pendências em ordem estão em "Etapa atual e pendências", logo abaixo da 
 | #13, #16 | `vp voice` e `vp render` (RF7, 2026-11-01) fazem voz e render; o script `montar_episodio.py` saiu. |
 | #15 | Adapter Kokoro existe (usado no `vp bench` e no script de voz); falta o glossário de pronúncia. |
 | #19–#22 | Adapters Pexels, Pixabay e Unsplash feitos na #48 (PRs #61–#63); Commons e Arquivo Nacional só pelos scripts provisórios de busca e download; `vp assets` não existe. |
-| #26 | Parcial: script provisório `baixar_fonte.py` (PR #68) e `vp excerpts`. |
+| #26 | Parcial: `vp sources add\|declared` (RF7, ex-`baixar_fonte.py` do PR #68) e `vp excerpts`. |
 | #27, #28 | Adapter Ollama existe; `vp script` e `vp scenes` não. Desde a ADR 009, fichas, roteiro e cenas saem dos agentes (pesquisador, roteirista, verificador) validados pelo `vp check`; o Ollama ficou como candidato (§7). |
 | #14, #17, #18, #23–#25, #29–#31, #41, #42 | Não começadas. #17 (legendas) e #18 (pacote) são necessárias antes de publicar. |
 | M2–M7 do piloto documentário | Em pausa. |

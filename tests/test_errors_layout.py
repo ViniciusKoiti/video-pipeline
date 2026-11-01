@@ -16,7 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILTIN_ERRORS = {
     n for n, v in vars(builtins).items() if isinstance(v, type) and issubclass(v, BaseException)
 }
-GUARDED = ("app/cli.py", "app/commands", "scripts/provisorio")
+SCRIPT_DIRS = ("scripts/provisorio", "scripts/bench", "scripts/ferramentas")
+GUARDED = ("app/cli.py", "app/commands", *SCRIPT_DIRS)
 
 # Arquivo -> motivo. Sair da lista quando o `except` sair; entrar nela, só com motivo e decisão do dono.
 ALLOWED = {
@@ -76,7 +77,7 @@ def guarded_sources() -> dict[str, str]:
     files = [
         ROOT / "app/cli.py",
         *(ROOT / "app/commands").glob("*.py"),
-        *(ROOT / "scripts/provisorio").glob("*.py"),
+        *(path for folder in SCRIPT_DIRS for path in (ROOT / folder).glob("*.py")),
     ]
     return {str(p.relative_to(ROOT)): p.read_text() for p in sorted(files)}
 
@@ -115,3 +116,12 @@ def test_checker_catches_a_class_outside_the_tree_and_a_listed_except() -> None:
     assert caught_project_errors(code, project) == [
         (3, "Boa")
     ]  # só o do projeto, e não `PipelineError` sozinho
+
+
+def test_the_guard_reads_every_script_folder() -> None:
+    paths = set(guarded_sources())
+    assert {
+        "scripts/provisorio/evolucao.py",
+        "scripts/bench/checagem_local.py",
+        "scripts/ferramentas/clipe_tempos.py",
+    } <= paths

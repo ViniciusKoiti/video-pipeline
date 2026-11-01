@@ -1,6 +1,6 @@
 """Comparação pequena de voz: Gemini TTS × Kokoro, às cegas (CLAUDE.md §7; provisório, sem adapter ainda).
 
-Uso: `.venv/bin/python scripts/provisorio/teste_voz_gemini.py <comando>`
+Uso: `.venv/bin/python scripts/bench/teste_voz_gemini.py <comando>`
 
   vozes                         lista as vozes da biblioteca do Gemini para pt-BR (1 chamada)
   gerar --vozes Charon,pt-br-advisor-9 [--modelo gemini-3.8-flash-lite-tts]

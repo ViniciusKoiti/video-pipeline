@@ -1,7 +1,7 @@
 # Checagem local: prompt `prompts/local/checagem.md` em modelo pequeno (#27)
 
 Medição do prompt de uma afirmação contra um trecho, com o Ollama local, no episódio aprovado
-`votorantim-dinheiro`. Comando: `scripts/provisorio/checagem_local.py votorantim-dinheiro --modelo <m>`
+`votorantim-dinheiro`. Comando: `scripts/bench/checagem_local.py votorantim-dinheiro --modelo <m>`
 (semente 1, 12 afirmações reais e 8 casos de cada mutação). Relatório completo fica em `data/cache/` (fora do Git).
 
 **Gabarito:** as afirmações reais valem `SUSTENTA` (passaram pelo verificador e pelos gates, o que é

@@ -5,7 +5,7 @@ transformers guardar as atenções de todas as camadas do codificador (uns 6 GB 
 derrubava o WSL.
 Provisório. Rodar com teto de memória (sem ele, um estouro reinicia o WSL inteiro):
     systemd-run --user --scope -p MemoryMax=6G -p MemorySwapMax=0 \
-        uv run python scripts/provisorio/clipe_reconhecer.py ...
+        uv run python scripts/ferramentas/clipe_reconhecer.py ...
 
 Uso: clipe_reconhecer.py musica.mp3 saida.json [modelo]; a saída entra em clipe_tempos.py.
 """

@@ -125,8 +125,8 @@ associado da Amazon (pública) · `app/render/` motor por formato · `app/media/
 etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (apontado por `AGENTS.md`;
 `analise-de-formato` e `validacao-de-nicho` moram aqui, e `.claude/skills/` só as aponta por symlink) ·
 `prompts/local/` prompts para modelo local · `config/providers.toml` implementação por função ·
-`scripts/provisorio/` scripts até
-virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
+`scripts/provisorio/` ferramentas do dono ainda sem comando (`evolucao.py`, `sprites_apresentador.py`) ·
+`scripts/bench/` medições de modelo e de voz · `scripts/ferramentas/` ferramentas de uma vez (letra do clipe do Nabote) · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
 `outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `molde.json`, `partitura.md`, `pauta.md`, `sources/`,
 `excerpts/`, `assets/`, `voice/`, `renders/`) ·
 `data/benchmarks/` medições e termos dos provedores · `data/publicacoes/registro.jsonl` trilha dos agendamentos
@@ -423,8 +423,8 @@ medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. 
 do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o
 roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `script`, `scenes`, `gallery` e `subs`
-saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem o Short e as
-ferramentas avulsas. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
+saem com "ainda não implementado" e a etapa pendente; o Short é o `vp short` e a conferência de áudio, o `vp audio`; ferramentas
+avulsas ficam em `scripts/provisorio/`, `scripts/bench/` e `scripts/ferramentas/`. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
 comando com subcomandos próprios vira módulo em `app/commands/` com `add_arguments` e `run`, como o `postiz`. Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
 
@@ -560,7 +560,7 @@ montado por JSON no `motion-video` do kit com o dono numa janela e a voz clonada
 
 **Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
 unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),
-medido por `scripts/provisorio/checagem_local.py` (resultados em `data/benchmarks/checagem-local.md`). O `vp check`
+medido por `scripts/bench/checagem_local.py` (resultados em `data/benchmarks/checagem-local.md`). O `vp check`
 e os gates continuam decidindo; o veredito do modelo é alerta.
 
 **Agentes mais específicos (candidatos).** Criar só quando a etapa existir no código e houver necessidade

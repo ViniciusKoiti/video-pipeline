@@ -42,7 +42,7 @@ flowchart TD
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
 | RF6 | Integração G01–G11 no longo e Short | Fechado em 2026-11-01: voz (ADR 049), pacote (ADR 050), render por porta (ADR 051), estado da voz por cena (ADR 052) e contratos de narração, legendas, planos e efeitos provados; **ressalva:** render real e vídeo-régua não rodados |
-| RF7 | G12 e encerramento da migração | Pendente |
+| RF7 | G12 e encerramento da migração | Quase fechado em 2026-11-01: todos os scripts de etapa viraram comando `vp` ou foram classificados; **pendente a conferência do dono** das configurações locais (critério 3) |
 
 “Implantado” significa que há código de verificação, não que todos os gaps foram resolvidos. Teste antigo
 passando não comprova serviço que ainda não existe. A migração de uma casca fina offline, como métricas,
@@ -276,14 +276,17 @@ quando houver autorização e CPU livre. Ele não substitui as provas de proteç
 
 **Entrega:** remover as dependências dos scripts migrados e consolidar os módulos tocados.
 
-- [ ] Tests passam a importar de `app/`; nenhum consumidor ativo ainda importa script removido por caminho.
-- [ ] Skills, referências do CLI e documentação apontam para os comandos implementados.
+- [x] Tests passam a importar de `app/`; nenhum consumidor ativo ainda importa script removido por caminho. (2026-11-01: busca de `scripts.provisorio` e `from scripts` em `tests/` e `app/` sem resultado; o único caminho de script em `tests/` é a lista de pastas do gate `test_errors_layout`.)
+- [x] Skills, referências do CLI e documentação apontam para os comandos implementados. (2026-11-01: busca dos 13 nomes de script removidos em `.claude/`, `.agents/`, `AGENTS.md`, `README.md`, guias de `docs/`, `prompts/` e `config/` só acha o `settings.local.json` e a linha do ROADMAP, já ajustada; `vp --help` lista os 29 comandos e CLAUDE.md §10 diz quais respondem e quais ainda saem como "não implementado": `new`, `script`, `scenes`, `gallery`, `subs`.)
 - [ ] Configurações locais e rotina diária são conferidas pelo dono quando precisarem de alteração fora
-  do escopo editável; não remover o script enquanto houver um consumidor pendente.
-- [ ] Ferramentas de uma vez e benchmarks são classificados e preservam referências históricas.
-- [ ] Módulos grandes são divididos por responsabilidade ao serem tocados; imports públicos e schemas persistidos
-  mantêm compatibilidade. Baseline encolhe apenas com redução comprovada.
-- [ ] Testes globais e lint passam; não restam critérios obrigatórios sem evidência.
+  do escopo editável; não remover o script enquanto houver um consumidor pendente. **Pendente do dono:**
+  `.claude/settings.local.json` ainda libera `shorts_tec.py` e `conferir_audio.py` por caminho (já removidos) e não
+  tem regra para `vp short *` nem `vp audio *`; a rotina diária (ADR 036, timer desligado) segue a skill
+  `short-diario`, que já chama os comandos novos.
+- [x] Ferramentas de uma vez e benchmarks são classificados e preservam referências históricas. (2026-11-01: `scripts/bench/` com `checagem_local.py` e `teste_voz_gemini.py` (medições); `scripts/ferramentas/` com `clipe_tempos.py` e `clipe_reconhecer.py` (letra do clipe do Nabote, feitas uma vez); `scripts/provisorio/` fica com `evolucao.py` e `sprites_apresentador.py`, ferramentas do dono ainda sem comando. Os caminhos citados em CLAUDE.md, benchmarks, prompts e no `video/` foram ajustados; ADRs e análises datadas mantêm o caminho de então. O gate de erros (`test_errors_layout`) cobre as três pastas.)
+- [x] Módulos grandes são divididos por responsabilidade ao serem tocados; imports públicos e schemas persistidos
+  mantêm compatibilidade. Baseline encolhe apenas com redução comprovada. (2026-11-01: cada comando novo é um módulo próprio; o `cli.py` perdeu `approve`, `reject`, `checagem`, `medicao`, `traducao`, `numeros` e `status` para `app/commands/` e está em 177 linhas de código; a baseline não foi regenerada, e o gate de tamanho passa com 0 problema.)
+- [ ] Testes globais e lint passam; não restam critérios obrigatórios sem evidência. (2026-11-01: `scripts/check_qualidade.sh` aprovado, 1456 testes, lint e Mypy estrito limpos; falta só a evidência do critério 3, que depende do dono.)
 
 **Evidência:** busca dos caminhos antigos em app, testes e instruções; help do CLI; checks globais e
 conferência dos consumidores operacionais. Não acrescentar publicação ou agendamento ao teste de migração.
@@ -394,5 +397,16 @@ para dois diretórios de dados, o script antigo (versão `f5a3b73`) e o `vp rend
 mutações conferidas (três sobreviveram, a proteção da legenda pelo gate 4, a fonte do rodapé e a medição de volume, e ganharam
 teste). O `evolucao.py gerar` (vídeo-régua) passou a chamar `vp render --preview --voz gemini`; **essa chamada não foi
 exercitada**, porque rodaria um render real. O `mypy` (que não cobria o script) achou plano de mídia sem `asset_id`: a mensagem
-agora diz "escolha o ativo no gate 3". Falta no RF7: `shorts_tec`, `conferir_audio` e a classificação dos avulsos.
+agora diz "escolha o ativo no gate 3".
+Fatia 7a: `shorts_tec.py voz` e `gate` viraram `vp short voz|gate` (`app/commands/short_voz.py`, `short_gate.py`; serviço
+`app/pipeline/short_voice.py` e `app/media/speech_bounds.py`; ADR 049 e 050, emendas). Fatia 7b: `tempos`, `sfx`, `juntar` e
+`boca` viraram `vp short tempos|sfx|juntar|boca` (`short_timing`, `short_join`, `short_mouth`, `app/media/short_mix.py`; ADR 035 e
+048, emendas) e o script saiu. **Provas com dado real** (`short-lista-ligada-pt`, sem rede, com plano de efeitos): a saída
+impressa, `narracao.voz.json`, o pacote do gate (`final.mp4`, `legenda-post.txt`, `pacote.json`), `content.voz.json`, `boca.json`
+e o MP4 misturado saíram **idênticos byte a byte** entre o script antigo e os comandos. Testes: `tests/test_short_command.py` (11),
+`tests/test_short_montage.py` (23); mutações conferidas (sobrevive só uma equivalente). Fatia 8: `conferir_audio.py` virou `vp audio`
+(`app/commands/audio.py`, `app/pipeline/audio_review.py`; ADR 035, emenda); os cortes de 23 conteúdos, os momentos esperados de
+14 planos de efeitos e os cortes de 33 `episode.json` saíram iguais aos do script; **o earshot em si não foi rodado** (só com
+pedido do dono e a sonda de CPU), e `tests/test_audio_command.py` (9) o simula. Fechamento: os avulsos foram classificados
+(critério 4), a busca dos caminhos antigos e o `vp --help` estão no critério 2, e o `status` saiu do `cli.py`.
 

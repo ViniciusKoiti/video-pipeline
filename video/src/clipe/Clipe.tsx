@@ -9,7 +9,7 @@ import brasaoUrl from "./marca/brasao.svg";
 import {type Linha, MUSICAS, type Musica, type Palavra} from "./musicas";
 
 // Clipe de letra (tipografia cinética) das músicas do Nabote ("A Planilha é Tua", "A Vinha Não é Sua"). Fora
-// do contrato `episode.json`: a entrada é a letra com tempo por palavra (de `scripts/provisorio/clipe_tempos.py`),
+// do contrato `episode.json`: a entrada é a letra com tempo por palavra (de `scripts/ferramentas/clipe_tempos.py`),
 // o que muda por música (`musicas.ts`) e o áudio no publicDir.
 // Duas vozes, duas letras: o poder em serifada de inscrição (Cinzel), o eu em condensada pesada (Anton); as
 // falas secas (intro, ponte, outro) em monoespaçada (IBM Plex Mono). Todas SIL OFL 1.1 (`fonts/*-OFL.txt`).

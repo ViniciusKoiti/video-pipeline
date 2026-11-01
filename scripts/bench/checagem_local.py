@@ -1,6 +1,6 @@
 """Mede o prompt de checagem local (prompts/local/checagem.md) num modelo do Ollama (provisório até a #27).
 
-Uso: `.venv/bin/python scripts/provisorio/checagem_local.py <episode-id> --modelo qwen3:4b [--real N]
+Uso: `.venv/bin/python scripts/bench/checagem_local.py <episode-id> --modelo qwen3:4b [--real N]
 [--por-tipo N] [--semente S] [--saida ARQUIVO.json]`
 
 - Gabarito: afirmações reais do episódio aprovado (esperado `SUSTENTA`) e mutações mecânicas delas: número

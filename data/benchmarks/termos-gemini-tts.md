@@ -2,7 +2,7 @@
 
 Registro pedido no `CLAUDE.md` §7 antes de testar um provedor remoto: link oficial, data da consulta e o que a
 página diz. Candidato à narração em pt-BR no lugar do Kokoro (`pm_alex`), com teste às cegas
-(`scripts/provisorio/teste_voz_gemini.py`). Onde a leitura só trouxe resumo (página cortada), está marcado
+(`scripts/bench/teste_voz_gemini.py`). Onde a leitura só trouxe resumo (página cortada), está marcado
 **[resumo]**; o resto foi lido no texto da página.
 
 ## Modelos e idioma
@@ -83,7 +83,7 @@ Fonte: [voice-replication](https://ai.google.dev/gemini-api/docs/voice-replicati
 
 ## Resultado do teste (2026-09-29/30)
 
-Script `scripts/provisorio/teste_voz_gemini.py`; áudios em `data/benchmarks/voz-gemini/` (fora do Git). Endpoint
+Script `scripts/bench/teste_voz_gemini.py`; áudios em `data/benchmarks/voz-gemini/` (fora do Git). Endpoint
 `POST /v1beta/interactions`, camada gratuita, sem faturamento. Direção de fala: "narração de documentário em
 português do Brasil, com sotaque brasileiro; tom calmo, informativo e neutro; ritmo moderado".
 
