@@ -333,6 +333,11 @@ lacuna fica registrada.
   texto enviado à voz, por palavra inteira, e vale para qualquer voz; tela, legenda e âncoras ficam com a do
   roteiro, e o `scenes.json` não muda.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
+- **Porta de voz (ADR 041):** cada TTS tem `identity` (chave do cache, no nome do WAV; `gemini` é alias de
+  `gemini_tts`) e `fingerprint(request)` com os parâmetros efetivos da síntese, sem o texto. O WAV só aparece
+  inteiro e válido (`atomic_wav`). Lote e fallback em `app/media/speech_batches.py`: só o corte recusado
+  (`InvalidOutput`) gera cena a cena, e cota esgotada para as chamadas. Quem constrói o TTS o fecha
+  (`closing_tts`). Os scripts de voz ainda usam a lógica própria até migrarem.
 - **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem

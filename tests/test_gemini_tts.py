@@ -235,3 +235,42 @@ def test_one_scene_is_a_plain_call_and_mixed_languages_are_refused(tmp_path: Pat
     mixed = scene_requests(tmp_path, ["Uma."]) + scene_requests(tmp_path / "en", ["Two."], language="en")
     with pytest.raises(ProviderError, match="um idioma só"):
         tts.synthesize_many(mixed)
+
+
+# --- RF3: contrato de lote e arquivo íntegro ----------------------------------------------------
+
+
+def test_gemini_declares_the_batch_contract_with_the_legacy_limit() -> None:
+    from app.providers.tts.base import BatchTTS
+
+    tts = make(FakePost())
+    assert isinstance(tts, BatchTTS) and tts.max_batch_chars == 1200
+    assert tts.identity == "gemini" and tts.info.name == "gemini_tts"
+
+
+def test_a_failed_call_publishes_nothing_and_keeps_the_previous_wav(tmp_path: Path) -> None:
+    out = tmp_path / "voice" / "S01.wav"
+    out.parent.mkdir()
+    out.write_bytes(wav_bytes(480))
+    before = out.read_bytes()
+    post = FakePost(TransportError(500, "erro"), TransportError(500, "erro"))
+    with pytest.raises(ProviderError):
+        make(post).synthesize_speech(SpeechRequest(text="Oi.", out_path=out, language="pt-BR"))
+    assert out.read_bytes() == before and sorted(p.name for p in out.parent.iterdir()) == ["S01.wav"]
+
+
+def test_a_batch_with_one_invalid_cut_publishes_no_scene(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.providers.tts import gemini
+
+    def bad_cut(path: Path, outs: list[Path]) -> list[Path]:
+        for i, out in enumerate(outs):
+            out.write_bytes(wav_bytes() if i == 0 else b"corte quebrado")
+        return outs
+
+    monkeypatch.setattr(gemini, "split_at_pauses", bad_cut)
+    requests = scene_requests(tmp_path, ["Uma.", "Duas."])
+    with pytest.raises(InvalidOutput, match="corte inválido"):
+        make(FakePost(audio_response(wav_bytes()))).synthesize_many(requests)
+    assert not list((tmp_path / "voice").glob("*.wav"))  # nem a cena boa: o lote cai para cena a cena

@@ -18,6 +18,11 @@ class ChatterboxConstants:
     MODEL_PREFIX: Final[str] = "chatterbox-multilingual-"
     MAX_PART_CHARS: Final[int] = 300
     SENTENCE_GAP_MS: Final[int] = 150
+    # Versão do corte e da junção da fala longa. Entra na identidade do cache só acima de 1 (as falas de hoje
+    # seguem com o mesmo nome); subir o número ao mudar o algoritmo regenera as falas afetadas (ADR 041).
+    SPEECH_VERSION: Final[int] = 1
+    # exaggeration e cfg_weight que o modelo usa quando a entrega não os define
+    NEUTRAL_DEFAULT: Final = (0.5, 0.5)
     _SENTENCE_END: Final = re.compile('(?<=[.!?…])\\s+|(?<=[.!?…][”\\"’)])\\s+')
     _CLAUSE_END: Final = re.compile("(?<=[,;:])\\s+")
     DEFAULT_DELIVERY: Final[Mapping[str, Mapping[str, float]]] = MappingProxyType(

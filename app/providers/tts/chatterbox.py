@@ -10,20 +10,22 @@ nunca sai da máquina. Sem dicionário de fonemas: o `lexicon` do pedido é igno
 
 from __future__ import annotations
 
-import hashlib
 import json
 import subprocess
 import tempfile
-import wave
 from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any, Protocol
 
-from app.media.narration import split_pauses
+from app.media.narration import has_pauses, split_pauses
 from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest, SpeechResult
+from app.providers.tts.chatterbox_text import join_wavs as join_wavs  # reexportados: imports de antes
+from app.providers.tts.chatterbox_text import reference_hash as reference_hash
+from app.providers.tts.chatterbox_text import split_long as split_long
 from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
+from app.providers.tts.files import atomic_wav
 
 # A mesma fala numa GPU do Modal (ADR 024): um cliente com o protocolo do worker.
 
@@ -34,64 +36,6 @@ from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
 
 
 # Entrega da fala (ADR 022): padrão do modelo na fala neutra; ênfase alta e cfg baixo no chamado.
-
-
-def _pack(pieces: list[str], limit: int) -> list[str]:
-    groups: list[str] = []
-    current = ""
-    for piece in pieces:
-        joined = f"{current} {piece}" if current else piece
-        if current and len(joined) > limit:
-            groups.append(current)
-            current = piece
-        else:
-            current = joined
-    return [*groups, current] if current else groups
-
-
-def _split_sentence(sentence: str, limit: int) -> list[str]:
-    """Frase maior que o limite: parte nas vírgulas, e a oração ainda maior, nas palavras."""
-    pieces: list[str] = []
-    for clause in ChatterboxConstants._CLAUSE_END.split(sentence):
-        pieces.extend(_pack(clause.split(), limit) if len(clause) > limit else [clause])
-    return _pack(pieces, limit)
-
-
-def split_long(text: str, limit: int = ChatterboxConstants.MAX_PART_CHARS) -> list[str]:
-    """Os grupos de frases, cada um com até `limit` caracteres, na ordem do texto; o texto curto
-    fica inteiro."""
-    text = text.strip()
-    if len(text) <= limit:
-        return [text] if text else []
-    pieces: list[str] = []
-    for sentence in ChatterboxConstants._SENTENCE_END.split(text):
-        sentence = sentence.strip()
-        if sentence:
-            pieces.extend(_split_sentence(sentence, limit) if len(sentence) > limit else [sentence])
-    return _pack(pieces, limit)
-
-
-def join_wavs(pieces: list[Path], gap_ms: int, out_path: Path) -> None:
-    """Junta WAVs PCM do mesmo formato, com `gap_ms` de silêncio entre eles."""
-    with wave.open(str(pieces[0]), "rb") as first:
-        params = first.getparams()
-    gap = b"\x00" * (round(params.framerate * gap_ms / 1000) * params.sampwidth * params.nchannels)
-    with wave.open(str(out_path), "wb") as out:
-        out.setnchannels(params.nchannels)
-        out.setsampwidth(params.sampwidth)
-        out.setframerate(params.framerate)
-        for i, piece in enumerate(pieces):
-            with wave.open(str(piece), "rb") as wav:
-                if (wav.getnchannels(), wav.getsampwidth(), wav.getframerate()) != params[:3]:
-                    raise ValueError(f"formato diferente em {piece.name}")
-                if i:
-                    out.writeframes(gap)
-                out.writeframes(wav.readframes(wav.getnframes()))
-
-
-def reference_hash(reference: Path) -> str:
-    """Entra na chave de cache da fala: trocar a gravação de referência troca a voz."""
-    return hashlib.sha256(reference.read_bytes()).hexdigest()[:12]
 
 
 class Worker(Protocol):
@@ -155,6 +99,7 @@ class ChatterboxTTS:
     ) -> None:
         # `chatterbox_modal` (ADR 024): o mesmo adapter com a síntese numa GPU do Modal; muda só o processo.
         self.info = ProviderInfo(provider, remote=remote)
+        self.identity = provider  # local e Modal têm chaves de cache separadas, como os WAVs de hoje
         # Entrega da fala (ADR 022): ênfase e cfg por nome; entrega desconhecida cai na neutra.
         self._delivery = {
             name: dict(params) for name, params in (delivery or ChatterboxConstants.DEFAULT_DELIVERY).items()
@@ -181,35 +126,77 @@ class ChatterboxTTS:
                 raise ModelUnavailable(self.info.name, f"o modelo não carregou: {error}") from error
         return self._worker, self._reference
 
-    def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
+    def _language_id(self, request: SpeechRequest) -> str:
         language_id = self._language_ids.get(request.language)
         if language_id is None:
             raise ModelUnavailable(self.info.name, f"sem código de idioma para {request.language!r}")
+        return language_id
+
+    def _delivery_params(self, delivery: str) -> tuple[str, float, float]:
+        """(entrega efetiva, exaggeration, cfg_weight): entrega desconhecida cai na neutra (ADR 022).
+        É a única resolução, usada pela síntese e pela identidade do cache."""
+        named = self._delivery.get(delivery)
+        used = delivery if named is not None else "neutral"
+        params = named or self._delivery.get("neutral") or {}
+        default = ChatterboxConstants.NEUTRAL_DEFAULT
+        return used, params.get("exaggeration", default[0]), params.get("cfg_weight", default[1])
+
+    def fingerprint(self, request: SpeechRequest) -> str:
+        """`<nome>|<modelo>|<código do idioma>|<hash da referência>` mais, quando valem para o pedido:
+        `|pausa<ms>` (texto com pausa), `|entrega:<nome>=<exaggeration>,<cfg_weight>` (entrega não neutra
+        definida), `|neutro=<exaggeration>,<cfg_weight>` (parâmetros da neutra, usada também como fallback,
+        só se diferem do padrão do modelo), `|frases<N>` (fala longa, em grupos de frases) e `|v<N>` (versão
+        do corte e junção, só acima de 1). Os nomes de WAV de antes seguem válidos, salvo a entrega não
+        neutra, que antes não levava os valores (ADR 041)."""
+        language_id = self._language_id(request)
+        reference = self._reference_path()
+        text = [f"|pausa{self._pause_ms}"] if has_pauses(request.text) else []
+        used, exaggeration, cfg_weight = self._delivery_params(request.delivery)
+        pair = f"{exaggeration:g},{cfg_weight:g}"
+        if used != "neutral":
+            text.append(f"|entrega:{used}={pair}")
+        elif (exaggeration, cfg_weight) != ChatterboxConstants.NEUTRAL_DEFAULT:
+            text.append(f"|neutro={pair}")
+        parts = split_pauses(request.text) or [request.text]
+        if any(len(part) > ChatterboxConstants.MAX_PART_CHARS for part in parts):
+            text.append(f"|frases{ChatterboxConstants.MAX_PART_CHARS}")
+        if ChatterboxConstants.SPEECH_VERSION > 1:
+            text.append(f"|v{ChatterboxConstants.SPEECH_VERSION}")
+        base = f"{self.identity}|{self._model}|{language_id}|{reference_hash(reference)}"
+        return base + "".join(text)
+
+    def _reference_path(self) -> Path:
+        if self._reference is None or not self._reference.is_file():
+            raise ModelUnavailable(self.info.name, "gravação de referência ausente (CHATTERBOX_REFERENCE)")
+        return self._reference
+
+    def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
+        language_id = self._language_id(request)
         worker, reference = self._ready()
-        request.out_path.parent.mkdir(parents=True, exist_ok=True)
-        params = self._delivery.get(request.delivery) or self._delivery.get("neutral") or {}
+        _, exaggeration, cfg_weight = self._delivery_params(request.delivery)
         base = {
             "language_id": language_id,
             "reference": str(reference),
-            "exaggeration": params.get("exaggeration", 0.5),
-            "cfg_weight": params.get("cfg_weight", 0.5),
+            "exaggeration": exaggeration,
+            "cfg_weight": cfg_weight,
         }
         parts = split_pauses(request.text) or [request.text]
         groups = [split_long(part) or [part] for part in parts]
-        if all(len(group) == 1 for group in groups):
-            self._ask(worker, {**base, "parts": parts, "out_path": str(request.out_path),
-                               "pause_ms": self._pause_ms}, request.out_path)
-        else:
-            # Fala longa (mais que ~40 s numa chamada): um pedido por trecho entre pausas, cada um com os
-            # grupos de frases; os trechos se juntam aqui com o silêncio das pausas.
-            with tempfile.TemporaryDirectory(dir=request.out_path.parent) as folder:
-                pieces = []
-                for i, group in enumerate(groups):
-                    piece = Path(folder) / f"trecho-{i:02d}.wav"
-                    self._ask(worker, {**base, "parts": group, "out_path": str(piece),
-                                       "pause_ms": ChatterboxConstants.SENTENCE_GAP_MS}, piece)
-                    pieces.append(piece)
-                join_wavs(pieces, self._pause_ms, request.out_path)
+        with atomic_wav(request.out_path, self.info.name) as partial:
+            if all(len(group) == 1 for group in groups):
+                self._ask(worker, {**base, "parts": parts, "out_path": str(partial),
+                                   "pause_ms": self._pause_ms}, partial)
+            else:
+                # Fala longa (mais que ~40 s numa chamada): um pedido por trecho entre pausas, cada um com os
+                # grupos de frases; os trechos se juntam aqui com o silêncio das pausas.
+                with tempfile.TemporaryDirectory(dir=request.out_path.parent) as folder:
+                    pieces = []
+                    for i, group in enumerate(groups):
+                        piece = Path(folder) / f"trecho-{i:02d}.wav"
+                        self._ask(worker, {**base, "parts": group, "out_path": str(piece),
+                                           "pause_ms": ChatterboxConstants.SENTENCE_GAP_MS}, piece)
+                        pieces.append(piece)
+                    join_wavs(pieces, self._pause_ms, partial)
         voice = f"clone:{reference_hash(reference)}"
         return SpeechResult(
             path=request.out_path, model=ChatterboxConstants.MODEL_PREFIX + self._model, voice=voice

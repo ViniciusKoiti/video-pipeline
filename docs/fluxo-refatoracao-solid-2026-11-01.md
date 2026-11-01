@@ -38,7 +38,7 @@ flowchart TD
 | RF0 | G12; prevenção da dependência de G09 | Fechado em 2026-11-01: arquitetura, modelos, constantes, tamanho, tipagem e lint verdes |
 | RF1 | G01; fronteira de proteção de G02 | Implementado em 2026-11-01 (ADR 039); ligar os escritores concretos fica para RF5/RF6 |
 | RF2 | G03; recuperação de G02 | Implementado em 2026-11-01 (ADR 040); nenhum chamador real usa `run_scenes` ainda (RF3/RF6) |
-| RF3 | G04–G05 | Pendente |
+| RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Pendente |
 | RF5 | G02, G10–G11 | Pendente |
 | RF6 | Integração G01–G11 no longo e Short | Pendente |
@@ -130,19 +130,25 @@ sem estado e será substituído quando o narrador for migrado (RF3/RF6).
 
 **Entrega:** porta definida antes de extrair o código compartilhado de voz.
 
-- [ ] Fingerprint representa os mesmos parâmetros efetivos usados na síntese: idioma, voz, modelo,
+- [x] Fingerprint representa os mesmos parâmetros efetivos usados na síntese: idioma, voz, modelo,
   referência, pausa, entrega neutra/fallback e corte/junção; overrides têm regra explícita.
-- [ ] Identidade de cache e nome de exibição são distintos; alias legado `gemini` é tratado explicitamente.
-- [ ] Compatibilidade dos nomes de WAV de longo e Short é testada; invalidar cache incorreto é mudança
+- [x] Identidade de cache e nome de exibição são distintos; alias legado `gemini` é tratado explicitamente.
+- [x] Compatibilidade dos nomes de WAV de longo e Short é testada; invalidar cache incorreto é mudança
   declarada e limitada às falas afetadas, não promessa de zero regenerações.
-- [ ] Lote respeita voz/idioma, limite e pausas; mantém ordem, quantidade e correspondência entre pedidos e saídas.
-- [ ] Só recusa de corte prevista aciona fallback por cena; cota esgotada não gera nova rajada de chamadas.
-- [ ] Falha não publica WAV inválido; fechamento acontece também na exceção; propriedade e reuso do TTS
+- [x] Lote respeita voz/idioma, limite e pausas; mantém ordem, quantidade e correspondência entre pedidos e saídas.
+- [x] Só recusa de corte prevista aciona fallback por cena; cota esgotada não gera nova rajada de chamadas.
+- [x] Falha não publica WAV inválido; fechamento acontece também na exceção; propriedade e reuso do TTS
   após `close` estão definidos.
-- [ ] Fakes e adapters aplicáveis passam pelos mesmos contratos, com transporte falso para remotos.
+- [x] Fakes e adapters aplicáveis passam pelos mesmos contratos, com transporte falso para remotos.
 
-**Evidência:** ampliar `tests/test_contracts.py`, `tests/test_chatterbox_tts.py`, `tests/test_gemini_tts.py`
-e testes de nomenclatura. Só depois extrair `VoiceKey`, biblioteca e narrador e migrar seus dois chamadores.
+**Evidência:** `tests/test_tts_fingerprint.py` (nomes antigos de longo e Short contra as funções reais dos
+scripts, alias Gemini, dois idiomas, pausas, fala longa, entrega neutra e fallback, referência, versão),
+`tests/test_tts_batching.py` (agrupamento, fallback, cota, WAV inválido, fechamento), `tests/test_contracts.py`,
+`tests/test_chatterbox_tts.py` e `tests/test_gemini_tts.py`; mutações conferidas nos três pontos centrais.
+Ressalvas: a escrita atômica do Kokoro só roda no teste lento (`extra tts`); a mudança de chave da entrega não
+neutra do Chatterbox é declarada (ADR 041); a decisão de manter o nome dos Shorts já aprovados (identidade sem
+texto) fica para o `VoiceKey`. Os scripts ainda não usam a porta nova: a migração dos dois chamadores é a etapa
+seguinte, depois da extração de `VoiceKey`, biblioteca e narrador.
 
 ### RF4 — Operações públicas e direção das dependências
 
@@ -225,3 +231,8 @@ RF1 foi entregue em seguida (ADR 039): `ReviewWriteGuard` sobre o `review.json`,
 RF2 veio depois (ADR 040): `run_scenes` com registro por cena no `manifest.json`, retomada só das cenas pendentes,
 `plan` que só reaproveita resultado íntegro e `run_step` com a entrada conferida sob o lock. O próximo trabalho da
 sequência é RF3: porta TTS, lotes e identidade do cache.
+
+RF3 foi entregue em seguida (ADR 041): `identity` e `fingerprint(request)` na porta, `BatchTTS`, `Closeable` e
+`closing_tts`, `atomic_wav` nos adapters, `app/media/speech_batches.py` (lote, fallback só no corte recusado, cota
+que para as chamadas) e `app/media/wav.py`. O `chatterbox.py` foi dividido (`chatterbox_text.py`). O próximo
+trabalho da sequência é RF4: operações públicas e direção das dependências.

@@ -23,7 +23,7 @@ from app.pipeline.schemas import Asset, EpisodeManifest, Generation, Provider, R
 from app.providers.alignment.base import Cue
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
-from app.providers.errors import InvalidOutput
+from app.providers.errors import InvalidOutput, ProviderError
 from app.providers.http import JsonPost, JsonResponse, TransportError
 from app.providers.image_gen.base import CostEstimate, GeneratedImage, ImageRequest
 from app.providers.text.base import TextRequest, TextResult, Usage
@@ -93,13 +93,59 @@ class FakeText:
 class FakeTTS:
     """WAV de silêncio com 300 ms por palavra."""
 
+    identity = "fake"
+
     def __init__(self) -> None:
         self.info = ProviderInfo("fake-tts", remote=False)
+
+    def fingerprint(self, request: SpeechRequest) -> str:
+        return f"{self.identity}|{request.language}|{request.voice or ''}"
 
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         write_silence(request.out_path, MS_PER_WORD * max(1, len(request.text.split())))
         voice = request.voice or f"fake-{request.language}"
         return SpeechResult(path=request.out_path, model="fake", voice=voice)
+
+
+class FakeBatchTTS(FakeTTS):
+    """`FakeTTS` que declara `BatchTTS` e `Closeable`: registra as chamadas e falha onde mandarem.
+
+    `batch_error` falha toda chamada em lote; `scene_errors` falha a síntese da cena (pelo nome do WAV), em
+    lote ou sozinha; `calls` guarda, por chamada, os nomes dos WAVs."""
+
+    def __init__(
+        self,
+        max_batch_chars: int = 1200,
+        *,
+        batch_error: Exception | None = None,
+        scene_errors: Mapping[str, Exception] | None = None,
+    ) -> None:
+        super().__init__()
+        self.max_batch_chars = max_batch_chars
+        self.batch_error = batch_error
+        self.scene_errors = dict(scene_errors or {})
+        self.calls: list[list[str]] = []
+        self.closed = 0
+
+    def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
+        self.calls.append([request.out_path.name])
+        if error := self.scene_errors.get(request.out_path.name):
+            raise error
+        return super().synthesize_speech(request)
+
+    def synthesize_many(self, requests: Sequence[SpeechRequest]) -> list[SpeechResult]:
+        self.calls.append([r.out_path.name for r in requests])
+        if len({(r.voice, r.language) for r in requests}) != 1:
+            raise ProviderError(self.info.name, "um lote precisa de uma voz e um idioma só")
+        if self.batch_error:
+            raise self.batch_error
+        failed = [r.out_path.name for r in requests if r.out_path.name in self.scene_errors]
+        if failed:
+            raise self.scene_errors[failed[0]]
+        return [FakeTTS.synthesize_speech(self, r) for r in requests]
+
+    def close(self) -> None:
+        self.closed += 1
 
 
 class FakeImageGen:

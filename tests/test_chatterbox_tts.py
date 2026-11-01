@@ -85,11 +85,11 @@ def test_one_scene_is_one_job_with_the_reference_voice(tmp_path: Path) -> None:
     result = tts.synthesize_speech(SpeechRequest(text="Uma fala só.", out_path=out, language="pt-BR"))
     assert worker.jobs == [{
         "parts": ["Uma fala só."], "language_id": "pt", "reference": str(tmp_path / "voz.wav"),
-        "out_path": str(out), "pause_ms": 400,
+        "out_path": str(out.with_name(".S01.partial.wav")), "pause_ms": 400,  # escreve ao lado
         "exaggeration": 0.5,
         "cfg_weight": 0.5,
     }]
-    assert result.path == out and out.is_file()
+    assert result.path == out and out.is_file() and not out.with_name(".S01.partial.wav").exists()
     assert result.model == "chatterbox-multilingual-v3"
     assert result.voice == f"clone:{reference_hash(tmp_path / 'voz.wav')}"
 
@@ -326,3 +326,44 @@ def test_long_cloned_speech_gets_its_own_cache_key_so_cut_wavs_are_redone() -> N
     assert module.long_speech_tag("chatterbox_modal", LONG) == "|frases300"
     assert module.long_speech_tag("chatterbox", f"Curta. {SP} Também curta.") == ""
     assert module.long_speech_tag("kokoro", LONG) == ""  # as outras vozes não mudam de chave
+
+
+# --- RF3: arquivo íntegro, fechamento e reuso ---------------------------------------------------
+
+
+def test_a_failed_scene_publishes_nothing_and_keeps_the_previous_wav(tmp_path: Path) -> None:
+    out = tmp_path / "voice" / "S01.wav"
+    out.parent.mkdir()
+    write_wav(out, frames=480)
+    before = out.read_bytes()
+    failing = FakeWorker(answer={"ok": False, "error": "falhou"})
+    with pytest.raises(ProviderError):
+        request = SpeechRequest(text="Oi.", out_path=out, language="pt-BR")
+        make_tts(failing, tmp_path).synthesize_speech(request)
+    assert out.read_bytes() == before  # a fala anterior segue utilizável
+    assert sorted(p.name for p in out.parent.iterdir()) == ["S01.wav"]  # nenhum temporário sobra
+
+
+def test_an_invalid_wav_from_the_model_is_never_published(tmp_path: Path) -> None:
+    class Junk(FakeWorker):
+        def ask(self, job: Mapping[str, Any]) -> dict[str, Any]:
+            Path(job["out_path"]).write_bytes(b"nao e um wav")
+            return {"ok": True}
+
+    out = tmp_path / "voice" / "S01.wav"
+    with pytest.raises(ProviderError, match="WAV válido"):
+        request = SpeechRequest(text="Oi.", out_path=out, language="pt-BR")
+        make_tts(Junk(), tmp_path).synthesize_speech(request)
+    assert not out.exists() and not list(out.parent.iterdir())
+
+
+def test_close_is_idempotent_and_the_provider_works_again_afterwards(tmp_path: Path) -> None:
+    worker = FakeWorker()
+    tts = make_tts(worker, tmp_path)
+    request = SpeechRequest(text="Oi.", out_path=tmp_path / "a.wav", language="pt-BR")
+    tts.synthesize_speech(request)
+    tts.close()
+    tts.close()  # fechar de novo não é erro
+    assert worker.closed
+    tts.synthesize_speech(SpeechRequest(text="Oi.", out_path=tmp_path / "b.wav", language="pt-BR"))
+    assert len(tts.starts) == 2 and (tmp_path / "b.wav").is_file()  # type: ignore[attr-defined]  # reabriu

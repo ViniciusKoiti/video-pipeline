@@ -6,6 +6,7 @@ Glossário de pronúncia (§9) usa a sintaxe de fonemas do Kokoro: `[Greely](/ɡ
 
 from __future__ import annotations
 
+import hashlib
 import re
 from collections.abc import Mapping
 from typing import TYPE_CHECKING
@@ -16,10 +17,11 @@ if TYPE_CHECKING:
     from kokoro import KPipeline
     from torch import Tensor
 
-from app.media.narration import split_pauses
+from app.media.narration import has_pauses, split_pauses
 from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest, SpeechResult
+from app.providers.tts.files import atomic_wav
 
 
 def apply_lexicon(text: str, lexicon: Mapping[str, str]) -> str:
@@ -32,6 +34,8 @@ def apply_lexicon(text: str, lexicon: Mapping[str, str]) -> str:
 
 
 class KokoroTTS:
+    identity = KokoroConstants.IDENTITY  # `info.name` é só o nome de exibição
+
     def __init__(self, voices: Mapping[str, str], *, num_threads: int = 8, pause_ms: int = 300) -> None:
         self.info = ProviderInfo("kokoro", remote=False)
         self._voices = dict(voices)  # idioma -> voz (ex.: {"en": "am_michael", "pt-BR": "pm_alex"})
@@ -46,6 +50,15 @@ class KokoroTTS:
         if lang_code is None or voice is None:
             raise ModelUnavailable(self.info.name, f"sem voz configurada para o idioma {request.language!r}")
         return lang_code, voice
+
+    def fingerprint(self, request: SpeechRequest) -> str:
+        """`kokoro|<voz>`, mais `|pausa<ms>` quando o texto tem pausa e `|lexico<hash>` quando o pedido traz
+        glossário de fonemas (o único jeito de o Kokoro ler o termo de outra forma)."""
+        _, voice = self.voice_for(request)
+        pause = f"|pausa{self._pause_ms}" if has_pauses(request.text) else ""
+        terms = sorted(request.lexicon.items())
+        lexicon = f"|lexico{hashlib.sha256(repr(terms).encode()).hexdigest()[:8]}" if terms else ""
+        return f"{self.identity}|{voice}{pause}{lexicon}"
 
     def _load(self, lang_code: str) -> KPipeline:
         if lang_code not in self._pipelines:
@@ -74,6 +87,6 @@ class KokoroTTS:
             chunks += [audio for result in pipeline(text, voice=voice) if (audio := result[2]) is not None]
         if not chunks:
             raise ProviderError(self.info.name, "nenhum áudio gerado para o texto")
-        request.out_path.parent.mkdir(parents=True, exist_ok=True)
-        sf.write(request.out_path, np.concatenate(chunks), KokoroConstants.SAMPLE_RATE)
+        with atomic_wav(request.out_path, self.info.name) as partial:
+            sf.write(partial, np.concatenate(chunks), KokoroConstants.SAMPLE_RATE, format="WAV")
         return SpeechResult(path=request.out_path, model=KokoroConstants.REPO_ID, voice=voice)

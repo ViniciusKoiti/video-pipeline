@@ -63,6 +63,9 @@ def test_mypy_checks_adapter_against_the_real_tts_protocol(tmp_path: Path, compa
         "class Adapter:\n"
         "    def __init__(self) -> None:\n"
         '        self.info = ProviderInfo("test", remote=False)\n'
+        '        self.identity = "test"\n'
+        "    def fingerprint(self, request: SpeechRequest) -> str:\n"
+        '        return "test"\n'
         f"    def synthesize_speech(self, request: SpeechRequest) -> {result_type}:\n"
         f"        return {result_value}\n"
         "def use(provider: TTSProvider) -> None:\n"

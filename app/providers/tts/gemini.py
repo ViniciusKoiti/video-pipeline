@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import base64
+import os
 import tempfile
 import time
 from collections.abc import Callable, Mapping, Sequence
@@ -23,14 +24,19 @@ from pathlib import Path
 from typing import Any
 
 from app.media.pauses import SplitError, split_at_pauses
+from app.media.wav import wav_is_valid
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import AuthPost, TransportError, post_json_with_headers
 from app.providers.tts.base import SpeechRequest, SpeechResult
 from app.providers.tts.constants.gemini_constants import GeminiConstants
+from app.providers.tts.files import atomic_wav
 
 
 class GeminiTTS:
+    identity = GeminiConstants.IDENTITY  # alias legado do nome `gemini_tts` (ADR 041)
+    max_batch_chars = GeminiConstants.BATCH_CHARS  # ~90 s de fala por chamada (ADR 012)
+
     def __init__(
         self,
         api_key: str,
@@ -60,13 +66,18 @@ class GeminiTTS:
             raise ModelUnavailable(self.info.name, f"sem voz configurada para o idioma {request.language!r}")
         return voice
 
+    def fingerprint(self, request: SpeechRequest) -> str:
+        """`gemini|<modelo>|<voz>|<direção de fala do idioma>`; pausa e entrega vão no texto."""
+        style = self._styles.get(request.language, "")
+        return f"{self.identity}|{self._model}|{self._check(request)}|{style}"
+
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         voice = self._check(request)
         audio = self._audio(
             self._call(self._body(request.text, request.language, voice), GeminiConstants.TIMEOUT_S)
         )
-        request.out_path.parent.mkdir(parents=True, exist_ok=True)
-        request.out_path.write_bytes(audio)
+        with atomic_wav(request.out_path, self.info.name) as partial:
+            partial.write_bytes(audio)
         return SpeechResult(path=request.out_path, model=self._model, voice=voice)
 
     def synthesize_many(self, requests: Sequence[SpeechRequest]) -> list[SpeechResult]:
@@ -87,10 +98,17 @@ class GeminiTTS:
         with tempfile.TemporaryDirectory(dir=folder) as tmp:
             batch = Path(tmp) / "lote.wav"
             batch.write_bytes(audio)
+            parts = [Path(tmp) / f"{i:03d}.wav" for i in range(len(requests))]
             try:
-                split_at_pauses(batch, [r.out_path for r in requests])
+                split_at_pauses(batch, parts)
             except SplitError as error:
                 raise InvalidOutput(self.info.name, f"lote de {len(requests)} cenas: {error}") from None
+            pairs = list(zip(requests, parts, strict=True))
+            invalid = [r.out_path.name for r, part in pairs if not wav_is_valid(part)]
+            if invalid:  # nada é publicado se algum corte saiu inválido: o lote cai para cena a cena
+                raise InvalidOutput(self.info.name, f"corte inválido em {', '.join(invalid)}")
+            for request, part in pairs:
+                os.replace(part, request.out_path)  # só depois de todos os cortes conferidos
         return [SpeechResult(path=r.out_path, model=self._model, voice=voice) for r in requests]
 
     def _check(self, request: SpeechRequest) -> str:
