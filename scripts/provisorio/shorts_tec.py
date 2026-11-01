@@ -42,6 +42,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -61,9 +62,12 @@ from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.models.voiced_speech import VoicedSpeech as Speech  # noqa: E402
 from app.pipeline.motion_inputs import fit_content, load_content, load_narration, load_voiced  # noqa: E402
 from app.pipeline.package import PackagePublisher  # noqa: E402
+from app.pipeline.ports import ManifestStore  # noqa: E402
 from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
+from app.pipeline.voice_state import produce_with_state  # noqa: E402
 from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
+from app.storage.json_files import JsonFileStore  # noqa: E402
 
 # A voz clonada devolve silêncio nas pontas do WAV (até 1 s antes da fala, em 2026-10-25): a fala é o trecho
 # entre os silêncios das pontas, com uma respiração de cada lado.
@@ -169,9 +173,13 @@ def mix_filter(
     return ";".join(parts)
 
 
-def generate_voice(tts: TTSProvider, language: str, lines: list[Line], folder: Path) -> list[Path]:
+def generate_voice(
+    tts: TTSProvider, language: str, lines: list[Line], store: ManifestStore, episode_id: str
+) -> list[Path]:
     """O WAV de cada fala, na ordem (ADR 049; nome de WAV do Short, o mesmo de sempre): só as que faltam são
-    geradas e a antiga só sai depois da nova pronta e medida. Falta de fala é `VoiceIncomplete`."""
+    geradas e a antiga só sai depois da nova pronta e medida. Falta de fala é `VoiceIncomplete`. O relatório
+    por cena fica no `manifest.json` da pasta (ADR 052) e o `vp status` o mostra."""
+    folder = store.path(episode_id, "")
     voice_dir = folder / "voice"
     voice_dir.mkdir(parents=True, exist_ok=True)
     glossary = load_glossary(folder)
@@ -187,7 +195,8 @@ def generate_voice(tts: TTSProvider, language: str, lines: list[Line], folder: P
         for index, line in enumerate(lines)
     ]
     with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
-        wavs = narrator.require(narrator.produce(speech))
+        outcomes = produce_with_state(narrator, store, episode_id, speech, now=datetime.now().astimezone())
+        wavs = narrator.require(outcomes)
     return [wavs[item.id] for item in speech]
 
 
@@ -203,7 +212,8 @@ def cmd_voz(folder: Path, narration: Path, named: str | None) -> None:
         provider, tts = settings.providers.tts_final or settings.providers.tts, context.tts_final
     started = time.monotonic()
     manifest = []
-    for line, wav in zip(lines, generate_voice(tts, language, lines, folder), strict=True):
+    store = JsonFileStore(folder.parent)  # a pasta de produção é o "episódio" do estado
+    for line, wav in zip(lines, generate_voice(tts, language, lines, store, folder.name), strict=True):
         seconds = duration_ms(wav) / 1000
         begin, end = speech_bounds(wav)
         manifest.append(

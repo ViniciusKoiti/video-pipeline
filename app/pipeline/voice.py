@@ -23,6 +23,7 @@ dela (mesmo começo de nome, outro hash) e a poda delas.
 from __future__ import annotations
 
 import glob
+import hashlib
 import math
 from collections.abc import Callable, Sequence
 from dataclasses import replace
@@ -101,6 +102,11 @@ class Narrator:
         base = self._tts.fingerprint(replace(request, text="", delivery=VoiceConstants.NEUTRAL))
         named = self._tts.identity in VoiceConstants.CLONED and request.delivery != VoiceConstants.NEUTRAL
         return base + (VoiceConstants.LEGACY_DELIVERY.format(name=request.delivery) if named else "")
+
+    def input_hash(self, lines: Sequence[SpeechLine]) -> str:
+        """Muda quando qualquer fala muda de texto, voz ou entrega: é o `input_hash` do estado da etapa."""
+        names = "\n".join(self.key(line).file_name(self._library.naming) for line in lines)
+        return "sha256:" + hashlib.sha256(names.encode()).hexdigest()
 
     def plan(self, lines: Sequence[SpeechLine]) -> list[PlannedSpeech]:
         """Só as falas sem WAV (ou com um arquivo inválido no lugar dele)."""

@@ -29,7 +29,6 @@ from app.pipeline.gates import (
     GateStatus,
     gate_report,
     latest_check,
-    missing_pieces,
     record_check,
     record_decision,
 )
@@ -45,6 +44,7 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
+from app.pipeline.pending import pending_pieces
 from app.pipeline.ports import Context
 from app.pipeline.schemas import (
     Decision,
@@ -173,7 +173,7 @@ def _status(args: argparse.Namespace, context: Context) -> int:
         if row.step is Step.SCRIPT:
             print(_check_line(context, args.episode_id))
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
-    pending += missing_pieces(context.store, args.episode_id)
+    pending += pending_pieces(context.store, args.episode_id)
     pending += _metrics_status(context, args.episode_id)
     print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
     return 0

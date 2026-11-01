@@ -41,7 +41,7 @@ flowchart TD
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
-| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz (ADR 049), pacote (ADR 050) e montagem e render por porta (ADR 051) feitos em 2026-11-01; estado por cena e a prova de timestamps, legendas e áudio pendentes |
+| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz (ADR 049), pacote (ADR 050), render por porta (ADR 051) e estado da voz por cena (ADR 052) feitos em 2026-11-01; falta provar timestamps, legendas, áudio e efeitos |
 | RF7 | G12 e encerramento da migração | Pendente |
 
 “Implantado” significa que há código de verificação, não que todos os gaps foram resolvidos. Teste antigo
@@ -225,7 +225,8 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
 
 - [x] Longo e Short compartilham voz sem herdar de uma classe genérica de produção.
 - [x] WAV novo é validado e promovido antes de remover versões obsoletas; erro conserva o anterior utilizável.
-- [ ] Estado, relatório por cena e cache permitem retomar depois de encerrar o processo.
+- [x] Estado, relatório por cena e cache permitem retomar depois de encerrar o processo.
+  *(a voz, a etapa com falha por cena; o cache por cena do render é do motor e não passa pelo `manifest.json`)*
 - [x] Motor vem da porta configurada por formato; substituição é demonstrada com renderer falso.
 - [x] Montagem incompleta não avança para render final; precondições são verificadas na operação.
 - [x] Prévia e final não se confundem no estado/cache nem no conteúdo protegido pelo gate 4.
@@ -252,6 +253,11 @@ reabrir libera, `episode.json` igual não regravado e aprovado não trocado, esc
 lock) e um caso em `tests/test_captions.py` (o gancho recusa antes de renomear ou gravar a legenda); mutações
 conferidas (final sem exigir ativos, sem o guard no MP4, `episode.json` sem guard, regravação do igual, motor fixo).
 Ressalva: o render real (Remotion) não foi exercitado, só o renderer falso.
+
+**Evidência (estado da voz, fatia 5):** `tests/test_voice_state.py` (7: rodada completa, parcial com o motivo lido por
+um processo novo, retomada que pede só o que falta, WAV registrado que sumiu, erro inesperado como `failed` e a exceção
+que sobe, lock único liberado, e o `vp status` com as pendências da voz) e `tests/test_voice_scripts.py` com a nova
+assinatura; mutações conferidas (sem gravar o relatório, sem registrar a falha, sem conferir o WAV, `vp status` sem a voz).
 
 **Evidência:** testes de integração da produção a criar, mais os testes existentes de narração, captions,
 shots, efeitos e Shorts. O vídeo-régua complementa esses testes; não substitui provas de proteção e retomada.
@@ -335,3 +341,6 @@ bloqueia o agendamento de um pacote interrompido.
 A fatia 4 do RF6 (ADR 051) levou o fim do `montar_episodio.py` para o `EpisodeRenderer`: o motor vem da porta por
 formato, a montagem incompleta não chega a ele, o render final exige os ativos aprovados, e o gate 4 aprovado recusa
 render por cima do MP4, do `episode.json` e do `captions.srt` que ele carimbou.
+
+A fatia 5 do RF6 (ADR 052) gravou o relatório por cena da voz no `manifest.json`: uma rodada que para deixa dito quais falas
+ficaram para trás e por quê, o `vp status` as lista e retomar continua sendo rodar de novo (o cache são os nomes dos arquivos).

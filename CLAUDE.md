@@ -351,6 +351,9 @@ lacuna fica registrada.
   hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs dos Shorts já
   aprovados fica como está** (decisão do dono, 2026-11-01). Fala nova só substitui a antiga depois de pronta e medida. `montar_episodio.py` e `shorts_tec.py` geram a voz por
   `generate_voice` (o `Narrator`), e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
+- **Estado da voz (ADR 052, `app/pipeline/voice_state.py`):** cada rodada de voz grava no `manifest.json` um registro por
+  fala (pronta, ou pendente com o motivo); o `vp status` lista as pendências e um WAV que sumiu. Retomar é rodar de novo:
+  o cache são os nomes dos arquivos.
 - **Montagem e render (ADR 051, `app/pipeline/assembly.py`):** `montar_episodio.py` usa `EpisodeRenderer` e o motor da
   porta por formato (`context.renderer`). Montagem incompleta (WAV ou mídia ausente) não chega ao motor; o render
   final exige os ativos aprovados (a prévia, não). O gate 4 aprovado recusa render por cima do MP4, do `episode.json`
