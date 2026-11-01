@@ -318,6 +318,10 @@ Pixabay e Unsplash por API, Coverr só à mão pelo site → (4) Workers AI, no 
 (5) mapa, cronologia, citação curta permitida ou tela gráfica original. Cada cena recebe imagem relevante ou a
 lacuna fica registrada.
 
+- **Entrada (ADR 044, `app/pipeline/assets.py`):** a busca registra a falha de cada banco com o motivo; nenhum banco
+  disponível é erro (sem arquivos vazios) e `PaidApiBlocked` interrompe a busca. O download de um ativo já baixado e
+  íntegro só acrescenta a cena em `used_in_scenes`; ativo aprovado nunca é alterado (JSON nem mídia) e, sem a mídia,
+  é erro: reabrir (`vp reopen --step assets --asset <id>`).
 - Busca em lote por consulta normalizada; cache de metadados e miniaturas; `sha256` para deduplicar;
   redimensionar só o ativo final escolhido; registrar headers de cota dos bancos quando existirem.
 - Termos de cada banco em `data/benchmarks/termos-bancos-de-imagem.md`. Imagem de banco sem pessoa

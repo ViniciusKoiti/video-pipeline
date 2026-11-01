@@ -22,7 +22,6 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
 
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 from pydantic import ValidationError
@@ -30,6 +29,7 @@ from pydantic import ValidationError
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.constants.medicao_constants import MedicaoConstants
 from app.pipeline.constants.translation_constants import TranslationConstants
+from app.pipeline.file_hash import sha256_file
 from app.pipeline.medicao import medicao_problems
 from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
@@ -58,7 +58,7 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
     if step is Step.ASSETS:
         if asset_id is None:
             raise GateError("a etapa assets decide ativo por ativo: informe --asset")
-        return "sha256:" + _file_sha256(_media_path(store, episode_id, asset_id))
+        return "sha256:" + sha256_file(_media_path(store, episode_id, asset_id))
     if asset_id is not None:
         raise GateError("--asset só vale para a etapa assets")
     if step is Step.PREVIEW:
@@ -300,11 +300,3 @@ def _media_path(store: ManifestStore, episode_id: str, asset_id: str) -> Path:
         if path.is_file():
             return path
     raise GateError(f"{asset_id}: nenhum arquivo de mídia em assets/")
-
-
-def _file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1 << 20), b""):
-            digest.update(chunk)
-    return digest.hexdigest()

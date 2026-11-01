@@ -6,15 +6,17 @@ Uso: `.venv/bin/python scripts/provisorio/buscar_candidatos.py <episode-id> <ped
 "midias": ["video", "photo"], "min_duration_s": 4, "orientacao": "portrait"}]}`.
 
 - Usa os bancos da cascata de config/providers.toml que têm adapter e chave no .env; os outros são pulados
-  com aviso (o Coverr é só manual).
+  com o motivo (o Coverr é só manual), e o arquivo de cada pedido registra os pulados. Nenhum banco
+  disponível é erro (sai sem gravar candidatos), não uma busca vazia; provedor pago bloqueado interrompe
+  a busca (regra de custo zero, ADR 044).
 - Orientação do arquivo: `orientacao` do pedido (`landscape` ou `portrait`); sem ela, a do `scenes.json`
   do episódio (ADR 014), e sem o arquivo, `landscape`. Em retrato só entram arquivos em pé de pelo menos
   1080×1920.
 - Cada consulta vai a cada banco em cada mídia pedida; `--limit` candidatos por chamada (padrão 5), para a
   triagem humana escolher até 2 por plano. Tudo é ilustração: `visual_need` sempre `contextual_stock`.
 - Saída: `data/episodes/<id>/candidatos/<pedido>.json` com o ativo (licença, autor, página, crédito), a
-  miniatura no cache, largura, altura, duração, banco, consulta e mídia. Falha de um banco (cota, chave)
-  fica registrada no arquivo e não interrompe os outros (§2.1). Nada é baixado em resolução final aqui.
+  miniatura no cache, largura, altura, duração, banco, consulta e mídia. Falha de um banco (cota, serviço)
+  fica registrada no arquivo, com o motivo, e não interrompe os outros (§2.1). Nada é baixado aqui.
 """
 
 from __future__ import annotations
@@ -27,24 +29,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.bootstrap import DEFAULT_REGISTRY, ConfigurationError  # noqa: E402
+from app.bootstrap.archives import available_archives  # noqa: E402
+from app.pipeline.assets import NoArchiveAvailable, require_archives, search_archives  # noqa: E402
 from app.pipeline.schemas import Orientation, VisualNeed  # noqa: E402
-from app.providers.archives.base import ArchiveProvider, AssetCandidate, AssetQuery  # noqa: E402
-from app.providers.errors import ProviderError  # noqa: E402
+from app.providers.archives.base import AssetCandidate, AssetQuery  # noqa: E402
+from app.providers.errors import PaidApiBlocked  # noqa: E402
 from app.settings import load_settings  # noqa: E402
-
-
-def available_archives(settings) -> list[ArchiveProvider]:  # noqa: ANN001
-    archives = []
-    for name in settings.providers.archives:
-        registration = DEFAULT_REGISTRY["archives"].get(name)
-        if registration is None or registration.factory is None:
-            continue  # acervo ainda sem adapter (Commons, LoC, Flickr Commons)
-        try:
-            archives.append(registration.factory(settings))
-        except ConfigurationError as error:
-            print(f"pulado: {name} ({error})")
-    return archives
 
 
 def episode_orientation(episode_dir: Path) -> Orientation:
@@ -86,9 +76,15 @@ def main() -> None:
     args = parser.parse_args()
     settings = load_settings(ROOT)
     out_dir = settings.data_dir / "episodes" / args.episode_id / "candidatos"
+    availability = available_archives(settings)
+    for skipped in availability.skipped:
+        print(f"pulado: {skipped.name} ({skipped.reason})")
+    try:
+        archives = require_archives(availability)
+    except NoArchiveAvailable as error:
+        raise SystemExit(f"{args.episode_id}: {error}; nenhum candidato foi gravado") from error
     out_dir.mkdir(parents=True, exist_ok=True)
-    archives = available_archives(settings)
-    print("bancos:", ", ".join(a.info.name for a in archives) or "nenhum")
+    print("bancos:", ", ".join(a.info.name for a in archives))
     default_orientation = episode_orientation(out_dir.parent)
 
     for pedido in json.loads(args.pedidos.read_text())["pedidos"]:
@@ -107,15 +103,24 @@ def main() -> None:
                     min_duration_s=pedido.get("min_duration_s") if media == "video" else None,
                     orientation=orientation,
                 )
-                for archive in archives:
-                    try:
-                        candidates = archive.search_assets(query)
-                    except ProviderError as error:
-                        failures.append({"banco": archive.info.name, "consulta": text, "motivo": str(error)})
-                        continue
-                    for c in candidates:
-                        found.setdefault(c.asset.id, _record(c, archive.info.name, text, media))
-        result = {"pedido": pedido, "candidatos": list(found.values()), "falhas": failures}
+                try:
+                    searched = search_archives(archives, query)
+                except PaidApiBlocked as error:
+                    message = f"{pedido['id']}: busca interrompida, provedor pago bloqueado: {error}"
+                    raise SystemExit(message) from error
+                failures += [
+                    {"banco": f.bank, "consulta": f.query, "razao": f.reason, "motivo": f.detail}
+                    for f in searched.failures
+                ]
+                for bank, c in searched.hits:
+                    found.setdefault(c.asset.id, _record(c, bank, text, media))
+        skipped = [{"banco": s.name, "motivo": s.reason} for s in availability.skipped]
+        result = {
+            "pedido": pedido,
+            "candidatos": list(found.values()),
+            "falhas": failures,
+            "bancos_pulados": skipped,
+        }
         (out_dir / f"{pedido['id']}.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
         by_bank = {}
         for c in found.values():

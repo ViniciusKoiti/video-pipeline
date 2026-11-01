@@ -7,6 +7,10 @@ Uso: `.venv/bin/python scripts/provisorio/baixar_escolhidos.py <episode-id> <cen
 - Grava `assets/<asset-id>.json` com o `sha256` do arquivo e a cena em `used_in_scenes`, ainda em
   `needs_review`: a conferência de pessoas, marcas e texto vai em `usage_notes`, e a aprovação é humana, com
   `vp approve <id> --step assets --asset <asset-id>` (§2.5, ADR 007).
+- A entrada é `app.pipeline.assets.AssetIntake` (ADR 044): ativo já baixado e íntegro não é baixado de novo, a
+  cena entra em `used_in_scenes` sem apagar as anteriores, repetir é idempotente e ativo aprovado nunca é
+  alterado (o uso em outra cena fica no `asset_id` do `scenes.json`). Falha de um ativo não para os outros;
+  o código de saída é 1 se algum falhou.
 """
 
 from __future__ import annotations
@@ -15,17 +19,36 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.bootstrap import DEFAULT_REGISTRY  # noqa: E402
+from app.bootstrap.archives import available_archives  # noqa: E402
+from app.pipeline.assets import AssetError, AssetIntake, NoArchiveAvailable, require_archives  # noqa: E402
+from app.pipeline.models.intake_action import IntakeAction  # noqa: E402
+from app.pipeline.ports import EpisodeLocked, ImmutableManifest  # noqa: E402
+from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.schemas import Asset  # noqa: E402
-from app.providers.archives.stock import sha256_file  # noqa: E402
+from app.providers.errors import ProviderError  # noqa: E402
 from app.settings import load_settings  # noqa: E402
+from app.storage.json_files import JsonFileStore, JsonReviewGate  # noqa: E402
 
-SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
+LABELS = {
+    IntakeAction.DOWNLOADED: "baixado",
+    IntakeAction.REPAIRED: "mídia refeita (a anterior não batia com o sha256)",
+    IntakeAction.SCENE_ADDED: "já baixado; cena acrescentada",
+    IntakeAction.UNCHANGED: "já baixado; nada a fazer",
+    IntakeAction.APPROVED_UNTOUCHED: "aprovado; não alterado (use o asset_id no scenes.json)",
+}
+
+
+def candidates(episode_dir: Path) -> dict[str, dict]:
+    records = {}
+    for path in sorted((episode_dir / "candidatos").glob("*.json")):
+        data = json.loads(path.read_text())
+        for record in data.get("candidatos", []) if isinstance(data, dict) else []:
+            records[record["ativo"]["id"]] = record
+    return records
 
 
 def main() -> None:
@@ -36,21 +59,32 @@ def main() -> None:
     parser.add_argument("asset_ids", nargs="+")
     args = parser.parse_args()
     settings = load_settings(ROOT)
-    episode_dir = settings.data_dir / "episodes" / args.episode_id
-    records = {}
-    for path in sorted((episode_dir / "candidatos").glob("*.json")):
-        data = json.loads(path.read_text())
-        for record in data.get("candidatos", []) if isinstance(data, dict) else []:
-            records[record["ativo"]["id"]] = record
+    store = JsonFileStore(settings.data_dir / "episodes")
+    intake = AssetIntake(store, ReviewWriteGuard(store, JsonReviewGate(store)))
+    records = candidates(store.path(args.episode_id, ""))
+    availability = available_archives(settings)
+    try:
+        banks = {bank.info.name: bank for bank in require_archives(availability)}
+    except NoArchiveAvailable as error:
+        raise SystemExit(f"{args.episode_id}: {error}") from error
+    failed = False
     for asset_id in args.asset_ids:
-        asset = Asset.model_validate(records[asset_id]["ativo"])
-        archive = DEFAULT_REGISTRY["archives"][asset.provider.value].factory(settings)  # type: ignore[misc]
-        suffix = Path(urlparse(asset.original_url or "").path).suffix.lower()
-        suffix = suffix if suffix in SUFFIXES else (".mp4" if "-video-" in asset.id else ".jpg")
-        media = archive.download_asset(asset, episode_dir / "assets" / f"{asset.id}{suffix}")
-        final = asset.model_copy(update={"sha256": sha256_file(media), "used_in_scenes": [args.scene_id]})
-        (episode_dir / "assets" / f"{asset.id}.json").write_text(final.model_dump_json(indent=2) + "\n")
-        print(f"{asset.id}: {media.relative_to(ROOT)} ({media.stat().st_size / 1e6:.1f} MB)")
+        try:
+            if asset_id not in records:
+                raise AssetError(f"{asset_id}: não está em candidatos/ (rode buscar_candidatos.py)")
+            asset = Asset.model_validate(records[asset_id]["ativo"])
+            if asset.provider.value not in banks:
+                bank = asset.provider.value
+                why = {s.name: s.reason for s in availability.skipped}.get(bank, "fora da cascata")
+                raise AssetError(f"{asset_id}: o banco {bank} não está disponível ({why})")
+            result = intake.take(args.episode_id, asset, args.scene_id, banks[asset.provider.value])
+        except (AssetError, EpisodeLocked, ImmutableManifest, ProviderError) as error:
+            print(f"{asset_id}: ERRO {error}", file=sys.stderr)
+            failed = True
+            continue
+        print(f"{asset_id}: {LABELS[result.action]}; cenas {result.asset.used_in_scenes}")
+    if failed:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
