@@ -40,7 +40,7 @@ flowchart TD
 | RF2 | G03; recuperação de G02 | Implementado em 2026-11-01 (ADR 040); nenhum chamador real usa `run_scenes` ainda (RF3/RF6) |
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
-| RF5 | G02, G10–G11 | Fatias 1 (fontes, ADR 043), 2 (ativos, ADR 044) e 3 (entradas do SFX, ADR 046) feitas em 2026-11-01; `MotionContent`, briefs e catálogo de música pendentes |
+| RF5 | G02, G10–G11 | Fatias 1 (fontes, ADR 043), 2 (ativos, ADR 044), 3 (entradas do SFX, ADR 046) e 4 (briefs e catálogo de música, ADR 047) feitas em 2026-11-01; só o `MotionContent` pendente |
 | RF6 | Integração G01–G11 no longo e Short | Pendente |
 | RF7 | G12 e encerramento da migração | Pendente |
 
@@ -186,7 +186,7 @@ acrescentar testes de operações separadas quando forem implementadas. Os exemp
   *(feito para o SFX Kit e o `sfx.json`, ADR 046; falta o `MotionContent`: fps, durações e fala dentro do WAV)*
 - [ ] Leitura/escrita do conteúdo do kit preserva campos que o auto-play não interpreta.
   *(o `sounds.json` é só de leitura e ignora os campos que não usa; falta o `MotionContent` carregar e salvar)*
-- [ ] Cópias de briefs e catálogo de música mantêm seus contratos de substituição e licença.
+- [x] Cópias de briefs e catálogo de música mantêm seus contratos de substituição e licença.
 
 **Evidência (fatia 1, fontes):** `tests/test_sources.py` (13 casos: as três entradas, id sob lock com dois
 "processos", repetição, gate 1 aprovado, falha em texto, trechos e manifesto, órfão, manifesto por último;
@@ -195,8 +195,11 @@ banco falho registrado, nenhum banco, `PaidApiBlocked`, composição, entrada no
 intocado, mídia trocada, falhas injetadas, JSON por último, lock; mutações conferidas) e
 `tests/test_assets_scripts.py` (os dois scripts, sem rede). **Fatia 3 (SFX):** `tests/test_sfx_inputs.py` (31 casos: kit válido, campo faltando, 16 valores fora do
 contrato, id repetido, JSON e forma inválidos, plano válido e 9 inválidos, plano ausente; mutações conferidas;
-o kit real de 320 sons carrega). **Pendente:** `MotionContent` (fps, durações, fala no WAV, preservação de campos
-desconhecidos) e briefs/catálogo de música. Criar testes específicos de ativos e briefs e ampliar os de
+o kit real de 320 sons carrega). **Fatia 4 (briefs e música):** `tests/test_briefs.py` (14 casos: os dois tipos, troca recusada, guardado
+com a data e sem colisão, falha no meio, lock, episódio inexistente), `tests/test_music_library.py` (21 casos:
+faixa nunca substituída, licença, sha256 do catálogo, versão do episódio intocada, aprovado, falhas injetadas) e
+`tests/test_briefs_music_scripts.py` (os três scripts, sem rede nem ffmpeg); mutações conferidas. **Pendente:**
+`MotionContent` (fps, durações, fala no WAV, preservação de campos desconhecidos ao carregar e salvar). Criar testes específicos de ativos e briefs e ampliar os de
 música/Short conforme a fatia. Nenhum critério passa só porque um arquivo foi movido para `app/`.
 
 ### RF5-bis — Tratamento único de erros (ADR 045)
@@ -276,8 +279,9 @@ registro de comandos. O que falta no RF4 depende de objetos que só nascem no RF
 RF5 começou pelas fontes (ADR 043): `app/pipeline/sources.py` (`SourceRegistry` e as três entradas) e
 `app/pipeline/atomic_files.py`; `baixar_fonte.py` e `fonte_declarada.py` agora só chamam o registro. A fatia 2 (ADR 044)
 fez a busca tolerante e a entrada de ativos (`app/pipeline/assets.py`, `app/bootstrap/archives.py`); a fatia 3
-(ADR 046) validou o SFX Kit e o `sfx.json` na leitura (`app/pipeline/sfx_inputs.py`); resta o `MotionContent`
-(G10), os briefs e o catálogo de música.
+(ADR 046) validou o SFX Kit e o `sfx.json` na leitura (`app/pipeline/sfx_inputs.py`); a fatia 4 (ADR 047)
+fez as cópias de briefs (`app/pipeline/briefs.py`) e o catálogo de música (`app/pipeline/music_library.py`);
+resta o `MotionContent` (G10).
 
 ## 5. Pendências abertas ao fim do RF3 (2026-11-01)
 

@@ -10,6 +10,9 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from pydantic import ValidationError
+
+from app.errors import PipelineError
 from app.media.narration import strip_pauses, timeline_length, timeline_position
 from app.pipeline.constants.music_constants import MusicConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
@@ -25,12 +28,21 @@ from app.pipeline.schemas import (
 )
 
 
+class MusicCatalogError(PipelineError, ValueError):
+    """`catalog.json`, ativo ou faixa fora do contrato; a mensagem diz o que e onde."""
+
+
 def load_music_catalog(data_dir: Path) -> MusicCatalog | None:
-    """O catálogo de `data/music/`; sem o arquivo, None."""
+    """O catálogo de `data/music/`; sem o arquivo, None. Fora do contrato é `MusicCatalogError`."""
     path = data_dir / SchemasConstants.MUSIC_DIR / SchemasConstants.MUSIC_CATALOG_FILE
     if not path.is_file():
         return None
-    return MusicCatalog.model_validate_json(path.read_text(encoding="utf-8"))
+    try:
+        return MusicCatalog.model_validate_json(path.read_text(encoding="utf-8"))
+    except ValidationError as error:
+        first = error.errors()[0]
+        where = ".".join(map(str, first["loc"])) or "registro"
+        raise MusicCatalogError(f"{path.name}: fora do contrato ({where}: {first['msg']})") from error
 
 
 def _position(narration: str, anchor: MusicAnchor, *, edge: str) -> int | None:

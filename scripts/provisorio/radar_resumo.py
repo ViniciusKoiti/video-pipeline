@@ -8,7 +8,8 @@ Uso: `.venv/bin/python scripts/provisorio/radar_resumo.py <episode-id> <nicho> [
 - É uma cópia datada: o roteiro e o `vp check` leem a do episódio, e o resumo de lá pode mudar depois sem
   mudar o que este episódio usou.
 - Não sobrescreve: com um resumo diferente já na pasta, só troca com `--atualizar`, e o anterior fica ao lado
-  com a data dele no nome.
+  com a data dele no nome (nunca por cima de um guardado antes). A cópia é `app.pipeline.briefs.install_brief`
+  (ADR 047): validada antes de escrever, gravada inteira e com o episódio travado.
 - Não roda coleta nem chama rede: gerar ou atualizar o resumo é no reels-radar, e coleta que gasta crédito é
   decisão do dono.
 - O resumo é observação de forma em amostra pequena; nunca é fonte de fato (§2.2).
@@ -24,9 +25,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.pipeline.constants.radar_constants import RadarConstants  # noqa: E402
+from app.commands.errors import run  # noqa: E402
+from app.pipeline.briefs import install_brief, radar_spec  # noqa: E402
+from app.pipeline.models.brief_action import BriefAction  # noqa: E402
 from app.pipeline.radar import RadarBrief, brief_summary  # noqa: E402
 from app.settings import load_settings, read_dotenv  # noqa: E402
+from app.storage.json_files import JsonFileStore  # noqa: E402
 
 
 def radar_dir(given: str | None) -> Path:
@@ -50,30 +54,17 @@ def main() -> None:
         how = f"`radar brief niches/{args.niche}.toml`"
         raise SystemExit(f"{source} não existe: gere com {how} no reels-radar")
     text = source.read_text(encoding="utf-8")
-    brief = RadarBrief.model_validate_json(text)  # contrato errado para aqui, antes de gravar
+    brief = RadarBrief.model_validate_json(text)
 
-    episode_dir = load_settings(ROOT).data_dir / "episodes" / args.episode_id
-    if not episode_dir.is_dir():
-        raise SystemExit(f"episódio {args.episode_id} não existe em {episode_dir.parent}")
-    target = episode_dir / RadarConstants.BRIEF_FILE
-    if target.is_file():
-        current = target.read_text(encoding="utf-8")
-        if current == text:
-            print(f"já está atualizado: {brief_summary(brief)}")
-            return
-        if not args.atualizar:
-            old = RadarBrief.model_validate_json(current)
-            raise SystemExit(
-                f"{target} já tem outro resumo ({old.niche}, de {old.generated_at:%d/%m/%Y}); "
-                "use --atualizar para trocar"
-            )
-        old = RadarBrief.model_validate_json(current)
-        kept = episode_dir / f"radar-brief.{old.generated_at:%Y%m%d-%H%M%S}.json"
-        target.rename(kept)
-        print(f"resumo anterior guardado em {kept.name}")
-    target.write_text(text, encoding="utf-8")
+    store = JsonFileStore(load_settings(ROOT).data_dir / "episodes")
+    result = install_brief(store, args.episode_id, radar_spec(), text, replace=args.atualizar)
+    if result.action is BriefAction.UNCHANGED:
+        print(f"já está atualizado: {brief_summary(brief)}")
+        return
+    if result.archived:
+        print(f"resumo anterior guardado em {result.archived}")
     print(brief_summary(brief))
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("radar_resumo", main))

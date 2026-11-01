@@ -7,7 +7,9 @@ Uso: `.venv/bin/python scripts/provisorio/formato_resumo.py <episode-id> <format
 - É uma cópia datada: o roteiro, o `vp numeros` e o `vp check` leem a do episódio, e a análise pode mudar
   depois sem mudar o que este episódio usou.
 - Não sobrescreve: com um perfil diferente já na pasta, só troca com `--atualizar`, e o anterior fica ao lado
-  com a data dele no nome.
+  com a data dele no nome (nunca por cima de um guardado antes). A cópia é `app.pipeline.briefs.install_brief`
+  (ADR 047): validada antes de escrever, gravada inteira e com o episódio travado; a pasta do episódio vem do
+  `data_dir` das configurações, como no `radar_resumo.py`.
 - É forma, nunca fonte (§2.2): nenhum número do perfil vai para a fala ou para a tela.
 """
 
@@ -20,8 +22,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.commands.errors import run  # noqa: E402
+from app.pipeline.briefs import format_spec, install_brief  # noqa: E402
 from app.pipeline.constants.numbers_constants import NumbersConstants  # noqa: E402
-from app.pipeline.numbers import FormatBrief  # noqa: E402
+from app.pipeline.models.brief_action import BriefAction  # noqa: E402
+from app.settings import load_settings  # noqa: E402
+from app.storage.json_files import JsonFileStore  # noqa: E402
 
 
 def main() -> None:
@@ -33,19 +39,15 @@ def main() -> None:
     args = parser.parse_args()
 
     text = args.perfil.read_text(encoding="utf-8")
-    brief = FormatBrief.model_validate_json(text)
-    target = ROOT / "data" / "episodes" / args.episode_id / NumbersConstants.FORMAT_FILE
-    if not target.parent.is_dir():
-        raise SystemExit(f"episódio {args.episode_id} não existe em data/episodes/")
-    if target.is_file():
-        if target.read_text(encoding="utf-8") == text:
-            print(f"{target}: já é este perfil")
-            return
-        if not args.atualizar:
-            raise SystemExit(f"{target} já existe com outro perfil: use --atualizar")
-        old = FormatBrief.model_validate_json(target.read_text(encoding="utf-8"))
-        target.rename(target.with_name(f"formato-brief-{old.data}.json"))
-    target.write_text(text, encoding="utf-8")
+    store = JsonFileStore(load_settings(ROOT).data_dir / "episodes")
+    result = install_brief(store, args.episode_id, format_spec(), text, replace=args.atualizar)
+    brief = result.brief
+    target = store.path(args.episode_id, NumbersConstants.FORMAT_FILE)
+    if result.action is BriefAction.UNCHANGED:
+        print(f"{target}: já é este perfil")
+        return
+    if result.archived:
+        print(f"perfil anterior guardado em {result.archived}")
     patterns = [name for name, m in brief.medidas.items() if m.forca == "pattern"]
     print(
         f"{target}: {brief.nicho}, grupo {brief.grupo}, {brief.data}, n = {brief.n}; "
@@ -54,4 +56,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("formato_resumo", main))

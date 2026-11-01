@@ -380,6 +380,9 @@ lacuna fica registrada.
   CPU; mede a loudness como o YouTube mede (mono contado nos dois alto-falantes: o `ebur128` do ffmpeg dá 3 dB a
   menos num Short mono, por isso o `juntar` sai em estéreo desde 2026-10-31), o pico real, a batida da trilha e se
   cada corte com efeito no plano tem um ataque a 40 ms.
+  Catálogo de música (ADR 047, `app/pipeline/music_library.py`): `adicionar` nunca substitui faixa e valida antes de
+  copiar; `usar` confere o `sha256` do ativo e nunca troca o que o episódio já tem. Resumos do radar e do formato
+  (`app/pipeline/briefs.py`): só trocam com `--atualizar`, e o anterior fica com a data, sem sobrescrever outro.
   O `sounds.json` do kit e o `sfx.json` são validados na leitura (ADR 046, `SfxInputError`): tempos finitos, `onset <=
   body_end <= duração`, `file` dentro do kit, `sha256` bem formado, id sem repetição.
   B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre

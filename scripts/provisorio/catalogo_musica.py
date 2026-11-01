@@ -10,107 +10,65 @@ Uso:
 - `adicionar`: a faixa que o dono baixou da YouTube Audio Library (Studio, sem API) vai para `data/music/`
   com o ativo `<id>.json` (licença, `sha256`, `usage_notes`) e uma linha no `catalog.json`. A duração vem do
   ffprobe e a intensidade (1 a 5), da loudness integrada. O clima e a voz cantada são do dono, que ouviu.
+  Nunca substitui uma faixa do catálogo.
 - `usar`: copia o ativo e o arquivo da faixa para `assets/` do episódio, onde o gate 3 aprova a faixa como
-  qualquer outro ativo (`vp approve <id> --step assets --asset <asset-id>`).
+  qualquer outro ativo (`vp approve <id> --step assets --asset <asset-id>`). Confere o arquivo contra o
+  `sha256` do ativo e nunca troca o que o episódio já tem (`app.pipeline.music_library`, ADR 047).
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
-import re
-import shutil
 import sys
-import unicodedata
 from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.commands.errors import run  # noqa: E402
 from app.media.loudness import integrated_lufs, intensity  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
+from app.pipeline.models.audio_probe import AudioProbe  # noqa: E402
+from app.pipeline.models.track_draft import TrackDraft  # noqa: E402
+from app.pipeline.models.track_install_action import TrackInstallAction  # noqa: E402
 from app.pipeline.music import load_music_catalog  # noqa: E402
-from app.pipeline.schemas import Asset, MusicCatalog, MusicTrack, Provider  # noqa: E402
+from app.pipeline.music_library import add_track, install_track  # noqa: E402
+from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
+from app.settings import load_settings  # noqa: E402
+from app.storage.json_files import JsonFileStore, JsonReviewGate  # noqa: E402
 
-LIBRARY_URL = "https://www.youtube.com/audiolibrary"
-AUDIO_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")
-
-
-def slug(text: str) -> str:
-    plain = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
-    return re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-")
+ACTIONS = {
+    TrackInstallAction.INSTALLED: "faixa e ativo copiados para assets/ do episódio",
+    TrackInstallAction.UNCHANGED: "já está no episódio",
+    TrackInstallAction.REPAIRED: "o ativo já estava no episódio; a mídia foi refeita",
+}
 
 
 def add(args: argparse.Namespace, music_dir: Path) -> int:
-    source = Path(args.arquivo)
-    if source.suffix.lower() not in AUDIO_SUFFIXES:
-        raise SystemExit(f"formato {source.suffix} fora de {', '.join(AUDIO_SUFFIXES)}")
-    if args.licenca in SchemasConstants.ATTRIBUTION_LICENSES and not args.atribuicao:
-        raise SystemExit("faixa CC exige --atribuicao (o texto do botão Copy da coluna License type)")
-    asset_id = f"ytal-{slug(args.titulo)}"
-    catalog = load_music_catalog(music_dir.parent) or MusicCatalog()
-    if asset_id in catalog.by_id():
-        raise SystemExit(f"{asset_id} já está no catálogo")
-    target = music_dir / f"{asset_id}{source.suffix.lower()}"
-    music_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source, target)
-    digest = hashlib.sha256(target.read_bytes()).hexdigest()
-    lufs = integrated_lufs(target)
-    vocals = args.voz_cantada == "sim"
-    now = datetime.now(UTC)
-    asset = Asset(
-        id=asset_id,
-        provider=Provider.YOUTUBE_AUDIO_LIBRARY,
-        provider_id=args.titulo,
-        page_url=LIBRARY_URL,
-        author=args.artista,
-        license_id=args.licenca,
-        attribution_text=args.atribuicao or "",
-        usage_notes=(
-            f"Faixa \"{args.titulo}\"{f' de {args.artista}' if args.artista else ''}, baixada pelo dono na "
-            f"YouTube Audio Library (Studio) em {now:%Y-%m-%d}; licença conforme a coluna License type "
-            f"({args.licenca}). Só em vídeo publicado no YouTube (data/benchmarks/termos-musica.md, "
-            f"ADR 030). Voz cantada: {'sim' if vocals else 'não'} (escuta do dono)."
-        ),
-        retrieved_at=now,
-        sha256=digest,
-    )
-    (music_dir / f"{asset_id}.json").write_text(asset.model_dump_json(indent=2) + "\n")
-    track = MusicTrack(
-        asset_id=asset_id,
+    draft = TrackDraft(
         title=args.titulo,
+        moods=tuple(m.strip() for m in args.clima.split(",") if m.strip()),
+        vocals=args.voz_cantada == "sim",
+        license_id=args.licenca,
         artist=args.artista,
-        file=target.name,
-        duration_ms=duration_ms(target),
-        moods=[m.strip() for m in args.clima.split(",") if m.strip()],
-        intensity=intensity(lufs),
+        attribution=args.atribuicao or "",
         bpm=args.bpm,
-        vocals=vocals,
         loops=args.loop,
     )
-    catalog = MusicCatalog(tracks=[*catalog.tracks, track])
-    (music_dir / SchemasConstants.MUSIC_CATALOG_FILE).write_text(catalog.model_dump_json(indent=2) + "\n")
-    print(f"{asset_id}: {track.duration_ms / 1000:.0f} s, {lufs:.1f} LUFS, intensidade {track.intensity}")
+    probe = AudioProbe(duration_ms=duration_ms, lufs=integrated_lufs, intensity=intensity)
+    track, lufs = add_track(music_dir, Path(args.arquivo), draft, probe, datetime.now(UTC))
+    seconds = track.duration_ms / 1000
+    print(f"{track.asset_id}: {seconds:.0f} s, {lufs:.1f} LUFS, intensidade {track.intensity}")
     return 0
 
 
 def use(args: argparse.Namespace, music_dir: Path, data_dir: Path) -> int:
-    catalog = load_music_catalog(data_dir)
-    track = (catalog.by_id() if catalog else {}).get(args.asset_id)
-    if track is None:
-        raise SystemExit(f"{args.asset_id} fora do catálogo")
-    assets = data_dir / "episodes" / args.episode_id / "assets"
-    if not assets.parent.is_dir():
-        raise SystemExit(f"episódio {args.episode_id} não existe")
-    assets.mkdir(exist_ok=True)
-    for name in (f"{track.asset_id}.json", track.file):
-        if (assets / name).exists():
-            print(f"{name}: já está no episódio")
-            continue
-        shutil.copy2(music_dir / name, assets / name)
-        print(f"{name} -> {assets / name}")
+    store = JsonFileStore(data_dir / "episodes")
+    guard = ReviewWriteGuard(store, JsonReviewGate(store))
+    action = install_track(store, guard, music_dir, args.episode_id, args.asset_id)
+    print(f"{args.asset_id}: {ACTIONS[action]}")
     return 0
 
 
@@ -143,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     use_p.add_argument("asset_id")
     sub.add_parser("listar")
     args = parser.parse_args(argv)
-    data_dir = ROOT / "data"
+    data_dir = load_settings(ROOT).data_dir
     music_dir = data_dir / SchemasConstants.MUSIC_DIR
     if args.comando == "adicionar":
         return add(args, music_dir)
@@ -153,4 +111,4 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(run("catalogo_musica", main))
