@@ -41,7 +41,7 @@ flowchart TD
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
-| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz (ADR 049) e pacote de vídeo e texto (ADR 050) feitos em 2026-11-01; render por porta, montagem e prévia/final pendentes |
+| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz (ADR 049), pacote (ADR 050) e montagem e render por porta (ADR 051) feitos em 2026-11-01; estado por cena e a prova de timestamps, legendas e áudio pendentes |
 | RF7 | G12 e encerramento da migração | Pendente |
 
 “Implantado” significa que há código de verificação, não que todos os gaps foram resolvidos. Teste antigo
@@ -226,9 +226,9 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
 - [x] Longo e Short compartilham voz sem herdar de uma classe genérica de produção.
 - [x] WAV novo é validado e promovido antes de remover versões obsoletas; erro conserva o anterior utilizável.
 - [ ] Estado, relatório por cena e cache permitem retomar depois de encerrar o processo.
-- [ ] Motor vem da porta configurada por formato; substituição é demonstrada com renderer falso.
-- [ ] Montagem incompleta não avança para render final; precondições são verificadas na operação.
-- [ ] Prévia e final não se confundem no estado/cache nem no conteúdo protegido pelo gate 4.
+- [x] Motor vem da porta configurada por formato; substituição é demonstrada com renderer falso.
+- [x] Montagem incompleta não avança para render final; precondições são verificadas na operação.
+- [x] Prévia e final não se confundem no estado/cache nem no conteúdo protegido pelo gate 4.
 - [x] Pacote de vídeo e texto é preparado e validado antes de publicar; falha injetada não produz pacote
   considerado completo. Recusar substituição de pacote aprovado antes da primeira cópia.
 - [ ] Timestamps, legendas, áudio e efeitos preservam os contratos existentes; teste visual real, quando
@@ -244,6 +244,14 @@ trocado, validação antes de escrever, o defeito de antes (vídeo novo ao lado 
 recusa antes da primeira cópia e reabrir libera, falha em vídeo, texto e marcador, arquivo trocado à mão, lock, o
 comando `gate`) e um caso em `tests/test_postiz_cadeia.py` (pacote interrompido bloqueia o `schedule`); mutações
 conferidas, e os 44 `post.json` reais passam no contrato.
+
+**Evidência (render, fatia 4):** `tests/test_assembly.py` (13: o motor vem da porta por formato e é trocado por
+renderer falso, formato sem motor, montagem incompleta que não chega ao motor, prévia rascunho e final com ativos
+aprovados, trilha, prévia e final como arquivos distintos, gate 4 aprovado recusa o render por cima antes do motor e
+reabrir libera, `episode.json` igual não regravado e aprovado não trocado, escrita inteira e falha, `--no-render`,
+lock) e um caso em `tests/test_captions.py` (o gancho recusa antes de renomear ou gravar a legenda); mutações
+conferidas (final sem exigir ativos, sem o guard no MP4, `episode.json` sem guard, regravação do igual, motor fixo).
+Ressalva: o render real (Remotion) não foi exercitado, só o renderer falso.
 
 **Evidência:** testes de integração da produção a criar, mais os testes existentes de narração, captions,
 shots, efeitos e Shorts. O vídeo-régua complementa esses testes; não substitui provas de proteção e retomada.
@@ -323,3 +331,7 @@ antiga depois de pronta, a voz fecha também na falha e as fórmulas dos nomes d
 A fatia 3 do RF6 (ADR 050) fez o pacote do gate 4: `shorts_tec.py gate` valida o vídeo e o post antes de escrever, recusa
 trocar o que o gate 4 aprovou antes da primeira cópia e só marca o pacote completo depois do último arquivo; o Postiz
 bloqueia o agendamento de um pacote interrompido.
+
+A fatia 4 do RF6 (ADR 051) levou o fim do `montar_episodio.py` para o `EpisodeRenderer`: o motor vem da porta por
+formato, a montagem incompleta não chega a ele, o render final exige os ativos aprovados, e o gate 4 aprovado recusa
+render por cima do MP4, do `episode.json` e do `captions.srt` que ele carimbou.

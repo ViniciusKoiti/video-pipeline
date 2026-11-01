@@ -5,6 +5,8 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+import pytest
+
 from app.media.captions import (
     Cue,
     Phrase,
@@ -151,3 +153,27 @@ def test_real_audio_puts_the_switch_where_the_speech_starts_again(tmp_path: Path
     cues, approximate = scene_cues(scene)
     assert approximate == 0
     assert abs(cues[0].end_ms - 2000) <= 40
+
+
+def test_a_hook_can_refuse_the_change_before_the_srt_is_renamed_or_written(tmp_path: Path) -> None:
+    """O gate 4 aprovado carimba o `captions.srt`: a troca é recusada antes de o arquivo ser tocado."""
+    seen: list[str] = []
+
+    def refuse(text: str) -> None:
+        seen.append(text)
+        raise PermissionError("carimbado pelo gate 4")
+
+    first = [Cue(0, 1000, "Texto gerado.")]
+    srt = tmp_path / CaptionsConstants.CAPTIONS
+    key = tmp_path / CaptionsConstants.KEY
+    old = tmp_path / CaptionsConstants.OLD_CAPTIONS
+    with pytest.raises(PermissionError):  # a primeira gravação também passa pelo gancho
+        sync_captions(tmp_path, first, "k1", refuse)
+    assert not srt.exists() and not key.exists()
+    assert sync_captions(tmp_path, first, "k1").startswith("gerada")
+    before = (srt.read_text(), key.read_text())
+    with pytest.raises(PermissionError):
+        sync_captions(tmp_path, [Cue(0, 900, "Voz nova.")], "k2", refuse)
+    assert "Voz nova." in seen[-1] and (srt.read_text(), key.read_text()) == before and not old.exists()
+    called: list[str] = []
+    assert sync_captions(tmp_path, first, "k1", called.append).startswith("mantida") and called == []

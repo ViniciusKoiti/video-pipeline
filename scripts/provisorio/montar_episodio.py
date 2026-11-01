@@ -36,6 +36,7 @@ from __future__ import annotations
 import os
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
@@ -61,10 +62,12 @@ from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.media.word_captions import SceneSpeech, sync_words  # noqa: E402
+from app.pipeline.assembly import EpisodeRenderer  # noqa: E402
 from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
 from app.pipeline.models.naming import Naming  # noqa: E402
 from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.music import load_music_catalog, resolve_music  # noqa: E402
+from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
     EpisodeManifest,
@@ -79,7 +82,6 @@ from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
 from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
 from app.providers.errors import ProviderError  # noqa: E402
 from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
-from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
@@ -132,8 +134,15 @@ def music(settings: Settings, episode_dir: Path, episode: EpisodeManifest) -> li
     return resolve_music(plan, episode, catalog, track_file)
 
 
-def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path], total_ms: int) -> None:
-    """Gera ou mantém `captions.srt` e confere o arquivo que vai para o render (#17)."""
+def captions(
+    episode_dir: Path,
+    scenes: list[EpisodeScene],
+    wavs: dict[str, Path],
+    total_ms: int,
+    before_change: Callable[[str], None] | None = None,
+) -> None:
+    """Gera ou mantém `captions.srt` e confere o arquivo que vai para o render (#17). `before_change` deixa o
+    gate 4 aprovado recusar a troca antes de o arquivo ser tocado."""
     audio = [
         SceneAudio(
             start_ms=scene.start_ms, duration_ms=scene.duration_ms, narration=scene.narration,
@@ -142,7 +151,8 @@ def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path
         for scene in scenes
     ]
     cues, approximate = episode_cues(audio)
-    note = sync_captions(episode_dir, cues, captions_key([wavs[scene.id].name for scene in scenes]))
+    key = captions_key([wavs[scene.id].name for scene in scenes])
+    note = sync_captions(episode_dir, cues, key, before_change)
     found, problems = parse_srt((episode_dir / CaptionsConstants.CAPTIONS).read_text())
     problems += timing_problems(found, total_ms)
     if problems:
@@ -215,7 +225,11 @@ def main() -> None:
         cursor += ms
     print(f"voz: {time.monotonic() - started:.0f} s; total {cursor / 1000:.1f} s")
 
-    captions(episode_dir, episode_scenes, wavs, cursor)
+    guard = ReviewWriteGuard(context.store, context.review)
+    def refuse_if_approved(text: str) -> None:
+        guard.check(args[0], "captions.srt", text.encode())  # o gate 4 aprovado recusa a troca da legenda
+
+    captions(episode_dir, episode_scenes, wavs, cursor, refuse_if_approved)
     word_captions(context, episode_dir, episode_scenes, scenes.language)
     episode = EpisodeManifest(
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
@@ -226,14 +240,13 @@ def main() -> None:
     if tracks := music(settings, episode_dir, episode):
         episode = EpisodeManifest.model_validate({**episode.model_dump(), "music": tracks})
         print(f"trilha: {len(tracks)} trecho(s), {len({m.asset_id for m in tracks})} faixa(s)")
-    (episode_dir / "episode.json").write_text(episode.model_dump_json(indent=2))
     print("ritmo:", pacing_warnings(episode) or "ok")
+    renderer = EpisodeRenderer(context.store, guard, context.renderer)
     if "--no-render" in sys.argv:
+        renderer.assemble(args[0], scenes, episode)
         return
-    preview = "--preview" in sys.argv
     started = time.monotonic()
-    out = episode_dir / "renders" / ("preview.mp4" if preview else "final.mp4")
-    result = RemotionEngine().render(episode, episode_dir, out, preview=preview)
+    result = renderer.render(args[0], scenes, episode, preview="--preview" in sys.argv)
     print(f"render: {time.monotonic() - started:.0f} s -> {result.path} ({result.duration_ms / 1000:.1f} s)")
     if episode.music:
         lufs = integrated_lufs(result.path)

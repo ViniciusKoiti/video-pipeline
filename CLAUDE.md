@@ -351,6 +351,10 @@ lacuna fica registrada.
   hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs dos Shorts já
   aprovados fica como está** (decisão do dono, 2026-11-01). Fala nova só substitui a antiga depois de pronta e medida. `montar_episodio.py` e `shorts_tec.py` geram a voz por
   `generate_voice` (o `Narrator`), e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
+- **Montagem e render (ADR 051, `app/pipeline/assembly.py`):** `montar_episodio.py` usa `EpisodeRenderer` e o motor da
+  porta por formato (`context.renderer`). Montagem incompleta (WAV ou mídia ausente) não chega ao motor; o render
+  final exige os ativos aprovados (a prévia, não). O gate 4 aprovado recusa render por cima do MP4, do `episode.json`
+  e do `captions.srt` carimbados (reabrir libera); prévia e final são arquivos distintos.
 - **Pacote do gate 4 (ADR 050, `app/pipeline/package.py`):** `shorts_tec.py gate` valida o MP4 e o `post.json` antes
   de escrever, recusa trocar o que o gate 4 aprovou (antes da primeira cópia; reabrir libera) e só vale completo: o
   marcador `renders/pacote.json` fica `writing` até o último arquivo. Pacote interrompido bloqueia o `vp postiz`.

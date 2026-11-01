@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from app.media.constants.captions_constants import CaptionsConstants
@@ -219,11 +219,17 @@ def captions_key(audio_names: Sequence[str], max_chars: int = CaptionsConstants.
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
 
-def sync_captions(episode_dir: Path, cues: Sequence[Cue], key: str) -> str:
-    """Grava `captions.srt` se ele não existe ou se a fala mudou; senão mantém o arquivo (talvez revisado)."""
+def sync_captions(
+    episode_dir: Path, cues: Sequence[Cue], key: str, before_change: Callable[[str], None] | None = None
+) -> str:
+    """Grava `captions.srt` se ele não existe ou se a fala mudou; senão mantém o arquivo (talvez revisado).
+    `before_change` recebe o texto novo antes de qualquer escrita ou renomeação, e pode recusar (o gate 4)."""
     srt, key_file = episode_dir / CaptionsConstants.CAPTIONS, episode_dir / CaptionsConstants.KEY
     if srt.is_file() and key_file.is_file() and key_file.read_text().strip() == key:
         return "mantida (pode ter revisão à mão)"
+    text = to_srt(cues)
+    if before_change is not None:
+        before_change(text)
     if srt.is_file():
         srt.replace(episode_dir / CaptionsConstants.OLD_CAPTIONS)
         note = (
@@ -232,6 +238,6 @@ def sync_captions(episode_dir: Path, cues: Sequence[Cue], key: str) -> str:
     )
     else:
         note = "gerada; revise números, nomes e pausas"
-    srt.write_text(to_srt(cues))
+    srt.write_text(text)
     key_file.write_text(key + "\n")
     return note
