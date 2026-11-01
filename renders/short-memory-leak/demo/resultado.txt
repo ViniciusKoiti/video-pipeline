@@ -1,0 +1,55 @@
+# 2026-10-31T20:21:20-03:00 | gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0 -O2 | AMD Ryzen 7 5700U with Radeon Graphics | bloco 64 KB a cada 1 ms, 10 s | 15 rodadas por versao
+## serie versao=vaza rodada=1
+versao=vaza rodada=1 t=1s rss_mb=42.7 iteracoes=650
+versao=vaza rodada=1 t=2s rss_mb=83.9 iteracoes=1310
+versao=vaza rodada=1 t=3s rss_mb=123.2 iteracoes=1939
+versao=vaza rodada=1 t=4s rss_mb=166.5 iteracoes=2631
+versao=vaza rodada=1 t=5s rss_mb=216.0 iteracoes=3423
+versao=vaza rodada=1 t=6s rss_mb=265.5 iteracoes=4214
+versao=vaza rodada=1 t=7s rss_mb=314.5 iteracoes=4999
+versao=vaza rodada=1 t=8s rss_mb=364.1 iteracoes=5792
+versao=vaza rodada=1 t=9s rss_mb=412.4 iteracoes=6564
+versao=vaza rodada=1 t=10s rss_mb=457.0 iteracoes=7278 fim
+versao=vaza rodada=1 rss_10s_mb=457.0 iteracoes=7278
+versao=vaza rodada=2 rss_10s_mb=486.7 iteracoes=7753
+versao=vaza rodada=3 rss_10s_mb=483.1 iteracoes=7696
+versao=vaza rodada=4 rss_10s_mb=487.3 iteracoes=7762
+versao=vaza rodada=5 rss_10s_mb=489.0 iteracoes=7790
+versao=vaza rodada=6 rss_10s_mb=494.6 iteracoes=7880
+versao=vaza rodada=7 rss_10s_mb=494.1 iteracoes=7871
+versao=vaza rodada=8 rss_10s_mb=499.1 iteracoes=7951
+versao=vaza rodada=9 rss_10s_mb=505.7 iteracoes=8057
+versao=vaza rodada=10 rss_10s_mb=490.0 iteracoes=7806
+versao=vaza rodada=11 rss_10s_mb=492.7 iteracoes=7849
+versao=vaza rodada=12 rss_10s_mb=482.6 iteracoes=7687
+versao=vaza rodada=13 rss_10s_mb=491.0 iteracoes=7822
+versao=vaza rodada=14 rss_10s_mb=491.5 iteracoes=7830
+versao=vaza rodada=15 rss_10s_mb=506.9 iteracoes=8076
+## resumo versao=vaza rss_10s_mb mediana=491.0 minimo=457.0 maximo=506.9
+## serie versao=libera rodada=1
+versao=libera rodada=1 t=1s rss_mb=2.1 iteracoes=877
+versao=libera rodada=1 t=2s rss_mb=2.1 iteracoes=1750
+versao=libera rodada=1 t=3s rss_mb=2.1 iteracoes=2628
+versao=libera rodada=1 t=4s rss_mb=2.1 iteracoes=3500
+versao=libera rodada=1 t=5s rss_mb=2.1 iteracoes=4368
+versao=libera rodada=1 t=6s rss_mb=2.1 iteracoes=5240
+versao=libera rodada=1 t=7s rss_mb=2.1 iteracoes=6116
+versao=libera rodada=1 t=8s rss_mb=2.1 iteracoes=6992
+versao=libera rodada=1 t=9s rss_mb=2.1 iteracoes=7869
+versao=libera rodada=1 t=10s rss_mb=2.1 iteracoes=8744 fim
+versao=libera rodada=1 rss_10s_mb=2.1 iteracoes=8744
+versao=libera rodada=2 rss_10s_mb=2.1 iteracoes=8733
+versao=libera rodada=3 rss_10s_mb=2.1 iteracoes=8738
+versao=libera rodada=4 rss_10s_mb=2.1 iteracoes=8744
+versao=libera rodada=5 rss_10s_mb=2.1 iteracoes=8740
+versao=libera rodada=6 rss_10s_mb=2.1 iteracoes=8731
+versao=libera rodada=7 rss_10s_mb=2.1 iteracoes=8733
+versao=libera rodada=8 rss_10s_mb=2.1 iteracoes=8748
+versao=libera rodada=9 rss_10s_mb=2.1 iteracoes=8739
+versao=libera rodada=10 rss_10s_mb=2.1 iteracoes=8725
+versao=libera rodada=11 rss_10s_mb=2.1 iteracoes=8743
+versao=libera rodada=12 rss_10s_mb=2.1 iteracoes=8717
+versao=libera rodada=13 rss_10s_mb=2.1 iteracoes=8727
+versao=libera rodada=14 rss_10s_mb=2.1 iteracoes=8749
+versao=libera rodada=15 rss_10s_mb=2.1 iteracoes=8755
+## resumo versao=libera rss_10s_mb mediana=2.1 minimo=2.1 maximo=2.1

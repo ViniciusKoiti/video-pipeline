@@ -1,0 +1,28 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "This program does the same thing seven thousand times in ten seconds. Watch the memory.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "codigo",
+      "text": "Each time it asks for sixty-four kilobytes and writes into them. In one version I give the block back with free. In the other, I forgot."
+    },
+    {
+      "scene": "resultado",
+      "text": "With the free, memory stays at two megabytes from start to finish. Without it, in ten seconds it goes past four hundred and ninety megabytes.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "curva",
+      "text": "And it keeps climbing: forty-two megabytes in the first second, four hundred and fifty-seven in the tenth."
+    },
+    {
+      "scene": "fecho",
+      "text": "Same code, one free less. Where does that memory go? Comment below. Code in the description.",
+      "delivery": "invite"
+    }
+  ]
+}
