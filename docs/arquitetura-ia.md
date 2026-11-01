@@ -4,12 +4,12 @@
 > revisão editorial, produz a voz e pode fornecer os tempos das palavras. O código valida
 > os contratos, registra as decisões humanas e monta o vídeo.
 
-[Diagrama SVG](arquitetura-ia.svg) · [Fonte PlantUML](arquitetura-ia.puml)
+[Diagrama SVG](diagramas/svg/arquitetura-ia.svg) · [Fonte PlantUML](diagramas/puml/arquitetura-ia.puml)
 
 Próximas melhorias, critérios de entrega e atuação de personagens 2D:
 [evolução do fluxo por camadas](evolucao-por-camadas.md).
 
-![Arquitetura do auto-play com os pontos de IA destacados](arquitetura-ia.svg)
+![Arquitetura do auto-play com os pontos de IA destacados](diagramas/svg/arquitetura-ia.svg)
 
 ## Onde está a IA
 

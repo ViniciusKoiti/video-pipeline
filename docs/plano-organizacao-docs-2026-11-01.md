@@ -8,7 +8,7 @@ Pedido do dono: reunir os diagramas em uma pasta (fonte `.puml` e `.svg`) e remo
 |---|---|
 | Arquivos em `docs/` fora de `decisions/` e `pesquisa/` | 31 `.md` (23 na raiz, 6 em `specs/`, 2 em `tarefas/`), 4 `.puml`, 8 `.svg`, 3 `.mmd`, 3 `.png` de diagrama, 1 `.mermaid`, 2 `.png` de sprite e 2 `.mp3` |
 | Diagramas espalhados | `.puml` e `.svg` soltos na raiz, `diagramas-consumo/` com Mermaid + PNG + SVG, `pipeline-hoje.mermaid` na raiz e `pipeline-plano-2026-09-26.mermaid` dentro de `pesquisa/` |
-| Diagrama sem fonte | `execucao-proposta.svg` não tem `.puml` nem `.mmd` |
+| Diagrama sem consumidor | `execucao-proposta.svg` é o 2º diagrama de `classes-e-integracao.puml` e só o `evolucao-por-camadas.md` o cita |
 | Fotografias datadas tratadas como atuais | 7 documentos de 24/09 a 22/10 descrevem o `app/` de antes do RF1–RF6; ao menos 4 documentos citam arquivos que já não existem (`app/pipeline/production.py`, `app/pipeline/retrieval.py`, `docs/spec-v0.4.md`, `docs/pipeline-flowchart.mermaid`) |
 | Índice | a seção de docs do `README.md` lista 13 destes arquivos sem dizer quais são fotografia e quais são guia |
 | Mídia do dono em `docs/` | `A Planilha é Tua.mp3` e `A Vinha Não é Sua (1).mp3` (fora do Git pelo `.gitignore`); `kenny-sprite.png` e `person-sprite.png` (commitados em 2026-11-01) |
@@ -30,7 +30,7 @@ docs/
   specs/  pesquisa/  ROADMAP.md  e os guias atuais (postiz, usage, gate-qualidade, arquitetura, ...)
 ```
 
-A regra da pasta de diagramas: **um `.puml` ou `.mmd` por `.svg`, com o mesmo nome**, e nenhum SVG sem fonte.
+A regra da pasta de diagramas: **um `.puml` ou `.mmd` por `.svg`, com o mesmo nome**, e nenhum SVG sem fonte. Exceção atual: `classes-e-integracao.puml` tem dois diagramas (`classes-e-integracao` e `execucao-proposta`); sai na fase B.
 
 Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase opcional (D): mexem em caminhos citados pelo `CLAUDE.md`, por skills e por ADRs, e não foram pedidas.
 
@@ -54,7 +54,7 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 | `ANALISE.md` | Fotografia de 2026-09-24; cita `docs/spec-v0.4.md` e `docs/pipeline-flowchart.mermaid`, que não existem; as questões viraram ADRs | `README.md`; `ROADMAP.md:87`; `pesquisa/nichos-reels-animados.md:74,427` (menção histórica ao "item 18") |
 | `WORKSPACE-ATUAL-E-COMPONENTES.md` | Fotografia de 13/10 da branch `objetivo-do-video`; 403 linhas sobre um estado anterior ao RF1–RF6 | `README.md`; `opencode-codebase-memory-mcp.md` |
 | `analise-gaps-tecnicos.md` | Fotografia de 22/10 no commit `313d718`; superada pela `analise-gaps-solid` e pelo RF | `README.md`; `analise-scripts-provisorios`, `evolucao-por-camadas` e `arquitetura-ia` (os dois últimos saem junto) |
-| `evolucao-por-camadas.md` + `fluxo-evolucao.puml/.svg` + `classes-e-integracao.puml/.svg` | Proposta de 22–23/10; parte virou as ADRs 039–052 e o resto foi abandonado ou refeito; cita `app/pipeline/production.py` e `retrieval.py`, que não existem | `README.md`; `arquitetura-ia.md` |
+| `evolucao-por-camadas.md` + `fluxo-evolucao.puml/.svg` + `classes-e-integracao.puml/.svg` + `execucao-proposta.svg` (2º diagrama de `classes-e-integracao.puml`) | Proposta de 22–23/10; parte virou as ADRs 039–052 e o resto foi abandonado ou refeito; cita `app/pipeline/production.py` e `retrieval.py`, que não existem | `README.md`; `arquitetura-ia.md` |
 
 ### 4.2 Remover com a confirmação do dono (fase B2)
 
@@ -66,7 +66,6 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 | `proposta-banco-consumo-agentes.md` + `diagramas-consumo/*` | O SQLite já está feito (ADR 032, `usage.md`); sobram as propostas de PostgreSQL e do controlador de lançamento. Manter como proposta aberta? |
 | `tarefas/conectar-instagram-postiz.md` | Fotografia de 15/10 com o Postiz 2.0.16; hoje é a 2.25.3 e o Instagram já recebe posts |
 | `tarefas/plano-montagem-json-cena-e-conceito.md` | Plano de 24/10 aguardando o dono; o fluxo `shorts_tec` + `motion-video` já existe (ADR 033). Executado? |
-| `execucao-proposta.svg` | Sem fonte e sem consumidor; não dá para editar. Remover ou guardar em `diagramas/svg/` marcado "sem fonte"? |
 
 ### 4.3 Manter
 

@@ -5,12 +5,12 @@ com comandos em [usage.md](usage.md). O controlador de lançamento, a coleta aut
 e PostgreSQL permanecem propostas. O diagrama é lógico; o schema concreto está em
 `app/storage/usage_sqlite.py`.
 
-Diagramas renderizados em SVG: [SQLite](diagramas-consumo/sqlite.svg) ·
-[PostgreSQL](diagramas-consumo/postgresql.svg) ·
-[Modelo de tabelas](diagramas-consumo/modelo-logico.svg).
-Versões PNG: [SQLite](diagramas-consumo/sqlite.png) ·
-[PostgreSQL](diagramas-consumo/postgresql.png) ·
-[Modelo de tabelas](diagramas-consumo/modelo-logico.png).
+Diagramas renderizados em SVG: [SQLite](diagramas/svg/consumo-sqlite.svg) ·
+[PostgreSQL](diagramas/svg/consumo-postgresql.svg) ·
+[Modelo de tabelas](diagramas/svg/consumo-modelo-logico.svg).
+Versões PNG: [SQLite](diagramas/png/consumo-sqlite.png) ·
+[PostgreSQL](diagramas/png/consumo-postgresql.png) ·
+[Modelo de tabelas](diagramas/png/consumo-modelo-logico.png).
 
 O banco registra consumo de modelos e orçamento por episódio. O mesmo modelo lógico
 serve para SQLite local e PostgreSQL centralizado. A implantação e as transações de

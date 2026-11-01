@@ -3,7 +3,7 @@
 Mapa, não implementação: nada foi movido. Conferido na árvore local (branch `serie-conceitos-short-1`,
 2026-10-31) lendo os 18 scripts de `scripts/provisorio/` (2.745 linhas), o `app/cli.py`, o `app/bootstrap.py`,
 as skills e agentes que os chamam, os testes que os carregam e as issues #188–#193 (gaps G1–G6 de 2026-10-23).
-Complementa `docs/pipeline-hoje.mermaid` (onde cada script aparece) e `docs/analise-gaps-tecnicos.md` (G4 é o
+Complementa `docs/diagramas/mermaid/pipeline-hoje.mermaid` (onde cada script aparece) e `docs/analise-gaps-tecnicos.md` (G4 é o
 `montar_episodio.py` fora das proteções do núcleo). O §5 traz o desenho em objetos: o que vira classe, o que
 vira valor e o que fica função, no estilo que o `app/` já usa.
 
@@ -136,7 +136,7 @@ scripts, em pasta nomeada pelo que são.
    módulos novos sem mudança.
 8. **Fora do código.** Citam scripts e mudam no mesmo PR de cada comando: skills `pauta`, `plano-de-imagens`,
    `trilha`, `vp-trilha`, `shorts-tec`, `short-diario`, `analise-de-formato` (SKILL.md e `brief.py`), agente
-   `diretor-musical`, CLAUDE.md (§1, mapa do §3, §4, §6, §9, §10, §15: 8 linhas), `docs/pipeline-hoje.mermaid`,
+   `diretor-musical`, CLAUDE.md (§1, mapa do §3, §4, §6, §9, §10, §15: 8 linhas), `docs/diagramas/mermaid/pipeline-hoje.mermaid`,
    `data/benchmarks/evolucao-template.md` (cabeçalho gerado por `app/media/evolution.py`). As ADRs ficam como
    estão (histórico). `.claude/settings.local.json` libera `shorts_tec.py` e `conferir_audio.py` por caminho: o
    dono troca para `.venv/bin/vp short *` e `.venv/bin/vp audio *` (a pasta `.claude/` está na lista de negação

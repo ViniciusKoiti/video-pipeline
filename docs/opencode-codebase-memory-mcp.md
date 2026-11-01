@@ -133,7 +133,7 @@ Após mapear `.MD`, `CLAUDE.md` também passou a ter `metadata_match`.
 Isso confirma a configuração consultada, sem provar resolução de toda chamada dinâmica.
 
 O parser 0.11.0 reportou falha em `docs/pipeline-flowchart.mermaid` e
-`docs/pipeline-hoje.mermaid`. Os arquivos continuam no repositório; leia os
+`docs/diagramas/mermaid/pipeline-hoje.mermaid`. Os arquivos continuam no repositório; leia os
 diagramas diretamente e não use o grafo como prova da sua interpretação.
 Arquivos excluídos intencionalmente também não podem ser usados como evidência
 a partir de uma busca vazia.

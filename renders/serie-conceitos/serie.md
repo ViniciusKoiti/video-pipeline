@@ -2,7 +2,7 @@
 
 Decisão do dono (2026-10-31): uma série semanal de Shorts técnicos explicando um conceito com uma demonstração
 medida na máquina dele, no molde do `short-lista-ligada` (ADR 033, 034 e 035). Pautas aprovadas em lote, o mesmo
-horário toda semana, três saídas por Short. O fluxo é o de hoje (`docs/pipeline-hoje.mermaid`), em série.
+horário toda semana, três saídas por Short. O fluxo é o de hoje (`docs/diagramas/mermaid/pipeline-hoje.mermaid`), em série.
 
 ## Calendário
 
