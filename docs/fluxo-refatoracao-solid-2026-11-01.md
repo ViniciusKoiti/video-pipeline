@@ -41,7 +41,7 @@ flowchart TD
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
-| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz feita em 2026-11-01 (fatias 1 e 2, ADR 049: `Narrator` nos dois scripts, nomes de WAV mantidos); render, montagem e pacote pendentes |
+| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz (ADR 049) e pacote de vídeo e texto (ADR 050) feitos em 2026-11-01; render por porta, montagem e prévia/final pendentes |
 | RF7 | G12 e encerramento da migração | Pendente |
 
 “Implantado” significa que há código de verificação, não que todos os gaps foram resolvidos. Teste antigo
@@ -229,7 +229,7 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
 - [ ] Motor vem da porta configurada por formato; substituição é demonstrada com renderer falso.
 - [ ] Montagem incompleta não avança para render final; precondições são verificadas na operação.
 - [ ] Prévia e final não se confundem no estado/cache nem no conteúdo protegido pelo gate 4.
-- [ ] Pacote de vídeo e texto é preparado e validado antes de publicar; falha injetada não produz pacote
+- [x] Pacote de vídeo e texto é preparado e validado antes de publicar; falha injetada não produz pacote
   considerado completo. Recusar substituição de pacote aprovado antes da primeira cópia.
 - [ ] Timestamps, legendas, áudio e efeitos preservam os contratos existentes; teste visual real, quando
   aplicável, segue o vídeo-régua e as autorizações atuais.
@@ -238,6 +238,12 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
 congeladas em `tests/legacy_voice_names.py`, biblioteca, narrador, nova só depois de pronta), `tests/test_voice_scripts.py`
 (4: a geração dos dois scripts, o fechamento da voz e a parada com o motivo); mutações conferidas. Com dado real, só
 leitura: os 18 registros de fala dos Shorts do dono dão **zero falas faltando** (os WAVs existentes são reaproveitados).
+
+**Evidência (pacote, fatia 3):** `tests/test_package.py` (31: texto do post pelo contrato, pacote novo, repetido,
+trocado, validação antes de escrever, o defeito de antes (vídeo novo ao lado de texto velho), gate 4 aprovado
+recusa antes da primeira cópia e reabrir libera, falha em vídeo, texto e marcador, arquivo trocado à mão, lock, o
+comando `gate`) e um caso em `tests/test_postiz_cadeia.py` (pacote interrompido bloqueia o `schedule`); mutações
+conferidas, e os 44 `post.json` reais passam no contrato.
 
 **Evidência:** testes de integração da produção a criar, mais os testes existentes de narração, captions,
 shots, efeitos e Shorts. O vídeo-régua complementa esses testes; não substitui provas de proteção e retomada.
@@ -313,3 +319,7 @@ pronta. Os scripts de voz migram na fatia seguinte.
 A fatia 2 do RF6 (ADR 049) levou `montar_episodio.py` e `shorts_tec.py` para o `Narrator`: a fala nova só substitui a
 antiga depois de pronta, a voz fecha também na falha e as fórmulas dos nomes de antes ficam congeladas em
 `tests/legacy_voice_names.py`. Com os arquivos reais do dono, em leitura, nenhum WAV de Short seria regerado.
+
+A fatia 3 do RF6 (ADR 050) fez o pacote do gate 4: `shorts_tec.py gate` valida o vídeo e o post antes de escrever, recusa
+trocar o que o gate 4 aprovou antes da primeira cópia e só marca o pacote completo depois do último arquivo; o Postiz
+bloqueia o agendamento de um pacote interrompido.

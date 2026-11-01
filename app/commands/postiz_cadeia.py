@@ -21,6 +21,7 @@ from app.commands.constants.postiz_cadeia_constants import PostizCadeiaConstants
 from app.commands.postiz_links import LinkFetch, caption_links, link_findings, link_status
 from app.errors import PipelineError
 from app.pipeline.gates import gate_report
+from app.pipeline.package import package_problems
 from app.pipeline.ports import Context
 from app.pipeline.schemas import Decision, Step
 from app.providers.errors import ProviderError
@@ -83,13 +84,17 @@ def record_upload(
 
 
 def gate4(context: Context, episode_id: str | None) -> str:
-    """Gate 4 do episódio: "aprovado", "não aprovado", "mudou depois da aprovação" ou "sem episódio"."""
+    """Gate 4 do episódio: "aprovado", "não aprovado", "mudou depois da aprovação", "pacote incompleto" ou
+    "sem episódio"."""
     if episode_id is None:
         return "sem episódio"
     status = next(s for s in gate_report(context.store, context.review, episode_id) if s.step is Step.PREVIEW)
     if status.entry is None or status.entry.decision is not Decision.APPROVED:
         return "não aprovado"
-    return "aprovado" if status.valid else "mudou depois da aprovação"
+    if not status.valid:
+        return "mudou depois da aprovação"
+    problems = package_problems(context.store, episode_id)  # gravação interrompida ou trocado (ADR 050)
+    return "aprovado" if not problems else f"pacote incompleto ({problems[0]})"
 
 
 def build_package(

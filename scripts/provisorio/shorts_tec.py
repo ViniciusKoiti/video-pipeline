@@ -56,9 +56,12 @@ from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.pipeline.models.motion_content import MotionContent  # noqa: E402
 from app.pipeline.models.naming import Naming  # noqa: E402
+from app.pipeline.models.package_action import PackageAction  # noqa: E402
 from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.models.voiced_speech import VoicedSpeech as Speech  # noqa: E402
 from app.pipeline.motion_inputs import fit_content, load_content, load_narration, load_voiced  # noqa: E402
+from app.pipeline.package import PackagePublisher  # noqa: E402
+from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
 from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
 
@@ -409,23 +412,18 @@ def cmd_boca(
 
 
 def cmd_gate(video: Path, post: Path, episode_id: str) -> None:
-    import shutil
-
+    """O pacote do gate 4 (`app.pipeline.package`, ADR 050): valida o vídeo e o post antes de escrever, recusa
+    trocar o que o gate 4 já aprovou e só marca o pacote completo depois do último arquivo."""
     from app.bootstrap import build_context
 
-    settings = build_context(ROOT).settings
-    folder = settings.data_dir / "episodes" / episode_id
-    (folder / "renders").mkdir(parents=True, exist_ok=True)
-    final = folder / "renders" / "final.mp4"
-    shutil.copyfile(video, final)
-    data = json.loads(post.read_text(encoding="utf-8"))
-    entry = data["posts"][0]
-    title = entry.get("settings", {}).get("title")
-    caption = entry["value"][0]["content"]
-    (folder / "legenda-post.txt").write_text(
-        (f"{title}\n\n" if title else "") + caption + "\n", encoding="utf-8"
+    context = build_context(ROOT)
+    publisher = PackagePublisher(
+        context.store, ReviewWriteGuard(context.store, context.review), lambda mp4: duration_ms(mp4) / 1000
     )
-    print(f"gate: {final} ({duration_ms(final) / 1000:.1f} s) e legenda-post.txt; carimbe com:")
+    action = publisher.publish(episode_id, video, post)
+    final = context.store.path(episode_id, "renders/final.mp4")
+    done = "já estava igual" if action is PackageAction.UNCHANGED else "pacote montado"
+    print(f"gate: {final} ({duration_ms(final) / 1000:.1f} s) e legenda-post.txt ({done}); carimbe com:")
     print(f'  vp approve {episode_id} --step preview --notes "assisti"')
     print(f"  vp postiz pacote {post} --episode {episode_id}")
 
