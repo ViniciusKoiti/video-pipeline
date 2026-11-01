@@ -369,3 +369,9 @@ adicionar|usar|listar` (ADR 047, emenda); os scripts saíram e a skill `pauta`, 
 `trilha`, `vp-trilha` e `analise-de-formato` chamam os comandos novos. `tests/test_briefs_music_command.py` (8, oito
 mutações conferidas; quatro sobreviveram e ganharam teste). Antes dela, `approve`, `reject` e `checagem` e o
 `project_root` saíram do `cli.py` (172 linhas, fora do baseline) e o `reopen` passou a achar o `.env` pela raiz.
+Fatia 4: `livros_afiliado` virou `vp export livros <id>` (`app/commands/export.py`, serviço `apply_books` em
+`app/pipeline/affiliate.py`); o script saiu. Erros de lista, link e tag viraram `AffiliateError` (antes `ValueError`, que
+saía com traceback), a escrita passou a ser atômica e sob o lock do episódio, e uma descrição nova não começa mais com
+linhas em branco. `tests/test_export_command.py` (8, seis mutações conferidas; duas sobreviveram, o lock e a não
+regravação do arquivo em dia, e ganharam teste). O `export` completo (vídeo, legenda, `credits.txt`) segue sem comando.
+

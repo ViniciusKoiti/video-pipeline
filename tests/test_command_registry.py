@@ -12,7 +12,7 @@ from app.commands.constants.cli_constants import CliConstants
 
 APP = Path(__file__).resolve().parents[1] / "app"
 # Registrados à parte, com subcomandos próprios (módulos de app/commands).
-OWN_PARSERS = {"postiz", "usage", "sources", "assets", "briefs", "music"}
+OWN_PARSERS = {"postiz", "usage", "sources", "assets", "briefs", "music", "export"}
 COMMAND_NAMES = [c.name for c in CliConstants.COMMANDS]
 
 
@@ -56,9 +56,8 @@ def test_commands_without_a_handler_exit_with_the_not_implemented_code(
         "voice",
         "subs",
         "render",
-        "export",
     } <= set(stubs)
-    assert main(["export", "ep"]) == CliConstants.EXIT_NOT_IMPLEMENTED == 3
+    assert main(["script", "ep"]) == CliConstants.EXIT_NOT_IMPLEMENTED == 3
     assert "ainda não implementado" in capsys.readouterr().err
 
 

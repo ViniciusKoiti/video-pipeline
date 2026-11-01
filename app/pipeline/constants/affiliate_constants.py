@@ -8,6 +8,7 @@ from typing import Final
 class AffiliateConstants:
     BOOKS_FILE: Final[str] = "livros.json"
     CHANNEL_FILE: Final[str] = "config/canal.toml"
+    DESCRIPTION_FILE: Final[str] = "description.txt"
     AMAZON_HOSTS: Final = ("amazon.com.br", "www.amazon.com.br", "amzn.to")
     DISCLOSURE: Final[str] = (
         "Como participante do Programa de Associados da Amazon, sou remunerado "

@@ -12,11 +12,11 @@ from tests.fakes import make_root
 # Comandos do CLAUDE.md §10; um comando não pode sumir sem atualizar a spec.
 SPEC_COMMANDS = {
     "bench", "new", "script", "scenes", "gallery",
-    "voice", "subs", "render", "export", "approve", "reject", "status", "reopen", "excerpts", "check",
+    "voice", "subs", "render", "approve", "reject", "status", "reopen", "excerpts", "check",
     "checagem", "numeros", "traducao",
     "medicao",
 }
-OWN_PARSER_COMMANDS = {"sources", "assets", "briefs", "music", "postiz", "usage"}  # app/commands
+OWN_PARSER_COMMANDS = {"sources", "assets", "briefs", "music", "export", "postiz", "usage"}  # app/commands
 
 
 def test_commands_match_spec() -> None:

@@ -41,7 +41,6 @@ class CliConstants:
         Command("voice", "Kokoro por bloco + ffprobe -> voice/", 16),
         Command("subs", "legendas alinhadas -> captions.srt", 17),
         Command("render", "motor escolhido -> renders/", 13, add_arguments=_render_arguments),
-        Command("export", "final.mp4 + srt + description.txt + credits.txt", 18),
         Command("approve", "registra aprovação humana em review.json", 12, add_arguments=_approve_arguments),
         Command("reject", "registra reprovação ou mudanças pedidas", 12, add_arguments=_reject_arguments),
         Command("status", "estados por etapa e pendências", 12),
