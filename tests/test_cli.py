@@ -11,11 +11,12 @@ from tests.fakes import make_root
 
 # Comandos do CLAUDE.md §10; um comando não pode sumir sem atualizar a spec.
 SPEC_COMMANDS = {
-    "bench", "new", "sources", "script", "scenes", "assets", "gallery",
+    "bench", "new", "script", "scenes", "assets", "gallery",
     "voice", "subs", "render", "export", "approve", "reject", "status", "reopen", "excerpts", "check",
     "checagem", "numeros", "traducao",
     "medicao",
 }
+OWN_PARSER_COMMANDS = {"sources", "postiz", "usage"}  # módulos de app/commands com subcomandos próprios
 
 
 def test_commands_match_spec() -> None:
@@ -27,7 +28,7 @@ def test_help_lists_every_command(capsys: pytest.CaptureFixture[str]) -> None:
         main(["--help"])
     assert exc.value.code == 0
     out = capsys.readouterr().out
-    for name in SPEC_COMMANDS:
+    for name in SPEC_COMMANDS | OWN_PARSER_COMMANDS:
         assert name in out
 
 

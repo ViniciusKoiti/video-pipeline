@@ -35,7 +35,6 @@ class CliConstants:
             add_arguments=_bench_arguments,
         ),
         Command("new", "cria data/episodes/<id>/ e o manifesto inicial", 12, add_arguments=_new_arguments),
-        Command("sources", "busca, download e extração de texto -> sources.json", 26),
         Command("script", "roteiro com retrieval + validação de schema e de claims", 27),
         Command("scenes", "divisão em cenas + visual_need + search_query", 28),
         Command("assets", "busca visual em cascata, respeitando limites", 22),

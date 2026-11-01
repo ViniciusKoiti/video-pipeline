@@ -15,15 +15,14 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import postiz, reopen, usage
+from app.commands import numeros, postiz, reopen, sources, usage
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.errors import run
 from app.commands.models.command import Command as Command
 from app.commands.reviewer import default_reviewer
 from app.pipeline.bench import run_bench, summary
-from app.pipeline.check import check_episode, episode_assets
+from app.pipeline.check import check_episode
 from app.pipeline.check_report import load_check_report
-from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.excerpts import numbered_view
 from app.pipeline.gates import (
     GateStatus,
@@ -35,22 +34,11 @@ from app.pipeline.gates import (
 from app.pipeline.medicao import medicao_problems
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
-from app.pipeline.numbers import (
-    FormatBrief,
-    current_block,
-    render_block,
-    render_image_plan,
-    replace_block,
-    script_numbers,
-    used_in_scenes_mismatches,
-)
 from app.pipeline.pending import pending_pieces
 from app.pipeline.ports import Context
 from app.pipeline.schemas import (
     Decision,
-    ScenesManifest,
     SourcesManifest,
-    Status,
     Step,
 )
 from app.pipeline.translation import translation_problems
@@ -222,61 +210,6 @@ def _pending(row: GateStatus) -> bool:
 
 
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
-def _write_if_changed(path: Path, text: str) -> bool:
-    if path.is_file() and path.read_text(encoding="utf-8") == text:
-        return False
-    path.write_text(text, encoding="utf-8")
-    return True
-
-
-def _numeros(args: argparse.Namespace, context: Context) -> int:
-    store, episode_id = context.store, args.episode_id
-    chars_per_second = speech_chars_per_second(context.settings)
-    scenes = store.read(episode_id, "scenes.json", ScenesManifest)
-    assets = episode_assets(store, episode_id)
-    brief = None
-    if store.exists(episode_id, NumbersConstants.FORMAT_FILE):
-        brief = store.read(episode_id, NumbersConstants.FORMAT_FILE, FormatBrief)
-    try:
-        numbers = script_numbers(scenes, assets, chars_per_second)
-    except ValueError as error:
-        print(f"vp numeros: {error} (rode vp check)", file=sys.stderr)
-        return 1
-    block = render_block(numbers, brief, chars_per_second)
-    plan = render_image_plan(scenes, numbers, assets, chars_per_second)
-    outline, plan_path = (
-        store.path(episode_id, "outline.md"),
-        store.path(episode_id, NumbersConstants.IMAGE_PLAN_FILE),
-    )
-    print(block)
-    if not outline.is_file():
-        print("outline.md: não existe", file=sys.stderr)
-        return 1
-    text = outline.read_text(encoding="utf-8")
-    current = current_block(text)
-    state = "em dia" if current == block else ("desatualizado" if current else "sem o bloco")
-    plan_ok = plan_path.is_file() and plan_path.read_text(encoding="utf-8") == plan
-    print(f"outline.md: {state}; {NumbersConstants.IMAGE_PLAN_FILE}: {'em dia' if plan_ok else 'diferente'}")
-    with store.lock(episode_id):
-        if args.escrever:
-            targets = (
-                ("outline.md", outline, replace_block(text, block)),
-                (NumbersConstants.IMAGE_PLAN_FILE, plan_path, plan),
-            )
-            wrote = [name for name, path, new in targets if _write_if_changed(path, new)]
-            print("gravado: " + (", ".join(wrote) if wrote else "nada mudou"))
-        if args.used_in_scenes:
-            for asset_id, used in used_in_scenes_mismatches(numbers, assets).items():
-                asset = assets[asset_id]
-                if asset.review_status is Status.APPROVED:
-                    print(f"{asset_id}: aprovado, não mudo (o roteiro usa {used})")
-                    continue
-                updated = asset.model_copy(update={"used_in_scenes": used})
-                store.write(episode_id, f"assets/{asset_id}.json", updated)
-                print(f"{asset_id}: used_in_scenes -> {used}")
-    return 0
-
-
 HANDLERS: dict[str, Handler] = {
     "bench": _bench,
     "excerpts": _excerpts,
@@ -288,7 +221,8 @@ HANDLERS: dict[str, Handler] = {
     "checagem": _checagem,
     "traducao": _traducao,
     "medicao": _medicao,
-    "numeros": _numeros,
+    "numeros": numeros.run,
+    "sources": sources.run,
     "postiz": postiz.run,
     "usage": usage.run,
 }
@@ -315,6 +249,7 @@ def build_parser() -> argparse.ArgumentParser:
         if command.add_arguments is not None:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
+    sources.add_arguments(subparsers.add_parser("sources", help="registra uma fonte (ADR 043)"))
     usage.add_arguments(
         subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")
     )

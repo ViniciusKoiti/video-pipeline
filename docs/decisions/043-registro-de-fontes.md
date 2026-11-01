@@ -33,3 +33,13 @@ mesma URL duas vezes e podiam acrescentar fonte depois do gate 1 aprovado, mudan
 
 `vp sources` (o comando continua stub; os scripts seguem como entrada); busca e entrada de ativos, entradas do
 kit e briefs (próximas fatias do RF5); validar a URL além do padrão `http(s)://` do schema.
+
+## Emenda de 2026-11-01 (RF7, fatia 1): `vp sources`
+
+Os dois scripts viraram o comando `vp sources` (`app/commands/sources.py`), com os mesmos argumentos:
+`vp sources add <id> <url> --title ... --kind ... [--authors] [--interested] [--notes] [--file]` (era
+`baixar_fonte.py`) e `vp sources declared <id> <arquivo> --title ...` (era `fonte_declarada.py`). O registro, o
+guard do gate 1 e a escrita do `sources.json` por último seguem sendo o `SourceRegistry`; o comando só monta a
+entrada. `scripts/provisorio/baixar_fonte.py` e `fonte_declarada.py` foram removidos (nenhuma skill ou agente os
+chamava). `vp numeros` saiu do `app/cli.py` para `app/commands/numeros.py` sem mudar o comportamento, e o
+baseline de tamanho do `cli.py` caiu de 301 para 229 linhas de código.

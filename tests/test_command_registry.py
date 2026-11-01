@@ -12,7 +12,7 @@ from app.commands.constants.cli_constants import CliConstants
 
 APP = Path(__file__).resolve().parents[1] / "app"
 # Registrados à parte, com subcomandos próprios (módulos de app/commands).
-OWN_PARSERS = {"postiz", "usage"}
+OWN_PARSERS = {"postiz", "usage", "sources"}
 COMMAND_NAMES = [c.name for c in CliConstants.COMMANDS]
 
 
@@ -50,7 +50,6 @@ def test_commands_without_a_handler_exit_with_the_not_implemented_code(
     stubs = [c.name for c in CliConstants.COMMANDS if c.name not in HANDLERS]
     assert {
         "new",
-        "sources",
         "script",
         "scenes",
         "assets",

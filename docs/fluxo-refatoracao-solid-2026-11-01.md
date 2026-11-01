@@ -354,3 +354,9 @@ render por cima do MP4, do `episode.json` e do `captions.srt` que ele carimbou.
 
 A fatia 5 do RF6 (ADR 052) gravou o relatório por cena da voz no `manifest.json`: uma rodada que para deixa dito quais falas
 ficaram para trás e por quê, o `vp status` as lista e retomar continua sendo rodar de novo (o cache são os nomes dos arquivos).
+
+RF7 começou pelos comandos (2026-11-01). Fatia 1: `baixar_fonte` e `fonte_declarada` viraram `vp sources add|declared`
+(ADR 043, emenda), os dois scripts saíram e o `vp numeros` foi para `app/commands/numeros.py`; `tests/test_sources_command.py`
+cobre o caminho real (parser, `HANDLERS` e handler de erros) e mutações conferidas. Falta o resto do critério "Tests passam a
+importar de `app/`": `buscar_candidatos` e `baixar_escolhidos` (assets), `catalogo_musica`, `radar_resumo` e `formato_resumo`
+(briefs e música), `montar_episodio` e `shorts_tec` (voz e render).
