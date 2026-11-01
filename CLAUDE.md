@@ -189,7 +189,7 @@ export. Na descrição, os livros citados levam o link de afiliado da Amazon com
 busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
 ou agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no
 mesmo recorte (§12).
-Diagrama do estado atual, longo e curto, com as lacunas marcadas: `docs/diagramas/mermaid/pipeline-hoje.mermaid` (2026-10-31); o plano
+Diagrama do estado atual, longo e curto, com as lacunas marcadas: `docs/diagramas/mermaid/pipeline-hoje.mermaid` (2026-11-01); o plano
 original de 2026-09-26 está em `docs/diagramas/mermaid/pipeline-plano-2026-09-26.mermaid`.
 
 ## 5. Estados, cache e invalidação

@@ -99,7 +99,7 @@ cópia idêntica em `data/cache/` (cache). Foram movidos para `data/clipe/audio/
 | C | Feita (`6f4d19e`): `docs/README.md` com o papel de cada documento |
 | B2 | Feita: tabela 4.2 |
 | D | Descartada: sem subpastas por assunto, para manter os caminhos citados pelo `CLAUDE.md` e pelas skills |
-| E | Depois do RF7: redesenhar `arquitetura-atual` e `pipeline-hoje`, e remover as análises do RF que o plano já absorveu |
+| E | **Parcial (2026-11-01):** `arquitetura-atual.puml` e `pipeline-hoje.mermaid` redesenhados depois do RF7. Faltam (1) regerar `svg/arquitetura-atual.svg`, que ainda é o de 22/10 (sem `plantuml` aqui) e (2) remover as análises do RF (`analise-gaps-solid`, `analise-scripts-provisorios`, `analise-tamanho-modulos`, `desenho-orientado-a-objetos`) e o `loop-refatoracao`, só depois de o dono conferir as configurações locais (critério 3 do RF7) |
 
 Menções por nome a arquivos removidos que ficam de propósito, em texto histórico: o `nichos-reels-animados.md`
 (pesquisa) cita o "item 18" do `ANALISE.md`; o `analise-scripts-provisorios` cita a `analise-gaps-tecnicos`; a legenda do

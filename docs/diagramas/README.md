@@ -6,8 +6,8 @@ diagrama, regenerar a saída no mesmo commit.
 
 | Diagrama | Fonte | Saída | Assunto | Situação |
 |---|---|---|---|---|
-| `arquitetura-atual` | `puml/arquitetura-atual.puml` | `svg/arquitetura-atual.svg` | Arquitetura implementada | **Defasado**: árvore de 22/10 (base `313d718`), anterior ao RF1–RF7. Redesenhar ao fim do RF7 (`docs/plano-organizacao-docs-2026-11-01.md`, fase E) |
-| `pipeline-hoje` | `mermaid/pipeline-hoje.mermaid` | (sem saída; o GitHub e o GitLab renderizam o Mermaid) | Fluxo do longo e do Short, em três faixas, com as lacunas marcadas | 2026-10-31; as lacunas de comandos mudaram com o RF7 |
+| `arquitetura-atual` | `puml/arquitetura-atual.puml` | `svg/arquitetura-atual.svg` | Arquitetura implementada | **Fonte redesenhada em 2026-11-01** (depois do RF7, base `dbb41ea`). **A saída `svg/arquitetura-atual.svg` ainda é a de 22/10 e está defasada**: falta regerar com o `plantuml` (não instalado aqui) |
+| `pipeline-hoje` | `mermaid/pipeline-hoje.mermaid` | (sem saída; o GitHub e o GitLab renderizam o Mermaid) | Fluxo do longo e do Short, em três faixas, com as lacunas marcadas | Redesenhado em 2026-11-01, depois do RF7: os comandos `vp` implementados saem em verde |
 | `pipeline-plano-2026-09-26` | `mermaid/pipeline-plano-2026-09-26.mermaid` | (idem) | Fluxo originalmente planejado | Histórico, não se atualiza |
 
 ## Gerar

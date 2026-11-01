@@ -1,18 +1,18 @@
 flowchart TD
-    %% Estado conferido em 2026-10-31 (ADRs 001 a 035). Ordem editorial recomendada, não um orquestrador.
+    %% Estado conferido em 2026-11-01, depois do RF7 (ADRs 001 a 052). Ordem editorial recomendada, não um orquestrador.
     %% Três faixas: a PROVA muda com o formato (fontes ou medição própria), a PRODUÇÃO muda com o motor
     %% (Remotion no longo, motion-video no Short) e a SAÍDA é uma só: gate 4, cadeia do Postiz, Studio, métricas.
-    %% Verde: comando ou script implementado. Azul: agente (escreve só dados). Laranja: gate do dono.
+    %% Verde: comando vp implementado; verde-claro: script avulso do dono. Azul: agente (escreve só dados). Laranja: gate do dono.
     %% Amarelo: decisão ou ação do dono. Roxo: projeto ou serviço externo. Cinza tracejado: lacuna.
 
     subgraph PROVA["1. PROVA — de onde vêm os fatos"]
         direction TB
         subgraph PL["Longo (ensaio) e Reel de pauta: fontes verificáveis"]
             D1["Dono: público, ângulo, objetivo, tese;<br/>pautas aprovadas em lote"]:::dono
-            RAD["radar-de-reels (projeto vizinho)<br/>radar_resumo.py copia o brief do nicho (Reel)"]:::externo
+            RAD["radar-de-reels (projeto vizinho)<br/>vp briefs radar copia o brief do nicho (Reel)"]:::externo
             MOL["analise-de-formato: molde.json e partitura.md<br/>(ADR 031)"]:::agente
             PAU["pauta.md: título provisório, conceito da capa,<br/>hipótese, perguntas às fontes"]:::agente
-            SRC["baixar_fonte.py: sources.json e texto extraído<br/>vp excerpts: trechos numerados"]:::script
+            SRC["vp sources add|declared: sources.json e texto extraído<br/>vp excerpts: trechos numerados"]:::cmd
             FAC["pesquisador: facts.json<br/>citação literal por fato, lacunas"]:::agente
             CK1{"vp check: fontes e fichas"}:::cmd
             G1{{"Gate 1: vp approve --step sources"}}:::gate
@@ -39,17 +39,17 @@ flowchart TD
             CK2{"vp check: claims, âncoras, pausas,<br/>molde do nicho, título, funil"}:::cmd
             VER["verificador, até 2 rodadas no mesmo contexto<br/>parecer gravado por vp checagem"]:::agente
             G2{{"Gate 2: vp approve --step script"}}:::gate
-            IMG["plano-de-imagens (o dono valida antes de baixar)<br/>download e assets/id.json com licença e sha256"]:::agente
+            IMG["plano-de-imagens (o dono valida antes de baixar)<br/>vp assets search|take: assets/id.json com licença e sha256"]:::agente
             G3{{"Gate 3: vp approve --step assets --asset id"}}:::gate
-            MUS["diretor-musical: music.json<br/>catálogo da YouTube Audio Library (ADR 030)"]:::agente
-            MON["vp render --voz-final: voz clonada no Modal (ADR 024),<br/>captions.srt por frase ou palavra (ADR 021/023),<br/>trilha com ducking, render Remotion por cena, loudness"]:::script
+            MUS["diretor-musical: music.json<br/>catálogo da YouTube Audio Library: vp music (ADR 030)"]:::agente
+            MON["vp render --voz-final: voz clonada no Modal (ADR 024),<br/>captions.srt por frase ou palavra (ADR 021/023),<br/>trilha com ducking, render Remotion por cena, loudness"]:::cmd
             MIN["miniatura: arte da capa pelo canal de referência"]:::agente
             G1 --> ROTL --> CK2
             CK2 -- "erro" --> ROTL
             CK2 -- "ok" --> VER
             VER -- "pendência" --> ROTL
             VER -- "conferido" --> G2 --> IMG --> G3 --> MUS --> MON --> MIN
-            VPX["vp subs e o export completo (vídeo, legenda, créditos) respondem 'não implementado';<br/>a legenda sai de vp render"]:::falta
+            VPX["vp new, script, scenes, gallery e subs respondem 'não implementado'; vp export só tem os livros<br/>(vp export livros); o MP4 e a legenda saem de vp render e de vp short; os créditos ainda não têm comando"]:::falta
             VPX -.-> MON
             TRL["tradução do longo em pasta própria com gate translation<br/>(ADR 034): pronta no código, nunca usada num longo"]:::falta
             G2 -.-> TRL
@@ -59,11 +59,11 @@ flowchart TD
             KIT["motion-video validate, inspect e review<br/>(kit do dono, tarball fixado, ADR 027)"]:::script
             TRS["tradução: pasta id-en com traducao.json<br/>vp traducao: cenas, entregas, pausas e números ditos"]:::cmd
             GT{{"Gate translation: vp approve id-en --step translation"}}:::gate
-            VOZ["vp short voz: voz clonada no Modal,<br/>só com pedido do dono na sessão"]:::script
-            TMP["vp short tempos (cena estica até a fala caber)<br/>motion-video render"]:::script
-            SFX["sfx.json: SFX Kit (CC0) ancorado na fala ou no corte<br/>vp short juntar --sfx: estéreo, −14 LUFS (ADR 035)"]:::script
-            EAR["vp audio (earshot): loudness como o YouTube mede,<br/>pico real, batida, ataque em cada corte com efeito"]:::script
-            GS["vp short gate: renders/final.mp4 e legenda-post.txt<br/>um id por idioma"]:::script
+            VOZ["vp short voz: voz clonada no Modal,<br/>só com pedido do dono na sessão"]:::cmd
+            TMP["vp short tempos (cena estica até a fala caber)<br/>motion-video render"]:::cmd
+            SFX["sfx.json: SFX Kit (CC0) ancorado na fala ou no corte<br/>vp short juntar --sfx: estéreo, −14 LUFS (ADR 035)"]:::cmd
+            EAR["vp audio (earshot): loudness como o YouTube mede,<br/>pico real, batida, ataque em cada corte com efeito"]:::cmd
+            GS["vp short gate: renders/final.mp4 e legenda-post.txt<br/>um id por idioma"]:::cmd
             SCK -- "ok" --> NAR --> KIT --> TRS --> GT --> VOZ --> TMP --> SFX --> EAR --> GS
             EVT["motion-kit exportar o instante em que cada cartão entra:<br/>hoje o deslocamento do efeito dentro da cena é a olho"]:::falta
             EVT -.-> SFX
