@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-10-28T19:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Claude Code mod: text and configuration in your project that changes what the agent does. Skill, agent and configuration, with real examples from this repository.\n\nPresenter drawn from photos; voice cloned by AI.\n\n#ClaudeCode #Programming #Dev #AI",
+          "image": [
+            {
+              "id": "20d7ad60-563b-4f75-8149-bc11491b346f",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/cf9e4b10716ab32eb8beca3438dfe87dc.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

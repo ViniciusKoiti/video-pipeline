@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "[DATA]",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "[CANAL_YOUTUBE]"
+      },
+      "value": [
+        {
+          "content": "A Claude Code mod finds the cause of a bug Python never warns about: a default argument that keeps data between calls. The video shows the real output of each command. The second call brings back the bread from the first; ruff points to line 1 with B006; with lista=None, only the milk comes out.\n\nOnly on your own code, or for study.\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #Python #ClaudeCode #Programming #Dev",
+          "image": [
+            {
+              "id": "[MIDIA]",
+              "path": "[UPLOAD_DO_MP4]"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Python runs with no error, and the result is wrong",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

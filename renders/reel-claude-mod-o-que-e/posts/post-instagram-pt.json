@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "[DATA: quarta 2026-10-28, horário a definir]",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "[CANAL_INSTAGRAM]"
+      },
+      "value": [
+        {
+          "content": "Mod do Claude Code: texto e configuração no seu projeto que muda o que o agente faz. Skill, agente e configuração, com exemplos reais deste repositório.\n\nApresentador desenhado a partir de fotos; voz clonada por IA.\n\n#ClaudeCode #Programação #Dev #IA",
+          "image": [
+            {
+              "id": "[MIDIA]",
+              "path": "[UPLOAD_DO_MP4]"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

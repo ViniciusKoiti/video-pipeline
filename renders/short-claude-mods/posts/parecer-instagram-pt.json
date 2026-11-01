@@ -1,0 +1,13 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: 2026-10-27T12:00-03:00 (15:00 UTC), igual ao pacote; sobra cerca de 1,6 dia para apagar.",
+    "Canal: integration cmv8r4jw30001l2863lr8x1lo, Desenvolvedor Plen (koiti.dev), instagram-standalone, post. Ids não conferidos (sem rede). Deve virar Reel; não verificado.",
+    "Mídia: 7b5489b7-9351-416f-8373-ed9ed81dfe54 bate com o upload de mods-pt-voz.mp4. Vídeo não aberto pela dúvida.",
+    "Legenda: sem link nem código. Aviso de segurança presente.",
+    "Gate 4: aprovado para short-claude-mods-pt; confirmar que a legenda final é a carimbada. Pele em needs_review sem gerador (risco aceito pelo dono).",
+    "Conteúdo sintético: ligar o rótulo 'Conteúdo feito com IA' à mão no app do Instagram.",
+    "Ritmo: o Reel do cofre-en sai 26/10 às 19h, no mesmo tema, um dia antes."
+  ],
+  "revisor": "duvida-cega"
+}

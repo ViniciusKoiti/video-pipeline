@@ -1,0 +1,28 @@
+{
+ "type": "schedule",
+ "date": "2026-10-16T21:10:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmv9rspfe000dl2864bagp1hs"
+   },
+   "value": [
+    {
+     "content": "Clipe completo de \"A Vinha Não é Sua\" no YouTube: Nabote Songs (@movimentonabote).\nMúsica gerada com IA (Suno).",
+     "image": [
+      {
+       "id": "d4a8069f-6aa4-4064-8566-58be615d2308",
+       "path": "https://postizis.duckdns.org/uploads/2026/10/16/8bfd5af9982e3796f221b9138aaf96d9.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "instagram-standalone",
+    "post_type": "story"
+   }
+  }
+ ]
+}

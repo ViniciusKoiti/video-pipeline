@@ -1,0 +1,48 @@
+{
+  "type": "schedule",
+  "date": "2026-10-27T19:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "A Claude Code mod is an instruction file: a SKILL.md that tells the agent how to work. This one teaches it to analyze a binary with no source code. On screen: the skill itself, then file, strings and objdump, with real output, then the password, the vault open.\n\nEvery claim points to a line of real output. Only on your own binary, or a CTF.\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #ReverseEngineering #ClaudeCode #Assembly #Linux #Programming",
+          "image": [
+            {
+              "id": "15be3290-8879-4a51-bd75-9bcbbbb6426a",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/f41038a4864929128ee36f6ce7f10fa6ea.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Claude Code mods: reverse engineering a binary in 60 seconds",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "claude code",
+            "label": "claude code"
+          },
+          {
+            "value": "reverse engineering",
+            "label": "reverse engineering"
+          },
+          {
+            "value": "assembly",
+            "label": "assembly"
+          },
+          {
+            "value": "linux",
+            "label": "linux"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: 2026-10-27T19:00-03:00 (22:00 UTC), igual ao pacote; sobra cerca de 1,9 dia para apagar no Postiz.",
+    "Canal: integration cmr030qdh000glw83on440hxi, youtube, baixo.nivel.dev.s. Ids não conferidos contra a lista viva (sem rede).",
+    "Mídia: 15be3290-8879-4a51-bd75-9bcbbbb6426a bate com o upload de mods-en-voz.mp4. Vídeo não aberto pela dúvida.",
+    "Legenda: sem link, código nem menção. 'Every claim points to a line of real output' é afirmação técnica que só o dono confirma.",
+    "Gate 4: aprovado para short-claude-mods-en; confirmar que a legenda final é a carimbada. Pele em needs_review sem gerador (risco aceito pelo dono).",
+    "Conteúdo sintético: marcar à mão no YouTube Studio (voz clonada e apresentador desenhado).",
+    "Título promete 60 s: duração do vídeo é 53,9 s."
+  ],
+  "revisor": "duvida-cega"
+}

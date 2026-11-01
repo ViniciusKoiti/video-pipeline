@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-10-26T19:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "I asked Claude Code to open a vault with no password and no source code. It opened it in five steps, all on screen: what the binary gives away, where it decides, the ten-byte table, the XOR undone letter by letter, and the vault open.\n\nEverything on screen is real output of file, strings and objdump. Nothing else.\n\nOnly on your own binary, or a CTF. Code and binary at github.com/ViniciusKoiti/baixo-nivel-demos\n\nPresenter drawn from my photos; voice cloned by AI.\n\n#reverseengineering #claudecode #assembly #linux #programming #dev",
+          "image": [
+            {
+              "id": "c4315948-691f-4cba-8782-c45d72a4ab53",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/25/47c435822e8e6bbe7eefa74d8b057284.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

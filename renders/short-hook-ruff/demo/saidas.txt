@@ -1,0 +1,12 @@
+# Saídas reais do hook, ruff 0.16.9 (.venv do projeto), 2026-10-26
+# Entrada: o JSON que o Claude Code manda ao hook PostToolUse (tool_input.file_path)
+
+$ echo '{"tool_name":"Edit","tool_input":{"file_path":".../tmp/py/lista.py"}}' | ./ruff-apos-edicao.sh ; echo "exit $?"
+B006 Do not use mutable data structures for argument defaults
+ --> lista.py:1:26
+help: Replace with `None`; initialize within function
+Found 1 error.
+exit 2
+
+$ echo '{"tool_name":"Write","tool_input":{"file_path":".../tmp/py/lista_certo.py"}}' | ./ruff-apos-edicao.sh ; echo "exit $?"
+exit 0

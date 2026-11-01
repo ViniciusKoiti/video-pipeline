@@ -1,0 +1,29 @@
+# Saídas reais, Python 3.12 e ruff 0.16.9, 2026-10-26
+# lista.py: argumento padrão mutável (lista=[]) e duas chamadas
+
+$ python3 lista.py ; echo "exit $?"
+['pão']
+['pão', 'leite']
+exit 0
+
+$ ruff check --isolated lista.py ; echo "exit $?"
+B006 Do not use mutable data structures for argument defaults
+ --> lista.py:1:26
+help: Replace with `None`; initialize within function
+Found 1 error.
+exit 1
+
+$ ruff check --isolated --select E,F lista.py ; echo "exit $?"
+All checks passed!
+exit 0
+
+# lista_certo.py: lista=None e a lista nasce dentro da função
+
+$ python3 lista_certo.py ; echo "exit $?"
+['pão']
+['leite']
+exit 0
+
+$ ruff check --isolated lista_certo.py ; echo "exit $?"
+All checks passed!
+exit 0

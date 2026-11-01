@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-10-30T19:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "A slash command is a Markdown file in .claude/commands. This one runs ruff and pytest, and returns only the errors, with file and line. The output points to a list default that keeps data between calls.\n\nPresenter drawn from photos; voice cloned by AI.\n\n#ClaudeCode #Programming #Dev #AI",
+          "image": [
+            {
+              "id": "d42a468f-7737-45ca-9c01-5c5ef03a234b",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/9e6b4aeb11cae15334ecf771ce9d8d84.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

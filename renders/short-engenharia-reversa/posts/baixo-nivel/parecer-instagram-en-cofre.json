@@ -1,0 +1,14 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: 2026-10-26T19:00-03:00 (22:00 UTC), igual ao pacote. Pacote gravado em 25/10 às 21:03 UTC; sobra cerca de 1 dia para apagar no Postiz.",
+    "Canal: integration cmv8r4jw30001l2863lr8x1lo, 'Desenvolvedor Plen', instagram-standalone, post_type post. Ids não conferidos contra a lista viva (sem rede). A escolha deste perfil não está registrada no README; o dono confirma o destino.",
+    "Mídia: c4315948-691f-4cba-8782-c45d72a4ab53 bate com o upload de 25/10 20:19 UTC (cofre-en-voz.mp4, sha256 daec6cf8…). Não abri o vídeo. Como post de Instagram pode virar Reel ou post de feed; não verificado.",
+    "Legenda: igual ao pacote, só quebras de parágrafo. As afirmações técnicas só o dono confirma. O link github.com/ViniciusKoiti/baixo-nivel-demos é texto, não clicável no Instagram; o repositório é público segundo o README, não testado. Aviso de segurança presente.",
+    "Gate 4: 'aprovado' para short-engenharia-reversa-en, mas o carimbo cobre o MP4 e o legenda-post.txt do YouTube. Esta legenda do Instagram é outro texto, então a aprovação não cobre o texto exato que vai ao ar.",
+    "Divulgação: voz clonada e apresentador desenhado a partir de fotos, declarados na legenda. Marcar o rótulo de IA à mão no app; a pele segue em needs_review sem gerador registrado (risco que o dono pode aceitar).",
+    "Repetição: sem agendado anterior neste perfil. O mesmo vídeo em inglês já está agendado no YouTube para 25/10 22:30 UTC (outra rede). A versão em português deste perfil, 26/10 12h, não foi agendada; se as duas saírem, ficam a 7h de distância no mesmo perfil.",
+    "Outros arquivos: o post-shorts-en.json fora de baixo-nivel/ tem lacunas e não deve ser usado."
+  ],
+  "revisor": "duvida-cega"
+}

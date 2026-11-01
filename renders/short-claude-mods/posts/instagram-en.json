@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "DATA_PROPOSTA_IG_EN",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "A Claude Code mod is an instruction file. This one teaches the agent to analyze a binary with no source code: file, strings and objdump, real output on screen, down to the password.\n\nEvery claim points to a line of output. Only on your own binary, or a CTF.\n\nPresenter drawn from my photos; voice cloned by AI.\n\n#reverseengineering #claudecode #assembly #linux #programming #dev",
+          "image": [
+            {
+              "id": "15be3290-8879-4a51-bd75-9bcbbbb6426a",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/f41038a4864929128ee36f6ce7f10fa6ea.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}
