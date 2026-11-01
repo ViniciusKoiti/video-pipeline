@@ -15,21 +15,18 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import assets, conferences, numeros, postiz, reopen, sources, usage
+from app.commands import assets, conferences, decisions, numeros, postiz, reopen, sources, usage
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.errors import run
 from app.commands.models.command import Command as Command
-from app.commands.reviewer import default_reviewer
+from app.commands.project_root import project_root
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode
-from app.pipeline.check_report import load_check_report
 from app.pipeline.excerpts import numbered_view
 from app.pipeline.gates import (
     GateStatus,
     gate_report,
     latest_check,
-    record_check,
-    record_decision,
 )
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
@@ -42,7 +39,6 @@ from app.pipeline.schemas import (
 )
 from app.render.remotion import region_codes
 from app.settings import speech_chars_per_second
-from app.settings.constants.settings_constants import SettingsConstants
 
 Handler = Callable[[argparse.Namespace, Context], int]
 
@@ -90,48 +86,6 @@ def _check(args: argparse.Namespace, context: Context) -> int:
         print(f"erro    {line}")
     print("resultado: " + ("sem erros" if report.ok else f"{len(report.errors)} erro(s)"))
     return 0 if report.ok else 1
-
-
-def _approve(args: argparse.Namespace, context: Context) -> int:
-    return _decide(args, context, Decision.APPROVED, args.notes, skip_check=args.skip_check)
-
-
-def _reject(args: argparse.Namespace, context: Context) -> int:
-    decision = Decision.CHANGES_REQUESTED if args.changes else Decision.REJECTED
-    return _decide(args, context, decision, args.reason)
-
-
-def _decide(
-    args: argparse.Namespace, context: Context, decision: Decision, notes: str, skip_check: str | None = None
-) -> int:
-    entry = record_decision(
-        context.store,
-        context.review,
-        args.episode_id,
-        Step(args.step),
-        decision,
-        reviewer=args.reviewer or default_reviewer(project_root(Path.cwd())),
-        now=lambda: datetime.now().astimezone().replace(microsecond=0),
-        asset_id=args.asset,
-        notes=notes,
-        skip_check=skip_check,
-    )
-    target = entry.asset_id or entry.step.value
-    print(
-        f"{CliConstants.DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})"
-    )
-    return 0
-
-
-def _checagem(args: argparse.Namespace, context: Context) -> int:
-    verdict, problems = load_check_report(args.parecer)
-    entry = record_check(
-        context.store, args.episode_id, verdict, problems, reviewer=args.reviewer,
-        now=lambda: datetime.now().astimezone().replace(microsecond=0),
-    )
-    label = CliConstants.CHECK_LABELS[entry.verdict]
-    print(f"checagem: {label} por {entry.reviewer}, {len(entry.problems)} problema(s) ({entry.input_hash})")
-    return 0
 
 
 def _status(args: argparse.Namespace, context: Context) -> int:
@@ -194,11 +148,11 @@ HANDLERS: dict[str, Handler] = {
     "bench": _bench,
     "excerpts": _excerpts,
     "check": _check,
-    "approve": _approve,
-    "reject": _reject,
+    "approve": decisions.approve,
+    "reject": decisions.reject,
     "reopen": reopen.run,
     "status": _status,
-    "checagem": _checagem,
+    "checagem": decisions.checagem,
     "traducao": conferences.traducao,
     "medicao": conferences.medicao,
     "numeros": numeros.run,
@@ -236,14 +190,6 @@ def build_parser() -> argparse.ArgumentParser:
         subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")
     )
     return parser
-
-
-def project_root(start: Path) -> Path:
-    """Primeira pasta, subindo a partir de `start`, que tem `config/providers.toml`."""
-    for folder in (start, *start.parents):
-        if (folder / SettingsConstants.CONFIG_FILE).is_file():
-            return folder
-    raise SystemExit(f"vp: {SettingsConstants.CONFIG_FILE} não encontrado a partir de {start}")
 
 
 def main(argv: Sequence[str] | None = None) -> int:

@@ -6,6 +6,7 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
+from app.commands.project_root import project_root
 from app.commands.reviewer import default_reviewer
 from app.pipeline.ports import Context
 from app.pipeline.reopen import reopen_gate
@@ -18,7 +19,7 @@ def run(args: argparse.Namespace, context: Context) -> int:
         context.review,
         args.episode_id,
         Step(args.step),
-        reviewer=args.reviewer or default_reviewer(Path.cwd()),
+        reviewer=args.reviewer or default_reviewer(project_root(Path.cwd())),
         reason=args.reason,
         now=lambda: datetime.now().astimezone().replace(microsecond=0),
         asset_id=args.asset,

@@ -2,7 +2,6 @@
   "max_code_lines_per_file": 200,
   "max_code_lines_per_function": 50,
   "files": {
-    "app/cli.py": 215,
     "app/media/evolution.py": 239,
     "app/pipeline/bench.py": 240,
     "app/pipeline/check.py": 547,
