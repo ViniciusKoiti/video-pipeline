@@ -27,7 +27,7 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
 ## O que você escreve, na pasta do short
 
 - `narracao.<idioma>.json`: uma fala por cena do JSON e as falas dos planos fora dele (formato no cabeçalho de
-  `scripts/provisorio/shorts_tec.py`).
+  `app/commands/short.py`).
 - `content.<idioma>.json`: o vídeo por JSON do `motion-video` (tipos de cena e campos na receita
   `packages/motion-video/recipes/explainer.md` do kit; a janela do dono é o campo `host`).
 - `posts/`: os rascunhos do Postiz e o `README.md` com os textos, a hipótese e a lista do que falta.
@@ -54,14 +54,14 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
 5. **A voz.** `vp short voz <pasta> narracao.<idioma>.json` (`--voz NOME` troca a voz) gera as falas com a voz do vídeo final (a
    clonada do dono no Modal, ADR 024). É serviço externo: só com o pedido do dono na sessão, e a sonda
    `cpu_probe()` antes. Pronto quando o `narracao.<idioma>.voz.json` lista um WAV por linha e o dono ouviu.
-6. **Tempos, render e junção.** `shorts_tec.py tempos` estica as cenas até a fala caber; o `render` do kit
-   sai do `content.<idioma>.voz.json`; `shorts_tec.py juntar` põe cada fala no começo da cena. Pronto quando o
+6. **Tempos, render e junção.** `vp short tempos <pasta> content.<idioma>.json narracao.<idioma>.json` estica as cenas até a fala caber; o `render` do kit
+   sai do `content.<idioma>.voz.json`; `vp short juntar <pasta> <mudo.mp4> content.<idioma>.voz.json narracao.<idioma>.json --saida <mp4>` põe cada fala no começo da cena. Pronto quando o
    `juntar` imprime o volume dentro do alvo e nenhuma fala passa do fim da cena.
    **Efeitos sonoros (ADR 035, opcional):** um `sfx.<idioma>.json` com um som do SFX Kit (`data/sfx/kit/`,
    CC0) por momento: no corte de cada cena e nas palavras que pesam (número que cai, item que entra, pedido
    final), ancorado como os planos (`scene` + `text` ou `offset_s`). Escolha pela tabela "On screen" do
-   `GUIDE.md` do kit; nunca os sons que o kit marca "On top of speech" sobre a fala. `shorts_tec.py sfx` confere
-   e lista onde cada som cai; `juntar --sfx=` mistura numa saída nova, sem tocar no MP4 carimbado. O dono ouve.
+   `GUIDE.md` do kit; nunca os sons que o kit marca "On top of speech" sobre a fala. `vp short sfx` confere
+   e lista onde cada som cai; `juntar --sfx` mistura numa saída nova, sem tocar no MP4 carimbado. O dono ouve.
 7. **Os posts.** Rascunhos no formato do Postiz para cada canal e idioma (`docs/postiz.md`), com data, mídia e
    link como lacunas explícitas até existir o que preencher, e a hipótese a medir aos 7 e 28 dias (CLAUDE.md
    §4). Pronto quando o `README.md` da pasta lista o que falta antes do `pacote`.

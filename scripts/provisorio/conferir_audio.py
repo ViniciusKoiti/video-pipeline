@@ -6,7 +6,7 @@ Uso: `.venv/bin/python scripts/provisorio/conferir_audio.py <video.mp4>
 - `--episodio=<id>`: vídeo longo; os cortes vêm do `episode.json` da pasta do episódio (`start_ms` de cada
   cena).
 - `--content=<content.voz.json>`: Short por JSON do motion-video; os cortes vêm do começo de cada cena, com a
-  mesma conta do `shorts_tec.py`. Com `--sfx`, cada som colocado por deslocamento (começo da cena +
+  mesma conta do `vp short juntar`. Com `--sfx`, cada som colocado por deslocamento (começo da cena +
   `offset_s`) precisa ter um ataque a 40 ms de onde o kit diz que o ataque dele cai (momento − `sync.at` +
   `onset`), senão é problema; os cortes de cena entram na medida como informação.
 - Mede a loudness como o YouTube mede (mono contado nos dois alto-falantes), o pico real e a batida da trilha,

@@ -59,11 +59,11 @@ flowchart TD
             KIT["motion-video validate, inspect e review<br/>(kit do dono, tarball fixado, ADR 027)"]:::script
             TRS["tradução: pasta id-en com traducao.json<br/>vp traducao: cenas, entregas, pausas e números ditos"]:::cmd
             GT{{"Gate translation: vp approve id-en --step translation"}}:::gate
-            VOZ["shorts_tec.py voz: voz clonada no Modal,<br/>só com pedido do dono na sessão"]:::script
-            TMP["shorts_tec.py tempos (cena estica até a fala caber)<br/>motion-video render"]:::script
-            SFX["sfx.json: SFX Kit (CC0) ancorado na fala ou no corte<br/>juntar --sfx: estéreo, −14 LUFS (ADR 035)"]:::script
+            VOZ["vp short voz: voz clonada no Modal,<br/>só com pedido do dono na sessão"]:::script
+            TMP["vp short tempos (cena estica até a fala caber)<br/>motion-video render"]:::script
+            SFX["sfx.json: SFX Kit (CC0) ancorado na fala ou no corte<br/>vp short juntar --sfx: estéreo, −14 LUFS (ADR 035)"]:::script
             EAR["conferir_audio.py (earshot): loudness como o YouTube mede,<br/>pico real, batida, ataque em cada corte com efeito"]:::script
-            GS["shorts_tec.py gate: renders/final.mp4 e legenda-post.txt<br/>um id por idioma"]:::script
+            GS["vp short gate: renders/final.mp4 e legenda-post.txt<br/>um id por idioma"]:::script
             SCK -- "ok" --> NAR --> KIT --> TRS --> GT --> VOZ --> TMP --> SFX --> EAR --> GS
             EVT["motion-kit exportar o instante em que cada cartão entra:<br/>hoje o deslocamento do efeito dentro da cena é a olho"]:::falta
             EVT -.-> SFX

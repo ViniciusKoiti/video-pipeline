@@ -41,3 +41,14 @@ qualquer texto em `delivery` e cena repetida. Erros chegavam como `KeyError`, `Z
 
 `ShortProduction`, o `VoicedNarration` que escreve o registro de fala e o `AudioReviewPlan` (RF6); `translation.py`
 segue lendo o `content` cru em `content_problems`.
+
+## Emenda de 2026-11-01 (RF7, fatia 7b)
+
+O `shorts_tec.py` acabou: `tempos`, `sfx`, `juntar` e `boca` viraram `vp short tempos|sfx|juntar|boca`
+(`app/commands/short_*.py`), sobre `app/pipeline/short_timing.py` (falas, tempos, efeitos), `short_join.py`
+(quais falas entram e o comando do ffmpeg), `short_mouth.py` (batidas e envelope da boca) e
+`app/media/short_mix.py` (filtro e execução do ffmpeg). As entradas continuam validadas na leitura
+(`MotionInputError`); o que era `SystemExit` virou erro do projeto: `ShortAssemblyError` (fala que não cabe, cena
+inexistente, plano de efeitos com erro) e `MixError` (ffmpeg da junção falhou, com o fim da mensagem dele). A saída
+impressa e os arquivos escritos são os mesmos, com uma diferença: as mensagens de erro saem com o prefixo
+`vp short:` e a opção de valor é `--saida PATH` (a forma `--saida=PATH` continua valendo).
