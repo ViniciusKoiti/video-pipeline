@@ -155,7 +155,7 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
   reexports de compatibilidade. `app.settings/` e `app.bootstrap/` são pacotes com seus próprios modelos.
 - **Erros esperados (ADR 045):** toda classe de erro de `app/` herda de `app.errors.PipelineError` (e da base de
   antes). Comandos e scripts não têm `try/except` de erro do projeto: levantam, e `app.commands.errors.run` é o
-  único ponto que imprime `vp <comando>: <mensagem>` e sai com 1 (`VP_DEBUG=1` sobe o traceback). Bug nunca é
+  único ponto que imprime `vp <comando>: <mensagem>` e sai com 1 (`VP_DEBUG=1` sobe o traceback; manifesto fora do schema é `ManifestInvalid`, levantado pelo store). Bug nunca é
   capturado ali. A recuperação por cena ou por item fica onde ela é possível. `postiz` e `usage` mantêm o erro em
   JSON. Gate em `tests/test_errors_layout.py`; script novo termina com `raise SystemExit(run("nome", main))`.
 - Constantes de todos os fluxos de `app/`, inclusive valores privados e de validação, usam classes em

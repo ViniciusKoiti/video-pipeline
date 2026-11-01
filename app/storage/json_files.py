@@ -9,13 +9,27 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TypeVar
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
-from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, is_approved_json
+from app.pipeline.ports import (
+    EpisodeLocked,
+    ImmutableManifest,
+    ManifestInvalid,
+    ManifestNotFound,
+    is_approved_json,
+)
 from app.pipeline.schemas import ReviewEntry, ReviewLog
 from app.storage.constants.json_files_constants import JsonFilesConstants
 
 M = TypeVar("M", bound=BaseModel)
+
+
+def _details(error: ValidationError, limit: int = 5) -> str:
+    """Os primeiros campos com problema, `campo: motivo`, separados por ponto e vírgula."""
+    return "; ".join(
+        f"{'.'.join(str(part) for part in item['loc']) or '(arquivo)'}: {item['msg']}"
+        for item in error.errors()[:limit]
+    )
 
 
 class JsonFileStore:
@@ -33,6 +47,8 @@ class JsonFileStore:
             return model.model_validate_json(self.path(episode_id, name).read_text())
         except FileNotFoundError:
             raise ManifestNotFound(f"{episode_id}/{name}") from None
+        except ValidationError as error:
+            raise ManifestInvalid(f"{episode_id}/{name}", _details(error)) from error
 
     def write(self, episode_id: str, name: str, manifest: BaseModel) -> None:
         path = self.path(episode_id, name)

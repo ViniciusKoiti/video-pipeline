@@ -42,3 +42,14 @@ com formatos de mensagem diferentes, e `cli.py` capturava `KeyError` e `TypeErro
 
 A mensagem de um erro tratado em script perde o prefixo do id do episódio que alguns tinham; as mensagens dos
 erros do projeto já trazem o episódio e o arquivo (`ep/sources.json está carimbado...`).
+
+## Emenda de 2026-11-01 (manifesto fora do contrato)
+
+Um `scenes.json` (ou qualquer manifesto) editado à mão e fora do schema saía com o traceback do pydantic, fora do
+tratamento central. `JsonFileStore.read` agora converte o `ValidationError` em `ManifestInvalid` (um
+`PipelineError` e `ValueError`, em `app/pipeline/ports.py`): `vp <comando>: <episódio>/<arquivo> fora do contrato:
+<campo>: <motivo>`, com os cinco primeiros campos e o erro original na cadeia (`VP_DEBUG` mostra). Erro na raiz do
+arquivo (JSON cortado, lista no lugar de objeto) sai como `(arquivo)`. Quem lia o manifesto e tratava
+`ValidationError` (`vp check`, a lista de ativos e a conferência de aprovação do render final) passou a tratar
+`ManifestInvalid`, com o mesmo resultado. O que não passa pelo store (`ValidationError` ao montar um modelo no
+código) continua sendo bug, com traceback.

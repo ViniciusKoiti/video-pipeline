@@ -30,6 +30,15 @@ class ManifestNotFound(PipelineError, LookupError):
     pass
 
 
+class ManifestInvalid(PipelineError, ValueError):
+    """O arquivo existe, mas não segue o contrato: editado à mão, de uma versão antiga ou cortado. `details`
+    traz os primeiros campos com problema (`campo: motivo`), para quem mostra ou junta os erros."""
+
+    def __init__(self, where: str, details: str) -> None:
+        super().__init__(f"{where} fora do contrato: {details}")
+        self.details = details
+
+
 class ImmutableManifest(PipelineError, PermissionError):
     """§2.6: arquivo aprovado não é sobrescrito pelo código; reabrir é explícito (vp reopen)."""
 

@@ -18,15 +18,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from pydantic import ValidationError
-
 from app.errors import PipelineError
 from app.media.wav import wav_is_valid
 from app.pipeline.atomic_files import write_atomic
 from app.pipeline.constants.assembly_constants import AssemblyConstants as Constants
 from app.pipeline.constants.gates_constants import GatesConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
-from app.pipeline.ports import ManifestNotFound, ManifestStore, WriteGuard
+from app.pipeline.ports import ManifestInvalid, ManifestNotFound, ManifestStore, WriteGuard
 from app.pipeline.schemas import Asset, EpisodeFormat, EpisodeManifest, ScenesManifest, effective_shots
 from app.render.base import RenderEngine, RenderResult
 
@@ -71,7 +69,7 @@ def assembly_problems(
 def _approved(store: ManifestStore, episode_id: str, asset_id: str) -> bool:
     try:
         asset = store.read(episode_id, f"assets/{asset_id}.json", Asset)
-    except (ManifestNotFound, ValidationError):
+    except (ManifestNotFound, ManifestInvalid):
         return False
     return asset.review_status in SchemasConstants.APPROVED_STATES
 

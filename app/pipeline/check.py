@@ -12,8 +12,6 @@ import re
 import unicodedata
 from datetime import date
 
-from pydantic import ValidationError
-
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.constants.check_constants import CheckConstants as Constants
 from app.pipeline.constants.molde_constants import MoldeConstants
@@ -36,7 +34,7 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
-from app.pipeline.ports import M, ManifestStore
+from app.pipeline.ports import M, ManifestInvalid, ManifestStore
 from app.pipeline.radar import RadarBrief, brief_summary, form_warnings, unmeasured_patterns
 from app.pipeline.schemas import (
     Asset,
@@ -85,11 +83,8 @@ def _read(
         return None
     try:
         return store.read(episode_id, name, model)
-    except ValidationError as error:
-        problems = "; ".join(
-            f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in error.errors()[:5]
-        )
-        report.errors.append(f"{name}: {problems}")
+    except ManifestInvalid as error:
+        report.errors.append(f"{name}: {error.details}")
         return None
 
 
@@ -523,7 +518,7 @@ def episode_assets(store: ManifestStore, episode_id: str) -> dict[str, Asset]:
     for path in sorted(folder.glob("*.json")) if folder.is_dir() else []:
         try:
             found[path.stem] = store.read(episode_id, f"assets/{path.name}", Asset)
-        except ValidationError:
+        except ManifestInvalid:
             continue
     return found
 
