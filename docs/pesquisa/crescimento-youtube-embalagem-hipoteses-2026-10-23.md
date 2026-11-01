@@ -28,7 +28,7 @@ sem conferência audiovisual segundo a segundo.
 | Alcance da regra dos quatro vídeos | O §12 pede quatro vídeos no mesmo recorte em 4–6 semanas. | É um lote editorial mínimo do projeto, não cálculo de poder estatístico nem prova causal. |
 
 Fontes locais: [contrato](../../app/pipeline/schemas.py), [leitura e gravação das métricas](../../app/pipeline/metrics.py),
-[script de métricas](../../scripts/provisorio/metricas.py), [testes do contrato](../../tests/test_metrics.py),
+[comando `vp metricas`](../../app/commands/metricas.py), [testes do contrato](../../tests/test_metrics.py),
 [pauta](../../.agents/skills/vp-pauta/SKILL.md), [miniatura](../../.claude/skills/miniatura/SKILL.md),
 [contexto, §§4, 12 e 15](../../CLAUDE.md), gaps de 12/10, §3.2 (relatório removido; está no histórico do Git) e
 [análise de miniaturas de 20/10](miniaturas-filosofatos-2026-10-20.md).
@@ -134,7 +134,7 @@ estar na própria string e no registro de pauta. Exemplo de **fragmento**, não 
 ```
 
 Para uma publicação nova com episódio, canal, formato e data reais conhecidos, o caminho já existente é
-`scripts/provisorio/metricas.py iniciar <id> --platform youtube --format longo`, completando os metadados e
+`vp metricas iniciar <id> --platform youtube --format longo`, completando os metadados e
 `--hypothesis` com o texto escolhido. `iniciar` recusa arquivo existente. Não usar `ler` para editar hipótese.
 Uma eventual correção de registro existente exige preservar as leituras e validar o objeto completo.
 

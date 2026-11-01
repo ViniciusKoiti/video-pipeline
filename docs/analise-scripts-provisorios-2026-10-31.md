@@ -3,7 +3,7 @@
 Mapa, não implementação: nada foi movido. Conferido na árvore local (branch `serie-conceitos-short-1`,
 2026-10-31) lendo os 18 scripts de `scripts/provisorio/` (2.745 linhas), o `app/cli.py`, o `app/bootstrap.py`,
 as skills e agentes que os chamam, os testes que os carregam e as issues #188–#193 (gaps G1–G6 de 2026-10-23).
-Complementa `docs/diagramas/mermaid/pipeline-hoje.mermaid` (onde cada script aparece) e `docs/analise-gaps-tecnicos.md` (G4 é o
+Complementa `docs/diagramas/mermaid/pipeline-hoje.mermaid` (onde cada script aparece) e `docs/analise-gaps-tecnicos.md` (removido em 2026-11-01; no histórico do Git; G4 é o
 `montar_episodio.py` fora das proteções do núcleo). O §5 traz o desenho em objetos: o que vira classe, o que
 vira valor e o que fica função, no estilo que o `app/` já usa.
 

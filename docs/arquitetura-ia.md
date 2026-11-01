@@ -6,9 +6,6 @@
 
 [Diagrama SVG](diagramas/svg/arquitetura-ia.svg) · [Fonte PlantUML](diagramas/puml/arquitetura-ia.puml)
 
-Próximas melhorias, critérios de entrega e atuação de personagens 2D:
-[evolução do fluxo por camadas](evolucao-por-camadas.md).
-
 ![Arquitetura do auto-play com os pontos de IA destacados](diagramas/svg/arquitetura-ia.svg)
 
 ## Onde está a IA
@@ -30,7 +27,7 @@ em arquivos estruturados; sua CLI ainda não executa automaticamente a criação
 O parecer de verificação é uma entrega separada, registrada por `vp checagem`.
 
 Na produção de mídia, o próprio código solicita inferência por interfaces de provedor.
-[bootstrap.py](../app/bootstrap.py) escolhe o adapter conforme a configuração. O TOML versionado
+[bootstrap](../app/bootstrap/__init__.py) escolhe o adapter conforme a configuração. O TOML versionado
 seleciona Kokoro para rascunho e Chatterbox no Modal para voz final; configurações locais podem
 substituir essa escolha. A configuração privada não foi inspecionada.
 
@@ -54,7 +51,7 @@ o reconhecimento remoto é uma opção para os tempos por palavra.
 
 O desenho apresenta a sequência operacional conduzida pelo dono. O fluxo atual combina
 arquivos, comandos e scripts; a montagem ainda não exige todos os gates automaticamente.
-Os detalhes de implementação e os gaps estão na [visão técnica](analise-gaps-tecnicos.md).
+Os gaps de SOLID e o plano de correção estão em [fluxo-refatoracao-solid-2026-11-01.md](fluxo-refatoracao-solid-2026-11-01.md).
 Geração de imagem por Workers AI tem porta/configuração, mas está sem fábrica implementada
 na registry; portanto não aparece como uma capacidade operacional no desenho.
 

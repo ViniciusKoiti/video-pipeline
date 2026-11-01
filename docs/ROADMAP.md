@@ -84,7 +84,7 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
   - trilha e efeitos com `MusicBed`/`SfxTrack` (#81, licença por faixa decidida pelo dono);
   - `vp render` (#13) no lugar do script provisório; o `npm run render` de `video/package.json` ainda aponta
     para a composição `Episode`, que não existe mais.
-- [ ] **Quando for publicar**, na ordem (análise na `docs/ANALISE.md`, revisão de 2026-09-29):
+- [ ] **Quando for publicar**, na ordem (análise inicial, revisão de 2026-09-29; o documento foi removido em 2026-11-01 e está no histórico do Git):
   1. Decisões do dono, numa rodada só: (a) o `votorantim-completo` sai com o roteiro atual (32 carimbos,
      7 planos com "Fonte:" no texto, que agora duplica o rodapé, trechos de até 18 planos sem imagem) ou é
      reescrito com os planos da ADR 011, o que reabre o gate 2 e cumpre os critérios das #73 e #76–#79;

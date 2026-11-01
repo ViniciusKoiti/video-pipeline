@@ -180,7 +180,7 @@ dependem de conteúdo mutável, e não apenas pelo handler antes da chamada.
 ### G07 — Ampliar `Context` corrige a tipagem, mas não segrega as dependências dos serviços
 
 **Evidência atual:** [`Context`](../app/pipeline/ports.py) expõe todas as portas e `Settings`.
-[`LazyContext`](../app/bootstrap.py) já implementa `tts_final`, `tts_named` e `word_aligner`, ausentes da porta
+[`LazyContext`](../app/bootstrap/__init__.py) já implementa `tts_final`, `tts_named` e `word_aligner`, ausentes da porta
 e do [`FakeContext`](../tests/fakes/__init__.py). Completar os dois é necessário. Entretanto `Production` e
 `ShortProduction` propostos continuam recebendo o contexto inteiro, apesar da regra “nenhum objeto lê Settings”.
 
@@ -238,7 +238,7 @@ do kit que o auto-play não interpreta, sem alterar o objeto original acidentalm
 
 **Evidência atual:** `LazyContext.archives` aborta ao montar um banco indisponível; o script de busca contorna
 o bootstrap. O desenho melhora isso com `ArchiveCascade`, mantendo `archives` compatível. Já
-[`baixar_escolhidos`](../scripts/provisorio/baixar_escolhidos.py) baixa diretamente no destino e substitui
+`baixar_escolhidos` (removido no RF7; hoje `vp assets take`) baixa diretamente no destino e substitui
 `used_in_scenes` por uma lista de uma cena a cada execução.
 
 **Menor correção:** pular indisponibilidade esperada com motivo explícito; não engolir erro de programação

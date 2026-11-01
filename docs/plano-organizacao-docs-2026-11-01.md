@@ -86,6 +86,23 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 ## 5. Regras da execução
 
 - Mover com `git mv` (o histórico acompanha) e remover com `git rm`: tudo recuperável pelo Git.
-- Um commit por fase. O gate de qualidade roda em cada commit.
+- Um commit por fase (B e C saíram juntos, porque as edições do `README.md` se misturam). O gate de qualidade roda em cada commit.
 - Cada remoção só depois de listar os links que apontavam para o arquivo e ajustá-los; ao final, uma busca confirma que nenhum link restou apontando para arquivo removido.
 - Texto histórico dentro de ADRs e pesquisa que cita um arquivo removido não é reescrito: a menção fica, com o nome do arquivo, e o Git guarda o conteúdo.
+
+## 6. Situação (2026-11-01)
+
+| Fase | Situação |
+|---|---|
+| A | Feita (`be1bcbd`): `docs/diagramas/{puml,mermaid,svg,png}` com o README da pasta; links do README, do `CLAUDE.md` e dos documentos ajustados |
+| B | Feita: removidos `ANALISE.md`, `WORKSPACE-ATUAL-E-COMPONENTES.md`, `analise-gaps-tecnicos.md`, `evolucao-por-camadas.md`, `fluxo-evolucao.puml/.svg`, `classes-e-integracao.puml/.svg` e `execucao-proposta.svg`. Links markdown quebrados em `docs/`, README, `CLAUDE.md` e skills: **de 13 para 2**, e os 2 já existiam e não têm relação (`../AGENT.MD` numa análise histórica e `/fonemas/`, falso positivo de texto) |
+| C | Feita: `docs/README.md` com o papel de cada documento; a lista do `README.md` da raiz aponta para ele |
+| B2 | **Aguarda o dono**: a tabela 4.2 (6 itens) |
+| D | Aguarda decisão (opcional) |
+| E | Depois do RF7 |
+
+Ficaram, de propósito, três menções por nome a arquivos removidos, em textos históricos: o `nichos-reels-animados.md`
+(pesquisa) cita o "item 18" do `ANALISE.md`; o `analise-scripts-provisorios` cita a `analise-gaps-tecnicos`; a legenda do
+`arquitetura-atual.puml` (e do SVG gerado dele) cita a `analise-gaps-tecnicos.md`. O SVG não pode ser regerado aqui
+(sem `plantuml`), então a legenda só muda no redesenho da fase E.
+

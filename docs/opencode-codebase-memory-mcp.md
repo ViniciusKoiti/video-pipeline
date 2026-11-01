@@ -114,7 +114,7 @@ automaticamente o código de todos eles; a cobertura dos vizinhos não foi audit
 - **Lab-voz:** o adapter executa um worker com Python externo configurado; o grafo
   do auto-play não comprova o valor atual de `CHATTERBOX_PYTHON`.
 
-O [mapa do workspace](WORKSPACE-ATUAL-E-COMPONENTES.md) descreve essas integrações.
+O mapa do repositório está no `CLAUDE.md` (§3, "Mapa do repositório").
 Indexar projetos vizinhos separadamente pode ajudar uma análise posterior; isso
 não substitui a revisão dos imports, arquivos transferidos e caminhos configurados.
 
