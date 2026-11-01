@@ -2,7 +2,7 @@
 
 Data: 2026-11-01. Status: aceita. Fatia 5 do RF5 (fecha o RF5) do
 [fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md). Gap G10 da
-[análise](../analise-gaps-solid-2026-10-31.md). Feita pelo loop `docs/loop-refatoracao.md`.
+análise de gaps de 2026-10-31 (removida; o resumo está em [refatoracao-resultado](../refatoracao-resultado-2026-11-01.md), §4 e §7). Feita pelo loop de refatoração (prompt removido em 2026-11-01).
 
 ## Contexto
 

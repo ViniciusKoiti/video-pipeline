@@ -1,10 +1,9 @@
 # Fluxo de refatoração SOLID e gates de aceite
 
-Data: 2026-11-01. Sequência de execução da
-[análise de gaps](analise-gaps-solid-2026-10-31.md), complementando o
-[inventário dos scripts](analise-scripts-provisorios-2026-10-31.md), o
-[desenho em objetos](desenho-orientado-a-objetos-2026-10-31.md) e o
-[gate de tamanho](analise-tamanho-modulos-2026-10-31.md).
+Data: 2026-11-01. Sequência de execução da análise de gaps de 2026-10-31, junto com o inventário dos scripts, o
+desenho em objetos e a análise do gate de tamanho (os quatro documentos foram removidos ao fim do RF7; o
+[resumo](refatoracao-resultado-2026-11-01.md) diz o que ficou, e o Git guarda o texto). O
+[gate de qualidade](gate-qualidade.md) é o de hoje.
 
 Cada etapa entrega uma mudança pequena e verificável; a próxima começa quando os critérios anteriores
 estiverem demonstrados. A ordem abaixo corrige a dependência do plano antigo, que extraía o narrador antes

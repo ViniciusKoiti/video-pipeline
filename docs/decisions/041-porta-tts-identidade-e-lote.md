@@ -1,7 +1,7 @@
 # ADR 041 — Porta de voz: identidade do cache, lote e ciclo de vida
 
 Data: 2026-11-01. Status: aceita (RF3 do [fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md),
-gaps G04 e G05 da [análise](../analise-gaps-solid-2026-10-31.md)). Decide a **porta**; extrair `VoiceKey`, a
+gaps G04 e G05 da análise de gaps de 2026-10-31 (removida; o resumo está em [refatoracao-resultado](../refatoracao-resultado-2026-11-01.md), §4 e §7)). Decide a **porta**; extrair `VoiceKey`, a
 biblioteca de WAVs e o narrador, e migrar `montar_episodio.py` e `shorts_tec.py`, vem depois (RF4/RF6).
 
 ## Contexto

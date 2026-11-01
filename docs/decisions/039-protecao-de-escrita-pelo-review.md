@@ -1,7 +1,7 @@
 # ADR 039 — Proteção de escrita derivada do review.json
 
 Data: 2026-11-01. Status: aceita (RF1 do [fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md),
-gap G01 da [análise](../analise-gaps-solid-2026-10-31.md)).
+gap G01 da análise de gaps de 2026-10-31 (removida; o resumo está em [refatoracao-resultado](../refatoracao-resultado-2026-11-01.md), §4 e §7)).
 
 ## Contexto
 

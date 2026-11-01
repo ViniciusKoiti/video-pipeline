@@ -1,7 +1,7 @@
 # ADR 040 — Etapa por cena com retomada
 
 Data: 2026-11-01. Status: aceita (RF2 do [fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md),
-gap G03 da [análise](../analise-gaps-solid-2026-10-31.md)).
+gap G03 da análise de gaps de 2026-10-31 (removida; o resumo está em [refatoracao-resultado](../refatoracao-resultado-2026-11-01.md), §4 e §7)).
 
 ## Contexto
 

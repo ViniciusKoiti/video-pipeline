@@ -20,20 +20,14 @@ código e os ADRs já superaram não fica aqui: o Git guarda o histórico (`git 
 | [ROADMAP.md](ROADMAP.md) | Etapas entregáveis; precisa de revisão |
 | [specs/](specs/) | Especificações dos componentes do template e do `vp numeros` |
 
-## Plano em andamento: refatoração SOLID (RF0–RF7)
+## Refatoração SOLID (RF0–RF7)
 
 | Documento | Papel |
 |---|---|
-| [fluxo-refatoracao-solid-2026-11-01.md](fluxo-refatoracao-solid-2026-11-01.md) | Gates de aceite e registro de cada fatia |
-| [loop-refatoracao.md](loop-refatoracao.md) | Prompt do loop de uma iteração |
+| [refatoracao-resultado-2026-11-01.md](refatoracao-resultado-2026-11-01.md) | O que ficou: estrutura, como estender, scripts → comandos, gaps fechados e o que está aberto |
+| [fluxo-refatoracao-solid-2026-11-01.md](fluxo-refatoracao-solid-2026-11-01.md) | Gates de aceite e registro de cada fatia, com as provas |
 | [inventario-constantes-2026-11-01.md](inventario-constantes-2026-11-01.md) | Inventário de constantes |
 | [qualidade-tipagem-2026-11-01.md](qualidade-tipagem-2026-11-01.md) | Linha de base da tipagem |
-
-Entradas que viraram o plano (fotografias de 2026-10-31, arquivam ao fim do RF7):
-[analise-gaps-solid](analise-gaps-solid-2026-10-31.md),
-[analise-scripts-provisorios](analise-scripts-provisorios-2026-10-31.md),
-[analise-tamanho-modulos](analise-tamanho-modulos-2026-10-31.md) e
-[desenho-orientado-a-objetos](desenho-orientado-a-objetos-2026-10-31.md).
 
 ## Diagramas
 

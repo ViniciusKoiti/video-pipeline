@@ -1,7 +1,7 @@
 # ADR 047 — Cópias de briefs e catálogo de música com contrato de substituição
 
 Data: 2026-11-01. Status: aceita. Fatia 4 do RF5 do
-[fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md). Feita pelo loop `docs/loop-refatoracao.md`.
+[fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md). Feita pelo loop de refatoração (prompt removido em 2026-11-01).
 
 ## Contexto
 

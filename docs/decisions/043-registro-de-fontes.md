@@ -2,7 +2,7 @@
 
 Data: 2026-11-01. Status: aceita. Primeira fatia do RF5 do
 [fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md) (fontes); ativos e briefs seguem em fatias
-próprias. Gaps G02 e G10 da [análise](../analise-gaps-solid-2026-10-31.md).
+próprias. Gaps G02 e G10 da análise de gaps de 2026-10-31 (removida; o resumo está em [refatoracao-resultado](../refatoracao-resultado-2026-11-01.md), §4 e §7).
 
 ## Contexto
 

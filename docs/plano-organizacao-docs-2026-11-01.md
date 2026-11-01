@@ -42,7 +42,7 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 | C | Cria `docs/README.md` (índice com papel de cada arquivo) e enxuga a lista do `README.md` da raiz para apontar para ele. | agora |
 | B2 | Remove o que a tabela 4.2 lista (o dono mandou tirar o que não é necessário e vital). | feita |
 | D | Subpastas por assunto (opcional). | descartada |
-| E | **Depois do RF7:** redesenhar `arquitetura-atual` e `pipeline-hoje` a partir do `app/` de então (comandos `vp`, serviços, portas), mover as análises do RF (`analise-gaps-solid`, `analise-scripts-provisorios`, `analise-tamanho-modulos`, `desenho-orientado-a-objetos`, `fluxo-refatoracao`, `loop-refatoracao`, `inventario-constantes`, `qualidade-tipagem`) para uma pasta de histórico e registrar a decisão. | fim do RF7 |
+| E | Depois do RF7: redesenhar `arquitetura-atual` e `pipeline-hoje`, e tirar as análises do RF. **Feita em 2026-11-01**, menos o SVG (ver a seção 6). | feita |
 
 ## 4. Classificação
 
@@ -99,7 +99,7 @@ cópia idêntica em `data/cache/` (cache). Foram movidos para `data/clipe/audio/
 | C | Feita (`6f4d19e`): `docs/README.md` com o papel de cada documento |
 | B2 | Feita: tabela 4.2 |
 | D | Descartada: sem subpastas por assunto, para manter os caminhos citados pelo `CLAUDE.md` e pelas skills |
-| E | **Parcial (2026-11-01):** `arquitetura-atual.puml` e `pipeline-hoje.mermaid` redesenhados depois do RF7. Faltam (1) regerar `svg/arquitetura-atual.svg`, que ainda é o de 22/10 (sem `plantuml` aqui) e (2) remover as análises do RF (`analise-gaps-solid`, `analise-scripts-provisorios`, `analise-tamanho-modulos`, `desenho-orientado-a-objetos`) e o `loop-refatoracao`, só depois de o dono conferir as configurações locais (critério 3 do RF7) |
+| E | **Feita em 2026-11-01**, menos um item. `arquitetura-atual.puml` e `pipeline-hoje.mermaid` redesenhados depois do RF7; removidas as quatro análises de 2026-10-31 e o `loop-refatoracao` (o resumo está em `refatoracao-resultado-2026-11-01.md` e o texto, no Git). **Falta regerar `svg/arquitetura-atual.svg`**, ainda o de 22/10 (sem `plantuml` aqui). `fluxo-refatoracao-solid`, `inventario-constantes` e `qualidade-tipagem` ficam: o primeiro guarda as provas do RF7 e o critério 3, pendente do dono |
 
 Menções por nome a arquivos removidos que ficam de propósito, em texto histórico: o `nichos-reels-animados.md`
 (pesquisa) cita o "item 18" do `ANALISE.md`; o `analise-scripts-provisorios` cita a `analise-gaps-tecnicos`; a legenda do
