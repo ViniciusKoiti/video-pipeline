@@ -15,9 +15,9 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
 4. `narracao.pt.json` (pela skill humanizer-narracao) e `narracao.en.json`, cinco cenas, 35 a 45 s; copiar como `narracao.json` nas pastas de episódio.
 5. `content.pt.json` e `content.en.json` no molde (`safeArea: shorts`, `footer` com o ambiente, `showRatio: false`); `validate` e `inspect` do kit com cwd na pasta do JSON; corrigir rótulos longos; `review` e listar os quadros.
 6. `medicao.json` com todos os números; `vp medicao <id>-pt` e `-en` limpos; `vp traducao <id>-en` limpo. Corrija a narração ou o `medicao.json`, nunca o resultado.
-7. `shorts_tec.py voz` (Modal), `tempos`, `render` do kit nas duas pastas; o Reel usa o `content.en.json` com `host` só se a pele estiver `approved`.
+7. `vp short voz` (Modal), `tempos`, `render` do kit nas duas pastas; o Reel usa o `content.en.json` com `host` só se a pele estiver `approved`.
 8. `sfx.pt.json` e `sfx.en.json` no molde; `shorts_tec.py sfx`; `juntar --sfx` em `renders/final.mp4`; `conferir_audio.py --content --sfx` sem problema.
-9. `post.json` por saída (título provisório da pauta, origem dos números, divulgação da voz clonada, link do baixo-nivel-demos); `shorts_tec.py gate` por saída; `vp postiz upload` e `vp postiz pacote --episode` por saída; confira os ids em `vp postiz integrations`.
+9. `post.json` por saída (título provisório da pauta, origem dos números, divulgação da voz clonada, link do baixo-nivel-demos); `vp short gate` por saída; `vp postiz upload` e `vp postiz pacote --episode` por saída; confira os ids em `vp postiz integrations`.
 10. `data/rotina/AAAA-MM-DD.md`: o que foi feito, os avisos, os quadros para olhar e os comandos que faltam ao dono (`vp approve ... --step translation`, `--step preview` ×3, push, `vp postiz duvida` e `schedule` ×3).
 ## Regras
 Tudo da skill `shorts-tec` vale. Só o que a medição mostra. Não refazer o que existe com o mesmo hash; não apagar saídas. Uma execução por dia.

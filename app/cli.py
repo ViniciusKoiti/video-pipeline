@@ -27,6 +27,7 @@ from app.commands import (
     postiz,
     render,
     reopen,
+    short,
     sources,
     usage,
     voice,
@@ -172,6 +173,7 @@ HANDLERS: dict[str, Handler] = {
     "medicao": conferences.medicao,
     "numeros": numeros.run,
     "sources": sources.run,
+    "short": short.run,
     "voice": voice.run,
     "render": render.run,
     "assets": assets.run,
@@ -210,6 +212,7 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_arguments(subparsers.add_parser("export", help="o que sai do episódio para publicar (#18)"))
     metricas.add_arguments(subparsers.add_parser("metricas", help="métricas aos 7 e 28 dias (§12)"))
     music.add_arguments(subparsers.add_parser("music", help="catálogo de música de fundo (ADR 030)"))
+    short.add_arguments(subparsers.add_parser("short", help="Short de tecnologia por JSON do kit (RF7)"))
     sources.add_arguments(subparsers.add_parser("sources", help="registra uma fonte (ADR 043)"))
     usage.add_arguments(
         subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")

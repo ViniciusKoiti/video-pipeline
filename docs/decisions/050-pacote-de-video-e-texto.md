@@ -38,3 +38,9 @@ cru). O id do episódio não era validado: um erro de digitação criava uma pas
 
 O pacote do vídeo longo (`montar_episodio.py` grava `renders/final.mp4` pelo motor de render, na próxima fatia);
 exigir o marcador em episódios antigos; o texto do `description.txt` e `credits.txt` do `vp export`.
+
+## Emenda de 2026-11-01 (RF7, fatia 7a)
+
+`shorts_tec.py gate` virou `vp short gate <mp4> <post.json> --episodio ID` (`app/commands/short_gate.py`), com a
+mesma validação, o mesmo carimbo e a mesma saída. O `--episodio` agora é opção com espaço (`--episodio ID`); a
+forma `--episodio=ID` continua valendo no `argparse`.

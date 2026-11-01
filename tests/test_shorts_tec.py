@@ -35,18 +35,6 @@ def test_filtro_do_ffmpeg_atrasa_cada_fala_ate_a_cena_e_fecha_no_alvo(shorts_tec
     assert text.endswith(",aresample=48000[voz]")
 
 
-def test_fala_fica_entre_os_silencios_das_pontas(shorts_tec) -> None:
-    log = (
-        "silence_start: 0\nsilence_end: 1.028667\nsilence_start: 2.7285\nsilence_end: 2.954792\n"
-        "silence_start: 3.5685\nsilence_end: 3.92\n"
-    )
-    begin, end = shorts_tec.bounds_from_log(log, 3.92)
-    assert (begin, end) == (pytest.approx(0.9487, abs=1e-3), pytest.approx(3.6485, abs=1e-3))
-    # Sem silêncio nas pontas: o arquivo inteiro. Silêncio aberto até o fim: o fim antecipa.
-    assert shorts_tec.bounds_from_log("silence_start: 1.1\nsilence_end: 1.4\n", 3.2) == (0.0, 3.2)
-    assert shorts_tec.bounds_from_log("silence_start: 2.65\n", 3.2) == (0.0, pytest.approx(2.73))
-
-
 def test_filtro_mistura_o_audio_do_render_quando_ele_existe(shorts_tec) -> None:
     text = shorts_tec.mix_filter([0, 2000], 8.2, video_audio=True)
     assert "[0:a]aformat=sample_rates=48000:channel_layouts=mono[v0a]" in text

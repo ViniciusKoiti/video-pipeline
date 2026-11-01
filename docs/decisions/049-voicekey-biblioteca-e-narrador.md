@@ -62,3 +62,12 @@ apagar os scripts sem perder a prova. `batches`/`generate` e as constantes `CLON
 
 `Production`, `subs` e `render` (próximas fatias do RF6); a escolha do provedor da voz (`tts_final`) e o registro
 `<narração>.voz.json` continuam nos scripts.
+
+## Emenda de 2026-11-01 (RF7, fatia 7a)
+
+A voz do Short saiu do script: `vp short voz <pasta> <narracao.json> [--voz NOME]` (`app/commands/short_voz.py`)
+usa `produce_short_voice` e escreve o registro `<narração>.voz.json` (`app/pipeline/short_voice.py`); o trecho
+falado de cada WAV vem de `app/media/speech_bounds.py` (era `speech_bounds` e `bounds_from_log` do script, com
+as mesmas constantes). Os nomes dos WAVs não mudam (oráculo em `tests/legacy_voice_names.py`). A voz padrão
+continua sendo a `tts_final`; a falha de leitura do ffmpeg passou de `SystemExit` a `SpeechBoundsError`, com a
+mesma mensagem e saída 1 pelo tratamento central.

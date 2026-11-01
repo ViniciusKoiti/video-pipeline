@@ -8,20 +8,26 @@ from pathlib import Path
 import pytest
 
 from app.pipeline.models.naming import Naming
+from app.pipeline.models.narration import Narration
+from app.pipeline.models.narration_line import NarrationLine
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.short_voice import produce_short_voice
 from app.pipeline.voice import Narrator, VoiceIncomplete, VoiceLibrary
 from app.pipeline.voice_production import produce_voice
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore
-from scripts.provisorio import shorts_tec
 from tests.fakes import FakeBatchTTS, wav_duration_ms
 
 SHORT_LINES = [
-    shorts_tec.Line("gancho", "Uma lista ligada.", "hook"),
-    shorts_tec.Line(None, "Fala solta, sem cena.", "neutral"),
-    shorts_tec.Line("final", "Até a próxima.", "invite"),
+    NarrationLine(scene="gancho", text="Uma lista ligada.", delivery="hook"),
+    NarrationLine(scene=None, text="Fala solta, sem cena."),
+    NarrationLine(scene="final", text="Até a próxima.", delivery="invite"),
 ]
+
+
+def narration(lines: list[NarrationLine]) -> Narration:
+    return Narration(language="pt-BR", lines=lines)
 
 
 EP = "ep-voz"
@@ -44,27 +50,27 @@ def names(where: Path) -> list[str]:
 
 def test_the_short_voice_makes_one_wav_per_line_with_the_short_name_and_nothing_twice(tmp_path: Path) -> None:
     tts = FakeBatchTTS()
-    paths = shorts_tec.generate_voice(tts, "pt-BR", SHORT_LINES, store(tmp_path), EP)
+    paths = produce_short_voice(tts, narration(SHORT_LINES), store(tmp_path), EP)
     assert [p.name.split("-fake-ptbr-")[0] for p in paths] == ["gancho", "fora-1", "final"]
     assert all(wav_duration_ms(p) > 0 for p in paths) and len(tts.calls) == 1 and tts.closed == 1
     again = FakeBatchTTS()
-    assert shorts_tec.generate_voice(again, "pt-BR", SHORT_LINES, store(tmp_path), EP) == paths
+    assert produce_short_voice(again, narration(SHORT_LINES), store(tmp_path), EP) == paths
     assert again.calls == []
     assert again.closed == 1  # fecha também quando nada precisou ser gerado
 
 
 def test_the_short_voice_keeps_the_old_wav_when_the_new_one_fails_and_closes_the_tts(tmp_path: Path) -> None:
-    first = shorts_tec.generate_voice(FakeBatchTTS(), "pt-BR", SHORT_LINES[:1], store(tmp_path), EP)
+    first = produce_short_voice(FakeBatchTTS(), narration(SHORT_LINES[:1]), store(tmp_path), EP)
     old = first[0]
-    changed = [shorts_tec.Line("gancho", "Outra frase.", "hook")]
+    changed = narration([NarrationLine(scene="gancho", text="Outra frase.", delivery="hook")])
     library = VoiceLibrary(folder(tmp_path) / "voice", Naming.SHORT)
     probe = Narrator(FakeBatchTTS(), "pt-BR", library, lambda w: 1.0)
     new_name = probe.key(SpeechLine("gancho", "Outra frase.", "hook")).file_name(Naming.SHORT)
     failing = FakeBatchTTS(scene_errors={new_name: QuotaExhausted("fake", "cota")})
     with pytest.raises(VoiceIncomplete, match=r"1 fala\(s\) sem WAV \(gancho: quota_exhausted"):
-        shorts_tec.generate_voice(failing, "pt-BR", changed, store(tmp_path), EP)
+        produce_short_voice(failing, changed, store(tmp_path), EP)
     assert old.is_file() and failing.closed == 1  # a fala anterior segue utilizável
-    shorts_tec.generate_voice(FakeBatchTTS(), "pt-BR", changed, store(tmp_path), EP)
+    produce_short_voice(FakeBatchTTS(), changed, store(tmp_path), EP)
     assert not old.exists() and names(folder(tmp_path)) == [new_name]
 
 

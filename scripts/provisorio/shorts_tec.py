@@ -2,12 +2,7 @@
 provisório até virar comando `vp`).
 
 Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
-- `voz <pasta> <narracao.json> [--voz=<nome>]`: uma fala por linha da narração, em
-  `<pasta>/voice/<cena>-<provedor>-<hash>.wav`. A voz padrão é a do vídeo final (`tts_final`, a clonada do
-  dono no Modal, ADR 024); `--voz=kokoro` para um rascunho local. O hash cobre o texto, o provedor, o modelo,
-  a gravação de referência e a entrega: a fala só é gerada de novo quando um deles muda. Com um
-  `<pasta>/voice/glossary.json` (§9, `app/media/pronunciation.py`), a voz lê a grafia do glossário ("JSON" →
-  "jêison") e o hash cobre esse texto; a tela e a legenda ficam com a grafia da narração.
+- `voz` e `gate` viraram `vp short voz` e `vp short gate` (RF7; `app/commands/short.py`).
 - `tempos <pasta> <content.json> <narracao.json>`: escreve `<content>.voz.json` com a duração de cada cena
   esticada até a fala dela caber (`max(duração do JSON, fala + folga)`), sem encurtar nenhuma, e, nas cenas
   com a janela do apresentador, `host.speaking` com o trecho da fala, para a boca parar quando a voz para.
@@ -18,10 +13,6 @@ Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
   sobre a fala.
 - `sfx <pasta> <content.voz.json> <narracao.json> <sfx.json>`: confere o plano de efeitos e lista onde cada
   som cai, sem misturar nada.
-- `gate <mp4> <post.json> --episodio=<id>`: a pasta de gate do Short em `data/episodes/<id>/`
-  (`renders/final.mp4` e `legenda-post.txt` com título e legenda do post), para o dono carimbar o gate 4 com
-  `vp approve <id> --step preview` e o `vp postiz pacote --episode <id>` conferir a aprovação, como num
-  episódio (CLAUDE.md §5). Um id por idioma (`-pt`, `-en`): cada MP4 tem o seu gate.
 - `boca <pasta> <content.voz.json> <narracao.json> --saida=<json> [--manifesto=<sprites.json>]
   [--texto=<arquivo>]`: os dados de uma montagem em TSX com o kit: as batidas (cena, frame inicial, duração,
   trecho da fala), o envelope da boca por frame do vídeo inteiro (`app/media/envelope.py`, o mesmo do
@@ -36,17 +27,12 @@ Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
 from __future__ import annotations
 
 import json
-import os
-import re
 import subprocess
 import sys
-import time
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
@@ -54,26 +40,9 @@ from app.commands.errors import run  # noqa: E402
 from app.media.constants.loudness_constants import LoudnessConstants  # noqa: E402
 from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
-from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.pipeline.models.motion_content import MotionContent  # noqa: E402
-from app.pipeline.models.naming import Naming  # noqa: E402
-from app.pipeline.models.package_action import PackageAction  # noqa: E402
-from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.models.voiced_speech import VoicedSpeech as Speech  # noqa: E402
 from app.pipeline.motion_inputs import fit_content, load_content, load_narration, load_voiced  # noqa: E402
-from app.pipeline.package import PackagePublisher  # noqa: E402
-from app.pipeline.ports import ManifestStore  # noqa: E402
-from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
-from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
-from app.pipeline.voice_state import produce_with_state  # noqa: E402
-from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
-from app.storage.json_files import JsonFileStore  # noqa: E402
-
-# A voz clonada devolve silêncio nas pontas do WAV (até 1 s antes da fala, em 2026-10-25): a fala é o trecho
-# entre os silêncios das pontas, com uma respiração de cada lado.
-NOISE_DB = -35
-EDGE_SILENCE_S = 0.15
-BREATH_S = 0.08
 
 
 @dataclass(frozen=True)
@@ -90,46 +59,6 @@ class Line:
 def load_lines(path: Path) -> tuple[str, list[Line]]:
     narration = load_narration(path)
     return narration.language, [Line(x.scene, x.text, x.delivery or "neutral") for x in narration.lines]
-
-
-def bounds_from_log(log: str, total: float, breath: float = BREATH_S) -> tuple[float, float]:
-    """Onde a fala começa e termina, pelo `silencedetect` do ffmpeg: um silêncio que começa no zero adianta o
-    começo; um que termina no fim do arquivo antecipa o fim. Sem silêncio nas pontas, o arquivo inteiro."""
-    starts = [float(x) for x in re.findall(r"silence_start: (-?[\d.]+)", log)]
-    ends = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", log)]
-    begin, end = 0.0, total
-    for s, e in zip(starts, ends, strict=False):
-        if s <= 0.05:
-            begin = max(0.0, e - breath)
-        if e >= total - 0.05:
-            end = min(total, s + breath)
-    if len(starts) > len(ends) and starts[-1] > begin:  # silêncio aberto até o fim do arquivo
-        end = min(total, starts[-1] + breath)
-    return (begin, end) if end > begin else (0.0, total)
-
-
-def speech_bounds(path: Path) -> tuple[float, float]:
-    """A fala de um WAV, em segundos desde o início: `(começo, fim)`."""
-    result = subprocess.run(
-        [
-            "ffmpeg",
-            "-hide_banner",
-            "-nostats",
-            "-i",
-            str(path),
-            "-af",
-            f"silencedetect=noise={NOISE_DB}dB:d={EDGE_SILENCE_S}",
-            "-f",
-            "null",
-            "-",
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        raise SystemExit(f"ffmpeg não leu {path.name}: {result.stderr.strip()[-200:]}")
-    return bounds_from_log(result.stderr, duration_ms(path) / 1000)
 
 
 def mix_filter(
@@ -171,75 +100,6 @@ def mix_filter(
         f"aformat=channel_layouts=stereo,loudnorm=I={target_lufs:.0f}:TP=-1.5:LRA=11,aresample=48000[voz]"
     )
     return ";".join(parts)
-
-
-def generate_voice(
-    tts: TTSProvider, language: str, lines: list[Line], store: ManifestStore, episode_id: str
-) -> list[Path]:
-    """O WAV de cada fala, na ordem (ADR 049; nome de WAV do Short, o mesmo de sempre): só as que faltam são
-    geradas e a antiga só sai depois da nova pronta e medida. Falta de fala é `VoiceIncomplete`. O relatório
-    por cena fica no `manifest.json` da pasta (ADR 052) e o `vp status` o mostra."""
-    folder = store.path(episode_id, "")
-    voice_dir = folder / "voice"
-    voice_dir.mkdir(parents=True, exist_ok=True)
-    glossary = load_glossary(folder)
-    narrator = Narrator(
-        tts,
-        language,
-        VoiceLibrary(voice_dir, Naming.SHORT),
-        lambda wav: duration_ms(wav) / 1000,
-        lambda text: respell(text, glossary),
-    )
-    speech = [
-        SpeechLine(line.stem if line.scene else f"fora-{index}", line.text, line.delivery)
-        for index, line in enumerate(lines)
-    ]
-    with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
-        outcomes = produce_with_state(narrator, store, episode_id, speech, now=datetime.now().astimezone())
-        wavs = narrator.require(outcomes)
-    return [wavs[item.id] for item in speech]
-
-
-def cmd_voz(folder: Path, narration: Path, named: str | None) -> None:
-    from app.bootstrap import build_context
-
-    context = build_context(ROOT)
-    settings = context.settings
-    language, lines = load_lines(narration)
-    if named:
-        provider, tts = named, context.tts_named(named)
-    else:
-        provider, tts = settings.providers.tts_final or settings.providers.tts, context.tts_final
-    started = time.monotonic()
-    manifest = []
-    store = JsonFileStore(folder.parent)  # a pasta de produção é o "episódio" do estado
-    for line, wav in zip(lines, generate_voice(tts, language, lines, store, folder.name), strict=True):
-        seconds = duration_ms(wav) / 1000
-        begin, end = speech_bounds(wav)
-        manifest.append(
-            {
-                "scene": line.scene,
-                "text": line.text,
-                "delivery": line.delivery,
-                "wav": f"voice/{wav.name}",
-                "seconds": seconds,
-                "speech": [round(begin, 3), round(end, 3)],
-            }
-        )
-        print(f"{line.stem:16s} {seconds:5.2f} s (fala {begin:.2f}–{end:.2f})  {wav.name}")
-    out = folder / f"{narration.stem}.voz.json"
-    out.write_text(
-        json.dumps(
-            {"language": language, "provider": provider, "lines": manifest}, ensure_ascii=False, indent=2
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-    total = sum(item["speech"][1] - item["speech"][0] for item in manifest)
-    print(
-        f"voz: {len(lines)} fala(s), {total:.1f} s de fala, {time.monotonic() - started:.0f} s; "
-        f"registro em {out.name}"
-    )
 
 
 def voiced(folder: Path, narration: Path) -> dict[str, Speech]:
@@ -421,23 +281,6 @@ def cmd_boca(
     )
 
 
-def cmd_gate(video: Path, post: Path, episode_id: str) -> None:
-    """O pacote do gate 4 (`app.pipeline.package`, ADR 050): valida o vídeo e o post antes de escrever, recusa
-    trocar o que o gate 4 já aprovou e só marca o pacote completo depois do último arquivo."""
-    from app.bootstrap import build_context
-
-    context = build_context(ROOT)
-    publisher = PackagePublisher(
-        context.store, ReviewWriteGuard(context.store, context.review), lambda mp4: duration_ms(mp4) / 1000
-    )
-    action = publisher.publish(episode_id, video, post)
-    final = context.store.path(episode_id, "renders/final.mp4")
-    done = "já estava igual" if action is PackageAction.UNCHANGED else "pacote montado"
-    print(f"gate: {final} ({duration_ms(final) / 1000:.1f} s) e legenda-post.txt ({done}); carimbe com:")
-    print(f'  vp approve {episode_id} --step preview --notes "assisti"')
-    print(f"  vp postiz pacote {post} --episode {episode_id}")
-
-
 def main() -> None:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = {
@@ -448,11 +291,7 @@ def main() -> None:
     if not args:
         raise SystemExit(__doc__)
     verb, rest = args[0], args[1:]
-    if verb == "voz" and len(rest) == 2:
-        cmd_voz(
-            Path(rest[0]), Path(rest[1]), flags.get("--voz") if isinstance(flags.get("--voz"), str) else None
-        )
-    elif verb == "tempos" and len(rest) == 3:
+    if verb == "tempos" and len(rest) == 3:
         cmd_tempos(Path(rest[0]), Path(rest[1]), Path(rest[2]))
     elif verb == "juntar" and len(rest) == 4 and isinstance(flags.get("--saida"), str):
         plan = flags.get("--sfx")
@@ -462,8 +301,6 @@ def main() -> None:
         )
     elif verb == "sfx" and len(rest) == 4:
         cmd_sfx(Path(rest[0]), Path(rest[1]), Path(rest[2]), Path(rest[3]))
-    elif verb == "gate" and len(rest) == 2 and isinstance(flags.get("--episodio"), str):
-        cmd_gate(Path(rest[0]), Path(rest[1]), flags["--episodio"])
     elif verb == "boca" and len(rest) == 3 and isinstance(flags.get("--saida"), str):
         manifest = flags.get("--manifesto")
         text = flags.get("--texto")

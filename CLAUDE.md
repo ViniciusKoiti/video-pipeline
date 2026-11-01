@@ -349,8 +349,8 @@ lacuna fica registrada.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Nome do WAV e narrador (ADR 049, `app/pipeline/voice.py`):** `VoiceKey` + `VoiceLibrary` + `Narrator`. Os nomes de
   hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs já gerados fica
-  como está** (decisão do dono, 2026-11-01; os valores da entrega clonada não entram no nome). Fala nova só substitui a antiga depois de pronta e medida. `vp voice` (`produce_voice`, em `app/pipeline/voice_production.py`) e `shorts_tec.py` geram a voz por
-  `Narrator`, e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
+  como está** (decisão do dono, 2026-11-01; os valores da entrega clonada não entram no nome). Fala nova só substitui a antiga depois de pronta e medida. `vp voice` (`produce_voice`, em `app/pipeline/voice_production.py`) e `vp short voz` (`produce_short_voice`, em
+  `app/pipeline/short_voice.py`) geram a voz por `Narrator`, e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
 - **Estado da voz (ADR 052, `app/pipeline/voice_state.py`):** cada rodada de voz grava no `manifest.json` um registro por
   fala (pronta, ou pendente com o motivo); o `vp status` lista as pendências e um WAV que sumiu. Retomar é rodar de novo:
   o cache são os nomes dos arquivos.
@@ -359,7 +359,7 @@ lacuna fica registrada.
   `app/pipeline/episode_build.py` e as legendas de `app/pipeline/caption_production.py`. Montagem incompleta (WAV ou mídia ausente) não chega ao motor; o render
   final exige os ativos aprovados (a prévia, não). O gate 4 aprovado recusa render por cima do MP4, do `episode.json`
   e do `captions.srt` carimbados (reabrir libera); prévia e final são arquivos distintos.
-- **Pacote do gate 4 (ADR 050, `app/pipeline/package.py`):** `shorts_tec.py gate` valida o MP4 e o `post.json` antes
+- **Pacote do gate 4 (ADR 050, `app/pipeline/package.py`):** `vp short gate` valida o MP4 e o `post.json` antes
   de escrever, recusa trocar o que o gate 4 aprovou (antes da primeira cópia; reabrir libera) e só vale completo: o
   marcador `renders/pacote.json` fica `writing` até o último arquivo. Pacote interrompido bloqueia o `vp postiz`.
 - **Porta de voz (ADR 041):** cada TTS tem `identity` (chave do cache, no nome do WAV; `gemini` é alias de
@@ -416,7 +416,7 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `render`, `traducao`, `medicao`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]` faz voz, tempo dos planos, legendas, `episode.json` e render (RF7). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
+`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `render`, `traducao`, `medicao`, `short`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]` faz voz, tempo dos planos, legendas, `episode.json` e render (RF7). `vp short voz <pasta> <narracao.json> [--voz NOME]` gera a fala de cada linha da narração de um Short e `vp short gate <mp4> <post.json> --episodio ID` monta o pacote do gate 4 dele (skill `shorts-tec`, ADR 048 e 050; RF7; `tempos`, `sfx`, `juntar` e `boca` seguem em `shorts_tec.py`). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
 contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
 medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
@@ -556,8 +556,8 @@ Reels; `plano-de-imagens` entre os gates 2 e 3 (o dono valida o plano antes de q
 produz a arte entre os gates 3 e 4, partindo do conceito planejado na pauta e do canal de referência;
 `componentes-do-kit` ao mexer no template (§14); a rotina do Short diário (ADR 036, proposta; timer desligado e a skill `short-diario` ainda por criar, pelo dono):
 um Short da série até o pacote do Postiz, sem gates; `shorts-tec` para um Short ou teaser de uma ferramenta do dono,
-montado por JSON no `motion-video` do kit com o dono numa janela e a voz clonada (voz, tempos e junção em
-`scripts/provisorio/shorts_tec.py`; primeiro caso: o teaser do motion-kit, 2026-10-25).
+montado por JSON no `motion-video` do kit com o dono numa janela e a voz clonada (voz e pacote do gate em `vp short`; tempos, SFX e
+junção ainda em `scripts/provisorio/shorts_tec.py`; primeiro caso: o teaser do motion-kit, 2026-10-25).
 
 **Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
 unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),

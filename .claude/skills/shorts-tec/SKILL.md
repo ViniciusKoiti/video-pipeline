@@ -51,7 +51,7 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
    uma decisão escrita: `host: false` na cena, janela menor, ou aceitar o encolhimento.
 4. **Review.** `review` do JSON e os quadros de leitura de todas as cenas abertos. Pronto quando cada cena foi
    conferida contra três defeitos: animação cortada antes do fim, janela sobre o conteúdo e texto sobre o rodapé.
-5. **A voz.** `shorts_tec.py voz <pasta> narracao.<idioma>.json` gera as falas com a voz do vídeo final (a
+5. **A voz.** `vp short voz <pasta> narracao.<idioma>.json` (`--voz NOME` troca a voz) gera as falas com a voz do vídeo final (a
    clonada do dono no Modal, ADR 024). É serviço externo: só com o pedido do dono na sessão, e a sonda
    `cpu_probe()` antes. Pronto quando o `narracao.<idioma>.voz.json` lista um WAV por linha e o dono ouviu.
 6. **Tempos, render e junção.** `shorts_tec.py tempos` estica as cenas até a fala caber; o `render` do kit
@@ -65,7 +65,7 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
 7. **Os posts.** Rascunhos no formato do Postiz para cada canal e idioma (`docs/postiz.md`), com data, mídia e
    link como lacunas explícitas até existir o que preencher, e a hipótese a medir aos 7 e 28 dias (CLAUDE.md
    §4). Pronto quando o `README.md` da pasta lista o que falta antes do `pacote`.
-8. **Os gates são do dono, e ficam no auto-play.** `shorts_tec.py gate <mp4> <post.json> --episodio=<id>-<idioma>`
+8. **Os gates são do dono, e ficam no auto-play.** `vp short gate <mp4> <post.json> --episodio <id>-<idioma>`
    monta a pasta de gate em `data/episodes/` (o render e `legenda-post.txt`); o dono assiste e carimba com
    `vp approve <id>-<idioma> --step preview`, que grava no `review.json` dele com o hash do MP4 e da legenda.
    O `vp postiz pacote --episode <id>-<idioma>` lê essa aprovação, e a dúvida cega a encontra. Pronto quando

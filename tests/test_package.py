@@ -263,7 +263,7 @@ def test_the_episode_lock_is_exclusive_for_the_package(env: Env) -> None:
     assert "renders/final.mp4" not in env.files()
 
 
-# --- O script `shorts_tec.py gate` --------------------------------------------------------------------------
+# --- O comando `vp short gate` ------------------------------------------------------------------------------
 
 
 def test_the_gate_command_builds_the_package_and_stops_with_a_message_when_approved(
@@ -271,20 +271,24 @@ def test_the_gate_command_builds_the_package_and_stops_with_a_message_when_appro
 ) -> None:
     from types import SimpleNamespace
 
+    from app.cli import HANDLERS, build_parser
     from app.commands.errors import run
-    from scripts.provisorio import shorts_tec
 
     context = SimpleNamespace(store=env.store, review=env.review)
-    monkeypatch.setattr("app.bootstrap.build_context", lambda root: context)
-    monkeypatch.setattr(shorts_tec, "duration_ms", lambda path: 12_500)
-    assert run("gate", lambda: shorts_tec.cmd_gate(env.video, env.post, EP)) == 0
+    monkeypatch.setattr("app.commands.short_gate.duration_ms", lambda path: 12_500)
+    argv = ["short", "gate", str(env.video), str(env.post), "--episodio", EP]
+
+    def gate() -> int:
+        return run("vp short", lambda: HANDLERS["short"](build_parser().parse_args(argv), context))  # type: ignore[arg-type]
+
+    assert gate() == 0
     out = capsys.readouterr().out
     assert "gate:" in out and "(12.5 s)" in out and "pacote montado" in out
     assert f"vp approve {EP} --step preview" in out and f"vp postiz pacote {env.post} --episode {EP}" in out
-    assert run("gate", lambda: shorts_tec.cmd_gate(env.video, env.post, EP)) == 0
+    assert gate() == 0
     assert "já estava igual" in capsys.readouterr().out
     env.approve()
     env.video.write_bytes(b"video-v2")
-    assert run("gate", lambda: shorts_tec.cmd_gate(env.video, env.post, EP)) == 1
+    assert gate() == 1
     assert "carimbado pelo gate de preview" in capsys.readouterr().err
     assert env.path("renders/final.mp4").read_bytes() == b"video-v1"
