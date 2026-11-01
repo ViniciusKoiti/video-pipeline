@@ -17,7 +17,9 @@ class ReviewLog(Model):
         self, step: Step, *, scene_id: str | None = None, asset_id: str | None = None
     ) -> ReviewEntry | None:
         matches = [e for e in self.entries if (e.step, e.scene_id, e.asset_id) == (step, scene_id, asset_id)]
-        return max(matches, key=lambda e: e.at) if matches else None
+        # O log só acrescenta: a posição é a ordem real das decisões, mesmo com o relógio recuado (WSL) ou
+        # duas decisões no mesmo segundo (o CLI grava sem microssegundos).
+        return matches[-1] if matches else None
 
     def is_approved(
         self,

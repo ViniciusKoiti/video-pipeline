@@ -30,10 +30,6 @@ def _new_arguments(parser: argparse.ArgumentParser) -> None:
 def _render_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--preview", action="store_true", help="prévia em 720p")
 
-def _reopen_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--step", required=True, help="etapa aprovada a reabrir")
-    parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
-
 def _decision_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--step",
@@ -44,6 +40,10 @@ def _decision_arguments(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--asset", help="id do ativo, na etapa assets")
     parser.add_argument("--reviewer", help="quem decide (padrão: VP_REVIEWER, senão git config user.name)")
+
+def _reopen_arguments(parser: argparse.ArgumentParser) -> None:
+    _decision_arguments(parser)
+    parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
 
 def _approve_arguments(parser: argparse.ArgumentParser) -> None:
     _decision_arguments(parser)

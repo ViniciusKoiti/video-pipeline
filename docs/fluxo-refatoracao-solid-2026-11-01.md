@@ -17,8 +17,8 @@ continuam sendo decisões humanas, registradas em `review.json`.
 **Estado atual:** modelos e constantes foram separados por área (ADRs 037–038), com guardas no gate:
 311 constantes em 54 classes, tipagem estrita sem erros em 362 arquivos e 958 testes passando (6 lentos
 fora pela configuração existente). A baseline de tamanho caiu para 10 arquivos e 9 funções. RF0 ainda
-não está fechado: o lint global reprova dois `B006` preexistentes em demonstrações locais de `renders/`,
-identificados no gate de qualidade. O próximo gate funcional é RF1, após resolver essa pendência.
+foi fechado em 2026-11-01: os dois `B006` eram demos de Shorts que mostram o bug de propósito e ganharam
+exceção pontual no ruff. RF1 foi implementado no mesmo dia (ADR 039); o próximo gate funcional é RF2.
 
 ## 1. Sequência e situação
 
@@ -35,8 +35,8 @@ flowchart TD
 
 | Gate | Gaps cobertos | Situação atual |
 |---|---|---|
-| RF0 | G12; prevenção da dependência de G09 | Guardas de arquitetura, modelos, constantes, tamanho e tipagem implantadas; lint global pendente |
-| RF1 | G01; fronteira de proteção de G02 | Pendente |
+| RF0 | G12; prevenção da dependência de G09 | Fechado em 2026-11-01: arquitetura, modelos, constantes, tamanho, tipagem e lint verdes |
+| RF1 | G01; fronteira de proteção de G02 | Implementado em 2026-11-01 (ADR 039); ligar os escritores concretos fica para RF5/RF6 |
 | RF2 | G03; recuperação de G02 | Pendente |
 | RF3 | G04–G05 | Pendente |
 | RF4 | G06–G09 | Pendente |
@@ -82,7 +82,7 @@ o histórico para fingir que a execução anterior nunca ocorreu.
 - [x] Mypy estrito integrado ao comando único; linha de base dos erros de tipos registrada.
 - [x] Modelos por área, uma classe por arquivo, com compatibilidade dos imports existentes (ADR 037).
 - [x] Constantes por área, atributos Final e coleções imutáveis em profundidade, verificados no gate (ADR 038).
-- [ ] Checks globais inteiramente verdes, incluindo lint e tipagem; registrar qualquer impedimento antes de avançar.
+- [x] Checks globais inteiramente verdes, incluindo lint e tipagem (2026-11-01).
 
 Comando rápido: `uv run pytest tests/test_architecture.py tests/test_tamanho_modulos.py -q`.
 O hook depende de `git config core.hooksPath .githooks` no clone; a presença do arquivo não ativa essa configuração.
@@ -92,16 +92,18 @@ O hook depende de `git config core.hooksPath .githooks` no clone; a presença do
 **Entrega:** uma regra de proteção consultada pelos escritores, com `review.json` como autoridade e
 reabertura explícita; nenhuma migração de episódio real para provar o mecanismo.
 
-- [ ] Aprovar pelo CLI e tentar alterar fontes/fichas, roteiro e saídas do gate 4 recusa antes da escrita.
-- [ ] A fronteira de proteção também pode ser consultada antes de substituir binários; integração dos
-  escritores concretos será demonstrada em RF5/RF6.
-- [ ] Status de topo aprovado dos ativos continua protegido, incluindo ativos reaproveitados.
-- [ ] Reabertura tem motivo e autor registrados, libera apenas o alvo solicitado e não apaga decisões antigas.
-- [ ] Alteração de `asset_id` no gate 3 e bloco numérico derivado mantêm as exceções já definidas para o gate 2.
-- [ ] Decisões existentes e hashes legados continuam reconhecidos; nenhuma segunda autoridade de aprovação.
+- [x] Aprovar pelo CLI e tentar alterar fontes/fichas, roteiro e saídas do gate 4 recusa antes da escrita.
+- [x] A fronteira de proteção também pode ser consultada antes de substituir binários (`check` sem candidato);
+  integração dos escritores concretos será demonstrada em RF5/RF6.
+- [x] Status de topo aprovado dos ativos continua protegido, incluindo ativos reaproveitados.
+- [x] Reabertura tem motivo e autor registrados, libera apenas o alvo solicitado e não apaga decisões antigas.
+- [x] Alteração de `asset_id` no gate 3 e bloco numérico derivado mantêm as exceções já definidas para o gate 2.
+- [x] Decisões existentes e hashes legados continuam reconhecidos; nenhuma segunda autoridade de aprovação.
 
-**Evidência:** ampliar `tests/test_gates.py`, `tests/test_state.py` e testes do CLI; incluir aprovação pelo
-caminho público seguida da tentativa de escrita. Fechar o contrato de reabertura antes de ligar novos escritores.
+**Evidência:** `tests/test_protection.py` (aprovação pelo `main` do `vp` seguida da tentativa de escrita, hash
+legado, reabertura, ativo, relógio recuado) e `tests/test_state.py`. Ressalvas: a recusa vale para quem consulta
+o `WriteGuard`, e hoje só `write_output` o faz (ligar os escritores concretos é RF5/RF6); o gate 4 foi
+provado pelo `check` direto, e só o gate 1 também pelo `write_output` de ponta a ponta.
 
 ### RF2 — Estado e retomada
 
@@ -214,5 +216,7 @@ A guarda de arquitetura foi ampliada em `tests/test_architecture.py`; o gate de 
 preservado. RF1–RF7 continuam pendentes; escrever seus critérios não os implementa. A linha de base e os
 resultados locais estão no [registro do gate de qualidade](gate-qualidade.md).
 
-O próximo trabalho da sequência é RF1: reproduzir aprovação pelo CLI, recusar escrita antes de alterar o
-arquivo e fechar a reabertura, mantendo decisões antigas compatíveis.
+RF1 foi entregue em seguida (ADR 039): `ReviewWriteGuard` sobre o `review.json`, `reopen_gate` e `vp reopen`,
+`ReviewLog.latest` pela posição no log e `default_reviewer` em `app/commands/reviewer.py` (o `cli.py` encolheu de
+318 para 301 linhas de código e a baseline foi regenerada). O próximo trabalho da sequência é RF2: estado,
+falha parcial e retomada.

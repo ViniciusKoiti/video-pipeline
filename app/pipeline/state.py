@@ -21,7 +21,7 @@ from app.pipeline.models.episode_state import EpisodeState as EpisodeState
 from app.pipeline.models.step_result import StepResult as StepResult
 from app.pipeline.models.step_run import StepRun as StepRun
 from app.pipeline.models.step_state import StepState as StepState
-from app.pipeline.ports import ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate
+from app.pipeline.ports import ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate, WriteGuard
 from app.pipeline.schemas import Decision, ReviewEntry, Status, Step
 from app.providers.errors import ProviderError
 
@@ -122,10 +122,14 @@ def run_step(
         return StepRun(Action.RUN, done)
 
 
-def write_output(store: ManifestStore, episode_id: str, name: str, manifest: BaseModel) -> None:
-    """Escreve um manifesto de saída, recusando os que pertencem a etapa aprovada (§2.6)."""
+def write_output(
+    store: ManifestStore, episode_id: str, name: str, manifest: BaseModel, *, guard: WriteGuard
+) -> None:
+    """Escreve um manifesto de saída, recusando o que uma aprovação protege (§2.6): a etapa aprovada no
+    manifest.json ou o que um gate carimbou no review.json (`guard`). Quem chama já segura o lock."""
     if name in load_state(store, episode_id).protected_outputs:
         raise ImmutableManifest(f"{episode_id}/{name} pertence a uma etapa aprovada; reabra antes (§2.6)")
+    guard.check(episode_id, name, (manifest.model_dump_json(indent=2) + "\n").encode())
     store.write(episode_id, name, manifest)
 
 

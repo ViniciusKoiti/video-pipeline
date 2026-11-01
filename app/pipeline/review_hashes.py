@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
@@ -14,9 +15,14 @@ def content_hash(paths: list[Path], *, base: Path) -> str:
     """Como `compute_input_hash`, sem o que é derivado ou escolhido depois do roteiro: no `scenes.json`, todo
     `asset_id` conta como `null`; no `outline.md`, o bloco de números gerado (`vp numeros`) não conta. Um
     roteiro sem imagens e sem bloco tem o mesmo hash de antes."""
+    return hash_contents({path: path.read_bytes() for path in paths}, base=base)
+
+
+def hash_contents(contents: Mapping[Path, bytes], *, base: Path) -> str:
+    """O mesmo hash, sobre o conteúdo informado: confere o que uma escrita mudaria antes de gravar."""
     digest = hashlib.sha256()
-    for path in sorted(paths):
-        data = path.read_bytes()
+    for path in sorted(contents):
+        data = contents[path]
         if path.name == "scenes.json":
             data = Constants.ASSET_ID.sub(rb"\1null", data)
         elif path.name == "outline.md":

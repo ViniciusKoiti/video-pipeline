@@ -75,7 +75,8 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
 5. **Revisão humana obrigatória** nos 4 gates: tema/fontes, roteiro, ativos/direitos, prévia/descrição.
    Score de IA não aprova direitos nem autenticidade histórica.
 6. **Arquivos com `review_status: approved` são imutáveis para o código.** Nova execução reutiliza,
-   nunca sobrescreve.
+   nunca sobrescreve. O que um gate aprovado carimba também (ADR 039): a proteção sai do `review.json` e só
+   `vp reopen --step S --reason ...` a libera, para aquele alvo.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
    multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
@@ -190,7 +191,8 @@ original de 2026-09-26 está em `docs/pesquisa/pipeline-plano-2026-09-26.mermaid
 - Chave de cache: `(episode_id, step, input_hash)`. O `input_hash` cobre o conteúdo das entradas **e** os
   parâmetros que mudam o resultado (modelo, voz, versão do motor). Hash igual = reutiliza a saída; hash
   diferente = reexecuta, **exceto** etapa `approved`: essa nunca é refeita nem sobrescrita sem
-  `vp reopen <id> --step <s> --reason "..."`, registrado no `review.json` (§2.6).
+  `vp reopen <id> --step <s> --reason "..."`, registrado no `review.json` (§2.6; hoje só nas etapas com gate:
+  `sources`, `script`, `assets` com `--asset`, `translation` e `preview`, ADR 039).
 - Uma execução por episódio de cada vez: trava em `data/episodes/<id>/.lock`.
 - Invalidação: trocar uma imagem invalida **só** montagem e prévia; alterar texto narrado invalida voz do bloco,
   timing, legendas e render; alterar fonte invalida roteiro e tudo abaixo. Erros de rede, cota ou licença param a
@@ -368,13 +370,13 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `status`, `numeros`, `traducao`, `medicao`, `postiz` e `usage`. `vp traducao <id>` confere uma pasta de tradução
+`reject`, `reopen`, `status`, `numeros`, `traducao`, `medicao`, `postiz` e `usage`. `vp traducao <id>` confere uma pasta de tradução
 contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
 medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
 do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o
-roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
+roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
 saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem fonte, voz e render
 até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
 comando com subcomandos próprios vira módulo em `app/commands/` com `add_arguments` e `run`, como o `postiz`. Cada

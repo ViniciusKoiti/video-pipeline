@@ -226,8 +226,8 @@ def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> li
             step,
             asset,
             log.latest(step, asset_id=asset),
-            _current(store, episode_id, step, asset),
-            _legacy(store, episode_id, step),
+            current_hash(store, episode_id, step, asset),
+            legacy_hash(store, episode_id, step),
         )
         for step, asset in targets
     ]
@@ -278,14 +278,14 @@ def _approved(
         raise GateError(f"{asset_id}: {problems}") from None
 
 
-def _current(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str | None:
+def current_hash(store: ManifestStore, episode_id: str, step: Step, asset: str | None = None) -> str | None:
     try:
-        return gate_hash(store, episode_id, step, asset_id)
+        return gate_hash(store, episode_id, step, asset)
     except GateError:
         return None
 
 
-def _legacy(store: ManifestStore, episode_id: str, step: Step) -> str | None:
+def legacy_hash(store: ManifestStore, episode_id: str, step: Step) -> str | None:
     """O hash dos arquivos inteiros, como era gravado antes (decisões antigas continuam valendo)."""
     names = Constants.GATE_FILES.get(step)
     paths = [store.path(episode_id, name) for name in names or ()]

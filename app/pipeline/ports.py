@@ -69,6 +69,16 @@ class ReviewGate(Protocol):
     def log(self, episode_id: str) -> ReviewLog: ...
 
 
+class WriteGuard(Protocol):
+    """Regra única de proteção de escrita (§2.6), consultada antes de gravar ou de substituir um arquivo.
+
+    `candidate` é o conteúdo que seria gravado: uma escrita que não muda o que o gate carimbou passa; sem ele
+    (troca de binário), qualquer alteração de arquivo carimbado é recusada. Violação → `ImmutableManifest`.
+    """
+
+    def check(self, episode_id: str, name: str, candidate: bytes | None = None) -> None: ...
+
+
 class Context(Protocol):
     """Tudo o que uma etapa pode usar, passado explicitamente (sem estado global)."""
 

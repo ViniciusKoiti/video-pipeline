@@ -9,8 +9,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
-import subprocess
 import sys
 from collections.abc import Callable, Sequence
 from datetime import date, datetime
@@ -18,9 +16,10 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import postiz, usage
+from app.commands import postiz, reopen, usage
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.models.command import Command as Command
+from app.commands.reviewer import default_reviewer
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode, episode_assets
 from app.pipeline.constants.numbers_constants import NumbersConstants
@@ -57,7 +56,7 @@ from app.pipeline.schemas import (
 )
 from app.pipeline.translation import translation_problems
 from app.render.remotion import region_codes
-from app.settings import read_dotenv, speech_chars_per_second
+from app.settings import speech_chars_per_second
 from app.settings.constants.settings_constants import SettingsConstants
 
 Handler = Callable[[argparse.Namespace, Context], int]
@@ -127,7 +126,7 @@ def _decide(
             args.episode_id,
             Step(args.step),
             decision,
-            reviewer=args.reviewer or _default_reviewer(),
+            reviewer=args.reviewer or default_reviewer(project_root(Path.cwd())),
             now=lambda: datetime.now().astimezone().replace(microsecond=0),
             asset_id=args.asset,
             notes=notes,
@@ -141,28 +140,6 @@ def _decide(
         f"{CliConstants.DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})"
     )
     return 0
-
-
-def _default_reviewer() -> str:
-    """`VP_REVIEWER` do ambiente; senão o nome do git, com aviso, porque ele vai assinar a decisão do gate."""
-    root = project_root(Path.cwd())
-    name = (os.environ.get("VP_REVIEWER") or read_dotenv(root / ".env").get("VP_REVIEWER", "")).strip()
-    if name:
-        return name
-    name = _git_user()
-    print(
-        f"vp: decisão assinada como '{name}' (git config user.name); "
-        "use --reviewer ou VP_REVIEWER para assinar com o seu nome",
-        file=sys.stderr,
-    )
-    return name
-
-
-def _git_user() -> str:
-    result = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True, check=False)
-    if not result.stdout.strip():
-        raise SystemExit("vp: informe --reviewer (git config user.name está vazio)")
-    return result.stdout.strip()
 
 
 def _medicao(args: argparse.Namespace, context: Context) -> int:
@@ -317,6 +294,7 @@ HANDLERS: dict[str, Handler] = {
     "check": _check,
     "approve": _approve,
     "reject": _reject,
+    "reopen": reopen.run,
     "status": _status,
     "checagem": _checagem,
     "traducao": _traducao,

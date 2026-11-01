@@ -44,7 +44,6 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
         (["new", "pilot-001", "--topic", "Greely expedition"], 12),
         (["script", "pilot-001"], 27),
         (["render", "pilot-001", "--preview"], 13),
-        (["reopen", "pilot-001", "--step", "script", "--reason", "refazer"], 12),
     ],
 )
 def test_stub_points_to_roadmap_step(argv: list[str], step: int, capsys: pytest.CaptureFixture[str]) -> None:

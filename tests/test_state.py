@@ -9,6 +9,7 @@ import pytest
 
 from app.pipeline.constants.state_constants import StateConstants
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
+from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import SourcesManifest, Status, Step
 from app.pipeline.state import (
     Action,
@@ -47,11 +48,12 @@ class Counter:
 
     def __init__(self, store: JsonFileStore, needs_review: bool = True) -> None:
         self.store, self.needs_review, self.calls = store, needs_review, 0
+        self.guard = ReviewWriteGuard(store, InMemoryReviewGate())
 
     def __call__(self) -> StepResult:
         self.calls += 1
         sources = SourcesManifest.model_validate_json((FIXTURE / "sources.json").read_text())
-        write_output(self.store, EP, "sources.json", sources)
+        write_output(self.store, EP, "sources.json", sources, guard=self.guard)
         return StepResult(outputs=["sources.json"], needs_review=self.needs_review)
 
 
@@ -133,7 +135,7 @@ def test_approved_output_is_never_overwritten(store: JsonFileStore) -> None:
         run_step(store, EP, Step.SOURCES, "sha256:v2", action, now=clock)
     sources = SourcesManifest.model_validate_json((FIXTURE / "sources.json").read_text())
     with pytest.raises(ImmutableManifest):  # nem escrita direta no arquivo aprovado
-        write_output(store, EP, "sources.json", sources)
+        write_output(store, EP, "sources.json", sources, guard=ReviewWriteGuard(store, review))
     assert action.calls == 1
     assert review.log(EP).entries[-1].input_hash == "sha256:v1"
 
