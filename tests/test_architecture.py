@@ -12,11 +12,13 @@ import pytest
 APP = Path(__file__).resolve().parents[1] / "app"
 
 FUNCTIONS = sorted(
-    p.name for p in (APP / "providers").iterdir() if p.is_dir() and p.name not in {"__pycache__", "models"}
+    p.name
+    for p in (APP / "providers").iterdir()
+    if p.is_dir() and p.name not in {"__pycache__", "models", "constants"}
 )
 # app.providers.<função>.<adapter> ou app.render.<motor>, exceto os módulos base (e o que vem deles).
 CONCRETE_ADAPTER = re.compile(
-    rf"^app\.(providers\.({'|'.join(FUNCTIONS)})|render|storage)\.(?!base(\.|$))[a-z_]"
+    f"^app\\.(providers\\.({'|'.join(FUNCTIONS)})|render|storage)\\.(?!base(\\.|$))[a-z_]"
 )
 COMPOSITION = ("app.bootstrap", "app.cli")
 HEAVY = {"kokoro", "torch", "soundfile", "misaki", "spacy"}
@@ -48,13 +50,13 @@ def in_package(module: str, roots: tuple[str, ...]) -> bool:
 def violations(module: str, imports: set[str]) -> list[str]:
     problems = []
     for name in sorted(imports):
-        concrete = CONCRETE_ADAPTER.match(name) and "models" not in name.split(".")
+        concrete = CONCRETE_ADAPTER.match(name) and not {"models", "constants"} & set(name.split("."))
         if in_package(module, ("app.pipeline",)):
             if concrete or in_package(name, COMPOSITION) or name.split(".")[0] in HEAVY:
                 problems.append(f"{module} importa {name}: o pipeline só conhece portas")
         elif in_package(module, ("app.providers", "app.render")):
             if in_package(name, ("app.pipeline",)) and not in_package(
-                name, ("app.pipeline.schemas", "app.pipeline.models")
+                name, ("app.pipeline.schemas", "app.pipeline.models", "app.pipeline.constants")
             ):
                 problems.append(f"{module} importa {name}: adapters só usam models ou schemas")
             if in_package(name, (*COMPOSITION, "app.settings")):
@@ -64,7 +66,9 @@ def violations(module: str, imports: set[str]) -> list[str]:
         if (
             in_package(module, ("app.media",))
             and in_package(name, ("app.pipeline",))
-            and not in_package(name, ("app.pipeline.schemas", "app.pipeline.models"))
+            and not in_package(
+                name, ("app.pipeline.schemas", "app.pipeline.models", "app.pipeline.constants")
+            )
         ):
             problems.append(f"{module} importa {name}: mídia só usa models ou schemas")
     return problems
@@ -102,10 +106,12 @@ def test_checker_allows_ports_and_schemas() -> None:
 
 
 @pytest.mark.parametrize("module", ["app.pipeline.voice", "app.media.host", "app.providers.tts.kokoro"])
-def test_checker_allows_data_models_from_other_areas(module: str) -> None:
+def test_checker_allows_models_and_constants_from_other_areas(module: str) -> None:
     assert violations(module, {
         "app.pipeline.models.scene", "app.providers.tts.models.speech",
         "app.render.models.target_spec",
+        "app.pipeline.constants.schemas_constants", "app.providers.tts.constants.kokoro_constants",
+        "app.render.constants.ffmpeg_constants",
     }) == []
 
 

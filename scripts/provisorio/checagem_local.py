@@ -25,8 +25,9 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import build_context  # noqa: E402
-from app.pipeline.bench import CPU_PROBE_SLOW_S, cpu_probe  # noqa: E402
+from app.pipeline.bench import cpu_probe  # noqa: E402
 from app.pipeline.checagem_local import build_cases, load_prompt, run, score  # noqa: E402
+from app.pipeline.constants.bench_constants import BenchConstants  # noqa: E402
 
 
 def main() -> None:
@@ -40,8 +41,10 @@ def main() -> None:
     args = parser.parse_args()
 
     probe = cpu_probe()
-    if probe > CPU_PROBE_SLOW_S:
-        raise SystemExit(f"CPU limitada (sonda {probe:.2f} s, limite {CPU_PROBE_SLOW_S} s): feche os apps")
+    if probe > BenchConstants.CPU_PROBE_SLOW_S:
+        raise SystemExit(
+            f"CPU limitada (sonda {probe:.2f} s, limite {BenchConstants.CPU_PROBE_SLOW_S} s): feche os apps"
+        )
     context = build_context(ROOT)
     episode_dir = context.settings.data_dir / "episodes" / args.episode_id
     cases = build_cases(episode_dir, per_kind=args.por_tipo, real=args.real, seed=args.semente)

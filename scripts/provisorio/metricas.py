@@ -32,9 +32,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.pipeline.constants.metrics_constants import MetricsConstants  # noqa: E402
+from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
 from app.pipeline.metrics import (  # noqa: E402
-    PUBLICATIONS_DIR,
-    TABLE_FILE,
     all_metrics,
     load_metrics,
     metrics_path,
@@ -47,7 +47,6 @@ from app.pipeline.metrics import (  # noqa: E402
     write_table,
 )
 from app.pipeline.schemas import (  # noqa: E402
-    WINDOW_DAYS,
     AudienceRequest,
     MetricsReading,
     PublicationMetrics,
@@ -139,7 +138,7 @@ def pendentes(args: argparse.Namespace, data_dir: Path) -> int:
 def tabela(args: argparse.Namespace, data_dir: Path) -> int:
     items = [metrics for _, metrics in all_metrics(data_dir)]
     rows = table_rows(items)
-    out = args.saida or data_dir / PUBLICATIONS_DIR / TABLE_FILE
+    out = args.saida or data_dir / MetricsConstants.PUBLICATIONS_DIR / MetricsConstants.TABLE_FILE
     write_table(out, rows)
     print(f"{out}: {len(items)} publicação(ões), {len(rows)} linha(s)")
     return 0
@@ -165,7 +164,7 @@ def main() -> int:
 
     p = sub.add_parser("ler", help="grava a leitura de uma janela")
     p.add_argument("id")
-    p.add_argument("janela", choices=list(WINDOW_DAYS))
+    p.add_argument("janela", choices=list(SchemasConstants.WINDOW_DAYS))
     p.add_argument("--read-at", type=date.fromisoformat, help="padrão: hoje")
     for name in ("views", "likes", "shares", "comments", "saves", "impressions", "inscritos"):
         p.add_argument(f"--{name}", type=int)

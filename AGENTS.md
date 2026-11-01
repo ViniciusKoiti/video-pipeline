@@ -9,6 +9,12 @@ Modelos de dados de todos os fluxos ficam em `app/<área>/models/`, uma classe p
 Código novo importa modelos pelo módulo da área; reexports antigos existem para compatibilidade.
 O gate de qualidade verifica essa organização em `tests/test_model_layout.py`.
 
+Grupos de constantes operacionais usam classes em `app/<área>/constants/`, com atributos tipados
+como `Final` e coleções imutáveis ([ADR 038](docs/decisions/038-constantes-por-area.md)).
+Essa regra vale em todo `app/`, inclusive para constantes privadas e de validação; o gate a verifica em
+`tests/test_constants_layout.py`, incluindo imutabilidade de coleções aninhadas. Campos de modelos, aliases
+de tipos, variáveis locais e os dois registros mutáveis de composição documentados na ADR mantêm seu papel.
+
 <!-- codebase-memory-mcp:start -->
 For structural codebase exploration, use the installed `codebase-memory` skill.
 <!-- codebase-memory-mcp:end -->

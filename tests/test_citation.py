@@ -10,12 +10,8 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 
 from app.pipeline.check import check_episode
-from app.pipeline.schemas import (
-    MAX_CITATION_FRAMES,
-    Asset,
-    Shot,
-    citation_violations,
-)
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.schemas import Asset, Shot, citation_violations
 from tests.test_research import EP, episode, facts_file, scenes
 from tests.test_schemas import commons_asset
 
@@ -72,12 +68,18 @@ def photo(asset_id: str) -> Shot:
 
 
 def test_citation_limits_frames_and_screen_time() -> None:
-    assets = {f"q{i}": Asset.model_validate(citation(f"q{i}")) for i in range(MAX_CITATION_FRAMES + 1)}
-    within = [("S01", photo(f"q{i}"), 4000) for i in range(MAX_CITATION_FRAMES)]
+    assets = {
+        f"q{i}": Asset.model_validate(citation(f"q{i}"))
+        for i in range(SchemasConstants.MAX_CITATION_FRAMES + 1)
+    }
+    within = [("S01", photo(f"q{i}"), 4000) for i in range(SchemasConstants.MAX_CITATION_FRAMES)]
     assert citation_violations(within, assets) == []
-    over = [*within, ("S02", photo(f"q{MAX_CITATION_FRAMES}"), 4000)]
+    over = [*within, ("S02", photo(f"q{SchemasConstants.MAX_CITATION_FRAMES}"), 4000)]
     assert citation_violations(over, assets) == [
-        f"{MAX_CITATION_FRAMES + 1} quadros citados no vídeo (máximo {MAX_CITATION_FRAMES})"
+        (
+        f'{SchemasConstants.MAX_CITATION_FRAMES + 1} quadros citados no vídeo (máximo '
+        f'{SchemasConstants.MAX_CITATION_FRAMES})'
+    )
     ]
     assert citation_violations([("S01", photo("q0"), 9500)], assets) == [
         "S01: citação q0 com ~9.5 s na tela (máximo 8 s)"

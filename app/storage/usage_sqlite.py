@@ -12,43 +12,9 @@ from typing import Any
 
 from pydantic import TypeAdapter
 
-from app.pipeline.usage import TOKEN_FIELDS, AgentRun, Count, UsageBudget, UsageError, UsageRequest
-
-SCHEMA = (
-    """CREATE TABLE runs (
-        id TEXT PRIMARY KEY, project TEXT NOT NULL, episode_id TEXT NOT NULL,
-        stage TEXT NOT NULL, agent_name TEXT NOT NULL, session_id TEXT,
-        parent_run_id TEXT REFERENCES runs(id),
-        status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','pending_reconciliation','closed')),
-        started_at TEXT NOT NULL, finished_at TEXT
-    ) STRICT""",
-    """CREATE TABLE requests (
-        event_key TEXT PRIMARY KEY, provider_request_id TEXT UNIQUE,
-        run_id TEXT NOT NULL REFERENCES runs(id), model TEXT NOT NULL, occurred_at TEXT NOT NULL,
-        input_tokens INTEGER CHECK(input_tokens >= 0), output_tokens INTEGER CHECK(output_tokens >= 0),
-        cache_read_tokens INTEGER CHECK(cache_read_tokens >= 0),
-        cache_write_tokens INTEGER CHECK(cache_write_tokens >= 0),
-        cost_usd_micros INTEGER CHECK(cost_usd_micros >= 0), duration_ms INTEGER CHECK(duration_ms >= 0),
-        status TEXT NOT NULL CHECK(status IN ('success','error'))
-    ) STRICT""",
-    """CREATE TABLE budgets (
-        id TEXT PRIMARY KEY, project TEXT NOT NULL, episode_id TEXT NOT NULL,
-        model_filter TEXT NOT NULL, metric TEXT NOT NULL CHECK(metric IN ('tokens_total','cost_usd_micros')),
-        limit_value INTEGER NOT NULL CHECK(limit_value >= 0),
-        spent_value INTEGER NOT NULL DEFAULT 0 CHECK(spent_value >= 0),
-        UNIQUE(project, episode_id, model_filter, metric)
-    ) STRICT""",
-    """CREATE TABLE reservations (
-        budget_id TEXT NOT NULL REFERENCES budgets(id), run_id TEXT NOT NULL REFERENCES runs(id),
-        initial_value INTEGER NOT NULL CHECK(initial_value >= 0),
-        remaining_value INTEGER NOT NULL CHECK(remaining_value >= 0),
-        status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','pending_reconciliation','closed')),
-        PRIMARY KEY(budget_id, run_id)
-    ) STRICT""",
-    "CREATE INDEX requests_run ON requests(run_id)",
-    "CREATE INDEX runs_scope ON runs(project, episode_id)",
-    "CREATE INDEX runs_parent ON runs(parent_run_id)",
-)
+from app.pipeline.constants.usage_constants import UsageConstants
+from app.pipeline.usage import AgentRun, Count, UsageBudget, UsageError, UsageRequest
+from app.storage.constants.usage_sqlite_constants import UsageSqliteConstants
 
 
 class SQLiteUsageLedger:
@@ -68,7 +34,7 @@ class SQLiteUsageLedger:
             if version == 0:
                 if db.execute("SELECT 1 FROM sqlite_master WHERE type='table'").fetchone():
                     raise UsageError("O arquivo já contém tabelas de outro banco.")
-                for statement in SCHEMA:
+                for statement in UsageSqliteConstants.SCHEMA:
                     db.execute(statement)
                 db.execute("PRAGMA user_version=1")
 
@@ -112,7 +78,7 @@ class SQLiteUsageLedger:
         value = (
             "q.cost_usd_micros"
             if budget["metric"] == "cost_usd_micros"
-            else "+".join(f"q.{name}" for name in TOKEN_FIELDS)
+            else "+".join(f"q.{name}" for name in UsageConstants.TOKEN_FIELDS)
         )
         row = db.execute(
             f"""WITH RECURSIVE tree(id) AS (

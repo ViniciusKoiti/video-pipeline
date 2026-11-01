@@ -8,13 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from app.pipeline.check import check_episode
-from app.pipeline.molde import (
-    MOLDE_FILE,
-    Molde,
-    claimless_statements,
-    molde_summary,
-    molde_warnings,
-)
+from app.pipeline.constants.molde_constants import MoldeConstants
+from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.schemas import ScenesManifest
 from app.storage.json_files import JsonFileStore
 
@@ -245,7 +240,7 @@ def write_episode(root: Path, molde_raw: dict[str, Any] | None, manifest: Scenes
     folder.mkdir(parents=True)
     (folder / "scenes.json").write_text(manifest.model_dump_json())
     if molde_raw is not None:
-        (folder / MOLDE_FILE).write_text(json.dumps(molde_raw))
+        (folder / MoldeConstants.MOLDE_FILE).write_text(json.dumps(molde_raw))
     return JsonFileStore(root)
 
 

@@ -13,61 +13,26 @@ import re
 import statistics
 
 from app.media.narration import strip_pauses, timeline_length
+from app.pipeline.constants.molde_constants import MoldeConstants as Constants
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._molde_molde import _Molde as _Molde
 from app.pipeline.models.casas import Casas as Casas
 from app.pipeline.models.medida import Medida as Medida
 from app.pipeline.models.molde import Molde as Molde
 from app.pipeline.models.molde_videos import MoldeVideos as MoldeVideos
 from app.pipeline.models.traco import Traco as Traco
-from app.pipeline.schemas import OVERLAY_SHOT_KINDS, Scene, ScenesManifest, effective_shots
+from app.pipeline.schemas import Scene, ScenesManifest, effective_shots
 from app.pipeline.shots import shot_bounds
 
-MOLDE_FILE = "molde.json"
-PARTITURA_FILE = "partitura.md"
-OPENING_S = 60.0  # a abertura que o molde mede em `cortes_60s` e `voce_60s`
-DURATION_TOLERANCE = 0.2  # a duração estimada pode ficar 20% longe da que a partitura pede
-CUT_RATIO = 2.0  # planos por minuto acima do dobro do molde viram alerta
-CLOSING_RISE = 1.3  # o molde "sobe" uma palavra no fecho quando o último décimo tem 30% a mais que o corpo
-MIN_VIDEOS = 8  # abaixo disso o molde é descrição, e o alerta diz isso
-STATEMENT_MIN_WORDS = 6  # frase curta sem claims (ponte, pergunta retórica) não é afirmação de fato
-TITLE_MIN_LETTERS = 4  # palavra de conteúdo do título: 4 letras ou mais, fora de TITLE_STOP
 # A mesma lista de `STOP_TITULO` em `.agents/skills/analise-de-formato/molde.py`: o molde mede o nicho com
 # ela e o check mede o roteiro com ela (um teste confere que as duas são iguais).
-TITLE_STOP = frozenset({
-    "como", "para", "pelo", "pela", "pelos", "pelas", "você", "voce", "vocês", "voces", "isso", "isto",
-    "esse", "essa", "este", "esta", "aquele", "aquela", "mais", "menos", "muito", "tudo", "nada", "quando",
-    "onde", "porque", "então", "ainda", "sobre", "entre", "até", "depois", "antes", "mesmo", "cada", "sempre",
-    "nunca", "quem", "qual", "quais", "coisa", "coisas", "vídeo", "video", "parte", "episódio", "episodio",
-    "minutos", "pode", "podem", "deve", "devem", "está", "estão", "foram", "sendo", "tinha", "teria", "fazer",
-    "ouvir", "enquanto", "outra", "outro", "outras", "outros", "também", "assim", "aqui", "agora", "hoje",
-    "anos", "todo", "toda", "todos", "todas", "primeiro", "primeira", "deveria", "devia", "deviam", "estava",
-    "estavam", "gente", "certo", "certa", "nosso", "nossa", "ninguém", "ninguem", "alguém", "alguem",
-})
-
-_VOCE = re.compile(r"\bvoc[êe]s?\b", re.IGNORECASE)
-_EU = re.compile(r"\beu\b", re.IGNORECASE)
-_CONFISSAO = re.compile(
-    r"\beu (vou )?(admitir|admito|confesso|confessar)\b|\beu (acreditei|achava|errei|errava)\b"
-    r"|\bvergonha\b|\beu (ia|tinha) (come[çc]ar|escrito)\b|\bestava escrito aqui\b",
-    re.IGNORECASE,
-)
-_SENTENCE_END = re.compile(r"(?<=[.?!…])\s+")
-_WORD = re.compile(r"\w+", re.UNICODE)
-_FIRST_PERSON = re.compile(r"^(eu\b|pra mim|para mim|acho|na minha|confesso|admito|a meu ver)", re.IGNORECASE)
-_STOP = frozenset({
-    "a", "o", "e", "de", "do", "da", "que", "em", "um", "uma", "para", "com", "não", "por", "se", "os", "as",
-    "no", "na", "é", "mais", "você", "vocês", "ele", "ela", "isso", "esse", "essa", "aqui", "ali", "lá", "já",
-    "tá", "pra", "pro", "dos", "das", "ao", "à", "como", "mas", "ou", "também", "muito", "tudo", "nada",
-    "ser", "foi", "era", "tem", "tinha", "vai", "vou", "eu", "nós", "gente", "quando", "onde", "porque",
-    "então", "ainda", "sobre", "entre", "até", "depois", "antes", "mesmo", "cada", "bem", "só",
-})
 
 
 def molde_summary(molde: Molde) -> str:
     grupos = ", ".join(molde.grupos) or "todos os grupos"
     line = (
-        f"{MOLDE_FILE}: {molde.videos.n} vídeo(s) de {grupos}, {molde.videos.com_batidas} com batidas, "
-        f"gerado em {molde.gerado_em}"
+        f'{Constants.MOLDE_FILE}: {molde.videos.n} vídeo(s) de {grupos}, '
+        f'{molde.videos.com_batidas} com batidas, gerado em {molde.gerado_em}'
     )
     if molde.episodio is not None:
         line += f"; partitura: {molde.episodio.duracao_min:g} min"
@@ -98,13 +63,15 @@ def _cut_times(timed: list[tuple[Scene, float, float]]) -> list[float]:
         times += [
             start + offset / 1000
             for shot, (offset, _) in zip(planned, bounds, strict=True)
-            if shot.kind not in OVERLAY_SHOT_KINDS
+            if shot.kind not in SchemasConstants.OVERLAY_SHOT_KINDS
         ]
     return times
 
 
 def _content_trigrams(text: str) -> set[tuple[str, str, str]]:
-    words = [w.lower() for w in _WORD.findall(text) if w.lower() not in _STOP and len(w) > 2]
+    words = [
+        w.lower() for w in Constants._WORD.findall(text) if w.lower() not in Constants._STOP and len(w) > 2
+    ]
     return {tuple(words[i : i + 3]) for i in range(len(words) - 2)}
 
 
@@ -119,8 +86,8 @@ def _rate_per_10min(count: int, seconds: float) -> float:
 def title_words(title: str) -> list[str]:
     """Palavras de conteúdo do título, na ordem e sem repetição: a regra de `assunto_do_titulo` da skill."""
     seen: list[str] = []
-    for word in _WORD.findall(title.lower()):
-        if len(word) >= TITLE_MIN_LETTERS and word not in TITLE_STOP and word not in seen:
+    for word in Constants._WORD.findall(title.lower()):
+        if len(word) >= Constants.TITLE_MIN_LETTERS and word not in Constants.TITLE_STOP and word not in seen:
             seen.append(word)
     return seen
 
@@ -135,7 +102,7 @@ def _title_said_at(timed: list[tuple[Scene, float, float]], words: list[str]) ->
     for scene, start, end in timed:
         text = strip_pauses(scene.narration)
         offset = 0
-        for sentence in _SENTENCE_END.split(text):
+        for sentence in Constants._SENTENCE_END.split(text):
             offset += len(sentence) + 1
             spoken += " " + sentence.lower()
             if sum(1 for pattern in patterns if pattern.search(spoken)) >= target:
@@ -181,59 +148,21 @@ def _range(item: Medida, unit: str = "") -> str:
     return f"entre {item.q1:g} e {item.q3:g}{unit} (mediana {item.mediana:g}, n {item.n})"
 
 
-def molde_warnings(scenes: ScenesManifest, molde: Molde, chars_per_second: float) -> list[str]:
-    """Onde o roteiro foge do molde, no que o código sabe medir: duração pedida pela partitura, planos por
-    minuto na abertura e depois, "você" por mil palavras, "você" e "eu" no fecho, os dois traços que o molde
-    sustenta como padrão e uma expressão regular alcança (confissão do narrador, fim que retoma a abertura) e,
-    com `title` no scenes.json, o tamanho do título e o segundo em que a fala diz o assunto dele (emenda de
-    2026-10-23 da ADR 031). Alertas, nunca erros; o molde mede fala em português."""
-    if scenes.language != "pt-BR" or not scenes.scenes:
-        return []
+def _closing_warnings(
+    molde: Molde, timed: list[tuple[Scene, float, float]], total_s: float, tag: str
+) -> list[str]:
     warnings: list[str] = []
-    tag = "molde" if molde.videos.n >= MIN_VIDEOS else f"molde ({molde.videos.n} vídeos, só descrição)"
-    timed = _timed_scenes(scenes, chars_per_second)
-    total_s = timed[-1][2]
-    text = _text_between(timed, 0, total_s)
-    words = len(_WORD.findall(text))
-
-    casas = molde.episodio
-    if casas is not None:
-        target = casas.duracao_min * 60
-        if abs(total_s - target) > DURATION_TOLERANCE * target:
-            warnings.append(
-                f"{tag}: duração estimada ~{total_s / 60:.1f} min; a partitura pede {casas.duracao_min:g} min"
-            )
-
-    cuts = _cut_times(timed)
-    opening = sum(1 for t in cuts if t < OPENING_S)
-    if (m60 := molde.medidas.get("cortes_60s")) is not None and m60.q3 is not None and opening > m60.q3:
-        warnings.append(
-            f"{tag}: abertura com {opening} planos nos primeiros 60 s; o molde corta {_range(m60)}"
-        )
-    body_minutes = (total_s - OPENING_S) / 60
-    body_curve = [v for v in molde.curva("cortes_min")[1:9] if v is not None]
-    if body_minutes > 0 and body_curve:
-        reference = statistics.median(body_curve)
-        rate = sum(1 for t in cuts if t >= OPENING_S) / body_minutes
-        if reference > 0 and rate > CUT_RATIO * reference:
-            warnings.append(
-                f"{tag}: ~{rate:.1f} planos por minuto depois da abertura; o molde troca de imagem "
-                f"{reference:g} vez(es) por minuto no corpo"
-            )
-
-    if words and (voce := molde.medidas.get("voce_por_mil")) is not None and voce.q1 is not None:
-        per_mil = 1000 * len(_VOCE.findall(text)) / words
-        if per_mil < voce.q1 or (voce.q3 is not None and per_mil > voce.q3):
-            warnings.append(f'{tag}: "você" {per_mil:.1f} por mil palavras; o molde fica {_range(voce)}')
-
     decile = total_s / 10
-    for chave, pattern, nome in (("voce_por_10min", _VOCE, "você"), ("eu_por_10min", _EU, "eu")):
+    for chave, pattern, nome in (
+        ("voce_por_10min", Constants._VOCE, "você"),
+        ("eu_por_10min", Constants._EU, "eu"),
+    ):
         curve = molde.curva(chave)
         body_ref = [v for v in curve[1:9] if v is not None]
         if len(curve) < 10 or curve[9] is None or not body_ref or decile <= 0:
             continue
         body_median = statistics.median(body_ref)
-        if body_median <= 0 or curve[9] < CLOSING_RISE * body_median:
+        if body_median <= 0 or curve[9] < Constants.CLOSING_RISE * body_median:
             continue
         last = len(pattern.findall(_text_between(timed, 9 * decile, total_s)))
         before = len(pattern.findall(_text_between(timed, decile, 9 * decile)))
@@ -243,17 +172,70 @@ def molde_warnings(scenes: ScenesManifest, molde: Molde, chars_per_second: float
                 f'{tag}: o molde sobe "{nome}" no fecho ({curve[9]:g} por 10 min contra {body_median:g} no '
                 f"corpo); o roteiro tem {ours_last:.0f} no último décimo contra {ours_before:.0f} antes"
             )
+    return warnings
+
+
+def molde_warnings(scenes: ScenesManifest, molde: Molde, chars_per_second: float) -> list[str]:
+    """Onde o roteiro foge do molde, no que o código sabe medir: duração pedida pela partitura, planos por
+    minuto na abertura e depois, "você" por mil palavras, "você" e "eu" no fecho, os dois traços que o molde
+    sustenta como padrão e uma expressão regular alcança (confissão do narrador, fim que retoma a abertura) e,
+    com `title` no scenes.json, o tamanho do título e o segundo em que a fala diz o assunto dele (emenda de
+    2026-10-23 da ADR 031). Alertas, nunca erros; o molde mede fala em português."""
+    if scenes.language != "pt-BR" or not scenes.scenes:
+        return []
+    warnings: list[str] = []
+    tag = (
+        "molde"
+        if molde.videos.n >= Constants.MIN_VIDEOS
+        else f"molde ({molde.videos.n} vídeos, só descrição)"
+    )
+    timed = _timed_scenes(scenes, chars_per_second)
+    total_s = timed[-1][2]
+    text = _text_between(timed, 0, total_s)
+    words = len(Constants._WORD.findall(text))
+
+    casas = molde.episodio
+    if casas is not None:
+        target = casas.duracao_min * 60
+        if abs(total_s - target) > Constants.DURATION_TOLERANCE * target:
+            warnings.append(
+                f"{tag}: duração estimada ~{total_s / 60:.1f} min; a partitura pede {casas.duracao_min:g} min"
+            )
+
+    cuts = _cut_times(timed)
+    opening = sum(1 for t in cuts if t < Constants.OPENING_S)
+    if (m60 := molde.medidas.get("cortes_60s")) is not None and m60.q3 is not None and opening > m60.q3:
+        warnings.append(
+            f"{tag}: abertura com {opening} planos nos primeiros 60 s; o molde corta {_range(m60)}"
+        )
+    body_minutes = (total_s - Constants.OPENING_S) / 60
+    body_curve = [v for v in molde.curva("cortes_min")[1:9] if v is not None]
+    if body_minutes > 0 and body_curve:
+        reference = statistics.median(body_curve)
+        rate = sum(1 for t in cuts if t >= Constants.OPENING_S) / body_minutes
+        if reference > 0 and rate > Constants.CUT_RATIO * reference:
+            warnings.append(
+                f"{tag}: ~{rate:.1f} planos por minuto depois da abertura; o molde troca de imagem "
+                f"{reference:g} vez(es) por minuto no corpo"
+            )
+
+    if words and (voce := molde.medidas.get("voce_por_mil")) is not None and voce.q1 is not None:
+        per_mil = 1000 * len(Constants._VOCE.findall(text)) / words
+        if per_mil < voce.q1 or (voce.q3 is not None and per_mil > voce.q3):
+            warnings.append(f'{tag}: "você" {per_mil:.1f} por mil palavras; o molde fica {_range(voce)}')
+
+    warnings += _closing_warnings(molde, timed, total_s, tag)
 
     warnings += _title_warnings(scenes, molde, timed, tag)
 
-    if (confissao := molde.padrao("confissao")) is not None and not _CONFISSAO.search(text):
+    if (confissao := molde.padrao("confissao")) is not None and not Constants._CONFISSAO.search(text):
         warnings.append(
             f"{tag}: confissão do narrador em {confissao.com} de {confissao.n} vídeos; nenhuma frase de "
             "confissão no roteiro (eu confesso, eu admito, eu errei, eu achava)"
         )
-    if (volta := molde.padrao("fecho_volta")) is not None and total_s > 2 * OPENING_S:
-        first = _content_trigrams(_text_between(timed, 0, OPENING_S))
-        last_text = _content_trigrams(_text_between(timed, total_s - OPENING_S, total_s))
+    if (volta := molde.padrao("fecho_volta")) is not None and total_s > 2 * Constants.OPENING_S:
+        first = _content_trigrams(_text_between(timed, 0, Constants.OPENING_S))
+        last_text = _content_trigrams(_text_between(timed, total_s - Constants.OPENING_S, total_s))
         if not first & last_text:
             warnings.append(
                 f"{tag}: o fim retoma a abertura em {volta.com} de {volta.n} vídeos; o último minuto não "
@@ -266,8 +248,8 @@ def _proper_nouns(scenes: ScenesManifest) -> set[str]:
     """Palavras que aparecem com maiúscula fora do começo da frase: nomes próprios do roteiro."""
     nouns: set[str] = set()
     for scene in scenes.scenes:
-        for sentence in _SENTENCE_END.split(strip_pauses(scene.narration)):
-            words = _WORD.findall(sentence)
+        for sentence in Constants._SENTENCE_END.split(strip_pauses(scene.narration)):
+            words = Constants._WORD.findall(sentence)
             nouns.update(w.lower() for w in words[1:] if w[:1].isupper() and len(w) > 2)
     return nouns
 
@@ -280,12 +262,12 @@ def claimless_statements(scenes: ScenesManifest) -> list[str]:
     for scene in scenes.scenes:
         if scene.claims or any(shot.claims for shot in scene.shots):
             continue
-        for sentence in _SENTENCE_END.split(strip_pauses(scene.narration).strip()):
+        for sentence in Constants._SENTENCE_END.split(strip_pauses(scene.narration).strip()):
             sentence = sentence.strip()
-            if not sentence or sentence.endswith("?") or _FIRST_PERSON.match(sentence):
+            if not sentence or sentence.endswith("?") or Constants._FIRST_PERSON.match(sentence):
                 continue
-            words = _WORD.findall(sentence)
-            if len(words) < STATEMENT_MIN_WORDS:
+            words = Constants._WORD.findall(sentence)
+            if len(words) < Constants.STATEMENT_MIN_WORDS:
                 continue
             if any(w.isdigit() for w in words) or any(w.lower() in nouns for w in words):
                 warnings.append(f"{scene.id}: frase afirmativa em cena sem claims: {sentence[:80]!r}")

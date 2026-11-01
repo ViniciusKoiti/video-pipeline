@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from app.media.models._earshot_types import SYNC_TOLERANCE_MS
+from app.media.constants.earshot_constants import EarshotConstants
 
 
 @dataclass(frozen=True)
@@ -14,4 +14,4 @@ class CueSync:
 
     @property
     def hit(self) -> bool:
-        return self.offset_ms is not None and abs(self.offset_ms) <= SYNC_TOLERANCE_MS
+        return self.offset_ms is not None and abs(self.offset_ms) <= EarshotConstants.SYNC_TOLERANCE_MS

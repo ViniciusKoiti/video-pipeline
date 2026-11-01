@@ -17,6 +17,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from app.commands.constants.postiz_cadeia_constants import PostizCadeiaConstants
 from app.commands.postiz_links import LinkFetch, caption_links, link_findings, link_status
 from app.pipeline.gates import gate_report
 from app.pipeline.ports import Context
@@ -26,17 +27,7 @@ from app.providers.postiz_validation import ScheduleClient, visible_text
 
 __all__ = ["LinkFetch", "caption_links", "link_findings", "link_status"]
 
-REGISTRO = Path("publicacoes/registro.jsonl")
-UNDO = (
-    "Antes do horário: apagar o post no Postiz (os ids saem no registro e em `vp postiz posts`). "
-    "Depois do horário: apagar a publicação na rede; o Postiz não desfaz o que já saiu."
-)
-FIXED_RISKS = (
-    "O Postiz não garante idempotência: se o envio falhar, consultar a fila antes de repetir.",
-    "A API não marca conteúdo alterado ou sintético: com voz ou imagem gerada, marcar à mão na rede.",
-    "Depois de publicar: conferir no Studio (ERROR no Postiz não prova falha), fixar o primeiro comentário "
-    "e marcar o conteúdo alterado, tudo à mão.",
-)
+
 Clock = Callable[[], datetime]
 
 
@@ -45,7 +36,7 @@ def _now() -> datetime:
 
 
 def registro_path(context: Context) -> Path:
-    return context.settings.data_dir / REGISTRO
+    return context.settings.data_dir / PostizCadeiaConstants.REGISTRO
 
 
 def payload_hash(payload: dict[str, Any]) -> str:
@@ -100,8 +91,6 @@ def gate4(context: Context, episode_id: str | None) -> str:
     return "aprovado" if status.valid else "mudou depois da aprovação"
 
 
-
-
 def build_package(
     payload: dict[str, Any],
     check: dict[str, Any],
@@ -111,7 +100,7 @@ def build_package(
     fetch: LinkFetch | None = None,
 ) -> dict[str, Any]:
     by_media = {u["midia"]["id"]: u for u in uploads}
-    posts, risks, blocking = [], list(FIXED_RISKS), []
+    posts, risks, blocking = [], list(PostizCadeiaConstants.FIXED_RISKS), []
     for post in payload["posts"]:
         integration_id = post["integration"]["id"]
         media = []
@@ -153,7 +142,7 @@ def build_package(
             "defesas": "data futura, canal ativo, sem duplicata na fila",
         },
         "riscos": blocking + risks,
-        "como_desfazer": UNDO,
+        "como_desfazer": PostizCadeiaConstants.UNDO,
         "recomendacao": "não agendar: " + " ".join(blocking) if blocking else "agendar, se o dono autorizar",
     }
 
@@ -178,15 +167,11 @@ class ChainError(ValueError):
     """O agendamento não tem o pacote de decisão ou a dúvida cega exigidos."""
 
 
-VERDICTS = ("segue", "não segue")
-NO_PACKAGE = "sem pacote de decisão para este JSON: rode `vp postiz pacote` e mostre o pacote ao dono"
-
-
 def _last_package(entries: list[dict[str, Any]], digest: str) -> int:
     for index in range(len(entries) - 1, -1, -1):
         if entries[index]["event"] == "pacote" and entries[index]["payload"] == digest:
             return index
-    raise ChainError(NO_PACKAGE)
+    raise ChainError(PostizCadeiaConstants.NO_PACKAGE)
 
 
 def record_doubt(
@@ -198,7 +183,7 @@ def record_doubt(
     report = report if isinstance(report, dict) else {}
     risks, reviewer = report.get("riscos"), report.get("revisor")
     if (
-        report.get("veredito") not in VERDICTS
+        report.get("veredito") not in PostizCadeiaConstants.VERDICTS
         or not isinstance(risks, list)
         or not all(isinstance(r, str) and r.strip() for r in risks)
         or not isinstance(reviewer, str)

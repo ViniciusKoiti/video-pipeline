@@ -44,9 +44,9 @@ flowchart TD
 
 | Módulo | Pode importar | Não pode importar |
 |---|---|---|
-| `app/pipeline/**` | `schemas`, `ports`, `app.settings`, módulos `base` e `errors` | adapters concretos, `app.bootstrap`, `app.cli`, bibliotecas pesadas (torch, kokoro…) |
-| `app/providers/**`, `app/render/**` | `app.pipeline.models`, `app.pipeline.schemas`, outras portas | resto de `app.pipeline`, `app.settings`, `app.bootstrap`, `app.cli` |
-| `app/media/**` | contratos de `app.pipeline.models` e `app.pipeline.schemas`, portas e módulos de mídia | orquestração de `app.pipeline`, adapters concretos |
+| `app/pipeline/**` | modelos, constantes, `schemas`, `ports`, `app.settings`, módulos `base` e `errors` | adapters concretos, `app.bootstrap`, `app.cli`, bibliotecas pesadas (torch, kokoro…) |
+| `app/providers/**`, `app/render/**` | `app.pipeline.models`, `app.pipeline.constants`, `app.pipeline.schemas`, outras portas | resto de `app.pipeline`, `app.settings`, `app.bootstrap`, `app.cli` |
+| `app/media/**` | contratos e constantes de `app.pipeline`, portas e módulos de mídia | orquestração de `app.pipeline`, adapters concretos |
 | `app/bootstrap/**` | tudo; compõem adapters concretos | — |
 
 O teste resolve imports relativos e usa fronteiras exatas de pacote: `app.bootstrap.factories` pertence
@@ -65,6 +65,12 @@ podem ficar junto dos modelos; os `__init__.py` dessa pasta permanecem mínimos.
 Os módulos anteriores reexportam as classes para preservar os imports existentes. Novos consumidores
 usam o módulo específico de `models/` da área. `app/models/` guarda somente compatibilidade dos modelos
 Bench; a definição está em `app/pipeline/models/`. O gate aplica a convenção por `tests/test_model_layout.py`.
+
+Constantes de todos os fluxos ficam em classes de `app/<área>/constants/`, com atributos `Final`
+e coleções imutáveis em profundidade ([ADR 038](decisions/038-constantes-por-area.md)). Inclui constantes
+privadas e de validação antes misturadas nos modelos. O gate verifica essa organização e os valores das
+coleções em `tests/test_constants_layout.py`. O [inventário](inventario-constantes-2026-11-01.md) identifica
+os grupos e os dois registros mutáveis de composição; configurações, campos e variáveis locais mantêm seu papel.
 
 ## Como trocar de abordagem
 

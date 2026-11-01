@@ -1,3 +1,4 @@
+
 import json
 from pathlib import Path
 from typing import Any
@@ -5,8 +6,8 @@ from typing import Any
 import pytest
 from pydantic import BaseModel, ValidationError
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.schemas import (
-    STOCK_LICENSES,
     Asset,
     Claim,
     EpisodeManifest,
@@ -193,7 +194,7 @@ def stock_asset(provider: Provider, **changes: Any) -> dict[str, Any]:
         "provider": provider.value,
         "provider_id": "123",
         "page_url": f"https://example.org/{provider.value}/123",
-        "license_id": STOCK_LICENSES[provider],
+        "license_id": SchemasConstants.STOCK_LICENSES[provider],
         "author": "Fulano",
         "attribution_text": f"Fulano via {provider.value}",
         "usage_notes": "Sem pessoa reconhecível, doente ou medicada; sem marca, logo, texto ou política.",
@@ -201,9 +202,9 @@ def stock_asset(provider: Provider, **changes: Any) -> dict[str, Any]:
     return commons_asset(**{**defaults, **changes})
 
 
-@pytest.mark.parametrize("provider", list(STOCK_LICENSES))
+@pytest.mark.parametrize("provider", list(SchemasConstants.STOCK_LICENSES))
 def test_stock_asset_is_approved_with_its_own_license_or_cc0(provider: Provider) -> None:
-    assert Asset.model_validate(stock_asset(provider)).license_id == STOCK_LICENSES[provider]
+    assert Asset.model_validate(stock_asset(provider)).license_id == SchemasConstants.STOCK_LICENSES[provider]
     assert Asset.model_validate(stock_asset(provider, license_id="CC0-1.0")).license_id == "CC0-1.0"
 
 

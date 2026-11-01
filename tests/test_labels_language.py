@@ -8,10 +8,11 @@ import subprocess
 
 import pytest
 
-from app.pipeline.attribution import INTERESTED_FLAG, shot_attribution, source_label
+from app.pipeline.attribution import shot_attribution, source_label
+from app.pipeline.constants.attribution_constants import AttributionConstants
 from app.pipeline.schemas import Claim, Language, Source
 from app.pipeline.shots import episode_shots
-from app.render.remotion import PROJECT
+from app.render.constants.remotion_constants import RemotionConstants
 from tests.test_editorial_shots import NET, make_scene, network, sources_of
 from tests.test_research import source
 from tests.test_shots import photo
@@ -42,7 +43,10 @@ def test_shot_attribution_follows_the_language() -> None:
 
     assert shot_attribution(claims(1, 3, 4), manifest, "pt-BR") == ("Silva; Annual Report e outras", None)
     assert shot_attribution(claims(1, 3, 4), manifest, "en") == ("Silva; Annual Report and others", None)
-    assert shot_attribution(claims(3), manifest) == ("Annual Report", INTERESTED_FLAG)  # padrão: pt-BR
+    assert shot_attribution(claims(3), manifest) == (
+        "Annual Report",
+        AttributionConstants.INTERESTED_FLAG,
+    )  # padrão: pt-BR
     assert shot_attribution(claims(3), manifest, "en") == ("Annual Report", "interested source")
 
 
@@ -64,6 +68,6 @@ def test_template_labels_cover_both_languages() -> None:
         pytest.skip("Node 22.18+ ausente (TypeScript sem build)")
     result = subprocess.run(
         ["node", "--disable-warning=ExperimentalWarning", "--test", "tests/labels.test.ts"],
-        cwd=PROJECT, capture_output=True, text=True, timeout=60, check=False,
+        cwd=RemotionConstants.PROJECT, capture_output=True, text=True, timeout=60, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

@@ -6,9 +6,6 @@ import subprocess
 from pathlib import Path
 
 from app.media.captions import (
-    CAPTIONS,
-    KEY,
-    OLD_CAPTIONS,
     Cue,
     Phrase,
     SceneAudio,
@@ -22,6 +19,7 @@ from app.media.captions import (
     timing_problems,
     to_srt,
 )
+from app.media.constants.captions_constants import CaptionsConstants
 from app.media.pauses import silences
 
 
@@ -115,13 +113,13 @@ def test_review_hints_point_to_numbers_and_proper_names() -> None:
 def test_the_edited_file_is_kept_until_the_speech_changes(tmp_path: Path) -> None:
     first = [Cue(0, 1000, "Texto gerado.")]
     assert sync_captions(tmp_path, first, "k1").startswith("gerada")
-    (tmp_path / CAPTIONS).write_text(to_srt([Cue(0, 1000, "Texto revisado.")]))
+    (tmp_path / CaptionsConstants.CAPTIONS).write_text(to_srt([Cue(0, 1000, "Texto revisado.")]))
     assert sync_captions(tmp_path, first, "k1").startswith("mantida")
-    assert "revisado" in (tmp_path / CAPTIONS).read_text()
+    assert "revisado" in (tmp_path / CaptionsConstants.CAPTIONS).read_text()
     assert sync_captions(tmp_path, [Cue(0, 900, "Voz nova.")], "k2").startswith("refeita")
-    assert "Voz nova." in (tmp_path / CAPTIONS).read_text()
-    assert "revisado" in (tmp_path / OLD_CAPTIONS).read_text()
-    assert (tmp_path / KEY).read_text().strip() == "k2"
+    assert "Voz nova." in (tmp_path / CaptionsConstants.CAPTIONS).read_text()
+    assert "revisado" in (tmp_path / CaptionsConstants.OLD_CAPTIONS).read_text()
+    assert (tmp_path / CaptionsConstants.KEY).read_text().strip() == "k2"
 
 
 def test_the_key_changes_with_the_audio_and_the_limit() -> None:

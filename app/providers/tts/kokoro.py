@@ -10,6 +10,8 @@ import re
 from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
+from app.providers.tts.constants.kokoro_constants import KokoroConstants
+
 if TYPE_CHECKING:
     from kokoro import KPipeline
     from torch import Tensor
@@ -18,10 +20,6 @@ from app.media.narration import split_pauses
 from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest, SpeechResult
-
-REPO_ID = "hexgrad/Kokoro-82M"
-SAMPLE_RATE = 24_000
-LANG_CODES = {"en": "a", "pt-BR": "p"}  # códigos do KPipeline: inglês americano, português do Brasil
 
 
 def apply_lexicon(text: str, lexicon: Mapping[str, str]) -> str:
@@ -43,7 +41,7 @@ class KokoroTTS:
 
     def voice_for(self, request: SpeechRequest) -> tuple[str, str]:
         """(código do KPipeline, voz) do pedido; idioma sem voz configurada é erro do provedor."""
-        lang_code = LANG_CODES.get(request.language)
+        lang_code = KokoroConstants.LANG_CODES.get(request.language)
         voice = request.voice or self._voices.get(request.language)
         if lang_code is None or voice is None:
             raise ModelUnavailable(self.info.name, f"sem voz configurada para o idioma {request.language!r}")
@@ -57,7 +55,7 @@ class KokoroTTS:
             except ImportError as error:
                 raise ModelUnavailable(self.info.name, "extra 'tts' ausente (uv sync --extra tts)") from error
             torch.set_num_threads(self._num_threads)
-            self._pipelines[lang_code] = KPipeline(lang_code=lang_code, repo_id=REPO_ID)
+            self._pipelines[lang_code] = KPipeline(lang_code=lang_code, repo_id=KokoroConstants.REPO_ID)
         return self._pipelines[lang_code]
 
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
@@ -67,7 +65,7 @@ class KokoroTTS:
         lang_code, voice = self.voice_for(request)
         pipeline = self._load(lang_code)
         # O Kokoro não tem tags: divide em cada `<short pause>` e separa os pedaços por silêncio.
-        silence = np.zeros(round(SAMPLE_RATE * self._pause_ms / 1000), dtype=np.float32)
+        silence = np.zeros(round(KokoroConstants.SAMPLE_RATE * self._pause_ms / 1000), dtype=np.float32)
         chunks: list[np.ndarray | Tensor] = []
         for i, part in enumerate(split_pauses(request.text) or [request.text]):
             if i:
@@ -77,5 +75,5 @@ class KokoroTTS:
         if not chunks:
             raise ProviderError(self.info.name, "nenhum áudio gerado para o texto")
         request.out_path.parent.mkdir(parents=True, exist_ok=True)
-        sf.write(request.out_path, np.concatenate(chunks), SAMPLE_RATE)
-        return SpeechResult(path=request.out_path, model=REPO_ID, voice=voice)
+        sf.write(request.out_path, np.concatenate(chunks), KokoroConstants.SAMPLE_RATE)
+        return SpeechResult(path=request.out_path, model=KokoroConstants.REPO_ID, voice=voice)

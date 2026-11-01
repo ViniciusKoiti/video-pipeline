@@ -149,6 +149,12 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
   Provedores usam também `app/providers/<função>/models/`. Não criar pastas vazias nem um catálogo global.
   Imports novos usam o módulo específico; `app.pipeline.schemas` e os demais módulos anteriores mantêm
   reexports de compatibilidade. `app.settings/` e `app.bootstrap/` são pacotes com seus próprios modelos.
+- Constantes de todos os fluxos de `app/`, inclusive valores privados e de validação, usam classes em
+  `app/<área>/constants/<responsabilidade>_constants.py`, com atributos `Final` e coleções imutáveis
+  (ADR 038; gate `tests/test_constants_layout.py`). Mapas aninhados também são imutáveis: usar
+  `MappingProxyType`, `tuple` e `frozenset`. Campos/defaults dos modelos, aliases de tipos e variáveis locais
+  mantêm seu papel; parâmetros configuráveis mantêm sua configuração própria. Os únicos registros mutáveis
+  globais permitidos são `app.cli.HANDLERS` e `app.bootstrap.DEFAULT_REGISTRY`, por serem composição.
 
 ## 4. Fluxo de trabalho
 

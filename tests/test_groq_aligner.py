@@ -10,7 +10,8 @@ from typing import Any
 import pytest
 
 from app.providers.alignment.base import TimedWord
-from app.providers.alignment.groq import PROMPT_CHARS, URL, GroqWordAligner
+from app.providers.alignment.constants.groq_constants import GroqConstants
+from app.providers.alignment.groq import GroqWordAligner
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import TransportError
 
@@ -40,13 +41,13 @@ def test_request_asks_for_words_in_the_episode_language(tmp_path: Path) -> None:
     audio.write_bytes(b"RIFF")
     provider, post = aligner({"words": [{"word": " Meia", "start": 0.12, "end": 0.4},
                                         {"word": "lata.", "start": 0.45, "end": 0.9}]})
-    words = provider.recognize_words(audio, "pt-BR", prompt="x" * (PROMPT_CHARS + 50))
+    words = provider.recognize_words(audio, "pt-BR", prompt="x" * (GroqConstants.PROMPT_CHARS + 50))
     assert words == [TimedWord("Meia", 120, 400), TimedWord("lata.", 450, 900)]
     ((url, fields, files, headers),) = post.calls
-    assert url == URL and "chave" not in url
+    assert url == GroqConstants.URL and "chave" not in url
     assert fields["language"] == "pt" and fields["timestamp_granularities[]"] == "word"
     assert fields["response_format"] == "verbose_json" and fields["model"] == "whisper-large-v3-turbo"
-    assert len(fields["prompt"]) == PROMPT_CHARS
+    assert len(fields["prompt"]) == GroqConstants.PROMPT_CHARS
     assert files == {"file": audio} and headers == {"Authorization": "Bearer chave-secreta"}
     assert provider.info.remote and provider.info.usd_per_call == 0
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Gate único local e do CI: lint, tipagem, arquitetura, tamanho e regressão.
+# Gate único local e do CI: lint, tipagem, arquitetura, modelos, constantes, tamanho e regressão.
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
@@ -10,7 +10,7 @@ uv run --no-sync ruff check . || failed=1
 printf '\nTipagem estática (Mypy estrito em app/)\n'
 uv run --no-sync mypy || failed=1
 
-printf '\nTestes (incluem arquitetura e tamanho 200/50)\n'
+printf '\nTestes (incluem arquitetura, modelos, constantes imutáveis e tamanho 200/50)\n'
 uv run --no-sync pytest -q || failed=1
 
 if (( failed )); then

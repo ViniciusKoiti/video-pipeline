@@ -14,8 +14,9 @@ from app.providers.archives.pexels import PexelsArchive
 from app.providers.archives.pixabay import PixabayArchive
 from app.providers.archives.stock import normalize_query, sha256_file
 from app.providers.archives.unsplash import UnsplashArchive
+from app.providers.constants.http_constants import HttpConstants
 from app.providers.errors import InvalidOutput, ProviderError, QuotaExhausted
-from app.providers.http import USER_AGENT, TransportError, download, get_json
+from app.providers.http import TransportError, download, get_json
 from tests.fakes import FIXED_TIME, FakeHttp
 
 FIXTURES = Path(__file__).parent / "fixtures" / "archives"
@@ -346,7 +347,9 @@ def test_transport_identifies_itself_and_lowercases_headers(
     response = get_json("https://api.example.org/x", {"Authorization": KEY}, 5)
     assert response.data == {"ok": True} and response.headers == {"x-ratelimit-remaining": "7"}
     download("https://files.example.org/a.mp4", tmp_path / "a.mp4", {}, 5)
-    assert all(h["User-agent"] == USER_AGENT for h in seen)  # urllib guarda o nome capitalizado assim
+    assert all(
+        h["User-agent"] == HttpConstants.USER_AGENT for h in seen
+    )  # urllib guarda o nome capitalizado assim
     assert seen[0]["Authorization"] == KEY and "Authorization" not in seen[1]
     assert (tmp_path / "a.mp4").is_file() and not (tmp_path / "a.mp4.part").exists()
 

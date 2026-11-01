@@ -19,11 +19,10 @@ from urllib.parse import urlparse
 
 from app.pipeline.schemas import Asset, Orientation, Provider, Status
 from app.providers.archives.base import AssetCandidate, AssetQuery
+from app.providers.archives.constants.stock_constants import StockConstants
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ProviderError, QuotaExhausted
 from app.providers.http import FileGet, JsonGet, JsonResponse, TransportError, download, get_json
-
-IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp")
 
 
 def normalize_query(text: str) -> str:
@@ -81,7 +80,11 @@ class ArchiveCache:
 
     def thumbnail(self, asset_id: str, url: str, fetch: Callable[[str, Path], Path]) -> Path:
         suffix = Path(urlparse(url).path).suffix.lower()
-        path = self._dir / "thumbs" / f"{asset_id}{suffix if suffix in IMAGE_SUFFIXES else '.jpg'}"
+        path = (
+            self._dir
+            / "thumbs"
+            / f"{asset_id}{suffix if suffix in StockConstants.IMAGE_SUFFIXES else '.jpg'}"
+        )
         return path if path.is_file() else fetch(url, path)
 
     @staticmethod

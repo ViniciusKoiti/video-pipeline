@@ -5,8 +5,8 @@ from typing import Annotated, Literal, Self
 
 from pydantic import AwareDatetime, Field, model_validator
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._schemas_types import (
-    WINDOW_DAYS,
     HttpUrl,
     NonEmpty,
     Platform,
@@ -39,14 +39,18 @@ class PublicationMetrics(Model):
 
     def due_date(self, window: Window) -> date:
         """Dia em que a janela fecha, no fuso gravado em `published_at`."""
-        return (self.published_at + timedelta(days=WINDOW_DAYS[window])).date()
+        return (self.published_at + timedelta(days=SchemasConstants.WINDOW_DAYS[window])).date()
 
     def pending(self, today: date) -> list[Window]:
         """Janelas já fechadas e ainda não lidas."""
-        return [w for w in WINDOW_DAYS if w not in self.readings and today >= self.due_date(w)]
+        return [
+            w for w in SchemasConstants.WINDOW_DAYS if w not in self.readings and today >= self.due_date(w)
+        ]
 
     def upcoming(self, today: date) -> list[Window]:
-        return [w for w in WINDOW_DAYS if w not in self.readings and today < self.due_date(w)]
+        return [
+            w for w in SchemasConstants.WINDOW_DAYS if w not in self.readings and today < self.due_date(w)
+        ]
 
     @model_validator(mode="after")
     def _readings_after_window(self) -> Self:

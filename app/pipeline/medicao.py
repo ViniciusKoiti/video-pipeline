@@ -13,23 +13,19 @@ Fora da conferência: o `footer` (a legenda do ambiente, conferida de olho) e o 
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Any
 
-from app.pipeline.models._medicao_types import DEFAULT_TOLERANCE as DEFAULT_TOLERANCE
+from app.pipeline.constants.medicao_constants import MedicaoConstants
+from app.pipeline.constants.translation_constants import TranslationConstants
 from app.pipeline.models.medicao import Medicao as Medicao
 from app.pipeline.models.numero import Numero as Numero
 from app.pipeline.ports import ManifestNotFound, ManifestStore
-from app.pipeline.translation import CONTENT_FILE, NARRATION_FILE, Narration, spoken_numbers
-
-MEDICAO_FILE = "medicao.json"
-TEXT_KEYS = frozenset({"text", "title", "sub", "label", "highlight"})  # strings da tela que contam
-_NUMBER = re.compile(r"\d+(?:[.,]\d+)?")
+from app.pipeline.translation import Narration, spoken_numbers
 
 
 def _numbers_in(text: str) -> list[float]:
-    return [float(t.replace(",", ".")) for t in _NUMBER.findall(text)]
+    return [float(t.replace(",", ".")) for t in MedicaoConstants._NUMBER.findall(text)]
 
 
 def _same(a: float, b: float) -> bool:
@@ -45,7 +41,7 @@ def screen_numbers(content: dict[str, Any], language: str) -> list[tuple[str, fl
             for key, value in node.items():
                 if key == "value" and isinstance(value, int | float) and not isinstance(value, bool):
                     found.append((scene, float(value)))
-                elif key in TEXT_KEYS and isinstance(value, str):
+                elif key in MedicaoConstants.TEXT_KEYS and isinstance(value, str):
                     found.extend((scene, float(n)) for n in spoken_numbers(value, language))
                 elif isinstance(value, dict | list):
                     walk(value, scene)
@@ -118,8 +114,8 @@ def _evidence_path(store: ManifestStore, episode_id: str, relative: str) -> Path
 def medicao_problems(store: ManifestStore, episode_id: str) -> tuple[list[str], list[str]]:
     """(problemas, avisos) da conferência; sem problemas, o gate 4 pode abrir."""
     try:
-        plan = store.read(episode_id, MEDICAO_FILE, Medicao)
-        narration = store.read(episode_id, NARRATION_FILE, Narration)
+        plan = store.read(episode_id, MedicaoConstants.MEDICAO_FILE, Medicao)
+        narration = store.read(episode_id, TranslationConstants.NARRATION_FILE, Narration)
     except ManifestNotFound as error:
         return [f"falta arquivo para conferir a medição ({error})"], []
     except ValueError as error:
@@ -134,7 +130,7 @@ def medicao_problems(store: ManifestStore, episode_id: str) -> tuple[list[str], 
     spoken = narration_numbers(narration)
     missing, used = coverage_problems(spoken, plan.numeros, "fala")
     problems += missing
-    content_path = store.path(episode_id, CONTENT_FILE)
+    content_path = store.path(episode_id, TranslationConstants.CONTENT_FILE)
     if content_path.is_file():
         import json
 

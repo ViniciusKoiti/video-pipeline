@@ -20,7 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.pipeline.numbers import FORMAT_FILE, FormatBrief  # noqa: E402
+from app.pipeline.constants.numbers_constants import NumbersConstants  # noqa: E402
+from app.pipeline.numbers import FormatBrief  # noqa: E402
 
 
 def main() -> None:
@@ -33,7 +34,7 @@ def main() -> None:
 
     text = args.perfil.read_text(encoding="utf-8")
     brief = FormatBrief.model_validate_json(text)
-    target = ROOT / "data" / "episodes" / args.episode_id / FORMAT_FILE
+    target = ROOT / "data" / "episodes" / args.episode_id / NumbersConstants.FORMAT_FILE
     if not target.parent.is_dir():
         raise SystemExit(f"episódio {args.episode_id} não existe em data/episodes/")
     if target.is_file():

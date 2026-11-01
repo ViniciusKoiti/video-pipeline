@@ -15,8 +15,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from app.media.narration import strip_pauses, timeline_length, timeline_position
-from app.pipeline.models._sfx_types import COVERS_SPEECH as COVERS_SPEECH
-from app.pipeline.models._sfx_types import MAX_GAIN_DB as MAX_GAIN_DB
+from app.pipeline.constants.sfx_constants import SfxConstants
 from app.pipeline.models.placed_sfx import PlacedSfx as PlacedSfx
 from app.pipeline.models.sfx_cue import SfxCue as SfxCue
 from app.pipeline.models.sfx_kit import SfxKit as SfxKit
@@ -24,18 +23,11 @@ from app.pipeline.models.sfx_plan import SfxPlan as SfxPlan
 from app.pipeline.models.sfx_sound import SfxSound as SfxSound
 from app.pipeline.models.speech import Speech as Speech
 
-SFX_DIR = "sfx"  # em data/: o kit clonado em kit/
-KIT_DIR = "kit"
-KIT_INDEX = "sounds.json"
-SFX_PLAN_FILE = "sfx.json"  # na pasta do vídeo
-KIT_VOICE_REFERENCE_LUFS = -16.0  # o kit foi nivelado para uma voz a −16 LUFS (GUIDE.md, §3)
-MAX_CUES_PER_10S = 8  # acima disso é ruído, não acabamento
-
 
 def load_kit(data_dir: Path) -> SfxKit | None:
     """O SFX Kit em `data/sfx/kit/`; sem o `sounds.json`, None."""
-    root = data_dir / SFX_DIR / KIT_DIR
-    index = root / KIT_INDEX
+    root = data_dir / SfxConstants.SFX_DIR / SfxConstants.KIT_DIR
+    index = root / SfxConstants.KIT_INDEX
     if not index.is_file():
         return None
     data = json.loads(index.read_text(encoding="utf-8"))
@@ -121,10 +113,10 @@ def plan_problems(
     moments.sort()
     for i, moment in enumerate(moments):
         window = [m for m in moments[i:] if m < moment + 10]
-        if len(window) > MAX_CUES_PER_10S:
+        if len(window) > SfxConstants.MAX_CUES_PER_10S:
             warnings.append(
                 f"sfx.json: {len(window)} efeitos em 10 s a partir de {moment:.1f} s "
-                f"(mais de {MAX_CUES_PER_10S})"
+                f"(mais de {SfxConstants.MAX_CUES_PER_10S})"
             )
             break
     return errors, warnings
@@ -140,7 +132,7 @@ def resolve_sfx(
 ) -> list[PlacedSfx]:
     """Onde cada arquivo começa e com que ganho. `voice_lufs`: a loudness medida da voz, para manter a relação
     que o kit assume (voz a −16 LUFS): voz mais baixa que isso baixa os efeitos junto."""
-    reference = 0.0 if voice_lufs is None else voice_lufs - KIT_VOICE_REFERENCE_LUFS
+    reference = 0.0 if voice_lufs is None else voice_lufs - SfxConstants.KIT_VOICE_REFERENCE_LUFS
     spans = [
         (scene_starts[s], scene_starts[s] + sp.seconds) for s, sp in speeches.items() if s in scene_starts
     ]

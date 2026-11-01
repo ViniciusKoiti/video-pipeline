@@ -5,7 +5,8 @@ from typing import Self
 
 from pydantic import Field, model_validator
 
-from app.pipeline.models._schemas_types import _OBJECTIVE_FIELDS, NonEmpty, ObjectiveKind, _unique
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models._schemas_types import NonEmpty, ObjectiveKind, _unique
 from app.pipeline.models.model import Model
 
 
@@ -34,7 +35,7 @@ class Objective(Model):
     @model_validator(mode="after")
     def _fields_match_kinds(self) -> Self:
         _unique(self.kinds, "tipos de objetivo")
-        for kind, names in _OBJECTIVE_FIELDS.items():
+        for kind, names in SchemasConstants._OBJECTIVE_FIELDS.items():
             given = [name for name in names if getattr(self, name) is not None]
             if kind in self.kinds and len(given) < len(names):
                 missing = ", ".join(name for name in names if name not in given)

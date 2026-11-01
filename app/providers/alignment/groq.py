@@ -11,12 +11,10 @@ from pathlib import Path
 from typing import Any
 
 from app.providers.alignment.base import TimedWord
+from app.providers.alignment.constants.groq_constants import GroqConstants
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import MultipartPost, TransportError, post_multipart
-
-URL = "https://api.groq.com/openai/v1/audio/transcriptions"
-PROMPT_CHARS = 600  # o Whisper só usa os últimos ~224 tokens do prompt
 
 
 class GroqWordAligner:
@@ -38,10 +36,10 @@ class GroqWordAligner:
             "temperature": "0",
         }
         if prompt:
-            fields["prompt"] = prompt[-PROMPT_CHARS:]
+            fields["prompt"] = prompt[-GroqConstants.PROMPT_CHARS:]
         try:
             auth = {"Authorization": f"Bearer {self._key}"}
-            data = self._post(URL, fields, {"file": audio}, auth, self._timeout)
+            data = self._post(GroqConstants.URL, fields, {"file": audio}, auth, self._timeout)
         except TransportError as error:
             raise _provider_error(error) from None
         except ValueError:

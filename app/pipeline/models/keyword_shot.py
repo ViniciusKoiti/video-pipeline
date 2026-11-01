@@ -4,8 +4,9 @@ from typing import Literal, Self
 
 from pydantic import model_validator
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._schemas_shot import _Shot
-from app.pipeline.models._schemas_types import KEYWORD_MAX_WORDS, NonEmpty, _fold
+from app.pipeline.models._schemas_types import NonEmpty, _fold
 
 
 class KeywordShot(_Shot):
@@ -18,8 +19,10 @@ class KeywordShot(_Shot):
 
     @model_validator(mode="after")
     def _short_and_consistent(self) -> Self:
-        if len(self.text.split()) > KEYWORD_MAX_WORDS:
-            raise ValueError(f"frase na tela com mais de {KEYWORD_MAX_WORDS} palavras: {self.text!r}")
+        if len(self.text.split()) > SchemasConstants.KEYWORD_MAX_WORDS:
+            raise ValueError(
+                f"frase na tela com mais de {SchemasConstants.KEYWORD_MAX_WORDS} palavras: {self.text!r}"
+            )
         if self.highlight and _fold(self.highlight) not in _fold(self.text):
             raise ValueError(f"destaque {self.highlight!r} fora da frase {self.text!r}")
         return self

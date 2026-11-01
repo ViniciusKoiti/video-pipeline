@@ -14,7 +14,8 @@ from pydantic import TypeAdapter
 
 from app.pipeline.check import CheckReport, check_episode
 from app.pipeline.schemas import EpisodeManifest, Language, Shot, number_format_problem, screen_number
-from app.render.remotion import PROJECT, RemotionEngine
+from app.render.constants.remotion_constants import RemotionConstants
+from app.render.remotion import RemotionEngine
 from tests.test_remotion_props import FIXTURE
 from tests.test_research import EP, episode, facts_file, scenes
 from tests.test_shots import CLAIM, v2_episode
@@ -184,6 +185,6 @@ def test_template_reads_numbers_like_the_python_side() -> None:
     """`video/src/numbers.ts` e `screen_number` leem os mesmos casos de `fixtures/screen-numbers.json`."""
     result = subprocess.run(
         ["node", "--disable-warning=ExperimentalWarning", "--test", "tests/numbers.test.ts"],
-        cwd=PROJECT, capture_output=True, text=True, timeout=60, check=False,
+        cwd=RemotionConstants.PROJECT, capture_output=True, text=True, timeout=60, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

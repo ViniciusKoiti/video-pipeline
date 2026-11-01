@@ -20,6 +20,7 @@ O comando pode ser chamado de qualquer diretório pelo caminho do script. Usa o 
 | Testes e regressão | `uv run --no-sync pytest -q` | Todos os testes selecionados passam |
 | Arquitetura, dentro do pytest | `tests/test_architecture.py` | Dependências obedecem às fronteiras abaixo |
 | Modelos, dentro do pytest | `tests/test_model_layout.py` | Objetos de dados em `app/<área>/models/`, uma classe por arquivo (ADR 037) |
+| Constantes, dentro do pytest | `tests/test_constants_layout.py` | Todos os fluxos de `app/` usam classes em `constants/`, atributos `Final` e coleções imutáveis em profundidade (ADR 038) |
 | Tamanho, dentro do pytest | `tests/test_tamanho_modulos.py` | Arquivos de `app/` até 200 linhas de código, funções até 50; exceções existentes não crescem |
 
 Os três comandos são executados mesmo quando um anterior falha. O processo retorna **0** apenas se todos
@@ -72,10 +73,14 @@ trabalho; o CI verifica o conteúdo do checkout da revisão enviada.
 
 - Pipeline usa portas e valores; não importa adapters concretos nem raiz de composição.
 - Adapters não dependem da orquestração do pipeline nem leem `Settings` diretamente.
-- Mídia e adapters podem consumir `app.pipeline.models` e o reexport `app.pipeline.schemas`;
+- Mídia e adapters podem consumir `app.pipeline.models`, `app.pipeline.constants` e o reexport `app.pipeline.schemas`;
   não dependem de serviços de produção, Short ou efeitos do pipeline.
 - Modelos de todos os fluxos ficam em `app/<área>/models/`, uma classe por arquivo; serviços e portas
   ficam fora. A regra e os caminhos de compatibilidade estão na [ADR 037](decisions/037-modelos-por-fluxo.md).
+- Constantes públicas, privadas e de validação ficam nas classes de `constants/` da área. O gate rejeita
+  definições fora da pasta, atributos sem `Final` e valores mutáveis em coleções aninhadas. Tipos, campos de
+  modelos, variáveis locais e os dois registros mutáveis de composição têm o tratamento da
+  [ADR 038](decisions/038-constantes-por-area.md); não há baseline que aceite constantes pendentes.
 - A raiz `app.bootstrap` pode virar pacote sem perder sua função de composição. Nomes semelhantes, como
   `app.bootstrap_extra`, não recebem a mesma permissão. A exceção existente de `app.cli` é preservada.
 - Imports relativos são resolvidos antes da análise, inclusive em `__init__.py`.
@@ -87,12 +92,13 @@ imports dinâmicos, efeitos colaterais ou contratos de comportamento.
 
 | Indicador | Medida local |
 |---|---|
-| Código em `app/` | 10.780 linhas de código em 302 arquivos Python após a migração de modelos |
-| Exceções legadas de tamanho | 11 arquivos e 10 funções, em `tests/baseline_tamanho_app.json`; nenhuma exceção cresceu |
+| Código em `app/` | 11.743 linhas de código em 362 arquivos Python após separar modelos e constantes em todo o sistema |
+| Exceções legadas de tamanho | 10 arquivos e 9 funções, em `tests/baseline_tamanho_app.json`; nenhuma exceção cresceu |
 | Violações atuais da catraca de tamanho | 0 |
-| Arquitetura, tamanho e organização dos modelos | 36 testes na verificação específica |
-| Suíte completa | 936 testes passaram; 6 lentos ficaram fora pela configuração existente |
-| Tipagem estrita | Sem erros nos 302 arquivos de `app/`; 107 diagnósticos iniciais resolvidos |
+| Arquitetura, tamanho, modelos e constantes | 57 testes passaram na verificação específica |
+| Constantes identificadas | 311 atributos em 54 classes; [inventário por responsabilidade](inventario-constantes-2026-11-01.md) |
+| Suíte completa | 958 testes passaram; 6 lentos ficaram fora pela configuração existente |
+| Tipagem estrita | Sem erros nos 362 arquivos de `app/`; 107 diagnósticos iniciais resolvidos |
 | Lint dos testes alterados | Aprovado |
 | Lint global | Reprovado por dois `B006` preexistentes, listados abaixo |
 
@@ -101,6 +107,14 @@ de tipagem e a ordem de correção estão em [qualidade de tipagem](qualidade-ti
 Os testes do mecanismo do gate usam um `uv` falso; o teste de compatibilidade TTS executa o Mypy instalado.
 Após as correções, o comando completo retornou **1** somente pelos dois erros de lint abaixo; tipagem,
 arquitetura, tamanho e testes passaram. Nenhum serviço de produção foi chamado.
+
+A extração de `FfmpegConstants` (ADR 038) preservou as chaves de cache de áudio conferidas antes e depois,
+com e sem trilha. A suíte também verifica que trocar a versão invalida o cache; a catraca de tamanho
+de `app/render/ffmpeg.py` caiu de 368 para 364 linhas de código.
+
+Na extensão para todo o sistema, 288 valores globais e 133 schemas Pydantic foram comparados antes/depois
+sem diferenças. A suíte verifica também as coleções aninhadas e o import do cliente isolado do Modal sem
+exigir instalação de `app` naquele ambiente. Esta validação não chama o Modal nem qualquer provedor real.
 
 Os dois impedimentos de lint são defaults mutáveis em demonstrações:
 

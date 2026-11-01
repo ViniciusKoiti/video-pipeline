@@ -19,6 +19,8 @@ from pathlib import Path
 
 from app.media.probe import duration_ms
 from app.pipeline import bench_data
+from app.pipeline.constants.bench_constants import BenchConstants
+from app.pipeline.constants.bench_data_constants import BenchDataConstants
 from app.pipeline.models.bench_report import BenchReport as BenchReport
 from app.pipeline.models.llm_run import LlmRun as LlmRun
 from app.pipeline.models.machine import Machine as Machine
@@ -29,10 +31,6 @@ from app.pipeline.schemas import EpisodeManifest
 from app.providers.errors import ProviderError
 from app.providers.text.base import TextRequest
 from app.providers.tts.base import SpeechRequest
-
-BUSY_LOAD_PER_CPU = 0.25
-CPU_PROBE_SLOW_S = 0.3  # sha256 de 64 MB leva centésimos numa CPU livre; muito mais = CPU estrangulada
-MAX_OUTPUT_TOKENS = 600
 
 Progress = Callable[[str], None]
 
@@ -67,7 +65,7 @@ def read_machine(proc: Path = Path("/proc"), probe: Callable[[], float] = cpu_pr
         load_1m=load,
         python=platform.python_version(),
         cpu_probe_s=probe_s,
-        busy=load / cpus > BUSY_LOAD_PER_CPU or probe_s > CPU_PROBE_SLOW_S,
+        busy=load / cpus > BenchConstants.BUSY_LOAD_PER_CPU or probe_s > BenchConstants.CPU_PROBE_SLOW_S,
     )
 
 
@@ -87,8 +85,8 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
     request = TextRequest(
         prompt=bench_data.prompt(run),
         output=bench_data.BenchScript,
-        system=bench_data.SYSTEM,
-        max_tokens=MAX_OUTPUT_TOKENS,
+        system=BenchDataConstants.SYSTEM,
+        max_tokens=BenchConstants.MAX_OUTPUT_TOKENS,
         model=model,
     )
     prompt_sha256 = hashlib.sha256(f"{request.system}\n\n{request.prompt}".encode()).hexdigest()
@@ -107,7 +105,7 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
             mem_available_mb_after=_available_mb(proc),
         )
     usage = result.usage
-    known = {excerpt_id for excerpt_id, _ in bench_data.EXCERPTS}
+    known = {excerpt_id for excerpt_id, _ in BenchDataConstants.EXCERPTS}
     cited = {e for claim in result.data.claims for e in claim.excerpt_ids}
     return LlmRun(
         provider=provider,
@@ -134,7 +132,7 @@ def bench_tts(context: Context, run: int, workdir: Path) -> TtsRun:
     out = workdir / f"tts-run{run}.wav"
     start = time.perf_counter()
     try:
-        result = context.tts.synthesize_speech(SpeechRequest(text=bench_data.NARRATION, out_path=out))
+        result = context.tts.synthesize_speech(SpeechRequest(text=BenchDataConstants.NARRATION, out_path=out))
     except ProviderError as error:
         return TtsRun(provider=provider, run=run, ok=False, error=f"{error.reason}: {error}",
                       wall_s=round(time.perf_counter() - start, 1))
@@ -153,9 +151,6 @@ def bench_tts(context: Context, run: int, workdir: Path) -> TtsRun:
     )
 
 
-RENDER_MODES = (("final-frio", False, True), ("final-cache", False, False), ("preview-frio", True, True))
-
-
 def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
     """Renderiza o episódio pela porta RenderEngine: final sem cache, final com cache e prévia."""
     episode = EpisodeManifest.model_validate_json((episode_dir / "episode.json").read_text())
@@ -163,7 +158,7 @@ def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
     engine = renderer.info.name
     out_dir = context.settings.data_dir / "benchmarks" / "renders" / engine
     runs = []
-    for mode, preview, cold in RENDER_MODES:
+    for mode, preview, cold in BenchConstants.RENDER_MODES:
         out = out_dir / f"{episode.episode_id}-{'preview' if preview else 'final'}.mp4"
         if cold:
             shutil.rmtree(out_dir / f".segments-{'preview' if preview else 'final'}", ignore_errors=True)

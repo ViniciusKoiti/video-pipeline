@@ -5,7 +5,8 @@ from typing import Annotated, Self
 
 from pydantic import Field, model_validator
 
-from app.pipeline.models._schemas_types import READING_NUMBERS, Count, Percent, _unique
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models._schemas_types import Count, Percent, _unique
 from app.pipeline.models.model import Model
 from app.pipeline.models.traffic_source import TrafficSource
 
@@ -29,7 +30,10 @@ class MetricsReading(Model):
 
     @model_validator(mode="after")
     def _has_numbers(self) -> Self:
-        if all(getattr(self, name) is None for name in READING_NUMBERS) and not self.traffic_sources:
+        if (
+            all(getattr(self, name) is None for name in SchemasConstants.READING_NUMBERS)
+            and not self.traffic_sources
+        ):
             raise ValueError("leitura sem nenhum número: o que não foi lido fica fora, não zero")
         _unique([source.name for source in self.traffic_sources], "origens de tráfego")
         total = sum(source.percent for source in self.traffic_sources)

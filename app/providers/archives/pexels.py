@@ -11,18 +11,15 @@ from collections.abc import Mapping
 from typing import Any
 from urllib.parse import urlencode
 
-from app.pipeline.schemas import Provider
 from app.providers.archives.base import AssetCandidate, AssetQuery
+from app.providers.archives.constants.pexels_constants import PexelsConstants
 from app.providers.archives.stock import StockArchive, normalize_query
-
-API = "https://api.pexels.com/v1"
-PER_PAGE = 15  # por busca; os filtros de resolução e duração descartam parte
 
 
 class PexelsArchive(StockArchive):
-    provider = Provider.PEXELS
-    license_id = "Pexels"
-    license_url = "https://www.pexels.com/license/"
+    provider = PexelsConstants.PROVIDER
+    license_id = PexelsConstants.LICENSE_ID
+    license_url = PexelsConstants.LICENSE_URL
 
     def __init__(self, api_key: str, **options: Any) -> None:
         super().__init__(**options)
@@ -34,9 +31,11 @@ class PexelsArchive(StockArchive):
         params = {
             "query": normalize_query(query.text),
             "orientation": query.orientation,
-            "per_page": PER_PAGE,
+            "per_page": PexelsConstants.PER_PAGE,
         }
-        data = self._fetch(f"{API}{path}?{urlencode(params)}", self._headers, {"endpoint": path, **params})
+        data = self._fetch(
+            f"{PexelsConstants.API}{path}?{urlencode(params)}", self._headers, {"endpoint": path, **params}
+        )
         return self._items(data, "videos" if video else "photos")
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:

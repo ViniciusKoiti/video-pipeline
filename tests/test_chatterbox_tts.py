@@ -16,7 +16,9 @@ from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest
 from app.providers.tts.chatterbox import ChatterboxTTS, reference_hash
-from app.settings import CONFIG_FILE, load_settings, speech_chars_per_second
+from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
+from app.settings import load_settings, speech_chars_per_second
+from app.settings.constants.settings_constants import SettingsConstants
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SP = "<short pause>"
@@ -198,8 +200,12 @@ def test_paths_come_from_the_environment_and_drafts_stay_on_kokoro(tmp_path: Pat
     assert settings.chatterbox.reference == Path("~/voz/referencia.wav")
     # ADR 016: a voz clonada é a do vídeo final; os rascunhos seguem no Kokoro, que é rápido
     assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "chatterbox_modal")  # ADR 024
-    (tmp_path / CONFIG_FILE.parent).mkdir()  # sem `.env` ao lado, para não depender do desta máquina
-    (tmp_path / CONFIG_FILE).write_text((REPO_ROOT / CONFIG_FILE).read_text())
+    (
+        tmp_path / SettingsConstants.CONFIG_FILE.parent
+    ).mkdir()  # sem `.env` ao lado, para não depender do desta máquina
+    (tmp_path / SettingsConstants.CONFIG_FILE).write_text(
+        (REPO_ROOT / SettingsConstants.CONFIG_FILE).read_text()
+    )
     assert load_settings(tmp_path, {}).chatterbox.python is None
 
 
@@ -263,11 +269,11 @@ LONG = " ".join(FRASE.format(n=n) for n in range(12))
 
 
 def test_split_long_keeps_every_word_in_order_and_respects_the_limit() -> None:
-    from app.providers.tts.chatterbox import MAX_PART_CHARS, split_long
+    from app.providers.tts.chatterbox import split_long
 
     groups = split_long(LONG)
     assert len(groups) > 1
-    assert all(len(group) <= MAX_PART_CHARS for group in groups)
+    assert all(len(group) <= ChatterboxConstants.MAX_PART_CHARS for group in groups)
     assert " ".join(groups).split() == LONG.split()
     assert all(group.endswith(".") for group in groups)  # corta no fim da frase
 
@@ -284,7 +290,7 @@ def test_split_long_breaks_a_huge_sentence_at_commas_then_words() -> None:
 
 
 def test_short_scene_is_still_one_job_and_long_scene_is_joined_with_the_pauses(tmp_path: Path) -> None:
-    from app.providers.tts.chatterbox import SENTENCE_GAP_MS
+
 
     worker = FakeWorker()
     tts = make_tts(worker, tmp_path)
@@ -293,7 +299,7 @@ def test_short_scene_is_still_one_job_and_long_scene_is_joined_with_the_pauses(t
     tts.synthesize_speech(SpeechRequest(text=text, out_path=out, language="pt-BR"))
     assert len(worker.jobs) == 2  # um pedido por trecho entre pausas
     first, second = worker.jobs
-    assert len(first["parts"]) > 1 and first["pause_ms"] == SENTENCE_GAP_MS
+    assert len(first["parts"]) > 1 and first["pause_ms"] == ChatterboxConstants.SENTENCE_GAP_MS
     assert second["parts"] == ["Fim curto."]
     assert " ".join(first["parts"]).split() == LONG.split()
     assert first["out_path"] != str(out) and not Path(first["out_path"]).exists()  # trechos temporários

@@ -4,7 +4,8 @@ from typing import Self
 
 from pydantic import Field, model_validator
 
-from app.pipeline.models._schemas_types import MEDIA_SHOT_KINDS, RelPath
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models._schemas_types import RelPath
 from app.pipeline.models._schemas_value_shot import Shot
 from app.pipeline.models._schemas_value_step_anchors import step_anchors
 from app.pipeline.models.model import Model
@@ -29,7 +30,7 @@ class EpisodeShot(Model):
 
     @model_validator(mode="after")
     def _media_when_needed(self) -> Self:
-        if (self.spec.kind in MEDIA_SHOT_KINDS) != (self.media is not None):
+        if (self.spec.kind in SchemasConstants.MEDIA_SHOT_KINDS) != (self.media is not None):
             raise ValueError(f"plano {self.spec.kind}: media é obrigatório para foto/B-roll e só para eles")
         expected = len(step_anchors(self.spec))
         if len(self.steps_ms) != expected:

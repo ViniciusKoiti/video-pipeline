@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from app.pipeline.models._sfx_types import COVERS_SPEECH
+from app.pipeline.constants.sfx_constants import SfxConstants
 from app.pipeline.models.model import Model
 
 
@@ -21,4 +21,4 @@ class SfxSound(Model):
 
     @property
     def covers_speech(self) -> bool:
-        return any(a.startswith(COVERS_SPEECH) for a in self.avoid_for)
+        return any(a.startswith(SfxConstants.COVERS_SPEECH) for a in self.avoid_for)

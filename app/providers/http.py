@@ -15,12 +15,12 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
+from app.providers.constants.http_constants import HttpConstants
 from app.providers.models._http_types import JsonPayload as JsonPayload
 from app.providers.models.json_response import JsonResponse as JsonResponse
 
-CHUNK_BYTES = 1 << 20
 # O "Python-urllib" padrão é barrado por proxies anti-robô (a API do Pexels responde 403, erro 1010).
-USER_AGENT = "video-pipeline/0.1"
+
 
 JsonPost = Callable[[str, Mapping[str, Any], float], JsonPayload]  # url, corpo, timeout → JSON
 AuthPost = Callable[[str, Mapping[str, Any], Mapping[str, str], float], JsonPayload]  # + cabeçalhos
@@ -50,7 +50,7 @@ def post_json_with_headers(
     request = urllib.request.Request(
         url,
         data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json", "User-Agent": USER_AGENT, **headers},
+        headers={"Content-Type": "application/json", "User-Agent": HttpConstants.USER_AGENT, **headers},
         method="POST",
     )
     try:
@@ -87,7 +87,9 @@ def post_multipart(
         url,
         data=bytes(body),
         headers={
-            "Content-Type": f"multipart/form-data; boundary={boundary}", "User-Agent": USER_AGENT, **headers
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            "User-Agent": HttpConstants.USER_AGENT,
+            **headers,
         },
         method="POST",
     )
@@ -105,7 +107,9 @@ FileGet = Callable[[str, Path, Mapping[str, str], float], Path]  # url, destino,
 
 
 def get_json(url: str, headers: Mapping[str, str], timeout: float) -> JsonResponse:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, **headers}, method="GET")
+    request = urllib.request.Request(
+        url, headers={"User-Agent": HttpConstants.USER_AGENT, **headers}, method="GET"
+    )
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             received = {name.lower(): value for name, value in response.headers.items()}
@@ -120,10 +124,12 @@ def download(url: str, dest: Path, headers: Mapping[str, str], timeout: float) -
     """Grava em `<dest>.part` e renomeia no fim: um download interrompido não deixa arquivo pela metade."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     partial = dest.with_name(dest.name + ".part")
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, **headers}, method="GET")
+    request = urllib.request.Request(
+        url, headers={"User-Agent": HttpConstants.USER_AGENT, **headers}, method="GET"
+    )
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response, partial.open("wb") as out:
-            shutil.copyfileobj(response, out, CHUNK_BYTES)
+            shutil.copyfileobj(response, out, HttpConstants.CHUNK_BYTES)
     except urllib.error.HTTPError as error:
         partial.unlink(missing_ok=True)
         raise TransportError(error.code, "download recusado") from None

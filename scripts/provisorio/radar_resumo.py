@@ -24,7 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.pipeline.radar import BRIEF_FILE, RadarBrief, brief_summary  # noqa: E402
+from app.pipeline.constants.radar_constants import RadarConstants  # noqa: E402
+from app.pipeline.radar import RadarBrief, brief_summary  # noqa: E402
 from app.settings import load_settings, read_dotenv  # noqa: E402
 
 
@@ -54,7 +55,7 @@ def main() -> None:
     episode_dir = load_settings(ROOT).data_dir / "episodes" / args.episode_id
     if not episode_dir.is_dir():
         raise SystemExit(f"episódio {args.episode_id} não existe em {episode_dir.parent}")
-    target = episode_dir / BRIEF_FILE
+    target = episode_dir / RadarConstants.BRIEF_FILE
     if target.is_file():
         current = target.read_text(encoding="utf-8")
         if current == text:

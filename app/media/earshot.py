@@ -18,12 +18,10 @@ from typing import Any
 
 from pydantic import TypeAdapter
 
+from app.media.constants.earshot_constants import EarshotConstants
 from app.media.loudness import loudness_problem
-from app.media.models._earshot_types import SYNC_TOLERANCE_MS as SYNC_TOLERANCE_MS
 from app.media.models.audio_review import AudioReview as AudioReview
 from app.media.models.cue_sync import CueSync as CueSync
-
-MAX_TRUE_PEAK_DBTP = -1.0  # acima disso o encoder já passou do teto; o loudnorm pede −1,5
 
 
 class EarshotError(RuntimeError):
@@ -78,8 +76,10 @@ def review_problems(review: AudioReview, expected_hits: Set[float] = frozenset()
     loud = loudness_problem(review.integrated_lufs)
     if loud:
         problems.append(f"volume efetivo (mono nos dois alto-falantes, como o YouTube mede): {loud}")
-    if review.true_peak_dbtp > MAX_TRUE_PEAK_DBTP:
-        problems.append(f"pico real {review.true_peak_dbtp:.1f} dBTP acima de {MAX_TRUE_PEAK_DBTP:.0f}")
+    if review.true_peak_dbtp > EarshotConstants.MAX_TRUE_PEAK_DBTP:
+        problems.append(
+            f"pico real {review.true_peak_dbtp:.1f} dBTP acima de {EarshotConstants.MAX_TRUE_PEAK_DBTP:.0f}"
+        )
     for cue in review.cues:
         if any(abs(cue.at_s - at) < 0.02 for at in expected_hits) and not cue.hit:
             where = "sem som" if cue.offset_ms is None else f"ataque a {cue.offset_ms:+.0f} ms"

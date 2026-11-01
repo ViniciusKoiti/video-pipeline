@@ -20,7 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.pipeline.affiliate import BOOKS_FILE, BookList, books_block, channel_tag, with_block  # noqa: E402
+from app.pipeline.affiliate import BookList, books_block, channel_tag, with_block  # noqa: E402
+from app.pipeline.constants.affiliate_constants import AffiliateConstants  # noqa: E402
 
 
 def main() -> None:
@@ -29,7 +30,7 @@ def main() -> None:
     parser.add_argument("episode_id")
     args = parser.parse_args()
     folder = ROOT / "data" / "episodes" / args.episode_id
-    books = BookList.model_validate_json((folder / BOOKS_FILE).read_text(encoding="utf-8"))
+    books = BookList.model_validate_json((folder / AffiliateConstants.BOOKS_FILE).read_text(encoding="utf-8"))
     block = books_block(books, channel_tag(ROOT))
     description = folder / "description.txt"
     text = description.read_text(encoding="utf-8") if description.is_file() else ""

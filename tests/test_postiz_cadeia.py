@@ -248,7 +248,6 @@ def test_doubt_agent_is_read_only() -> None:
     assert tools == "tools: Read, Grep, Glob"
 
 
-
 def package_of(caption: str, fetch) -> dict:
     from app.commands import postiz_cadeia
 

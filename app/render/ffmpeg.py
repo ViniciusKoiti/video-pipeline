@@ -18,17 +18,15 @@ import re
 import subprocess
 from pathlib import Path
 
-from app.media.loudness import TARGET_LUFS, integrated_lufs
+from app.media.constants.loudness_constants import LoudnessConstants
+from app.media.loudness import integrated_lufs
 from app.media.probe import dimensions, duration_ms, probe_streams
 from app.pipeline.schemas import EpisodeManifest, EpisodeMusic, EpisodeScene, VideoSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
+from app.render.constants.ffmpeg_constants import FfmpegConstants as Constants
 from app.render.models.cue import Cue as Cue
 from app.render.models.run_stats import RunStats as RunStats
-
-ENGINE_VERSION = "2"  # mudar invalida o cache de segmentos (v2: matriz e marcação bt709)
-FIT_MIN_ASPECT = 1.45
-SRT_TIME = re.compile(r"(\d+):(\d\d):(\d\d)[,.](\d\d\d)")
 
 
 class RenderError(RuntimeError):
@@ -39,7 +37,7 @@ def parse_srt(text: str) -> list[Cue]:
     cues = []
     for block in re.split(r"\n\s*\n", text.strip()):
         lines = block.strip().splitlines()
-        times = SRT_TIME.findall(lines[1]) if len(lines) >= 2 else []
+        times = Constants.SRT_TIME.findall(lines[1]) if len(lines) >= 2 else []
         if len(times) == 2:
             start, end = (
                 int(h) * 3_600_000 + int(m) * 60_000 + int(s) * 1000 + int(ms) for h, m, s, ms in times
@@ -143,7 +141,7 @@ class FfmpegEngine:
 
     def _segment_key(self, image: Path, spec: VideoSpec, frames: int, cues: list[Cue], preview: bool) -> str:
         payload = {
-            "engine": ENGINE_VERSION,
+            "engine": Constants.ENGINE_VERSION,
             "image": hashlib.sha256(image.read_bytes()).hexdigest(),
             "spec": [spec.width, spec.height, spec.fps],
             "frames": frames,
@@ -154,7 +152,7 @@ class FfmpegEngine:
                 self._zoom,
                 self._fade_s,
                 self._font,
-                FIT_MIN_ASPECT,
+                Constants.FIT_MIN_ASPECT,
             ],
         }
         return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:16]
@@ -164,7 +162,7 @@ class FfmpegEngine:
     ) -> str:
         w, h, fps = spec.width, spec.height, spec.fps
         w2, h2 = 2 * w, 2 * h  # superamostragem: o zoompan não treme
-        if image_size[0] / image_size[1] >= FIT_MIN_ASPECT:
+        if image_size[0] / image_size[1] >= Constants.FIT_MIN_ASPECT:
             base = f"[0:v]scale={w2}:{h2}:force_original_aspect_ratio=increase,crop={w2}:{h2},setsar=1"
         else:
             bw, bh = w // 4, h // 4
@@ -252,10 +250,6 @@ class FfmpegEngine:
         assemble(episode, episode_dir, segments, spec, out, audio_bitrate=self._audio_bitrate)
 
 
-CONCAT = ["-f", "concat", "-safe", "0"]
-AUDIO_VERSION = "1"  # mudar invalida o áudio em cache
-
-
 def assemble(
     episode: EpisodeManifest,
     episode_dir: Path,
@@ -276,7 +270,7 @@ def assemble(
     tmp = out.with_suffix(".tmp.mp4")
     _run(
         [
-            *CONCAT,
+            *Constants.CONCAT,
             "-i",
             str(video_list),
             "-i",
@@ -307,9 +301,11 @@ def _sha256(path: Path) -> str:
 def audio_key(episode: EpisodeManifest, episode_dir: Path, spec: VideoSpec, audio_bitrate: str) -> str:
     """Tudo que muda o áudio final: WAVs e o início de cada cena (os buracos viram silêncio), a trilha com as
     faixas, a taxa e o bitrate, e as constantes da mistura (alvo de loudness, ducking, limiter)."""
-    digest = hashlib.sha256(
-        f"{AUDIO_VERSION}|{spec.audio_sample_rate}|{audio_bitrate}|{TARGET_LUFS}|{DUCKING}|{LIMITER}".encode()
+    header = (
+        f"{Constants.AUDIO_VERSION}|{spec.audio_sample_rate}|{audio_bitrate}|"
+        f"{LoudnessConstants.TARGET_LUFS}|{Constants.DUCKING}|{Constants.LIMITER}"
     )
+    digest = hashlib.sha256(header.encode())
     for scene in episode.scenes:
         digest.update(f"|{scene.start_ms}|{_sha256(episode_dir / scene.audio)}".encode())
     digest.update(json.dumps([m.model_dump(mode="json") for m in episode.music], sort_keys=True).encode())
@@ -333,8 +329,8 @@ def _encoded_audio(
     audio: list[str] = ["-map", "0:a"]
     music_inputs: list[str] = []
     if episode.music:
-        voice_lufs = integrated_lufs(audio_list, input_args=CONCAT)
-        gain = TARGET_LUFS - voice_lufs
+        voice_lufs = integrated_lufs(audio_list, input_args=Constants.CONCAT)
+        gain = LoudnessConstants.TARGET_LUFS - voice_lufs
         music_inputs, graph = music_mix(
             episode.music, episode_dir, spec.audio_sample_rate, gain, voice_input=0
         )
@@ -342,7 +338,7 @@ def _encoded_audio(
     tmp = cached.with_suffix(".tmp.m4a")
     _run(
         [
-            *CONCAT,
+            *Constants.CONCAT,
             "-i",
             str(audio_list),
             *music_inputs,
@@ -361,11 +357,6 @@ def _encoded_audio(
     tmp.replace(cached)
     audio_list.unlink()
     return cached
-
-
-# Ducking (ADR 030): a trilha baixa enquanto a voz fala, com a própria voz como chave do compressor.
-DUCKING = "sidechaincompress=threshold=0.02:ratio=8:attack=20:release=500"
-LIMITER = "alimiter=limit=0.89:level=false"  # teto de ~-1 dBFS depois do ganho para o alvo de loudness
 
 
 def music_mix(
@@ -399,8 +390,8 @@ def music_mix(
         *chains,
         bus,
         f"[{voice_input}:a]{fmt},volume={voice_gain_db:.2f}dB,asplit=2[voice][key]",
-        f"[bus][key]{DUCKING}[ducked]",
-        f"[voice][ducked]amix=inputs=2:normalize=0:duration=first,{LIMITER}[a]",
+        f"[bus][key]{Constants.DUCKING}[ducked]",
+        f"[voice][ducked]amix=inputs=2:normalize=0:duration=first,{Constants.LIMITER}[a]",
     ]
     return inputs, ";".join(graph)
 
@@ -445,8 +436,7 @@ def _concat_list(paths: list[Path]) -> str:
 
 
 def _run(args: list[str]) -> None:
-    result = subprocess.run(
-        ["ffmpeg", "-v", "error", "-y", *args], capture_output=True, text=True, check=False
-    )
+    command = ["ffmpeg", "-v", "error", "-y", *args]
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         raise RenderError(f"ffmpeg falhou: {result.stderr.strip()[-500:]}")

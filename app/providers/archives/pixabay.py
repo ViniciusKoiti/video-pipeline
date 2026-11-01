@@ -12,19 +12,15 @@ from collections.abc import Mapping
 from typing import Any
 from urllib.parse import urlencode
 
-from app.pipeline.schemas import Provider
 from app.providers.archives.base import AssetCandidate, AssetQuery
+from app.providers.archives.constants.pixabay_constants import PixabayConstants
 from app.providers.archives.stock import StockArchive, normalize_query
-
-API = "https://pixabay.com/api/"
-PER_PAGE = 20
-MAX_QUERY_CHARS = 100  # limite da API para `q`
 
 
 class PixabayArchive(StockArchive):
-    provider = Provider.PIXABAY
-    license_id = "Pixabay"
-    license_url = "https://pixabay.com/service/license-summary/"
+    provider = PixabayConstants.PROVIDER
+    license_id = PixabayConstants.LICENSE_ID
+    license_url = PixabayConstants.LICENSE_URL
 
     def __init__(self, api_key: str, **options: Any) -> None:
         super().__init__(**options)
@@ -37,18 +33,18 @@ class PixabayArchive(StockArchive):
         if portrait:  # o mínimo é 1920×1080 deitado; em pé, 1080×1920
             min_width, min_height = min_height, min_width
         params: dict[str, Any] = {
-            "q": normalize_query(query.text)[:MAX_QUERY_CHARS],
+            "q": normalize_query(query.text)[:PixabayConstants.MAX_QUERY_CHARS],
             "min_width": min_width,
             "min_height": min_height,
             "safesearch": "true",
-            "per_page": PER_PAGE,
+            "per_page": PixabayConstants.PER_PAGE,
         }
         # o vídeo não tem filtro de orientação na API: o corte em pé sai do `_fits` de cada arquivo
         params |= {"video_type": "film"} if video else {
             "image_type": "photo",
             "orientation": "vertical" if portrait else "horizontal",
         }
-        endpoint = f"{API}videos/" if video else API
+        endpoint = f"{PixabayConstants.API}videos/" if video else PixabayConstants.API
         url = f"{endpoint}?{urlencode({'key': self._key, **params})}"
         data = self._fetch(url, {}, {"endpoint": "videos" if video else "images", **params})
         return self._items(data, "hits")

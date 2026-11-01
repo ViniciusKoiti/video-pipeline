@@ -9,27 +9,11 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._schemas_factual_shot import _FactualShot as _FactualShot
 from app.pipeline.models._schemas_from_to import _FromTo as _FromTo
 from app.pipeline.models._schemas_shot import _Shot as _Shot
 from app.pipeline.models._schemas_step import _Step as _Step
-from app.pipeline.models._schemas_types import _OBJECTIVE_FIELDS as _OBJECTIVE_FIELDS
-from app.pipeline.models._schemas_types import _SCREEN_NUMBER_RE as _SCREEN_NUMBER_RE
-from app.pipeline.models._schemas_types import _STEP_NAMES as _STEP_NAMES
-from app.pipeline.models._schemas_types import _WHEN_RE as _WHEN_RE
-from app.pipeline.models._schemas_types import _YEAR_RE as _YEAR_RE
-from app.pipeline.models._schemas_types import ATTRIBUTION_LICENSES as ATTRIBUTION_LICENSES
-from app.pipeline.models._schemas_types import AUDIO_LIBRARY_LICENSE as AUDIO_LIBRARY_LICENSE
-from app.pipeline.models._schemas_types import CITATION_LICENSE as CITATION_LICENSE
-from app.pipeline.models._schemas_types import HOOK_MAX_WORDS as HOOK_MAX_WORDS
-from app.pipeline.models._schemas_types import KEYWORD_MAX_WORDS as KEYWORD_MAX_WORDS
-from app.pipeline.models._schemas_types import MAX_MUSIC_GAIN_DB as MAX_MUSIC_GAIN_DB
-from app.pipeline.models._schemas_types import MEDIA_SHOT_KINDS as MEDIA_SHOT_KINDS
-from app.pipeline.models._schemas_types import PORTRAIT_SHOT_KINDS as PORTRAIT_SHOT_KINDS
-from app.pipeline.models._schemas_types import PUBLIC_DOMAIN_LICENSES as PUBLIC_DOMAIN_LICENSES
-from app.pipeline.models._schemas_types import READING_NUMBERS as READING_NUMBERS
-from app.pipeline.models._schemas_types import REELS_SHOT_KINDS as REELS_SHOT_KINDS
-from app.pipeline.models._schemas_types import WINDOW_DAYS as WINDOW_DAYS
 from app.pipeline.models._schemas_types import AssetId as AssetId
 from app.pipeline.models._schemas_types import Count as Count
 from app.pipeline.models._schemas_types import Delivery as Delivery
@@ -67,13 +51,10 @@ from app.pipeline.models._schemas_types import _unique as _unique
 from app.pipeline.models._schemas_types import portrait_problems as portrait_problems
 from app.pipeline.models._schemas_types import reels_shot_problems as reels_shot_problems
 from app.pipeline.models._schemas_types import screen_parts as screen_parts
-from app.pipeline.models._schemas_value_accepted_licenses import ACCEPTED_LICENSES as ACCEPTED_LICENSES
-from app.pipeline.models._schemas_value_approved_states import APPROVED_STATES as APPROVED_STATES
 from app.pipeline.models._schemas_value_effective_shots import effective_shots as effective_shots
 from app.pipeline.models._schemas_value_shot import Shot as Shot
 from app.pipeline.models._schemas_value_step_anchors import step_anchors as step_anchors
 from app.pipeline.models._schemas_value_step_positions import step_positions as step_positions
-from app.pipeline.models._schemas_value_stock_licenses import STOCK_LICENSES as STOCK_LICENSES
 from app.pipeline.models.asset import Asset as Asset
 from app.pipeline.models.audience_request import AudienceRequest as AudienceRequest
 from app.pipeline.models.broll_shot import BrollShot as BrollShot
@@ -166,7 +147,6 @@ from app.pipeline.models.visual_need import VisualNeed as VisualNeed
 # Número como aparece na tela ("R$ 47,6 bi", "1.500", "78%"): prefixo, dígitos e sufixo (regra do `number`).
 # Separador de milhar e de decimal de cada idioma: o mesmo texto vale outro número em outro idioma, então o
 # valor da tela segue a convenção do idioma do episódio (ADR 011, emenda "número por idioma").
-NUMBER_SEPARATORS: dict[Language, tuple[str, str]] = {"pt-BR": (".", ","), "en": (",", ".")}
 
 
 def screen_number(value: str, language: Language = "pt-BR") -> tuple[str, float, str] | None:
@@ -175,7 +155,7 @@ def screen_number(value: str, language: Language = "pt-BR") -> tuple[str, float,
     parts = screen_parts(value)
     if parts is None:
         return None
-    group, decimal = NUMBER_SEPARATORS[language]
+    group, decimal = SchemasConstants.NUMBER_SEPARATORS[language]
     try:
         return parts[0], float(parts[1].replace(group, "").replace(decimal, ".")), parts[2]
     except ValueError:
@@ -188,7 +168,7 @@ def number_format_problem(value: str, language: Language = "pt-BR") -> str | Non
     parts = screen_parts(value)
     if parts is None:
         return None
-    group, decimal = NUMBER_SEPARATORS[language]
+    group, decimal = SchemasConstants.NUMBER_SEPARATORS[language]
     group_re, decimal_re = re.escape(group), re.escape(decimal)
     if re.fullmatch(rf"(\d{{1,3}}({group_re}\d{{3}})+|\d+)({decimal_re}\d+)?", parts[1]):
         return None
@@ -205,13 +185,10 @@ def number_format_problem(value: str, language: Language = "pt-BR") -> str | Non
 
 
 # Planos dos Reels (ADR 028): só no vertical até o vídeo-régua em 16:9.
-GRAPHIC_SHOT_KINDS = frozenset(
-    {"number", "chart", "quote", "map", "stamp", "lower_third", "timeline", "family_tree", "compare",
-     "network", "keyword"}
-) | REELS_SHOT_KINDS
+
 # Desenhados por cima da foto ou do B-roll anterior da mesma cena; os outros gráficos ficam em tela cheia
 # (ADR 011, decisão 5).
-OVERLAY_SHOT_KINDS = frozenset({"lower_third", "stamp", "number", "keyword"})
+
 
 # Planos com layout em retrato; rede, mapa, linha do tempo, árvore e documento dependem de canvas largo.
 
@@ -219,7 +196,6 @@ OVERLAY_SHOT_KINDS = frozenset({"lower_third", "stamp", "number", "keyword"})
 # --- Apresentador em janela flutuante (ADR 013) --------------------------------------------------
 
 # sentido horário
-HOST_CORNERS: tuple[HostCorner, ...] = ("top-left", "top-right", "bottom-right", "bottom-left")
 
 
 # Entrega da fala (ADR 022), do mais ao menos enfático: `hook` abertura e chamado; `turn` a virada ("mas…");
@@ -245,8 +221,6 @@ HOST_CORNERS: tuple[HostCorner, ...] = ("top-left", "top-right", "bottom-right",
 # mantém o ativo fora de approved; a decisão vira revisão humana.
 # Banco de imagem: a licença do próprio banco, ou CC0-1.0 na parte do acervo que a tem.
 # Quadro parado de obra citada para crítica, só de material oficial público (emenda de citação, ADR 007).
-MAX_CITATION_FRAMES = 10  # quadros por vídeo
-MAX_CITATION_MS = 8000  # na tela, só enquanto a narração comenta o quadro
 # Música da YouTube Audio Library sem atribuição exigida (emenda de música, ADR 007 e ADR 030): vale só em
 # vídeo publicado no YouTube; a faixa CC dela entra com a licença CC-BY da própria faixa.
 
@@ -257,23 +231,14 @@ MAX_CITATION_MS = 8000  # na tela, só enquanto a narração comenta o quadro
 # --- Trilha sonora (ADR 030) ---------------------------------------------------------------------
 
 # Ganho sobre o arquivo da faixa, antes do ducking: a voz fica sempre acima da trilha.
-MUSIC_GAIN_DB: dict[str, float] = {"low": -24.0, "mid": -18.0}
-MUSIC_DIR = "music"  # em data/: catálogo, faixas e o ativo de cada uma
-MUSIC_CATALOG_FILE = "catalog.json"  # em data/music/
-MUSIC_PLAN_FILE = "music.json"  # na pasta do episódio
-
 
 # --- episode.json (contrato do render) ----------------------------------------------------------
 
 
 # --- Métricas de publicação (§12; contrato D6 de 2026-10-14, emenda da ADR 007 de 2026-10-23) ----
 
-METRICS_FILE = "metrics.json"
-
 
 # --- Verificações entre arquivos -----------------------------------------------------------------
-
-_EXCERPT_RE = re.compile(r"^(source-\d{2,})#E\d+$")
 
 
 def unknown_source_refs(scenes: ScenesManifest, sources: SourcesManifest) -> list[str]:
@@ -282,13 +247,12 @@ def unknown_source_refs(scenes: ScenesManifest, sources: SourcesManifest) -> lis
     problems = []
     for scene in scenes.scenes:
         for claim in scene.claims + [c for shot in scene.shots for c in shot.claims]:
-            refs = claim.source_ids + [_EXCERPT_RE.sub(r"\1", e) for e in claim.excerpt_ids]
+            refs = claim.source_ids + [SchemasConstants._EXCERPT_RE.sub(r"\1", e) for e in claim.excerpt_ids]
             problems += [f"{scene.id}: fonte {r} não está em sources.json" for r in refs if r not in known]
     return sorted(set(problems))
 
 
 # §2.4: stock (os bancos de STOCK_LICENSES) e imagem gerada são ilustração, nunca registro do fato.
-_NOT_A_RECORD = frozenset({*STOCK_LICENSES, Provider.WORKERS_AI})
 
 
 def citation_violations(planned: Sequence[tuple[str, Shot, float]], assets: dict[str, Asset]) -> list[str]:
@@ -299,19 +263,19 @@ def citation_violations(planned: Sequence[tuple[str, Shot, float]], assets: dict
         if not isinstance(shot, PhotoShot | BrollShot) or shot.asset_id is None:
             continue
         asset = assets.get(shot.asset_id)
-        if asset is None or asset.license_id != CITATION_LICENSE:
+        if asset is None or asset.license_id != SchemasConstants.CITATION_LICENSE:
             continue
         if isinstance(shot, BrollShot):
             problems.append(f"{scene_id}: citação {shot.asset_id} só como quadro parado, nunca B-roll")
             continue
         frames += 1
-        if ms > MAX_CITATION_MS:
+        if ms > SchemasConstants.MAX_CITATION_MS:
             problems.append(
-                f"{scene_id}: citação {shot.asset_id} com ~{ms / 1000:.1f} s na tela "
-                f"(máximo {MAX_CITATION_MS / 1000:.0f} s)"
+                f"{scene_id}: citação {shot.asset_id} com ~{ms / 1000:.1f} s na tela (máximo "
+                f"{SchemasConstants.MAX_CITATION_MS / 1000:.0f} s)"
             )
-    if frames > MAX_CITATION_FRAMES:
-        problems.append(f"{frames} quadros citados no vídeo (máximo {MAX_CITATION_FRAMES})")
+    if frames > SchemasConstants.MAX_CITATION_FRAMES:
+        problems.append(f"{frames} quadros citados no vídeo (máximo {SchemasConstants.MAX_CITATION_FRAMES})")
     return problems
 
 
@@ -325,6 +289,9 @@ def visual_need_violations(scenes: ScenesManifest, assets: dict[str, Asset]) -> 
             asset = assets.get(shot.asset_id)
             if asset is None:
                 problems.append(f"{scene.id}: ativo {shot.asset_id} não encontrado")
-            elif shot.visual_need is VisualNeed.HISTORICAL_EXACT and asset.provider in _NOT_A_RECORD:
+            elif (
+                shot.visual_need is VisualNeed.HISTORICAL_EXACT
+                and asset.provider in SchemasConstants._NOT_A_RECORD
+            ):
                 problems.append(f"{scene.id}: historical_exact não pode usar {asset.provider.value}")
     return problems

@@ -10,9 +10,9 @@ from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError
 from app.providers.http import JsonPost, TransportError, post_json
 from app.providers.text.base import TextRequest, TextResult, Usage
+from app.providers.text.constants.ollama_constants import OllamaConstants
 
 T = TypeVar("T", bound=BaseModel)
-NS_PER_MS = 1_000_000
 
 
 class OllamaText:
@@ -73,7 +73,7 @@ class OllamaText:
 
 def _ms(response: dict[str, Any], key: str) -> int | None:
     value = response.get(key)
-    return None if value is None else int(value) // NS_PER_MS
+    return None if value is None else int(value) // OllamaConstants.NS_PER_MS
 
 
 def _usage(response: dict[str, Any]) -> Usage:

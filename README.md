@@ -70,6 +70,8 @@ uv run pytest -m slow      # contratos com modelos locais pesados (Kokoro)
 Critérios, linha de base e próximos passos: [gate de qualidade](docs/gate-qualidade.md).
 Modelos de todos os fluxos seguem `app/<área>/models/`, uma classe por arquivo;
 convenção e compatibilidade na [ADR 037](docs/decisions/037-modelos-por-fluxo.md).
+Constantes seguem classes em `app/<área>/constants/`, com `Final` e coleções imutáveis; o mesmo gate
+verifica a regra no sistema. [Inventário e exceções por responsabilidade](docs/inventario-constantes-2026-11-01.md).
 
 ## Consumo dos agentes em SQLite
 

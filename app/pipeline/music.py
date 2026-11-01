@@ -11,10 +11,9 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from app.media.narration import strip_pauses, timeline_length, timeline_position
+from app.pipeline.constants.music_constants import MusicConstants
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.schemas import (
-    MUSIC_CATALOG_FILE,
-    MUSIC_DIR,
-    MUSIC_GAIN_DB,
     EpisodeManifest,
     EpisodeMusic,
     EpisodeScene,
@@ -25,13 +24,10 @@ from app.pipeline.schemas import (
     Scene,
 )
 
-MAX_BED_CHANGES_PER_MINUTE = 1.0  # fundos novos por minuto de vídeo, em média: troca só nas viradas
-MIN_CUE_MS = 1000
-
 
 def load_music_catalog(data_dir: Path) -> MusicCatalog | None:
     """O catálogo de `data/music/`; sem o arquivo, None."""
-    path = data_dir / MUSIC_DIR / MUSIC_CATALOG_FILE
+    path = data_dir / SchemasConstants.MUSIC_DIR / SchemasConstants.MUSIC_CATALOG_FILE
     if not path.is_file():
         return None
     return MusicCatalog.model_validate_json(path.read_text(encoding="utf-8"))
@@ -111,10 +107,13 @@ def plan_problems(
         for quiet in silences:
             if span[0] < quiet[1] and quiet[0] < span[1]:
                 errors.append(f"music.json: fundo {cue.track} toca dentro de um silêncio proposital")
-    if estimated_minutes > 0 and len(beds) > 1 + MAX_BED_CHANGES_PER_MINUTE * estimated_minutes:
+    if (
+        estimated_minutes > 0
+        and len(beds) > 1 + MusicConstants.MAX_BED_CHANGES_PER_MINUTE * estimated_minutes
+    ):
         errors.append(
             f"music.json: {len(beds)} fundos em ~{estimated_minutes:.0f} min; troca de faixa só nas viradas "
-            f"(no máximo {MAX_BED_CHANGES_PER_MINUTE:g} por minuto)"
+            f"(no máximo {MusicConstants.MAX_BED_CHANGES_PER_MINUTE:g} por minuto)"
         )
     used = {cue.track for cue in plan.cues if cue.track}
     if len(used) > 4:
@@ -145,7 +144,7 @@ def resolve_music(
         start = _at(scenes[cue.start.scene], cue.start, edge="start")
         end = _at(scenes[cue.end.scene], cue.end, edge="end")
         length = end - start
-        if length < MIN_CUE_MS:
+        if length < MusicConstants.MIN_CUE_MS:
             raise ValueError(f"trilha {cue.track}: trecho de {length} ms, curto demais")
         fade_in, fade_out = cue.fade_in_ms, cue.fade_out_ms
         if fade_in + fade_out > length:  # trecho curto: os fades dividem o trecho na mesma proporção
@@ -160,7 +159,7 @@ def resolve_music(
                 start_ms=start,
                 end_ms=end,
                 track_offset_ms=cue.track_offset_ms,
-                gain_db=MUSIC_GAIN_DB[cue.level],
+                gain_db=SchemasConstants.MUSIC_GAIN_DB[cue.level],
                 fade_in_ms=fade_in,
                 fade_out_ms=fade_out,
                 loop=cue.track_offset_ms + length > track.duration_ms,

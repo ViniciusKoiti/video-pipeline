@@ -11,9 +11,9 @@ from collections.abc import Callable, Sequence
 
 from app.media.narration import strip_pauses, timeline_length, timeline_position
 from app.pipeline.attribution import shot_attribution
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.constants.shots_constants import ShotsConstants
 from app.pipeline.schemas import (
-    MEDIA_SHOT_KINDS,
-    EpisodeFormat,
     EpisodeManifest,
     EpisodeShot,
     Language,
@@ -24,12 +24,6 @@ from app.pipeline.schemas import (
     effective_shots,
     step_positions,
 )
-
-MIN_SHOT_MS = 1500
-TARGET_AVERAGE_MS: dict[EpisodeFormat, tuple[int, int]] = {
-    EpisodeFormat.EXPLAINER: (2000, 4000),
-    EpisodeFormat.ARCHIVAL_DOCUMENTARY: (4000, 6000),
-}
 
 
 def shot_bounds(narration: str, shots: Sequence[Shot], duration_ms: int) -> list[tuple[int, int]]:
@@ -76,7 +70,7 @@ def episode_shots(
                 start_ms=start,
                 duration_ms=duration,
                 spec=shot,
-                media=media_for(shot) if shot.kind in MEDIA_SHOT_KINDS else None,
+                media=media_for(shot) if shot.kind in SchemasConstants.MEDIA_SHOT_KINDS else None,
                 source=source,
                 source_flag=flag,
                 steps_ms=steps_ms,
@@ -101,10 +95,12 @@ def pacing_warnings(episode: EpisodeManifest) -> list[str]:
     for scene in episode.scenes:
         scene_durations = [shot.duration_ms for shot in scene.shots] or [scene.duration_ms]
         durations += scene_durations
-        short = [d for d in scene_durations if d < MIN_SHOT_MS]
+        short = [d for d in scene_durations if d < ShotsConstants.MIN_SHOT_MS]
         if short:
-            warnings.append(f"{scene.id}: {len(short)} plano(s) com menos de {MIN_SHOT_MS / 1000:.1f} s")
-    low, high = TARGET_AVERAGE_MS[episode.format]
+            warnings.append(
+                f"{scene.id}: {len(short)} plano(s) com menos de {ShotsConstants.MIN_SHOT_MS / 1000:.1f} s"
+            )
+    low, high = ShotsConstants.TARGET_AVERAGE_MS[episode.format]
     average = sum(durations) / len(durations)
     if not low <= average <= high:
         warnings.append(

@@ -11,16 +11,15 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from app.media.constants.pronunciation_constants import PronunciationConstants
 from app.media.models._pronunciation_model import _Model as _Model
 from app.media.models.glossary import Glossary as Glossary
 from app.media.models.term import Term as Term
 
-GLOSSARY_FILE = "voice/glossary.json"
-
 
 def load_glossary(episode_dir: Path) -> Glossary:
     """O glossário do episódio; sem o arquivo, vazio."""
-    path = episode_dir / GLOSSARY_FILE
+    path = episode_dir / PronunciationConstants.GLOSSARY_FILE
     if not path.is_file():
         return Glossary()
     return Glossary.model_validate_json(path.read_text(encoding="utf-8"))

@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from app.media.pauses import LEAD_S, TAIL_S, SplitError, boundaries, silences, split_at_pauses
+from app.media.constants.pauses_constants import PausesConstants
+from app.media.pauses import SplitError, boundaries, silences, split_at_pauses
 from app.media.probe import duration_ms
 
 
@@ -39,9 +40,9 @@ def test_the_longest_pauses_split_the_scenes(tmp_path: Path) -> None:
     assert len(silences(audio)) == 4
     outs = split_at_pauses(audio, [tmp_path / f"S0{i}.wav" for i in (1, 2, 3)])
     seconds = [duration_ms(p) / 1000 for p in outs]
-    assert seconds[0] == pytest.approx(2.1 + TAIL_S, abs=0.06)
-    assert seconds[1] == pytest.approx(LEAD_S + 1.0 + TAIL_S, abs=0.06)
-    assert seconds[2] == pytest.approx(LEAD_S + 1.4, abs=0.06)
+    assert seconds[0] == pytest.approx(2.1 + PausesConstants.TAIL_S, abs=0.06)
+    assert seconds[1] == pytest.approx(PausesConstants.LEAD_S + 1.0 + PausesConstants.TAIL_S, abs=0.06)
+    assert seconds[2] == pytest.approx(PausesConstants.LEAD_S + 1.4, abs=0.06)
 
 
 def test_a_boundary_that_does_not_stand_out_is_refused() -> None:

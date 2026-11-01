@@ -15,7 +15,8 @@ Objetos de dados estavam misturados com comandos, etapas e adapters. A separaç�
 - São modelos os objetos Pydantic, dataclasses, enums e TypedDicts, inclusive suas bases privadas.
   Seus validadores permanecem junto dos dados. Serviços, adapters, comandos executáveis, exceções e
   `Protocol`s permanecem nos módulos de execução, erros e portas.
-- Tipos, constantes e funções puras usados pelos modelos podem ficar em módulos auxiliares dessa pasta.
+- Tipos e funções puras usados pelos modelos podem ficar em módulos auxiliares dessa pasta.
+  Constantes de validação seguem a regra posterior da ADR 038: classes em `constants/` da área.
   Não se cria uma pasta vazia para uma área que ainda não tem modelos. Não se acrescenta I/O aos modelos.
 - Dependências entre modelos usam o módulo específico. Os `__init__.py` de `models/` ficam mínimos,
   evitando carregar todos os modelos ou criar ciclos por uma importação agregada.

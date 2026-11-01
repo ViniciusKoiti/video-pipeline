@@ -10,6 +10,8 @@ from typing import Any
 
 import pytest
 
+from app.pipeline.constants.molde_constants import MoldeConstants
+
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / ".agents" / "skills" / "analise-de-formato"
 
@@ -229,8 +231,8 @@ def test_regra_do_assunto_do_titulo_e_a_mesma_no_vp_check() -> None:
     """O molde mede o nicho e o `vp check` mede o roteiro com a mesma lista e a mesma regra (ADR 031)."""
     from app.pipeline import molde as pipeline_molde
 
-    assert pipeline_molde.TITLE_STOP == molde_mod.STOP_TITULO
-    assert pipeline_molde.TITLE_MIN_LETTERS == molde_mod.MIN_LETRAS_TITULO
+    assert MoldeConstants.TITLE_STOP == molde_mod.STOP_TITULO
+    assert MoldeConstants.TITLE_MIN_LETTERS == molde_mod.MIN_LETRAS_TITULO
     for titulo in (
         "Kira teria voto no Brasil? Death Note, o medo e a justiça",
         "O Que Não Está na Sua Mão | Epicteto e a única coisa que você controla",

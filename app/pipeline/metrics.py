@@ -10,24 +10,14 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
+from app.pipeline.constants.metrics_constants import MetricsConstants
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models.scheduled_post import ScheduledPost as ScheduledPost
-from app.pipeline.schemas import (
-    METRICS_FILE,
-    READING_NUMBERS,
-    WINDOW_DAYS,
-    MetricsReading,
-    PublicationMetrics,
-)
-
-EPISODES_DIR = "episodes"
-PUBLICATIONS_DIR = "publicacoes"
-REGISTRY_FILE = "registro.jsonl"
-METRICS_DIR = "metricas"
-TABLE_FILE = "metricas.csv"
+from app.pipeline.schemas import MetricsReading, PublicationMetrics
 
 
 def registry_path(data_dir: Path) -> Path:
-    return data_dir / PUBLICATIONS_DIR / REGISTRY_FILE
+    return data_dir / MetricsConstants.PUBLICATIONS_DIR / MetricsConstants.REGISTRY_FILE
 
 
 def scheduled_posts(registry: Path) -> list[ScheduledPost]:
@@ -67,10 +57,12 @@ def scheduled_posts(registry: Path) -> list[ScheduledPost]:
 
 def metrics_path(data_dir: Path, publication_id: str) -> Path:
     """Na pasta do episódio quando ela existe; senão em `data/publicacoes/metricas/<id>.json`."""
-    episode_dir = data_dir / EPISODES_DIR / publication_id
+    episode_dir = data_dir / MetricsConstants.EPISODES_DIR / publication_id
     if episode_dir.is_dir():
-        return episode_dir / METRICS_FILE
-    return data_dir / PUBLICATIONS_DIR / METRICS_DIR / f"{publication_id}.json"
+        return episode_dir / SchemasConstants.METRICS_FILE
+    return (
+        data_dir / MetricsConstants.PUBLICATIONS_DIR / MetricsConstants.METRICS_DIR / f"{publication_id}.json"
+    )
 
 
 def load_metrics(path: Path) -> PublicationMetrics:
@@ -86,8 +78,10 @@ def save_metrics(path: Path, metrics: PublicationMetrics) -> None:
 
 def all_metrics(data_dir: Path) -> list[tuple[Path, PublicationMetrics]]:
     """Todos os arquivos de métricas, dos episódios e das publicações sem episódio, por id."""
-    paths = list((data_dir / EPISODES_DIR).glob(f"*/{METRICS_FILE}"))
-    paths += list((data_dir / PUBLICATIONS_DIR / METRICS_DIR).glob("*.json"))
+    paths = list((data_dir / MetricsConstants.EPISODES_DIR).glob(f"*/{SchemasConstants.METRICS_FILE}"))
+    paths += list(
+        (data_dir / MetricsConstants.PUBLICATIONS_DIR / MetricsConstants.METRICS_DIR).glob("*.json")
+    )
     items = [(path, load_metrics(path)) for path in paths]
     return sorted(items, key=lambda item: item[1].id)
 
@@ -111,7 +105,7 @@ def pending_lines(metrics: PublicationMetrics, today: date) -> list[str]:
 
 def summary_line(metrics: PublicationMetrics, today: date) -> str:
     parts = [f"publicado {metrics.published_at:%Y-%m-%d} ({metrics.platform}, {metrics.channel})"]
-    for window in WINDOW_DAYS:
+    for window in SchemasConstants.WINDOW_DAYS:
         due = metrics.due_date(window)
         if window in metrics.readings:
             parts.append(f"{window} lida {metrics.readings[window].read_at:%Y-%m-%d}")
@@ -120,12 +114,6 @@ def summary_line(metrics: PublicationMetrics, today: date) -> str:
         else:
             parts.append(f"{window} vence {due:%Y-%m-%d}")
     return "; ".join(parts)
-
-
-CSV_COLUMNS = [
-    "id", "platform", "channel", "format", "series", "published_at", "duration_s", "hypothesis",
-    "window", "due", "read_at", *READING_NUMBERS, "traffic_sources", "requests", "notes", "url", "post_id",
-]
 
 
 def table_rows(items: list[PublicationMetrics]) -> list[dict[str, Any]]:
@@ -140,12 +128,12 @@ def table_rows(items: list[PublicationMetrics]) -> list[dict[str, Any]]:
             "post_id": metrics.post_id or "",
             "requests": "; ".join(f"{r.kind}: {r.summary}" for r in metrics.requests),
         }
-        for window in WINDOW_DAYS:
+        for window in SchemasConstants.WINDOW_DAYS:
             row = {**base, "window": window, "due": metrics.due_date(window).isoformat()}
             reading = metrics.readings.get(window)
             if reading is not None:
                 row["read_at"] = reading.read_at.isoformat()
-                row.update({name: getattr(reading, name) for name in READING_NUMBERS})
+                row.update({name: getattr(reading, name) for name in SchemasConstants.READING_NUMBERS})
                 sources = reading.traffic_sources
                 row["traffic_sources"] = "; ".join(f"{s.name} {s.percent:g}%" for s in sources)
                 row["notes"] = reading.notes
@@ -156,7 +144,12 @@ def table_rows(items: list[PublicationMetrics]) -> list[dict[str, Any]]:
 def write_table(path: Path, rows: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(handle, fieldnames=MetricsConstants.CSV_COLUMNS)
         writer.writeheader()
         for row in rows:
-            writer.writerow({key: ("" if row.get(key) is None else row.get(key, "")) for key in CSV_COLUMNS})
+            writer.writerow(
+                {
+                    key: ("" if row.get(key) is None else row.get(key, ""))
+                    for key in MetricsConstants.CSV_COLUMNS
+                }
+            )

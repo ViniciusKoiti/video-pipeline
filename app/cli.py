@@ -19,12 +19,13 @@ from pathlib import Path
 
 from app.bootstrap import build_context
 from app.commands import postiz, usage
+from app.commands.constants.cli_constants import CliConstants
 from app.commands.models.command import Command as Command
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode, episode_assets
+from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.excerpts import numbered_view
 from app.pipeline.gates import (
-    GATED_STEPS,
     GateError,
     GateStatus,
     gate_report,
@@ -37,8 +38,6 @@ from app.pipeline.medicao import medicao_problems
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
 from app.pipeline.numbers import (
-    FORMAT_FILE,
-    IMAGE_PLAN_FILE,
     FormatBrief,
     current_block,
     render_block,
@@ -51,7 +50,6 @@ from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
 from app.pipeline.schemas import (
     CheckVerdict,
     Decision,
-    EpisodeFormat,
     ScenesManifest,
     SourcesManifest,
     Status,
@@ -59,123 +57,11 @@ from app.pipeline.schemas import (
 )
 from app.pipeline.translation import translation_problems
 from app.render.remotion import region_codes
-from app.settings import CONFIG_FILE, read_dotenv, speech_chars_per_second
-
-EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
+from app.settings import read_dotenv, speech_chars_per_second
+from app.settings.constants.settings_constants import SettingsConstants
 
 Handler = Callable[[argparse.Namespace, Context], int]
 
-
-def _bench_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--models", help="modelos de texto separados por vírgula (padrão: o configurado)")
-    parser.add_argument("--runs", type=int, default=2, help="execuções por modelo (padrão: 2)")
-    parser.add_argument("--skip-llm", action="store_true", help="não medir o LLM")
-    parser.add_argument("--skip-tts", action="store_true", help="não medir o TTS")
-    parser.add_argument(
-        "--render", type=Path, metavar="DIR", help="pasta de episódio para medir o motor de render"
-    )
-
-
-def _new_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--topic", required=True, help="tema do episódio")
-    parser.add_argument(
-        "--format",
-        choices=[f.value for f in EpisodeFormat],
-        default=EpisodeFormat.ARCHIVAL_DOCUMENTARY.value,
-        help="formato do episódio; decide o motor de render (ADR 001)",
-    )
-
-
-def _render_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--preview", action="store_true", help="prévia em 720p")
-
-
-def _reopen_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--step", required=True, help="etapa aprovada a reabrir")
-    parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
-
-
-def _decision_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument(
-        "--step",
-        required=True,
-        choices=[s.value for s in GATED_STEPS],
-        help="gate: sources (fontes e fichas), script (roteiro), assets (um ativo, com --asset), translation "
-        "(pasta de tradução, ADR 034) ou preview (o render mais acabado, com legenda e texto do post)",
-    )
-    parser.add_argument("--asset", help="id do ativo, na etapa assets")
-    parser.add_argument("--reviewer", help="quem decide (padrão: VP_REVIEWER, senão git config user.name)")
-
-
-def _approve_arguments(parser: argparse.ArgumentParser) -> None:
-    _decision_arguments(parser)
-    parser.add_argument("--notes", default="", help="observação registrada no review.json")
-    parser.add_argument(
-        "--sem-checagem",
-        dest="skip_check",
-        metavar="MOTIVO",
-        help="aprova o gate 2 sem parecer do verificador; o motivo vai para o review.json",
-    )
-
-
-def _checagem_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("parecer", type=Path, help='JSON com "verdict" (approved | rejected) e "problems"')
-    parser.add_argument("--reviewer", default="verificador", help="quem conferiu (padrão: verificador)")
-
-
-def _reject_arguments(parser: argparse.ArgumentParser) -> None:
-    _decision_arguments(parser)
-    parser.add_argument("--reason", required=True, help="motivo, registrado no review.json")
-    parser.add_argument("--changes", action="store_true", help="mudanças pedidas em vez de reprovação")
-
-
-def _numeros_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument(
-        "--escrever", action="store_true", help="grava o bloco no outline.md e regrava o plano-imagens.md"
-    )
-    parser.add_argument(
-        "--used-in-scenes",
-        dest="used_in_scenes",
-        action="store_true",
-        help="acerta o used_in_scenes dos ativos ainda não aprovados (ativo aprovado não muda, §2.6)",
-    )
-
-
-COMMANDS: tuple[Command, ...] = (
-    Command(
-        "bench", "RAM, CPU, tok/s do modelo local, tempo de TTS", 5, takes_episode=False,
-        add_arguments=_bench_arguments,
-    ),
-    Command("new", "cria data/episodes/<id>/ e o manifesto inicial", 12, add_arguments=_new_arguments),
-    Command("sources", "busca, download e extração de texto -> sources.json", 26),
-    Command("script", "roteiro com retrieval + validação de schema e de claims", 27),
-    Command("scenes", "divisão em cenas + visual_need + search_query", 28),
-    Command("assets", "busca visual em cascata, respeitando limites", 22),
-    Command("gallery", "galeria HTML estática em 127.0.0.1", 23),
-    Command("voice", "Kokoro por bloco + ffprobe -> voice/", 16),
-    Command("subs", "legendas alinhadas -> captions.srt", 17),
-    Command("render", "motor escolhido -> renders/", 13, add_arguments=_render_arguments),
-    Command("export", "final.mp4 + srt + description.txt + credits.txt", 18),
-    Command("approve", "registra aprovação humana em review.json", 12, add_arguments=_approve_arguments),
-    Command("reject", "registra reprovação ou mudanças pedidas", 12, add_arguments=_reject_arguments),
-    Command("status", "estados por etapa e pendências", 12),
-    Command(
-        "reopen", "reabre etapa aprovada para refazer (motivo no review.json)", 12,
-        add_arguments=_reopen_arguments,
-    ),
-    Command("excerpts", "trechos numerados de cada fonte -> excerpts/<fonte>.md (ADR 009)", 48),
-    Command("check", "valida fontes, fichas e cenas, escritas por agente ou à mão (ADR 009)", 48),
-    Command(
-        "checagem", "grava o parecer do verificador sobre fichas e roteiro -> checagem.json (gate 2)", 48,
-        add_arguments=_checagem_arguments,
-    ),
-    Command("traducao", "confere a tradução contra o original: cenas, pausas e números (ADR 034)", 0),
-    Command("medicao", "confere os números do Short contra o arquivo de resultado da medição (ADR 034)", 0),
-    Command(
-        "numeros", "números do roteiro e comparação com o nicho -> bloco do outline.md (#170)", 170,
-        add_arguments=_numeros_arguments,
-    ),
-)
 
 def _bench(args: argparse.Namespace, context: Context) -> int:
     models = [m.strip() for m in args.models.split(",")] if args.models else [None]
@@ -222,13 +108,6 @@ def _check(args: argparse.Namespace, context: Context) -> int:
     return 0 if report.ok else 1
 
 
-DECISION_LABELS = {
-    Decision.APPROVED: "aprovado",
-    Decision.REJECTED: "reprovado",
-    Decision.CHANGES_REQUESTED: "mudanças pedidas",
-}
-
-
 def _approve(args: argparse.Namespace, context: Context) -> int:
     return _decide(args, context, Decision.APPROVED, args.notes, skip_check=args.skip_check)
 
@@ -258,7 +137,9 @@ def _decide(
         print(f"vp {args.command}: {error}", file=sys.stderr)
         return 1
     target = entry.asset_id or entry.step.value
-    print(f"{DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})")
+    print(
+        f"{CliConstants.DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})"
+    )
     return 0
 
 
@@ -314,12 +195,9 @@ def _checagem(args: argparse.Namespace, context: Context) -> int:
     except (OSError, ValueError, KeyError, TypeError, GateError, EpisodeLocked) as error:
         print(f"vp checagem: parecer inválido ou episódio sem roteiro ({error})", file=sys.stderr)
         return 1
-    label = CHECK_LABELS[entry.verdict]
+    label = CliConstants.CHECK_LABELS[entry.verdict]
     print(f"checagem: {label} por {entry.reviewer}, {len(entry.problems)} problema(s) ({entry.input_hash})")
     return 0
-
-
-CHECK_LABELS = {CheckVerdict.APPROVED: "aprovado", CheckVerdict.REJECTED: "reprovado"}
 
 
 def _status(args: argparse.Namespace, context: Context) -> int:
@@ -357,7 +235,7 @@ def _status_line(row: GateStatus) -> str:
     else:
         state = "vale" if row.valid else "MUDOU depois da decisão"
     entry = row.entry
-    label = DECISION_LABELS[entry.decision]
+    label = CliConstants.DECISION_LABELS[entry.decision]
     return f"{kind:6}{target:32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
 
 
@@ -366,7 +244,7 @@ def _check_line(context: Context, episode_id: str) -> str:
     if entry is None:
         return f"{'parecer':6}{'verificador':32} sem parecer"
     state = "vale" if valid else "MUDOU depois do parecer"
-    label = CHECK_LABELS[entry.verdict]
+    label = CliConstants.CHECK_LABELS[entry.verdict]
     return f"{'parecer':6}{'verificador':32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
 
 
@@ -391,8 +269,8 @@ def _numeros(args: argparse.Namespace, context: Context) -> int:
     scenes = store.read(episode_id, "scenes.json", ScenesManifest)
     assets = episode_assets(store, episode_id)
     brief = None
-    if store.exists(episode_id, FORMAT_FILE):
-        brief = store.read(episode_id, FORMAT_FILE, FormatBrief)
+    if store.exists(episode_id, NumbersConstants.FORMAT_FILE):
+        brief = store.read(episode_id, NumbersConstants.FORMAT_FILE, FormatBrief)
     try:
         numbers = script_numbers(scenes, assets, chars_per_second)
     except ValueError as error:
@@ -400,7 +278,10 @@ def _numeros(args: argparse.Namespace, context: Context) -> int:
         return 1
     block = render_block(numbers, brief, chars_per_second)
     plan = render_image_plan(scenes, numbers, assets, chars_per_second)
-    outline, plan_path = store.path(episode_id, "outline.md"), store.path(episode_id, IMAGE_PLAN_FILE)
+    outline, plan_path = (
+        store.path(episode_id, "outline.md"),
+        store.path(episode_id, NumbersConstants.IMAGE_PLAN_FILE),
+    )
     print(block)
     if not outline.is_file():
         print("outline.md: não existe", file=sys.stderr)
@@ -409,12 +290,12 @@ def _numeros(args: argparse.Namespace, context: Context) -> int:
     current = current_block(text)
     state = "em dia" if current == block else ("desatualizado" if current else "sem o bloco")
     plan_ok = plan_path.is_file() and plan_path.read_text(encoding="utf-8") == plan
-    print(f"outline.md: {state}; {IMAGE_PLAN_FILE}: {'em dia' if plan_ok else 'diferente'}")
+    print(f"outline.md: {state}; {NumbersConstants.IMAGE_PLAN_FILE}: {'em dia' if plan_ok else 'diferente'}")
     with store.lock(episode_id):
         if args.escrever:
             targets = (
                 ("outline.md", outline, replace_block(text, block)),
-                (IMAGE_PLAN_FILE, plan_path, plan),
+                (NumbersConstants.IMAGE_PLAN_FILE, plan_path, plan),
             )
             wrote = [name for name, path, new in targets if _write_if_changed(path, new)]
             print("gravado: " + (", ".join(wrote) if wrote else "nada mudou"))
@@ -460,7 +341,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {_package_version()}")
     subparsers = parser.add_subparsers(dest="command", metavar="<comando>", required=True)
-    for command in COMMANDS:
+    for command in CliConstants.COMMANDS:
         sub = subparsers.add_parser(command.name, help=command.help, description=command.help)
         if command.takes_episode:
             sub.add_argument("episode_id", metavar="id", help="identificador do episódio")
@@ -476,9 +357,9 @@ def build_parser() -> argparse.ArgumentParser:
 def project_root(start: Path) -> Path:
     """Primeira pasta, subindo a partir de `start`, que tem `config/providers.toml`."""
     for folder in (start, *start.parents):
-        if (folder / CONFIG_FILE).is_file():
+        if (folder / SettingsConstants.CONFIG_FILE).is_file():
             return folder
-    raise SystemExit(f"vp: {CONFIG_FILE} não encontrado a partir de {start}")
+    raise SystemExit(f"vp: {SettingsConstants.CONFIG_FILE} não encontrado a partir de {start}")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -493,6 +374,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             report_error = postiz.report_error if args.command == "postiz" else usage.report_error
             return report_error("Não foi possível carregar a configuração do projeto.")
         return handler(args, context)
-    step = next(c.step for c in COMMANDS if c.name == args.command)
+    step = next(c.step for c in CliConstants.COMMANDS if c.name == args.command)
     print(f"vp {args.command}: ainda não implementado (etapa #{step} do roadmap).", file=sys.stderr)
-    return EXIT_NOT_IMPLEMENTED
+    return CliConstants.EXIT_NOT_IMPLEMENTED

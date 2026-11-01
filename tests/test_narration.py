@@ -9,8 +9,8 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
+from app.media.constants.narration_constants import NarrationConstants
 from app.media.narration import (
-    PAUSE_CHARS,
     has_pauses,
     narration_problems,
     pause_positions,
@@ -36,13 +36,16 @@ def test_marks_leave_the_plain_text_and_count_in_the_timeline() -> None:
         "Se você quer realmente", "aprender sobre isso, você", "deve começar pelo dinheiro."
     ]
     assert [PLAIN[p:].split()[0] for p in pause_positions(TEXT)] == ["aprender", "deve"]
-    assert timeline_length(TEXT) == len(PLAIN) + 2 * PAUSE_CHARS
+    assert timeline_length(TEXT) == len(PLAIN) + 2 * NarrationConstants.PAUSE_CHARS
     assert timeline_length(PLAIN) == len(PLAIN)
     # um ponto depois de uma pausa anda a pausa inteira; antes dela, nada
     deve = PLAIN.index("deve")
     assert timeline_position(TEXT, PLAIN.index("quer")) == PLAIN.index("quer")
-    assert timeline_position(TEXT, PLAIN.index("aprender")) == PLAIN.index("aprender") + PAUSE_CHARS
-    assert timeline_position(TEXT, deve) == deve + 2 * PAUSE_CHARS
+    assert (
+        timeline_position(TEXT, PLAIN.index("aprender"))
+        == PLAIN.index("aprender") + NarrationConstants.PAUSE_CHARS
+    )
+    assert timeline_position(TEXT, deve) == deve + 2 * NarrationConstants.PAUSE_CHARS
 
 
 @pytest.mark.parametrize(
@@ -93,7 +96,11 @@ def test_marks_shift_the_shots_after_the_pause() -> None:
     (_, _), (without_pause, _) = shot_bounds(PLAIN, plain_shots, 10_000)
     deve = PLAIN.index("deve")
     assert without_pause == round(deve / len(PLAIN) * 10_000)
-    assert with_pause == round((deve + 2 * PAUSE_CHARS) / (len(PLAIN) + 2 * PAUSE_CHARS) * 10_000)
+    assert with_pause == round(
+        (deve + 2 * NarrationConstants.PAUSE_CHARS)
+        / (len(PLAIN) + 2 * NarrationConstants.PAUSE_CHARS)
+        * 10_000
+    )
     assert with_pause > without_pause  # duas pausas empurram o plano para depois, onde a fala de fato está
 
 

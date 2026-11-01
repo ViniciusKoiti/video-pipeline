@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-import re
 import urllib.error
 import urllib.request
 from collections.abc import Callable
 from typing import Any
 
-LINK = re.compile(r"https?://[^\s<>\"')]+")
-LINK_TIMEOUT_S = 8
-GONE = (404, 410)  # o que um repositório privado ou apagado devolve a quem não está logado
+from app.commands.constants.postiz_links_constants import PostizLinksConstants
 
 LinkFetch = Callable[[str], "int | None"]
 
@@ -20,7 +17,7 @@ def link_status(url: str) -> int | None:
     for method in ("HEAD", "GET"):
         request = urllib.request.Request(url, method=method, headers={"User-Agent": "vp-postiz-pacote"})
         try:
-            with urllib.request.urlopen(request, timeout=LINK_TIMEOUT_S) as response:
+            with urllib.request.urlopen(request, timeout=PostizLinksConstants.LINK_TIMEOUT_S) as response:
                 status: int = response.status
                 return status
         except urllib.error.HTTPError as error:
@@ -33,7 +30,7 @@ def link_status(url: str) -> int | None:
 
 def caption_links(text: str) -> list[str]:
     """Os links da legenda, sem pontuação final e sem repetição, na ordem em que aparecem."""
-    return list(dict.fromkeys(url.rstrip(".,;:!?") for url in LINK.findall(text)))
+    return list(dict.fromkeys(url.rstrip(".,;:!?") for url in PostizLinksConstants.LINK.findall(text)))
 
 
 def link_findings(posts: list[dict[str, Any]], fetch: LinkFetch) -> tuple[list[str], list[str]]:
@@ -46,7 +43,7 @@ def link_findings(posts: list[dict[str, Any]], fetch: LinkFetch) -> tuple[list[s
             status = seen[url]
             if status is None:
                 risks.append(f"Link da legenda de {post['canal']} sem resposta, não conferido: {url}")
-            elif status in GONE:
+            elif status in PostizLinksConstants.GONE:
                 blocking.append(f"Link da legenda de {post['canal']} não abre (HTTP {status}): {url}")
             elif status >= 400:
                 risks.append(f"Link da legenda de {post['canal']} respondeu HTTP {status}: {url}")

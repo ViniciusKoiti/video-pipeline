@@ -4,8 +4,9 @@ from typing import Literal, Self
 
 from pydantic import Field, model_validator
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._schemas_factual_shot import _FactualShot
-from app.pipeline.models._schemas_types import _WHEN_RE, NonEmpty
+from app.pipeline.models._schemas_types import NonEmpty
 from app.pipeline.models.chart_point import ChartPoint
 
 
@@ -24,7 +25,7 @@ class ChartShot(_FactualShot):
         labels = [p.label for p in self.points]
         if self.highlight is not None and self.highlight not in labels:
             raise ValueError(f"destaque {self.highlight!r} não é um dos rótulos do gráfico")
-        if self.type == "line" and not all(_WHEN_RE.match(label) for label in labels):
+        if self.type == "line" and not all(SchemasConstants._WHEN_RE.match(label) for label in labels):
             raise ValueError("gráfico de linha: os rótulos precisam ser anos (1927) ou datas ISO")
         if self.type == "share" and any(p.value < 0 for p in self.points):
             raise ValueError("gráfico de participação sem valor negativo")

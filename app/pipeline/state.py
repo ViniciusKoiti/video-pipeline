@@ -15,6 +15,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from app.pipeline.constants.state_constants import StateConstants
 from app.pipeline.models.action import Action as Action
 from app.pipeline.models.episode_state import EpisodeState as EpisodeState
 from app.pipeline.models.step_result import StepResult as StepResult
@@ -24,21 +25,10 @@ from app.pipeline.ports import ImmutableManifest, ManifestNotFound, ManifestStor
 from app.pipeline.schemas import Decision, ReviewEntry, Status, Step
 from app.providers.errors import ProviderError
 
-MANIFEST = "manifest.json"
 Clock = Callable[[], datetime]
 
 
 # Transições do §5. Sair de APPROVED/COMPLETED para refazer só por reabertura explícita (reopen_step).
-TRANSITIONS: dict[Status, frozenset[Status]] = {
-    Status.PENDING: frozenset({Status.RUNNING}),
-    Status.RUNNING: frozenset({Status.NEEDS_REVIEW, Status.COMPLETED, Status.FAILED}),
-    Status.NEEDS_REVIEW: frozenset(
-        {Status.APPROVED, Status.RUNNING}
-    ),  # aprovação, ou refazer com entrada nova
-    Status.APPROVED: frozenset({Status.COMPLETED}),
-    Status.COMPLETED: frozenset({Status.RUNNING}),  # etapa sem gate humano com entrada nova
-    Status.FAILED: frozenset({Status.RUNNING}),
-}
 
 
 class InvalidTransition(ValueError):
@@ -50,7 +40,7 @@ class StaleApproval(RuntimeError):
 
 
 def transition(state: StepState, to: Status, **changes: object) -> StepState:
-    if to not in TRANSITIONS[state.status]:
+    if to not in StateConstants.TRANSITIONS[state.status]:
         raise InvalidTransition(f"{state.status} → {to} não é permitido (§5)")
     return state.model_copy(update={"status": to, **changes})
 
@@ -79,14 +69,14 @@ def compute_input_hash(files: Iterable[Path], params: Mapping[str, object], *, b
 
 def load_state(store: ManifestStore, episode_id: str) -> EpisodeState:
     try:
-        return store.read(episode_id, MANIFEST, EpisodeState)
+        return store.read(episode_id, StateConstants.MANIFEST, EpisodeState)
     except ManifestNotFound:
         return EpisodeState(episode_id=episode_id)
 
 
 def _save(store: ManifestStore, state: EpisodeState, step: Step, step_state: StepState) -> EpisodeState:
     updated = state.model_copy(update={"steps": {**state.steps, step: step_state}})
-    store.write(state.episode_id, MANIFEST, updated)
+    store.write(state.episode_id, StateConstants.MANIFEST, updated)
     return updated
 
 

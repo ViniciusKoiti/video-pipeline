@@ -7,7 +7,8 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from app.media.pronunciation import GLOSSARY_FILE, Glossary, Term, load_glossary, respell
+from app.media.constants.pronunciation_constants import PronunciationConstants
+from app.media.pronunciation import Glossary, Term, load_glossary, respell
 
 GLOSSARY = Glossary(termos=[Term(escrita="FBI", fala="efe bê i"), Term(escrita="SPK", fala="esse pê cá")])
 
@@ -32,8 +33,8 @@ def test_replacement_keeps_backslashes_literal() -> None:
 
 def test_missing_file_is_an_empty_glossary(tmp_path: Path) -> None:
     assert load_glossary(tmp_path) == Glossary()
-    (tmp_path / GLOSSARY_FILE).parent.mkdir()
-    (tmp_path / GLOSSARY_FILE).write_text(GLOSSARY.model_dump_json(), encoding="utf-8")
+    (tmp_path / PronunciationConstants.GLOSSARY_FILE).parent.mkdir()
+    (tmp_path / PronunciationConstants.GLOSSARY_FILE).write_text(GLOSSARY.model_dump_json(), encoding="utf-8")
     assert load_glossary(tmp_path) == GLOSSARY
 
 

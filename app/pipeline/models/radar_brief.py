@@ -5,8 +5,8 @@ from typing import Literal
 
 from pydantic import Field
 
+from app.pipeline.constants.radar_constants import RadarConstants
 from app.pipeline.models._radar_radar import _Radar
-from app.pipeline.models._radar_types import MEASURES
 from app.pipeline.models.radar_guidance import RadarGuidance
 from app.pipeline.models.radar_purposes import RadarPurposes
 
@@ -39,4 +39,4 @@ class RadarBrief(_Radar):
         """A medida, como o alerta a chama: nunca 'compartilhamento' quando o resumo mediu outra coisa."""
         if self.measure is None:
             return "na medida do resumo, que não está informada"
-        return MEASURES.get(self.measure, self.measure)
+        return RadarConstants.MEASURES.get(self.measure, self.measure)

@@ -1,9 +1,11 @@
+
 import argparse
 from pathlib import Path
 
 import pytest
 
-from app.cli import COMMANDS, EXIT_NOT_IMPLEMENTED, HANDLERS, main
+from app.cli import HANDLERS, main
+from app.commands.constants.cli_constants import CliConstants
 from app.pipeline.ports import Context
 from tests.fakes import make_root
 
@@ -17,7 +19,7 @@ SPEC_COMMANDS = {
 
 
 def test_commands_match_spec() -> None:
-    assert {c.name for c in COMMANDS} == SPEC_COMMANDS
+    assert {c.name for c in CliConstants.COMMANDS} == SPEC_COMMANDS
 
 
 def test_help_lists_every_command(capsys: pytest.CaptureFixture[str]) -> None:
@@ -46,7 +48,7 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
     ],
 )
 def test_stub_points_to_roadmap_step(argv: list[str], step: int, capsys: pytest.CaptureFixture[str]) -> None:
-    assert main(argv) == EXIT_NOT_IMPLEMENTED
+    assert main(argv) == CliConstants.EXIT_NOT_IMPLEMENTED
     assert f"etapa #{step}" in capsys.readouterr().err
 
 

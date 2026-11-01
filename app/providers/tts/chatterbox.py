@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 import subprocess
 import tempfile
 import wave
@@ -24,26 +23,17 @@ from app.media.narration import split_pauses
 from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest, SpeechResult
+from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
 
-WORKER = Path(__file__).with_name("chatterbox_worker.py")
 # A mesma fala numa GPU do Modal (ADR 024): um cliente com o protocolo do worker.
-MODAL_CLIENT = Path(__file__).with_name("chatterbox_modal_client.py")
-MODEL_PREFIX = "chatterbox-multilingual-"
+
+
 # O Chatterbox gera no máximo 1.000 tokens de fala por chamada (`max_new_tokens` fixo no `generate`), uns
 # 40 s: passou disso, a fala sai cortada sem erro. A fala longa vai em grupos de frases até este tamanho, uma
 # chamada por grupo, com um silêncio curto entre eles; as `<short pause>` seguem com o `pause_ms` (ADR 015).
-MAX_PART_CHARS = 300
-SENTENCE_GAP_MS = 150
-_SENTENCE_END = re.compile(r"(?<=[.!?…])\s+|(?<=[.!?…][”\"’)])\s+")
-_CLAUSE_END = re.compile(r"(?<=[,;:])\s+")
+
+
 # Entrega da fala (ADR 022): padrão do modelo na fala neutra; ênfase alta e cfg baixo no chamado.
-DEFAULT_DELIVERY: dict[str, dict[str, float]] = {
-    "hook": {"exaggeration": 0.8, "cfg_weight": 0.3},
-    "turn": {"exaggeration": 0.7, "cfg_weight": 0.4},
-    "invite": {"exaggeration": 0.6, "cfg_weight": 0.4},
-    "neutral": {"exaggeration": 0.5, "cfg_weight": 0.5},
-    "calm": {"exaggeration": 0.4, "cfg_weight": 0.6},
-}
 
 
 def _pack(pieces: list[str], limit: int) -> list[str]:
@@ -62,19 +52,19 @@ def _pack(pieces: list[str], limit: int) -> list[str]:
 def _split_sentence(sentence: str, limit: int) -> list[str]:
     """Frase maior que o limite: parte nas vírgulas, e a oração ainda maior, nas palavras."""
     pieces: list[str] = []
-    for clause in _CLAUSE_END.split(sentence):
+    for clause in ChatterboxConstants._CLAUSE_END.split(sentence):
         pieces.extend(_pack(clause.split(), limit) if len(clause) > limit else [clause])
     return _pack(pieces, limit)
 
 
-def split_long(text: str, limit: int = MAX_PART_CHARS) -> list[str]:
+def split_long(text: str, limit: int = ChatterboxConstants.MAX_PART_CHARS) -> list[str]:
     """Os grupos de frases, cada um com até `limit` caracteres, na ordem do texto; o texto curto
     fica inteiro."""
     text = text.strip()
     if len(text) <= limit:
         return [text] if text else []
     pieces: list[str] = []
-    for sentence in _SENTENCE_END.split(text):
+    for sentence in ChatterboxConstants._SENTENCE_END.split(text):
         sentence = sentence.strip()
         if sentence:
             pieces.extend(_split_sentence(sentence, limit) if len(sentence) > limit else [sentence])
@@ -117,7 +107,7 @@ class SubprocessWorker:
         # Avisos e barras de progresso do modelo; lido só em falha e aberto enquanto o processo vive.
         self._log = tempfile.TemporaryFile()  # noqa: SIM115
         self._process = subprocess.Popen(
-            command or [str(python), str(WORKER), model, str(num_threads)],
+            command or [str(python), str(ChatterboxConstants.WORKER), model, str(num_threads)],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self._log, text=True, encoding="utf-8",
         )
         ready = self._read()
@@ -166,7 +156,9 @@ class ChatterboxTTS:
         # `chatterbox_modal` (ADR 024): o mesmo adapter com a síntese numa GPU do Modal; muda só o processo.
         self.info = ProviderInfo(provider, remote=remote)
         # Entrega da fala (ADR 022): ênfase e cfg por nome; entrega desconhecida cai na neutra.
-        self._delivery = {name: dict(params) for name, params in (delivery or DEFAULT_DELIVERY).items()}
+        self._delivery = {
+            name: dict(params) for name, params in (delivery or ChatterboxConstants.DEFAULT_DELIVERY).items()
+        }
         self._python = python  # o Python do ambiente em que o Chatterbox está instalado
         self._reference = reference  # gravação da voz a clonar
         self._model = model
@@ -215,11 +207,13 @@ class ChatterboxTTS:
                 for i, group in enumerate(groups):
                     piece = Path(folder) / f"trecho-{i:02d}.wav"
                     self._ask(worker, {**base, "parts": group, "out_path": str(piece),
-                                       "pause_ms": SENTENCE_GAP_MS}, piece)
+                                       "pause_ms": ChatterboxConstants.SENTENCE_GAP_MS}, piece)
                     pieces.append(piece)
                 join_wavs(pieces, self._pause_ms, request.out_path)
         voice = f"clone:{reference_hash(reference)}"
-        return SpeechResult(path=request.out_path, model=MODEL_PREFIX + self._model, voice=voice)
+        return SpeechResult(
+            path=request.out_path, model=ChatterboxConstants.MODEL_PREFIX + self._model, voice=voice
+        )
 
     def _ask(self, worker: Worker, job: Mapping[str, Any], out_path: Path) -> None:
         try:
@@ -242,7 +236,7 @@ def modal_starter(app: str, reference_name: str) -> Callable[[Path, str, int], W
     """O processo do cliente do Modal (ADR 024): `python` é o da CLI do Modal, que tem o pacote e o token."""
 
     def start(python: Path, model: str, num_threads: int) -> Worker:
-        command = [str(python), str(MODAL_CLIENT), app, model, reference_name]
+        command = [str(python), str(ChatterboxConstants.MODAL_CLIENT), app, model, reference_name]
         return SubprocessWorker(python, model, num_threads, command=command)
 
     return start

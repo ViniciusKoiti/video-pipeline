@@ -6,7 +6,6 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Protocol
 
-from app.pipeline.models._usage_types import TOKEN_FIELDS as TOKEN_FIELDS
 from app.pipeline.models._usage_types import Count as Count
 from app.pipeline.models._usage_types import Identifier as Identifier
 from app.pipeline.models._usage_types import Metric as Metric

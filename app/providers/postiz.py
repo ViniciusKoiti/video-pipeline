@@ -14,8 +14,9 @@ from typing import Any
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlsplit
 from uuid import uuid4
 
+from app.providers.constants.http_constants import HttpConstants
 from app.providers.errors import ProviderError
-from app.providers.http import USER_AGENT, TransportError, get_json, post_json_with_headers
+from app.providers.http import TransportError, get_json, post_json_with_headers
 from app.providers.postiz_validation import (
     parse_instant,
     reject_queued_duplicates,
@@ -165,7 +166,7 @@ class PostizClient:
                     method="POST",
                     headers={
                         **self._headers,
-                        "User-Agent": USER_AGENT,
+                        "User-Agent": HttpConstants.USER_AGENT,
                         "Content-Type": f"multipart/form-data; boundary={boundary}",
                         "Content-Length": str(len(head) + size + len(tail)),
                     },

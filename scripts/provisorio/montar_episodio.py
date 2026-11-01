@@ -45,7 +45,6 @@ sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import LazyContext, build_context  # noqa: E402
 from app.media.captions import (  # noqa: E402
-    CAPTIONS,
     SceneAudio,
     captions_key,
     episode_cues,
@@ -54,15 +53,17 @@ from app.media.captions import (  # noqa: E402
     sync_captions,
     timing_problems,
 )
+from app.media.constants.captions_constants import CaptionsConstants  # noqa: E402
+from app.media.constants.word_captions_constants import WordCaptionsConstants  # noqa: E402
 from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.narration import has_pauses, split_pauses, strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
-from app.media.word_captions import WORDS, SceneSpeech, sync_words  # noqa: E402
+from app.media.word_captions import SceneSpeech, sync_words  # noqa: E402
+from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
 from app.pipeline.music import load_music_catalog, resolve_music  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
-    MUSIC_PLAN_FILE,
     EpisodeFormat,
     EpisodeManifest,
     EpisodeMusic,
@@ -75,7 +76,8 @@ from app.pipeline.schemas import (  # noqa: E402
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
 from app.providers.errors import InvalidOutput, ProviderError  # noqa: E402
 from app.providers.tts.base import SpeechRequest, TTSProvider  # noqa: E402
-from app.providers.tts.chatterbox import MAX_PART_CHARS, reference_hash  # noqa: E402
+from app.providers.tts.chatterbox import reference_hash  # noqa: E402
+from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants  # noqa: E402
 from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
@@ -106,8 +108,8 @@ def long_speech_tag(provider: str, text: str) -> str:
     chamada só, foi cortada em ~40 s sem erro. Fala curta e as outras vozes não mudam de chave."""
     if provider not in CLONED:
         return ""
-    long = any(len(part) > MAX_PART_CHARS for part in split_pauses(text) or [text])
-    return f"|frases{MAX_PART_CHARS}" if long else ""
+    long = any(len(part) > ChatterboxConstants.MAX_PART_CHARS for part in split_pauses(text) or [text])
+    return f"|frases{ChatterboxConstants.MAX_PART_CHARS}" if long else ""
 
 
 def batches(requests: list[SpeechRequest], limit: int = BATCH_CHARS) -> list[list[SpeechRequest]]:
@@ -159,7 +161,7 @@ def media_path(episode_dir: Path, asset_id: str) -> str:
 
 def music(settings: Settings, episode_dir: Path, episode: EpisodeManifest) -> list[EpisodeMusic]:
     """Trechos da trilha (ADR 030) com o tempo dos WAVs; sem `music.json`, nenhum."""
-    plan_path = episode_dir / MUSIC_PLAN_FILE
+    plan_path = episode_dir / SchemasConstants.MUSIC_PLAN_FILE
     if not plan_path.is_file():
         return []
     catalog = load_music_catalog(settings.data_dir)
@@ -189,10 +191,10 @@ def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path
     ]
     cues, approximate = episode_cues(audio)
     note = sync_captions(episode_dir, cues, captions_key([wavs[scene.id].name for scene in scenes]))
-    found, problems = parse_srt((episode_dir / CAPTIONS).read_text())
+    found, problems = parse_srt((episode_dir / CaptionsConstants.CAPTIONS).read_text())
     problems += timing_problems(found, total_ms)
     if problems:
-        raise SystemExit(f"{CAPTIONS}: " + "; ".join(problems))
+        raise SystemExit(f"{CaptionsConstants.CAPTIONS}: " + "; ".join(problems))
     print(f"legenda: {note}; {len(found)} blocos, {approximate} fronteira(s) no tempo proporcional")
     for n, hint in review_hints(found):
         print(f"  revisar bloco {n}: {hint}")
@@ -201,7 +203,7 @@ def captions(episode_dir: Path, scenes: list[EpisodeScene], wavs: dict[str, Path
 def word_captions(context: LazyContext, episode_dir: Path, scenes: list[EpisodeScene], language: str) -> None:
     """Palavras com tempo em `captions.words.json`; reconhece no Whisper remoto só com `--legenda-palavra`."""
     request = "--legenda-palavra" in sys.argv
-    path = episode_dir / WORDS
+    path = episode_dir / WordCaptionsConstants.WORDS
     if not request and not path.is_file():
         return
     speech = [SceneSpeech(s.id, s.audio, s.narration, s.duration_ms) for s in scenes]
@@ -216,7 +218,7 @@ def word_captions(context: LazyContext, episode_dir: Path, scenes: list[EpisodeS
         report = sync_words(path, speech, recognize, name)
     except ProviderError as error:
         raise SystemExit(f"legenda palavra a palavra: {error.reason}: {error}. As cenas já reconhecidas "
-                         f"ficam em {WORDS}; rode de novo depois.") from error
+                         f"ficam em {WordCaptionsConstants.WORDS}; rode de novo depois.") from error
     print(f"legenda palavra a palavra: {len(report.with_words)} cena(s), {report.unmatched} palavra(s) com "
           "tempo dividido entre as vizinhas")
     if report.without:
@@ -301,7 +303,7 @@ def main() -> None:
         schema_version=2, episode_id=scenes.episode_id, title=f"{scenes.episode_id} (rascunho)",
         language=scenes.language, format=EpisodeFormat.EXPLAINER, scenes=episode_scenes, host=scenes.host,
         series=scenes.series,
-        video=VideoSpec.for_orientation(scenes.orientation), captions=CAPTIONS,
+        video=VideoSpec.for_orientation(scenes.orientation), captions=CaptionsConstants.CAPTIONS,
     )
     if tracks := music(settings, episode_dir, episode):
         episode = EpisodeManifest.model_validate({**episode.model_dump(), "music": tracks})

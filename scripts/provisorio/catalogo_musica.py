@@ -30,17 +30,9 @@ sys.path.insert(0, str(ROOT))
 
 from app.media.loudness import integrated_lufs, intensity  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
+from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
 from app.pipeline.music import load_music_catalog  # noqa: E402
-from app.pipeline.schemas import (  # noqa: E402
-    ATTRIBUTION_LICENSES,
-    AUDIO_LIBRARY_LICENSE,
-    MUSIC_CATALOG_FILE,
-    MUSIC_DIR,
-    Asset,
-    MusicCatalog,
-    MusicTrack,
-    Provider,
-)
+from app.pipeline.schemas import Asset, MusicCatalog, MusicTrack, Provider  # noqa: E402
 
 LIBRARY_URL = "https://www.youtube.com/audiolibrary"
 AUDIO_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")
@@ -55,7 +47,7 @@ def add(args: argparse.Namespace, music_dir: Path) -> int:
     source = Path(args.arquivo)
     if source.suffix.lower() not in AUDIO_SUFFIXES:
         raise SystemExit(f"formato {source.suffix} fora de {', '.join(AUDIO_SUFFIXES)}")
-    if args.licenca in ATTRIBUTION_LICENSES and not args.atribuicao:
+    if args.licenca in SchemasConstants.ATTRIBUTION_LICENSES and not args.atribuicao:
         raise SystemExit("faixa CC exige --atribuicao (o texto do botão Copy da coluna License type)")
     asset_id = f"ytal-{slug(args.titulo)}"
     catalog = load_music_catalog(music_dir.parent) or MusicCatalog()
@@ -99,7 +91,7 @@ def add(args: argparse.Namespace, music_dir: Path) -> int:
         loops=args.loop,
     )
     catalog = MusicCatalog(tracks=[*catalog.tracks, track])
-    (music_dir / MUSIC_CATALOG_FILE).write_text(catalog.model_dump_json(indent=2) + "\n")
+    (music_dir / SchemasConstants.MUSIC_CATALOG_FILE).write_text(catalog.model_dump_json(indent=2) + "\n")
     print(f"{asset_id}: {track.duration_ms / 1000:.0f} s, {lufs:.1f} LUFS, intensidade {track.intensity}")
     return 0
 
@@ -143,8 +135,8 @@ def main(argv: list[str] | None = None) -> int:
     add_p.add_argument("--voz-cantada", choices=("sim", "nao"), required=True)
     add_p.add_argument("--loop", action="store_true", help="o fim emenda no começo sem corte audível")
     add_p.add_argument("--bpm", type=int)
-    licenses = sorted({AUDIO_LIBRARY_LICENSE} | ATTRIBUTION_LICENSES)
-    add_p.add_argument("--licenca", choices=licenses, default=AUDIO_LIBRARY_LICENSE)
+    licenses = sorted({SchemasConstants.AUDIO_LIBRARY_LICENSE} | SchemasConstants.ATTRIBUTION_LICENSES)
+    add_p.add_argument("--licenca", choices=licenses, default=SchemasConstants.AUDIO_LIBRARY_LICENSE)
     add_p.add_argument("--atribuicao", help="texto de crédito, para faixa CC")
     use_p = sub.add_parser("usar", help="copia a faixa para assets/ do episódio (gate 3)")
     use_p.add_argument("episode_id")
@@ -152,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("listar")
     args = parser.parse_args(argv)
     data_dir = ROOT / "data"
-    music_dir = data_dir / MUSIC_DIR
+    music_dir = data_dir / SchemasConstants.MUSIC_DIR
     if args.comando == "adicionar":
         return add(args, music_dir)
     if args.comando == "usar":

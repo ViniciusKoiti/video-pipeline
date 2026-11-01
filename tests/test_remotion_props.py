@@ -5,9 +5,11 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+from app.media.constants.word_captions_constants import WordCaptionsConstants
 from app.pipeline.schemas import EpisodeManifest
+from app.render.constants.remotion_constants import RemotionConstants
 from app.render.ffmpeg import frame_bounds
-from app.render.remotion import PROJECT, RemotionEngine, footage_continuity, template_hash
+from app.render.remotion import RemotionEngine, footage_continuity, template_hash
 from tests.test_shots import v2_episode
 
 FIXTURE = Path(__file__).parent / "fixtures" / "episodes" / "engine-test"
@@ -54,12 +56,12 @@ def test_preview_carries_captions_per_scene() -> None:
 
 
 def test_template_hash_covers_sources_and_fonts() -> None:
-    assert len(template_hash(PROJECT)) == 64
-    assert any(PROJECT.glob("src/fonts/*.woff2"))
+    assert len(template_hash(RemotionConstants.PROJECT)) == 64
+    assert any(RemotionConstants.PROJECT.glob("src/fonts/*.woff2"))
 
 
 def test_portrait_scene_with_recognized_words_carries_them(tmp_path: Path) -> None:
-    from app.media.word_captions import WORDS, SceneSpeech, sync_words
+    from app.media.word_captions import SceneSpeech, sync_words
     from app.pipeline.schemas import VideoSpec
     from app.providers.alignment.base import TimedWord
 
@@ -70,7 +72,7 @@ def test_portrait_scene_with_recognized_words_carries_them(tmp_path: Path) -> No
     episode = EpisodeManifest.model_validate(v2_episode())
     (scene,) = episode.scenes
     speech = [SceneSpeech(scene.id, scene.audio, scene.narration, scene.duration_ms)]
-    sync_words(tmp_path / WORDS, speech, lambda s: [TimedWord("x", 0, 500)], "fake")
+    sync_words(tmp_path / WordCaptionsConstants.WORDS, speech, lambda s: [TimedWord("x", 0, 500)], "fake")
     (landscape,) = RemotionEngine().scene_props(episode, tmp_path, preview=True)
     assert "words" not in landscape  # paisagem: só a legenda por frase
     portrait = episode.model_copy(update={"video": VideoSpec.for_orientation("portrait")})

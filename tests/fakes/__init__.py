@@ -29,7 +29,8 @@ from app.providers.image_gen.base import CostEstimate, GeneratedImage, ImageRequ
 from app.providers.text.base import TextRequest, TextResult, Usage
 from app.providers.tts.base import SpeechRequest, SpeechResult
 from app.render.base import RenderResult, target_spec
-from app.settings import CONFIG_FILE, Settings, load_settings
+from app.settings import Settings, load_settings
+from app.settings.constants.settings_constants import SettingsConstants
 
 T = TypeVar("T", bound=BaseModel)
 M = TypeVar("M", bound=BaseModel)
@@ -43,10 +44,10 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 def make_root(tmp_path: Path, config: str | None = None) -> Path:
     """Pasta de projeto isolada com config/providers.toml (o real, ou `config`) e sem .env."""
-    target = tmp_path / CONFIG_FILE
+    target = tmp_path / SettingsConstants.CONFIG_FILE
     target.parent.mkdir(parents=True, exist_ok=True)
     if config is None:
-        shutil.copy(REPO_ROOT / CONFIG_FILE, target)
+        shutil.copy(REPO_ROOT / SettingsConstants.CONFIG_FILE, target)
     else:
         target.write_text(config)
     return tmp_path

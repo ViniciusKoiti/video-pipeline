@@ -21,14 +21,12 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
+from app.media.constants.word_captions_constants import WordCaptionsConstants
 from app.media.models.caption_word import CaptionWord as CaptionWord
 from app.media.models.report import Report as Report
 from app.media.models.scene_speech import SceneSpeech as SceneSpeech
 from app.media.narration import strip_pauses
 from app.providers.alignment.base import TimedWord
-
-WORDS = "captions.words.json"
-VERSION = 1
 
 
 def script_words(narration: str) -> list[str]:
@@ -91,13 +89,13 @@ def load(path: Path) -> dict[str, dict[str, Any]]:
     if not path.is_file():
         return {}
     data = json.loads(path.read_text())
-    if data.get("version") != VERSION:
+    if data.get("version") != WordCaptionsConstants.VERSION:
         return {}
     return {scene["audio"]: scene for scene in data.get("scenes", [])}
 
 
 def save(path: Path, aligner: str, scenes: Iterable[dict[str, Any]]) -> None:
-    payload = {"version": VERSION, "aligner": aligner, "scenes": list(scenes)}
+    payload = {"version": WordCaptionsConstants.VERSION, "aligner": aligner, "scenes": list(scenes)}
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
 
 

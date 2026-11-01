@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, is_approved_json
 from app.pipeline.schemas import ReviewEntry, ReviewLog
+from app.storage.constants.json_files_constants import JsonFilesConstants
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -63,7 +64,7 @@ class JsonFileStore:
 class JsonReviewGate:
     """`ReviewGate` em `data/episodes/<id>/review.json`: só acrescenta entradas (§5, ADR 007)."""
 
-    NAME = "review.json"
+    NAME = JsonFilesConstants.REVIEW_FILE
 
     def __init__(self, store: JsonFileStore) -> None:
         self._store = store

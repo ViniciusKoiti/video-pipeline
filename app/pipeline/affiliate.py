@@ -12,36 +12,29 @@ import tomllib
 from pathlib import Path
 from urllib.parse import parse_qsl, quote_plus, urlencode, urlsplit, urlunsplit
 
+from app.pipeline.constants.affiliate_constants import AffiliateConstants
 from app.pipeline.models._affiliate_model import _Model as _Model
 from app.pipeline.models.book import Book as Book
 from app.pipeline.models.book_list import BookList as BookList
 
-BOOKS_FILE = "livros.json"
-CHANNEL_FILE = "config/canal.toml"
-AMAZON_HOSTS = ("amazon.com.br", "www.amazon.com.br", "amzn.to")
 # Texto exigido pelo contrato do Programa de Associados da Amazon.com.br (cláusula 5)
-DISCLOSURE = (
-    "Como participante do Programa de Associados da Amazon, "
-    "sou remunerado pelas compras qualificadas efetuadas."
-)
+
 # O bloco vai para o YouTube como está: começa no título visível e termina no aviso, sem marcador escondido
-BLOCK_START = "📚 Livros citados no vídeo:"
-BLOCK_END = DISCLOSURE
 
 
 def channel_tag(root: Path) -> str:
     """A tag do associado (`[amazon] tag` em `config/canal.toml`)."""
-    data = tomllib.loads((root / CHANNEL_FILE).read_text(encoding="utf-8"))
+    data = tomllib.loads((root / AffiliateConstants.CHANNEL_FILE).read_text(encoding="utf-8"))
     tag = str(data.get("amazon", {}).get("tag", "")).strip()
     if not tag:
-        raise ValueError(f"{CHANNEL_FILE}: falta [amazon] tag")
+        raise ValueError(f"{AffiliateConstants.CHANNEL_FILE}: falta [amazon] tag")
     return tag
 
 
 def amazon_link(book: Book, tag: str) -> str:
     if book.link:
         parts = urlsplit(book.link)
-        if parts.hostname not in AMAZON_HOSTS:
+        if parts.hostname not in AffiliateConstants.AMAZON_HOSTS:
             raise ValueError(f"{book.titulo}: link fora da Amazon ({parts.hostname})")
         if parts.hostname == "amzn.to":
             return book.link  # link curto da SiteStripe: a tag já vai dentro dele
@@ -52,15 +45,15 @@ def amazon_link(book: Book, tag: str) -> str:
 
 
 def books_block(books: BookList, tag: str) -> str:
-    lines = [BLOCK_START]
+    lines = [AffiliateConstants.BLOCK_START]
     lines += [f"- {book.autor}, {book.titulo}: {amazon_link(book, tag)}" for book in books.livros]
-    lines += [BLOCK_END]
+    lines += [AffiliateConstants.BLOCK_END]
     return "\n".join(lines)
 
 
 def with_block(text: str, block: str) -> str:
     """O texto com o bloco trocado; sem bloco, acrescenta no fim. Fora dos marcadores nada muda."""
-    start, end = text.find(BLOCK_START), text.find(BLOCK_END)
+    start, end = text.find(AffiliateConstants.BLOCK_START), text.find(AffiliateConstants.BLOCK_END)
     if start >= 0 and end > start:
-        return text[:start] + block + text[end + len(BLOCK_END) :]
+        return text[:start] + block + text[end + len(AffiliateConstants.BLOCK_END) :]
     return text.rstrip("\n") + "\n\n" + block + "\n"

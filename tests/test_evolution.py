@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from app.media import evolution
+from app.media.constants.evolution_constants import EvolutionConstants
 from app.media.probe import dimensions
 from app.pipeline.schemas import EpisodeFormat, EpisodeManifest, EpisodeScene, EpisodeShot, KeywordShot
 
@@ -98,7 +99,7 @@ def test_registry_starts_with_the_header_and_escapes_pipes(tmp_path: Path) -> No
                                               cpu_probe_s=0.05))
     evolution.append_registry(registry, store(video(tmp_path / "b.mp4", "darkred"), folder, note="a | b"))
     lines = registry.read_text().splitlines()
-    assert registry.read_text().startswith(evolution.REGISTRY_HEADER)
+    assert registry.read_text().startswith(EvolutionConstants.REGISTRY_HEADER)
     assert lines[-2] == ("| v1 | `regua` | " + evolution.load(folder, "v1").rendered_at
                          + " | `abc1234` | `2af5a7e` | `ffffffffffff` | 180 s | 0,05 s | — | mudança |")
     assert lines[-1].endswith("| — | — | S01 plano 1, S01 plano 2, S02 plano 1 | a \\| b |")
@@ -119,8 +120,8 @@ def test_contact_sheet_has_one_row_per_shot_and_one_column_per_version(tmp_path:
     store(video(tmp_path / "b.mp4", "navy", then="darkgreen"), folder)
     out = folder / "folha.jpg"
     assert evolution.contact_sheet(folder, ["v1", "v2"], out) == {"v2": ["S02#1"]}
-    assert dimensions(out) == (evolution.LABEL_W + 2 * evolution.CELL_W,
-                               evolution.HEADER_H + 3 * evolution.CELL_H)
+    assert dimensions(out) == (EvolutionConstants.LABEL_W + 2 * EvolutionConstants.CELL_W,
+                               EvolutionConstants.HEADER_H + 3 * EvolutionConstants.CELL_H)
 
 
 def test_side_by_side_puts_both_versions_in_one_video(tmp_path: Path) -> None:
@@ -128,7 +129,7 @@ def test_side_by_side_puts_both_versions_in_one_video(tmp_path: Path) -> None:
     store(video(tmp_path / "a.mp4", "navy"), folder)
     store(video(tmp_path / "b.mp4", "darkred"), folder)
     out = evolution.side_by_side(folder, "v1", "v2", folder / "v1-v2.mp4")
-    assert dimensions(out) == (2 * evolution.SIDE_W, evolution.SIDE_H)
+    assert dimensions(out) == (2 * EvolutionConstants.SIDE_W, EvolutionConstants.SIDE_H)
 
 
 def test_unknown_version_is_a_clear_error(tmp_path: Path) -> None:

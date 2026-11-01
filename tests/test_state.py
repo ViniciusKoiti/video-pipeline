@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
+from app.pipeline.constants.state_constants import StateConstants
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
 from app.pipeline.schemas import SourcesManifest, Status, Step
 from app.pipeline.state import (
-    MANIFEST,
     Action,
     InvalidTransition,
     StaleApproval,
@@ -115,7 +115,7 @@ def test_same_input_does_not_redo_work(store: JsonFileStore) -> None:
     second = run_step(store, EP, Step.SOURCES, "sha256:v1", action, now=clock)
     assert (first.action, second.action, action.calls) == (Action.RUN, Action.REUSE, 1)
     assert load_state(store, EP).get(Step.SOURCES).status is Status.NEEDS_REVIEW
-    assert store.path(EP, MANIFEST).is_file()
+    assert store.path(EP, StateConstants.MANIFEST).is_file()
 
 
 def test_step_without_human_gate_reruns_when_input_changes(store: JsonFileStore) -> None:

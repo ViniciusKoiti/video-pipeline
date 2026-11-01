@@ -11,8 +11,8 @@ import pytest
 from pydantic import BaseModel
 
 from app.media.probe import duration_ms
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.schemas import (
-    APPROVED_STATES,
     Asset,
     EpisodeManifest,
     ReviewLog,
@@ -69,7 +69,7 @@ def test_every_asset_is_approved_with_matching_file(
     assert set(files) == set(assets)
     for asset_id, path in files.items():
         asset = assets[asset_id]
-        assert asset.review_status in APPROVED_STATES
+        assert asset.review_status in SchemasConstants.APPROVED_STATES
         assert hashlib.sha256(path.read_bytes()).hexdigest() == asset.sha256
         assert review.is_approved(Step.ASSETS, asset_id=asset_id, input_hash=f"sha256:{asset.sha256}")
 

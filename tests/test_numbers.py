@@ -12,11 +12,9 @@ import pytest
 
 from app.cli import main
 from app.pipeline.check import check_episode
+from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.gates import gate_report, record_check, record_decision
 from app.pipeline.numbers import (
-    BLOCK_END,
-    BLOCK_START,
-    SPOKEN,
     FormatBrief,
     format_warnings,
     image_changes,
@@ -177,7 +175,7 @@ def test_same_patterns_as_the_niche_analysis() -> None:
         if isinstance(n, ast.Assign) and any(getattr(t, "id", "") == "SPOKEN" for t in n.targets)
     )
     theirs = {k.value: v.args[0].value for k, v in zip(node.keys, node.values, strict=True)}
-    assert theirs == {name: rx.pattern for name, rx in SPOKEN.items()}
+    assert theirs == {name: rx.pattern for name, rx in NumbersConstants.SPOKEN.items()}
 
 
 # --- bloco no outline ---
@@ -186,7 +184,7 @@ def test_same_patterns_as_the_niche_analysis() -> None:
 def test_block_is_stable_and_only_replaces_itself() -> None:
     scenes, assets = fixture()
     block = render_block(script_numbers(scenes, assets, CPS), None, CPS)
-    assert block.startswith(BLOCK_START) and block.endswith(BLOCK_END)
+    assert block.startswith(NumbersConstants.BLOCK_START) and block.endswith(NumbersConstants.BLOCK_END)
     assert render_block(script_numbers(scenes, assets, CPS), None, CPS) == block
     outline = "# Outline\n\nTexto à mão.\n"
     once = replace_block(outline, block)

@@ -13,7 +13,8 @@ from pydantic import (
     model_validator,
 )
 
-from app.pipeline.models._usage_types import TOKEN_FIELDS, Count, Identifier
+from app.pipeline.constants.usage_constants import UsageConstants
+from app.pipeline.models._usage_types import Count, Identifier
 
 
 class UsageRequest(BaseModel):
@@ -43,6 +44,6 @@ class UsageRequest(BaseModel):
 
     @model_validator(mode="after")
     def token_range(self) -> UsageRequest:
-        if sum(getattr(self, name) or 0 for name in TOKEN_FIELDS) > 2**63 - 1:
+        if sum(getattr(self, name) or 0 for name in UsageConstants.TOKEN_FIELDS) > 2**63 - 1:
             raise ValueError("soma de tokens excede o intervalo do SQLite")
         return self

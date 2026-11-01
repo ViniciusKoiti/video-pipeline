@@ -18,9 +18,16 @@ import os
 import sys
 from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Any, TextIO
+from typing import TYPE_CHECKING, Any, TextIO
 
-FORWARDED = ("parts", "language_id", "pause_ms", "exaggeration", "cfg_weight")
+if TYPE_CHECKING or __package__:
+    from .constants.chatterbox_modal_client_constants import ChatterboxModalClientConstants
+else:
+    from importlib import import_module
+
+    ChatterboxModalClientConstants = import_module(
+        "constants.chatterbox_modal_client_constants"
+    ).ChatterboxModalClientConstants
 
 
 def answer(out: TextIO, payload: dict[str, Any]) -> None:
@@ -34,7 +41,9 @@ Call = Callable[[dict[str, Any]], dict[str, Any]]
 def handle(job: dict[str, Any], reference_name: str, call: Call) -> dict[str, Any]:
     """Um pedido: o que vai ao Modal e o que volta para o adapter. A gravação não vai no pedido, só o hash."""
     reference = Path(job["reference"])
-    remote_job = {key: job[key] for key in FORWARDED if key in job}
+    remote_job: dict[str, Any] = {
+        key: job[key] for key in ChatterboxModalClientConstants.FORWARDED if key in job
+    }
     remote_job["reference_name"] = reference_name
     remote_job["reference_hash"] = hashlib.sha256(reference.read_bytes()).hexdigest()[:12]
     result = call(remote_job)

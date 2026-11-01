@@ -14,6 +14,12 @@ continuam sendo decisões humanas, registradas em `review.json`.
 **Foco desta entrega:** primeiro o [gate de qualidade](gate-qualidade.md), executado por
 `bash scripts/check_qualidade.sh`. As demais etapas são plano de execução e permanecem pendentes.
 
+**Estado atual:** modelos e constantes foram separados por área (ADRs 037–038), com guardas no gate:
+311 constantes em 54 classes, tipagem estrita sem erros em 362 arquivos e 958 testes passando (6 lentos
+fora pela configuração existente). A baseline de tamanho caiu para 10 arquivos e 9 funções. RF0 ainda
+não está fechado: o lint global reprova dois `B006` preexistentes em demonstrações locais de `renders/`,
+identificados no gate de qualidade. O próximo gate funcional é RF1, após resolver essa pendência.
+
 ## 1. Sequência e situação
 
 ```mermaid
@@ -27,9 +33,9 @@ flowchart TD
     RF6 --> RF7["RF7 · Migração de chamadores e consolidação"]
 ```
 
-| Gate | Gaps cobertos | Situação inicial |
+| Gate | Gaps cobertos | Situação atual |
 |---|---|---|
-| RF0 | G12; prevenção da dependência de G09 | Guardas implantadas; arquitetura, tamanho e tipagem verificados; lint global pendente |
+| RF0 | G12; prevenção da dependência de G09 | Guardas de arquitetura, modelos, constantes, tamanho e tipagem implantadas; lint global pendente |
 | RF1 | G01; fronteira de proteção de G02 | Pendente |
 | RF2 | G03; recuperação de G02 | Pendente |
 | RF3 | G04–G05 | Pendente |
@@ -74,6 +80,8 @@ o histórico para fingir que a execução anterior nunca ocorreu.
 - [x] Gate de tamanho preservado em 200/50, sem ampliar baseline.
 - [x] Pré-commit executa arquitetura e tamanho; o CI executa ambos pela suíte existente.
 - [x] Mypy estrito integrado ao comando único; linha de base dos erros de tipos registrada.
+- [x] Modelos por área, uma classe por arquivo, com compatibilidade dos imports existentes (ADR 037).
+- [x] Constantes por área, atributos Final e coleções imutáveis em profundidade, verificados no gate (ADR 038).
 - [ ] Checks globais inteiramente verdes, incluindo lint e tipagem; registrar qualquer impedimento antes de avançar.
 
 Comando rápido: `uv run pytest tests/test_architecture.py tests/test_tamanho_modulos.py -q`.

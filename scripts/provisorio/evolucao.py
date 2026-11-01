@@ -32,9 +32,11 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.media import evolution  # noqa: E402
-from app.pipeline.bench import CPU_PROBE_SLOW_S, cpu_probe  # noqa: E402
+from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.constants.bench_constants import BenchConstants  # noqa: E402
 from app.pipeline.schemas import EpisodeManifest  # noqa: E402
-from app.render.remotion import PROJECT, template_hash  # noqa: E402
+from app.render.constants.remotion_constants import RemotionConstants  # noqa: E402
+from app.render.remotion import template_hash  # noqa: E402
 from app.settings import load_settings  # noqa: E402
 
 REGISTRY = ROOT / "data" / "benchmarks" / "evolucao-template.md"
@@ -50,7 +52,7 @@ def template_info(ref: str | None) -> tuple[str, str, str]:
         commit = git("rev-parse", "--short", "HEAD")
         if git("status", "--porcelain", "--", "video"):
             commit += " + alterações locais em video/"
-        return commit, *project_info(PROJECT)
+        return commit, *project_info(RemotionConstants.PROJECT)
     commit = git("rev-parse", "--short", ref)
     with tempfile.TemporaryDirectory() as tmp:
         archive = subprocess.run(["git", "archive", ref, "video"], cwd=ROOT, capture_output=True, check=True)
@@ -104,9 +106,11 @@ def main() -> None:
     try:
         if args.command == "gerar":
             probe = cpu_probe()
-            if probe > CPU_PROBE_SLOW_S:
-                raise SystemExit(f"CPU limitada (sonda {probe:.2f} s, limite {CPU_PROBE_SLOW_S} s): "
-                                 "feche os apps pesados e tente de novo")
+            if probe > BenchConstants.CPU_PROBE_SLOW_S:
+                raise SystemExit(
+                    f"CPU limitada (sonda {probe:.2f} s, limite {BenchConstants.CPU_PROBE_SLOW_S} s): "
+                    "feche os apps pesados e tente de novo"
+                )
             started = time.monotonic()
             script = ROOT / "scripts" / "provisorio" / "montar_episodio.py"
             # O vídeo-régua fica com a voz com que foi gravado (Charon, ADR 012), já guardada: só o

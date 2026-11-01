@@ -51,7 +51,8 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.media.loudness import TARGET_LUFS, integrated_lufs, loudness_problem  # noqa: E402
+from app.media.constants.loudness_constants import LoudnessConstants  # noqa: E402
+from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.providers.errors import ProviderError  # noqa: E402
@@ -182,7 +183,7 @@ def scene_starts(content: dict[str, Any]) -> dict[str, float]:
 def mix_filter(
     starts_ms: list[int],
     video_sec: float,
-    target_lufs: float = TARGET_LUFS,
+    target_lufs: float = LoudnessConstants.TARGET_LUFS,
     trims: list[tuple[float, float]] | None = None,
     video_audio: bool = False,
     effects: list[tuple[int, float, float]] | None = None,

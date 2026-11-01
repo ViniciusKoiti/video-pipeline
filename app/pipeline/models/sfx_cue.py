@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import Field
 
-from app.pipeline.models._sfx_types import MAX_GAIN_DB
+from app.pipeline.constants.sfx_constants import SfxConstants
 from app.pipeline.models.model import Model
 
 
@@ -14,5 +14,5 @@ class SfxCue(Model):
     scene: str
     text: str | None = None
     offset_s: float = 0.0
-    gain_db: float = Field(default=0.0, le=MAX_GAIN_DB)
+    gain_db: float = Field(default=0.0, le=SfxConstants.MAX_GAIN_DB)
     note: str | None = None  # o que acontece na tela nesse momento

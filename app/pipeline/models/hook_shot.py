@@ -4,8 +4,9 @@ from typing import Literal, Self
 
 from pydantic import model_validator
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._schemas_shot import _Shot
-from app.pipeline.models._schemas_types import HOOK_MAX_WORDS, NonEmpty, _fold
+from app.pipeline.models._schemas_types import NonEmpty, _fold
 
 
 class HookShot(_Shot):
@@ -18,8 +19,8 @@ class HookShot(_Shot):
 
     @model_validator(mode="after")
     def _short_and_sourced(self) -> Self:
-        if len(self.text.split()) > HOOK_MAX_WORDS:
-            raise ValueError(f"gancho com mais de {HOOK_MAX_WORDS} palavras: {self.text!r}")
+        if len(self.text.split()) > SchemasConstants.HOOK_MAX_WORDS:
+            raise ValueError(f"gancho com mais de {SchemasConstants.HOOK_MAX_WORDS} palavras: {self.text!r}")
         if self.highlight and _fold(self.highlight) not in _fold(self.text):
             raise ValueError(f"destaque {self.highlight!r} fora do gancho {self.text!r}")
         if any(c.isdigit() for c in self.text) and not self.claims:

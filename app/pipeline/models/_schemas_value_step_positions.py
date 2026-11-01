@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from app.pipeline.models._schemas_types import _STEP_NAMES
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models._schemas_value_step_anchors import step_anchors
 
 if TYPE_CHECKING:
@@ -21,8 +21,10 @@ def step_positions(narration: str, shot: Shot, start: int, end: int, *, scene_id
         if position < 0 or position >= end:
             where = "da rede" if shot.kind == "network" else f"do plano {shot.kind}"
             raise ValueError(
-                f"{scene_id}: {_STEP_NAMES[shot.kind]} {anchor!r} {where} não aparece na narração, em ordem, "
-                "dentro do trecho do plano"
+
+        f'{scene_id}: {SchemasConstants._STEP_NAMES[shot.kind]} {anchor!r} {where}'
+        f' não aparece na narração, em ordem, dentro do trecho do plano'
+
             )
         positions.append(position)
         cursor = position + 1

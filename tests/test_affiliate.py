@@ -7,17 +7,8 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 
-from app.pipeline.affiliate import (
-    BLOCK_END,
-    BLOCK_START,
-    DISCLOSURE,
-    Book,
-    BookList,
-    amazon_link,
-    books_block,
-    channel_tag,
-    with_block,
-)
+from app.pipeline.affiliate import Book, BookList, amazon_link, books_block, channel_tag, with_block
+from app.pipeline.constants.affiliate_constants import AffiliateConstants
 
 TAG = "canal-20"
 
@@ -47,7 +38,11 @@ def test_link_outside_amazon_is_refused() -> None:
 def test_block_has_the_disclosure_and_replaces_only_itself() -> None:
     books = BookList(livros=[Book(titulo="A República", autor="Platão")])
     block = books_block(books, TAG)
-    assert block.startswith(BLOCK_START) and block.endswith(BLOCK_END) and DISCLOSURE in block
+    assert (
+        block.startswith(AffiliateConstants.BLOCK_START)
+        and block.endswith(AffiliateConstants.BLOCK_END)
+        and AffiliateConstants.DISCLOSURE in block
+    )
     text = "Resumo do vídeo.\n\nFontes: ver credits.txt\n"
     once = with_block(text, block)
     assert with_block(once, block) == once

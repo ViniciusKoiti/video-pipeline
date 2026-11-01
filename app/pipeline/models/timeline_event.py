@@ -4,7 +4,8 @@ from typing import Self
 
 from pydantic import field_validator, model_validator
 
-from app.pipeline.models._schemas_types import _WHEN_RE, _YEAR_RE, NonEmpty
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models._schemas_types import NonEmpty
 from app.pipeline.models.model import Model
 
 
@@ -22,9 +23,9 @@ class TimelineEvent(Model):
     def _when_matches_date(self) -> Self:
         if self.when is None:
             return self
-        if not _WHEN_RE.match(self.when):
+        if not SchemasConstants._WHEN_RE.match(self.when):
             raise ValueError(f"when {self.when!r}: use o ano (1927) ou uma data ISO (1927-03-12)")
-        years = _YEAR_RE.findall(self.date)
+        years = SchemasConstants._YEAR_RE.findall(self.date)
         if years and self.when[:4] not in years:
             raise ValueError(f"when {self.when!r} não bate com o ano escrito em {self.date!r}")
         return self

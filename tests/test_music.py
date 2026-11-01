@@ -11,12 +11,13 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from app.media.loudness import TARGET_LUFS, integrated_lufs, intensity, loudness_problem
+from app.media.constants.loudness_constants import LoudnessConstants
+from app.media.loudness import integrated_lufs, intensity, loudness_problem
 from app.media.probe import duration_ms, probe_streams
 from app.pipeline.check import check_episode
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.music import load_music_catalog, plan_problems, resolve_music
 from app.pipeline.schemas import (
-    AUDIO_LIBRARY_LICENSE,
     Asset,
     EpisodeFormat,
     EpisodeManifest,
@@ -31,7 +32,8 @@ from app.pipeline.schemas import (
     Status,
     VideoSpec,
 )
-from app.render.ffmpeg import assemble
+from app.render.constants.ffmpeg_constants import FfmpegConstants
+from app.render.ffmpeg import assemble, audio_key
 from app.storage.json_files import JsonFileStore
 
 V1 = {"visual_need": "contextual_stock", "search_query": "papel"}
@@ -81,10 +83,18 @@ def bed(start_ms: int, end_ms: int, **changes: Any) -> EpisodeMusic:
 
 
 def library_asset(**changes: Any) -> dict[str, Any]:
-    return {"id": "ytal-noite", "provider": "youtube_audio_library", "provider_id": "Noite",
-            "page_url": "https://www.youtube.com/audiolibrary", "license_id": AUDIO_LIBRARY_LICENSE,
-            "usage_notes": "Só YouTube; sem voz cantada.", "retrieved_at": datetime.now(UTC).isoformat(),
-            "sha256": "a" * 64, "review_status": Status.APPROVED, **changes}
+    return {
+        "id": "ytal-noite",
+        "provider": "youtube_audio_library",
+        "provider_id": "Noite",
+        "page_url": "https://www.youtube.com/audiolibrary",
+        "license_id": SchemasConstants.AUDIO_LIBRARY_LICENSE,
+        "usage_notes": "Só YouTube; sem voz cantada.",
+        "retrieved_at": datetime.now(UTC).isoformat(),
+        "sha256": "a" * 64,
+        "review_status": Status.APPROVED,
+        **changes,
+    }
 
 
 def test_audio_library_track_is_approved_with_its_own_license() -> None:
@@ -123,7 +133,7 @@ def test_silence_has_no_track_and_bed_needs_one() -> None:
 
 def test_intensity_steps_and_loudness_alert() -> None:
     assert [intensity(v) for v in (-40, -27, -20, -16, -10)] == [1, 2, 3, 4, 5]
-    assert loudness_problem(TARGET_LUFS - 1) is None
+    assert loudness_problem(LoudnessConstants.TARGET_LUFS - 1) is None
     assert "alvo" in (loudness_problem(-20.0) or "")
 
 
@@ -250,8 +260,21 @@ def test_assemble_mixes_the_bed_under_the_voice_at_the_target_loudness(tmp_path:
     audio = next(s for s in probe_streams(out) if s["codec_type"] == "audio")
     assert (audio["codec_name"], audio["channels"]) == ("aac", 2)
     assert abs(duration_ms(out) - 4000) <= 150
-    assert abs(integrated_lufs(out) - TARGET_LUFS) <= 2.0
+    assert abs(integrated_lufs(out) - LoudnessConstants.TARGET_LUFS) <= 2.0
     assert not list(out.parent.glob(".*.txt"))  # as listas do concat foram apagadas
+
+
+def test_audio_cache_is_invalidated_when_its_version_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest = episode()
+    for scene in manifest.scenes:
+        audio = tmp_path / scene.audio
+        audio.parent.mkdir(parents=True, exist_ok=True)
+        audio.write_bytes(scene.id.encode())
+    original = audio_key(manifest, tmp_path, manifest.video, "192k")
+    monkeypatch.setattr(FfmpegConstants, "AUDIO_VERSION", "next")
+    assert audio_key(manifest, tmp_path, manifest.video, "192k") != original
 
 
 def test_assemble_reuses_the_encoded_audio_until_the_speech_or_the_bed_changes(tmp_path: Path) -> None:

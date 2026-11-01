@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.pipeline.constants.text_fit_constants import TextFitConstants
 from app.pipeline.schemas import (
     Claim,
     CompareShot,
@@ -15,12 +16,7 @@ from app.pipeline.schemas import (
     TimelineEvent,
     TimelineShot,
 )
-from app.pipeline.text_fit import (
-    EDGE_LABEL_CHARS,
-    NUMBER_OVER_MEDIA,
-    lines,
-    text_fit_warnings,
-)
+from app.pipeline.text_fit import lines, text_fit_warnings
 
 CLAIMS = [Claim(text="x", source_ids=["source-01"])]
 
@@ -53,7 +49,7 @@ def test_lines_break_between_words() -> None:
 
 
 def test_number_over_media_fits_one_line_and_full_screen_two() -> None:
-    per_line, _ = NUMBER_OVER_MEDIA
+    per_line, _ = TextFitConstants.NUMBER_OVER_MEDIA
     one_line = words(per_line // 6)
     two_lines = words(per_line // 6 + 2)
     assert text_fit_warnings("S01", number(one_line), 3000, over_media=True) == []
@@ -94,7 +90,7 @@ def test_network_node_hanging_over_an_arrow() -> None:
 
 
 def test_network_arrow_text_and_value() -> None:
-    shot = network("Banco", edge_label="x" * (EDGE_LABEL_CHARS + 1), value="v" * 30)
+    shot = network("Banco", edge_label="x" * (TextFitConstants.EDGE_LABEL_CHARS + 1), value="v" * 30)
     warnings = text_fit_warnings("S06", shot, 6000, over_media=False)
     assert [w.split(" com ")[0] for w in warnings] == [
         "S06: texto da seta outro→raiz", "S06: valor da seta outro→raiz",
