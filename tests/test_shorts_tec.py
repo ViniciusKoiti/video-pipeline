@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from app.pipeline.motion_inputs import MotionInputError
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -22,48 +24,6 @@ def shorts_tec():
     sys.modules["shorts_tec"] = module
     spec.loader.exec_module(module)
     return module
-
-
-def content() -> dict:
-    return {
-        "fps": 30,
-        "scenes": [
-            {"id": "gancho", "type": "hook", "durationSec": 2.0},
-            {"id": "numero", "type": "number", "durationSec": 2.9},
-            {"id": "final", "type": "end_card", "durationSec": 2.0},
-        ],
-    }
-
-
-def test_tempos_esticam_a_cena_ate_a_fala_caber_e_nunca_encurtam(shorts_tec) -> None:
-    data = content()
-    rows = shorts_tec.fit_durations(data, {"gancho": 1.1, "numero": 3.84})
-    # gancho: a fala cabe (1,1 + 0,3 < 2,0); numero: 3,84 + 0,3 = 4,14 → 4,2; final: sem fala, fica.
-    assert rows == [("gancho", 2.0, 2.0), ("numero", 2.9, 4.2), ("final", 2.0, 2.0)]
-    assert [s["durationSec"] for s in data["scenes"]] == [2.0, 4.2, 2.0]
-    # Sem janela no vídeo, nenhuma cena ganha host.
-    assert all("host" not in s for s in data["scenes"])
-
-
-def test_tempos_prendem_a_boca_da_janela_ao_trecho_da_fala(shorts_tec) -> None:
-    data = content()
-    data["host"] = {"assetId": "apresentador"}
-    data["scenes"][1]["host"] = {"corner": "top-left"}
-    shorts_tec.fit_durations(data, {"gancho": 1.1, "numero": 3.84})
-    # A capa nunca tem janela; o número fala do começo ao fim da fala, mantendo o canto.
-    assert "host" not in data["scenes"][0]
-    assert data["scenes"][1]["host"] == {"corner": "top-left", "speaking": [0.0, 3.84]}
-    assert "host" not in data["scenes"][2]
-    # Janela escondida na cena fica escondida.
-    data["scenes"][1]["host"] = False
-    shorts_tec.fit_durations(data, {"numero": 1.0})
-    assert data["scenes"][1]["host"] is False
-
-
-def test_comecos_das_cenas_seguem_os_frames_inteiros_do_motion_video(shorts_tec) -> None:
-    data = content()
-    data["scenes"][1]["durationSec"] = 4.2
-    assert shorts_tec.scene_starts(data) == {"gancho": 0.0, "numero": 2.0, "final": 6.2}
 
 
 def test_filtro_do_ffmpeg_atrasa_cada_fala_ate_a_cena_e_fecha_no_alvo(shorts_tec) -> None:
@@ -131,6 +91,9 @@ def test_narracao_lida_do_json_com_entrega_neutra_por_padrao(shorts_tec, tmp_pat
     language, lines = shorts_tec.load_lines(path)
     assert language == "pt-BR"
     assert lines == [shorts_tec.Line("gancho", "Oi.", "neutral"), shorts_tec.Line(None, "Fora.", "neutral")]
-    path.write_text(json.dumps({"lines": []}))
-    with pytest.raises(SystemExit):
+    path.write_text(json.dumps({"language": "pt-BR", "lines": []}))
+    with pytest.raises(MotionInputError, match="lines"):  # sem linhas, e sem `language`, o erro é do projeto
+        shorts_tec.load_lines(path)
+    path.write_text(json.dumps({"lines": [{"text": "Oi."}]}))
+    with pytest.raises(MotionInputError, match="language"):
         shorts_tec.load_lines(path)

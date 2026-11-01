@@ -38,9 +38,9 @@ def cuts_from_episode(data_dir: Path, episode_id: str) -> list[float]:
 
 
 def cuts_from_content(content_file: Path) -> tuple[list[float], dict[str, float]]:
-    from scripts.provisorio.shorts_tec import scene_starts
+    from app.pipeline.motion_inputs import load_content
 
-    starts = scene_starts(json.loads(content_file.read_text(encoding="utf-8")))
+    starts = load_content(content_file).starts()
     return [round(t, 3) for t in list(starts.values())[1:]], starts
 
 

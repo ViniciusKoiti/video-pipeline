@@ -40,7 +40,7 @@ flowchart TD
 | RF2 | G03; recuperação de G02 | Implementado em 2026-11-01 (ADR 040); nenhum chamador real usa `run_scenes` ainda (RF3/RF6) |
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
-| RF5 | G02, G10–G11 | Fatias 1 (fontes, ADR 043), 2 (ativos, ADR 044), 3 (entradas do SFX, ADR 046) e 4 (briefs e catálogo de música, ADR 047) feitas em 2026-11-01; só o `MotionContent` pendente |
+| RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
 | RF6 | Integração G01–G11 no longo e Short | Pendente |
 | RF7 | G12 e encerramento da migração | Pendente |
 
@@ -182,10 +182,8 @@ acrescentar testes de operações separadas quando forem implementadas. Os exemp
   conclusão é publicado por último. `replace` individual não é chamado de transação de vários arquivos.
 - [x] Busca distingue banco indisponível, busca sem resultado e erro de programação; motivos ficam registrados.
 - [x] Download escolhido preserva associação de cenas anteriores, é idempotente e protege mídia aprovada.
-- [ ] Entradas validam IDs, caminhos contidos, fps e durações positivos/finitos, intervalos de fala e referências.
-  *(feito para o SFX Kit e o `sfx.json`, ADR 046; falta o `MotionContent`: fps, durações e fala dentro do WAV)*
-- [ ] Leitura/escrita do conteúdo do kit preserva campos que o auto-play não interpreta.
-  *(o `sounds.json` é só de leitura e ignora os campos que não usa; falta o `MotionContent` carregar e salvar)*
+- [x] Entradas validam IDs, caminhos contidos, fps e durações positivos/finitos, intervalos de fala e referências.
+- [x] Leitura/escrita do conteúdo do kit preserva campos que o auto-play não interpreta.
 - [x] Cópias de briefs e catálogo de música mantêm seus contratos de substituição e licença.
 
 **Evidência (fatia 1, fontes):** `tests/test_sources.py` (13 casos: as três entradas, id sob lock com dois
@@ -198,8 +196,12 @@ contrato, id repetido, JSON e forma inválidos, plano válido e 9 inválidos, pl
 o kit real de 320 sons carrega). **Fatia 4 (briefs e música):** `tests/test_briefs.py` (14 casos: os dois tipos, troca recusada, guardado
 com a data e sem colisão, falha no meio, lock, episódio inexistente), `tests/test_music_library.py` (21 casos:
 faixa nunca substituída, licença, sha256 do catálogo, versão do episódio intocada, aprovado, falhas injetadas) e
-`tests/test_briefs_music_scripts.py` (os três scripts, sem rede nem ffmpeg); mutações conferidas. **Pendente:**
-`MotionContent` (fps, durações, fala no WAV, preservação de campos desconhecidos ao carregar e salvar). Criar testes específicos de ativos e briefs e ampliar os de
+`tests/test_briefs_music_scripts.py` (os três scripts, sem rede nem ffmpeg); mutações conferidas. **Fatia 5 (entradas do Short):**
+`tests/test_motion_inputs.py` (62 casos: o contrato do conteúdo, `fitted` sem alterar o original, campos do kit
+preservados no ida-e-volta, falas conferidas, narração e fala gerada com a cena, o campo e o WAV na mensagem;
+mutações conferidas) e `tests/test_shorts_tec.py`; os 77 conteúdos, 28 narrações e 18 registros de fala reais
+carregam. Os testes de `fit_durations` e `scene_starts` migraram com a semântica de não alterar o original.
+**RF5 fechado:** ligar os escritores concretos ao `WriteGuard` e aos serviços novos é o RF6. Criar testes específicos de ativos e briefs e ampliar os de
 música/Short conforme a fatia. Nenhum critério passa só porque um arquivo foi movido para `app/`.
 
 ### RF5-bis — Tratamento único de erros (ADR 045)
@@ -281,7 +283,10 @@ RF5 começou pelas fontes (ADR 043): `app/pipeline/sources.py` (`SourceRegistry`
 fez a busca tolerante e a entrada de ativos (`app/pipeline/assets.py`, `app/bootstrap/archives.py`); a fatia 3
 (ADR 046) validou o SFX Kit e o `sfx.json` na leitura (`app/pipeline/sfx_inputs.py`); a fatia 4 (ADR 047)
 fez as cópias de briefs (`app/pipeline/briefs.py`) e o catálogo de música (`app/pipeline/music_library.py`);
-resta o `MotionContent` (G10).
+a fatia 5
+(ADR 048) fechou o G10 com `MotionContent`, a fala gerada e a narração validados na leitura
+(`app/pipeline/motion_inputs.py`). **RF5 fechado**; o próximo trabalho da sequência é o RF6, que depende de
+decisões do dono (ver a seção 5).
 
 ## 5. Pendências abertas ao fim do RF3 (2026-11-01)
 

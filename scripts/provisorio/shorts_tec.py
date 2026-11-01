@@ -37,7 +37,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 import os
 import re
 import subprocess
@@ -55,11 +54,12 @@ from app.media.constants.loudness_constants import LoudnessConstants  # noqa: E4
 from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
+from app.pipeline.models.motion_content import MotionContent  # noqa: E402
+from app.pipeline.models.voiced_speech import VoicedSpeech as Speech  # noqa: E402
+from app.pipeline.motion_inputs import fit_content, load_content, load_narration, load_voiced  # noqa: E402
 from app.providers.errors import ProviderError  # noqa: E402
 from app.providers.tts.base import SpeechRequest  # noqa: E402
 
-PAD_SEC = 0.3  # folga depois da fala, antes do corte
-HOST_HIDDEN_TYPES = ("hook", "end_card", "presenter")  # cenas sem a janela do apresentador (motion-video)
 CLONED = ("chatterbox", "chatterbox_modal")
 # A voz clonada devolve silêncio nas pontas do WAV (até 1 s antes da fala, em 2026-10-25): a fala é o trecho
 # entre os silêncios das pontas, com uma respiração de cada lado.
@@ -80,14 +80,8 @@ class Line:
 
 
 def load_lines(path: Path) -> tuple[str, list[Line]]:
-    data = json.loads(path.read_text(encoding="utf-8"))
-    lines = [
-        Line(item.get("scene"), item["text"].strip(), item.get("delivery") or "neutral")
-        for item in data["lines"]
-    ]
-    if not lines:
-        raise SystemExit(f"{path.name}: sem linhas de narração")
-    return data.get("language", "pt-BR"), lines
+    narration = load_narration(path)
+    return narration.language, [Line(x.scene, x.text, x.delivery or "neutral") for x in narration.lines]
 
 
 def wav_name(
@@ -145,39 +139,6 @@ def speech_bounds(path: Path) -> tuple[float, float]:
     if result.returncode != 0:
         raise SystemExit(f"ffmpeg não leu {path.name}: {result.stderr.strip()[-200:]}")
     return bounds_from_log(result.stderr, duration_ms(path) / 1000)
-
-
-def fit_durations(
-    content: dict[str, Any], seconds: dict[str, float], pad: float = PAD_SEC
-) -> list[tuple[str, float, float]]:
-    """Estica cada cena até a fala caber: `max(duração do JSON, fala + folga)`, no décimo de segundo acima.
-    Cena sem fala fica como está. Devolve `(id, antes, depois)` e altera `content` no lugar."""
-    rows = []
-    windowed = content.get("host") is not None
-    for scene in content["scenes"]:
-        before = float(scene["durationSec"])
-        after = before
-        if scene["id"] in seconds:
-            after = max(before, math.ceil((seconds[scene["id"]] + pad) * 10 - 1e-9) / 10)
-            scene["durationSec"] = after
-            # A fala entra no começo da cena (`juntar`): a boca da janela fala só nesse trecho.
-            if windowed and scene.get("host") is not False and scene["type"] not in HOST_HIDDEN_TYPES:
-                scene["host"] = {
-                    **(scene.get("host") or {}),
-                    "speaking": [0.0, round(seconds[scene["id"]], 2)],
-                }
-        rows.append((scene["id"], before, after))
-    return rows
-
-
-def scene_starts(content: dict[str, Any]) -> dict[str, float]:
-    """O começo de cada cena em segundos, com a mesma conta do motion-video: frames inteiros por cena."""
-    fps = int(content.get("fps", 30))
-    starts, frame = {}, 0
-    for scene in content["scenes"]:
-        starts[scene["id"]] = frame / fps
-        frame += round(float(scene["durationSec"]) * fps)
-    return starts
 
 
 def mix_filter(
@@ -286,53 +247,31 @@ def cmd_voz(folder: Path, narration: Path, named: str | None) -> None:
     )
 
 
-@dataclass(frozen=True)
-class Speech:
-    wav: Path
-    begin: float
-    end: float
-
-    @property
-    def seconds(self) -> float:
-        return self.end - self.begin
-
-
 def voiced(folder: Path, narration: Path) -> dict[str, Speech]:
-    """As falas de cena (WAV e o trecho falado), pelo registro que `voz` escreveu."""
+    """As falas de cena (WAV e o trecho falado), pelo registro que `voz` escreveu, conferido contra o WAV."""
     record = folder / f"{narration.stem}.voz.json"
-    if not record.is_file():
-        raise SystemExit(f"falta {record.name}: rode `voz` antes")
-    data = json.loads(record.read_text(encoding="utf-8"))
-    return {
-        item["scene"]: Speech(folder / item["wav"], *item["speech"])
-        for item in data["lines"]
-        if item["scene"]
-    }
+    return load_voiced(folder, record, lambda wav: duration_ms(wav) / 1000)
 
 
 def cmd_tempos(folder: Path, content_file: Path, narration: Path) -> None:
-    content = json.loads(content_file.read_text(encoding="utf-8"))
+    content = load_content(content_file)
     wavs = voiced(folder, narration)
-    ids = {scene["id"] for scene in content["scenes"]}
-    unknown = sorted(set(wavs) - ids)
-    if unknown:
-        raise SystemExit(f"falas de cenas que não existem no JSON: {', '.join(unknown)}")
     seconds = {scene_id: speech.seconds for scene_id, speech in wavs.items()}
-    rows = fit_durations(content, seconds)
+    fitted, rows = fit_content(content, seconds)
     out = content_file.with_name(content_file.name.replace(".json", ".voz.json"))
-    out.write_text(json.dumps(content, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    for scene_id, before, after in rows:
-        fala = f"fala {seconds[scene_id]:.2f} s" if scene_id in seconds else "sem fala"
-        mark = " ←" if after != before else ""
-        print(f"{scene_id:16s} {before:4.1f} → {after:4.1f} s  ({fala}){mark}")
+    out.write_text(fitted.dumps(), encoding="utf-8")
+    for row in rows:
+        fala = f"fala {row.spoken:.2f} s" if row.spoken is not None else "sem fala"
+        mark = " ←" if row.after != row.before else ""
+        print(f"{row.scene:16s} {row.before:4.1f} → {row.after:4.1f} s  ({fala}){mark}")
     print(
-        f"tempos: {sum(r[2] for r in rows):.1f} s no JSON ({sum(r[1] for r in rows):.1f} s antes); "
+        f"tempos: {sum(r.after for r in rows):.1f} s no JSON ({sum(r.before for r in rows):.1f} s antes); "
         f"escrito {out.name}"
     )
 
 
 def sfx_placed(
-    folder: Path, content: dict[str, Any], narration: Path, plan_file: Path, wavs: dict[str, Speech]
+    folder: Path, content: MotionContent, narration: Path, plan_file: Path, wavs: dict[str, Speech]
 ):
     """O plano de efeitos conferido e resolvido sobre as cenas e as falas; para no primeiro erro."""
     from app.bootstrap import build_context
@@ -343,8 +282,8 @@ def sfx_placed(
     _, lines = load_lines(narration)
     narrations = {line.scene: line.text for line in lines if line.scene}
     speeches = {scene_id: sfxmod.Speech(seconds=speech.seconds) for scene_id, speech in wavs.items()}
-    starts = scene_starts(content)
-    durations = {s["id"]: float(s["durationSec"]) for s in content["scenes"]}
+    starts = content.starts()
+    durations = {s["id"]: float(s["durationSec"]) for s in content.raw["scenes"]}
     errors, warnings = sfxmod.plan_problems(plan, kit, starts, durations, narrations, speeches)
     for warning in warnings:
         print(f"sfx: alerta: {warning}")
@@ -358,7 +297,7 @@ def sfx_placed(
 
 
 def cmd_sfx(folder: Path, content_file: Path, narration: Path, plan_file: Path) -> None:
-    content = json.loads(content_file.read_text(encoding="utf-8"))
+    content = load_content(content_file)
     placed, voice_lufs = sfx_placed(folder, content, narration, plan_file, voiced(folder, narration))
     print(f"voz medida: {voice_lufs:.1f} LUFS (o kit assume −16)" if voice_lufs is not None else "sem voz")
     for p in placed:
@@ -370,9 +309,9 @@ def cmd_sfx(folder: Path, content_file: Path, narration: Path, plan_file: Path) 
 def cmd_juntar(
     folder: Path, video: Path, content_file: Path, narration: Path, out: Path, plan_file: Path | None = None
 ) -> None:
-    content = json.loads(content_file.read_text(encoding="utf-8"))
+    content = load_content(content_file)
     wavs = voiced(folder, narration)
-    starts = scene_starts(content)
+    starts = content.starts()
     missing = sorted(set(wavs) - set(starts))
     if missing:
         raise SystemExit(f"falas de cenas que não existem no JSON: {', '.join(missing)}")
@@ -381,7 +320,7 @@ def cmd_juntar(
     for scene_id in ordered:
         end = starts[scene_id] + wavs[scene_id].seconds
         limit = starts[scene_id] + float(
-            next(s["durationSec"] for s in content["scenes"] if s["id"] == scene_id)
+            next(s["durationSec"] for s in content.raw["scenes"] if s["id"] == scene_id)
         )
         if end > limit + 0.05:
             raise SystemExit(
@@ -453,14 +392,14 @@ def cmd_boca(
 ) -> None:
     from app.media.envelope import mouth_levels
 
-    content = json.loads(content_file.read_text(encoding="utf-8"))
-    fps = int(content.get("fps", 30))
+    content = load_content(content_file)
+    fps = content.fps
     wavs = voiced(folder, narration)
-    starts = scene_starts(content)
-    total = sum(round(float(s["durationSec"]) * fps) for s in content["scenes"])
+    starts = content.starts()
+    total = sum(round(float(s["durationSec"]) * fps) for s in content.raw["scenes"])
     levels = [0.0] * total
     beats = []
-    for scene in content["scenes"]:
+    for scene in content.raw["scenes"]:
         start = round(starts[scene["id"]] * fps)
         duration = round(float(scene["durationSec"]) * fps)
         beat: dict[str, Any] = {"id": scene["id"], "from": start, "duration": duration}
