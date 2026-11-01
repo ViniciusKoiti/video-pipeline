@@ -21,6 +21,7 @@ from app.commands import (
     conferences,
     decisions,
     export,
+    metricas,
     music,
     numeros,
     postiz,
@@ -172,6 +173,7 @@ HANDLERS: dict[str, Handler] = {
     "assets": assets.run,
     "briefs": briefs.run,
     "export": export.run,
+    "metricas": metricas.run,
     "music": music.run,
     "postiz": postiz.run,
     "usage": usage.run,
@@ -202,6 +204,7 @@ def build_parser() -> argparse.ArgumentParser:
     assets.add_arguments(subparsers.add_parser("assets", help="busca e baixa ativos visuais (ADR 044)"))
     briefs.add_arguments(subparsers.add_parser("briefs", help="resumo do radar e perfil do nicho (ADR 047)"))
     export.add_arguments(subparsers.add_parser("export", help="o que sai do episódio para publicar (#18)"))
+    metricas.add_arguments(subparsers.add_parser("metricas", help="métricas aos 7 e 28 dias (§12)"))
     music.add_arguments(subparsers.add_parser("music", help="catálogo de música de fundo (ADR 030)"))
     sources.add_arguments(subparsers.add_parser("sources", help="registra uma fonte (ADR 043)"))
     usage.add_arguments(

@@ -374,4 +374,9 @@ Fatia 4: `livros_afiliado` virou `vp export livros <id>` (`app/commands/export.p
 saía com traceback), a escrita passou a ser atômica e sob o lock do episódio, e uma descrição nova não começa mais com
 linhas em branco. `tests/test_export_command.py` (8, seis mutações conferidas; duas sobreviveram, o lock e a não
 regravação do arquivo em dia, e ganharam teste). O `export` completo (vídeo, legenda, `credits.txt`) segue sem comando.
+Fatia 5: `metricas` virou `vp metricas iniciar|ler|pendentes|tabela` (`app/commands/metricas.py` e
+`metricas_arguments.py`); o script saiu. As recusas viraram `MetricsError` pelo handler central (antes, `print` em `stderr`
+com código 1), e `--origem` e `--pedido` passaram a ser validados pelo argparse (erro de uso, código 2). A parte do
+script em `tests/test_metrics.py` virou `tests/test_metricas_command.py` (7 testes, 12 mutações conferidas; uma
+sobreviveu, a opção `--saida`, e ganhou teste). Faltam `montar_episodio`, `shorts_tec` e a classificação dos avulsos.
 

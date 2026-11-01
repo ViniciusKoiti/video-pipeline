@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-import argparse
 import csv
-import importlib.util
 import json
 from datetime import UTC, date, datetime
 from pathlib import Path
-from types import ModuleType
 from typing import Any
 
 import pytest
@@ -31,7 +28,7 @@ from app.pipeline.metrics import (
 )
 from app.pipeline.schemas import MetricsReading, PublicationMetrics
 from app.storage.json_files import JsonFileStore
-from tests.fakes import REPO_ROOT, make_root
+from tests.fakes import make_root
 
 EPISODE = "ensaio-teste"
 PUBLISHED = datetime(2026, 10, 20, 22, 0, tzinfo=UTC)
@@ -227,63 +224,3 @@ def test_table_has_one_row_per_window(tmp_path: Path) -> None:
     with out.open(encoding="utf-8", newline="") as handle:
         parsed = list(csv.DictReader(handle))
     assert parsed[0]["views"] == "1200" and parsed[1]["views"] == "" and parsed[1]["likes"] == ""
-
-
-# --- script provisório ------------------------------------------------------------------------------
-
-
-def script() -> ModuleType:
-    path = REPO_ROOT / "scripts" / "provisorio" / "metricas.py"
-    spec = importlib.util.spec_from_file_location("metricas", path)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def iniciar_args(**changes: Any) -> argparse.Namespace:
-    base = {"id": EPISODE, "platform": "youtube", "format": "longo", "channel": None, "published_at": None,
-            "post_id": None, "url": None, "series": None, "duration_s": None,
-            "hypothesis": "abertura com pergunta"}
-    return argparse.Namespace(**{**base, **changes})
-
-
-def ler_args(**changes: Any) -> argparse.Namespace:
-    base = {"id": EPISODE, "janela": "d7", "read_at": date(2026, 10, 27), "views": 1500, "likes": None,
-            "shares": None, "comments": 3, "saves": None, "impressions": None, "inscritos": None, "ctr": 4.2,
-            "duracao_media": None, "retencao_30s": None, "origem": ["Navegação=42"],
-            "pedido": ["duvida: como achar o livro"], "nota": None, "refazer": False}
-    return argparse.Namespace(**{**base, **changes})
-
-
-def test_script_iniciar_ler_pendentes_tabela(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    data = tmp_path / "data"
-    registry(tmp_path)
-    (data / "episodes" / EPISODE).mkdir(parents=True)
-    mod = script()
-    assert mod.iniciar(iniciar_args(), data) == 0
-    path = data / "episodes" / EPISODE / "metrics.json"
-    m = load_metrics(path)
-    assert m.published_at == PUBLISHED and m.post_id == "post-1" and m.channel == "Cena e Conceito"
-    assert m.hypothesis == "abertura com pergunta" and m.readings == {}
-    assert mod.iniciar(iniciar_args(), data) == 1  # nunca sobrescreve
-    assert mod.iniciar(iniciar_args(id="sem-registro", format="clipe"), data) == 1  # sem data conhecida
-    assert mod.iniciar(iniciar_args(id="sem-registro", format="clipe", channel="Nabote Songs",
-                                    published_at=PUBLISHED), data) == 0
-    assert (data / "publicacoes" / "metricas" / "sem-registro.json").is_file()
-
-    assert mod.ler(ler_args(), data) == 0
-    m = load_metrics(path)
-    assert m.readings["d7"].views == 1500 and m.readings["d7"].ctr_percent == 4.2
-    assert m.readings["d7"].traffic_sources[0].name == "Navegação" and m.requests[0].kind == "duvida"
-    assert mod.ler(ler_args(views=1), data) == 1  # segunda leitura sem --refazer
-    assert "já lida" in capsys.readouterr().err
-    assert mod.ler(ler_args(views=1, refazer=True, pedido=[]), data) == 0
-    assert load_metrics(path).readings["d7"].views == 1 and len(load_metrics(path).requests) == 1
-    assert mod.ler(ler_args(janela="d28", read_at=date(2026, 11, 1)), data) == 1  # antes da janela
-    assert "só fecha" in capsys.readouterr().err
-
-    assert mod.pendentes(argparse.Namespace(hoje=date(2026, 11, 20)), data) == 0
-    assert "vencidas e não lidas: 3" in capsys.readouterr().out  # d28 do episódio + d7 e d28 do clipe
-    assert mod.tabela(argparse.Namespace(saida=None), data) == 0
-    assert (data / "publicacoes" / "metricas.csv").is_file()

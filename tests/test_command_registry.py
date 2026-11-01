@@ -12,7 +12,7 @@ from app.commands.constants.cli_constants import CliConstants
 
 APP = Path(__file__).resolve().parents[1] / "app"
 # Registrados à parte, com subcomandos próprios (módulos de app/commands).
-OWN_PARSERS = {"postiz", "usage", "sources", "assets", "briefs", "music", "export"}
+OWN_PARSERS = {"postiz", "usage", "sources", "assets", "briefs", "music", "export", "metricas"}
 COMMAND_NAMES = [c.name for c in CliConstants.COMMANDS]
 
 

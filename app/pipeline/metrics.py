@@ -10,10 +10,15 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
+from app.errors import PipelineError
 from app.pipeline.constants.metrics_constants import MetricsConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models.scheduled_post import ScheduledPost as ScheduledPost
 from app.pipeline.schemas import MetricsReading, PublicationMetrics
+
+
+class MetricsError(PipelineError, ValueError):
+    """Leitura recusada ou arquivo de métricas que não pode ser criado; a mensagem diz o motivo."""
 
 
 def registry_path(data_dir: Path) -> Path:
@@ -92,7 +97,7 @@ def record_reading(
     """Uma janela é lida uma vez; `replace` refaz uma leitura errada. Valida de novo o arquivo inteiro."""
     if window in metrics.readings and not replace:
         done = metrics.readings[window].read_at
-        raise ValueError(f"{window} já lida em {done:%Y-%m-%d}; use --refazer para substituir")
+        raise MetricsError(f"{window} já lida em {done:%Y-%m-%d}; use --refazer para substituir")
     data = metrics.model_dump(mode="json")
     data["readings"] = {**data["readings"], window: reading.model_dump(mode="json")}
     return PublicationMetrics.model_validate(data)
