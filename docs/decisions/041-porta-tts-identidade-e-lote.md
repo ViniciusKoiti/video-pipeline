@@ -29,7 +29,8 @@ caminho final, então uma falha deixava arquivo pela metade.
 - **Nomes de hoje:** o Gemini, o Kokoro e o Chatterbox sem entrega seguem com a mesma chave (testado contra
   `voice_fingerprint`, `long_speech_tag` e `wav_name` reais). **Mudança declarada:** a entrega não neutra do
   Chatterbox passa a levar os valores (`|entrega:hook=0.8,0.3` no lugar de `|entrega:hook`); essas falas são
-  geradas uma vez de novo. Entrega desconhecida cai na neutra, nome e identidade. Subir `SPEECH_VERSION`
+  geradas uma vez de novo. *(Revogado para o nome do WAV pela emenda da ADR 049 de 2026-11-01: o nome do longo
+  volta a não levar os valores; `fingerprint` do adapter segue completo.)* Entrega desconhecida cai na neutra, nome e identidade. Subir `SPEECH_VERSION`
   regenera só as falas afetadas por uma mudança no corte ou na junção. **Aberto para o `VoiceKey`:** o Short
   nunca pôs pausa nem fala longa na chave; `fingerprint` de um pedido sem texto reproduz o nome dele de hoje,
   e usar isso evita regenerar Shorts já aprovados na escuta. Decidir ao migrar o `shorts_tec`.

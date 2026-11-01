@@ -320,3 +320,10 @@ def test_the_episode_lock_is_exclusive_for_the_render(env: Env) -> None:
     with env.store.lock(EP), pytest.raises(EpisodeLocked):
         env.render(preview=True)
     assert env.engine.calls == [] and not env.path("episode.json").exists()
+
+
+def test_episode_json_has_the_same_bytes_the_script_wrote_before(env: Env) -> None:
+    """O script gravava `episode.model_dump_json(indent=2)` sem quebra de linha no fim: o arquivo não muda."""
+    env.render(preview=True)
+    assert env.path("episode.json").read_bytes() == env.episode.model_dump_json(indent=2).encode("utf-8")
+    assert not env.path("episode.json").read_bytes().endswith(b"\n")

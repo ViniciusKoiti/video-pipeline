@@ -7,10 +7,11 @@ dela (mesmo começo de nome, outro hash) e a poda delas.
 **`Narrator`** gera as falas que faltam com um `TTSProvider`:
 
 - A chave do WAV vem do adapter (`TTSProvider.fingerprint`, ADR 041) e do texto que a voz lê (glossário
-  aplicado). No longo é a identidade completa. **No Short é o nome de hoje, mantido por decisão do dono** (as
-  falas já aprovadas na escuta não são regeradas): a identidade de um pedido sem texto (sem pausa nem fala
-  longa) mais a entrega pelo nome, no formato antigo, só nas vozes clonadas. Os dois formatos são testados
-  contra as funções reais dos scripts.
+  aplicado). **Nos dois formatos o nome é o de hoje, mantido por decisão do dono** (as falas já aprovadas na
+  escuta não são regeradas). No longo, a identidade do adapter sem os valores da entrega clonada
+  (`|entrega:<nome>=<ênfase>,<cfg>` vira `|entrega:<nome>`). No Short, a identidade de um pedido sem texto
+  (sem pausa nem fala longa) mais a entrega pelo nome, no formato antigo, só nas vozes clonadas. Os dois
+  formatos são testados, com todas as entregas, contra as funções reais dos scripts.
 - Gera só o que não existe; em lote quando o provedor oferece, com o fallback e a cota da ADR 041
   (`synthesize_requests`). O erro de uma fala vira `needs_review` dela e as outras seguem.
 - **Uma fala nova só substitui a antiga depois de pronta:** o WAV é conferido (mede mais que zero) e só
@@ -98,7 +99,10 @@ class Narrator:
 
     def _fingerprint(self, request: SpeechRequest) -> str:
         if self._library.naming is Naming.LONG:
-            return self._tts.fingerprint(request)
+            full = self._tts.fingerprint(request)
+            if self._tts.identity in VoiceConstants.CLONED:  # o nome de hoje não leva os valores da entrega
+                return VoiceConstants.DELIVERY_VALUES.sub(r"\1", full)
+            return full
         base = self._tts.fingerprint(replace(request, text="", delivery=VoiceConstants.NEUTRAL))
         named = self._tts.identity in VoiceConstants.CLONED and request.delivery != VoiceConstants.NEUTRAL
         return base + (VoiceConstants.LEGACY_DELIVERY.format(name=request.delivery) if named else "")

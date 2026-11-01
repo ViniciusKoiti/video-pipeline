@@ -348,8 +348,8 @@ lacuna fica registrada.
   roteiro, e o `scenes.json` não muda.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Nome do WAV e narrador (ADR 049, `app/pipeline/voice.py`):** `VoiceKey` + `VoiceLibrary` + `Narrator`. Os nomes de
-  hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs dos Shorts já
-  aprovados fica como está** (decisão do dono, 2026-11-01). Fala nova só substitui a antiga depois de pronta e medida. `montar_episodio.py` e `shorts_tec.py` geram a voz por
+  hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs já gerados fica
+  como está** (decisão do dono, 2026-11-01; os valores da entrega clonada não entram no nome). Fala nova só substitui a antiga depois de pronta e medida. `montar_episodio.py` e `shorts_tec.py` geram a voz por
   `generate_voice` (o `Narrator`), e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
 - **Estado da voz (ADR 052, `app/pipeline/voice_state.py`):** cada rodada de voz grava no `manifest.json` um registro por
   fala (pronta, ou pendente com o motivo); o `vp status` lista as pendências e um WAV que sumiu. Retomar é rodar de novo:

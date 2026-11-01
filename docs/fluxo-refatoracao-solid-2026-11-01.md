@@ -41,7 +41,7 @@ flowchart TD
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
-| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz (ADR 049), pacote (ADR 050), render por porta (ADR 051) e estado da voz por cena (ADR 052) feitos em 2026-11-01; falta provar timestamps, legendas, áudio e efeitos |
+| RF6 | Integração G01–G11 no longo e Short | Fechado em 2026-11-01: voz (ADR 049), pacote (ADR 050), render por porta (ADR 051), estado da voz por cena (ADR 052) e contratos de narração, legendas, planos e efeitos provados; **ressalva:** render real e vídeo-régua não rodados |
 | RF7 | G12 e encerramento da migração | Pendente |
 
 “Implantado” significa que há código de verificação, não que todos os gaps foram resolvidos. Teste antigo
@@ -232,8 +232,8 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
 - [x] Prévia e final não se confundem no estado/cache nem no conteúdo protegido pelo gate 4.
 - [x] Pacote de vídeo e texto é preparado e validado antes de publicar; falha injetada não produz pacote
   considerado completo. Recusar substituição de pacote aprovado antes da primeira cópia.
-- [ ] Timestamps, legendas, áudio e efeitos preservam os contratos existentes; teste visual real, quando
-  aplicável, segue o vídeo-régua e as autorizações atuais.
+- [x] Timestamps, legendas, áudio e efeitos preservam os contratos existentes (testes de contrato e dado real, abaixo);
+  o teste visual real, que segue o vídeo-régua e as autorizações atuais, **não foi rodado** (pede o dono e a máquina livre).
 
 **Evidência (voz, fatias 1 e 2):** `tests/test_voice.py` (42: nomes de hoje no longo e no Short contra as fórmulas
 congeladas em `tests/legacy_voice_names.py`, biblioteca, narrador, nova só depois de pronta), `tests/test_voice_scripts.py`
@@ -259,8 +259,18 @@ um processo novo, retomada que pede só o que falta, WAV registrado que sumiu, e
 que sobe, lock único liberado, e o `vp status` com as pendências da voz) e `tests/test_voice_scripts.py` com a nova
 assinatura; mutações conferidas (sem gravar o relatório, sem registrar a falha, sem conferir o WAV, `vp status` sem a voz).
 
-**Evidência:** testes de integração da produção a criar, mais os testes existentes de narração, captions,
-shots, efeitos e Shorts. O vídeo-régua complementa esses testes; não substitui provas de proteção e retomada.
+**Evidência (contratos existentes):** 351 testes de contrato passam (narração, pausas, legendas por frase e por palavra,
+planos, `text_fit`, props do Remotion, apresentador, música, SFX e suas entradas, `shorts_tec`, entradas do motion-video,
+motor ffmpeg, montagem, voz). A montagem grava o `episode.json` com os mesmos bytes de antes
+(`test_episode_json_has_the_same_bytes_the_script_wrote_before`), e os parâmetros de codificação da configuração são os
+padrões do `RemotionEngine`.
+Dado real, só leitura: 320 sons do kit, 77 conteúdos do motion-video, 28 narrações, 18 registros de fala de Short e 44
+`post.json` passam nos validadores novos. **Defeito achado nessa conferência e corrigido:** o nome de WAV do longo levava
+os valores da entrega clonada (o teste só cobria a entrega neutra) e regeraria 53 de 89 falas do `death-note-fins-meios`;
+com os valores fora do nome (emenda da ADR 049), nenhuma voz final regera em nenhum episódio com WAV. Os rascunhos Kokoro
+antigos de `historia-vencedores` e `proteina-igual` não casam com o texto de hoje, mas não são a voz usada.
+**Ressalva:** o render real (Remotion) e o vídeo-régua não foram exercitados; o vídeo-régua segue como prova visual
+quando houver autorização e CPU livre. Ele não substitui as provas de proteção e retomada.
 
 ### RF7 — Chamadores, documentação e encerramento
 

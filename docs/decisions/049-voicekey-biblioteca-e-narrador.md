@@ -16,14 +16,18 @@ de gerar a nova**: uma falha ou uma cota esgotada deixava a cena sem fala. Os no
 - **`VoiceKey`** (`app/pipeline/models/voice_key.py`): cena, provedor (a **identidade** do cache,
   `TTSProvider.identity`, não o nome de exibição), idioma, `fingerprint` e texto falado. O hash é
   `sha256(f"{fingerprint}|{spoken}")[:10]`, e o nome vem do `Naming` da biblioteca: `LONG` ou `SHORT`.
-- **Os nomes de hoje não mudam, nos dois formatos.** No **longo**, o `fingerprint` é a identidade completa do
-  adapter (ADR 041): pausa, fala longa e a entrega. No **Short**, por decisão do dono, é o nome de hoje: a identidade
-  de um pedido **sem texto** (sem `|pausa` nem `|frases`) mais a entrega pelo nome, no formato antigo
-  (`|entrega:hook`), só nas vozes clonadas. Isso mantém os WAVs dos Shorts já aprovados na escuta, com pausa ou
-  entrega. O custo está registrado: o nome do Short não acompanha uma mudança de `pause_ms` nem dos valores de
-  `exaggeration` e `cfg_weight` da entrega. Os testes comparam, para Kokoro, Gemini e Chatterbox (local e Modal),
-  quatro textos e três entregas, com as funções reais `wav_name`, `voice_fingerprint` e `long_speech_tag`.
-  A mudança declarada da ADR 041 (a entrega não neutra do **longo** passa a levar os valores) continua valendo.
+- **Os nomes de hoje não mudam, nos dois formatos.** No **longo**, o `fingerprint` é a identidade do adapter
+  (ADR 041: pausa, fala longa e entrega) **sem os valores da entrega clonada**: `|entrega:hook=0.8,0.3` volta a ser
+  `|entrega:hook`, como era. No **Short**, por decisão do dono, é o nome de hoje: a identidade de um pedido **sem
+  texto** (sem `|pausa` nem `|frases`) mais a entrega pelo nome, no formato antigo, só nas vozes clonadas. Isso mantém
+  os WAVs já gerados e aprovados na escuta, com pausa ou entrega. O custo está registrado: o nome não acompanha uma
+  mudança dos valores de `exaggeration` e `cfg_weight` da entrega (no Short, nem de `pause_ms`); trocar esses valores
+  pede apagar os WAVs afetados. Os testes comparam, para Kokoro, Gemini e Chatterbox (local e Modal), quatro textos e
+  as cinco entregas, com as funções reais `wav_name`, `voice_fingerprint` e `long_speech_tag`.
+  **Emenda de 2026-11-01 (dado real):** a primeira versão deixava os valores da entrega no nome do longo (a mudança
+  declarada da ADR 041) e o teste só cobria a entrega neutra. Contra os episódios reais, 53 de 89 falas do
+  `death-note-fins-meios` e as de entrega não neutra de vários outros episódios seriam regeradas. Com os valores fora do
+  nome, nenhuma fala final regera (conferido em todos os episódios com WAV, só leitura).
 - **`VoiceLibrary`** (`app/pipeline/voice.py`) é só arquivos: `path`, `has` (o arquivo é um WAV válido, e um
   corrompido no lugar da fala conta como ausente), `stale` (mesmo começo de nome e **exatamente** um hash de 10
   caracteres; nada de outra cena, provedor, idioma ou arquivo que não seja um hash) e `prune`.

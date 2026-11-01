@@ -63,8 +63,10 @@ def test_the_short_name_is_the_one_made_before(tmp_path: Path, provider: str, te
 @pytest.mark.parametrize("text", TEXTS)
 def test_the_long_name_is_the_one_made_before(tmp_path: Path, provider: str, text: str) -> None:
     tts, settings = adapters(tmp_path)[provider]
-    expected = long_name(settings, provider, "S01", text, "neutral", "pt-BR")
-    assert narrator(tts, tmp_path).key(SpeechLine("S01", text)).file_name(Naming.LONG) == expected
+    for delivery in [*DELIVERIES, "turn", "invite"]:  # as vozes clonadas levam a entrega no nome
+        expected = long_name(settings, provider, "S01", text, delivery, "pt-BR")
+        key = narrator(tts, tmp_path).key(SpeechLine("S01", text, delivery))
+        assert key.file_name(Naming.LONG) == expected, f"{provider} / {delivery}"
 
 
 def test_the_name_uses_the_cache_identity_not_the_display_name(tmp_path: Path) -> None:
