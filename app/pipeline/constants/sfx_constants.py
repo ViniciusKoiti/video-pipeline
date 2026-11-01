@@ -19,3 +19,5 @@ class SfxConstants:
     KIT_VOICE_REFERENCE_LUFS: Final = -16.0
     # acima disso é ruído, não acabamento
     MAX_CUES_PER_10S: Final[int] = 8
+    # arredondamento do kit: o fim do corpo e o ponto de sincronia podem passar da duração por esse tanto
+    TIME_SLACK_S: Final[float] = 1e-6

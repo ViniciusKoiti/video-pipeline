@@ -339,7 +339,7 @@ def sfx_placed(
     from app.pipeline import sfx as sfxmod
 
     kit = sfxmod.load_kit(build_context(ROOT).settings.data_dir)
-    plan = sfxmod.SfxPlan.model_validate_json(plan_file.read_text(encoding="utf-8"))
+    plan = sfxmod.load_plan(plan_file)
     _, lines = load_lines(narration)
     narrations = {line.scene: line.text for line in lines if line.scene}
     speeches = {scene_id: sfxmod.Speech(seconds=speech.seconds) for scene_id, speech in wavs.items()}

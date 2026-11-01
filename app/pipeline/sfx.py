@@ -10,7 +10,6 @@ fala. O código confere o que não depende de ouvir; quem ouve é o dono, na pr�
 
 from __future__ import annotations
 
-import json
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -22,32 +21,15 @@ from app.pipeline.models.sfx_kit import SfxKit as SfxKit
 from app.pipeline.models.sfx_plan import SfxPlan as SfxPlan
 from app.pipeline.models.sfx_sound import SfxSound as SfxSound
 from app.pipeline.models.speech import Speech as Speech
+from app.pipeline.sfx_inputs import load_plan as load_plan
+from app.pipeline.sfx_inputs import parse_kit
 
 
 def load_kit(data_dir: Path) -> SfxKit | None:
-    """O SFX Kit em `data/sfx/kit/`; sem o `sounds.json`, None."""
+    """O SFX Kit em `data/sfx/kit/`; sem o `sounds.json`, None. Fora do contrato é `SfxInputError`."""
     root = data_dir / SfxConstants.SFX_DIR / SfxConstants.KIT_DIR
     index = root / SfxConstants.KIT_INDEX
-    if not index.is_file():
-        return None
-    data = json.loads(index.read_text(encoding="utf-8"))
-    sounds = {}
-    for record in data["sounds"]:
-        fits = record.get("fits_seconds")
-        sounds[record["id"]] = SfxSound(
-            id=record["id"],
-            file=record["file"],
-            duration=record["duration"],
-            sync_at=record["sync"]["at"],
-            meets=record["sync"]["meets"],
-            onset=record["timing"]["onset"],
-            body_end=record["timing"]["body_end"],
-            under_voiceover_db=record["under_voiceover_db"],
-            avoid_for=record.get("avoid_for", []),
-            fits_seconds=tuple(fits) if fits else None,
-            sha256=record["sha256"],
-        )
-    return SfxKit(root=root, license=str(data.get("license", "")), sounds=sounds)
+    return parse_kit(root, index.read_text(encoding="utf-8")) if index.is_file() else None
 
 
 def _moment(cue: SfxCue, scene_start: float, narration: str | None, speech: Speech | None) -> float | None:

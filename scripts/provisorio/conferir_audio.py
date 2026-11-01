@@ -49,9 +49,9 @@ def expected_from_sfx(plan_file: Path, starts: dict[str, float], data_dir: Path)
     texto) tem de cair: o momento do plano menos o `sync.at` do kit mais o `onset` do som. Num pop é o próprio
     momento; num whoosh o ataque vem antes do pico, e é isso que o earshot ouve. Os ancorados na fala dependem
     do WAV e ficam fora desta conferência."""
-    from app.pipeline.sfx import SfxPlan, load_kit
+    from app.pipeline.sfx import load_kit, load_plan
 
-    plan = SfxPlan.model_validate_json(plan_file.read_text(encoding="utf-8"))
+    plan = load_plan(plan_file)
     kit = load_kit(data_dir)
     if kit is None:
         raise SystemExit("conferir_audio: falta o SFX Kit em data/sfx/kit/ para ler o sync.at dos sons")
