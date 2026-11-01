@@ -4,18 +4,16 @@ Uso: `.venv/bin/python scripts/provisorio/baixar_fonte.py <episode-id> <url> --t
 [--authors "Sobrenome, Nome; ..."] [--interested] [--notes "..."] [--file arquivo.pdf]`
 
 - `--file`: PDF salvo à mão no navegador, para o servidor que recusa o robô (403); `url` segue como origem.
-
 - Só para serviços que o dono autorizou na sessão (§14). O transporte manda o User-Agent do projeto.
 - Original em `sources/raw/source-NN.(html|pdf)`; texto em `sources/source-NN.txt`, um parágrafo por trecho
   (`app/pipeline/extract.py`); trechos numerados em `excerpts/source-NN.md`, como `vp excerpts`.
-- O id é o próximo `source-NN` livre; nada existente é sobrescrito. Independência e interesse são registrados
-  (`--authors`, `--interested`) e julgados no gate 1.
+- O registro é `app.pipeline.sources.SourceRegistry` (ADR 043): id livre sob lock, a mesma URL não duplica,
+  gate 1 aprovado recusa antes de escrever (`vp reopen --step sources`) e o `sources.json` vai por último.
 """
 
 from __future__ import annotations
 
 import argparse
-import shutil
 import subprocess
 import sys
 from datetime import datetime
@@ -24,12 +22,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.pipeline.excerpts import numbered_view  # noqa: E402
-from app.pipeline.extract import as_source_text, decode_html, html_paragraphs, pdf_paragraphs  # noqa: E402
-from app.pipeline.schemas import Source, SourceKind, SourcesManifest  # noqa: E402
-from app.providers.http import download  # noqa: E402
+from app.pipeline.models.source_draft import SourceDraft  # noqa: E402
+from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound  # noqa: E402
+from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
+from app.pipeline.schemas import SourceKind  # noqa: E402
+from app.pipeline.sources import SourceError, SourceRegistry, fetch_url, from_file  # noqa: E402
+from app.providers.http import TransportError, download  # noqa: E402
 from app.settings import load_settings  # noqa: E402
-from app.storage.json_files import JsonFileStore  # noqa: E402
+from app.storage.json_files import JsonFileStore, JsonReviewGate  # noqa: E402
+
+
+def pdf_text(pdf: Path) -> str:
+    return subprocess.run(["pdftotext", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
 
 
 def main() -> None:
@@ -46,46 +50,30 @@ def main() -> None:
     args = parser.parse_args()
 
     store = JsonFileStore(load_settings(ROOT).data_dir / "episodes")
-    manifest = store.read(args.episode_id, "sources.json", SourcesManifest)
-    number = max((int(s.id.removeprefix("source-")) for s in manifest.sources), default=0) + 1
-    source_id = f"source-{number:02d}"
-    raw_dir = store.path(args.episode_id, "sources/raw")
-    if args.file:
-        partial = raw_dir / f"{source_id}.download"
-        raw_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(args.file, partial)
-    else:
-        partial = download(args.url, raw_dir / f"{source_id}.download", {}, 120)
-    is_pdf = partial.read_bytes()[:5] == b"%PDF-"
-    raw = partial.rename(raw_dir / f"{source_id}.{'pdf' if is_pdf else 'html'}")
-    if is_pdf:
-        extracted = subprocess.run(["pdftotext", str(raw), "-"], capture_output=True, text=True, check=True)
-        paragraphs = pdf_paragraphs(extracted.stdout)
-    else:
-        paragraphs = html_paragraphs(decode_html(raw.read_bytes()))
-    if not paragraphs:
-        raise SystemExit(f"{source_id}: nenhum texto extraído de {raw.name}; fonte não registrada")
-
-    text = as_source_text(paragraphs)
-    local_path = f"sources/{source_id}.txt"
-    store.path(args.episode_id, local_path).write_text(text, encoding="utf-8")
-    source = Source(
-        id=source_id,
+    guard = ReviewWriteGuard(store, JsonReviewGate(store))
+    registry = SourceRegistry(store, guard, lambda: datetime.now().astimezone().replace(microsecond=0))
+    draft = SourceDraft(
         title=args.title,
-        url=args.url,
         kind=SourceKind(args.kind),
-        retrieved_at=datetime.now().astimezone().replace(microsecond=0),
-        local_path=local_path,
-        notes=args.notes,
+        url=args.url,
+        authors=tuple(a.strip() for a in args.authors.split(";") if a.strip()),
         interested=args.interested,
-        authors=[a.strip() for a in args.authors.split(";") if a.strip()],
+        notes=args.notes,
     )
-    updated = manifest.model_copy(update={"sources": [*manifest.sources, source]})
-    store.write(args.episode_id, "sources.json", updated)
-    excerpts = store.path(args.episode_id, f"excerpts/{source_id}.md")
-    excerpts.parent.mkdir(parents=True, exist_ok=True)
-    excerpts.write_text(numbered_view(source, text), encoding="utf-8")
-    print(f"{source_id}: {raw.name}, {len(paragraphs)} trechos -> {excerpts.relative_to(ROOT)}")
+    try:
+        if args.file:
+            extracted = from_file(Path(args.file), pdf_text)
+        else:
+            extracted = fetch_url(args.url, lambda url, dest: download(url, dest, {}, 120), pdf_text)
+        result = registry.register(args.episode_id, draft, extracted)
+    except (SourceError, ManifestNotFound, EpisodeLocked, ImmutableManifest, TransportError) as error:
+        raise SystemExit(f"{args.episode_id}: {error}") from error
+    source = result.source
+    if not result.created:
+        print(f"{source.id}: já registrada para esta URL; nada foi escrito")
+        return
+    excerpts = store.path(args.episode_id, f"excerpts/{source.id}.md").relative_to(ROOT)
+    print(f"{source.id}: {extracted.suffix}, {len(extracted.paragraphs)} trechos -> {excerpts}")
 
 
 if __name__ == "__main__":

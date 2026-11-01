@@ -7,13 +7,13 @@ Uso: `.venv/bin/python scripts/provisorio/fonte_declarada.py <episode-id> <arqui
 - Não acessa rede. O original é copiado para `sources/raw/source-NN.md`; o texto vai para
   `sources/source-NN.txt`, **cada linha não vazia como um trecho** (receita e nota são listas: um ingrediente,
   um item, um trecho); trechos numerados em `excerpts/source-NN.md`, como `vp excerpts`.
-- O id é o próximo `source-NN` livre; nada existente é sobrescrito.
+- O registro é `app.pipeline.sources.SourceRegistry` (ADR 043): id livre sob lock, o mesmo texto não duplica,
+  gate 1 aprovado recusa antes de escrever (`vp reopen --step sources`) e o `sources.json` vai por último.
 """
 
 from __future__ import annotations
 
 import argparse
-import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -21,16 +21,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.pipeline.excerpts import numbered_view  # noqa: E402
-from app.pipeline.extract import as_source_text  # noqa: E402
-from app.pipeline.schemas import Source, SourceKind, SourcesManifest  # noqa: E402
+from app.pipeline.models.source_draft import SourceDraft  # noqa: E402
+from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound  # noqa: E402
+from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
+from app.pipeline.schemas import SourceKind  # noqa: E402
+from app.pipeline.sources import SourceError, SourceRegistry, declared  # noqa: E402
 from app.settings import load_settings  # noqa: E402
-from app.storage.json_files import JsonFileStore  # noqa: E402
-
-
-def line_paragraphs(text: str) -> list[str]:
-    """Cada linha não vazia vira um trecho; espaços repetidos são juntados."""
-    return [" ".join(line.split()) for line in text.splitlines() if line.strip()]
+from app.storage.json_files import JsonFileStore, JsonReviewGate  # noqa: E402
 
 
 def main() -> None:
@@ -43,40 +40,26 @@ def main() -> None:
     parser.add_argument("--notes", default="")
     args = parser.parse_args()
 
-    original = Path(args.file)
-    if not original.is_file():
-        raise SystemExit(f"{original} não existe")
-    paragraphs = line_paragraphs(original.read_text(encoding="utf-8"))
-    if not paragraphs:
-        raise SystemExit(f"{original}: nenhum texto; fonte não registrada")
-
     store = JsonFileStore(load_settings(ROOT).data_dir / "episodes")
-    manifest = store.read(args.episode_id, "sources.json", SourcesManifest)
-    number = max((int(s.id.removeprefix("source-")) for s in manifest.sources), default=0) + 1
-    source_id = f"source-{number:02d}"
-    raw = store.path(args.episode_id, f"sources/raw/{source_id}{original.suffix or '.txt'}")
-    raw.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(original, raw)
-
-    text = as_source_text(paragraphs)
-    local_path = f"sources/{source_id}.txt"
-    store.path(args.episode_id, local_path).write_text(text, encoding="utf-8")
-    source = Source(
-        id=source_id,
+    guard = ReviewWriteGuard(store, JsonReviewGate(store))
+    registry = SourceRegistry(store, guard, lambda: datetime.now().astimezone().replace(microsecond=0))
+    draft = SourceDraft(
         title=args.title,
-        url=None,
         kind=SourceKind.DECLARED,
-        retrieved_at=datetime.now().astimezone().replace(microsecond=0),
-        local_path=local_path,
+        authors=tuple(a.strip() for a in args.authors.split(";") if a.strip()),
         notes=args.notes,
-        authors=[a.strip() for a in args.authors.split(";") if a.strip()],
     )
-    updated = manifest.model_copy(update={"sources": [*manifest.sources, source]})
-    store.write(args.episode_id, "sources.json", updated)
-    excerpts = store.path(args.episode_id, f"excerpts/{source_id}.md")
-    excerpts.parent.mkdir(parents=True, exist_ok=True)
-    excerpts.write_text(numbered_view(source, text), encoding="utf-8")
-    print(f"{source_id}: fonte declarada, {len(paragraphs)} trechos -> {excerpts.relative_to(ROOT)}")
+    try:
+        extracted = declared(Path(args.file))
+        result = registry.register(args.episode_id, draft, extracted)
+    except (SourceError, ManifestNotFound, EpisodeLocked, ImmutableManifest) as error:
+        raise SystemExit(f"{args.episode_id}: {error}") from error
+    source = result.source
+    if not result.created:
+        print(f"{source.id}: este texto já está registrado; nada foi escrito")
+        return
+    excerpts = store.path(args.episode_id, f"excerpts/{source.id}.md").relative_to(ROOT)
+    print(f"{source.id}: fonte declarada, {len(extracted.paragraphs)} trechos -> {excerpts}")
 
 
 if __name__ == "__main__":

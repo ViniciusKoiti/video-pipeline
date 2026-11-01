@@ -40,7 +40,7 @@ flowchart TD
 | RF2 | G03; recuperação de G02 | Implementado em 2026-11-01 (ADR 040); nenhum chamador real usa `run_scenes` ainda (RF3/RF6) |
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
-| RF5 | G02, G10–G11 | Pendente |
+| RF5 | G02, G10–G11 | Fatia 1 (fontes) feita em 2026-11-01 (ADR 043); ativos, entradas do kit e briefs pendentes |
 | RF6 | Integração G01–G11 no longo e Short | Pendente |
 | RF7 | G12 e encerramento da migração | Pendente |
 
@@ -176,9 +176,9 @@ acrescentar testes de operações separadas quando forem implementadas. Os exemp
 
 **Entrega:** migrar uma entrada por fatia, usando os contratos de proteção e retomada já verificados.
 
-- [ ] Fontes baixadas, locais e declaradas compartilham registro; ID é alocado sob lock; repetição não duplica
+- [x] Fontes baixadas, locais e declaradas compartilham registro; ID é alocado sob lock; repetição não duplica
   nem substitui fonte aprovada.
-- [ ] Falha no registro de bruto/texto/trechos/manifesto deixa uma recuperação definida; o manifesto de
+- [x] Falha no registro de bruto/texto/trechos/manifesto deixa uma recuperação definida; o manifesto de
   conclusão é publicado por último. `replace` individual não é chamado de transação de vários arquivos.
 - [ ] Busca distingue banco indisponível, busca sem resultado e erro de programação; motivos ficam registrados.
 - [ ] Download escolhido preserva associação de cenas anteriores, é idempotente e protege mídia aprovada.
@@ -186,8 +186,12 @@ acrescentar testes de operações separadas quando forem implementadas. Os exemp
 - [ ] Leitura/escrita do conteúdo do kit preserva campos que o auto-play não interpreta.
 - [ ] Cópias de briefs e catálogo de música mantêm seus contratos de substituição e licença.
 
-**Evidência:** criar testes específicos de fontes, ativos e briefs e ampliar os de música/Short conforme a
-fatia. Nenhum critério passa só porque um arquivo foi movido para `app/`.
+**Evidência (fatia 1, fontes):** `tests/test_sources.py` (13 casos: as três entradas, id sob lock com dois
+"processos", repetição, gate 1 aprovado, falha em texto, trechos e manifesto, órfão, manifesto por último;
+mutações conferidas) e `tests/test_sources_scripts.py` (os dois scripts, sem rede). **Pendente:** ativos
+(`AssetIntake`, busca tolerante a banco indisponível), validação das entradas do kit, preservação de campos
+desconhecidos e briefs/catálogo de música. Criar testes específicos de ativos e briefs e ampliar os de
+música/Short conforme a fatia. Nenhum critério passa só porque um arquivo foi movido para `app/`.
 
 ### RF6 — Integração da produção longa e Short
 
@@ -247,6 +251,10 @@ RF4 foi feito só no que existe (ADR 042): `Context` com `tts_final`, `tts_named
 igual), guarda contra `Settings` no núcleo e contra a orquestração de produção em código compartilhado, e testes do
 registro de comandos. O que falta no RF4 depende de objetos que só nascem no RF6 (`voice`, `subs`, `render`,
 `EpisodeFolder`); o contrato deles está no ADR 042. O próximo trabalho da sequência é RF5: fontes, ativos e briefs.
+
+RF5 começou pelas fontes (ADR 043): `app/pipeline/sources.py` (`SourceRegistry` e as três entradas) e
+`app/pipeline/atomic_files.py`; `baixar_fonte.py` e `fonte_declarada.py` agora só chamam o registro. As próximas
+fatias são a entrada de ativos (G11) e a validação das entradas do kit (G10).
 
 ## 5. Pendências abertas ao fim do RF3 (2026-11-01)
 

@@ -251,7 +251,9 @@ revela:
 - **`sources.json`:** mínimo de 2 fontes independentes para os fatos principais. `Source.interested` marca fonte
   interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só.
   `kind: declared` é material do próprio dono (receita, nota de compra), sem URL: o `vp check` avisa e o dono
-  responde por ele no gate 1 (`scripts/provisorio/fonte_declarada.py`, até `vp sources`, #26).
+  responde por ele no gate 1 (`scripts/provisorio/fonte_declarada.py`, até `vp sources`, #26). Registro único em
+  `app/pipeline/sources.py` (ADR 043): id livre sob lock, a mesma URL não duplica, gate 1 aprovado recusa (`vp reopen
+  --step sources`) e o `sources.json` é gravado por último.
 - **`facts.json` (ADR 009):** as fichas são a única base do roteiro. Cada evidência traz `excerpt_id` (parágrafo do
   texto extraído, `source-01#E7`) e uma `quote` **literal**, conferida pelo `vp check`; `open_questions` guarda o
   que as fontes não respondem. Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
