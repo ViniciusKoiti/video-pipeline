@@ -17,6 +17,7 @@ from pathlib import Path
 from app.bootstrap import build_context
 from app.commands import (
     assets,
+    audio,
     briefs,
     conferences,
     decisions,
@@ -29,6 +30,7 @@ from app.commands import (
     reopen,
     short,
     sources,
+    status,
     usage,
     voice,
 )
@@ -39,19 +41,10 @@ from app.commands.project_root import project_root
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode
 from app.pipeline.excerpts import numbered_view
-from app.pipeline.gates import (
-    GateStatus,
-    gate_report,
-    latest_check,
-)
-from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
-from app.pipeline.pending import pending_pieces
 from app.pipeline.ports import Context
 from app.pipeline.schemas import (
-    Decision,
     SourcesManifest,
-    Step,
 )
 from app.render.remotion import region_codes
 from app.settings import speech_chars_per_second
@@ -104,61 +97,6 @@ def _check(args: argparse.Namespace, context: Context) -> int:
     return 0 if report.ok else 1
 
 
-def _status(args: argparse.Namespace, context: Context) -> int:
-    rows = gate_report(context.store, context.review, args.episode_id)
-    for row in rows:
-        print(_status_line(row))
-        if row.step is Step.SCRIPT:
-            print(_check_line(context, args.episode_id))
-    pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
-    pending += pending_pieces(context.store, args.episode_id)
-    pending += _metrics_status(context, args.episode_id)
-    print("pendências: " + (", ".join(pending) if pending else "nenhuma"))
-    return 0
-
-
-def _metrics_status(context: Context, episode_id: str) -> list[str]:
-    """Depois de publicado (§12): mostra as janelas de 7 e 28 dias e devolve as vencidas sem leitura."""
-    path = metrics_path(context.settings.data_dir, episode_id)
-    if not path.is_file():
-        return []
-    try:
-        metrics = load_metrics(path)
-    except ValueError:
-        return ["metrics.json inválido (ver vp check)"]
-    print(f"{'métricas':38} {summary_line(metrics, date.today())}")
-    return pending_lines(metrics, date.today())
-
-
-def _status_line(row: GateStatus) -> str:
-    kind, target = ("ativo", row.asset_id) if row.asset_id else ("gate", row.step.value)
-    if row.entry is None:
-        return f"{kind:6}{target:32} sem decisão"
-    if row.current_hash is None:
-        state = "arquivo removido"
-    else:
-        state = "vale" if row.valid else "MUDOU depois da decisão"
-    entry = row.entry
-    label = CliConstants.DECISION_LABELS[entry.decision]
-    return f"{kind:6}{target:32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
-
-
-def _check_line(context: Context, episode_id: str) -> str:
-    entry, valid = latest_check(context.store, episode_id)
-    if entry is None:
-        return f"{'parecer':6}{'verificador':32} sem parecer"
-    state = "vale" if valid else "MUDOU depois do parecer"
-    label = CliConstants.CHECK_LABELS[entry.verdict]
-    return f"{'parecer':6}{'verificador':32} {label:17} {entry.at:%Y-%m-%d %H:%M} {entry.reviewer} · {state}"
-
-
-def _pending(row: GateStatus) -> bool:
-    """Gate sem aprovação que valha; ativo rejeitado e removido não é pendência."""
-    if row.asset_id and row.current_hash is None:
-        return False
-    return not (row.entry is not None and row.entry.decision is Decision.APPROVED and row.valid)
-
-
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
 HANDLERS: dict[str, Handler] = {
     "bench": _bench,
@@ -167,7 +105,7 @@ HANDLERS: dict[str, Handler] = {
     "approve": decisions.approve,
     "reject": decisions.reject,
     "reopen": reopen.run,
-    "status": _status,
+    "status": status.run,
     "checagem": decisions.checagem,
     "traducao": conferences.traducao,
     "medicao": conferences.medicao,
@@ -177,6 +115,7 @@ HANDLERS: dict[str, Handler] = {
     "voice": voice.run,
     "render": render.run,
     "assets": assets.run,
+    "audio": audio.run,
     "briefs": briefs.run,
     "export": export.run,
     "metricas": metricas.run,
@@ -208,6 +147,7 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
     assets.add_arguments(subparsers.add_parser("assets", help="busca e baixa ativos visuais (ADR 044)"))
+    audio.add_arguments(subparsers.add_parser("audio", help="conferência de áudio com o earshot (ADR 035)"))
     briefs.add_arguments(subparsers.add_parser("briefs", help="resumo do radar e perfil do nicho (ADR 047)"))
     export.add_arguments(subparsers.add_parser("export", help="o que sai do episódio para publicar (#18)"))
     metricas.add_arguments(subparsers.add_parser("metricas", help="métricas aos 7 e 28 dias (§12)"))

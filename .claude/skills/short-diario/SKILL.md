@@ -16,7 +16,7 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
 5. `content.pt.json` e `content.en.json` no molde (`safeArea: shorts`, `footer` com o ambiente, `showRatio: false`); `validate` e `inspect` do kit com cwd na pasta do JSON; corrigir rótulos longos; `review` e listar os quadros.
 6. `medicao.json` com todos os números; `vp medicao <id>-pt` e `-en` limpos; `vp traducao <id>-en` limpo. Corrija a narração ou o `medicao.json`, nunca o resultado.
 7. `vp short voz` (Modal), `tempos`, `render` do kit nas duas pastas; o Reel usa o `content.en.json` com `host` só se a pele estiver `approved`.
-8. `sfx.pt.json` e `sfx.en.json` no molde; `vp short sfx`; `vp short juntar --sfx` em `renders/final.mp4`; `conferir_audio.py --content --sfx` sem problema.
+8. `sfx.pt.json` e `sfx.en.json` no molde; `vp short sfx`; `vp short juntar --sfx` em `renders/final.mp4`; `vp audio --content --sfx` sem problema.
 9. `post.json` por saída (título provisório da pauta, origem dos números, divulgação da voz clonada, link do baixo-nivel-demos); `vp short gate` por saída; `vp postiz upload` e `vp postiz pacote --episode` por saída; confira os ids em `vp postiz integrations`.
 10. `data/rotina/AAAA-MM-DD.md`: o que foi feito, os avisos, os quadros para olhar e os comandos que faltam ao dono (`vp approve ... --step translation`, `--step preview` ×3, push, `vp postiz duvida` e `schedule` ×3).
 ## Regras
