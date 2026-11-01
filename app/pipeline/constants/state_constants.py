@@ -17,7 +17,8 @@ class StateConstants:
     TRANSITIONS: Final[Mapping[Status, frozenset[Status]]] = MappingProxyType(
         {
             Status.PENDING: frozenset((Status.RUNNING,)),
-            Status.RUNNING: frozenset((Status.NEEDS_REVIEW, Status.COMPLETED, Status.FAILED)),
+            # RUNNING -> RUNNING: processo interrompido; quem tem o lock do episódio retoma (RF2)
+            Status.RUNNING: frozenset((Status.RUNNING, Status.NEEDS_REVIEW, Status.COMPLETED, Status.FAILED)),
             Status.NEEDS_REVIEW: frozenset((Status.APPROVED, Status.RUNNING)),
             Status.APPROVED: frozenset((Status.COMPLETED,)),
             Status.COMPLETED: frozenset((Status.RUNNING,)),

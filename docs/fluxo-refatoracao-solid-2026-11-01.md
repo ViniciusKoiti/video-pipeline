@@ -37,7 +37,7 @@ flowchart TD
 |---|---|---|
 | RF0 | G12; prevenção da dependência de G09 | Fechado em 2026-11-01: arquitetura, modelos, constantes, tamanho, tipagem e lint verdes |
 | RF1 | G01; fronteira de proteção de G02 | Implementado em 2026-11-01 (ADR 039); ligar os escritores concretos fica para RF5/RF6 |
-| RF2 | G03; recuperação de G02 | Pendente |
+| RF2 | G03; recuperação de G02 | Implementado em 2026-11-01 (ADR 040); nenhum chamador real usa `run_scenes` ainda (RF3/RF6) |
 | RF3 | G04–G05 | Pendente |
 | RF4 | G06–G09 | Pendente |
 | RF5 | G02, G10–G11 | Pendente |
@@ -110,18 +110,21 @@ provado pelo `check` direto, e só o gate 1 também pelo `write_output` de ponta
 **Entrega:** contrato de resultado incompleto e reutilização, provado com ações falsas e saídas persistidas.
 Não depende de o futuro `Narrator` já existir.
 
-- [ ] Três cenas independentes: a segunda falha; primeira e terceira deixam saídas válidas.
-- [ ] Reexecutar a mesma entrada tenta só a cena pendente; `needs_review` parcial não impede a tentativa.
-- [ ] Revisão humana pendente é distinguida de produção incompleta: não refazer um resultado íntegro que
+- [x] Três cenas independentes: a segunda falha; primeira e terceira deixam saídas válidas.
+- [x] Reexecutar a mesma entrada tenta só a cena pendente; `needs_review` parcial não impede a tentativa.
+- [x] Revisão humana pendente é distinguida de produção incompleta: não refazer um resultado íntegro que
   esteja apenas aguardando revisão.
-- [ ] Saída reutilizada é reconstruída após reiniciar o processo, sem depender de estado em memória.
-- [ ] Arquivo ausente ou inválido gera recuperação ou erro explícito; aprovado não é recriado automaticamente.
-- [ ] Lock continua exclusivo, inclusive no erro; não aninhar `store.lock` com o lock de `run_step`.
-- [ ] Entrada mutável é conferida sob a trava; mudança entre etapas não produz resultado misto silencioso.
-- [ ] Erro inesperado sobe e é registrado; falha recuperável fica ligada à cena e bloqueia só dependências dela.
+- [x] Saída reutilizada é reconstruída após reiniciar o processo, sem depender de estado em memória.
+- [x] Arquivo ausente ou inválido gera recuperação ou erro explícito; aprovado não é recriado automaticamente.
+- [x] Lock continua exclusivo, inclusive no erro; não aninhar `store.lock` com o lock de `run_step`.
+- [x] Entrada mutável é conferida sob a trava; mudança entre etapas não produz resultado misto silencioso.
+- [x] Erro inesperado sobe e é registrado; falha recuperável fica ligada à cena e bloqueia só dependências dela.
 
-**Evidência:** testes em `tests/test_state.py` e `tests/test_failures.py`, com disco temporário e ações falsas.
-Interromper uma gravação não pode transformar resultado parcial em saída concluída reutilizável.
+**Evidência:** `tests/test_scene_step.py` (15 casos, com mutações conferidas: sem a checagem de arquivo ou sem a
+retomada de `RUNNING`, os testes falham), `tests/test_state.py` e `tests/test_failures.py`, com disco temporário
+e ações falsas. Interromper uma gravação não vira saída concluída: a cena só é registrada depois que a ação
+terminou e as saídas existem. Ressalva: o contrato vale para `run_scenes` e `run_step`; `for_each_scene` segue
+sem estado e será substituído quando o narrador for migrado (RF3/RF6).
 
 ### RF3 — TTS, lotes, ciclo de vida e cache
 
@@ -218,5 +221,7 @@ resultados locais estão no [registro do gate de qualidade](gate-qualidade.md).
 
 RF1 foi entregue em seguida (ADR 039): `ReviewWriteGuard` sobre o `review.json`, `reopen_gate` e `vp reopen`,
 `ReviewLog.latest` pela posição no log e `default_reviewer` em `app/commands/reviewer.py` (o `cli.py` encolheu de
-318 para 301 linhas de código e a baseline foi regenerada). O próximo trabalho da sequência é RF2: estado,
-falha parcial e retomada.
+318 para 301 linhas de código e a baseline foi regenerada). 
+RF2 veio depois (ADR 040): `run_scenes` com registro por cena no `manifest.json`, retomada só das cenas pendentes,
+`plan` que só reaproveita resultado íntegro e `run_step` com a entrada conferida sob o lock. O próximo trabalho da
+sequência é RF3: porta TTS, lotes e identidade do cache.

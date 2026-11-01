@@ -194,6 +194,10 @@ original de 2026-09-26 está em `docs/pesquisa/pipeline-plano-2026-09-26.mermaid
   `vp reopen <id> --step <s> --reason "..."`, registrado no `review.json` (§2.6; hoje só nas etapas com gate:
   `sources`, `script`, `assets` com `--asset`, `translation` e `preview`, ADR 039).
 - Uma execução por episódio de cada vez: trava em `data/episodes/<id>/.lock`.
+- **Etapa por cena (ADR 040, `app/pipeline/scene_step.py`):** o `manifest.json` guarda um registro por cena. Uma
+  rodada refaz só as cenas que faltam (falha de provedor, bloqueada, saída ausente ou vazia); `needs_review` com
+  cena pendente roda de novo com a mesma entrada, `needs_review` de gate humano com tudo íntegro não. Etapa
+  aprovada com saída ausente é erro (`OutputMissing`), nunca recriada. Um lock só: não aninhar `store.lock`.
 - Invalidação: trocar uma imagem invalida **só** montagem e prévia; alterar texto narrado invalida voz do bloco,
   timing, legendas e render; alterar fonte invalida roteiro e tudo abaixo. Erros de rede, cota ou licença param a
   cena, não o episódio.

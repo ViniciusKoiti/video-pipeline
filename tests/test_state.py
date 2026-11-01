@@ -13,6 +13,7 @@ from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import SourcesManifest, Status, Step
 from app.pipeline.state import (
     Action,
+    InputChanged,
     InvalidTransition,
     StaleApproval,
     StepResult,
@@ -171,3 +172,25 @@ def test_one_execution_per_episode(store: JsonFileStore) -> None:
 
     with pytest.raises(EpisodeLocked):
         run_step(store, EP, Step.SOURCES, "sha256:v1", nested, now=Clock())
+
+
+def test_a_recorded_output_that_vanished_is_rebuilt_not_reused(store: JsonFileStore) -> None:
+    action, clock = Counter(store, needs_review=False), Clock()
+    run_step(store, EP, Step.SOURCES, "sha256:v1", action, now=clock)
+    store.path(EP, "sources.json").unlink()
+    rerun = run_step(store, EP, Step.SOURCES, "sha256:v1", action, now=clock)
+    assert (rerun.action, action.calls) == (Action.RUN, 2) and store.path(EP, "sources.json").is_file()
+
+
+def test_the_input_is_checked_under_the_lock_and_again_at_the_end(store: JsonFileStore) -> None:
+    current = {"hash": "sha256:v1"}
+    action = Counter(store)
+
+    def edits_midway() -> StepResult:
+        result = action()
+        current["hash"] = "sha256:v2"
+        return result
+
+    with pytest.raises(InputChanged):
+        run_step(store, EP, Step.SOURCES, lambda: current["hash"], edits_midway, now=Clock())
+    assert load_state(store, EP).get(Step.SOURCES).status is Status.FAILED  # nunca "concluída" com mistura
