@@ -28,6 +28,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import replace
 from pathlib import Path
 
+from app.errors import PipelineError
 from app.media.probe import ProbeError
 from app.media.speech_batches import synthesize_requests
 from app.media.wav import wav_is_valid
@@ -42,6 +43,10 @@ from app.providers.errors import InvalidOutput
 from app.providers.tts.base import SpeechRequest, TTSProvider
 
 Outcome = SceneOutcome[Path]
+
+
+class VoiceIncomplete(PipelineError, RuntimeError):
+    """Faltou fala: a mensagem diz quais e por quê. As que ficaram prontas seguem na pasta."""
 
 
 class VoiceLibrary:
@@ -144,3 +149,14 @@ class Narrator:
             or SceneOutcome(line.id, Status.COMPLETED, value=self._library.path(self.key(line)))
             for line in lines
         ]
+
+    @staticmethod
+    def require(outcomes: Sequence[Outcome]) -> dict[str, Path]:
+        """O WAV de cada fala, por id; se alguma falhou, `VoiceIncomplete` com o motivo de cada uma. As
+        prontas ficam na pasta, e rodar de novo pede só as que faltam."""
+        failed = [o for o in outcomes if o.status is not Status.COMPLETED or o.value is None]
+        if failed:
+            lines = "; ".join(f"{o.scene_id}: {o.reason}: {o.detail}" for o in failed)
+            message = f"{len(failed)} fala(s) sem WAV ({lines}). As prontas ficam; rode de novo depois."
+            raise VoiceIncomplete(message)
+        return {o.scene_id: o.value for o in outcomes if o.value is not None}

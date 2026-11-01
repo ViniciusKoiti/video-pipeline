@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.util
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +18,7 @@ from app.media.narration import (
     timeline_length,
     timeline_position,
 )
+from app.media.speech_batches import group_requests
 from app.pipeline.schemas import Scene
 from app.pipeline.shots import shot_bounds
 from app.providers.tts.base import SpeechRequest
@@ -138,21 +138,11 @@ def test_kokoro_synthesizes_each_piece_with_silence_between(tmp_path: Path) -> N
     assert fake.texts == [PLAIN]
 
 
-def montar_module() -> Any:
-    path = Path(__file__).resolve().parents[1] / "scripts" / "provisorio" / "montar_episodio.py"
-    spec = importlib.util.spec_from_file_location("montar_episodio", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def test_scenes_with_pauses_never_share_a_gemini_batch(tmp_path: Path) -> None:
-    montar = montar_module()
     req = lambda text: SpeechRequest(text=text, out_path=tmp_path / "x.wav", language="pt-BR")  # noqa: E731
     plain = [req("Primeira."), req("Segunda."), req("Terceira.")]
-    assert [len(g) for g in montar.batches(plain)] == [3]  # sem pausas, juntas, como antes
+    assert [len(g) for g in group_requests(plain, 1200)] == [3]  # sem pausas, juntas, como antes
     mixed = [req("Primeira."), req(f"Com {SP} pausa."), req("Terceira."), req("Quarta.")]
-    assert [[r.text for r in g] for g in montar.batches(mixed)] == [
+    assert [[r.text for r in g] for g in group_requests(mixed, 1200)] == [
         ["Primeira."], [f"Com {SP} pausa."], ["Terceira.", "Quarta."]
     ]

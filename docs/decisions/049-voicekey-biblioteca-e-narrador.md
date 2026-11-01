@@ -36,7 +36,25 @@ de gerar a nova**: uma falha ou uma cota esgotada deixava a cena sem fala. Os no
 - A medida do WAV e o glossário (`respell`) entram como funções injetadas: o núcleo não roda ffprobe nem lê
   arquivo de glossário.
 
+## Fatia 2: os scripts de voz usam o narrador
+
+`montar_episodio.py` (longo, `generate_voice` com `Naming.LONG`) e `shorts_tec.py` (Short, `generate_voice` com
+`Naming.SHORT`) deixaram de calcular a chave, de apagar as versões antigas antes de gerar e de decidir o lote: os
+dois chamam `Narrator.produce` e `Narrator.require`, dentro de `closing_tts` (a voz clonada fecha também na falha;
+antes, uma parada no meio deixava o processo do modelo aberto). Falta de fala é `VoiceIncomplete` (um
+`PipelineError`, tratado pelo handler central da ADR 045), com o motivo de cada fala; as prontas ficam, e rodar de
+novo pede só as que faltam. O registro `<narração>.voz.json` e o trecho falado (`speech_bounds`) seguem no script.
+
+As fórmulas dos nomes de antes (`voice_fingerprint`, `long_speech_tag`, `wav_name` e o laço do longo) saíram dos
+scripts e ficaram **congeladas em `tests/legacy_voice_names.py`**, que é a especificação do nome de hoje: o RF7 pode
+apagar os scripts sem perder a prova. `batches`/`generate` e as constantes `CLONED`/`BATCH_CHARS` saíram do script
+(o lote é `app/media/speech_batches.py`).
+
+**Prova com dado real (só leitura, nenhuma síntese):** para os 18 registros de fala dos Shorts em
+`data/episodes/` (todos `chatterbox_modal`, com o adaptador real e o hash da gravação de referência real), o
+`Narrator.plan` devolveu **zero falas faltando**: todos os WAVs existentes seriam reaproveitados, sem chamada de TTS.
+
 ## Fora do escopo
 
-Migrar `montar_episodio.py` e `shorts_tec.py` para o `Narrator` (próxima fatia); o registro `<narração>.voz.json`
-e o trecho falado (`speech_bounds`); `Production`, `subs` e `render`.
+`Production`, `subs` e `render` (próximas fatias do RF6); a escolha do provedor da voz (`tts_final`) e o registro
+`<narração>.voz.json` continuam nos scripts.

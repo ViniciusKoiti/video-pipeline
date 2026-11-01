@@ -1,7 +1,7 @@
 """RF3: identidade do cache de voz. Os nomes de WAV de hoje continuam valendo, e a única chave que muda é a
 da entrega não neutra do Chatterbox (que antes não levava os valores): mudança declarada na ADR 041.
 
-O oráculo são as funções reais dos scripts (`voice_fingerprint`, `long_speech_tag`, `wav_name`)."""
+O oráculo são as fórmulas dos scripts, congeladas em `tests/legacy_voice_names.py`."""
 
 from __future__ import annotations
 
@@ -18,9 +18,8 @@ from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
 from app.providers.tts.gemini import GeminiTTS
 from app.providers.tts.kokoro import KokoroTTS
 from app.settings import Settings
-from scripts.provisorio.montar_episodio import long_speech_tag, voice_fingerprint
-from scripts.provisorio.shorts_tec import Line, wav_name
 from tests.fakes import make_settings
+from tests.legacy_voice_names import long_speech_tag, short_name, voice_fingerprint
 from tests.test_chatterbox_tts import make_tts as make_chatterbox
 from tests.test_gemini_tts import FakePost, audio_response, wav_bytes
 
@@ -120,8 +119,7 @@ def test_the_short_name_does_not_change_for_the_same_input(tmp_path: Path) -> No
     """O Short nunca pôs pausa nem fala longa na chave: a identidade sem o texto reproduz o nome de hoje."""
     settings = make_settings(tmp_path)
     kokoro = KokoroTTS(settings.kokoro.voices, pause_ms=settings.kokoro.pause_ms)
-    line = Line(scene="S01", text=PAUSE)
-    legacy = wav_name(line, 0, "kokoro", voice_fingerprint(settings, "kokoro", "pt-BR"), "pt-BR")
+    legacy = short_name("S01", "kokoro", voice_fingerprint(settings, "kokoro", "pt-BR"), "neutral", PAUSE)
     stem = legacy.rsplit("-", 1)[0]
     digest = long_digest(kokoro.fingerprint(req("", "pt-BR")), PAUSE)  # sem texto: sem `|pausa`
     assert legacy == f"{stem}-{digest}.wav"

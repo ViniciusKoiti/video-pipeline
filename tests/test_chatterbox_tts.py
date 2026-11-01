@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.util
 import tempfile
 import wave
 from collections.abc import Mapping
@@ -19,6 +18,7 @@ from app.providers.tts.chatterbox import ChatterboxTTS, reference_hash
 from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
 from app.settings import load_settings, speech_chars_per_second
 from app.settings.constants.settings_constants import SettingsConstants
+from tests.legacy_voice_names import voice_fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SP = "<short pause>"
@@ -221,21 +221,11 @@ def test_check_estimates_with_the_cloned_voice_rate() -> None:
     assert speech_chars_per_second(settings) == settings.chatterbox.chars_per_second
 
 
-def montar_module() -> Any:
-    path = REPO_ROOT / "scripts" / "provisorio" / "montar_episodio.py"
-    spec = importlib.util.spec_from_file_location("montar_episodio", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def test_the_reference_recording_is_part_of_the_voice_cache_key(tmp_path: Path) -> None:
-    montar = montar_module()
     first, second = tmp_path / "a.wav", tmp_path / "b.wav"
     write_wav(first, 100)
     write_wav(second, 200)
-    key = lambda ref: montar.voice_fingerprint(  # noqa: E731
+    key = lambda ref: voice_fingerprint(  # noqa: E731
         load_settings(REPO_ROOT, {"CHATTERBOX_REFERENCE": str(ref)}), "chatterbox", "pt-BR"
     )
     assert key(first) != key(second)
@@ -317,15 +307,13 @@ def test_a_failure_in_one_part_of_a_long_scene_is_a_provider_error(tmp_path: Pat
     assert not (tmp_path / "S01.wav").exists()
 
 
-def test_long_cloned_speech_gets_its_own_cache_key_so_cut_wavs_are_redone() -> None:
-    path = REPO_ROOT / "scripts" / "provisorio" / "montar_episodio.py"
-    spec = importlib.util.spec_from_file_location("montar_episodio_chave", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    assert module.long_speech_tag("chatterbox_modal", LONG) == "|frases300"
-    assert module.long_speech_tag("chatterbox", f"Curta. {SP} Também curta.") == ""
-    assert module.long_speech_tag("kokoro", LONG) == ""  # as outras vozes não mudam de chave
+def test_long_cloned_speech_gets_its_own_cache_key_so_cut_wavs_are_redone(tmp_path: Path) -> None:
+    long_request = SpeechRequest(text=LONG, out_path=tmp_path / "a.wav", language="pt-BR")
+    short = f"Curta. {SP} Também curta."
+    short_request = SpeechRequest(text=short, out_path=tmp_path / "b.wav", language="pt-BR")
+    tts = make_tts(None, tmp_path)
+    assert tts.fingerprint(long_request).endswith("|frases300")
+    assert "|frases" not in tts.fingerprint(short_request)  # fala curta não muda de chave
 
 
 # --- RF3: arquivo íntegro, fechamento e reuso ---------------------------------------------------

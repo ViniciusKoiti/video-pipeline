@@ -33,7 +33,6 @@ Uso: `.venv/bin/python scripts/provisorio/montar_episodio.py <episode-id> [--no-
 
 from __future__ import annotations
 
-import hashlib
 import os
 import sys
 import time
@@ -44,6 +43,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import LazyContext, build_context  # noqa: E402
+from app.commands.errors import run  # noqa: E402
 from app.media.captions import (  # noqa: E402
     SceneAudio,
     captions_key,
@@ -56,12 +56,14 @@ from app.media.captions import (  # noqa: E402
 from app.media.constants.captions_constants import CaptionsConstants  # noqa: E402
 from app.media.constants.word_captions_constants import WordCaptionsConstants  # noqa: E402
 from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
-from app.media.narration import has_pauses, split_pauses, strip_pauses  # noqa: E402
+from app.media.narration import strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.media.word_captions import SceneSpeech, sync_words  # noqa: E402
 from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
+from app.pipeline.models.naming import Naming  # noqa: E402
+from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.music import load_music_catalog, resolve_music  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
@@ -74,10 +76,9 @@ from app.pipeline.schemas import (  # noqa: E402
     VideoSpec,
 )
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
-from app.providers.errors import InvalidOutput, ProviderError  # noqa: E402
-from app.providers.tts.base import SpeechRequest, TTSProvider  # noqa: E402
-from app.providers.tts.chatterbox import reference_hash  # noqa: E402
-from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants  # noqa: E402
+from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
+from app.providers.errors import ProviderError  # noqa: E402
+from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
 from app.render.remotion import RemotionEngine  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
@@ -85,71 +86,22 @@ MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
 MUSIC_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")
 
 
-# A voz clonada do dono: na máquina (ADR 016) ou numa GPU do Modal (ADR 024).
-CLONED = ("chatterbox", "chatterbox_modal")
-BATCH_CHARS = 1200  # ~90 s de fala por chamada num lote da voz final (ADR 012)
-
-
-def voice_fingerprint(settings: Settings, provider: str, language: str) -> str:
-    """O que muda a fala gerada, além do texto: provedor, modelo, voz e direção de fala."""
-    if provider == "gemini":
-        gemini = settings.gemini_tts
-        return f"gemini|{gemini.model}|{gemini.voices.get(language)}|{gemini.styles.get(language, '')}"
-    if provider in CLONED:  # a mesma voz local ou no Modal (ADR 024); o nome do WAV separa as duas
-        box = settings.chatterbox
-        reference = box.reference.expanduser() if box.reference else None
-        voice = reference_hash(reference) if reference and reference.is_file() else None
-        return f"{provider}|{box.model}|{box.language_ids.get(language)}|{voice}"
-    return f"{provider}|{settings.kokoro.voices.get(language)}"
-
-
-def long_speech_tag(provider: str, text: str) -> str:
-    """Entra na chave da fala clonada longa (#186): ela sai em grupos de frases, e a de antes, gerada numa
-    chamada só, foi cortada em ~40 s sem erro. Fala curta e as outras vozes não mudam de chave."""
-    if provider not in CLONED:
-        return ""
-    long = any(len(part) > ChatterboxConstants.MAX_PART_CHARS for part in split_pauses(text) or [text])
-    return f"|frases{ChatterboxConstants.MAX_PART_CHARS}" if long else ""
-
-
-def batches(requests: list[SpeechRequest], limit: int = BATCH_CHARS) -> list[list[SpeechRequest]]:
-    """Cenas seguidas em grupos de até `limit` caracteres (uma cena maior que o limite vai sozinha).
-    Cena com `<short pause>` também vai sozinha: no teste de 2026-10-05 as pausas dentro da cena (até 1,1 s)
-    não se destacaram da fronteira entre cenas, e o corte do lote foi recusado (ADR 015)."""
-    groups: list[list[SpeechRequest]] = []
-    size = 0
-    open_group = False  # o último grupo ainda aceita mais cenas
-    for request in requests:
-        if has_pauses(request.text):
-            groups.append([request])
-            open_group = False
-        elif open_group and size + len(request.text) <= limit:
-            groups[-1].append(request)
-            size += len(request.text)
-        else:
-            groups.append([request])
-            size = len(request.text)
-            open_group = True
-    return groups
-
-
-def generate(tts: TTSProvider, requests: list[SpeechRequest]) -> None:
-    many = getattr(tts, "synthesize_many", None)
-    groups = batches(requests) if many else [[r] for r in requests]
-    print(f"voz: {len(requests)} cena(s) a gerar em {len(groups)} chamada(s)")
-    for group in groups:
-        try:
-            if many and len(group) > 1:
-                try:
-                    many(group)
-                    continue
-                except InvalidOutput as error:
-                    print(f"lote recusado ({error}); gerando cena a cena")
-            for request in group:
-                tts.synthesize_speech(request)
-        except ProviderError as error:
-            raise SystemExit(f"{group[0].out_path.name}: {error.reason}: {error}. As falas já geradas "
-                             "ficam no cache; rode de novo depois.") from error
+def generate_voice(tts: TTSProvider, scenes: ScenesManifest, episode_dir: Path) -> dict[str, Path]:
+    """O WAV de cada cena (ADR 049): só as que faltam são geradas, em lote quando a voz oferece, e a antiga só
+    sai depois da nova pronta e medida. Falta de fala é `VoiceIncomplete`; as prontas ficam para a próxima."""
+    voice_dir = episode_dir / "voice"
+    voice_dir.mkdir(exist_ok=True)
+    glossary = load_glossary(episode_dir)
+    narrator = Narrator(
+        tts,
+        scenes.language,
+        VoiceLibrary(voice_dir, Naming.LONG),
+        lambda wav: duration_ms(wav) / 1000,
+        lambda text: respell(text, glossary),  # a grafia que a voz lê; sem termo, o texto do roteiro
+    )
+    lines = [SpeechLine(scene.id, scene.narration, scene.delivery or "neutral") for scene in scenes.scenes]
+    with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
+        return narrator.require(narrator.produce(lines))
 
 
 def media_path(episode_dir: Path, asset_id: str) -> str:
@@ -240,43 +192,9 @@ def main() -> None:
         sources = SourcesManifest.model_validate_json(sources_path.read_text())
     final = "--voz-final" in sys.argv
     named = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--voz=")), None)
-    if named:
-        provider, tts = named, context.tts_named(named)
-    else:
-        choice = settings.providers
-        provider = (choice.tts_final or choice.tts) if final else choice.tts
-        tts = context.tts_final if final else context.tts
-    fingerprint = voice_fingerprint(settings, provider, scenes.language)
-    voice_dir = episode_dir / "voice"
-    voice_dir.mkdir(exist_ok=True)
-    glossary = load_glossary(episode_dir)
-
+    tts = context.tts_named(named) if named else (context.tts_final if final else context.tts)
     started = time.monotonic()
-    wavs, missing = {}, []
-    for scene in scenes.scenes:
-        # Cena com pausa: o silêncio do Kokoro entra na chave (ADR 015); sem pausa a chave não muda.
-        pauses = {"kokoro": settings.kokoro.pause_ms, **dict.fromkeys(CLONED, settings.chatterbox.pause_ms)}
-        pause_ms = pauses.get(provider)
-        tagged = pause_ms is not None and has_pauses(scene.narration)
-        pause = f"|pausa{pause_ms}" if tagged else ""
-        # Entrega da fala (ADR 022): só a voz clonada obedece; a chave muda só quando a entrega não é neutra.
-        delivery = scene.delivery or "neutral"
-        entrega = f"|entrega:{delivery}" if provider in CLONED and delivery != "neutral" else ""
-        text = respell(scene.narration, glossary)  # a grafia que a voz lê; sem termo, o texto do roteiro
-        frases = long_speech_tag(provider, text)
-        key = hashlib.sha256(f"{fingerprint}{pause}{entrega}{frases}|{text}".encode()).hexdigest()[:10]
-        wavs[scene.id] = wav = voice_dir / f"{scene.id}-{provider}-{key}.wav"
-        if not wav.exists():
-            for stale in voice_dir.glob(f"{scene.id}-{provider}-*.wav"):
-                stale.unlink()
-            missing.append(
-                SpeechRequest(text=text, out_path=wav, language=scenes.language, delivery=delivery)
-            )
-    if missing:
-        generate(tts, missing)
-    close = getattr(tts, "close", None)  # a voz clonada mantém um processo com o modelo carregado
-    if close:
-        close()
+    wavs = generate_voice(tts, scenes, episode_dir)
 
     episode_scenes, cursor = [], 0
     for scene in scenes.scenes:
@@ -324,4 +242,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("montar_episodio", main))

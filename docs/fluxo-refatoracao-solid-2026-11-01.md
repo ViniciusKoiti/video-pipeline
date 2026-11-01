@@ -41,7 +41,7 @@ flowchart TD
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
 | RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Fechado em 2026-11-01 em cinco fatias (fontes ADR 043, ativos ADR 044, SFX ADR 046, briefs e música ADR 047, entradas do Short ADR 048); a integração nos escritores de produção fica para o RF6 |
-| RF6 | Integração G01–G11 no longo e Short | Em andamento: fatia 1 (`VoiceKey`, biblioteca e narrador, ADR 049) feita em 2026-11-01; migração dos scripts de voz e as demais operações pendentes |
+| RF6 | Integração G01–G11 no longo e Short | Em andamento: voz feita em 2026-11-01 (fatias 1 e 2, ADR 049: `Narrator` nos dois scripts, nomes de WAV mantidos); render, montagem e pacote pendentes |
 | RF7 | G12 e encerramento da migração | Pendente |
 
 “Implantado” significa que há código de verificação, não que todos os gaps foram resolvidos. Teste antigo
@@ -223,10 +223,8 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
 
 **Entrega:** comandos sobre os componentes verificados, uma operação por mudança revisável.
 
-- [ ] Longo e Short compartilham voz sem herdar de uma classe genérica de produção.
-  *(o `Narrator` serve aos dois formatos de nome, sem classe de produção; falta migrar os dois scripts)*
-- [ ] WAV novo é validado e promovido antes de remover versões obsoletas; erro conserva o anterior utilizável.
-  *(provado no `Narrator`, ADR 049; os scripts ainda apagam antes de gerar, até migrarem)*
+- [x] Longo e Short compartilham voz sem herdar de uma classe genérica de produção.
+- [x] WAV novo é validado e promovido antes de remover versões obsoletas; erro conserva o anterior utilizável.
 - [ ] Estado, relatório por cena e cache permitem retomar depois de encerrar o processo.
 - [ ] Motor vem da porta configurada por formato; substituição é demonstrada com renderer falso.
 - [ ] Montagem incompleta não avança para render final; precondições são verificadas na operação.
@@ -235,6 +233,11 @@ verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; muta
   considerado completo. Recusar substituição de pacote aprovado antes da primeira cópia.
 - [ ] Timestamps, legendas, áudio e efeitos preservam os contratos existentes; teste visual real, quando
   aplicável, segue o vídeo-régua e as autorizações atuais.
+
+**Evidência (voz, fatias 1 e 2):** `tests/test_voice.py` (42: nomes de hoje no longo e no Short contra as fórmulas
+congeladas em `tests/legacy_voice_names.py`, biblioteca, narrador, nova só depois de pronta), `tests/test_voice_scripts.py`
+(4: a geração dos dois scripts, o fechamento da voz e a parada com o motivo); mutações conferidas. Com dado real, só
+leitura: os 18 registros de fala dos Shorts do dono dão **zero falas faltando** (os WAVs existentes são reaproveitados).
 
 **Evidência:** testes de integração da produção a criar, mais os testes existentes de narração, captions,
 shots, efeitos e Shorts. O vídeo-régua complementa esses testes; não substitui provas de proteção e retomada.
@@ -300,9 +303,13 @@ Nenhuma bloqueia o RF4. O dono confirmou em 2026-11-01 que se segue sem decidir 
 | A entrega não neutra do Chatterbox muda de chave (ADR 041): essas falas são regeradas na próxima vez que a voz de um episódio rodar. Nada dispara isso sozinho; não rodar a voz de episódio aprovado sem necessidade. | Aviso | Contínuo |
 | Escrita atômica do Kokoro só é exercida no teste lento (`uv run pytest -m slow -k kokoro`, extra `tts`). Rodar com a máquina livre, depois da sonda de CPU (`cpu_probe`). | Dono pede | Quando quiser |
 | `data/publicacoes/registro.jsonl` já vinha modificado antes da refatoração e ficou fora dos commits. | Dono | Quando revisar os agendamentos |
-| Scripts `montar_episodio.py` e `shorts_tec.py` ainda usam a lógica própria de chave, lote e fechamento da voz. | Código | Depois da extração de `VoiceKey`, biblioteca e narrador |
+| ~~Scripts `montar_episodio.py` e `shorts_tec.py` com a lógica própria de chave, lote e fechamento da voz~~ Resolvido em 2026-11-01 (ADR 049, fatia 2). | Código | Resolvido |
 | Tratamento de erros: `except` por tipo restante em `app/commands/postiz.py`, `usage.py`, `postiz_cadeia.py` e nos scripts de voz (lista `ALLOWED` do gate). | Código | `postiz` e `usage` por contrato; os scripts de voz no RF6 |
 
 RF6 começou pela voz (ADR 049): `VoiceKey`, `VoiceLibrary` e `Narrator` em `app/pipeline/voice.py`, com os nomes de WAV de hoje
 preservados nos dois formatos (decisão do dono de manter os nomes) e a fala nova só substituindo a antiga depois de
 pronta. Os scripts de voz migram na fatia seguinte.
+
+A fatia 2 do RF6 (ADR 049) levou `montar_episodio.py` e `shorts_tec.py` para o `Narrator`: a fala nova só substitui a
+antiga depois de pronta, a voz fecha também na falha e as fórmulas dos nomes de antes ficam congeladas em
+`tests/legacy_voice_names.py`. Com os arquivos reais do dono, em leitura, nenhum WAV de Short seria regerado.

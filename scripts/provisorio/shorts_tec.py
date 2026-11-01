@@ -35,7 +35,6 @@ Uso: `.venv/bin/python scripts/provisorio/shorts_tec.py <verbo> ...`
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import re
@@ -50,17 +49,19 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.commands.errors import run  # noqa: E402
 from app.media.constants.loudness_constants import LoudnessConstants  # noqa: E402
 from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.pipeline.models.motion_content import MotionContent  # noqa: E402
+from app.pipeline.models.naming import Naming  # noqa: E402
+from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.models.voiced_speech import VoicedSpeech as Speech  # noqa: E402
 from app.pipeline.motion_inputs import fit_content, load_content, load_narration, load_voiced  # noqa: E402
-from app.providers.errors import ProviderError  # noqa: E402
-from app.providers.tts.base import SpeechRequest  # noqa: E402
+from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
+from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
 
-CLONED = ("chatterbox", "chatterbox_modal")
 # A voz clonada devolve silêncio nas pontas do WAV (até 1 s antes da fala, em 2026-10-25): a fala é o trecho
 # entre os silêncios das pontas, com uma respiração de cada lado.
 NOISE_DB = -35
@@ -82,23 +83,6 @@ class Line:
 def load_lines(path: Path) -> tuple[str, list[Line]]:
     narration = load_narration(path)
     return narration.language, [Line(x.scene, x.text, x.delivery or "neutral") for x in narration.lines]
-
-
-def wav_name(
-    line: Line,
-    index: int,
-    provider: str,
-    fingerprint: str,
-    language: str = "pt-BR",
-    spoken: str | None = None,
-) -> str:
-    """O nome do WAV da fala: a cena (ou `fora-N`), o provedor, o idioma e o hash do que muda a fala. O idioma
-    no nome separa as falas das duas línguas de uma mesma cena: sem ele, gerar uma apagava a outra. `spoken` é
-    o texto que a voz lê (com o glossário); sem termo do glossário, é o da narração e o nome não muda."""
-    delivery = f"|entrega:{line.delivery}" if provider in CLONED and line.delivery != "neutral" else ""
-    key = hashlib.sha256(f"{fingerprint}{delivery}|{spoken or line.text}".encode()).hexdigest()[:10]
-    stem = line.stem if line.scene else f"fora-{index}"
-    return f"{stem}-{provider}-{language.lower().replace('-', '')}-{key}.wav"
 
 
 def bounds_from_log(log: str, total: float, breath: float = BREATH_S) -> tuple[float, float]:
@@ -182,9 +166,30 @@ def mix_filter(
     return ";".join(parts)
 
 
+def generate_voice(tts: TTSProvider, language: str, lines: list[Line], folder: Path) -> list[Path]:
+    """O WAV de cada fala, na ordem (ADR 049; nome de WAV do Short, o mesmo de sempre): só as que faltam são
+    geradas e a antiga só sai depois da nova pronta e medida. Falta de fala é `VoiceIncomplete`."""
+    voice_dir = folder / "voice"
+    voice_dir.mkdir(parents=True, exist_ok=True)
+    glossary = load_glossary(folder)
+    narrator = Narrator(
+        tts,
+        language,
+        VoiceLibrary(voice_dir, Naming.SHORT),
+        lambda wav: duration_ms(wav) / 1000,
+        lambda text: respell(text, glossary),
+    )
+    speech = [
+        SpeechLine(line.stem if line.scene else f"fora-{index}", line.text, line.delivery)
+        for index, line in enumerate(lines)
+    ]
+    with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
+        wavs = narrator.require(narrator.produce(speech))
+    return [wavs[item.id] for item in speech]
+
+
 def cmd_voz(folder: Path, narration: Path, named: str | None) -> None:
     from app.bootstrap import build_context
-    from scripts.provisorio.montar_episodio import voice_fingerprint
 
     context = build_context(ROOT)
     settings = context.settings
@@ -193,45 +198,22 @@ def cmd_voz(folder: Path, narration: Path, named: str | None) -> None:
         provider, tts = named, context.tts_named(named)
     else:
         provider, tts = settings.providers.tts_final or settings.providers.tts, context.tts_final
-    fingerprint = voice_fingerprint(settings, provider, language)
-    voice_dir = folder / "voice"
-    voice_dir.mkdir(parents=True, exist_ok=True)
-    glossary = load_glossary(folder)
     started = time.monotonic()
     manifest = []
-    try:
-        for index, line in enumerate(lines):
-            spoken = respell(line.text, glossary)
-            wav = voice_dir / wav_name(line, index, provider, fingerprint, language, spoken)
-            if not wav.exists():
-                # Só as versões antigas desta fala, neste idioma: cena, provedor e idioma vêm antes do hash.
-                for stale in voice_dir.glob(f"{wav.name.rsplit('-', 1)[0]}-*.wav"):
-                    stale.unlink()
-                try:
-                    tts.synthesize_speech(
-                        SpeechRequest(text=spoken, out_path=wav, language=language, delivery=line.delivery)
-                    )
-                except ProviderError as error:
-                    raise SystemExit(
-                        f"{wav.name}: {error.reason}: {error}. As falas já geradas ficam; rode de novo."
-                    ) from error
-            seconds = duration_ms(wav) / 1000
-            begin, end = speech_bounds(wav)
-            manifest.append(
-                {
-                    "scene": line.scene,
-                    "text": line.text,
-                    "delivery": line.delivery,
-                    "wav": f"voice/{wav.name}",
-                    "seconds": seconds,
-                    "speech": [round(begin, 3), round(end, 3)],
-                }
-            )
-            print(f"{line.stem:16s} {seconds:5.2f} s (fala {begin:.2f}–{end:.2f})  {wav.name}")
-    finally:
-        close = getattr(tts, "close", None)
-        if close:
-            close()
+    for line, wav in zip(lines, generate_voice(tts, language, lines, folder), strict=True):
+        seconds = duration_ms(wav) / 1000
+        begin, end = speech_bounds(wav)
+        manifest.append(
+            {
+                "scene": line.scene,
+                "text": line.text,
+                "delivery": line.delivery,
+                "wav": f"voice/{wav.name}",
+                "seconds": seconds,
+                "speech": [round(begin, 3), round(end, 3)],
+            }
+        )
+        print(f"{line.stem:16s} {seconds:5.2f} s (fala {begin:.2f}–{end:.2f})  {wav.name}")
     out = folder / f"{narration.stem}.voz.json"
     out.write_text(
         json.dumps(
@@ -490,4 +472,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("shorts_tec", main))

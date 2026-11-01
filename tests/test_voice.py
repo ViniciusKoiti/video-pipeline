@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 import pytest
@@ -15,9 +14,8 @@ from app.pipeline.models.voice_key import VoiceKey
 from app.pipeline.voice import Narrator, VoiceLibrary
 from app.providers.errors import QuotaExhausted
 from app.providers.tts.kokoro import KokoroTTS
-from scripts.provisorio.montar_episodio import long_speech_tag, voice_fingerprint
-from scripts.provisorio.shorts_tec import Line, wav_name
 from tests.fakes import FakeBatchTTS, FakeTTS, make_settings, wav_duration_ms
+from tests.legacy_voice_names import long_name, short_name, voice_fingerprint
 from tests.test_tts_fingerprint import LONG, PAUSE, PLAIN, cloned_settings, gemini
 
 
@@ -50,32 +48,22 @@ def adapters(tmp_path: Path) -> dict[str, tuple]:  # type: ignore[type-arg]
 
 @pytest.mark.parametrize("provider", ["kokoro", "gemini", "chatterbox", "chatterbox_modal"])
 @pytest.mark.parametrize("text", TEXTS)
-def test_the_short_name_is_exactly_the_one_the_script_makes_today(
-    tmp_path: Path, provider: str, text: str
-) -> None:
+def test_the_short_name_is_the_one_made_before(tmp_path: Path, provider: str, text: str) -> None:
     """Decisão do dono: os WAVs dos Shorts aprovados na escuta não são regerados, nem com pausa ou entrega."""
     tts, settings = adapters(tmp_path)[provider]
     legacy = voice_fingerprint(settings, provider, "pt-BR")
     for index, delivery in enumerate(DELIVERIES):
-        scene = None if index == 1 else f"S0{index}"
-        line = Line(scene, text, delivery)
-        expected = wav_name(line, index, provider, legacy, "pt-BR", text)
-        stem = scene or f"fora-{index}"
+        stem = f"fora-{index}" if index == 1 else f"S0{index}"
+        expected = short_name(stem, provider, legacy, delivery, text)
         key = narrator(tts, tmp_path, Naming.SHORT).key(SpeechLine(stem, text, delivery))
         assert key.file_name(Naming.SHORT) == expected, f"{provider} / {delivery}"
 
 
 @pytest.mark.parametrize("provider", ["kokoro", "gemini", "chatterbox", "chatterbox_modal"])
 @pytest.mark.parametrize("text", TEXTS)
-def test_the_long_name_is_exactly_the_one_the_script_makes_today(
-    tmp_path: Path, provider: str, text: str
-) -> None:
+def test_the_long_name_is_the_one_made_before(tmp_path: Path, provider: str, text: str) -> None:
     tts, settings = adapters(tmp_path)[provider]
-    legacy = voice_fingerprint(settings, provider, "pt-BR")
-    pause = {"kokoro": 300, "chatterbox": 400, "chatterbox_modal": 400}.get(provider)
-    tagged = f"|pausa{pause}" if pause is not None and "<short pause>" in text else ""
-    raw = f"{legacy}{tagged}{long_speech_tag(provider, text)}|{text}".encode()
-    expected = f"S01-{provider}-{hashlib.sha256(raw).hexdigest()[:10]}.wav"
+    expected = long_name(settings, provider, "S01", text, "neutral", "pt-BR")
     assert narrator(tts, tmp_path).key(SpeechLine("S01", text)).file_name(Naming.LONG) == expected
 
 

@@ -349,7 +349,8 @@ lacuna fica registrada.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Nome do WAV e narrador (ADR 049, `app/pipeline/voice.py`):** `VoiceKey` + `VoiceLibrary` + `Narrator`. Os nomes de
   hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs dos Shorts já
-  aprovados fica como está** (decisão do dono, 2026-11-01). Fala nova só substitui a antiga depois de pronta e medida.
+  aprovados fica como está** (decisão do dono, 2026-11-01). Fala nova só substitui a antiga depois de pronta e medida. `montar_episodio.py` e `shorts_tec.py` geram a voz por
+  `generate_voice` (o `Narrator`), e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
 - **Porta de voz (ADR 041):** cada TTS tem `identity` (chave do cache, no nome do WAV; `gemini` é alias de
   `gemini_tts`) e `fingerprint(request)` com os parâmetros efetivos da síntese, sem o texto. O WAV só aparece
   inteiro e válido (`atomic_wav`). Lote e fallback em `app/media/speech_batches.py`: só o corte recusado

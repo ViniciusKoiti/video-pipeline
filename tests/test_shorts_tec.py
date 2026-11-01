@@ -60,30 +60,6 @@ def test_filtro_corta_a_fala_no_trecho_falado(shorts_tec) -> None:
     assert "[2:a]atrim=0.000:1.200,asetpts=PTS-STARTPTS,aformat=" in text
 
 
-def test_nome_do_wav_muda_com_texto_entrega_e_voz_e_fala_fora_do_json_ganha_indice(shorts_tec) -> None:
-    line = shorts_tec.Line("gancho", "Descrevi seis cenas.", "hook")
-    a = shorts_tec.wav_name(line, 0, "chatterbox_modal", "voz-a")
-    assert a.startswith("gancho-chatterbox_modal-ptbr-") and a.endswith(".wav")
-    # O idioma entra no nome: a fala em inglês da mesma cena não apaga a em português.
-    assert shorts_tec.wav_name(line, 0, "chatterbox_modal", "voz-a", "en").startswith(
-        "gancho-chatterbox_modal-en-"
-    )
-    assert a != shorts_tec.wav_name(line, 0, "chatterbox_modal", "voz-b")
-    neutral = shorts_tec.Line("gancho", "Descrevi seis cenas.", "neutral")
-    assert a != shorts_tec.wav_name(neutral, 0, "chatterbox_modal", "voz-a")
-    # O Kokoro ignora a entrega: o nome não muda com ela.
-    assert shorts_tec.wav_name(line, 0, "kokoro", "k") == shorts_tec.wav_name(neutral, 0, "kokoro", "k")
-    fora = shorts_tec.Line(None, "Fora do JSON.")
-    assert shorts_tec.wav_name(fora, 3, "kokoro", "k").startswith("fora-3-kokoro-ptbr-")
-
-
-def test_nome_do_wav_segue_o_texto_falado_do_glossario_e_nao_muda_sem_termo(shorts_tec) -> None:
-    line = shorts_tec.Line("gancho", "Um objeto JSON.")
-    plain = shorts_tec.wav_name(line, 0, "chatterbox_modal", "v")
-    assert shorts_tec.wav_name(line, 0, "chatterbox_modal", "v", spoken=line.text) == plain
-    assert shorts_tec.wav_name(line, 0, "chatterbox_modal", "v", spoken="Um objeto jêison.") != plain
-
-
 def test_narracao_lida_do_json_com_entrega_neutra_por_padrao(shorts_tec, tmp_path: Path) -> None:
     path = tmp_path / "narracao.pt.json"
     lines = [{"scene": "gancho", "text": " Oi. "}, {"scene": None, "text": "Fora."}]
