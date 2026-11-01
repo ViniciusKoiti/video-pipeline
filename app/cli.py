@@ -28,6 +28,7 @@ from app.commands import (
     reopen,
     sources,
     usage,
+    voice,
 )
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.errors import run
@@ -170,6 +171,7 @@ HANDLERS: dict[str, Handler] = {
     "medicao": conferences.medicao,
     "numeros": numeros.run,
     "sources": sources.run,
+    "voice": voice.run,
     "assets": assets.run,
     "briefs": briefs.run,
     "export": export.run,

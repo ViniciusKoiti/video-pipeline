@@ -27,6 +27,12 @@ def _new_arguments(parser: argparse.ArgumentParser) -> None:
         help="formato do episódio; decide o motor de render (ADR 001)",
     )
 
+def _voice_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--voz-final", action="store_true", help="a voz do vídeo final (tts_final, ADR 016)")
+    names = "gemini, chatterbox, chatterbox_modal, kokoro"
+    parser.add_argument("--voz", metavar="NOME", help=f"voz registrada pelo nome: {names}")
+
+
 def _render_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--preview", action="store_true", help="prévia em 720p")
 

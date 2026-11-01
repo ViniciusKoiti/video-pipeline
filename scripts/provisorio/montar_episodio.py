@@ -37,7 +37,6 @@ import os
 import sys
 import time
 from collections.abc import Callable
-from datetime import datetime
 from pathlib import Path
 
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
@@ -61,14 +60,10 @@ from app.media.loudness import integrated_lufs, loudness_problem  # noqa: E402
 from app.media.narration import strip_pauses  # noqa: E402
 from app.media.pauses import silences  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
-from app.media.pronunciation import load_glossary, respell  # noqa: E402
 from app.media.word_captions import SceneSpeech, sync_words  # noqa: E402
 from app.pipeline.assembly import EpisodeRenderer  # noqa: E402
 from app.pipeline.constants.schemas_constants import SchemasConstants  # noqa: E402
-from app.pipeline.models.naming import Naming  # noqa: E402
-from app.pipeline.models.speech_line import SpeechLine  # noqa: E402
 from app.pipeline.music import load_music_catalog, resolve_music  # noqa: E402
-from app.pipeline.ports import ManifestStore  # noqa: E402
 from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.schemas import (  # noqa: E402
     EpisodeFormat,
@@ -81,36 +76,12 @@ from app.pipeline.schemas import (  # noqa: E402
     VideoSpec,
 )
 from app.pipeline.shots import episode_shots, pacing_warnings  # noqa: E402
-from app.pipeline.voice import Narrator, VoiceLibrary  # noqa: E402
-from app.pipeline.voice_state import produce_with_state  # noqa: E402
+from app.pipeline.voice_production import produce_voice  # noqa: E402
 from app.providers.errors import ProviderError  # noqa: E402
-from app.providers.tts.base import TTSProvider, closing_tts  # noqa: E402
 from app.settings import Settings  # noqa: E402
 
 MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm")
 MUSIC_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")
-
-
-def generate_voice(
-    tts: TTSProvider, scenes: ScenesManifest, store: ManifestStore, episode_id: str
-) -> dict[str, Path]:
-    """O WAV de cada cena (ADR 049): só as que faltam são geradas, em lote quando a voz oferece, e a antiga só
-    sai depois da nova pronta e medida. Falta de fala é `VoiceIncomplete`; as prontas ficam para a próxima. O
-    relatório por cena fica no `manifest.json` (ADR 052) e o `vp status` o mostra."""
-    voice_dir = store.path(episode_id, "voice")
-    voice_dir.mkdir(parents=True, exist_ok=True)
-    glossary = load_glossary(store.path(episode_id, ""))
-    narrator = Narrator(
-        tts,
-        scenes.language,
-        VoiceLibrary(voice_dir, Naming.LONG),
-        lambda wav: duration_ms(wav) / 1000,
-        lambda text: respell(text, glossary),  # a grafia que a voz lê; sem termo, o texto do roteiro
-    )
-    lines = [SpeechLine(scene.id, scene.narration, scene.delivery or "neutral") for scene in scenes.scenes]
-    with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
-        outcomes = produce_with_state(narrator, store, episode_id, lines, now=datetime.now().astimezone())
-        return narrator.require(outcomes)
 
 
 def media_path(episode_dir: Path, asset_id: str) -> str:
@@ -211,7 +182,7 @@ def main() -> None:
     named = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--voz=")), None)
     tts = context.tts_named(named) if named else (context.tts_final if final else context.tts)
     started = time.monotonic()
-    wavs = generate_voice(tts, scenes, context.store, args[0])
+    wavs = produce_voice(tts, scenes, context.store, args[0])
 
     episode_scenes, cursor = [], 0
     for scene in scenes.scenes:

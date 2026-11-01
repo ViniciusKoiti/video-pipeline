@@ -53,7 +53,6 @@ def test_commands_without_a_handler_exit_with_the_not_implemented_code(
         "script",
         "scenes",
         "gallery",
-        "voice",
         "subs",
         "render",
     } <= set(stubs)

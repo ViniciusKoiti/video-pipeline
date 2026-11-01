@@ -379,4 +379,9 @@ Fatia 5: `metricas` virou `vp metricas iniciar|ler|pendentes|tabela` (`app/comma
 com código 1), e `--origem` e `--pedido` passaram a ser validados pelo argparse (erro de uso, código 2). A parte do
 script em `tests/test_metrics.py` virou `tests/test_metricas_command.py` (7 testes, 12 mutações conferidas; uma
 sobreviveu, a opção `--saida`, e ganhou teste). Faltam `montar_episodio`, `shorts_tec` e a classificação dos avulsos.
+Fatia 6a: a voz do longo virou `vp voice <id> [--voz-final | --voz NOME]` (`app/commands/voice.py`; a função
+`produce_voice` foi para `app/pipeline/voice_production.py`) e o `montar_episodio.py` a chama. `tests/test_voice_command.py`
+(6: as três escolhas de voz, o relógio por cena, a entrega de cada cena, o relatório de estado, a parada por cota com
+retomada, a falta do `scenes.json`; oito mutações conferidas, quatro sobreviveram e ganharam teste). Falta a 6b, o `vp render`
+(tempo dos planos, legenda, `episode.json` e render).
 

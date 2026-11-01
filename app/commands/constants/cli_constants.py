@@ -14,6 +14,7 @@ from app.commands.arguments import (
     _reject_arguments,
     _render_arguments,
     _reopen_arguments,
+    _voice_arguments,
 )
 from app.commands.models.command import Command
 from app.pipeline.schemas import CheckVerdict, Decision
@@ -38,7 +39,7 @@ class CliConstants:
         Command("script", "roteiro com retrieval + validação de schema e de claims", 27),
         Command("scenes", "divisão em cenas + visual_need + search_query", 28),
         Command("gallery", "galeria HTML estática em 127.0.0.1", 23),
-        Command("voice", "Kokoro por bloco + ffprobe -> voice/", 16),
+        Command("voice", "narração por cena -> voice/ (ADR 016, 049)", 16, add_arguments=_voice_arguments),
         Command("subs", "legendas alinhadas -> captions.srt", 17),
         Command("render", "motor escolhido -> renders/", 13, add_arguments=_render_arguments),
         Command("approve", "registra aprovação humana em review.json", 12, add_arguments=_approve_arguments),

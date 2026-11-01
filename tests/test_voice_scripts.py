@@ -11,9 +11,10 @@ from app.pipeline.models.naming import Naming
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.schemas import ScenesManifest
 from app.pipeline.voice import Narrator, VoiceIncomplete, VoiceLibrary
+from app.pipeline.voice_production import produce_voice
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore
-from scripts.provisorio import montar_episodio, shorts_tec
+from scripts.provisorio import shorts_tec
 from tests.fakes import FakeBatchTTS, wav_duration_ms
 
 SHORT_LINES = [
@@ -96,12 +97,12 @@ def scenes() -> ScenesManifest:
 def test_the_long_voice_uses_the_long_name_and_the_glossary_and_prunes_only_after_success(
     tmp_path: Path,
 ) -> None:
-    plain = montar_episodio.generate_voice(FakeBatchTTS(), scenes(), store(tmp_path), EP)
+    plain = produce_voice(FakeBatchTTS(), scenes(), store(tmp_path), EP)
     assert sorted(plain) == ["S01", "S02"] and all(p.name.startswith(f"{s}-fake-") for s, p in plain.items())
     assert "ptbr" not in plain["S01"].name  # o longo não leva o idioma no nome
     glossary = {"termos": [{"escrita": "JSON", "fala": "jêison"}]}
     (folder(tmp_path) / "voice" / "glossary.json").write_text(json.dumps(glossary), encoding="utf-8")
-    spelled = montar_episodio.generate_voice(FakeBatchTTS(), scenes(), store(tmp_path), EP)
+    spelled = produce_voice(FakeBatchTTS(), scenes(), store(tmp_path), EP)
     assert spelled["S01"] == plain["S01"]  # sem termo do glossário, o nome não muda
     assert spelled["S02"] != plain["S02"] and not plain["S02"].exists()  # a antiga saiu depois da nova pronta
     assert len(list((folder(tmp_path) / "voice").glob("S02-*.wav"))) == 1
@@ -113,8 +114,8 @@ def test_the_long_voice_stops_with_the_reason_per_scene_and_keeps_what_is_ready(
     bad = probe.key(SpeechLine("S02", "Uma frase com JSON.", "turn")).file_name(Naming.LONG)
     failing = FakeBatchTTS(max_batch_chars=1, scene_errors={bad: QuotaExhausted("fake", "10 por dia")})
     with pytest.raises(VoiceIncomplete, match="S02: quota_exhausted"):
-        montar_episodio.generate_voice(failing, scenes(), store(tmp_path), EP)
+        produce_voice(failing, scenes(), store(tmp_path), EP)
     assert failing.closed == 1 and len(list((folder(tmp_path) / "voice").glob("S01-*.wav"))) == 1
     ok = FakeBatchTTS(max_batch_chars=1)
-    montar_episodio.generate_voice(ok, scenes(), store(tmp_path), EP)
+    produce_voice(ok, scenes(), store(tmp_path), EP)
     assert [c for call in ok.calls for c in call] == [bad]  # só a que faltava
