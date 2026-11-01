@@ -15,7 +15,7 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
-from app.commands import numeros, postiz, reopen, sources, usage
+from app.commands import assets, conferences, numeros, postiz, reopen, sources, usage
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.errors import run
 from app.commands.models.command import Command as Command
@@ -31,7 +31,6 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
-from app.pipeline.medicao import medicao_problems
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.music import load_music_catalog
 from app.pipeline.pending import pending_pieces
@@ -41,7 +40,6 @@ from app.pipeline.schemas import (
     SourcesManifest,
     Step,
 )
-from app.pipeline.translation import translation_problems
 from app.render.remotion import region_codes
 from app.settings import speech_chars_per_second
 from app.settings.constants.settings_constants import SettingsConstants
@@ -125,24 +123,6 @@ def _decide(
     return 0
 
 
-def _medicao(args: argparse.Namespace, context: Context) -> int:
-    problems, warnings = medicao_problems(context.store, args.episode_id)
-    for problem in problems:
-        print(f"- {problem}")
-    for warning in warnings:
-        print(f"- aviso: {warning}")
-    print("resultado: " + (f"{len(problems)} problema(s)" if problems else "sem problemas"))
-    return 1 if problems else 0
-
-
-def _traducao(args: argparse.Namespace, context: Context) -> int:
-    problems = translation_problems(context.store, args.episode_id)
-    for problem in problems:
-        print(f"- {problem}")
-    print("resultado: " + (f"{len(problems)} problema(s)" if problems else "sem problemas"))
-    return 1 if problems else 0
-
-
 def _checagem(args: argparse.Namespace, context: Context) -> int:
     verdict, problems = load_check_report(args.parecer)
     entry = record_check(
@@ -219,10 +199,11 @@ HANDLERS: dict[str, Handler] = {
     "reopen": reopen.run,
     "status": _status,
     "checagem": _checagem,
-    "traducao": _traducao,
-    "medicao": _medicao,
+    "traducao": conferences.traducao,
+    "medicao": conferences.medicao,
     "numeros": numeros.run,
     "sources": sources.run,
+    "assets": assets.run,
     "postiz": postiz.run,
     "usage": usage.run,
 }
@@ -249,6 +230,7 @@ def build_parser() -> argparse.ArgumentParser:
         if command.add_arguments is not None:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
+    assets.add_arguments(subparsers.add_parser("assets", help="busca e baixa ativos visuais (ADR 044)"))
     sources.add_arguments(subparsers.add_parser("sources", help="registra uma fonte (ADR 043)"))
     usage.add_arguments(
         subparsers.add_parser("usage", help="consumo e orçamento dos agentes em SQLite local")

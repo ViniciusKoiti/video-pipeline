@@ -2,7 +2,7 @@
 
 Uso: python3 -I folhas.py <episódio> [--raiz .] [--pedidos t01-estadio t02-biblioteca] [--max 16]
 
-Lê `data/episodes/<episódio>/candidatos/<pedido>.json` (gravado por `buscar_candidatos.py`) e grava, em
+Lê `data/episodes/<episódio>/candidatos/<pedido>.json` (gravado por `vp assets search`) e grava, em
 `candidatos/galeria/`, `<pedido>.jpg` (4 colunas, o texto do plano no alto) e `<pedido>.ids.json` (os ids na
 mesma ordem dos números). Sem `--pedidos`, faz todos. Precisa de ffmpeg com drawtext e da fonte DejaVu Sans.
 """

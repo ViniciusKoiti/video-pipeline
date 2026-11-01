@@ -37,7 +37,6 @@ class CliConstants:
         Command("new", "cria data/episodes/<id>/ e o manifesto inicial", 12, add_arguments=_new_arguments),
         Command("script", "roteiro com retrieval + validação de schema e de claims", 27),
         Command("scenes", "divisão em cenas + visual_need + search_query", 28),
-        Command("assets", "busca visual em cascata, respeitando limites", 22),
         Command("gallery", "galeria HTML estática em 127.0.0.1", 23),
         Command("voice", "Kokoro por bloco + ffprobe -> voice/", 16),
         Command("subs", "legendas alinhadas -> captions.srt", 17),

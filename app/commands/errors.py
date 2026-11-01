@@ -4,7 +4,7 @@
 Qualquer outra exceção é bug e sobe com o traceback (§2.1). Com `VP_DEBUG` definido, o erro tratado também
 sobe, para depurar sem editar código. Comandos e scripts não têm `try/except` de erro do projeto: levantam,
 e este é o único ponto que decide a saída. A recuperação por cena ou por item continua no lugar onde ela é
-possível (`for_each_scene`, `run_scenes`, o laço de `baixar_escolhidos`).
+possível (`for_each_scene`, `run_scenes`, o laço de `vp assets take`).
 
 `postiz` e `usage` têm um contrato próprio de erro em JSON (`{"error": ...}`, mensagens fixas, sem detalhe
 que vaze segredo) e o mantêm.
