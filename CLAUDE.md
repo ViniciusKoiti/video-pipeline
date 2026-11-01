@@ -144,6 +144,9 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
 - Todo adapter declara `ProviderInfo(name, remote, usd_per_call)`; custo > 0 é recusado sem
   `ALLOW_PAID_API=true` e `MAX_API_SPEND_USD > 0`. `ProviderError` vira `needs_review` só na cena.
 - `tests/test_architecture.py` falha se `app/pipeline/` importar adapter concreto ou biblioteca pesada.
+- O núcleo (`app/pipeline`, `app/media`, `app/render`, `app/storage`) não lê `Settings`: recebe portas e valores
+  da composição (ADR 042). `Context` declara tudo o que o CLI e os scripts usam (`tts_final`, `tts_named`,
+  `word_aligner` incluídos) e o `FakeContext` o acompanha; `app.pipeline.production`/`short` só os comandos importam.
 - Modelos de dados de **todos os fluxos** ficam em `app/<área>/models/<nome_em_snake_case>.py`,
   uma classe por arquivo (ADR 037; gate em `tests/test_model_layout.py`). Inclui Pydantic, dataclasses,
   enums e TypedDicts. Validadores acompanham seus modelos; serviços, adapters e Protocols ficam fora.

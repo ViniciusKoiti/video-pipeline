@@ -165,3 +165,47 @@ def test_relative_imports_are_checked(source: str, package: str, expected: str) 
     imports = imported_modules(source, package=package)
     assert expected in imports
     assert violations("app.media.earshot", imports)
+
+
+# --- RF4: serviços não leem Settings e contratos compartilhados não carregam a orquestração ---------
+
+# Quem lê `Settings` é a composição e o CLI; o núcleo recebe portas e valores (G07). `ports.py` só declara
+# `Context.settings`, a conveniência do CLI.
+SETTINGS_FREE = ("app.pipeline", "app.media", "app.render", "app.storage")
+SETTINGS_EXCEPTIONS = {"app.pipeline.ports"}
+# Orquestração de um fluxo de produção (G09): ninguém fora dos comandos importa; nem a mídia nem os contratos
+# compartilhados (tradução, SFX, medição) carregam o ciclo de produção para medir ou conferir.
+FLOW_MODULES = ("app.pipeline.production", "app.pipeline.short")
+FLOW_CALLERS = (*COMPOSITION, "app.commands")
+
+
+def flow_violations(module: str, imports: set[str]) -> list[str]:
+    problems = []
+    for name in sorted(imports):
+        reads_settings = in_package(name, ("app.settings",)) and in_package(module, SETTINGS_FREE)
+        if reads_settings and module not in SETTINGS_EXCEPTIONS:
+            problems.append(f"{module} importa {name}: o núcleo recebe valores, não lê Settings")
+        if in_package(name, FLOW_MODULES) and not in_package(module, (*FLOW_CALLERS, *FLOW_MODULES)):
+            problems.append(f"{module} importa {name}: só os comandos importam a orquestração de produção")
+    return problems
+
+
+def test_services_do_not_read_settings_and_shared_contracts_do_not_pull_orchestration() -> None:
+    problems = []
+    for path in sorted(APP.rglob("*.py")):
+        module = module_name(path)
+        package = module if path.name == "__init__.py" else module.rpartition(".")[0]
+        problems += flow_violations(module, imported_modules(path.read_text(), package=package))
+    assert problems == []
+
+
+def test_flow_checker_catches_settings_in_a_service_and_orchestration_in_shared_code() -> None:
+    assert flow_violations("app.pipeline.voice", {"app.settings"}) == [
+        "app.pipeline.voice importa app.settings: o núcleo recebe valores, não lê Settings"
+    ]
+    assert flow_violations("app.pipeline.ports", {"app.settings"}) == []
+    assert flow_violations("app.commands.voice", {"app.settings", "app.pipeline.production"}) == []
+    assert flow_violations("app.media.earshot", {"app.pipeline.short"}) == [
+        "app.media.earshot importa app.pipeline.short: só os comandos importam a orquestração de produção"
+    ]
+    assert flow_violations("app.pipeline.translation", {"app.pipeline.production"}) != []

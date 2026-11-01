@@ -14,7 +14,7 @@ from typing import Protocol, TypeVar
 from pydantic import BaseModel
 
 from app.pipeline.schemas import EpisodeFormat, ReviewEntry, ReviewLog
-from app.providers.alignment.base import SubtitleAligner
+from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.image_gen.base import ImageGenProvider
 from app.providers.text.base import TextProvider
@@ -93,9 +93,14 @@ class Context(Protocol):
     @property
     def tts(self) -> TTSProvider: ...
     @property
+    def tts_final(self) -> TTSProvider: ...  # voz do vídeo final (ADR 012); sem ela, a dos rascunhos
+    def tts_named(self, name: str) -> TTSProvider: ...  # voz registrada, fora do providers.toml
+    @property
     def image_gen(self) -> ImageGenProvider: ...
     @property
     def archives(self) -> Sequence[ArchiveProvider]: ...  # na ordem da cascata
     @property
     def aligner(self) -> SubtitleAligner: ...
+    @property
+    def word_aligner(self) -> WordAligner: ...  # reconhecimento remoto: só com pedido do dono (ADR 023)
     def renderer(self, episode_format: EpisodeFormat) -> RenderEngine: ...  # motor do formato (ADR 001)

@@ -39,7 +39,7 @@ flowchart TD
 | RF1 | G01; fronteira de proteção de G02 | Implementado em 2026-11-01 (ADR 039); ligar os escritores concretos fica para RF5/RF6 |
 | RF2 | G03; recuperação de G02 | Implementado em 2026-11-01 (ADR 040); nenhum chamador real usa `run_scenes` ainda (RF3/RF6) |
 | RF3 | G04–G05 | Porta implementada em 2026-11-01 (ADR 041); `VoiceKey`, biblioteca, narrador e a migração dos dois scripts seguem pendentes |
-| RF4 | G06–G09 | Pendente |
+| RF4 | G06–G09 | Parcial em 2026-11-01 (ADR 042): `Context`, `Settings`, orquestração e registro de comandos provados; operações `voice`/`subs`/`render` e `EpisodeFolder` só com contrato escrito |
 | RF5 | G02, G10–G11 | Pendente |
 | RF6 | Integração G01–G11 no longo e Short | Pendente |
 | RF7 | G12 e encerramento da migração | Pendente |
@@ -155,16 +155,22 @@ seguinte, depois da extração de `VoiceKey`, biblioteca e narrador.
 **Entrega:** contratos e limites dos objetos que vão receber os scripts.
 
 - [ ] `voice` apenas produz voz; `subs` usa WAVs existentes; `render` não sintetiza nem alinha remotamente.
+  *(contrato no ADR 042; a prova depende de as operações existirem, RF6)*
 - [ ] Cada operação funciona em um processo novo com pré-requisitos próprios; voz de rascunho não exige
   ativos finais. Resolver as condições da voz final e do render final antes de habilitá-los.
-- [ ] Composição resolve configuração e entrega aos serviços só as portas e valores necessários.
-- [ ] `Context` e `FakeContext` declaram as capacidades realmente usadas pelo CLI.
+  *(condições propostas no ADR 042, a confirmar pelo dono ao implementar)*
+- [x] Composição resolve configuração e entrega aos serviços só as portas e valores necessários.
+  *(guarda: núcleo não importa `app.settings`; os serviços novos já recebem portas e valores)*
+- [x] `Context` e `FakeContext` declaram as capacidades realmente usadas pelo CLI.
 - [ ] `EpisodeFolder` cuida do acesso/layout; política de proteção e preparação de post não se duplicam nele.
+  *(a classe ainda não existe; fronteiras no ADR 042)*
 - [ ] Narração compartilhada não depende de `ShortProduction`; plano de revisão de áudio chega pronto à mídia.
-- [ ] Registro de comandos preserva argumentos e códigos de saída; nenhuma descoberta dinâmica de módulos.
+  *(a dependência já é barrada por teste; falta o `AudioReviewPlan` pronto, que nasce com o fluxo do Short)*
+- [x] Registro de comandos preserva argumentos e códigos de saída; nenhuma descoberta dinâmica de módulos.
 
-**Evidência:** testes do CLI, bootstrap e arquitetura; acrescentar testes de operações separadas quando
-forem implementadas. Os exemplos antigos de `run_voice -> Production.run()` não são critério de implementação.
+**Evidência:** `tests/test_context_contract.py`, `tests/test_command_registry.py` e os guardas novos de
+`tests/test_architecture.py` (mutações conferidas: serviço lendo `Settings`, `FakeContext` sem `word_aligner`);
+acrescentar testes de operações separadas quando forem implementadas. Os exemplos antigos de `run_voice -> Production.run()` não são critério de implementação.
 
 ### RF5 — Fontes, ativos e dados externos
 
@@ -236,6 +242,11 @@ RF3 foi entregue em seguida (ADR 041): `identity` e `fingerprint(request)` na po
 `closing_tts`, `atomic_wav` nos adapters, `app/media/speech_batches.py` (lote, fallback só no corte recusado, cota
 que para as chamadas) e `app/media/wav.py`. O `chatterbox.py` foi dividido (`chatterbox_text.py`). O próximo
 trabalho da sequência é RF4: operações públicas e direção das dependências.
+
+RF4 foi feito só no que existe (ADR 042): `Context` com `tts_final`, `tts_named` e `word_aligner` (e o `FakeContext`
+igual), guarda contra `Settings` no núcleo e contra a orquestração de produção em código compartilhado, e testes do
+registro de comandos. O que falta no RF4 depende de objetos que só nascem no RF6 (`voice`, `subs`, `render`,
+`EpisodeFolder`); o contrato deles está no ADR 042. O próximo trabalho da sequência é RF5: fontes, ativos e briefs.
 
 ## 5. Pendências abertas ao fim do RF3 (2026-11-01)
 

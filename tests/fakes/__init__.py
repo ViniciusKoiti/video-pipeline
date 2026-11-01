@@ -18,9 +18,10 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
+from app.bootstrap.registry import ConfigurationError
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, is_approved_json
 from app.pipeline.schemas import Asset, EpisodeManifest, Generation, Provider, ReviewEntry, ReviewLog, Status
-from app.providers.alignment.base import Cue
+from app.providers.alignment.base import Cue, TimedWord
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ProviderError
@@ -194,6 +195,20 @@ class FakeArchive:
         return dest
 
 
+class FakeWordAligner:
+    """Reparte as palavras do `prompt` (o texto esperado) pela duração do WAV."""
+
+    def __init__(self) -> None:
+        self.info = ProviderInfo("fake-word-aligner", remote=False)
+
+    def recognize_words(self, audio: Path, language: str, prompt: str = "") -> list[TimedWord]:
+        words, total = prompt.split(), wav_duration_ms(audio)
+        return [
+            TimedWord(word, total * i // len(words), total * (i + 1) // len(words))
+            for i, word in enumerate(words)
+        ]
+
+
 class FakeAligner:
     """Distribui as palavras pela duração do WAV, 7 por legenda."""
 
@@ -284,7 +299,19 @@ class FakeContext:
     image_gen: FakeImageGen = field(default_factory=FakeImageGen)
     archives: tuple[FakeArchive, ...] = (FakeArchive(),)
     aligner: FakeAligner = field(default_factory=FakeAligner)
+    word_aligner: FakeWordAligner = field(default_factory=FakeWordAligner)
+    final_tts: FakeTTS | None = None  # sem ele, `tts_final` é o `tts`, como no LazyContext
+    voices: dict[str, FakeTTS] = field(default_factory=dict)  # vozes por nome, para `tts_named`
     renderers: dict[str, FakeRender] = field(default_factory=dict)
+
+    @property
+    def tts_final(self) -> FakeTTS:
+        return self.final_tts or self.tts
+
+    def tts_named(self, name: str) -> FakeTTS:
+        if name not in self.voices:
+            raise ConfigurationError(f"tts = {name!r} não existe (opções: {', '.join(sorted(self.voices))})")
+        return self.voices[name]
 
     def renderer(self, episode_format: str) -> FakeRender:
         return self.renderers.setdefault(episode_format, FakeRender())
