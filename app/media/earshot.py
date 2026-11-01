@@ -18,13 +18,14 @@ from typing import Any
 
 from pydantic import TypeAdapter
 
+from app.errors import PipelineError
 from app.media.constants.earshot_constants import EarshotConstants
 from app.media.loudness import loudness_problem
 from app.media.models.audio_review import AudioReview as AudioReview
 from app.media.models.cue_sync import CueSync as CueSync
 
 
-class EarshotError(RuntimeError):
+class EarshotError(PipelineError, RuntimeError):
     pass
 
 

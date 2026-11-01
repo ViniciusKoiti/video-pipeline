@@ -6,6 +6,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Protocol
 
+from app.errors import PipelineError
 from app.pipeline.models._usage_types import Count as Count
 from app.pipeline.models._usage_types import Identifier as Identifier
 from app.pipeline.models._usage_types import Metric as Metric
@@ -14,7 +15,7 @@ from app.pipeline.models.usage_budget import UsageBudget as UsageBudget
 from app.pipeline.models.usage_request import UsageRequest as UsageRequest
 
 
-class UsageError(ValueError):
+class UsageError(PipelineError, ValueError):
     """Conflito de identidade, orçamento ou conciliação que exige corrigir a entrada."""
 
 

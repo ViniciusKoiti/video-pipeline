@@ -18,6 +18,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from app.errors import PipelineError
 from app.media.constants.word_captions_constants import WordCaptionsConstants
 from app.media.envelope import mouth_levels
 from app.media.host import check_sprites, host_corners, host_direction, sprites_hash, sprites_manifest
@@ -31,8 +32,8 @@ from app.render.constants.remotion_constants import RemotionConstants as Constan
 from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, parse_srt
 
 
-class RemotionError(RuntimeError):
-    pass
+class RemotionError(PipelineError, RuntimeError):
+    """O render do Remotion falhou, ou o template não está pronto."""
 
 
 def template_hash(project: Path) -> str:

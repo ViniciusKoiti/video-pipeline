@@ -15,6 +15,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+from app.errors import PipelineError
 from app.media.constants.host_constants import HostConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.schemas import EpisodeScene, HostCorner
@@ -24,7 +25,7 @@ from app.pipeline.schemas import EpisodeScene, HostCorner
 # Pele em camadas (ADR 029): com `sprites.json` na pasta, valem as camadas que ele cita, no formato
 # `host-sprites.v1` do motion-kit; sem ele, as 12 imagens inteiras da ADR 017.
 
-class SpriteCheckError(RuntimeError):
+class SpriteCheckError(PipelineError, RuntimeError):
     """A pasta da pele não passou na conferência do motion-kit."""
 
 

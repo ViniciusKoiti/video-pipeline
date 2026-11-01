@@ -7,12 +7,13 @@ import subprocess
 from collections.abc import Sequence
 from pathlib import Path
 
+from app.errors import PipelineError
 from app.media.constants.loudness_constants import LoudnessConstants
 
 # Intensidade de 1 a 5 da faixa pela loudness integrada: limites em LUFS de cada degrau acima do 1.
 
 
-class LoudnessError(RuntimeError):
+class LoudnessError(PipelineError, RuntimeError):
     pass
 
 

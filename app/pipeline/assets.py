@@ -22,6 +22,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from urllib.parse import urlparse
 
+from app.errors import PipelineError
 from app.pipeline.constants.assets_constants import AssetsConstants as Constants
 from app.pipeline.file_hash import sha256_file
 from app.pipeline.models.archive_availability import ArchiveAvailability
@@ -36,11 +37,11 @@ from app.providers.archives.base import ArchiveProvider, AssetQuery
 from app.providers.errors import PaidApiBlocked, ProviderError
 
 
-class NoArchiveAvailable(RuntimeError):
+class NoArchiveAvailable(PipelineError, RuntimeError):
     """Nenhum banco da cascata pôde ser usado; a mensagem diz por que cada um foi pulado."""
 
 
-class AssetError(ValueError):
+class AssetError(PipelineError, ValueError):
     """Ativo que não pode ser recebido (mídia vazia, aprovado sem a mídia); nada foi alterado."""
 
 

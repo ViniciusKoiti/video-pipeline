@@ -8,12 +8,13 @@ from app.bootstrap.models._bootstrap_registry_types import Factory as Factory
 from app.bootstrap.models._bootstrap_registry_types import T_co as T_co
 from app.bootstrap.models.registration import Registration as Registration
 from app.bootstrap.models.registry import Registry as Registry
+from app.errors import PipelineError
 from app.providers.base import ProviderInfo
 from app.providers.errors import PaidApiBlocked
 from app.settings import Budget, Settings
 
 
-class ConfigurationError(ValueError):
+class ConfigurationError(PipelineError, ValueError):
     pass
 
 

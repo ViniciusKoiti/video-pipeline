@@ -9,6 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from app.commands.errors import run as handled
 from app.pipeline.models.archive_availability import ArchiveAvailability
 from app.pipeline.models.skipped_archive import SkippedArchive
 from app.pipeline.schemas import Asset
@@ -25,9 +26,10 @@ def root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return tmp_path
 
 
-def run(module: object, monkeypatch: pytest.MonkeyPatch, *argv: str) -> None:
+def run(module: object, monkeypatch: pytest.MonkeyPatch, *argv: str) -> int:
+    """O ponto de entrada real do script: `main` dentro do handler central (ADR 045)."""
     monkeypatch.setattr(sys, "argv", ["script", *argv])
-    module.main()  # type: ignore[attr-defined]
+    return handled("script", module.main)  # type: ignore[attr-defined]
 
 
 def requests_file(root: Path) -> Path:
@@ -37,12 +39,12 @@ def requests_file(root: Path) -> Path:
 
 
 def test_search_with_no_available_bank_stops_without_writing_candidates(
-    root: Path, monkeypatch: pytest.MonkeyPatch
+    root: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     none = ArchiveAvailability((), (SkippedArchive("pexels", "PEXELS_API_KEY ausente"),))
     monkeypatch.setattr(buscar_candidatos, "available_archives", lambda settings: none)
-    with pytest.raises(SystemExit, match="nenhum banco disponível.*pexels: PEXELS_API_KEY ausente"):
-        run(buscar_candidatos, monkeypatch, EP, str(requests_file(root)))
+    assert run(buscar_candidatos, monkeypatch, EP, str(requests_file(root))) == 1
+    assert "script: nenhum banco disponível (pexels: PEXELS_API_KEY ausente)" in capsys.readouterr().err
     assert not (root / "episodes" / EP / "candidatos").exists()  # não é uma busca vazia
 
 
@@ -55,7 +57,7 @@ def test_search_records_failures_and_skipped_banks_in_the_candidates_file(
     quota = Bank("pexels", error=QuotaExhausted("pexels", "limite"))
     avail = ArchiveAvailability((quota, good), (SkippedArchive("unsplash", "sem chave"),))
     monkeypatch.setattr(buscar_candidatos, "available_archives", lambda settings: avail)
-    run(buscar_candidatos, monkeypatch, EP, str(requests_file(root)))
+    assert run(buscar_candidatos, monkeypatch, EP, str(requests_file(root))) == 0
     saved = json.loads((root / "episodes" / EP / "candidatos" / "cimento.json").read_text())
     assert [c["ativo"]["id"] for c in saved["candidatos"]] == ["pixabay-video-9"]
     assert [(f["banco"], f["razao"]) for f in saved["falhas"]] == [("pexels", "quota_exhausted")]
@@ -63,12 +65,12 @@ def test_search_records_failures_and_skipped_banks_in_the_candidates_file(
 
 
 def test_a_blocked_paid_provider_stops_the_search_with_a_message(
-    root: Path, monkeypatch: pytest.MonkeyPatch
+    root: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     avail = ArchiveAvailability((Bank("pexels", error=PaidApiBlocked("pexels", "plano pago")),))
     monkeypatch.setattr(buscar_candidatos, "available_archives", lambda settings: avail)
-    with pytest.raises(SystemExit, match="provedor pago bloqueado"):
-        run(buscar_candidatos, monkeypatch, EP, str(requests_file(root)))
+    assert run(buscar_candidatos, monkeypatch, EP, str(requests_file(root))) == 1
+    assert "script: pexels: plano pago" in capsys.readouterr().err
 
 
 def write_candidates(root: Path, asset: Asset) -> None:
@@ -87,9 +89,8 @@ def test_download_keeps_earlier_scenes_and_a_repeat_is_not_an_error(
     monkeypatch.setattr(
         baixar_escolhidos, "available_archives", lambda settings: ArchiveAvailability((bank,))
     )
-    run(baixar_escolhidos, monkeypatch, EP, "S01", asset.id)
-    run(baixar_escolhidos, monkeypatch, EP, "S02", asset.id)
-    run(baixar_escolhidos, monkeypatch, EP, "S02", asset.id)
+    codes = [run(baixar_escolhidos, monkeypatch, EP, scene, asset.id) for scene in ("S01", "S02", "S02")]
+    assert codes == [0, 0, 0]  # repetir não é erro
     out = capsys.readouterr().out
     assert "baixado; cenas ['S01']" in out and "cena acrescentada; cenas ['S01', 'S02']" in out
     assert "nada a fazer" in out and bank.downloads == [asset.id]
@@ -105,9 +106,7 @@ def test_download_reports_each_failure_and_exits_nonzero_without_stopping_the_ot
     monkeypatch.setattr(
         baixar_escolhidos, "available_archives", lambda settings: ArchiveAvailability((Bank("pexels"),))
     )
-    with pytest.raises(SystemExit) as stopped:
-        run(baixar_escolhidos, monkeypatch, EP, "S01", "pexels-video-404", asset.id)
-    assert stopped.value.code == 1
+    assert run(baixar_escolhidos, monkeypatch, EP, "S01", "pexels-video-404", asset.id) == 1
     captured = capsys.readouterr()
     assert "pexels-video-404: ERRO" in captured.err and "não está em candidatos" in captured.err
     assert f"{asset.id}: baixado" in captured.out  # o outro ativo seguiu
@@ -120,6 +119,5 @@ def test_download_of_an_unavailable_bank_says_why(
     write_candidates(root, asset)
     avail = ArchiveAvailability((Bank("pexels"),), (SkippedArchive("pixabay", "PIXABAY_API_KEY ausente"),))
     monkeypatch.setattr(baixar_escolhidos, "available_archives", lambda settings: avail)
-    with pytest.raises(SystemExit):
-        run(baixar_escolhidos, monkeypatch, EP, "S01", asset.id)
+    assert run(baixar_escolhidos, monkeypatch, EP, "S01", asset.id) == 1
     assert "o banco pixabay não está disponível (PIXABAY_API_KEY ausente)" in capsys.readouterr().err

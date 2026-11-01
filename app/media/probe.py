@@ -6,8 +6,10 @@ import json
 import subprocess
 from pathlib import Path
 
+from app.errors import PipelineError
 
-class ProbeError(RuntimeError):
+
+class ProbeError(PipelineError, RuntimeError):
     pass
 
 

@@ -31,6 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.commands.errors import run  # noqa: E402
 from app.media import evolution  # noqa: E402
 from app.pipeline.bench import cpu_probe  # noqa: E402
 from app.pipeline.constants.bench_constants import BenchConstants  # noqa: E402
@@ -103,38 +104,35 @@ def main() -> None:
 
     episode_dir = load_settings(ROOT).data_dir / "episodes" / args.episode_id
     folder = episode_dir / "renders" / "evolucao"
-    try:
-        if args.command == "gerar":
-            probe = cpu_probe()
-            if probe > BenchConstants.CPU_PROBE_SLOW_S:
-                raise SystemExit(
-                    f"CPU limitada (sonda {probe:.2f} s, limite {BenchConstants.CPU_PROBE_SLOW_S} s): "
-                    "feche os apps pesados e tente de novo"
-                )
-            started = time.monotonic()
-            script = ROOT / "scripts" / "provisorio" / "montar_episodio.py"
-            # O vídeo-régua fica com a voz com que foi gravado (Charon, ADR 012), já guardada: só o
-            # template muda. A voz final de hoje é outra (ADR 016) e mudaria o tempo de todos os planos.
-            command = [sys.executable, str(script), args.episode_id, "--preview", "--voz=gemini"]
-            subprocess.run(command, cwd=ROOT, check=True)
-            save(episode_dir, args.nota, None, round(time.monotonic() - started, 1), probe)
-        elif args.command == "guardar":
-            save(episode_dir, args.nota, args.commit, args.tempo_s, args.sonda)
-        elif args.command == "comparar":
-            names = args.versoes.split(",") if args.versoes else evolution.versions(folder)
-            suffix = "" if not args.versoes else "-" + "-".join(names)
-            out = folder / f"folha{suffix}.jpg"
-            changes = evolution.contact_sheet(folder, names, out)
-            print(f"folha: {out} ({len(names)} versões; borda nos quadros que mudaram)")
-            for name, changed in changes.items():
-                print(f"  {name}: {', '.join(changed) or 'nenhum plano mudou'}")
-        else:
-            out = folder / f"{args.antes}-{args.depois}.mp4"
-            evolution.side_by_side(folder, args.antes, args.depois, out)
-            print(f"lado a lado: {out}")
-    except evolution.EvolutionError as error:
-        raise SystemExit(str(error)) from error
+    if args.command == "gerar":
+        probe = cpu_probe()
+        if probe > BenchConstants.CPU_PROBE_SLOW_S:
+            raise SystemExit(
+                f"CPU limitada (sonda {probe:.2f} s, limite {BenchConstants.CPU_PROBE_SLOW_S} s): "
+                "feche os apps pesados e tente de novo"
+            )
+        started = time.monotonic()
+        script = ROOT / "scripts" / "provisorio" / "montar_episodio.py"
+        # O vídeo-régua fica com a voz com que foi gravado (Charon, ADR 012), já guardada: só o
+        # template muda. A voz final de hoje é outra (ADR 016) e mudaria o tempo de todos os planos.
+        command = [sys.executable, str(script), args.episode_id, "--preview", "--voz=gemini"]
+        subprocess.run(command, cwd=ROOT, check=True)
+        save(episode_dir, args.nota, None, round(time.monotonic() - started, 1), probe)
+    elif args.command == "guardar":
+        save(episode_dir, args.nota, args.commit, args.tempo_s, args.sonda)
+    elif args.command == "comparar":
+        names = args.versoes.split(",") if args.versoes else evolution.versions(folder)
+        suffix = "" if not args.versoes else "-" + "-".join(names)
+        out = folder / f"folha{suffix}.jpg"
+        changes = evolution.contact_sheet(folder, names, out)
+        print(f"folha: {out} ({len(names)} versões; borda nos quadros que mudaram)")
+        for name, changed in changes.items():
+            print(f"  {name}: {', '.join(changed) or 'nenhum plano mudou'}")
+    else:
+        out = folder / f"{args.antes}-{args.depois}.mp4"
+        evolution.side_by_side(folder, args.antes, args.depois, out)
+        print(f"lado a lado: {out}")
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("evolucao", main))

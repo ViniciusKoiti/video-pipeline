@@ -13,6 +13,7 @@ from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
+from app.errors import PipelineError
 from app.pipeline.schemas import EpisodeFormat, ReviewEntry, ReviewLog
 from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
@@ -25,15 +26,15 @@ from app.settings import Settings
 M = TypeVar("M", bound=BaseModel)
 
 
-class ManifestNotFound(LookupError):
+class ManifestNotFound(PipelineError, LookupError):
     pass
 
 
-class ImmutableManifest(PermissionError):
+class ImmutableManifest(PipelineError, PermissionError):
     """§2.6: arquivo aprovado não é sobrescrito pelo código; reabrir é explícito (vp reopen)."""
 
 
-class EpisodeLocked(RuntimeError):
+class EpisodeLocked(PipelineError, RuntimeError):
     """Outra execução já está trabalhando neste episódio (uma de cada vez, §3)."""
 
 

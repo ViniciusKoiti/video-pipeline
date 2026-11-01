@@ -15,6 +15,7 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
+from app.errors import PipelineError
 from app.providers.constants.http_constants import HttpConstants
 from app.providers.models._http_types import JsonPayload as JsonPayload
 from app.providers.models.json_response import JsonResponse as JsonResponse
@@ -33,7 +34,7 @@ def parse_json(raw: str | bytes) -> JsonPayload:
     return value
 
 
-class TransportError(Exception):
+class TransportError(PipelineError):
     def __init__(self, status: int | None, message: str) -> None:
         super().__init__(f"HTTP {status}: {message}" if status else message)
         self.status = status

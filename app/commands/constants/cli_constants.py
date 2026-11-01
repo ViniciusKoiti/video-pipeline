@@ -20,8 +20,12 @@ from app.pipeline.schemas import CheckVerdict, Decision
 
 
 class CliConstants:
+    # erro esperado tratado na borda (`app.commands.errors.run`); 2 é o uso incorreto do argparse
+    EXIT_ERROR: Final[int] = 1
     # distinto de 1 (falha) e 2 (uso incorreto, argparse)
     EXIT_NOT_IMPLEMENTED: Final[int] = 3
+    # com `VP_DEBUG` definido, o erro tratado sobe com o traceback inteiro
+    DEBUG_ENV: Final[str] = "VP_DEBUG"
     COMMANDS: Final[tuple[Command, ...]] = (
         Command(
             "bench",

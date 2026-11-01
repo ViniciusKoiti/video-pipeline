@@ -15,6 +15,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from app.errors import PipelineError
 from app.pipeline.constants.state_constants import StateConstants
 from app.pipeline.models.action import Action as Action
 from app.pipeline.models.episode_state import EpisodeState as EpisodeState
@@ -32,19 +33,19 @@ InputHash = str | Callable[[], str]  # um callable é resolvido sob o lock e con
 # Transições do §5. Sair de APPROVED/COMPLETED para refazer só por reabertura explícita (reopen_step).
 
 
-class InvalidTransition(ValueError):
+class InvalidTransition(PipelineError, ValueError):
     pass
 
 
-class StaleApproval(RuntimeError):
+class StaleApproval(PipelineError, RuntimeError):
     """Etapa aprovada recebeu entrada diferente: refazer exige reabrir (§2.6)."""
 
 
-class OutputMissing(RuntimeError):
+class OutputMissing(PipelineError, RuntimeError):
     """Etapa aprovada com saída ausente ou inválida: o código não a recria; reabra para refazer (§2.6)."""
 
 
-class InputChanged(RuntimeError):
+class InputChanged(PipelineError, RuntimeError):
     """A entrada mudou durante a execução: o resultado não vale e nada é marcado como concluído."""
 
 

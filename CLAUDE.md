@@ -153,6 +153,11 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
   Provedores usam também `app/providers/<função>/models/`. Não criar pastas vazias nem um catálogo global.
   Imports novos usam o módulo específico; `app.pipeline.schemas` e os demais módulos anteriores mantêm
   reexports de compatibilidade. `app.settings/` e `app.bootstrap/` são pacotes com seus próprios modelos.
+- **Erros esperados (ADR 045):** toda classe de erro de `app/` herda de `app.errors.PipelineError` (e da base de
+  antes). Comandos e scripts não têm `try/except` de erro do projeto: levantam, e `app.commands.errors.run` é o
+  único ponto que imprime `vp <comando>: <mensagem>` e sai com 1 (`VP_DEBUG=1` sobe o traceback). Bug nunca é
+  capturado ali. A recuperação por cena ou por item fica onde ela é possível. `postiz` e `usage` mantêm o erro em
+  JSON. Gate em `tests/test_errors_layout.py`; script novo termina com `raise SystemExit(run("nome", main))`.
 - Constantes de todos os fluxos de `app/`, inclusive valores privados e de validação, usam classes em
   `app/<área>/constants/<responsabilidade>_constants.py`, com atributos `Final` e coleções imutáveis
   (ADR 038; gate `tests/test_constants_layout.py`). Mapas aninhados também são imutáveis: usar

@@ -25,7 +25,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.media.earshot import EarshotError, parse_review, review_problems, run_timeline  # noqa: E402
+from app.commands.errors import run  # noqa: E402
+from app.media.earshot import parse_review, review_problems, run_timeline  # noqa: E402
 from app.pipeline.bench import cpu_probe  # noqa: E402
 
 CPU_LIMIT_S = 0.3
@@ -93,10 +94,7 @@ def main() -> int:
             f"conferir_audio: máquina limitada (sonda {probe:.2f} s > {CPU_LIMIT_S}); medida inválida"
         )
     out = Path(flags.get("--saida") or f"{media}.earshot.json")
-    try:
-        review = parse_review(run_timeline(python, media, cuts, out, settings.earshot.threads))
-    except EarshotError as error:
-        raise SystemExit(f"conferir_audio: {error}") from error
+    review = parse_review(run_timeline(python, media, cuts, out, settings.earshot.threads))
     beat = "sem batida"
     if review.has_beat:
         beat = f"{review.tempo_bpm:.0f} bpm, pulso {review.pulse_clarity:.2f}"
@@ -121,4 +119,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(run("conferir_audio", main))

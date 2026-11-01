@@ -22,12 +22,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from app.commands.errors import run  # noqa: E402
 from app.pipeline.models.source_draft import SourceDraft  # noqa: E402
-from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound  # noqa: E402
 from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.schemas import SourceKind  # noqa: E402
-from app.pipeline.sources import SourceError, SourceRegistry, fetch_url, from_file  # noqa: E402
-from app.providers.http import TransportError, download  # noqa: E402
+from app.pipeline.sources import SourceRegistry, fetch_url, from_file  # noqa: E402
+from app.providers.http import download  # noqa: E402
 from app.settings import load_settings  # noqa: E402
 from app.storage.json_files import JsonFileStore, JsonReviewGate  # noqa: E402
 
@@ -60,14 +60,11 @@ def main() -> None:
         interested=args.interested,
         notes=args.notes,
     )
-    try:
-        if args.file:
-            extracted = from_file(Path(args.file), pdf_text)
-        else:
-            extracted = fetch_url(args.url, lambda url, dest: download(url, dest, {}, 120), pdf_text)
-        result = registry.register(args.episode_id, draft, extracted)
-    except (SourceError, ManifestNotFound, EpisodeLocked, ImmutableManifest, TransportError) as error:
-        raise SystemExit(f"{args.episode_id}: {error}") from error
+    if args.file:
+        extracted = from_file(Path(args.file), pdf_text)
+    else:
+        extracted = fetch_url(args.url, lambda url, dest: download(url, dest, {}, 120), pdf_text)
+    result = registry.register(args.episode_id, draft, extracted)
     source = result.source
     if not result.created:
         print(f"{source.id}: já registrada para esta URL; nada foi escrito")
@@ -77,4 +74,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("baixar_fonte", main))

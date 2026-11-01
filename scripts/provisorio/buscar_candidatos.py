@@ -30,10 +30,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap.archives import available_archives  # noqa: E402
-from app.pipeline.assets import NoArchiveAvailable, require_archives, search_archives  # noqa: E402
+from app.commands.errors import run  # noqa: E402
+from app.pipeline.assets import require_archives, search_archives  # noqa: E402
 from app.pipeline.schemas import Orientation, VisualNeed  # noqa: E402
 from app.providers.archives.base import AssetCandidate, AssetQuery  # noqa: E402
-from app.providers.errors import PaidApiBlocked  # noqa: E402
 from app.settings import load_settings  # noqa: E402
 
 
@@ -79,10 +79,7 @@ def main() -> None:
     availability = available_archives(settings)
     for skipped in availability.skipped:
         print(f"pulado: {skipped.name} ({skipped.reason})")
-    try:
-        archives = require_archives(availability)
-    except NoArchiveAvailable as error:
-        raise SystemExit(f"{args.episode_id}: {error}; nenhum candidato foi gravado") from error
+    archives = require_archives(availability)  # sem banco: erro, e nada é gravado
     out_dir.mkdir(parents=True, exist_ok=True)
     print("bancos:", ", ".join(a.info.name for a in archives))
     default_orientation = episode_orientation(out_dir.parent)
@@ -103,11 +100,7 @@ def main() -> None:
                     min_duration_s=pedido.get("min_duration_s") if media == "video" else None,
                     orientation=orientation,
                 )
-                try:
-                    searched = search_archives(archives, query)
-                except PaidApiBlocked as error:
-                    message = f"{pedido['id']}: busca interrompida, provedor pago bloqueado: {error}"
-                    raise SystemExit(message) from error
+                searched = search_archives(archives, query)  # PaidApiBlocked interrompe a busca
                 failures += [
                     {"banco": f.bank, "consulta": f.query, "razao": f.reason, "motivo": f.detail}
                     for f in searched.failures
@@ -129,4 +122,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("buscar_candidatos", main))

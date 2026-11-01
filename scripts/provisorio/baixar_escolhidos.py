@@ -24,12 +24,12 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap.archives import available_archives  # noqa: E402
-from app.pipeline.assets import AssetError, AssetIntake, NoArchiveAvailable, require_archives  # noqa: E402
+from app.commands.errors import run  # noqa: E402
+from app.errors import PipelineError  # noqa: E402
+from app.pipeline.assets import AssetError, AssetIntake, require_archives  # noqa: E402
 from app.pipeline.models.intake_action import IntakeAction  # noqa: E402
-from app.pipeline.ports import EpisodeLocked, ImmutableManifest  # noqa: E402
 from app.pipeline.protection import ReviewWriteGuard  # noqa: E402
 from app.pipeline.schemas import Asset  # noqa: E402
-from app.providers.errors import ProviderError  # noqa: E402
 from app.settings import load_settings  # noqa: E402
 from app.storage.json_files import JsonFileStore, JsonReviewGate  # noqa: E402
 
@@ -51,7 +51,7 @@ def candidates(episode_dir: Path) -> dict[str, dict]:
     return records
 
 
-def main() -> None:
+def main() -> int:
     formatter = argparse.RawDescriptionHelpFormatter
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=formatter)
     parser.add_argument("episode_id")
@@ -63,10 +63,7 @@ def main() -> None:
     intake = AssetIntake(store, ReviewWriteGuard(store, JsonReviewGate(store)))
     records = candidates(store.path(args.episode_id, ""))
     availability = available_archives(settings)
-    try:
-        banks = {bank.info.name: bank for bank in require_archives(availability)}
-    except NoArchiveAvailable as error:
-        raise SystemExit(f"{args.episode_id}: {error}") from error
+    banks = {bank.info.name: bank for bank in require_archives(availability)}
     failed = False
     for asset_id in args.asset_ids:
         try:
@@ -78,14 +75,13 @@ def main() -> None:
                 why = {s.name: s.reason for s in availability.skipped}.get(bank, "fora da cascata")
                 raise AssetError(f"{asset_id}: o banco {bank} não está disponível ({why})")
             result = intake.take(args.episode_id, asset, args.scene_id, banks[asset.provider.value])
-        except (AssetError, EpisodeLocked, ImmutableManifest, ProviderError) as error:
+        except PipelineError as error:  # recuperação por ativo: o erro de um não para os outros
             print(f"{asset_id}: ERRO {error}", file=sys.stderr)
             failed = True
             continue
         print(f"{asset_id}: {LABELS[result.action]}; cenas {result.asset.used_in_scenes}")
-    if failed:
-        raise SystemExit(1)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(run("baixar_escolhidos", main))

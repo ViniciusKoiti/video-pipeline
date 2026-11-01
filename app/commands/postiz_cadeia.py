@@ -19,6 +19,7 @@ from typing import Any
 
 from app.commands.constants.postiz_cadeia_constants import PostizCadeiaConstants
 from app.commands.postiz_links import LinkFetch, caption_links, link_findings, link_status
+from app.errors import PipelineError
 from app.pipeline.gates import gate_report
 from app.pipeline.ports import Context
 from app.pipeline.schemas import Decision, Step
@@ -163,7 +164,7 @@ def package(
     return result
 
 
-class ChainError(ValueError):
+class ChainError(PipelineError, ValueError):
     """O agendamento não tem o pacote de decisão ou a dúvida cega exigidos."""
 
 

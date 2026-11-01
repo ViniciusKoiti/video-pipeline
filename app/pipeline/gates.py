@@ -26,6 +26,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from app.errors import PipelineError
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.constants.medicao_constants import MedicaoConstants
 from app.pipeline.constants.translation_constants import TranslationConstants
@@ -49,8 +50,8 @@ from app.pipeline.state import Clock, compute_input_hash
 from app.pipeline.translation import translation_hash, translation_problems
 
 
-class GateError(ValueError):
-    pass
+class GateError(PipelineError, ValueError):
+    """Gate que não pode ser decidido, conferido ou reaberto (arquivo faltando, parecer ausente)."""
 
 
 def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str:

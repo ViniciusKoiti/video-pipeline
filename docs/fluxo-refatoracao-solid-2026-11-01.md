@@ -195,6 +195,21 @@ intocado, mídia trocada, falhas injetadas, JSON por último, lock; mutações c
 preservação de campos desconhecidos e briefs/catálogo de música. Criar testes específicos de ativos e briefs e ampliar os de
 música/Short conforme a fatia. Nenhum critério passa só porque um arquivo foi movido para `app/`.
 
+### RF5-bis — Tratamento único de erros (ADR 045)
+
+**Entrega:** os erros esperados são tratados num ponto só, na borda, sem `try/except` por tipo nos comandos e
+scripts. Pedido do dono em 2026-11-01, entre as fatias do RF5.
+
+- [x] Toda classe de erro de `app/` herda de `PipelineError`, mantendo a base de antes.
+- [x] `app.commands.errors.run` é o único tratamento: mensagem no stderr e código 1; o CLI e os scripts o usam.
+- [x] Bug continua com traceback; `VP_DEBUG` sobe o erro tratado com o traceback.
+- [x] Códigos de saída preservados (1, 2 do argparse, 3 dos comandos sem handler).
+- [x] Gate impede regressão: classe de erro fora da árvore e `except` de erro do projeto em comando ou script.
+
+**Evidência:** `tests/test_errors.py` (handler, compatibilidade das 26 classes com a base antiga, parecer do
+verificador) e `tests/test_errors_layout.py` (gate e o verificador do gate; mutações conferidas). **Pendente:**
+`montar_episodio.py` e `shorts_tec.py` (migram no RF6); `postiz` e `usage` mantêm o contrato em JSON.
+
 ### RF6 — Integração da produção longa e Short
 
 **Entrega:** comandos sobre os componentes verificados, uma operação por mudança revisável.
@@ -270,3 +285,4 @@ Nenhuma bloqueia o RF4. O dono confirmou em 2026-11-01 que se segue sem decidir 
 | Escrita atômica do Kokoro só é exercida no teste lento (`uv run pytest -m slow -k kokoro`, extra `tts`). Rodar com a máquina livre, depois da sonda de CPU (`cpu_probe`). | Dono pede | Quando quiser |
 | `data/publicacoes/registro.jsonl` já vinha modificado antes da refatoração e ficou fora dos commits. | Dono | Quando revisar os agendamentos |
 | Scripts `montar_episodio.py` e `shorts_tec.py` ainda usam a lógica própria de chave, lote e fechamento da voz. | Código | Depois da extração de `VoiceKey`, biblioteca e narrador |
+| Tratamento de erros: `except` por tipo restante em `app/commands/postiz.py`, `usage.py`, `postiz_cadeia.py` e nos scripts de voz (lista `ALLOWED` do gate). | Código | `postiz` e `usage` por contrato; os scripts de voz no RF6 |

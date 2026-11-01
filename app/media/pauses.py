@@ -12,11 +12,12 @@ import re
 import subprocess
 from pathlib import Path
 
+from app.errors import PipelineError
 from app.media.constants.pauses_constants import PausesConstants
 from app.media.probe import duration_ms
 
 
-class SplitError(RuntimeError):
+class SplitError(PipelineError, RuntimeError):
     pass
 
 

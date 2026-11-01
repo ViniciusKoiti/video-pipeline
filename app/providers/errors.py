@@ -5,10 +5,11 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from app.errors import PipelineError
 from app.providers.constants.errors_constants import ErrorsConstants
 
 
-class ProviderError(Exception):
+class ProviderError(PipelineError):
     reason: ClassVar[str] = ErrorsConstants.PROVIDER_ERROR_REASON
 
     def __init__(self, provider: str, message: str) -> None:

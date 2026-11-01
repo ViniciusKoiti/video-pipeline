@@ -18,6 +18,7 @@ import re
 import subprocess
 from pathlib import Path
 
+from app.errors import PipelineError
 from app.media.constants.loudness_constants import LoudnessConstants
 from app.media.loudness import integrated_lufs
 from app.media.probe import dimensions, duration_ms, probe_streams
@@ -29,8 +30,8 @@ from app.render.models.cue import Cue as Cue
 from app.render.models.run_stats import RunStats as RunStats
 
 
-class RenderError(RuntimeError):
-    pass
+class RenderError(PipelineError, RuntimeError):
+    """O motor ffmpeg não conseguiu montar ou conferir o vídeo."""
 
 
 def parse_srt(text: str) -> list[Cue]:

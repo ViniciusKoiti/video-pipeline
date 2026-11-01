@@ -18,6 +18,7 @@ from datetime import datetime
 from itertools import pairwise
 from pathlib import Path
 
+from app.errors import PipelineError
 from app.media.constants.evolution_constants import EvolutionConstants as Constants
 from app.media.models.sample import Sample as Sample
 from app.media.models.version import Version as Version
@@ -31,8 +32,8 @@ from app.pipeline.schemas import EpisodeManifest
 # `video/vendor/` (`file:vendor/viniciusk-motion-kit-<versão>.tgz`, ADR 027).
 
 
-class EvolutionError(RuntimeError):
-    pass
+class EvolutionError(PipelineError, RuntimeError):
+    """Vídeo-régua que não pode ser guardado ou comparado (versão inexistente, igual à anterior)."""
 
 
 def samples(episode: EpisodeManifest) -> list[Sample]:

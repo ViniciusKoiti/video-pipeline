@@ -13,6 +13,7 @@ import json
 from datetime import datetime
 from typing import Literal
 
+from app.errors import PipelineError
 from app.pipeline.constants.format_decision_constants import FormatDecisionConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models.format_decision import FormatDecision as FormatDecision
@@ -29,7 +30,7 @@ from app.pipeline.schemas import (
 )
 
 
-class FormatNotConfirmed(LookupError):
+class FormatNotConfirmed(PipelineError, LookupError):
     pass
 
 

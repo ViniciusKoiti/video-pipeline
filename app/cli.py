@@ -8,7 +8,6 @@ montado quando existe handler, e cada porta só quando usada.
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from collections.abc import Callable, Sequence
 from datetime import date, datetime
@@ -18,14 +17,15 @@ from pathlib import Path
 from app.bootstrap import build_context
 from app.commands import postiz, reopen, usage
 from app.commands.constants.cli_constants import CliConstants
+from app.commands.errors import run
 from app.commands.models.command import Command as Command
 from app.commands.reviewer import default_reviewer
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode, episode_assets
+from app.pipeline.check_report import load_check_report
 from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.excerpts import numbered_view
 from app.pipeline.gates import (
-    GateError,
     GateStatus,
     gate_report,
     latest_check,
@@ -45,9 +45,8 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
-from app.pipeline.ports import Context, EpisodeLocked, ManifestNotFound
+from app.pipeline.ports import Context
 from app.pipeline.schemas import (
-    CheckVerdict,
     Decision,
     ScenesManifest,
     SourcesManifest,
@@ -119,22 +118,18 @@ def _reject(args: argparse.Namespace, context: Context) -> int:
 def _decide(
     args: argparse.Namespace, context: Context, decision: Decision, notes: str, skip_check: str | None = None
 ) -> int:
-    try:
-        entry = record_decision(
-            context.store,
-            context.review,
-            args.episode_id,
-            Step(args.step),
-            decision,
-            reviewer=args.reviewer or default_reviewer(project_root(Path.cwd())),
-            now=lambda: datetime.now().astimezone().replace(microsecond=0),
-            asset_id=args.asset,
-            notes=notes,
-            skip_check=skip_check,
-        )
-    except (GateError, ManifestNotFound, EpisodeLocked) as error:
-        print(f"vp {args.command}: {error}", file=sys.stderr)
-        return 1
+    entry = record_decision(
+        context.store,
+        context.review,
+        args.episode_id,
+        Step(args.step),
+        decision,
+        reviewer=args.reviewer or default_reviewer(project_root(Path.cwd())),
+        now=lambda: datetime.now().astimezone().replace(microsecond=0),
+        asset_id=args.asset,
+        notes=notes,
+        skip_check=skip_check,
+    )
     target = entry.asset_id or entry.step.value
     print(
         f"{CliConstants.DECISION_LABELS[entry.decision]}: {target} por {entry.reviewer} ({entry.input_hash})"
@@ -161,17 +156,11 @@ def _traducao(args: argparse.Namespace, context: Context) -> int:
 
 
 def _checagem(args: argparse.Namespace, context: Context) -> int:
-    try:
-        report = json.loads(args.parecer.read_text(encoding="utf-8"))
-        verdict = CheckVerdict(report["verdict"])
-        problems = report.get("problems", [])
-        entry = record_check(
-            context.store, args.episode_id, verdict, problems, reviewer=args.reviewer,
-            now=lambda: datetime.now().astimezone().replace(microsecond=0),
-        )
-    except (OSError, ValueError, KeyError, TypeError, GateError, EpisodeLocked) as error:
-        print(f"vp checagem: parecer inválido ou episódio sem roteiro ({error})", file=sys.stderr)
-        return 1
+    verdict, problems = load_check_report(args.parecer)
+    entry = record_check(
+        context.store, args.episode_id, verdict, problems, reviewer=args.reviewer,
+        now=lambda: datetime.now().astimezone().replace(microsecond=0),
+    )
     label = CliConstants.CHECK_LABELS[entry.verdict]
     print(f"checagem: {label} por {entry.reviewer}, {len(entry.problems)} problema(s) ({entry.input_hash})")
     return 0
@@ -351,7 +340,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 raise
             report_error = postiz.report_error if args.command == "postiz" else usage.report_error
             return report_error("Não foi possível carregar a configuração do projeto.")
-        return handler(args, context)
+        return run(f"vp {args.command}", lambda: handler(args, context))
     step = next(c.step for c in CliConstants.COMMANDS if c.name == args.command)
     print(f"vp {args.command}: ainda não implementado (etapa #{step} do roadmap).", file=sys.stderr)
     return CliConstants.EXIT_NOT_IMPLEMENTED

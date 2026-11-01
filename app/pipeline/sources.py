@@ -19,6 +19,7 @@ import tempfile
 from collections.abc import Callable
 from pathlib import Path
 
+from app.errors import PipelineError
 from app.pipeline.atomic_files import write_atomic
 from app.pipeline.constants.sources_constants import SourcesConstants as Constants
 from app.pipeline.excerpts import numbered_view
@@ -34,7 +35,7 @@ PdfText = Callable[[Path], str]  # o texto que o `pdftotext` tira do PDF
 Downloader = Callable[[str, Path], Path]  # (url, destino) -> arquivo baixado; sem rede nos testes
 
 
-class SourceError(ValueError):
+class SourceError(PipelineError, ValueError):
     """Fonte que não pode ser registrada (sem texto, arquivo ausente); nada foi escrito."""
 
 
