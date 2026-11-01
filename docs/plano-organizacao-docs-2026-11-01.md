@@ -26,7 +26,6 @@ docs/
     puml/                    fonte PlantUML
     mermaid/                 fonte Mermaid (.mmd e .mermaid)
     svg/                     saída vetorial, com o mesmo nome da fonte
-    png/                     só onde um SVG não serve (apresentação)
   specs/  pesquisa/  ROADMAP.md  e os guias atuais (postiz, usage, gate-qualidade, arquitetura, ...)
 ```
 
@@ -41,8 +40,8 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 | A | Cria `docs/diagramas/` e move os diagramas (`git mv`), renomeando `diagramas-consumo/*` com o prefixo `consumo-`. Ajusta os links. | agora |
 | B | Remove os `.md` da tabela "remover agora" e os diagramas que só ilustravam eles. Ajusta os links que sobrarem. | agora |
 | C | Cria `docs/README.md` (índice com papel de cada arquivo) e enxuga a lista do `README.md` da raiz para apontar para ele. | agora |
-| B2 | Remove o que a tabela "remover com confirmação" lista, se o dono confirmar. | depois da resposta |
-| D | Subpastas por assunto (opcional). | decisão do dono |
+| B2 | Remove o que a tabela 4.2 lista (o dono mandou tirar o que não é necessário e vital). | feita |
+| D | Subpastas por assunto (opcional). | descartada |
 | E | **Depois do RF7:** redesenhar `arquitetura-atual` e `pipeline-hoje` a partir do `app/` de então (comandos `vp`, serviços, portas), mover as análises do RF (`analise-gaps-solid`, `analise-scripts-provisorios`, `analise-tamanho-modulos`, `desenho-orientado-a-objetos`, `fluxo-refatoracao`, `loop-refatoracao`, `inventario-constantes`, `qualidade-tipagem`) para uma pasta de histórico e registrar a decisão. | fim do RF7 |
 
 ## 4. Classificação
@@ -56,16 +55,14 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 | `analise-gaps-tecnicos.md` | Fotografia de 22/10 no commit `313d718`; superada pela `analise-gaps-solid` e pelo RF | `README.md`; `analise-scripts-provisorios`, `evolucao-por-camadas` e `arquitetura-ia` (os dois últimos saem junto) |
 | `evolucao-por-camadas.md` + `fluxo-evolucao.puml/.svg` + `classes-e-integracao.puml/.svg` + `execucao-proposta.svg` (2º diagrama de `classes-e-integracao.puml`) | Proposta de 22–23/10; parte virou as ADRs 039–052 e o resto foi abandonado ou refeito; cita `app/pipeline/production.py` e `retrieval.py`, que não existem | `README.md`; `arquitetura-ia.md` |
 
-### 4.2 Remover com a confirmação do dono (fase B2)
+### 4.2 Removidos por decisão do dono (fase B2, 2026-11-01)
 
-| Arquivo | Dúvida |
-|---|---|
-| `arquitetura-ia.md` + `.puml` + `.svg` | Rascunho de apresentação de 22/10 ("implementação conferida em 22/10"). A ideia (onde entra a IA) pode continuar válida; o conteúdo está defasado. Refazer na fase E ou remover? |
-| `analise-pipeline-agentes.md` | Fotografia de 12/10, mas a skill `vp-engajamento` cita a "Medição" dela. Trocar o link da skill antes de remover? |
-| `analise-prompts-locais.md` | Fotografia de 12/10 sobre prompts locais; o `prompts/local/` e a medição em `data/benchmarks/checagem-local.md` seguem existindo. Ainda útil? |
-| `proposta-banco-consumo-agentes.md` + `diagramas-consumo/*` | O SQLite já está feito (ADR 032, `usage.md`); sobram as propostas de PostgreSQL e do controlador de lançamento. Manter como proposta aberta? |
-| `tarefas/conectar-instagram-postiz.md` | Fotografia de 15/10 com o Postiz 2.0.16; hoje é a 2.25.3 e o Instagram já recebe posts |
-| `tarefas/plano-montagem-json-cena-e-conceito.md` | Plano de 24/10 aguardando o dono; o fluxo `shorts_tec` + `motion-video` já existe (ADR 033). Executado? |
+O dono pediu para tirar o que não for necessário e vital. Saíram `arquitetura-ia.md` (+ `.puml` e `.svg`),
+`analise-pipeline-agentes.md`, `analise-prompts-locais.md`, `proposta-banco-consumo-agentes.md` (+ os três diagramas
+de consumo em Mermaid, SVG e PNG), `tarefas/conectar-instagram-postiz.md`, `tarefas/plano-montagem-json-cena-e-conceito.md`,
+`kenny-sprite.png` e `person-sprite.png`. Consumidores ajustados: a skill `vp-engajamento` (que citava a "Medição" da
+`analise-pipeline-agentes`) passou a apontar para `CLAUDE.md` §4, §6 e §12, e a agenda do clipe cita a tarefa removida.
+Tudo está no histórico do Git (`git log -- docs/<arquivo>`).
 
 ### 4.3 Manter
 
@@ -76,12 +73,15 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 | `specs/*` | Especificações de componentes, citadas por código e testes |
 | `fluxo-refatoracao-solid`, `loop-refatoracao`, `inventario-constantes`, `qualidade-tipagem`, `analise-gaps-solid`, `analise-scripts-provisorios`, `analise-tamanho-modulos`, `desenho-orientado-a-objetos` | O RF7 está em andamento e os documentos se citam; arquivam na fase E |
 | `pesquisa/*` | Pesquisa datada por natureza; não é "desatualizada", é registro. Fora do escopo deste plano |
-| `arquitetura-atual.puml/.svg` | Defasado (22/10, base `313d718`), mas é o único diagrama da arquitetura; vai para `diagramas/` com a data visível e é redesenhado na fase E |
+| `arquitetura-atual.puml/.svg` | Defasado (22/10, base `313d718`), mas é o único diagrama da arquitetura; fica em `diagramas/` com a data visível e é redesenhado na fase E |
 | `pipeline-hoje.mermaid`, `pipeline-plano-2026-09-26.mermaid` | O primeiro é o fluxo de hoje (citado pelo `CLAUDE.md`, a atualizar na fase E); o segundo é o plano original, histórico declarado |
 
-### 4.4 Fora do meu alcance (do dono)
+### 4.4 Mídia do dono em `docs/`
 
-`A Planilha é Tua.mp3` e `A Vinha Não é Sua (1).mp3` (fora do Git, são mídia do clipe) e `kenny-sprite.png`, `person-sprite.png` (commitados em `docs/` a pedido). Não movo nem apago. Sugestão: levar as mídias para `data/` (que o `.gitignore` já cobre) e os sprites para `docs/diagramas/png/` ou outro lugar que o dono prefira.
+`A Planilha é Tua.mp3` e `A Vinha Não é Sua (1).mp3` não foram apagados. A Vinha **não tem cópia em lugar nenhum**
+do projeto e o registro de licença do clipe (`video/src/clipe/LICENCAS.md`) a cita, com o id do Suno; a Planilha só tem
+cópia idêntica em `data/cache/` (cache). Foram movidos para `data/clipe/audio/` (fora do Git pelo `.gitignore`) e o
+`LICENCAS.md` aponta para o novo caminho. Apagar de vez é decisão do dono.
 
 ## 5. Regras da execução
 
@@ -94,15 +94,14 @@ Subpastas por assunto para os guias (`guias/`, `refatoracao/`) ficam como fase o
 
 | Fase | Situação |
 |---|---|
-| A | Feita (`be1bcbd`): `docs/diagramas/{puml,mermaid,svg,png}` com o README da pasta; links do README, do `CLAUDE.md` e dos documentos ajustados |
-| B | Feita: removidos `ANALISE.md`, `WORKSPACE-ATUAL-E-COMPONENTES.md`, `analise-gaps-tecnicos.md`, `evolucao-por-camadas.md`, `fluxo-evolucao.puml/.svg`, `classes-e-integracao.puml/.svg` e `execucao-proposta.svg`. Links markdown quebrados em `docs/`, README, `CLAUDE.md` e skills: **de 13 para 2**, e os 2 já existiam e não têm relação (`../AGENT.MD` numa análise histórica e `/fonemas/`, falso positivo de texto) |
-| C | Feita: `docs/README.md` com o papel de cada documento; a lista do `README.md` da raiz aponta para ele |
-| B2 | **Aguarda o dono**: a tabela 4.2 (6 itens) |
-| D | Aguarda decisão (opcional) |
-| E | Depois do RF7 |
+| A | Feita (`be1bcbd`): `docs/diagramas/{puml,mermaid,svg}` com o README da pasta; links ajustados |
+| B | Feita (`6f4d19e`): removidos `ANALISE`, `WORKSPACE-ATUAL-E-COMPONENTES`, `analise-gaps-tecnicos`, `evolucao-por-camadas` e os diagramas que só os ilustravam. Links markdown quebrados: de 13 para 2, ambos antigos e sem relação (`../AGENT.MD` e `/fonemas/`, um falso positivo de texto) |
+| C | Feita (`6f4d19e`): `docs/README.md` com o papel de cada documento |
+| B2 | Feita: tabela 4.2 |
+| D | Descartada: sem subpastas por assunto, para manter os caminhos citados pelo `CLAUDE.md` e pelas skills |
+| E | Depois do RF7: redesenhar `arquitetura-atual` e `pipeline-hoje`, e remover as análises do RF que o plano já absorveu |
 
-Ficaram, de propósito, três menções por nome a arquivos removidos, em textos históricos: o `nichos-reels-animados.md`
+Menções por nome a arquivos removidos que ficam de propósito, em texto histórico: o `nichos-reels-animados.md`
 (pesquisa) cita o "item 18" do `ANALISE.md`; o `analise-scripts-provisorios` cita a `analise-gaps-tecnicos`; a legenda do
-`arquitetura-atual.puml` (e do SVG gerado dele) cita a `analise-gaps-tecnicos.md`. O SVG não pode ser regerado aqui
-(sem `plantuml`), então a legenda só muda no redesenho da fase E.
-
+`arquitetura-atual.puml` e do SVG gerado dele cita a `analise-gaps-tecnicos.md` (o SVG não pode ser regerado aqui, sem
+`plantuml`).

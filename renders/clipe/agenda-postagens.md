@@ -21,8 +21,8 @@ Horário de Brasília. Todos públicos e marcados como "não é para crianças".
 
 ## Instagram
 
-Fica para quando o canal estiver conectado (`docs/tarefas/conectar-instagram-postiz.md`). Os mesmos cortes, nos
-mesmos dias e horários.
+Fica para quando o canal estiver conectado (a tarefa de conexão, `docs/tarefas/conectar-instagram-postiz.md`,
+foi removida em 2026-11-01 e está no histórico do Git). Os mesmos cortes, nos mesmos dias e horários.
 
 ## Agendado (2026-10-09)
 

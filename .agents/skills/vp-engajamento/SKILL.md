@@ -8,8 +8,8 @@ description: >
 
 # Aprendizado para a próxima pauta
 
-Leia [CLAUDE.md](../../../CLAUDE.md) e as seções "Direcionamento de temas", "O radar" e
-"Medição" da [análise da pipeline](../../../docs/analise-pipeline-agentes.md).
+Leia [CLAUDE.md](../../../CLAUDE.md): §4 (o radar e a pauta), §6 (objetivo e funil) e §12 (validação de
+audiência e métricas, registradas com `vp metricas`).
 Use pauta/objetivo, roteiro, radar e métricas que o dono forneceu. Só leitura nos artefatos
 do episódio; entregue a análise na resposta ou em relatório solicitado. Não chame APIs,
 colete Reels, publique ou altere a pauta por iniciativa própria.

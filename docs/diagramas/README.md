@@ -1,16 +1,14 @@
 # Diagramas
 
-Uma fonte por saída, com o mesmo nome: `puml/<nome>.puml` gera `svg/<nome>.svg`, e `mermaid/<nome>.mmd` (ou
-`.mermaid`) gera `svg/<nome>.svg` e, quando um SVG não serve, `png/<nome>.png`. Nenhum SVG fica sem fonte.
-Ao mudar um diagrama, regenerar a saída no mesmo commit.
+Pastas `puml/`, `mermaid/` e `svg/`. Uma fonte por saída, com o mesmo nome: `puml/<nome>.puml` gera
+`svg/<nome>.svg`, e `mermaid/<nome>.mmd` (ou `.mermaid`) também. Nenhum SVG fica sem fonte. Ao mudar um
+diagrama, regenerar a saída no mesmo commit.
 
 | Diagrama | Fonte | Saída | Assunto | Situação |
 |---|---|---|---|---|
 | `arquitetura-atual` | `puml/arquitetura-atual.puml` | `svg/arquitetura-atual.svg` | Arquitetura implementada | **Defasado**: árvore de 22/10 (base `313d718`), anterior ao RF1–RF7. Redesenhar ao fim do RF7 (`docs/plano-organizacao-docs-2026-11-01.md`, fase E) |
-| `arquitetura-ia` | `puml/arquitetura-ia.puml` | `svg/arquitetura-ia.svg` | Onde entra a IA (apresentação) | **Defasado**: conferido em 22/10; ver `docs/arquitetura-ia.md` |
 | `pipeline-hoje` | `mermaid/pipeline-hoje.mermaid` | (sem saída; o GitHub e o GitLab renderizam o Mermaid) | Fluxo do longo e do Short, em três faixas, com as lacunas marcadas | 2026-10-31; as lacunas de comandos mudaram com o RF7 |
 | `pipeline-plano-2026-09-26` | `mermaid/pipeline-plano-2026-09-26.mermaid` | (idem) | Fluxo originalmente planejado | Histórico, não se atualiza |
-| `consumo-modelo-logico`, `consumo-sqlite`, `consumo-postgresql` | `mermaid/consumo-*.mmd` | `svg/consumo-*.svg` e `png/consumo-*.png` | Modelo de consumo e orçamento dos agentes | ADR 032; o SQLite está implementado, o PostgreSQL é proposta |
 
 ## Gerar
 

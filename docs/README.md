@@ -4,8 +4,8 @@
 [`decisions/`](decisions/) e o [`CLAUDE.md`](../CLAUDE.md). Plano de organização desta pasta:
 [`plano-organizacao-docs-2026-11-01.md`](plano-organizacao-docs-2026-11-01.md).
 
-**Papéis:** *guia* descreve como o sistema é hoje e se mantém; *plano* está em andamento; *fotografia* é a
-análise de um dia e não se atualiza (vale o que o código e os ADRs dizem hoje); *histórico* fica pelo registro.
+**Papéis:** *guia* descreve como o sistema é hoje e se mantém; *plano* está em andamento. Análise de um dia que o
+código e os ADRs já superaram não fica aqui: o Git guarda o histórico (`git log -- docs/<arquivo>`).
 
 ## Guias (mantidos)
 
@@ -35,20 +35,10 @@ Entradas que viraram o plano (fotografias de 2026-10-31, arquivam ao fim do RF7)
 [analise-tamanho-modulos](analise-tamanho-modulos-2026-10-31.md) e
 [desenho-orientado-a-objetos](desenho-orientado-a-objetos-2026-10-31.md).
 
-## Fotografias e propostas (não atualizam)
-
-| Documento | Data | Situação |
-|---|---|---|
-| [analise-pipeline-agentes.md](analise-pipeline-agentes.md) | 12/10 | A skill `vp-engajamento` cita a "Medição" dela |
-| [analise-prompts-locais.md](analise-prompts-locais.md) | 12/10 | Prompts de `prompts/local/` e limites da validação |
-| [arquitetura-ia.md](arquitetura-ia.md) | 22/10 | Rascunho de apresentação; defasado |
-| [proposta-banco-consumo-agentes.md](proposta-banco-consumo-agentes.md) | 31/10 | SQLite feito (ADR 032); PostgreSQL segue proposta |
-| [tarefas/](tarefas/) | 15/10 e 24/10 | Tarefas datadas |
-
 ## Diagramas
 
 Fontes e saídas em [diagramas/](diagramas/) (ver o [README da pasta](diagramas/README.md)): `puml/`,
-`mermaid/`, `svg/` e `png/`. O fluxo de hoje é
+`mermaid/` e `svg/`. O fluxo de hoje é
 [`pipeline-hoje.mermaid`](diagramas/mermaid/pipeline-hoje.mermaid).
 
 ## Decisões e pesquisa
