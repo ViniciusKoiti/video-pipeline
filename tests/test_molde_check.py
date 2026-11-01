@@ -37,6 +37,14 @@ def medida(mediana: float, q1: float | None = None, q3: float | None = None, n: 
     return item
 
 
+def test_viewer_rate_with_only_a_lower_quartile_does_not_compare_against_none() -> None:
+    profile = molde()
+    measure = profile.medidas["voce_por_mil"]
+    profile.medidas["voce_por_mil"] = measure.model_copy(update={"q1": 0.0, "q3": None})
+    warnings = molde_warnings(scenes("Você olha, você conta, você decide."), profile, CPS)
+    assert not any("por mil palavras" in warning for warning in warnings)
+
+
 def traco(com: int, n: int = 13, forca: str = "padrao") -> dict[str, Any]:
     return {"com": com, "n": n, "pct": round(100 * com / n), "forca": forca, "unidade": "videos"}
 

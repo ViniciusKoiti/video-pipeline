@@ -6,11 +6,11 @@ from __future__ import annotations
 
 import csv
 import json
-from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
+from app.pipeline.models.scheduled_post import ScheduledPost as ScheduledPost
 from app.pipeline.schemas import (
     METRICS_FILE,
     READING_NUMBERS,
@@ -24,18 +24,6 @@ PUBLICATIONS_DIR = "publicacoes"
 REGISTRY_FILE = "registro.jsonl"
 METRICS_DIR = "metricas"
 TABLE_FILE = "metricas.csv"
-
-
-@dataclass(frozen=True)
-class ScheduledPost:
-    """Um agendamento do registro: o `pacote` e o `agendado` com o mesmo payload."""
-
-    episode_id: str | None
-    channel: str
-    integration_id: str
-    scheduled_at: datetime
-    post_id: str | None
-    media: str | None
 
 
 def registry_path(data_dir: Path) -> Path:

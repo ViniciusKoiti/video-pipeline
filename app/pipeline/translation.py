@@ -18,29 +18,14 @@ import re
 from typing import Any
 
 from app.media.narration import PAUSE_TAG
+from app.pipeline.models.narration import Narration as Narration
+from app.pipeline.models.narration_line import NarrationLine as NarrationLine
+from app.pipeline.models.translation_link import TranslationLink as TranslationLink
 from app.pipeline.ports import ManifestNotFound, ManifestStore
-from app.pipeline.schemas import EpisodeId, Model
 
 NARRATION_FILE = "narracao.json"
 LINK_FILE = "traducao.json"
 CONTENT_FILE = "content.json"  # o vídeo por JSON do motion-video, quando o episódio tem
-
-
-class NarrationLine(Model):
-    scene: str | None = None  # id da cena do vídeo; None = fala de um plano fora do JSON
-    text: str
-    delivery: str | None = None  # hook | turn | calm | invite (ADR 022)
-
-
-class Narration(Model):
-    language: str
-    lines: list[NarrationLine]
-
-
-class TranslationLink(Model):
-    derived_from: EpisodeId
-    language: str
-    source_language: str
 
 
 # --- números ditos ---------------------------------------------------------------------------------------
@@ -83,7 +68,8 @@ def spoken_numbers(text: str, language: str) -> list[float | int]:
     values, scales, connectors, _ = _LEXICONS.get(lang, _LEXICONS["en"])
     tokens = [t.lower() for t in _WORD.findall(text.replace(PAUSE_TAG, " "))]
     found: list[float | int] = []
-    total = current = 0
+    total: float = 0
+    current: float = 0
     active = False
     for i, token in enumerate(tokens):
         if token[0].isdigit():  # dígitos entram na conta como uma palavra-número: "100 mil" é 100000

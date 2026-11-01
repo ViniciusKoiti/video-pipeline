@@ -12,12 +12,14 @@ roteiro e para a revisão humana.
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
-from typing import Literal
-
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import date
 
 from app.media.narration import strip_pauses, timeline_length
+from app.pipeline.models._radar_radar import _Radar as _Radar
+from app.pipeline.models._radar_types import MEASURES as MEASURES
+from app.pipeline.models.radar_brief import RadarBrief as RadarBrief
+from app.pipeline.models.radar_guidance import RadarGuidance as RadarGuidance
+from app.pipeline.models.radar_purposes import RadarPurposes as RadarPurposes
 from app.pipeline.schemas import ScenesManifest
 
 BRIEF_FILE = "radar-brief.json"
@@ -27,11 +29,6 @@ OPENING_SHOTS = 2  # o título de alerta conta se for um dos primeiros planos da
 MIN_ANALYSED = 30  # abaixo disso o resumo leu poucos Reels e os padrões ficam como hipótese (skill `pauta`)
 
 # `measure` do resumo -> como o alerta a chama. Resumo antigo não tem o campo, e a medida fica desconhecida.
-MEASURES = {
-    "shares/views": "compartilhamentos por visualização",
-    "likes/views": "curtidas por visualização",
-    "comments/views": "comentários por visualização",
-}
 
 _VIEWER = {
     "pt-BR": r"\b(você|vocês|seu|sua|seus|suas|teu|tua|teus|tuas|contigo)\b",
@@ -42,67 +39,8 @@ _EMOJI = re.compile("[\U0001f000-\U0001faff☀-➿⬀-⯿]")
 _ASKS_COMMENT = re.compile(r"coment|comment", re.IGNORECASE)
 
 
-class _Radar(BaseModel):
-    # O contrato é do reels-radar e pode ganhar campos: o que não é lido aqui é ignorado.
-    model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
-
-
-class RadarGuidance(_Radar):
-    about: str  # form | opening | video | engagement | theme
-    trait: str
-    advice: Literal["use", "avoid"]
-    strength: Literal["pattern", "hint"]  # pattern: 5+ Reels de cada lado e acaso até 10%; hint: até 30%
-    share_rate_with: float | None = None
-    share_rate_without: float | None = None
-    n_with: int
-    n_without: int
-    chance: float
-
-
-class RadarPurposes(_Radar):
-    """Que tipo de vídeo (notícia, explicação, opinião) anda mais no nicho, quando o radar fez essa leitura.
-    Vem das palavras soltas das legendas, com o léxico do idioma de cada Reel: é palpite de vocabulário."""
-
-    reader: str
-    read: int  # quantos Reels tiveram a legenda lida
-    main_purposes: dict[str, int] = {}  # tipo principal (ou "none") -> Reels
-    guidance: list[RadarGuidance] = []  # `purpose_news`, `purpose_explain`, `purpose_opinion`
-    no_basis: list[str] = []
-
-
 # tipo do radar -> objetivo do roteiro (ADR 019)
 PURPOSE_KINDS = {"purpose_news": "noticiar", "purpose_explain": "explicar", "purpose_opinion": "opinar"}
-
-
-class RadarBrief(_Radar):
-    schema_name: Literal["script_brief.v1"] = Field(alias="schema")
-    niche: str
-    generated_at: datetime
-    analysed: int  # quantos Reels foram lidos
-    measure: str | None = None  # taxa de todos os números (shares/views, likes/views); resumo antigo não tem
-    guidance: list[RadarGuidance] = []
-    themes: list[RadarGuidance] = []  # palavras soltas das legendas: pergunta para a pesquisa, nunca fato
-    thresholds: dict[str, float | None] = {}  # None: o nicho não deu base para esse corte
-    caveats: list[str] = []
-    purposes: RadarPurposes | None = None  # resumos antigos não têm
-
-    def patterns(self) -> list[RadarGuidance]:
-        """Os padrões de forma e, quando o radar leu os tipos, os de tipo de vídeo."""
-        about_kind = self.purposes.guidance if self.purposes else []
-        return [g for g in [*self.guidance, *about_kind] if g.strength == "pattern"]
-
-    def hints(self) -> list[RadarGuidance]:
-        return [g for g in self.guidance if g.strength == "hint"]
-
-    def threshold(self, key: str) -> float | None:
-        """O corte de um `long_*` neste nicho, ou None quando o resumo não tem base para ele."""
-        return self.thresholds.get(key)
-
-    def measure_label(self) -> str:
-        """A medida, como o alerta a chama: nunca 'compartilhamento' quando o resumo mediu outra coisa."""
-        if self.measure is None:
-            return "na medida do resumo, que não está informada"
-        return MEASURES.get(self.measure, self.measure)
 
 
 def brief_summary(brief: RadarBrief) -> str:
@@ -146,8 +84,8 @@ def _measured(
     if trait in PURPOSE_KINDS:
         if scenes.objective is None:
             return None  # sem objetivo declarado não há o que comparar; o `vp check` já avisa disso
-        kinds = scenes.objective.kinds
-        return PURPOSE_KINDS[trait] in kinds, f"o objetivo declarado é {' + '.join(kinds)}"
+        objectives = scenes.objective.kinds
+        return PURPOSE_KINDS[trait] in objectives, f"o objetivo declarado é {' + '.join(objectives)}"
     if trait == "long_video" and (limit := brief.threshold("long_video_above_s")) is not None:
         seconds = sum(timeline_length(s.narration) for s in scenes.scenes) / chars_per_second
         return seconds > limit, f"o roteiro tem ~{seconds:.0f} s e o corte é {limit:.0f} s"

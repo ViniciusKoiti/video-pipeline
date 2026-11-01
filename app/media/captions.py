@@ -14,9 +14,11 @@ from __future__ import annotations
 import hashlib
 import re
 from collections.abc import Sequence
-from dataclasses import dataclass
 from pathlib import Path
 
+from app.media.models.cue import Cue as Cue
+from app.media.models.phrase import Phrase as Phrase
+from app.media.models.scene_audio import SceneAudio as SceneAudio
 from app.media.narration import PAUSE_CHARS, split_pauses
 
 CAPTIONS = "captions.srt"
@@ -46,29 +48,6 @@ _NUMBER_WORDS = frozenset(
         "billion",
     }
 )
-
-
-@dataclass(frozen=True)
-class Cue:
-    start_ms: int
-    end_ms: int
-    text: str
-
-
-@dataclass(frozen=True)
-class Phrase:
-    text: str
-    pause_after: bool = False  # termina numa marca `<short pause>`
-
-
-@dataclass(frozen=True)
-class SceneAudio:
-    """O que a legenda precisa de uma cena: onde ela começa no episódio, a fala e o áudio medido."""
-
-    start_ms: int
-    duration_ms: int
-    narration: str
-    silences_ms: Sequence[tuple[int, int]]  # silêncios internos do WAV (início, fim), em ms da cena
 
 
 # --- divisão em frases -----------------------------------------------------------------------------
@@ -118,7 +97,8 @@ def scene_cues(scene: SceneAudio, max_chars: int = MAX_CHARS) -> tuple[list[Cue]
         return [], 0
     weights = [len(p.text) + 1 + (PAUSE_CHARS if p.pause_after else 0) for p in found]
     total = sum(weights)
-    edges, used, approximate, cumulative = [0], set(), 0, 0
+    used: set[int] = set()
+    edges, approximate, cumulative = [0], 0, 0
     for k, phrase in enumerate(found[:-1]):
         cumulative += weights[k]
         estimate = round(scene.duration_ms * cumulative / total)

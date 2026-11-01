@@ -12,7 +12,9 @@ import tomllib
 from pathlib import Path
 from urllib.parse import parse_qsl, quote_plus, urlencode, urlsplit, urlunsplit
 
-from pydantic import BaseModel, ConfigDict, Field
+from app.pipeline.models._affiliate_model import _Model as _Model
+from app.pipeline.models.book import Book as Book
+from app.pipeline.models.book_list import BookList as BookList
 
 BOOKS_FILE = "livros.json"
 CHANNEL_FILE = "config/canal.toml"
@@ -25,21 +27,6 @@ DISCLOSURE = (
 # O bloco vai para o YouTube como está: começa no título visível e termina no aviso, sem marcador escondido
 BLOCK_START = "📚 Livros citados no vídeo:"
 BLOCK_END = DISCLOSURE
-
-
-class _Model(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-
-class Book(_Model):
-    titulo: str = Field(min_length=1)
-    autor: str = Field(min_length=1)
-    link: str | None = None  # link do produto copiado da SiteStripe; sem ele, uma busca
-    busca: str | None = None  # termos da busca; padrão: título e autor
-
-
-class BookList(_Model):
-    livros: list[Book]
 
 
 def channel_tag(root: Path) -> str:

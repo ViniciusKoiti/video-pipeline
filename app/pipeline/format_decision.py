@@ -11,18 +11,16 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime
-from enum import StrEnum
 from typing import Literal
 
-from pydantic import AwareDatetime, Field
-
+from app.pipeline.models.format_decision import FormatDecision as FormatDecision
+from app.pipeline.models.topic_assessment import TopicAssessment as TopicAssessment
+from app.pipeline.models.topic_kind import TopicKind as TopicKind
 from app.pipeline.schemas import (
     GRAPHIC_SHOT_KINDS,
     Decision,
     EpisodeFormat,
-    Model,
     ReviewLog,
-    SceneId,
     ScenesManifest,
     Shot,
     Step,
@@ -34,30 +32,6 @@ PUBLIC_DOMAIN_CUTOFF_YEAR = 1930  # publicado até 1930 = domínio público nos 
 EXPLAINER_GRAPHIC_SHARE = 0.6  # a partir desta fração de cenas gráficas, o vídeo é um explicativo
 GRAPHIC_NEEDS = frozenset({VisualNeed.MAP_OR_GRAPHIC})  # visual gerado a partir de dados
 PHOTO_NEEDS = frozenset({VisualNeed.HISTORICAL_EXACT, VisualNeed.CONTEXTUAL_STOCK})
-
-
-class TopicKind(StrEnum):
-    HISTORICAL_EVENT = "historical_event"
-    CONCEPT = "concept"
-    UNCLEAR = "unclear"
-
-
-class TopicAssessment(Model):
-    """Leitura do tema — produzida pelo adapter de texto (etapa 27) ou informada à mão."""
-
-    kind: TopicKind
-    period_year: int | None = None  # ano central do evento, se histórico
-    rationale: str = ""
-
-
-class FormatDecision(Model):
-    stage: Literal["topic", "scenes"]
-    recommended: EpisodeFormat
-    scores: dict[EpisodeFormat, float]
-    reasons: list[str] = Field(min_length=1)
-    graphic_scenes_as_assets: list[SceneId] = []  # cenas para o caminho "gráfico como ativo" (etapa #42)
-    input_hash: str
-    decided_at: AwareDatetime
 
 
 class FormatNotConfirmed(LookupError):

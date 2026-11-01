@@ -2,34 +2,18 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
+from app.providers.alignment.models.cue import Cue as Cue
+from app.providers.alignment.models.timed_word import TimedWord as TimedWord
 from app.providers.base import ProviderInfo
-
-
-@dataclass(frozen=True)
-class Cue:
-    start_ms: int
-    end_ms: int
-    text: str
 
 
 class SubtitleAligner(Protocol):
     info: ProviderInfo
 
     def align(self, text: str, audio: Path) -> list[Cue]: ...
-
-
-@dataclass(frozen=True)
-class TimedWord:
-    """Uma palavra reconhecida no áudio, com o tempo em ms do arquivo. O texto é o do reconhecedor, não o do
-    roteiro: quem usa casa os dois (`app.media.word_captions`)."""
-
-    text: str
-    start_ms: int
-    end_ms: int
 
 
 class WordAligner(Protocol):

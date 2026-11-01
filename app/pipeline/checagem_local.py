@@ -14,59 +14,24 @@ import statistics
 import time
 from collections import defaultdict
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
-
-from pydantic import Field
 
 from app.pipeline.excerpts import excerpts_of
-from app.pipeline.schemas import Model, ScenesManifest, SourcesManifest
+from app.pipeline.models._checagem_local_types import EXPECTED as EXPECTED
+from app.pipeline.models._checagem_local_types import Rotulo as Rotulo
+from app.pipeline.models.case import Case as Case
+from app.pipeline.models.result import Result as Result
+from app.pipeline.models.veredito import Veredito as Veredito
+from app.pipeline.schemas import ScenesManifest, SourcesManifest
 from app.providers.errors import ProviderError
 from app.providers.text.base import TextProvider, TextRequest
 
-Rotulo = Literal["SUSTENTA", "DIVERGE", "SEM_SUPORTE", "EXAGERO"]
 KINDS = ("real", "numero", "trecho_alheio", "superlativo")
-EXPECTED: dict[str, Rotulo] = {
-    "real": "SUSTENTA",
-    "numero": "DIVERGE",
-    "trecho_alheio": "SEM_SUPORTE",
-    "superlativo": "EXAGERO",
-}
 PROMPT_FILE = Path("prompts/local/checagem.md")
 _FICHA = re.compile(r"\s*\(F\d+(?:[,;]\s*F\d+)*\)")
 _NUMBER = re.compile(r"\d[\d.]*")
 _WORD = re.compile(r"\w{5,}")
 SUPERLATIVE = " Foi o maior de todo o país."
-
-
-class Veredito(Model):
-    """`confronto` vem antes: o modelo escreve a comparação e só depois decide."""
-
-    confronto: str = Field(min_length=1, pattern=r"\S")
-    veredito: Rotulo
-
-
-@dataclass(frozen=True)
-class Case:
-    id: str
-    kind: str
-    claim: str
-    excerpt_ids: tuple[str, ...]
-    excerpt: str
-
-    @property
-    def expected(self) -> Rotulo:
-        return EXPECTED[self.kind]
-
-
-@dataclass(frozen=True)
-class Result:
-    case: Case
-    verdict: Rotulo | None  # None = o modelo não devolveu JSON válido
-    confronto: str
-    error: str
-    seconds: float
 
 
 def load_prompt(root: Path) -> tuple[str, str]:

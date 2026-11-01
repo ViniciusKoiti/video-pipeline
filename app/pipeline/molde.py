@@ -11,11 +11,14 @@ from __future__ import annotations
 
 import re
 import statistics
-from typing import Any
-
-from pydantic import BaseModel, ConfigDict
 
 from app.media.narration import strip_pauses, timeline_length
+from app.pipeline.models._molde_molde import _Molde as _Molde
+from app.pipeline.models.casas import Casas as Casas
+from app.pipeline.models.medida import Medida as Medida
+from app.pipeline.models.molde import Molde as Molde
+from app.pipeline.models.molde_videos import MoldeVideos as MoldeVideos
+from app.pipeline.models.traco import Traco as Traco
 from app.pipeline.schemas import OVERLAY_SHOT_KINDS, Scene, ScenesManifest, effective_shots
 from app.pipeline.shots import shot_bounds
 
@@ -60,64 +63,6 @@ _STOP = frozenset({
 })
 
 
-class _Molde(BaseModel):
-    # O contrato é da skill e pode ganhar campos: o que não é lido aqui é ignorado.
-    model_config = ConfigDict(extra="ignore", frozen=True)
-
-
-class Medida(_Molde):
-    mediana: float
-    n: int
-    q1: float | None = None
-    q3: float | None = None
-    origem: str = ""
-
-
-class Traco(_Molde):
-    com: int
-    n: int
-    pct: int
-    forca: str  # padrao | indicio
-    unidade: str = "videos"
-
-
-class Casas(_Molde):
-    """O que a `partitura.py` pediu para este episódio, gravado na cópia do molde."""
-
-    duracao_min: float
-    assunto: str | None = None
-    blocos: int | None = None
-    abertura_s: float | None = None
-    fecho_inicio_s: float | None = None
-    confissao_s: float | None = None
-
-
-class MoldeVideos(_Molde):
-    n: int
-    com_batidas: int = 0
-
-
-class Molde(_Molde):
-    gerado_em: str
-    grupos: list[str] = []
-    assunto: str | None = None
-    videos: MoldeVideos
-    medidas: dict[str, Medida] = {}
-    prevalencia: dict[str, Traco] = {}
-    curvas: dict[str, Any] = {}  # `decimos`, `n_videos` e uma lista por décimo para cada medida
-    episodio: Casas | None = None
-    copiado_em: str | None = None
-
-    def curva(self, chave: str) -> list[float | None]:
-        valores = self.curvas.get(chave)
-        return list(valores) if isinstance(valores, list) else []
-
-    def padrao(self, traco: str) -> Traco | None:
-        """O traço, só quando a prevalência o sustenta como padrão."""
-        item = self.prevalencia.get(traco)
-        return item if item is not None and item.forca == "padrao" else None
-
-
 def molde_summary(molde: Molde) -> str:
     grupos = ", ".join(molde.grupos) or "todos os grupos"
     line = (
@@ -160,7 +105,7 @@ def _cut_times(timed: list[tuple[Scene, float, float]]) -> list[float]:
 
 def _content_trigrams(text: str) -> set[tuple[str, str, str]]:
     words = [w.lower() for w in _WORD.findall(text) if w.lower() not in _STOP and len(w) > 2]
-    return {tuple(words[i : i + 3]) for i in range(len(words) - 2)}  # type: ignore[misc]
+    return {tuple(words[i : i + 3]) for i in range(len(words) - 2)}
 
 
 def _text_between(timed: list[tuple[Scene, float, float]], start: float, end: float) -> str:
@@ -278,7 +223,7 @@ def molde_warnings(scenes: ScenesManifest, molde: Molde, chars_per_second: float
 
     if words and (voce := molde.medidas.get("voce_por_mil")) is not None and voce.q1 is not None:
         per_mil = 1000 * len(_VOCE.findall(text)) / words
-        if per_mil < voce.q1 or per_mil > voce.q3:
+        if per_mil < voce.q1 or (voce.q3 is not None and per_mil > voce.q3):
             warnings.append(f'{tag}: "você" {per_mil:.1f} por mil palavras; o molde fica {_range(voce)}')
 
     decile = total_s / 10

@@ -51,7 +51,7 @@ class PixabayArchive(StockArchive):
         endpoint = f"{API}videos/" if video else API
         url = f"{endpoint}?{urlencode({'key': self._key, **params})}"
         data = self._fetch(url, {}, {"endpoint": "videos" if video else "images", **params})
-        return data.get("hits", [])
+        return self._items(data, "hits")
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         return self._video(item, query) if query.media == "video" else self._photo(item, query)

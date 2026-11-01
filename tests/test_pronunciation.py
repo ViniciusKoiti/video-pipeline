@@ -25,6 +25,11 @@ def test_text_without_terms_is_unchanged() -> None:
     assert respell(text, Glossary()) == text
 
 
+def test_replacement_keeps_backslashes_literal() -> None:
+    glossary = Glossary(termos=[Term(escrita="termo", fala=r"fala\1\nome")])
+    assert respell("termo", glossary) == r"fala\1\nome"
+
+
 def test_missing_file_is_an_empty_glossary(tmp_path: Path) -> None:
     assert load_glossary(tmp_path) == Glossary()
     (tmp_path / GLOSSARY_FILE).parent.mkdir()

@@ -16,7 +16,6 @@ import hashlib
 import json
 import re
 import subprocess
-from dataclasses import dataclass, field
 from pathlib import Path
 
 from app.media.loudness import TARGET_LUFS, integrated_lufs
@@ -24,6 +23,8 @@ from app.media.probe import dimensions, duration_ms, probe_streams
 from app.pipeline.schemas import EpisodeManifest, EpisodeMusic, EpisodeScene, VideoSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
+from app.render.models.cue import Cue as Cue
+from app.render.models.run_stats import RunStats as RunStats
 
 ENGINE_VERSION = "2"  # mudar invalida o cache de segmentos (v2: matriz e marcação bt709)
 FIT_MIN_ASPECT = 1.45
@@ -32,19 +33,6 @@ SRT_TIME = re.compile(r"(\d+):(\d\d):(\d\d)[,.](\d\d\d)")
 
 class RenderError(RuntimeError):
     pass
-
-
-@dataclass(frozen=True)
-class Cue:
-    start_ms: int
-    end_ms: int
-    text: str
-
-
-@dataclass
-class RunStats:
-    rendered: list[str] = field(default_factory=list)
-    reused: list[str] = field(default_factory=list)
 
 
 def parse_srt(text: str) -> list[Cue]:

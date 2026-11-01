@@ -51,7 +51,7 @@ class UnsplashArchive(StockArchive):
             "per_page": PER_PAGE,
         }
         data = self._fetch(f"{API}/search/photos?{urlencode(params)}", self._headers, params)
-        return data.get("results", [])
+        return self._items(data, "results")
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         width, height = int(item.get("width") or 0), int(item.get("height") or 0)

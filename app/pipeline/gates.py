@@ -25,12 +25,12 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from dataclasses import dataclass
 from pathlib import Path
 
 from pydantic import ValidationError
 
 from app.pipeline.medicao import MEDICAO_FILE, medicao_problems
+from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.numbers import strip_block
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
 from app.pipeline.schemas import (
@@ -63,20 +63,6 @@ ASSET_ID = re.compile(rb'("asset_id"\s*:\s*)"(?:[^"\\]|\\.)*"')  # a imagem esco
 
 class GateError(ValueError):
     pass
-
-
-@dataclass(frozen=True)
-class GateStatus:
-    step: Step
-    asset_id: str | None
-    entry: ReviewEntry | None  # última decisão; None = nenhuma
-    current_hash: str | None  # None = o que foi revisto não existe mais
-    legacy_hash: str | None = None  # carimbo de antes de a imagem sair do gate 2 (decisões já gravadas)
-
-    @property
-    def valid(self) -> bool:
-        accepted = {self.current_hash, self.legacy_hash} - {None}
-        return self.entry is not None and self.entry.input_hash in accepted
 
 
 def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str:

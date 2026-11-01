@@ -12,13 +12,14 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
-from datetime import date
-from typing import Literal
-
-from pydantic import BaseModel, ConfigDict, Field
 
 from app.media.narration import pause_positions, strip_pauses, timeline_length
+from app.pipeline.models._numbers_brief import _Brief as _Brief
+from app.pipeline.models.citation import Citation as Citation
+from app.pipeline.models.format_brief import FormatBrief as FormatBrief
+from app.pipeline.models.format_measure import FormatMeasure as FormatMeasure
+from app.pipeline.models.script_numbers import ScriptNumbers as ScriptNumbers
+from app.pipeline.models.shot_timing import ShotTiming as ShotTiming
 from app.pipeline.schemas import (
     CITATION_LICENSE,
     MEDIA_SHOT_KINDS,
@@ -65,14 +66,6 @@ MEASURE_LABELS = {
     "voce_60s": '"você" no primeiro minuto',
     "cortes_60s": "trocas de imagem no primeiro minuto",
 }
-
-
-@dataclass(frozen=True)
-class ShotTiming:
-    scene_id: str
-    shot: Shot
-    start_ms: float  # desde o começo do vídeo
-    ms: float
 
 
 def scene_duration_ms(scene: Scene, chars_per_second: float) -> float:
@@ -124,34 +117,6 @@ def image_changes(timings: Sequence[ShotTiming]) -> list[float]:
             changes.append(timing.start_ms)
             previous = object()
     return changes
-
-
-@dataclass(frozen=True)
-class Citation:
-    scene_id: str
-    anchor: str
-    asset_id: str
-    ms: float
-
-
-@dataclass(frozen=True)
-class ScriptNumbers:
-    scenes: int
-    shots: int
-    text_shots: int
-    pauses: int
-    words: int
-    duration_ms: float
-    voce: int
-    voce_scenes: int
-    voce_closing: int
-    opening: tuple[int, float]  # planos que começam no primeiro décimo, e a duração desse décimo (ms)
-    rest: tuple[int, float]
-    rhythm_alerts: list[ShotTiming]
-    citations: list[Citation]
-    assets_by_use: dict[str, list[str]]  # ativo -> cenas, na ordem da primeira aparição
-    unused_assets: list[str]
-    measures: dict[str, float] = field(default_factory=dict)  # as medidas na unidade do nicho
 
 
 def _plain(scenes: ScenesManifest) -> list[tuple[str, str]]:
@@ -236,32 +201,6 @@ def script_numbers(
 
 
 # --- perfil de formato do nicho (ADR 031, parte B) ---
-
-
-class _Brief(BaseModel):
-    # O contrato é da skill `analise-de-formato` e pode ganhar campos: o que não é lido aqui é ignorado.
-    model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
-
-
-class FormatMeasure(_Brief):
-    alto: float  # mediana do terço de mais views
-    baixo: float  # mediana do terço de menos views
-    rho: float | None = None  # Spearman com log das views
-    n: int
-    forca: Literal["pattern", "hint"]
-
-    def bottom_side(self, value: float) -> bool:
-        """O valor do roteiro está mais perto do terço de baixo que do de cima."""
-        return abs(value - self.baixo) < abs(value - self.alto)
-
-
-class FormatBrief(_Brief):
-    schema_name: Literal["formato_brief.v1"] = Field(alias="schema")
-    nicho: str
-    grupo: str
-    data: date
-    n: int
-    medidas: dict[str, FormatMeasure]
 
 
 def format_warnings(numbers: ScriptNumbers, brief: FormatBrief | None) -> list[str]:
@@ -398,12 +337,12 @@ def render_image_plan(
         asset = _asset_id(timing.shot)
         clock = f"{int(timing.start_ms // 60000)}:{int(timing.start_ms % 60000 // 1000):02d}"
         if timing.shot.kind in MEDIA_SHOT_KINDS:
-            license_id = assets[asset].license_id if asset in assets else "sem registro"
+            license_id = assets[asset].license_id if asset is not None and asset in assets else None
             shown = f"`{asset}`" if asset else "(sem ativo)"
         else:
             license_id, shown = "—", "(gráfico do template)"
         shot = timing.shot
-        row = (timing.scene_id, clock, shot.anchor, shot.kind, shown, license_id)
+        row = (timing.scene_id, clock, shot.anchor, shot.kind, shown, license_id or "sem registro")
         lines.append("| " + " | ".join(row) + " |")
     lines += ["", f"## Ativos usados ({len(numbers.assets_by_use)})", "", "| Ativo | Licença | Cenas |"]
     lines.append("|---|---|---|")

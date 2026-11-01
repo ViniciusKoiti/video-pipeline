@@ -8,7 +8,11 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from kokoro import KPipeline
+    from torch import Tensor
 
 from app.media.narration import split_pauses
 from app.providers.base import ProviderInfo
@@ -35,7 +39,7 @@ class KokoroTTS:
         self._voices = dict(voices)  # idioma -> voz (ex.: {"en": "am_michael", "pt-BR": "pm_alex"})
         self._num_threads = num_threads  # 8 = núcleos físicos (ADR 004)
         self._pause_ms = pause_ms  # silêncio no lugar de cada `<short pause>` da narração (ADR 015)
-        self._pipelines: dict[str, Any] = {}
+        self._pipelines: dict[str, KPipeline] = {}
 
     def voice_for(self, request: SpeechRequest) -> tuple[str, str]:
         """(código do KPipeline, voz) do pedido; idioma sem voz configurada é erro do provedor."""
@@ -45,7 +49,7 @@ class KokoroTTS:
             raise ModelUnavailable(self.info.name, f"sem voz configurada para o idioma {request.language!r}")
         return lang_code, voice
 
-    def _load(self, lang_code: str) -> Any:
+    def _load(self, lang_code: str) -> KPipeline:
         if lang_code not in self._pipelines:
             try:
                 import torch
@@ -64,12 +68,12 @@ class KokoroTTS:
         pipeline = self._load(lang_code)
         # O Kokoro não tem tags: divide em cada `<short pause>` e separa os pedaços por silêncio.
         silence = np.zeros(round(SAMPLE_RATE * self._pause_ms / 1000), dtype=np.float32)
-        chunks: list[Any] = []
+        chunks: list[np.ndarray | Tensor] = []
         for i, part in enumerate(split_pauses(request.text) or [request.text]):
             if i:
                 chunks.append(silence)
             text = apply_lexicon(part, request.lexicon)
-            chunks += [audio for _, _, audio in pipeline(text, voice=voice)]
+            chunks += [audio for result in pipeline(text, voice=voice) if (audio := result[2]) is not None]
         if not chunks:
             raise ProviderError(self.info.name, "nenhum áudio gerado para o texto")
         request.out_path.parent.mkdir(parents=True, exist_ok=True)

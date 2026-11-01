@@ -14,7 +14,7 @@ from app.providers.archives.pexels import PexelsArchive
 from app.providers.archives.pixabay import PixabayArchive
 from app.providers.archives.stock import normalize_query, sha256_file
 from app.providers.archives.unsplash import UnsplashArchive
-from app.providers.errors import ProviderError, QuotaExhausted
+from app.providers.errors import InvalidOutput, ProviderError, QuotaExhausted
 from app.providers.http import USER_AGENT, TransportError, download, get_json
 from tests.fakes import FIXED_TIME, FakeHttp
 
@@ -48,6 +48,13 @@ def video_query(text: str = "Saco de cimento", **changes: Any) -> AssetQuery:
 
 def test_normalized_query_ignores_case_and_spacing() -> None:
     assert normalize_query("  Saco  de\tCIMENTO ") == "saco de cimento"
+
+
+@pytest.mark.parametrize("items", [{"id": "not-a-list"}, [42], None])
+def test_search_rejects_invalid_result_collections(items: object) -> None:
+    archive, _ = pexels(**{"/v1/search": {"photos": items}})
+    with pytest.raises(InvalidOutput, match="lista de objetos"):
+        archive.search_assets(photo_query())
 
 
 def test_pexels_video_keeps_landscape_1080p_files_long_enough() -> None:

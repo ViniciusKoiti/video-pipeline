@@ -97,7 +97,7 @@ class SQLiteUsageLedger:
     @staticmethod
     def _run(db: sqlite3.Connection, run_id: str) -> sqlite3.Row:
         run = db.execute("SELECT * FROM runs WHERE id=?", (run_id,)).fetchone()
-        if run is None:
+        if not isinstance(run, sqlite3.Row):
             raise UsageError("Execução de consumo não encontrada.")
         return run
 
@@ -114,7 +114,7 @@ class SQLiteUsageLedger:
             if budget["metric"] == "cost_usd_micros"
             else "+".join(f"q.{name}" for name in TOKEN_FIELDS)
         )
-        return db.execute(
+        row = db.execute(
             f"""WITH RECURSIVE tree(id) AS (
                 SELECT id FROM runs WHERE id=?
                 UNION ALL SELECT r.id FROM runs r JOIN tree t ON r.parent_run_id=t.id
@@ -124,16 +124,14 @@ class SQLiteUsageLedger:
             WHERE r.project=? AND r.episode_id=? AND (?='*' OR q.model=?)
             AND (? IS NULL OR r.id IN (SELECT id FROM tree))""",
             (
-                root_id,
-                budget["project"],
-                budget["episode_id"],
-                budget["model_filter"],
-                budget["model_filter"],
-                root_id,
+                root_id, budget["project"], budget["episode_id"],
+                budget["model_filter"], budget["model_filter"], root_id,
             ),
         ).fetchone()
+        assert isinstance(row, sqlite3.Row)
+        return row
 
-    def _sync(self, db: sqlite3.Connection, scope: Mapping[str, Any]) -> None:
+    def _sync(self, db: sqlite3.Connection, scope: Mapping[str, Any] | sqlite3.Row) -> None:
         for budget in db.execute(
             "SELECT * FROM budgets WHERE project=? AND episode_id=?", (scope["project"], scope["episode_id"])
         ).fetchall():

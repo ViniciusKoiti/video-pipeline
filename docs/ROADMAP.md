@@ -4,6 +4,10 @@ Cada etapa é uma issue no GitHub com o mesmo número (etapa N = issue #N) e per
 que segue a ordem de implementação do §11 do `CLAUDE.md`. Gerado a partir de uma fonte única;
 detalhes e critérios de aceite completos estão nas issues.
 
+Fluxo técnico de refatoração (2026-11-01):
+[sequência SOLID com gates RF0–RF7](fluxo-refatoracao-solid-2026-11-01.md), baseada no inventário dos scripts
+e nos gaps de arquitetura. A situação histórica dos episódios e das issues abaixo é preservada.
+
 ## Situação em 2026-09-29
 
 O formato explicativo (#48, #69–#82, no fim deste arquivo) passou na frente do piloto documentário. O histórico

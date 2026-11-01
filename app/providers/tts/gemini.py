@@ -118,7 +118,10 @@ class GeminiTTS:
         for attempt in (1, 2):
             self._wait()
             try:
-                return self._post(API, body, {"x-goog-api-key": self._key}, timeout)
+                response = self._post(API, body, {"x-goog-api-key": self._key}, timeout)
+                if not isinstance(response, dict):
+                    raise InvalidOutput(self.info.name, "resposta JSON deve ser um objeto")
+                return response
             except TransportError as error:
                 daily = error.status == 429 and "per day" in str(error)  # 10 por dia: esperar não adianta
                 if attempt == 1 and not daily and (error.status is None or error.status in TRANSIENT):
@@ -129,6 +132,8 @@ class GeminiTTS:
                 if error.status == 404:
                     raise ModelUnavailable(self.info.name, f"modelo {self._model} indisponível") from None
                 raise ProviderError(self.info.name, str(error)) from None
+            except ValueError:
+                raise InvalidOutput(self.info.name, "resposta JSON inválida") from None
         raise AssertionError("inalcançável")
 
     def _wait(self) -> None:

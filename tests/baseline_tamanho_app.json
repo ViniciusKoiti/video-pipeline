@@ -1,0 +1,29 @@
+{
+  "max_code_lines_per_file": 200,
+  "max_code_lines_per_function": 50,
+  "files": {
+    "app/cli.py": 413,
+    "app/media/evolution.py": 249,
+    "app/pipeline/bench.py": 242,
+    "app/pipeline/check.py": 569,
+    "app/pipeline/gates.py": 245,
+    "app/pipeline/molde.py": 231,
+    "app/pipeline/numbers.py": 289,
+    "app/pipeline/schemas.py": 217,
+    "app/render/ffmpeg.py": 368,
+    "app/render/remotion.py": 298,
+    "app/storage/usage_sqlite.py": 336
+  },
+  "functions": {
+    "app/commands/postiz_cadeia.py::build_package": 54,
+    "app/commands/usage.py::run": 62,
+    "app/pipeline/bench.py::run_bench": 54,
+    "app/pipeline/check.py::_check_scenes": 73,
+    "app/pipeline/gates.py::record_decision": 52,
+    "app/pipeline/molde.py::molde_warnings": 68,
+    "app/pipeline/numbers.py::render_block": 51,
+    "app/pipeline/sfx.py::plan_problems": 53,
+    "app/render/ffmpeg.py::FfmpegEngine._render_segment": 51,
+    "app/render/remotion.py::RemotionEngine.scene_props": 67
+  }
+}

@@ -2,22 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
 from app.pipeline.schemas import EpisodeManifest, VideoSpec
 from app.providers.base import ProviderInfo
+from app.render.models.render_result import RenderResult as RenderResult
 
 PREVIEW_HEIGHT = 720
-
-
-@dataclass(frozen=True)
-class RenderResult:
-    path: Path
-    width: int
-    height: int
-    duration_ms: int
 
 
 def target_spec(episode: EpisodeManifest, *, preview: bool) -> VideoSpec:

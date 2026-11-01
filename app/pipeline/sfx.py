@@ -10,62 +10,26 @@ fala. O código confere o que não depende de ouvir; quem ouve é o dono, na pr�
 
 from __future__ import annotations
 
-import hashlib
 import json
 from collections.abc import Mapping
 from pathlib import Path
 
-from pydantic import Field
-
 from app.media.narration import strip_pauses, timeline_length, timeline_position
-from app.pipeline.schemas import Model
+from app.pipeline.models._sfx_types import COVERS_SPEECH as COVERS_SPEECH
+from app.pipeline.models._sfx_types import MAX_GAIN_DB as MAX_GAIN_DB
+from app.pipeline.models.placed_sfx import PlacedSfx as PlacedSfx
+from app.pipeline.models.sfx_cue import SfxCue as SfxCue
+from app.pipeline.models.sfx_kit import SfxKit as SfxKit
+from app.pipeline.models.sfx_plan import SfxPlan as SfxPlan
+from app.pipeline.models.sfx_sound import SfxSound as SfxSound
+from app.pipeline.models.speech import Speech as Speech
 
 SFX_DIR = "sfx"  # em data/: o kit clonado em kit/
 KIT_DIR = "kit"
 KIT_INDEX = "sounds.json"
 SFX_PLAN_FILE = "sfx.json"  # na pasta do vídeo
 KIT_VOICE_REFERENCE_LUFS = -16.0  # o kit foi nivelado para uma voz a −16 LUFS (GUIDE.md, §3)
-MAX_GAIN_DB = 6.0
 MAX_CUES_PER_10S = 8  # acima disso é ruído, não acabamento
-COVERS_SPEECH = "On top of speech"  # prefixo do `avoid_for` dos sons que cobrem a voz
-
-
-class SfxSound(Model):
-    """O que usamos do registro de um som no `sounds.json` do kit."""
-
-    id: str
-    file: str
-    duration: float
-    sync_at: float
-    meets: str
-    onset: float
-    body_end: float
-    under_voiceover_db: float
-    avoid_for: list[str] = []
-    fits_seconds: tuple[float, float] | None = None
-    sha256: str
-
-    @property
-    def covers_speech(self) -> bool:
-        return any(a.startswith(COVERS_SPEECH) for a in self.avoid_for)
-
-
-class SfxKit(Model):
-    root: Path
-    license: str
-    sounds: dict[str, SfxSound]
-
-    def path(self, sound: SfxSound) -> Path:
-        return self.root / sound.file
-
-    def file_problem(self, sound: SfxSound) -> str | None:
-        path = self.path(sound)
-        if not path.is_file():
-            return f"{sound.id}: falta o arquivo {sound.file} no kit"
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        if digest != sound.sha256:
-            return f"{sound.id}: o arquivo não bate com o sha256 do kit"
-        return None
 
 
 def load_kit(data_dir: Path) -> SfxKit | None:
@@ -92,40 +56,6 @@ def load_kit(data_dir: Path) -> SfxKit | None:
             sha256=record["sha256"],
         )
     return SfxKit(root=root, license=str(data.get("license", "")), sounds=sounds)
-
-
-class SfxCue(Model):
-    """Um efeito: o som do kit no momento de uma cena. O momento é o começo da cena, mais a posição de `text`
-    na fala (quando há), mais `offset_s`."""
-
-    sound: str
-    scene: str
-    text: str | None = None
-    offset_s: float = 0.0
-    gain_db: float = Field(default=0.0, le=MAX_GAIN_DB)
-    note: str | None = None  # o que acontece na tela nesse momento
-
-
-class SfxPlan(Model):
-    """`sfx.json`: os efeitos de um vídeo, escritos por quem monta o Short; o código confere e coloca."""
-
-    cues: list[SfxCue]
-
-
-class Speech(Model):
-    """A fala de uma cena na junção: começa no começo da cena e dura `seconds`."""
-
-    seconds: float
-
-
-class PlacedSfx(Model):
-    sound: str
-    file: Path
-    moment_s: float  # o que o som encontra
-    start_s: float  # onde o arquivo começa na linha do tempo (nunca negativo)
-    trim_s: float  # quanto cortar do começo do arquivo quando o início cairia antes de 0
-    gain_db: float
-    under_speech: bool
 
 
 def _moment(cue: SfxCue, scene_start: float, narration: str | None, speech: Speech | None) -> float | None:

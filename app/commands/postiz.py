@@ -49,6 +49,7 @@ def report_error(message: str) -> int:
 def run(args: argparse.Namespace, context: Context) -> int:
     try:
         client = build_postiz(context.settings)
+        result: object
         match args.postiz_command:
             case "integrations":
                 result = client.integrations()

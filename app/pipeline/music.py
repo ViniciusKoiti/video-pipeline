@@ -69,7 +69,9 @@ def anchor_problems(plan: MusicPlan, scenes: Sequence[Scene]) -> list[str]:
     return problems
 
 
-def _span(plan_index: int, plan: MusicPlan, order: dict[str, int], narrations: dict[str, str]) -> tuple:
+def _span(
+    plan_index: int, plan: MusicPlan, order: dict[str, int], narrations: dict[str, str]
+) -> tuple[tuple[int, int | None], tuple[int, int | None]]:
     cue = plan.cues[plan_index]
     start = (order[cue.start.scene], _position(narrations[cue.start.scene], cue.start, edge="start"))
     end = (order[cue.end.scene], _position(narrations[cue.end.scene], cue.end, edge="end"))

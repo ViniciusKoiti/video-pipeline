@@ -11,29 +11,11 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from app.media.models._pronunciation_model import _Model as _Model
+from app.media.models.glossary import Glossary as Glossary
+from app.media.models.term import Term as Term
 
 GLOSSARY_FILE = "voice/glossary.json"
-
-
-class _Model(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-
-class Term(_Model):
-    escrita: str = Field(min_length=1)  # como está na narração
-    fala: str = Field(min_length=1)  # como a voz deve ler
-
-    @field_validator("escrita", "fala")
-    @classmethod
-    def _no_tags(cls, value: str) -> str:
-        if "<" in value or ">" in value:
-            raise ValueError("sem marcas <…> no glossário: as pausas ficam na narração")
-        return value
-
-
-class Glossary(_Model):
-    termos: list[Term] = []
 
 
 def load_glossary(episode_dir: Path) -> Glossary:
@@ -47,5 +29,5 @@ def load_glossary(episode_dir: Path) -> Glossary:
 def respell(text: str, glossary: Glossary) -> str:
     """O texto que vai para a voz: cada termo do glossário, como palavra inteira, trocado pela fala."""
     for term in glossary.termos:
-        text = re.sub(rf"(?<!\w){re.escape(term.escrita)}(?!\w)", lambda _, fala=term.fala: fala, text)
+        text = re.sub(rf"(?<!\w){re.escape(term.escrita)}(?!\w)", term.fala.replace("\\", "\\\\"), text)
     return text

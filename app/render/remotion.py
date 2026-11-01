@@ -85,7 +85,8 @@ MEDIA_KINDS = frozenset({"photo", "broll"})
 def _media_frames(shots: list[dict[str, Any]], index: int, scene_frames: int) -> int:
     """Quadros em que a mídia fica na tela: até a próxima mídia da cena, como em `Scene.tsx` (ADR 011)."""
     later = (s["from"] for s in shots[index + 1 :] if s["spec"]["kind"] in MEDIA_KINDS)
-    return next(later, scene_frames) - shots[index]["from"]
+    frames: int = next(later, scene_frames) - shots[index]["from"]
+    return frames
 
 
 def footage_continuity(props: list[dict[str, Any]], clip_frames: Callable[[str], int]) -> None:
@@ -219,7 +220,7 @@ class RemotionEngine:
         corners = []
         if episode.host is not None:
             corners = host_corners(episode.scenes, portrait=episode.video.portrait)
-        props = []
+        props: list[dict[str, Any]] = []
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]
             window = cues_between(cues, bounds[i] * 1000 // fps, bounds[i + 1] * 1000 // fps)
@@ -260,8 +261,7 @@ class RemotionEngine:
                 }
                 if episode.host.skin == "dono":  # trocar o desenho refaz as cenas (cache por props)
                     props[-1]["host"]["sprites"] = sprites_hash(episode_dir)
-                    manifest = sprites_manifest(episode_dir)
-                    if manifest is not None:  # pele em camadas (ADR 029); sem ele, as 12 imagens
+                    if (manifest := sprites_manifest(episode_dir)) is not None:  # pele em camadas (ADR 029)
                         props[-1]["host"]["manifest"] = manifest
             if episode.series is not None:  # selo do cartão final (ADR 028)
                 for shot in props[-1]["shots"]:

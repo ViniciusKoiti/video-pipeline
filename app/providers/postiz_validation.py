@@ -4,11 +4,16 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from html.parser import HTMLParser
-from typing import Any
+from typing import Any, Protocol
 
 from app.providers.errors import ProviderError
 
 ScheduleKey = tuple[str, datetime, str]
+
+
+class ScheduleClient(Protocol):
+    def check_schedule(self, payload: dict[str, Any]) -> dict[str, Any]: ...
+    def schedule(self, payload: dict[str, Any]) -> list[dict[str, Any]]: ...
 
 
 def _error(message: str) -> ProviderError:
@@ -35,7 +40,7 @@ class _VisibleText(HTMLParser):
         super().__init__()
         self.parts: list[str] = []
 
-    def handle_starttag(self, tag: str, attrs: list) -> None:
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag in {"p", "div", "br", "li"}:
             self.parts.append(" ")
 
@@ -54,7 +59,7 @@ def visible_text(content: str) -> str:
     return " ".join("".join(parser.parts).split())
 
 
-def validate_schedule(payload: dict, now: datetime) -> tuple[datetime, set[ScheduleKey]]:
+def validate_schedule(payload: dict[str, Any], now: datetime) -> tuple[datetime, set[ScheduleKey]]:
     if not isinstance(payload, dict) or payload.get("type") != "schedule" or "id" in payload:
         raise _error("somente novos agendamentos (type=schedule) são aceitos")
     instant = parse_instant(payload.get("date"))
@@ -92,13 +97,13 @@ def validate_schedule(payload: dict, now: datetime) -> tuple[datetime, set[Sched
     return instant, requested
 
 
-def require_active_integrations(requested: set[ScheduleKey], integrations: list[dict]) -> None:
+def require_active_integrations(requested: set[ScheduleKey], integrations: list[dict[str, Any]]) -> None:
     active = {item["id"] for item in integrations if not item["disabled"]}
     if any(integration_id not in active for integration_id, _, _ in requested):
         raise _error("integração inexistente ou desativada")
 
 
-def reject_queued_duplicates(requested: set[ScheduleKey], posts: list[dict]) -> None:
+def reject_queued_duplicates(requested: set[ScheduleKey], posts: list[dict[str, Any]]) -> None:
     for post in posts:
         if post.get("state", "").upper() != "QUEUE":
             continue

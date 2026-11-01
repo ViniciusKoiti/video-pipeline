@@ -63,9 +63,13 @@ scripts/check_env.sh
 ```bash
 uv run vp --help           # comandos do CLAUDE.md §10; os ainda não implementados indicam a etapa
 uv run vp bench --models qwen3.5:4b,qwen3.5:9b --runs 2   # rodar com a máquina ociosa
-uv run pytest && uv run ruff check .
+bash scripts/check_qualidade.sh  # lint, tipagem, arquitetura, tamanho e regressão (mesmo gate do CI)
 uv run pytest -m slow      # contratos com modelos locais pesados (Kokoro)
 ```
+
+Critérios, linha de base e próximos passos: [gate de qualidade](docs/gate-qualidade.md).
+Modelos de todos os fluxos seguem `app/<área>/models/`, uma classe por arquivo;
+convenção e compatibilidade na [ADR 037](docs/decisions/037-modelos-por-fluxo.md).
 
 ## Consumo dos agentes em SQLite
 

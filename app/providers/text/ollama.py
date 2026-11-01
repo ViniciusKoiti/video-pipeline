@@ -57,6 +57,10 @@ class OllamaText:
                 message = f"modelo {model!r} ausente (ollama pull {model})"
                 raise ModelUnavailable(self.info.name, message) from None
             raise ProviderError(self.info.name, str(error)) from None
+        except ValueError:
+            raise InvalidOutput(self.info.name, "resposta JSON inválida") from None
+        if not isinstance(response, dict):
+            raise InvalidOutput(self.info.name, "resposta JSON deve ser um objeto")
         if response.get("done_reason") == "length":
             raise InvalidOutput(self.info.name, f"resposta cortada no limite de {request.max_tokens} tokens")
         try:

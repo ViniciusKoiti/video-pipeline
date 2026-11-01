@@ -37,7 +37,7 @@ class PexelsArchive(StockArchive):
             "per_page": PER_PAGE,
         }
         data = self._fetch(f"{API}{path}?{urlencode(params)}", self._headers, {"endpoint": path, **params})
-        return data.get("videos" if video else "photos", [])
+        return self._items(data, "videos" if video else "photos")
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         return self._video(item, query) if query.media == "video" else self._photo(item, query)

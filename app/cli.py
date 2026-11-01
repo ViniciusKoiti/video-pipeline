@@ -13,13 +13,13 @@ import os
 import subprocess
 import sys
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
 from datetime import date, datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from app.bootstrap import build_context
 from app.commands import postiz, usage
+from app.commands.models.command import Command as Command
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode, episode_assets
 from app.pipeline.excerpts import numbered_view
@@ -64,15 +64,6 @@ from app.settings import CONFIG_FILE, read_dotenv, speech_chars_per_second
 EXIT_NOT_IMPLEMENTED = 3  # distinto de 1 (falha) e 2 (uso incorreto, argparse)
 
 Handler = Callable[[argparse.Namespace, Context], int]
-
-
-@dataclass(frozen=True)
-class Command:
-    name: str
-    help: str
-    step: int  # etapa do roadmap (= issue #N) que implementa o comando
-    takes_episode: bool = True
-    add_arguments: Callable[[argparse.ArgumentParser], None] | None = None
 
 
 def _bench_arguments(parser: argparse.ArgumentParser) -> None:
@@ -200,7 +191,7 @@ def _bench(args: argparse.Namespace, context: Context) -> int:
     )
     print("\n".join(summary(report)))
     print(f"resultado: {path}")
-    return 1 if any(not r.ok for r in [*report.llm, *report.tts, *report.render]) else 0
+    return 1 if any(not r.ok for runs in (report.llm, report.tts, report.render) for r in runs) else 0
 
 
 def _excerpts(args: argparse.Namespace, context: Context) -> int:
@@ -499,8 +490,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         except (ValueError, OSError, SystemExit):
             if args.command not in ("postiz", "usage"):
                 raise
-            command_module = postiz if args.command == "postiz" else usage
-            return command_module.report_error("Não foi possível carregar a configuração do projeto.")
+            report_error = postiz.report_error if args.command == "postiz" else usage.report_error
+            return report_error("Não foi possível carregar a configuração do projeto.")
         return handler(args, context)
     step = next(c.step for c in COMMANDS if c.name == args.command)
     print(f"vp {args.command}: ainda não implementado (etapa #{step} do roadmap).", file=sys.stderr)

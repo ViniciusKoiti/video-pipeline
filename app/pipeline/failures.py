@@ -3,22 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
-from typing import Generic, TypeVar
 
+from app.pipeline.models._failures_types import R as R
+from app.pipeline.models.scene_outcome import SceneOutcome as SceneOutcome
 from app.pipeline.schemas import Status
 from app.providers.errors import ProviderError
-
-R = TypeVar("R")
-
-
-@dataclass(frozen=True)
-class SceneOutcome(Generic[R]):
-    scene_id: str
-    status: Status  # COMPLETED ou NEEDS_REVIEW
-    value: R | None = None
-    reason: str = ""  # ProviderError.reason, para registrar em review.json
-    detail: str = ""
 
 
 def for_each_scene(scene_ids: Iterable[str], action: Callable[[str], R]) -> list[SceneOutcome[R]]:

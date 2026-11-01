@@ -17,34 +17,15 @@ import re
 from pathlib import Path
 from typing import Any
 
-from pydantic import Field
-
+from app.pipeline.models._medicao_types import DEFAULT_TOLERANCE as DEFAULT_TOLERANCE
+from app.pipeline.models.medicao import Medicao as Medicao
+from app.pipeline.models.numero import Numero as Numero
 from app.pipeline.ports import ManifestNotFound, ManifestStore
-from app.pipeline.schemas import Model
 from app.pipeline.translation import CONTENT_FILE, NARRATION_FILE, Narration, spoken_numbers
 
 MEDICAO_FILE = "medicao.json"
 TEXT_KEYS = frozenset({"text", "title", "sub", "label", "highlight"})  # strings da tela que contam
-DEFAULT_TOLERANCE = 0.01
 _NUMBER = re.compile(r"\d+(?:[.,]\d+)?")
-
-
-class Numero(Model):
-    """Um número dito ou mostrado, e de onde ele vem."""
-
-    valor: float
-    trechos: list[str] = []  # trechos literais do arquivo de resultado
-    medidos: list[float] = []  # os valores medidos que o número resume; vazio = os números dos trechos
-    tolerancia: float = Field(default=DEFAULT_TOLERANCE, ge=0)  # relativa ao medido
-    fator: float = 1.0  # unidade: medido × fator = a unidade dita (ms → s é 0.001)
-    cenas: list[str] | None = None  # só vale nessas cenas; None = em qualquer cena
-    nota: str | None = None  # obrigatória sem trechos: por que não é uma medida (nome, contagem)
-
-
-class Medicao(Model):
-    arquivo: str  # relativo à pasta do vídeo ou à raiz do repositório
-    ambiente: str | None = None
-    numeros: list[Numero]
 
 
 def _numbers_in(text: str) -> list[float]:

@@ -12,16 +12,25 @@ import urllib.error
 import urllib.request
 import uuid
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from app.providers.models._http_types import JsonPayload as JsonPayload
+from app.providers.models.json_response import JsonResponse as JsonResponse
 
 CHUNK_BYTES = 1 << 20
 # O "Python-urllib" padrão é barrado por proxies anti-robô (a API do Pexels responde 403, erro 1010).
 USER_AGENT = "video-pipeline/0.1"
 
-JsonPost = Callable[[str, Mapping[str, Any], float], dict[str, Any]]  # url, corpo, timeout → JSON
-AuthPost = Callable[[str, Mapping[str, Any], Mapping[str, str], float], dict[str, Any]]  # + cabeçalhos
+JsonPost = Callable[[str, Mapping[str, Any], float], JsonPayload]  # url, corpo, timeout → JSON
+AuthPost = Callable[[str, Mapping[str, Any], Mapping[str, str], float], JsonPayload]  # + cabeçalhos
+
+
+def parse_json(raw: str | bytes) -> JsonPayload:
+    value: object = json.loads(raw)
+    if not isinstance(value, (dict, list)):
+        raise ValueError("resposta JSON deve ser um objeto ou uma lista")
+    return value
 
 
 class TransportError(Exception):
@@ -30,14 +39,13 @@ class TransportError(Exception):
         self.status = status
 
 
-
-def post_json(url: str, payload: Mapping[str, Any], timeout: float) -> dict[str, Any]:
+def post_json(url: str, payload: Mapping[str, Any], timeout: float) -> JsonPayload:
     return post_json_with_headers(url, payload, {}, timeout)
 
 
 def post_json_with_headers(
     url: str, payload: Mapping[str, Any], headers: Mapping[str, str], timeout: float
-) -> dict[str, Any]:
+) -> JsonPayload:
     """POST com cabeçalhos (ex.: a chave da API, que nunca vai na URL, §2.7)."""
     request = urllib.request.Request(
         url,
@@ -47,7 +55,7 @@ def post_json_with_headers(
     )
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return json.loads(response.read())
+            return parse_json(response.read())
     except urllib.error.HTTPError as error:
         raise TransportError(error.code, error.read().decode(errors="replace")[:500]) from None
     except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
@@ -55,13 +63,13 @@ def post_json_with_headers(
 
 
 MultipartPost = Callable[  # url, campos, arquivos, cabeçalhos, timeout → JSON
-    [str, Mapping[str, str], Mapping[str, Path], Mapping[str, str], float], dict[str, Any]
+    [str, Mapping[str, str], Mapping[str, Path], Mapping[str, str], float], JsonPayload
 ]
 
 
 def post_multipart(
     url: str, fields: Mapping[str, str], files: Mapping[str, Path], headers: Mapping[str, str], timeout: float
-) -> dict[str, Any]:
+) -> JsonPayload:
     """POST `multipart/form-data` (ex.: um áudio para transcrição), com a biblioteca padrão."""
     boundary = f"----video-pipeline-{uuid.uuid4().hex}"
     body = bytearray()
@@ -85,17 +93,11 @@ def post_multipart(
     )
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return json.loads(response.read())
+            return parse_json(response.read())
     except urllib.error.HTTPError as error:
         raise TransportError(error.code, error.read().decode(errors="replace")[:500]) from None
     except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
         raise TransportError(None, str(getattr(error, "reason", error))) from None
-
-
-@dataclass(frozen=True)
-class JsonResponse:
-    data: dict[str, Any]
-    headers: Mapping[str, str]  # nomes em minúsculas (ex.: "x-ratelimit-remaining")
 
 
 JsonGet = Callable[[str, Mapping[str, str], float], JsonResponse]  # url, headers, timeout → JSON
@@ -107,7 +109,7 @@ def get_json(url: str, headers: Mapping[str, str], timeout: float) -> JsonRespon
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             received = {name.lower(): value for name, value in response.headers.items()}
-            return JsonResponse(json.loads(response.read()), received)
+            return JsonResponse(parse_json(response.read()), received)
     except urllib.error.HTTPError as error:
         raise TransportError(error.code, error.read().decode(errors="replace")[:500]) from None
     except (urllib.error.URLError, TimeoutError, ConnectionError) as error:

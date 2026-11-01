@@ -10,42 +10,22 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass
 from datetime import datetime
-from enum import StrEnum
 from pathlib import Path
 
-from pydantic import AwareDatetime, BaseModel
+from pydantic import BaseModel
 
+from app.pipeline.models.action import Action as Action
+from app.pipeline.models.episode_state import EpisodeState as EpisodeState
+from app.pipeline.models.step_result import StepResult as StepResult
+from app.pipeline.models.step_run import StepRun as StepRun
+from app.pipeline.models.step_state import StepState as StepState
 from app.pipeline.ports import ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate
-from app.pipeline.schemas import Decision, EpisodeId, Model, RelPath, ReviewEntry, Status, Step
+from app.pipeline.schemas import Decision, ReviewEntry, Status, Step
 from app.providers.errors import ProviderError
 
 MANIFEST = "manifest.json"
 Clock = Callable[[], datetime]
-
-
-class StepState(Model):
-    status: Status = Status.PENDING
-    input_hash: str | None = None
-    outputs: list[RelPath] = []  # arquivos gerados, relativos à pasta do episódio
-    started_at: AwareDatetime | None = None
-    finished_at: AwareDatetime | None = None
-    error: str = ""  # motivo da última falha (ex.: "quota_exhausted: ...")
-
-
-class EpisodeState(Model):
-    episode_id: EpisodeId
-    steps: dict[Step, StepState] = {}
-
-    def get(self, step: Step) -> StepState:
-        return self.steps.get(step, StepState())
-
-    @property
-    def protected_outputs(self) -> set[str]:
-        return {
-            out for state in self.steps.values() if state.status is Status.APPROVED for out in state.outputs
-        }
 
 
 # Transições do §5. Sair de APPROVED/COMPLETED para refazer só por reabertura explícita (reopen_step).
@@ -67,11 +47,6 @@ class InvalidTransition(ValueError):
 
 class StaleApproval(RuntimeError):
     """Etapa aprovada recebeu entrada diferente: refazer exige reabrir (§2.6)."""
-
-
-class Action(StrEnum):
-    RUN = "run"
-    REUSE = "reuse"
 
 
 def transition(state: StepState, to: Status, **changes: object) -> StepState:
@@ -113,18 +88,6 @@ def _save(store: ManifestStore, state: EpisodeState, step: Step, step_state: Ste
     updated = state.model_copy(update={"steps": {**state.steps, step: step_state}})
     store.write(state.episode_id, MANIFEST, updated)
     return updated
-
-
-@dataclass(frozen=True)
-class StepResult:
-    outputs: list[str]
-    needs_review: bool  # True = etapa com gate humano (fica em needs_review até aprovação)
-
-
-@dataclass(frozen=True)
-class StepRun:
-    action: Action
-    state: StepState
 
 
 def run_step(

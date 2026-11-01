@@ -16,32 +16,19 @@ import json
 import re
 import unicodedata
 from collections.abc import Callable, Iterable, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
+from app.media.models.caption_word import CaptionWord as CaptionWord
+from app.media.models.report import Report as Report
+from app.media.models.scene_speech import SceneSpeech as SceneSpeech
 from app.media.narration import strip_pauses
 from app.providers.alignment.base import TimedWord
 
 WORDS = "captions.words.json"
 VERSION = 1
-
-
-@dataclass(frozen=True)
-class CaptionWord:
-    text: str
-    start_ms: int
-    end_ms: int
-    matched: bool  # False = tempo dividido entre as vizinhas que casaram
-
-
-@dataclass(frozen=True)
-class SceneSpeech:
-    id: str
-    audio: str  # caminho do WAV no episode.json; muda quando o texto ou a voz mudam
-    narration: str
-    duration_ms: int
 
 
 def script_words(narration: str) -> list[str]:
@@ -112,13 +99,6 @@ def load(path: Path) -> dict[str, dict[str, Any]]:
 def save(path: Path, aligner: str, scenes: Iterable[dict[str, Any]]) -> None:
     payload = {"version": VERSION, "aligner": aligner, "scenes": list(scenes)}
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
-
-
-@dataclass(frozen=True)
-class Report:
-    with_words: list[str]  # cenas com palavra a palavra
-    without: list[str]  # cenas sem reconhecimento (ficam na legenda por frase)
-    unmatched: int  # palavras do roteiro com tempo dividido
 
 
 def sync_words(

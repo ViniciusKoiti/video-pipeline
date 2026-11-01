@@ -44,6 +44,10 @@ class GroqWordAligner:
             data = self._post(URL, fields, {"file": audio}, auth, self._timeout)
         except TransportError as error:
             raise _provider_error(error) from None
+        except ValueError:
+            raise InvalidOutput(self.info.name, "resposta JSON inválida") from None
+        if not isinstance(data, dict):
+            raise InvalidOutput(self.info.name, "resposta JSON deve ser um objeto")
         return _words(data, audio.name)
 
 

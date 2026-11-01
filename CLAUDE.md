@@ -116,7 +116,7 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
 ### Mapa do repositório
 
 `app/pipeline/` etapas, estados e schemas · `app/providers/<função>/` porta (`base.py`) + um adapter por provedor ·
-`app/bootstrap.py` único módulo que conhece adapters concretos · `config/canal.toml` nome do canal e tag de
+`app/bootstrap/` raiz de composição que conhece adapters concretos · `config/canal.toml` nome do canal e tag de
 associado da Amazon (pública) · `app/render/` motor por formato · `app/media/` áudio, legenda e apresentador
 (pausas, loudness, ffprobe, pronúncia, janela do host) · `app/commands/` subcomandos `vp` com verbos próprios (hoje
 `postiz`) · `app/storage/` leitura e escrita dos JSON do episódio · `video/` template Remotion do `explainer`
@@ -138,11 +138,17 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
 
 - Portas e adaptadores: cada função tem um `Protocol` em `app/providers/<função>/base.py` (ou
   `app/render/base.py`); as etapas recebem um `Context` explícito e só conhecem portas.
-- Trocar de abordagem = novo adapter + registro em `app/bootstrap.py` + passar em
+- Trocar de abordagem = novo adapter + registro em `app/bootstrap/__init__.py` + passar em
   `tests/test_contracts.py` + **uma linha** em `config/providers.toml`.
 - Todo adapter declara `ProviderInfo(name, remote, usd_per_call)`; custo > 0 é recusado sem
   `ALLOW_PAID_API=true` e `MAX_API_SPEND_USD > 0`. `ProviderError` vira `needs_review` só na cena.
 - `tests/test_architecture.py` falha se `app/pipeline/` importar adapter concreto ou biblioteca pesada.
+- Modelos de dados de **todos os fluxos** ficam em `app/<área>/models/<nome_em_snake_case>.py`,
+  uma classe por arquivo (ADR 037; gate em `tests/test_model_layout.py`). Inclui Pydantic, dataclasses,
+  enums e TypedDicts. Validadores acompanham seus modelos; serviços, adapters e Protocols ficam fora.
+  Provedores usam também `app/providers/<função>/models/`. Não criar pastas vazias nem um catálogo global.
+  Imports novos usam o módulo específico; `app.pipeline.schemas` e os demais módulos anteriores mantêm
+  reexports de compatibilidade. `app.settings/` e `app.bootstrap/` são pacotes com seus próprios modelos.
 
 ## 4. Fluxo de trabalho
 

@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from app.models.bench_claim import BenchClaim
+from app.models.bench_script import BenchScript
+
+__all__ = ["BenchClaim", "BenchScript", "EXCERPTS", "SYSTEM", "NARRATION", "prompt"]
 
 EXCERPTS: tuple[tuple[str, str], ...] = (
     ("E1", "The schooner Halcyon left the port of Aldermoor on 3 June 1894 under Captain Elias Marrow. "
@@ -75,20 +78,6 @@ NARRATION = (
     "By August, the ice had closed around her near Cape Tolland. The crew built a winter camp on shore, "
     "and for months no one in Aldermoor knew whether they were alive."
 )
-
-
-class BenchClaim(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    text: str = Field(min_length=1)
-    excerpt_ids: list[str] = Field(min_length=1)
-
-
-class BenchScript(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    narration: str = Field(min_length=1)
-    claims: list[BenchClaim] = Field(min_length=1)
 
 
 def prompt(run: int) -> str:

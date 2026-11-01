@@ -18,8 +18,8 @@ from datetime import datetime
 from itertools import pairwise
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict
-
+from app.media.models.sample import Sample as Sample
+from app.media.models.version import Version as Version
 from app.media.probe import duration_ms
 from app.pipeline.schemas import EpisodeManifest
 
@@ -57,34 +57,6 @@ REGISTRY_HEADER += "| " + " | ".join(REGISTRY_COLUMNS) + " |\n" + "|---" * len(R
 
 class EvolutionError(RuntimeError):
     pass
-
-
-class Sample(BaseModel):
-    """Um instante por plano: uma linha da folha de quadros."""
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    key: str  # "S01#2": cena e posição do plano na cena
-    kind: str
-    at_ms: int
-
-
-class Version(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    name: str
-    episode_id: str
-    rendered_at: str  # hora do arquivo renderizado
-    commit: str
-    template_hash: str
-    motion_kit: str
-    sha256: str
-    duration_ms: int
-    render_s: float | None = None
-    cpu_probe_s: float | None = None
-    note: str
-    samples: list[Sample]
-    changed: list[str] | None = None  # planos que mudaram em relação à versão anterior; None na primeira
 
 
 def samples(episode: EpisodeManifest) -> list[Sample]:

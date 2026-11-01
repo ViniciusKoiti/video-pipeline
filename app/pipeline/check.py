@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from dataclasses import dataclass, field
 from datetime import date
 
 from pydantic import ValidationError
@@ -18,6 +17,7 @@ from pydantic import ValidationError
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.metrics import summary_line
+from app.pipeline.models.check_report import CheckReport as CheckReport
 from app.pipeline.molde import MOLDE_FILE, Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
 from app.pipeline.numbers import (
@@ -93,17 +93,6 @@ READING_KINDS = frozenset({"chart", "compare", "network", "timeline", "calculati
 # duas convenções coincidem, que é inteiro abaixo de mil. Retirar quando o kit ganhar a prop e o pin subir.
 BAR_TYPES = frozenset({"bar", "bar_horizontal"})
 BAR_PLAIN_BELOW = 1000
-
-
-@dataclass
-class CheckReport:
-    errors: list[str] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
-    checked: list[str] = field(default_factory=list)
-
-    @property
-    def ok(self) -> bool:
-        return not self.errors
 
 
 def _read(
@@ -419,8 +408,8 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
                 continue
             if shot.kind == "lower_third" and not media_before:
                 warnings.append(f"{scene.id}: tarja ({shot.anchor!r}) sem foto nem B-roll por baixo")
-            two_bars = isinstance(shot, ChartShot) and shot.type in ("bar", "bar_horizontal")
-            if two_bars and len(shot.points) == 2:
+            bar = shot if isinstance(shot, ChartShot) and shot.type in ("bar", "bar_horizontal") else None
+            if bar is not None and len(bar.points) == 2:
                 warnings.append(f"{scene.id}: gráfico de barras com 2 pontos ({shot.anchor!r}); use compare")
             if previous is not None and previous[1] == shot.kind:
                 where = scene.id if previous[0] == scene.id else f"{previous[0]}–{scene.id}"

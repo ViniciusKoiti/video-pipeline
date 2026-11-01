@@ -66,8 +66,7 @@ def episode_shots(
     ends = [*positions[1:], len(spoken)]
     result = []
     for shot, (start, duration), position, end in zip(shots, bounds, positions, ends, strict=True):
-        has_source = sources and shot.claims
-        source, flag = shot_attribution(shot.claims, sources, language) if has_source else (None, None)
+        source, flag = (None, None) if sources is None else shot_attribution(shot.claims, sources, language)
         steps_ms = []
         for step in step_positions(spoken, shot, position, end, scene_id=scene.id):
             at = round(timeline_position(scene.narration, step) / total * duration_ms) - start

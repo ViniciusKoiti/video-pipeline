@@ -32,7 +32,10 @@ def dimensions(path: Path) -> tuple[int, int]:
     video = next((s for s in streams if s.get("codec_type") == "video"), None)
     if video is None:
         raise ProbeError(f"sem trilha de vídeo em {path.name}")
-    return int(video["width"]), int(video["height"])
+    width, height = video["width"], video["height"]
+    if not isinstance(width, (int, float, str)) or not isinstance(height, (int, float, str)):
+        raise ProbeError(f"ffprobe sem dimensões válidas para {path.name}")
+    return int(width), int(height)
 
 
 def probe_streams(path: Path) -> list[dict[str, object]]:

@@ -2,35 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from pathlib import Path
 from typing import Protocol
 
-from app.pipeline.schemas import Generation
 from app.providers.base import ProviderInfo
-
-
-@dataclass(frozen=True)
-class ImageRequest:
-    prompt: str
-    out_path: Path
-    width: int = 1024
-    height: int = 1024
-    steps: int = 4
-    seed: int | None = None
-
-
-@dataclass(frozen=True)
-class CostEstimate:
-    units: float
-    unit: str  # ex.: "neurons"
-    usd: float  # > 0 é recusado enquanto ALLOW_PAID_API=false
-
-
-@dataclass(frozen=True)
-class GeneratedImage:
-    path: Path
-    generation: Generation
+from app.providers.image_gen.models.cost_estimate import CostEstimate as CostEstimate
+from app.providers.image_gen.models.generated_image import GeneratedImage as GeneratedImage
+from app.providers.image_gen.models.image_request import ImageRequest as ImageRequest
 
 
 class ImageGenProvider(Protocol):
