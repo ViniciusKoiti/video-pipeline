@@ -1,0 +1,13 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {"scene": "gancho", "text": "Uma linha de SQL deixou esta consulta mais de mil vezes mais rápida, e cobrou um preço.", "delivery": "hook"},
+    {"scene": "sem-indice", "text": "Sem índice, o banco lê a tabela inteira, um milhão de linhas, para achar os pedidos de um cliente."},
+    {"scene": "codigo", "text": "Com um CREATE INDEX, o plano da consulta troca SCAN por SEARCH."},
+    {"scene": "com-indice", "text": "O índice é uma árvore ordenada por cliente, e a busca desce direto às linhas dele."},
+    {"scene": "comparacao", "text": "Sem ler a tabela, a consulta caiu de oitenta e seis milissegundos para cinco centésimos."},
+    {"scene": "escrita", "text": "Mas cada pedido novo também entra no índice e gravar ficou treze vezes mais lento.", "delivery": "turn"},
+    {"scene": "custo", "text": "Criar o índice levou setecentos e trinta e seis milissegundos e quase treze megas de arquivo."},
+    {"scene": "fecho", "text": "Então depende de quanto a tabela é lida e gravada. Qual coluna você indexaria?", "delivery": "invite"}
+  ]
+}

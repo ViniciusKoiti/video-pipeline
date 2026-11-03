@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-11-04T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0nn9g0003l26yf4npmb66"
+      },
+      "value": [
+        {
+          "content": "In SQLite, an orders screen looks up one customer's orders in a 1 million row table. Without an index, the plan is SCAN: the database reads the whole table. With CREATE INDEX on the customer column, the plan becomes SEARCH: the lookup walks down the index tree to the rows. The price: every new order also goes into the index.\n\nMeasured on this machine: SQLite 3.46.1, Python 3.14, Ryzen 7 5700U, 15 runs with the database rebuilt, SQLite default cache. Medians: query without index 85.7 ms; with index 0.047 ms; writing 10 thousand orders 24.3 ms without the index and 318.9 ms with it; building the index 736 ms; file from 74.6 to 87.2 MB.\n\nMechanism source: SQLite documentation (Query Planning, EXPLAIN QUERY PLAN and file format).\n\nThe voice is mine, cloned with AI. The animations were made for this video.\n\n#Shorts #SQL #SQLite",
+          "image": [
+            {
+              "id": "a4a9acec-e20a-4545-ab22-d4b2248f967d",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/03/6ac4efa59bda993ea1f4114c71e610541.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "One line of SQL, over a thousand times faster (and the price)",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

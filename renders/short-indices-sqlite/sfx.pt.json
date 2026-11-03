@@ -1,0 +1,9 @@
+{
+  "cues": [
+    {"sound": "pop-medium-in", "scene": "gancho", "offset_s": 0.05, "note": "Capa montada no primeiro quadro."},
+    {"sound": "pop-medium-in", "scene": "comparacao", "offset_s": 0.1, "note": "Entrada da comparação medida."},
+    {"sound": "impact-light-firm", "scene": "comparacao", "offset_s": 2.2, "note": "O painel com índice acende (winnerAtSec 2.2)."},
+    {"sound": "pop-medium-in", "scene": "escrita", "offset_s": 0.1, "note": "A virada: a escrita."},
+    {"sound": "pop-medium-in", "scene": "custo", "offset_s": 0.1, "note": "Entrada do preço medido."}
+  ]
+}

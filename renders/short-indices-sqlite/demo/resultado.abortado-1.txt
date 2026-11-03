@@ -1,0 +1,1 @@
+# 2026-11-03T08:04:08-03:00 | SQLite 3.46.1 | Python 3.14.4 | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | pedidos: 1000000 linhas, 100000 clientes, consulta WHERE cliente_id = ? | 20 consultas sem indice, 1000 com indice (ms por consulta) | 10000 insercoes por lote | banco em disco, cache do SO quente | 15 rodadas
