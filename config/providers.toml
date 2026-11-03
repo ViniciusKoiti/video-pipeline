@@ -54,6 +54,22 @@ invite = { exaggeration = 0.6, cfg_weight = 0.4 }
 neutral = { exaggeration = 0.5, cfg_weight = 0.5 }
 calm = { exaggeration = 0.4, cfg_weight = 0.6 }
 
+# Referência por idioma e entrega (ADR 053); caminhos relativos à raiz do projeto.
+# Sem mapeamento usa CHATTERBOX_REFERENCE; arquivo mapeado ausente é erro, não troca silenciosa.
+[chatterbox.references."pt-BR"]
+hook = "data/voice-references/pt-BR/hook-01.wav"
+turn = "data/voice-references/pt-BR/turn-01.wav"
+invite = "data/voice-references/pt-BR/invite-01.wav"
+neutral = "data/voice-references/pt-BR/neutral-01.wav"
+calm = "data/voice-references/pt-BR/calm-01.wav"
+
+[chatterbox.references.en]
+hook = "data/voice-references/en/hook-01.wav"
+turn = "data/voice-references/en/turn-01.wav"
+invite = "data/voice-references/en/invite-01.wav"
+neutral = "data/voice-references/en/neutral-01.wav"
+calm = "data/voice-references/en/calm-01.wav"
+
 [chatterbox_modal]  # a mesma voz numa GPU do Modal (ADR 024); modelo, entrega e gravação vêm de [chatterbox]
 python = "~/.local/share/uv/tools/modal/bin/python"  # o Python da CLI do Modal (uv tool install modal)
 app = "voz-dono"  # publicado com `modal deploy deploy/modal_chatterbox.py`

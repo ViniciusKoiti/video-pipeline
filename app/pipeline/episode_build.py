@@ -74,6 +74,10 @@ def build_scenes(
     built, cursor = [], 0
     for scene in scenes.scenes:
         wav = wavs[scene.id]
+        try:
+            audio = wav.resolve().relative_to(episode_dir.resolve()).as_posix()
+        except ValueError as error:
+            raise EpisodeBuildError(f"fala {scene.id} fora da pasta do episódio: {wav}") from error
         ms = measure(wav)
         shots = episode_shots(scene, ms, _media_for(episode_dir), sources, scenes.language)
         built.append(
@@ -82,7 +86,7 @@ def build_scenes(
                 start_ms=cursor,
                 duration_ms=ms,
                 narration=scene.narration,
-                audio=f"voice/{wav.name}",
+                audio=audio,
                 shots=shots,
                 host_corner=scene.host_corner,
                 delivery=scene.delivery,

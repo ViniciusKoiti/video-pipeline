@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any
 
 from app.errors import PipelineError
+from app.media.constants.voice_level_constants import VoiceLevelConstants
+from app.media.models.voice_level_report import VoiceLevelReport
 from app.media.probe import duration_ms
 from app.media.pronunciation import load_glossary, respell
 from app.pipeline.models.naming import Naming
@@ -25,7 +27,7 @@ from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.ports import ManifestStore
 from app.pipeline.voice import Narrator, VoiceLibrary
 from app.pipeline.voice_state import produce_with_state
-from app.providers.tts.base import TTSProvider, closing_tts
+from app.providers.tts.base import ReferencedTTS, SpeechRequest, TTSProvider, closing_tts
 
 Bounds = Callable[[Path], tuple[float, float]]
 
@@ -72,26 +74,44 @@ def produce_short_voice(
     )
     speech = speech_lines(narration)
     with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
-        outcomes = produce_with_state(narrator, store, episode_id, speech, now=datetime.now().astimezone())
+        outcomes = produce_with_state(
+            narrator, store, episode_id, speech, now=datetime.now().astimezone(),
+            level=isinstance(tts, ReferencedTTS) and tts.scene_references,
+        )
         wavs = narrator.require(outcomes)
     return [wavs[item.id] for item in speech]
 
 
-def voice_entries(narration: Narration, wavs: list[Path], bounds: Bounds) -> list[dict[str, Any]]:
+def voice_entries(
+    narration: Narration, wavs: list[Path], bounds: Bounds, tts: TTSProvider | None = None,
+    folder: Path | None = None,
+) -> list[dict[str, Any]]:
     """O registro de cada fala: o WAV, a duração e o trecho falado dentro dele (`bounds`)."""
-    entries = []
+    entries: list[dict[str, Any]] = []
     for line, wav in zip(narration.lines, wavs, strict=True):
         begin, end = bounds(wav)
+        relative = wav.resolve().relative_to(folder.resolve()).as_posix() if folder else f"voice/{wav.name}"
         entries.append(
             {
                 "scene": line.scene,
                 "text": line.text,
                 "delivery": line.delivery or "neutral",
-                "wav": f"voice/{wav.name}",
+                "wav": relative,
                 "seconds": duration_ms(wav) / 1000,
                 "speech": [round(begin, 3), round(end, 3)],
             }
         )
+        if isinstance(tts, ReferencedTTS):
+            request = SpeechRequest(
+                text=line.text, out_path=wav, language=narration.language, delivery=line.delivery or "neutral"
+            )
+            reference = tts.reference_for(request)
+            entries[-1]["reference"] = {
+                "file": str(reference.path), "sha256": reference.sha256, "remote_name": reference.remote_name
+            }
+        if wav.parent.name == VoiceLevelConstants.DIRECTORY:
+            report = VoiceLevelReport.model_validate_json(wav.with_suffix(".json").read_text())
+            entries[-1]["level"] = report.model_dump(mode="json")
     return entries
 
 

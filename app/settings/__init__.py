@@ -61,6 +61,16 @@ def load_settings(root: Path, environ: Mapping[str, str] | None = None) -> Setti
         field: env[var] for var, field in SettingsConstants.SECRET_VARS.items() if env.get(var)
     }
     settings = Settings.model_validate(data)
+    references = {
+        language: {
+            delivery: path.expanduser() if path.expanduser().is_absolute() else root / path
+            for delivery, path in entries.items()
+        }
+        for language, entries in settings.chatterbox.references.items()
+    }
+    settings = settings.model_copy(
+        update={"chatterbox": settings.chatterbox.model_copy(update={"references": references})}
+    )
     if not settings.data_dir.is_absolute():
         settings = settings.model_copy(update={"data_dir": root / settings.data_dir})
     return settings

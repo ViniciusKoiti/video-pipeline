@@ -19,7 +19,7 @@ from app.pipeline.ports import ManifestStore
 from app.pipeline.schemas import ScenesManifest
 from app.pipeline.voice import Narrator, VoiceLibrary
 from app.pipeline.voice_state import produce_with_state
-from app.providers.tts.base import TTSProvider, closing_tts
+from app.providers.tts.base import ReferencedTTS, TTSProvider, closing_tts
 
 
 def produce_voice(
@@ -38,5 +38,8 @@ def produce_voice(
     )
     lines = [SpeechLine(scene.id, scene.narration, scene.delivery or "neutral") for scene in scenes.scenes]
     with closing_tts(tts):  # a voz clonada mantém um processo com o modelo carregado
-        outcomes = produce_with_state(narrator, store, episode_id, lines, now=datetime.now().astimezone())
+        outcomes = produce_with_state(
+            narrator, store, episode_id, lines, now=datetime.now().astimezone(),
+            level=isinstance(tts, ReferencedTTS) and tts.scene_references,
+        )
         return narrator.require(outcomes)

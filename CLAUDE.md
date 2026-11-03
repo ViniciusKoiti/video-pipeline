@@ -30,6 +30,29 @@ Canal: **Cena e Conceito** (`@cenaeconceito`; nome e tag de afiliado em `config/
 
 ### Estado atual (2026-10-22)
 
+**Vídeos técnicos — direção do dono em 2026-11-01:** todo vídeo deve explicar e representar visualmente
+o impacto do conceito no **System Design da aplicação**: onde entra no fluxo, qual decisão muda e seus
+benefícios, custos e limites. Priorizar conteúdo sobre **Java** nas próximas gerações da série "eu medi";
+o próximo tema escolhido pelo dono é **CompletableFuture**. Planejar a explicação e os estados da animação antes da voz/render;
+usar blocos conectados, setas e mudanças de estado para mostrar o mecanismo, com a linguagem explícita.
+O vídeo explica o porquê com fontes; o fecho pode perguntar qual linguagem ou continuação o público quer.
+Direção e critérios: `renders/serie-conceitos/direcao-editorial.md`; ordem atual em
+`renders/serie-conceitos/fila.md`. O calendário original da série fica como histórico.
+O quadro "Controle obrigatório em todo tema" da direção editorial deve estar preenchido na pauta
+e conferido antes de voz/render e depois da montagem; uma lacuna impede avançar ou considerar a versão pronta.
+
+**Referências da voz por cena (ADR 053, pedido do dono em 2026-11-01):** o `delivery` e o idioma
+selecionam o WAV em `[chatterbox.references]` de `config/providers.toml`, para Shorts e vídeos longos,
+localmente ou no Modal. Gravações em `data/voice-references/{pt-BR,en}/`, fora do Git; guia em
+`docs/guia-gravacao-referencias-voz.md`. Sem mapeamento, usa a referência antiga; referência mapeada
+ausente/inválida deixa a cena pendente. O cache usa a referência efetiva e os parâmetros da fala;
+o manifest registra sua identidade por cena e o Short também registra arquivo/hash em `narracao.voz.json`.
+O cliente não envia gravações junto da síntese: os WAVs precisam estar previamente no volume privado do Modal.
+Com esse banco ativo, a geração também prepara cópias por cena em `voice/leveled/`, com alvo de −16 LUFS
+e pico de −1,5 dBTP (ADR 054). A montagem usa essas cópias, preservando os WAVs brutos; mudar o volume
+não exige chamar o TTS novamente. O Short registra as medições em `lines[].level`; o volume final
+do vídeo continua sendo conferido depois da mistura com efeitos/trilha.
+
 Primeiros agendamentos pelo Postiz em outubro de 2026, todos pela cadeia do §2.8 (clipes do Nabote em 17/10; o Reel
 `confeitaria-erro-2-pt` em 19/10; `death-note-fins-meios`, `kira-voto-brasil`, `historia-vencedores` e
 `epicteto-na-sua-mao` no Cena e Conceito, de 20 a 23/10; trilha em `data/publicacoes/registro.jsonl`). Agendado não

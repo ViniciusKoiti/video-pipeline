@@ -83,13 +83,13 @@ class _Generate:
     def remote(self, job):
         if os.environ.get("FAKE_MODAL_FAIL"):
             return {"ok": False, "error": "volume sem a gravação"}
-        import io, wave
+        import io, json, wave
         buffer = io.BytesIO()
         with wave.open(buffer, "wb") as wav:
             wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(24000)
             wav.writeframes(b"\\x00\\x00" * 2400)
         with open(os.environ["FAKE_MODAL_LOG"], "a") as log:
-            log.write(repr(sorted(job)) + "\\n")
+            log.write(json.dumps(job) + "\\n")
         return {"ok": True, "seconds": 0.1, "wav": buffer.getvalue()}
 
 
@@ -158,3 +158,40 @@ def test_the_cloud_voice_is_registered_free_and_remote(
     context = build_context(REPO_ROOT, environ={"CHATTERBOX_REFERENCE": str(reference(tmp_path))})
     tts = context.tts_named("chatterbox_modal")
     assert tts.info.name == "chatterbox_modal" and tts.info.remote and tts.info.usd_per_call == 0
+
+
+def test_reference_changes_per_job_in_the_same_real_client_process(tmp_path: Path, fake_modal: Path) -> None:
+    from tests.test_voice_references import recordings
+
+    refs = recordings(tmp_path / "references")
+    tts = ChatterboxTTS(
+        Path(sys.executable), reference(tmp_path), language_ids={"pt-BR": "pt", "en": "en"},
+        references=refs, start=modal_starter("voz-dono", "referencia.wav"),
+        provider="chatterbox_modal", remote=True,
+    )
+    try:
+        for language, entries in refs.items():
+            for tone in entries:
+                tts.synthesize_speech(SpeechRequest(
+                    "Uma frase.", tmp_path / f"{language}-{tone}.wav", language=language, delivery=tone
+                ))
+    finally:
+        tts.close()
+    jobs = [json.loads(line) for line in fake_modal.read_text().splitlines()]
+    assert len(jobs) == 10
+    selections = [(language, tone) for language, entries in refs.items() for tone in entries]
+    for job, (language, tone) in zip(jobs, selections, strict=True):
+        assert job["reference_name"] == f"references/{language}/{tone}.wav"
+        assert job["reference_hash"] == hashlib.sha256(refs[language][tone].read_bytes()).hexdigest()[:12]
+        assert "reference" not in job and "out_path" not in job and "wav" not in job
+
+
+@pytest.mark.parametrize("name", ["../private.wav", "/etc/private.wav", "references/../private.wav", "a\\b"])
+def test_reference_names_cannot_escape_the_private_volume(tmp_path: Path, name: str) -> None:
+    job = {"reference": str(reference(tmp_path)), "reference_name": name}
+
+    def never_call(_: dict[str, Any]) -> dict[str, Any]:
+        pytest.fail("nome inválido não faz chamada remota")
+
+    result = handle(job, "referencia.wav", never_call)
+    assert result["ok"] is False and "referência" in result["error"]

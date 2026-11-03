@@ -17,7 +17,7 @@ import json
 import os
 import sys
 from collections.abc import Callable, Iterable
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, TextIO
 
 if TYPE_CHECKING or __package__:
@@ -44,7 +44,12 @@ def handle(job: dict[str, Any], reference_name: str, call: Call) -> dict[str, An
     remote_job: dict[str, Any] = {
         key: job[key] for key in ChatterboxModalClientConstants.FORWARDED if key in job
     }
-    remote_job["reference_name"] = reference_name
+    name = job.get("reference_name", reference_name)
+    if not isinstance(name, str) or not name or "\\" in name:
+        return {"ok": False, "error": "nome de referência inválido"}
+    if PurePosixPath(name).is_absolute() or ".." in PurePosixPath(name).parts:
+        return {"ok": False, "error": "referência deve ficar dentro do volume privado"}
+    remote_job["reference_name"] = name
     remote_job["reference_hash"] = hashlib.sha256(reference.read_bytes()).hexdigest()[:12]
     result = call(remote_job)
     if not result.get("ok"):

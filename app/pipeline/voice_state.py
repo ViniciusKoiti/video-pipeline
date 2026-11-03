@@ -13,10 +13,14 @@ ainda existem: é o que o `vp status` mostra.
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Sequence
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 
+from app.media.constants.voice_level_constants import VoiceLevelConstants
+from app.media.voice_level import VoiceLevelError, level_policy, level_voice
 from app.pipeline.models.scene_outcome import SceneOutcome
 from app.pipeline.models.scene_record import SceneRecord
 from app.pipeline.models.speech_line import SpeechLine
@@ -29,9 +33,32 @@ from app.pipeline.voice import Narrator
 Outcome = SceneOutcome[Path]
 
 
+def _level(outcomes: list[Outcome]) -> list[Outcome]:
+    result = []
+    for outcome in outcomes:
+        if outcome.status is not Status.COMPLETED or outcome.value is None:
+            result.append(outcome)
+            continue
+        try:
+            wav = level_voice(outcome.value)
+        except VoiceLevelError as error:
+            result.append(SceneOutcome[Path](
+                outcome.scene_id, Status.NEEDS_REVIEW,
+                reason=VoiceLevelConstants.REASON, detail=str(error),
+            ))
+        else:
+            result.append(replace(
+                outcome, value=wav, detail=f"{outcome.detail}|{level_policy()}"
+            ))
+    return result
+
+
 def _record(outcome: Outcome, folder: Path) -> SceneRecord:
     if outcome.status is Status.COMPLETED and outcome.value is not None:
-        return SceneRecord(status=Status.COMPLETED, outputs=[outcome.value.relative_to(folder).as_posix()])
+        return SceneRecord(
+            status=Status.COMPLETED, outputs=[outcome.value.relative_to(folder).as_posix()],
+            detail=outcome.detail,
+        )
     return SceneRecord(status=Status.NEEDS_REVIEW, reason=outcome.reason, detail=outcome.detail)
 
 
@@ -74,14 +101,19 @@ def _save_failure(
 
 
 def produce_with_state(
-    narrator: Narrator, store: ManifestStore, episode_id: str, lines: Sequence[SpeechLine], *, now: datetime
+    narrator: Narrator, store: ManifestStore, episode_id: str, lines: Sequence[SpeechLine], *, now: datetime,
+    level: bool = False,
 ) -> list[Outcome]:
     """`Narrator.produce` com o episódio travado e o relatório por cena gravado no fim. Erro que não é de
     provedor fica registrado como `failed` e sobe; não aninhar `store.lock` dentro da geração."""
     digest = narrator.input_hash(lines)
+    if level:
+        digest = "sha256:" + hashlib.sha256(f"{digest}|{level_policy()}".encode()).hexdigest()
     with store.lock(episode_id):
         try:
             outcomes = narrator.produce(lines)
+            if level:
+                outcomes = _level(outcomes)
         except Exception as error:
             _save_failure(store, episode_id, digest, error, now)
             raise

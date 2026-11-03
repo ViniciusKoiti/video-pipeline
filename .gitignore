@@ -20,6 +20,8 @@ data/cache/*
 data/music/*
 # Consumo editorial privado, banco SQLite e arquivos auxiliares (ADR 032)
 data/telemetry/
+# Gravações pessoais de referência de voz, em qualquer formato
+data/voice-references/
 
 # Mídia pesada (exceto fixtures pequenas e revisadas)
 *.mp4

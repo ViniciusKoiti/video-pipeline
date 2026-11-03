@@ -27,6 +27,7 @@ from typing import Protocol, runtime_checkable
 from app.providers.base import ProviderInfo
 from app.providers.tts.models.speech_request import SpeechRequest as SpeechRequest
 from app.providers.tts.models.speech_result import SpeechResult as SpeechResult
+from app.providers.tts.models.voice_reference import VoiceReference
 
 
 class TTSProvider(Protocol):
@@ -36,6 +37,15 @@ class TTSProvider(Protocol):
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult: ...
 
     def fingerprint(self, request: SpeechRequest) -> str: ...
+
+
+@runtime_checkable
+class ReferencedTTS(Protocol):
+    """Voz com referência consultável, inclusive quando a fala já está em cache."""
+
+    scene_references: bool
+
+    def reference_for(self, request: SpeechRequest) -> VoiceReference: ...
 
 
 @runtime_checkable

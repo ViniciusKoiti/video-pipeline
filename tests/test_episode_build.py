@@ -77,6 +77,19 @@ def test_a_photo_without_a_chosen_asset_is_an_error_that_says_so(tmp_path: Path)
         build_scenes(script, wavs(where), where, None, lambda wav: 1000)
 
 
+def test_leveled_audio_keeps_its_real_subdirectory_in_the_render_manifest(tmp_path: Path) -> None:
+    where = folder(tmp_path)
+    leveled = {key: path.parent / "leveled" / path.name for key, path in wavs(where).items()}
+    built = build_scenes(roteiro(), leveled, where, None, lambda _: 1000)
+    assert all(scene.audio == f"voice/leveled/{leveled[scene.id].name}" for scene in built)
+
+
+def test_audio_outside_the_episode_is_refused(tmp_path: Path) -> None:
+    where = folder(tmp_path / "ep")
+    with pytest.raises(EpisodeBuildError, match="fora da pasta"):
+        build_scenes(roteiro(), wavs(tmp_path), where, None, lambda _: 1000)
+
+
 def test_the_episode_is_a_draft_explainer_with_the_video_of_the_script_orientation(tmp_path: Path) -> None:
     where = folder(tmp_path)
     built = build_scenes(roteiro(), wavs(where), where, None, lambda wav: 1000)

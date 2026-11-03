@@ -32,13 +32,17 @@ def run(args: argparse.Namespace, context: Context) -> int:
     started = time.monotonic()
     episode_id = production_id(context.store, args.folder)  # a pasta é o "episódio" do estado
     wavs = produce_short_voice(tts, narration, context.store, episode_id)
-    entries = voice_entries(narration, wavs, speech_bounds)
+    entries = voice_entries(narration, wavs, speech_bounds, tts, args.folder)
     for entry in entries:
         begin, end = entry["speech"]
         name = entry["wav"].removeprefix("voice/")
         print(
             f"{entry['scene'] or 'fora':16s} {entry['seconds']:5.2f} s (fala {begin:.2f}–{end:.2f})  {name}"
         )
+        if reference := entry.get("reference"):
+            print(f"  referência: {reference['file']} ({reference['sha256'][:12]})")
+        if level := entry.get("level"):
+            print(f"  volume: {level['input_lufs']:.1f} → {level['output_lufs']:.1f} LUFS")
     out = args.folder / f"{args.narration.stem}.voz.json"
     write_voice_record(out, narration.language, provider, entries)
     spoken = sum(entry["speech"][1] - entry["speech"][0] for entry in entries)

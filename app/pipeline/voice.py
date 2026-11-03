@@ -41,8 +41,8 @@ from app.pipeline.models.scene_outcome import SceneOutcome
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.status import Status
 from app.pipeline.models.voice_key import VoiceKey
-from app.providers.errors import InvalidOutput
-from app.providers.tts.base import SpeechRequest, TTSProvider
+from app.providers.errors import InvalidOutput, ProviderError
+from app.providers.tts.base import ReferencedTTS, SpeechRequest, TTSProvider
 
 Outcome = SceneOutcome[Path]
 
@@ -98,6 +98,8 @@ class Narrator:
         return VoiceKey(line.id, self._tts.identity, self._language, self._fingerprint(request), spoken)
 
     def _fingerprint(self, request: SpeechRequest) -> str:
+        if isinstance(self._tts, ReferencedTTS) and self._tts.scene_references:
+            return self._tts.fingerprint(request)
         if self._library.naming is Naming.LONG:
             full = self._tts.fingerprint(request)
             if self._tts.identity in VoiceConstants.CLONED:  # o nome de hoje não leva os valores da entrega
@@ -109,8 +111,13 @@ class Narrator:
 
     def input_hash(self, lines: Sequence[SpeechLine]) -> str:
         """Muda quando qualquer fala muda de texto, voz ou entrega: é o `input_hash` do estado da etapa."""
-        names = "\n".join(self.key(line).file_name(self._library.naming) for line in lines)
-        return "sha256:" + hashlib.sha256(names.encode()).hexdigest()
+        names = []
+        for line in lines:
+            try:
+                names.append(self.key(line).file_name(self._library.naming))
+            except ProviderError as error:
+                names.append(f"{line.id}|{line.delivery}|{line.text}|{error}")
+        return "sha256:" + hashlib.sha256("\n".join(names).encode()).hexdigest()
 
     def plan(self, lines: Sequence[SpeechLine]) -> list[PlannedSpeech]:
         """Só as falas sem WAV (ou com um arquivo inválido no lugar dele)."""
@@ -153,12 +160,30 @@ class Narrator:
 
     def produce(self, lines: Sequence[SpeechLine]) -> list[Outcome]:
         """Uma saída por fala, na ordem: a que já existia, a gerada agora ou o motivo da falha."""
-        done = {o.scene_id: o for o in self.synthesize(self.plan(lines))}
-        return [
-            done.get(line.id)
-            or SceneOutcome(line.id, Status.COMPLETED, value=self._library.path(self.key(line)))
-            for line in lines
-        ]
+        valid, failed = [], {}
+        for line in lines:
+            try:
+                self.key(line)
+            except ProviderError as error:
+                failed[line.id] = SceneOutcome[Path](
+                    line.id, Status.NEEDS_REVIEW, reason=error.reason, detail=str(error)
+                )
+            else:
+                valid.append(line)
+        done = {o.scene_id: o for o in self.synthesize(self.plan(valid))}
+        outcomes = []
+        for line in lines:
+            if line.id in failed:
+                outcomes.append(failed[line.id])
+                continue
+            key = self.key(line)
+            outcome = done.get(line.id) or SceneOutcome(
+                line.id, Status.COMPLETED, value=self._library.path(key)
+            )
+            if outcome.status is Status.COMPLETED:
+                outcome = replace(outcome, detail=key.fingerprint)
+            outcomes.append(outcome)
+        return outcomes
 
     @staticmethod
     def require(outcomes: Sequence[Outcome]) -> dict[str, Path]:
