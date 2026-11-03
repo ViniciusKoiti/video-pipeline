@@ -1,0 +1,23 @@
+[
+  {
+    "id": "codigo",
+    "file": "public/lottie/codigo.json",
+    "license": "Original",
+    "sha256": "5415b2e04e69de834629edc33bbc62db9482e28f883ce0dc27588e4eca07b0de",
+    "usage_notes": "English labels on the original C diagrams; same illustrative states, no new measurements."
+  },
+  {
+    "id": "mutex",
+    "file": "public/lottie/mutex.json",
+    "license": "Original",
+    "sha256": "d3a1aff0d705af425fe1b373b935ce02be3960cf3d7bbb11cd5431d303a13963",
+    "usage_notes": "English labels on the original C diagrams; same illustrative states, no new measurements."
+  },
+  {
+    "id": "atomic",
+    "file": "public/lottie/atomic.json",
+    "license": "Original",
+    "sha256": "a7dfe2744260f56df9b4823315f0632075cf98f2e31cf0bcf69c3cf6470039c4",
+    "usage_notes": "English labels on the original C diagrams; same illustrative states, no new measurements."
+  }
+]

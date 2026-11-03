@@ -1,0 +1,28 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Two threads add one million times each. The total should be two million.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "codigo",
+      "text": "Both add to the same counter, in a loop of a million. In one version I protect nothing. In the other two, I use a mutex and atomic."
+    },
+    {
+      "scene": "resultado",
+      "text": "Without protection, the total went from close to a million to over one million three hundred thousand, and changed every run. With the mutex, two million, in all fifteen.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "tempo",
+      "text": "Without protection, eleven milliseconds, and wrong. With the mutex, ninety-two, and right. With atomic, twenty-one, and right."
+    },
+    {
+      "scene": "fecho",
+      "text": "Why does the total come up short without the mutex? Comment below. Code in the description.",
+      "delivery": "invite"
+    }
+  ]
+}

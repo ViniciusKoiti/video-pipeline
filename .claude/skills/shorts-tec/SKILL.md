@@ -1,28 +1,39 @@
 ---
 name: shorts-tec
 description: |
-  Short de tecnologia (até uns 20 s) sobre uma ferramenta do dono, montado por JSON no motion-video do kit,
-  com o dono numa janela flutuante e a voz clonada dele: narração por cena → JSON → inspect e review → voz →
-  tempos → render → junção → posts. Use quando o dono pedir um Short, teaser ou demo de um projeto técnico
-  dele. Episódio do Cena e Conceito é `roteiro-explicativo`; Reel de pauta é `pauta`.
+  Monte Shorts técnicos sobre conceitos de programação ou ferramentas do dono com explicação animada
+  e impacto visual em System Design: pauta → plano de animação → narração → JSON do motion-video →
+  revisão → voz clonada → render → posts. Use para Shorts de Java, demonstrações técnicas e teasers
+  de projetos do dono. Episódio longo do Cena e Conceito é `roteiro-explicativo`.
 argument-hint: "<pasta do short>"
 ---
 
-# Shorts tec: uma frase, um JSON, a voz do dono
+# Shorts técnicos: mecanismo, fluxo animado e System Design
 
-O Short mostra uma coisa que o dono **construiu**, com os números do próprio repositório dela na tela e o dono
-falando numa janela no canto. A frase é "eu construí", nunca "eu achei": é conteúdo original, o oposto do que a
-política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O primeiro caso é o teaser do motion-kit
+O Short explica um conceito com uma demonstração própria ou mostra uma ferramenta que o dono construiu.
+Conceitos de programação têm linguagem explícita e uma aplicação concreta que revela o impacto em System Design.
+Para ferramentas do dono, a frase é "eu construí": o conteúdo e os números vêm do próprio repositório.
+O primeiro caso é o teaser do motion-kit
 (`data/episodes/teaser-motion-kit/`, posts em `renders/teaser-motion-kit/`, doc
 `docs/divulgacao/teaser-15s-2026-10-25.md` no repositório do kit): copie a forma dele.
 
 ## Entrada
 
+- Em todo vídeo técnico, explicar o impacto em System Design da aplicação e representá-lo
+  com nossas animações: fluxo entre componentes, mudança de estado e benefício/limite sustentados.
+  Ler os critérios em `renders/serie-conceitos/direcao-editorial.md` antes de planejar as cenas.
+  Preencher o quadro obrigatório por tema na pauta e conferir antes de voz/render e depois da montagem;
+  registrar lacunas e completar o conteúdo antes de avançar ou apresentá-lo como pronto.
+- Para a série de conceitos, ler `renders/serie-conceitos/direcao-editorial.md` e `fila.md`:
+  prioridade Java, explicação do mecanismo e plano de animação antes de gerar voz/render.
+  Esses critérios da série não mudam a duração de um teaser de ferramenta pedido pelo dono.
 - A pasta do short (o "projeto" do `motion-video`) em `data/episodes/<id>/`, fora do Git: JSON, narração,
   voz, a pele do dono e os renders. O que se publica vai para `renders/<id>/`, versionável.
-- O que o dono decidiu: o canal e o perfil, os idiomas, se ele aparece na janela, e os 15 a 20 segundos.
-- O repositório da ferramenta, de onde saem todos os números (`git log`, catálogo, testes). Um número sem
-  origem no repositório fica fora da tela.
+- O que o dono decidiu: o canal e o perfil, os idiomas, se ele aparece na janela e a duração da pauta.
+- Teasers usam os 15 a 20 segundos combinados; conceitos seguem a duração da pauta, com tempo para explicar
+  o mecanismo e seu impacto. A presença do dono na janela é opcional segundo o formato aprovado.
+- O código do exemplo ou repositório da ferramenta e as fontes primárias do mecanismo.
+  Cada número precisa de origem registrada; tempos e resultados exigem medição própria.
 
 ## O que você escreve, na pasta do short
 
@@ -30,30 +41,55 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
   `app/commands/short.py`).
 - `content.<idioma>.json`: o vídeo por JSON do `motion-video` (tipos de cena e campos na receita
   `packages/motion-video/recipes/explainer.md` do kit; a janela do dono é o campo `host`).
+- `plano-animacao.md`: trechos da fala, estados inicial/final, blocos, conexões, transições e fontes;
+  incluir a sequência de impacto na aplicação e o quadro de controle da direção editorial.
 - `posts/`: os rascunhos do Postiz e o `README.md` com os textos, a hipótese e a lista do que falta.
 - O doc do short, com a origem de cada número, as variantes e o que cada `review` mostrou.
 
 ## Método
 
-1. **A promessa em uma frase e a capa.** O cartão de abertura (`hook`, `cover: true`) é a capa do Short e diz a
-   promessa com números inteiros ("1 frase. 6 cenas. 47 estilos."). Pronto quando cada número da capa e das cenas
-   tem a linha de origem no doc do short.
-2. **A narração por cena.** Uma linha curta por cena, na ordem das cenas, mais as falas dos planos fora do JSON
+1. **A promessa em uma frase e a capa.** O cartão de abertura (`hook`, `cover: true`) é a capa do Short e diz
+   a pergunta ou promessa do vídeo, com a linguagem explícita nos conceitos de programação.
+   Quando houver números, cada um tem origem registrada no doc do short; não criar uma medição para a capa.
+2. **Plano de animação e narração por cena.** Antes de gerar a voz, definir no `plano-animacao.md` o fluxo
+   entre componentes, o elemento ativo em cada etapa e a mudança de estado que explica o mecanismo.
+   A sequência deve mostrar também a decisão de System Design, seu benefício e seu limite na aplicação.
+   Referência de forma: `renders/short-concorrencia/fluxo/plano-animacao.md` e
+   `renders/short-concorrencia/final.pt.fluxo.mp4`; os fatos e números desse exemplo são de C.
+   Uma linha curta de narração por cena, na ordem das cenas, mais as falas dos planos fora do JSON
    (gravação de tela, troca de estilos) com `scene: null`. Entrega da ADR 022: `hook` na abertura, `turn` na
-   virada, `invite` no fecho. A voz clonada fala a ~2,5 palavras por segundo: uma linha de 8 palavras ocupa
+   virada, `calm` para acompanhar contas/fluxos, `neutral` na explicação e `invite` no fecho.
+   Pela ADR 053, idioma + `delivery` escolhem a gravação em `[chatterbox.references]`; não inserir caminhos
+   pessoais no roteiro. Planejar a intenção e as pausas junto dos estados da animação.
+   A voz clonada fala a ~2,5 palavras por segundo: uma linha de 8 palavras ocupa
    3 s, e a cena precisa ter esse tempo depois de pronta para ler. Passe a `humanizer-narracao` antes de gravar.
-   Pronto quando nenhuma linha afirma o que o repositório não mostra. Com medição própria (ADR 034), escreva o
+   Pronto quando as afirmações se apoiam no código, nas fontes registradas ou na medição. Com medição própria (ADR 034), escreva o
    `medicao.json` (cada número dito ou mostrado, o trecho literal do `resultado.txt`, os medidos e a tolerância
    do arredondamento; nome e contagem levam só a `nota`) e rode `vp medicao <id>` até sair limpo: o gate 4 exige.
 3. **O JSON do motion-video.** `safeArea: "shorts"`, `footer` com a origem dos dados, `host` com a pele de
    sprites do dono (dado pessoal: a pasta fica no `.gitignore` do repositório onde o short mora) e `speaking`
    só nas cenas que a narração cobre. Pronto quando `inspect` sai válido e cada aviso `HOST_WINDOW_TIGHT` tem
    uma decisão escrita: `host: false` na cena, janela menor, ou aceitar o encolhimento.
+   Para mostrar um fluxo, usar blocos conectados, setas e valores/estados que mudam junto da explicação.
+   O tipo `animation` aceita Lottie original: conferir o contrato do kit, registrar licença/hash e
+   ajustar os keyframes às falas. O gerador `renders/short-concorrencia/fluxo/gerar_animacoes.py` é referência;
+   adaptar o desenho e a semântica ao tema. Uma sequência de cartões de texto não substitui o fluxo pedido.
 4. **Review.** `review` do JSON e os quadros de leitura de todas as cenas abertos. Pronto quando cada cena foi
    conferida contra três defeitos: animação cortada antes do fim, janela sobre o conteúdo e texto sobre o rodapé.
+   Nos fluxos, abrir também antes/durante/depois das transições: conferir valor transportado, elemento ativo,
+   espera, conclusão e impacto no desenho da aplicação. Registrar o resultado do controle obrigatório.
+   Conferir números e textos internos de Lottie visualmente: eles não entram na leitura do `vp medicao`.
 5. **A voz.** `vp short voz <pasta> narracao.<idioma>.json` (`--voz NOME` troca a voz) gera as falas com a voz do vídeo final (a
    clonada do dono no Modal, ADR 024). É serviço externo: só com o pedido do dono na sessão, e a sonda
    `cpu_probe()` antes. Pronto quando o `narracao.<idioma>.voz.json` lista um WAV por linha e o dono ouviu.
+   Conferir também `reference.file`, `reference.sha256` e `reference.remote_name` por fala; o manifest
+   registra a identidade de referência/entrega inclusive no reuso do cache. Gravação ausente ou divergente
+   no Modal deixa a cena pendente; não trocar por outro tom. O cadastro e a sincronização das referências
+   são descritos em `docs/guia-gravacao-referencias-voz.md`; a rotina não envia novas gravações pessoais.
+   Com o banco ativo, `voz` nivela cada fala em uma cópia `voice/leveled/` antes de `tempos` (ADR 054).
+   Conferir `level.input_lufs`, `level.output_lufs` e `level.true_peak_dbtp` no registro: alvo −16 LUFS,
+   teto −1,5 dBTP. A montagem usa o `wav` do registro; não voltar ao bruto por nome de arquivo.
+   Falha de nivelamento deixa a cena pendente; retomar reaproveita a síntese bruta já pronta.
 6. **Tempos, render e junção.** `vp short tempos <pasta> content.<idioma>.json narracao.<idioma>.json` estica as cenas até a fala caber; o `render` do kit
    sai do `content.<idioma>.voz.json`; `vp short juntar <pasta> <mudo.mp4> content.<idioma>.voz.json narracao.<idioma>.json --saida <mp4>` põe cada fala no começo da cena. Pronto quando o
    `juntar` imprime o volume dentro do alvo e nenhuma fala passa do fim da cena.
@@ -85,5 +121,5 @@ política de conteúdo não original do YouTube derruba (CLAUDE.md §12). O prim
 ## Fora da v1
 
 Legenda queimada (o `motion-video` não tem campo de legenda; a `WordCaption` é do template do auto-play),
-trilha (efeitos sonoros entraram na ADR 035; música ainda não), e a voz em inglês: a decisão entre a voz clonada em inglês e a dublagem automática do YouTube é do
-dono, numa escuta cega.
+trilha (efeitos sonoros entraram na ADR 035; música ainda não). A voz clonada em inglês foi aprovada
+pelo dono na versão de concorrência em C; referências novas ainda exigem escuta da prévia gerada.

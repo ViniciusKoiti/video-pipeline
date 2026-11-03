@@ -1,0 +1,305 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Measured 2026-11-02 · OpenJDK 25.0.4 · Ryzen 7 5700U · pool of 4 threads · 15 runs · simulated latencies",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 7,
+      "kicker": "Java · CompletableFuture",
+      "text": "In Java: wait for price and stock one by one, or join them?",
+      "highlight": "join them"
+    },
+    {
+      "id": "desenho",
+      "type": "flow",
+      "durationSec": 6.3,
+      "title": "Two calls, one pool",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Request",
+          "sublabel": "API · pool de 4 threads"
+        },
+        {
+          "id": "preco",
+          "label": "Price call"
+        },
+        {
+          "id": "estoque",
+          "label": "Stock call"
+        },
+        {
+          "id": "comb",
+          "label": "thenCombine"
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "preco",
+          "kind": "scheduling",
+          "label": "2 tarefas"
+        },
+        {
+          "from": "req",
+          "to": "estoque",
+          "kind": "scheduling"
+        },
+        {
+          "from": "preco",
+          "to": "comb",
+          "kind": "data"
+        },
+        {
+          "from": "estoque",
+          "to": "comb",
+          "kind": "data"
+        },
+        {
+          "from": "comb",
+          "to": "req",
+          "kind": "data"
+        }
+      ],
+      "states": [
+        {
+          "node": "comb",
+          "atSec": 1.2,
+          "state": "waiting"
+        },
+        {
+          "node": "req",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "preco",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "estoque",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "estoque",
+          "atSec": 2.0,
+          "state": "done"
+        },
+        {
+          "node": "preco",
+          "atSec": 2.6,
+          "state": "done"
+        },
+        {
+          "node": "comb",
+          "atSec": 2.6,
+          "state": "running"
+        },
+        {
+          "node": "comb",
+          "atSec": 3.4,
+          "state": "done"
+        },
+        {
+          "node": "req",
+          "atSec": 3.8,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t-estoque",
+          "from": "estoque",
+          "to": "comb",
+          "atSec": 2.0,
+          "durationSec": 0.6,
+          "label": "stock"
+        },
+        {
+          "id": "t-preco",
+          "from": "preco",
+          "to": "comb",
+          "atSec": 2.6,
+          "durationSec": 0.6,
+          "label": "price"
+        },
+        {
+          "id": "t-resposta",
+          "from": "comb",
+          "to": "req",
+          "atSec": 3.4,
+          "durationSec": 0.5,
+          "label": "response"
+        }
+      ]
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 5.9,
+      "title": "Two tasks, one join",
+      "lines": [
+        "CompletableFuture<String> price =",
+        "    supplyAsync(() -> priceOf(id), pool);",
+        "CompletableFuture<String> stock =",
+        "    supplyAsync(() -> stockOf(id), pool);",
+        "price.thenCombine(stock,",
+        "    (p, s) -> p + \"+\" + s).join();"
+      ],
+      "highlight": [
+        {
+          "token": "supplyAsync"
+        },
+        {
+          "token": "thenCombine"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 1.5,
+          "lines": [
+            1,
+            4
+          ],
+          "note": "Two tasks in the pool, no waiting"
+        },
+        {
+          "atSec": 4.5,
+          "lines": [
+            5,
+            6
+          ],
+          "note": "thenCombine waits for both and joins"
+        }
+      ]
+    },
+    {
+      "id": "comparacao",
+      "type": "versus",
+      "durationSec": 6,
+      "title": "Sequential × composed",
+      "left": {
+        "title": "Sequential",
+        "value": "501 ms",
+        "lines": [
+          "price 300 ms",
+          "then stock 200 ms"
+        ]
+      },
+      "right": {
+        "title": "Composed",
+        "value": "309.5 ms",
+        "lines": [
+          "both at the same time",
+          "waits for the slower"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 3
+    },
+    {
+      "id": "prazo",
+      "type": "flow",
+      "durationSec": 6,
+      "title": "500 ms deadline",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Request",
+          "sublabel": "product API"
+        },
+        {
+          "id": "tarefa",
+          "label": "Stock call",
+          "sublabel": "slow: 2 s"
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "tarefa",
+          "kind": "scheduling",
+          "label": "starts"
+        },
+        {
+          "from": "tarefa",
+          "to": "req",
+          "kind": "completion",
+          "label": "done"
+        }
+      ],
+      "states": [
+        {
+          "node": "req",
+          "atSec": 0.9,
+          "state": "waiting"
+        },
+        {
+          "node": "tarefa",
+          "atSec": 1.1,
+          "state": "running"
+        },
+        {
+          "node": "req",
+          "atSec": 1.6,
+          "state": "timeout"
+        },
+        {
+          "node": "tarefa",
+          "atSec": 3.0,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t-tarde",
+          "from": "tarefa",
+          "to": "req",
+          "atSec": 3.0,
+          "durationSec": 0.8,
+          "label": "too late"
+        }
+      ],
+      "direction": "right"
+    },
+    {
+      "id": "prazo-medido",
+      "type": "categories",
+      "durationSec": 4.6,
+      "title": "Measured on this machine (ms)",
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "task finishes",
+      "items": [
+        {
+          "label": "response with deadline",
+          "value": 508.1
+        },
+        {
+          "label": "task finishes",
+          "value": 2006.1
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 4.6,
+      "variant": "follow",
+      "text": "Where does your API stop waiting?",
+      "sub": "Comment what you would measure"
+    }
+  ]
+}

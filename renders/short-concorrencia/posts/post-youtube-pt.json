@@ -1,0 +1,52 @@
+{
+  "type": "schedule",
+  "date": "2026-11-01T14:14:08-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0omyy0005l26yggavdqpu"
+      },
+      "value": [
+        {
+          "content": "Dois threads somam um milhão de vezes cada no mesmo contador em C. Por que o total fica abaixo de dois milhões?\n\nA animação mostra um exemplo didático de uma atualização perdida, o trecho protegido por mutex e a soma indivisível de atomic_fetch_add. Em C, a corrida de dados da versão sem proteção tem comportamento indefinido; o desenho não é um trace da execução.\n\nMedição desta máquina: gcc 15.2.0, -O2 -pthread, Ryzen 7 5700U, 15 rodadas por versão em 01/11/2026. Medianas de tempo: sem proteção, 11,0 ms e total errado; mutex, 92,2 ms; atomic, 21,4 ms. Mutex e atomic atingiram 2.000.000 nas 15 rodadas. São resultados deste programa e ambiente, sem regra geral de desempenho.\n\nFontes para a explicação:\nC11/WG14 N1570, §§5.1.2.4 e 7.17.7.5: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf\nDocumentação de pthread_mutex_lock: https://docs.oracle.com/cd/E19120-01/open.solaris/816-5137/sync-117/index.html\n\nQuer ver como a concorrência funciona em outra linguagem? Comenta qual você quer ver.\n\nA voz é a minha, clonada por IA. Animações originais criadas para esta demonstração.\n\n#Shorts #Programação #LinguagemC #Concorrência #Mutex #Atomic",
+          "image": [
+            {
+              "id": "0dd3fb86-418a-41c4-903d-2be56a287385",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/01/8d94f61a6b10ed4a85e5257ba120e0106d.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Por que o contador perde somas em C? Mutex e atomic",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "C",
+            "label": "C"
+          },
+          {
+            "value": "concorrência",
+            "label": "concorrência"
+          },
+          {
+            "value": "mutex",
+            "label": "mutex"
+          },
+          {
+            "value": "atomic",
+            "label": "atomic"
+          },
+          {
+            "value": "programação",
+            "label": "programação"
+          }
+        ]
+      }
+    }
+  ]
+}

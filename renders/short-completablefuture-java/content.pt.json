@@ -1,0 +1,305 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Medido em 02/11/2026 · OpenJDK 25.0.4 · Ryzen 7 5700U · pool de 4 threads · 15 rodadas · latências simuladas",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 7,
+      "kicker": "Java · CompletableFuture",
+      "text": "Em Java: preço e estoque, em fila ou juntos?",
+      "highlight": "juntos"
+    },
+    {
+      "id": "desenho",
+      "type": "flow",
+      "durationSec": 6.3,
+      "title": "Duas consultas, um pool",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Requisição",
+          "sublabel": "API · pool de 4 threads"
+        },
+        {
+          "id": "preco",
+          "label": "Consulta preço"
+        },
+        {
+          "id": "estoque",
+          "label": "Consulta estoque"
+        },
+        {
+          "id": "comb",
+          "label": "thenCombine"
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "preco",
+          "kind": "scheduling",
+          "label": "2 tarefas"
+        },
+        {
+          "from": "req",
+          "to": "estoque",
+          "kind": "scheduling"
+        },
+        {
+          "from": "preco",
+          "to": "comb",
+          "kind": "data"
+        },
+        {
+          "from": "estoque",
+          "to": "comb",
+          "kind": "data"
+        },
+        {
+          "from": "comb",
+          "to": "req",
+          "kind": "data"
+        }
+      ],
+      "states": [
+        {
+          "node": "comb",
+          "atSec": 1.2,
+          "state": "waiting"
+        },
+        {
+          "node": "req",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "preco",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "estoque",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "estoque",
+          "atSec": 2.0,
+          "state": "done"
+        },
+        {
+          "node": "preco",
+          "atSec": 2.6,
+          "state": "done"
+        },
+        {
+          "node": "comb",
+          "atSec": 2.6,
+          "state": "running"
+        },
+        {
+          "node": "comb",
+          "atSec": 3.4,
+          "state": "done"
+        },
+        {
+          "node": "req",
+          "atSec": 3.8,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t-estoque",
+          "from": "estoque",
+          "to": "comb",
+          "atSec": 2.0,
+          "durationSec": 0.6,
+          "label": "estoque"
+        },
+        {
+          "id": "t-preco",
+          "from": "preco",
+          "to": "comb",
+          "atSec": 2.6,
+          "durationSec": 0.6,
+          "label": "preço"
+        },
+        {
+          "id": "t-resposta",
+          "from": "comb",
+          "to": "req",
+          "atSec": 3.4,
+          "durationSec": 0.5,
+          "label": "resposta"
+        }
+      ]
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 5.9,
+      "title": "Duas tarefas, um join",
+      "lines": [
+        "CompletableFuture<String> preco =",
+        "    supplyAsync(() -> precoDe(id), pool);",
+        "CompletableFuture<String> estoque =",
+        "    supplyAsync(() -> estoqueDe(id), pool);",
+        "preco.thenCombine(estoque,",
+        "    (p, e) -> p + \"+\" + e).join();"
+      ],
+      "highlight": [
+        {
+          "token": "supplyAsync"
+        },
+        {
+          "token": "thenCombine"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 1.5,
+          "lines": [
+            1,
+            4
+          ],
+          "note": "Duas tarefas no pool, sem esperar"
+        },
+        {
+          "atSec": 4.5,
+          "lines": [
+            5,
+            6
+          ],
+          "note": "thenCombine espera as duas e junta"
+        }
+      ]
+    },
+    {
+      "id": "comparacao",
+      "type": "versus",
+      "durationSec": 6,
+      "title": "Sequencial × composto",
+      "left": {
+        "title": "Sequencial",
+        "value": "501 ms",
+        "lines": [
+          "preço 300 ms",
+          "depois estoque 200 ms"
+        ]
+      },
+      "right": {
+        "title": "Composto",
+        "value": "309,5 ms",
+        "lines": [
+          "as duas ao mesmo tempo",
+          "espera a mais lenta"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 3
+    },
+    {
+      "id": "prazo",
+      "type": "flow",
+      "durationSec": 6,
+      "title": "Prazo de 500 ms",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Requisição",
+          "sublabel": "API de produto"
+        },
+        {
+          "id": "tarefa",
+          "label": "Consulta estoque",
+          "sublabel": "lenta: 2 s"
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "tarefa",
+          "kind": "scheduling",
+          "label": "dispara"
+        },
+        {
+          "from": "tarefa",
+          "to": "req",
+          "kind": "completion",
+          "label": "pronto"
+        }
+      ],
+      "states": [
+        {
+          "node": "req",
+          "atSec": 0.9,
+          "state": "waiting"
+        },
+        {
+          "node": "tarefa",
+          "atSec": 1.1,
+          "state": "running"
+        },
+        {
+          "node": "req",
+          "atSec": 1.6,
+          "state": "timeout"
+        },
+        {
+          "node": "tarefa",
+          "atSec": 3.0,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t-tarde",
+          "from": "tarefa",
+          "to": "req",
+          "atSec": 3.0,
+          "durationSec": 0.8,
+          "label": "chega tarde"
+        }
+      ],
+      "direction": "right"
+    },
+    {
+      "id": "prazo-medido",
+      "type": "categories",
+      "durationSec": 4.6,
+      "title": "Medido nesta máquina (ms)",
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "tarefa termina",
+      "items": [
+        {
+          "label": "resposta com prazo",
+          "value": 508.1
+        },
+        {
+          "label": "tarefa termina",
+          "value": 2006.1
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 4.6,
+      "variant": "follow",
+      "text": "Onde sua API deixa esperar?",
+      "sub": "Comenta o que você mediria"
+    }
+  ]
+}

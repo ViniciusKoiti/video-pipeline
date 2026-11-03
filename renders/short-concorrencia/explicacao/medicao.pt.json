@@ -1,0 +1,155 @@
+{
+  "arquivo": "renders/short-concorrencia/demo/resultado.txt",
+  "ambiente": "gcc 15.2.0 -O2 -pthread, Ryzen 7 5700U, 2 threads de 1.000.000 somas, 15 rodadas por versão, 2026-11-01; sonda da medição: 0,059 s",
+  "numeros": [
+    {
+      "valor": 1,
+      "cenas": [
+        "gancho",
+        "atomic"
+      ],
+      "nota": "Um contador no gancho; operando 1 do atomic_fetch_add no código da demonstração. Não são resultados de medição."
+    },
+    {
+      "valor": 2,
+      "trechos": [
+        "2 threads x 1000000 somas"
+      ],
+      "medidos": [
+        2
+      ],
+      "cenas": [
+        "gancho",
+        "codigo"
+      ],
+      "nota": "Dois threads na medição e no exemplo didático."
+    },
+    {
+      "valor": 1000000,
+      "trechos": [
+        "2 threads x 1000000 somas"
+      ],
+      "medidos": [
+        1000000
+      ],
+      "cenas": [
+        "gancho"
+      ]
+    },
+    {
+      "valor": 1130174,
+      "trechos": [
+        "## resumo versao=sem total mediana=1130174"
+      ],
+      "medidos": [
+        1130174
+      ],
+      "cenas": [
+        "resultado"
+      ]
+    },
+    {
+      "valor": 2000000,
+      "trechos": [
+        "2 threads x 1000000 somas",
+        "## resumo versao=mutex total mediana=2000000 minimo=2000000 maximo=2000000",
+        "## resumo versao=atomic total mediana=2000000 minimo=2000000 maximo=2000000"
+      ],
+      "medidos": [
+        2000000
+      ],
+      "cenas": [
+        "gancho",
+        "resultado"
+      ],
+      "nota": "Esperado de 2 × 1.000.000; mutex e atomic acertaram nas 15 rodadas."
+    },
+    {
+      "valor": 11,
+      "trechos": [
+        "## resumo versao=sem ms mediana=11.0"
+      ],
+      "medidos": [
+        11.0
+      ],
+      "cenas": [
+        "tempo"
+      ]
+    },
+    {
+      "valor": 21.4,
+      "trechos": [
+        "## resumo versao=atomic ms mediana=21.4"
+      ],
+      "medidos": [
+        21.4
+      ],
+      "cenas": [
+        "tempo"
+      ]
+    },
+    {
+      "valor": 21,
+      "trechos": [
+        "## resumo versao=atomic ms mediana=21.4"
+      ],
+      "medidos": [
+        21.4
+      ],
+      "tolerancia": 0.02,
+      "cenas": [
+        "tempo"
+      ],
+      "nota": "Vinte e um milissegundos na fala, arredondado da mediana de 21,4."
+    },
+    {
+      "valor": 92.2,
+      "trechos": [
+        "## resumo versao=mutex ms mediana=92.2"
+      ],
+      "medidos": [
+        92.2
+      ],
+      "cenas": [
+        "tempo"
+      ]
+    },
+    {
+      "valor": 92,
+      "trechos": [
+        "## resumo versao=mutex ms mediana=92.2"
+      ],
+      "medidos": [
+        92.2
+      ],
+      "tolerancia": 0.003,
+      "cenas": [
+        "tempo"
+      ],
+      "nota": "Noventa e dois milissegundos na fala, arredondado da mediana de 92,2."
+    },
+    {
+      "valor": 10,
+      "cenas": [
+        "codigo",
+        "atomic"
+      ],
+      "nota": "Valor inicial escolhido para o exemplo didático; não é uma medição nem um trace real da execução."
+    },
+    {
+      "valor": 11,
+      "cenas": [
+        "codigo",
+        "atomic"
+      ],
+      "nota": "Exemplo didático: 10 + 1 = 11; as duas gravações de 11 ilustram a soma perdida."
+    },
+    {
+      "valor": 12,
+      "cenas": [
+        "atomic"
+      ],
+      "nota": "Exemplo didático atômico: 10 + 1 + 1 = 12; não é um resultado de medição."
+    }
+  ]
+}

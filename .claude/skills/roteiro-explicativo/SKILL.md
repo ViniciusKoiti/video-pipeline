@@ -170,6 +170,8 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      abertura (texto curto, em pergunta ou chamado: "Você sabe quanto custa um docinho?"), `turn` na virada ("mas…"),
      `calm` na conta dita inteira, `invite` na pergunta final; cena de explicação não leva o campo. A ênfase vem da
      voz clonada. Explicação longa não cabe numa cena `hook`.
+     Referências por idioma/entrega (ADR 053) são escolhidas pelo gerador em `config/providers.toml`;
+     não inserir caminhos de gravações no roteiro. A prévia confirma se a intenção saiu natural.
    - **A palavra que pesa (pedido do dono, 2026-10-19).** O `delivery` muda o tom da cena inteira. Ele não
      aperta uma palavra, e a voz clonada não aceita marca de ênfase. Sem cuidado, a fala soa como alguém lendo.
      Toda cena que vira, opina, pergunta ou traz um número tem **uma** palavra que pesa: a da virada, do

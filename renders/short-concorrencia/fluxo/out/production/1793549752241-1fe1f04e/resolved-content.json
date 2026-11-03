@@ -1,0 +1,100 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Medido em 01/11/2026 · gcc 15.2 -O2 · Ryzen 7 5700U · 2 threads · esperado: 2.000.000 · 15 rodadas",
+  "assets": {
+    "codigo": {
+      "kind": "lottie",
+      "path": "lottie/codigo.json"
+    },
+    "mutex": {
+      "kind": "lottie",
+      "path": "lottie/mutex.json"
+    },
+    "atomic": {
+      "kind": "lottie",
+      "path": "lottie/atomic.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "gancho",
+      "durationSec": 4,
+      "type": "hook",
+      "text": "Em C: 2 threads. 1 contador. Deveria dar 2.000.000.",
+      "highlight": "deveria dar 2.000.000",
+      "kicker": "C · concorrência"
+    },
+    {
+      "id": "resultado",
+      "durationSec": 3.5,
+      "type": "comparison",
+      "left": {
+        "label": "sem proteção (mediana)",
+        "value": 1130174
+      },
+      "right": {
+        "label": "mutex e atomic",
+        "value": 2000000
+      },
+      "mode": "side",
+      "showRatio": false
+    },
+    {
+      "id": "codigo",
+      "durationSec": 12.4,
+      "type": "animation",
+      "assetId": "codigo",
+      "colors": "original"
+    },
+    {
+      "id": "mutex",
+      "durationSec": 4,
+      "type": "animation",
+      "assetId": "mutex",
+      "colors": "original"
+    },
+    {
+      "id": "atomic",
+      "durationSec": 7.9,
+      "type": "animation",
+      "assetId": "atomic",
+      "colors": "original"
+    },
+    {
+      "id": "tempo",
+      "durationSec": 9,
+      "type": "categories",
+      "title": "Tempo da rodada",
+      "items": [
+        {
+          "label": "sem proteção · errado",
+          "value": 11
+        },
+        {
+          "label": "atomic",
+          "value": 21.4
+        },
+        {
+          "label": "mutex",
+          "value": 92.2
+        }
+      ],
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "mutex"
+    },
+    {
+      "id": "fecho",
+      "durationSec": 5,
+      "type": "end_card",
+      "variant": "follow",
+      "text": "E em outras linguagens?",
+      "sub": "Comenta qual você quer ver"
+    }
+  ]
+}

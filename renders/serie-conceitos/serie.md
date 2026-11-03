@@ -1,5 +1,11 @@
 # Série "eu medi": um conceito por semana em Short, 2026-11
 
+**Direção atual, decidida pelo dono em 2026-11-01:** prioridade para Java, próximo tema
+`CompletableFuture`, explicação animada do mecanismo e de seu impacto em System Design
+da aplicação. Planejar a animação antes da voz/render. Ler [`direcao-editorial.md`](direcao-editorial.md)
+e usar [`fila.md`](fila.md) para a próxima geração. O calendário abaixo registra o lote
+original; as pautas ainda não produzidas ficaram no backlog da nova ordem.
+
 Decisão do dono (2026-10-31): uma série semanal de Shorts técnicos explicando um conceito com uma demonstração
 medida na máquina dele, no molde do `short-lista-ligada` (ADR 033, 034 e 035). Pautas aprovadas em lote, o mesmo
 horário toda semana, três saídas por Short. O fluxo é o de hoje (`docs/diagramas/mermaid/pipeline-hoje.mermaid`), em série.
@@ -34,7 +40,8 @@ with AI; the presenter is drawn from my photos").
 
 1. Pauta aprovada (este lote) → **medição própria** na máquina do dono: `demo/` com o programa, `resultado.txt`
    com ambiente, versão e data, `cpu_probe()` antes. Roda local, sem custo; só depois do ok do lote.
-2. `roteiro.md` com a origem de cada número → `narracao.pt.json` e `narracao.en.json` (humanizer no pt) →
+2. `roteiro.md` com fontes para o mecanismo e origem de cada número → `plano-animacao.md`
+   com estados, blocos, setas e trechos da fala → `narracao.pt.json` e `narracao.en.json` (humanizer no pt) →
    `content.pt.json` e `content.en.json` → `medicao.json` → `vp medicao` limpo nas duas pastas.
 3. Tradução em pasta própria (`-en`, `traducao.json`) → `vp traducao` → `vp approve <id>-en --step translation`.
 4. `validate`, `inspect` e `review` do kit; o dono olha os quadros.
@@ -62,8 +69,9 @@ voz e render na quinta, gates e agendamento na sexta. O que atrasar empurra o Sh
 
 ## Regras da série
 
-- Só o que a medição mostra. A fala não explica a causa (cache, escalonador, página de memória) sem fonte
-  registrada; o fecho pergunta o porquê ao público ("Comenta aqui") e o primeiro comentário fixado traz a medida.
+- A medição sustenta os resultados; fontes primárias registradas sustentam a explicação do mecanismo.
+  O vídeo responde o porquê com animação; o fecho pode pedir outra linguagem ou continuação.
+  Aplicar os critérios de `direcao-editorial.md` e a prioridade de `fila.md`.
 - Cada número da fala e da tela com entrada no `medicao.json`; o gate 4 não abre sem o `vp medicao` limpo.
 - Concorrência vista só como forma (o canal Bytada e afins): nada de roteiro, imagem ou título alheio.
 - Divulgação da voz clonada em toda legenda; do apresentador, na do Instagram.

@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-11-03T10:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0nn9g0003l26yf4npmb66"
+      },
+      "value": [
+        {
+          "content": "In Java, an API checks price and stock. With CompletableFuture, both calls start together and thenCombine waits for them. In this measurement, the composed response took as long as the slower call, not the sum.\n\nMeasured on this machine: OpenJDK 25.0.4, Ryzen 7 5700U, 15 runs per mode. The price (300 ms) and stock (200 ms) latencies are simulated in the demo code. Medians: sequential 501 ms; composed 309.5 ms; response with a 500 ms deadline at 508.1 ms, with the task only finishing at 2006.1 ms.\n\nMechanism source: CompletableFuture Javadoc (JDK 25).\n\nThe voice is mine, cloned with AI. The animations were made for this video.\n\n#Shorts #Java #CompletableFuture",
+          "image": [
+            {
+              "id": "88b4fe78-d190-496f-a122-c2c545c9fc3f",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/02/beba732a6e211f3dd297b108773d88d2.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "CompletableFuture in Java: two calls, one answer, and what it costs",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

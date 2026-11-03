@@ -1,0 +1,24 @@
+{
+  "arquivo": "renders/short-concorrencia/final.pt.mp4",
+  "sha256": "6f9257a13b52af8a59a08f6099497f8df9fe9b988d55fa54680fc530c8f5670d",
+  "duracao_s": 41.7,
+  "resolucao": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "audio": {
+    "codec": "aac",
+    "canais": 2,
+    "sample_rate": 48000,
+    "lufs": -14.6,
+    "true_peak_dbtp": -1.5,
+    "conferencia": "sem problemas; seis ataques verificáveis do plano dentro de 40 ms; o efeito no início fica fora da janela do analisador"
+  },
+  "falas": 5,
+  "falas_cabem_nas_cenas": true,
+  "revisao_visual": "Cinco quadros de leitura e cinco faixas de movimento do kit; cinco quadros extraídos do MP4 final.",
+  "gate_humano": "pendente",
+  "escuta_humana": "pendente",
+  "link_codigo_publico": "pendente de publicar a pasta concorrencia no baixo-nivel-demos"
+}

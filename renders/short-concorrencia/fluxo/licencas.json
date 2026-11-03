@@ -1,0 +1,23 @@
+[
+  {
+    "id": "codigo",
+    "file": "public/lottie/codigo.json",
+    "license": "Original",
+    "sha256": "a19af34a88210e062daff3baccd8e9babfa94b826c4ac9c384bb93996e8288da",
+    "usage_notes": "Gráfico vetorial original gerado a pedido do dono; exemplo didático de C, sem mídia externa."
+  },
+  {
+    "id": "mutex",
+    "file": "public/lottie/mutex.json",
+    "license": "Original",
+    "sha256": "02fb6bfe1e0cd351afcbe0f4c425b5f18bbb9af755c43e1309d699c76d23c2bd",
+    "usage_notes": "Gráfico vetorial original gerado a pedido do dono; exemplo didático de C, sem mídia externa."
+  },
+  {
+    "id": "atomic",
+    "file": "public/lottie/atomic.json",
+    "license": "Original",
+    "sha256": "91e50cdf9fb6e6965f5938374e0f10ee357cff3628a391d2464b80619424ddbe",
+    "usage_notes": "Gráfico vetorial original gerado a pedido do dono; exemplo didático de C, sem mídia externa."
+  }
+]

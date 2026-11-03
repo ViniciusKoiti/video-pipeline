@@ -1,0 +1,30 @@
+{
+  "arquivo": "renders/short-concorrencia/final.pt.explicado.mp4",
+  "sha256": "6472ec6da87ae6f547975e5f0336f25827713c923c79ab0b5e59caec5a7bfcaa",
+  "duracao_s": 50.2,
+  "resolucao": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "audio": {
+    "canais": 2,
+    "sample_rate": 48000,
+    "lufs": -14.6,
+    "true_peak_dbtp": -1.3,
+    "problemas": []
+  },
+  "falas": 7,
+  "falas_cabem_nas_cenas": true,
+  "efeitos_verificaveis": 7,
+  "revisao_visual": "Sete quadros de leitura do kit, movimentos dos dois exemplos e sete quadros do MP4 final; sem texto cortado ou sobreposto ao rodapé.",
+  "medicao": "vp medicao short-concorrencia-explicacao-pt: sem problemas",
+  "fontes": "fontes.md; padrão C N1570, documentação Oracle e código/medição locais",
+  "versao_anterior_preservada": "renders/short-concorrencia/final.pt.mp4",
+  "escuta_humana": "pendente",
+  "gate_humano": "pendente",
+  "checks_gerais": {
+    "pytest": "1396 passaram, 2 falhas em testes do CLI, 8 desmarcados",
+    "ruff": "6 E501 em app/commands/arguments.py e app/commands/render.py; nenhum código de aplicação alterado nesta revisão"
+  }
+}

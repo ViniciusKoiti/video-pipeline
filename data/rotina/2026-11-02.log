@@ -1,0 +1,29 @@
+2026-11-02T06:00:20-03:00 cpu_probe 0.055
+custo_usd_equivalente 0.38633910000000005 | turnos 12 | modelos ['claude-sonnet-5-5'] | duracao_s 64
+Parei na entrada da rotina: a pauta do `CompletableFuture` não está aprovada, então não produzi nada. Também não consegui gravar o registro do dia. As duas tentativas de escrita foram negadas, em `data/rotina/2026-11-02.md` e em `renders/serie-conceitos/rotina-2026-11-02.md`.
+
+**O que conferi**
+- **CPU:** a sonda de hoje deu 0,055 s às 06:00, registrada no `data/rotina/2026-11-02.log`. A máquina está livre. Não consegui rodar a sonda aqui porque o comando pediu aprovação.
+- **Fila:** `fila.md` e `direcao-editorial.md` mandam Java primeiro, com `CompletableFuture` como próximo tema.
+- **Pauta:** `data/episodes/short-completablefuture-java-pt/` só tem o `pauta.md`, e ele é rascunho para sua revisão. Diz "recorte em preparação" e "preparado para revisão antes da pesquisa e produção".
+- **Lacunas na pauta:**
+  - Não há fontes, roteiro nem medição.
+  - O controle de System Design e animação está pendente, antes e depois do render.
+  - O exemplo preço/estoque e o nível de detalhe estão em aberto.
+  - A duração-alvo, o estágio do funil e a chamada final não foram definidos.
+
+**O que não fiz**
+- Não escolhi Árvores, Índices nem o contador `i++`/`synchronized`/`AtomicInteger`, porque a fila proíbe escolher item do lote antigo sem pauta Java aprovada.
+- Não refiz o Short de C.
+- Não rodei JDK nem medição, não baixei fonte, não gerei voz nem render e não montei `post.json`.
+- Não mexi no Postiz nem no vidIQ, não fiz `vp approve` nem push, e não agendei nada.
+
+**O que preciso de você**
+1. Aprovar ou ajustar o recorte do `pauta.md`: API de produto com consultas independentes de preço e estoque, fluxo sequencial contra composto, executor com limite, e ramo de falha ou timeout.
+2. Dizer o estágio do funil (`topo`, `meio` ou `fundo`) e a chamada final.
+3. Confirmar a duração-alvo.
+
+Com isso, rode `/short-diario` de novo. O primeiro passo será fichar a documentação oficial do `CompletableFuture` na versão do JDK usada e conferir se há JDK instalado, o que ainda não verifiquei.
+
+As pendências do Short de C de ontem continuam como estavam: Node do nvm no PATH do `short-diario.sh`, as etapas 6 a 10, e o `contador.c` e o `medir.sh` para `baixo-nivel-demos/concorrencia/`. Se você liberar a escrita em `data/rotina/`, grego o registro lá.
+2026-11-02T06:01:30-03:00 fim

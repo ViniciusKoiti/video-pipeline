@@ -1,0 +1,143 @@
+{
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationInFrames": 1305,
+  "timeline": [
+    {
+      "id": "gancho",
+      "durationSec": 4,
+      "type": "hook",
+      "text": "2 threads. 1 contador. O total deveria dar 2.000.000.",
+      "highlight": "deveria dar 2.000.000",
+      "kicker": "concorrência",
+      "from": 0,
+      "durationInFrames": 120,
+      "readableFrame": 10,
+      "readableFrom": 10
+    },
+    {
+      "id": "resultado",
+      "durationSec": 3.5,
+      "type": "comparison",
+      "left": {
+        "label": "sem proteção (mediana)",
+        "value": 1130174
+      },
+      "right": {
+        "label": "mutex e atomic",
+        "value": 2000000
+      },
+      "mode": "side",
+      "showRatio": false,
+      "from": 120,
+      "durationInFrames": 105,
+      "readableFrame": 70,
+      "readableFrom": 190
+    },
+    {
+      "id": "codigo",
+      "durationSec": 11,
+      "type": "grid",
+      "title": "Exemplo didático · Em C, data race é comportamento indefinido",
+      "layout": "rows",
+      "cells": [
+        {
+          "kind": "text",
+          "text": "A lê 10 · B lê 10"
+        },
+        {
+          "kind": "text",
+          "text": "A soma e grava 11"
+        },
+        {
+          "kind": "text",
+          "text": "B soma e grava 11"
+        },
+        {
+          "kind": "text",
+          "text": "Uma soma se perde"
+        }
+      ],
+      "from": 225,
+      "durationInFrames": 330,
+      "readableFrame": 37,
+      "readableFrom": 262
+    },
+    {
+      "id": "mutex",
+      "durationSec": 4,
+      "type": "headline",
+      "text": "mutex: um thread por vez no trecho protegido.",
+      "highlight": "um thread por vez",
+      "from": 555,
+      "durationInFrames": 120,
+      "readableFrame": 56,
+      "readableFrom": 611
+    },
+    {
+      "id": "atomic",
+      "durationSec": 7,
+      "type": "grid",
+      "title": "atomic: soma indivisível",
+      "layout": "rows",
+      "cells": [
+        {
+          "kind": "text",
+          "text": "atomic_fetch_add(&com_atomic, 1)"
+        },
+        {
+          "kind": "text",
+          "text": "Primeiro incremento: 10 → 11"
+        },
+        {
+          "kind": "text",
+          "text": "Próximo incremento: 11 → 12"
+        }
+      ],
+      "from": 675,
+      "durationInFrames": 210,
+      "readableFrame": 32,
+      "readableFrom": 707
+    },
+    {
+      "id": "tempo",
+      "durationSec": 9,
+      "type": "categories",
+      "title": "Tempo da rodada",
+      "items": [
+        {
+          "label": "sem proteção · errado",
+          "value": 11
+        },
+        {
+          "label": "atomic",
+          "value": 21.4
+        },
+        {
+          "label": "mutex",
+          "value": 92.2
+        }
+      ],
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "mutex",
+      "from": 885,
+      "durationInFrames": 270,
+      "readableFrame": 44,
+      "readableFrom": 929
+    },
+    {
+      "id": "fecho",
+      "durationSec": 5,
+      "type": "end_card",
+      "variant": "follow",
+      "text": "Cada soma conta",
+      "sub": "atomic no contador · mutex no trecho",
+      "from": 1155,
+      "durationInFrames": 150,
+      "readableFrame": 26,
+      "readableFrom": 1181
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Medido em 01/11/2026 · gcc 15.2 -O2 · Ryzen 7 5700U · 2 threads · esperado: 2.000.000 · 15 rodadas",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 4,
+      "kicker": "concorrência",
+      "text": "2 threads. 1 contador. O total deveria dar 2.000.000.",
+      "highlight": "deveria dar 2.000.000"
+    },
+    {
+      "id": "codigo",
+      "type": "grid",
+      "durationSec": 9,
+      "layout": "two-by-two",
+      "cells": [
+        {"kind": "number", "value": 1000000, "label": "somas por thread"},
+        {"kind": "text", "text": "Versão 1: sem proteção"},
+        {"kind": "text", "text": "Versão 2: mutex"},
+        {"kind": "text", "text": "Versão 3: atomic"}
+      ]
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 10,
+      "mode": "side",
+      "showRatio": false,
+      "left": {"label": "sem proteção (mediana)", "value": 1130174},
+      "right": {"label": "mutex · 15 rodadas", "value": 2000000}
+    },
+    {
+      "id": "tempo",
+      "type": "categories",
+      "durationSec": 9,
+      "title": "Tempo da rodada",
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "mutex",
+      "items": [
+        {"label": "sem proteção · errado", "value": 11.0},
+        {"label": "atomic", "value": 21.4},
+        {"label": "mutex", "value": 92.2}
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 6,
+      "variant": "follow",
+      "text": "baixo nível",
+      "sub": "código na descrição"
+    }
+  ]
+}

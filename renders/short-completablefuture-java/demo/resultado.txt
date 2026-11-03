@@ -1,0 +1,50 @@
+# 2026-11-02T11:54:47-03:00 | openjdk version "25.0.4.1" 2026-08-18 | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | consultas simuladas: preco 300 ms, estoque 200 ms; timeout: estoque 2000 ms com orTimeout 500 ms | pool fixo de 4 threads | 15 rodadas por modo
+modo=sequencial rodada=1 ms=501.0 resultado=preco+estoque
+modo=sequencial rodada=2 ms=501.0 resultado=preco+estoque
+modo=sequencial rodada=3 ms=501.0 resultado=preco+estoque
+modo=sequencial rodada=4 ms=501.1 resultado=preco+estoque
+modo=sequencial rodada=5 ms=500.9 resultado=preco+estoque
+modo=sequencial rodada=6 ms=500.9 resultado=preco+estoque
+modo=sequencial rodada=7 ms=501.6 resultado=preco+estoque
+modo=sequencial rodada=8 ms=501.0 resultado=preco+estoque
+modo=sequencial rodada=9 ms=501.1 resultado=preco+estoque
+modo=sequencial rodada=10 ms=501.2 resultado=preco+estoque
+modo=sequencial rodada=11 ms=501.0 resultado=preco+estoque
+modo=sequencial rodada=12 ms=500.9 resultado=preco+estoque
+modo=sequencial rodada=13 ms=501.1 resultado=preco+estoque
+modo=sequencial rodada=14 ms=501.3 resultado=preco+estoque
+modo=sequencial rodada=15 ms=501.0 resultado=preco+estoque
+## resumo modo=sequencial ms mediana=501.0 minimo=500.9 maximo=501.6
+modo=composto rodada=1 ms=308.1 resultado=preco+estoque
+modo=composto rodada=2 ms=311.9 resultado=preco+estoque
+modo=composto rodada=3 ms=309.5 resultado=preco+estoque
+modo=composto rodada=4 ms=309.5 resultado=preco+estoque
+modo=composto rodada=5 ms=308.8 resultado=preco+estoque
+modo=composto rodada=6 ms=338.7 resultado=preco+estoque
+modo=composto rodada=7 ms=370.7 resultado=preco+estoque
+modo=composto rodada=8 ms=323.3 resultado=preco+estoque
+modo=composto rodada=9 ms=312.0 resultado=preco+estoque
+modo=composto rodada=10 ms=308.6 resultado=preco+estoque
+modo=composto rodada=11 ms=307.6 resultado=preco+estoque
+modo=composto rodada=12 ms=308.8 resultado=preco+estoque
+modo=composto rodada=13 ms=308.6 resultado=preco+estoque
+modo=composto rodada=14 ms=308.5 resultado=preco+estoque
+modo=composto rodada=15 ms=311.8 resultado=preco+estoque
+## resumo modo=composto ms mediana=309.5 minimo=307.6 maximo=370.7
+modo=timeout rodada=1 ms=507.1 tarefa_terminou_em_ms=2005.5 resultado=falhou:TimeoutException
+modo=timeout rodada=2 ms=508.7 tarefa_terminou_em_ms=2007.0 resultado=falhou:TimeoutException
+modo=timeout rodada=3 ms=507.1 tarefa_terminou_em_ms=2004.9 resultado=falhou:TimeoutException
+modo=timeout rodada=4 ms=506.5 tarefa_terminou_em_ms=2004.8 resultado=falhou:TimeoutException
+modo=timeout rodada=5 ms=506.8 tarefa_terminou_em_ms=2005.3 resultado=falhou:TimeoutException
+modo=timeout rodada=6 ms=509.0 tarefa_terminou_em_ms=2007.6 resultado=falhou:TimeoutException
+modo=timeout rodada=7 ms=508.1 tarefa_terminou_em_ms=2005.6 resultado=falhou:TimeoutException
+modo=timeout rodada=8 ms=507.4 tarefa_terminou_em_ms=2005.5 resultado=falhou:TimeoutException
+modo=timeout rodada=9 ms=507.8 tarefa_terminou_em_ms=2006.1 resultado=falhou:TimeoutException
+modo=timeout rodada=10 ms=509.8 tarefa_terminou_em_ms=2006.8 resultado=falhou:TimeoutException
+modo=timeout rodada=11 ms=509.9 tarefa_terminou_em_ms=2007.7 resultado=falhou:TimeoutException
+modo=timeout rodada=12 ms=506.5 tarefa_terminou_em_ms=2004.6 resultado=falhou:TimeoutException
+modo=timeout rodada=13 ms=533.1 tarefa_terminou_em_ms=2024.9 resultado=falhou:TimeoutException
+modo=timeout rodada=14 ms=517.8 tarefa_terminou_em_ms=2009.6 resultado=falhou:TimeoutException
+modo=timeout rodada=15 ms=514.3 tarefa_terminou_em_ms=2007.0 resultado=falhou:TimeoutException
+## resumo modo=timeout ms mediana=508.1 minimo=506.5 maximo=533.1
+## resumo modo=timeout tarefa_terminou_em_ms mediana=2006.1 minimo=2004.6 maximo=2024.9
