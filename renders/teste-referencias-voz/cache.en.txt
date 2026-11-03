@@ -1,0 +1,11 @@
+hook              5.68 s (fala 0.25–5.12)  hook-chatterbox_modal-en-7d1720c945.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/hook-01.wav (d20374693e11)
+neutral           5.04 s (fala 0.00–4.57)  neutral-chatterbox_modal-en-882fbb0f7c.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav (60ed099bd3e3)
+calm              6.48 s (fala 0.19–5.81)  calm-chatterbox_modal-en-874df5916c.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/calm-01.wav (79342d49b99e)
+turn              8.16 s (fala 0.44–7.64)  turn-chatterbox_modal-en-325404de8a.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/turn-01.wav (ea3fc41905ca)
+invite            5.20 s (fala 0.33–4.72)  invite-chatterbox_modal-en-c8b676f529.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/invite-01.wav (0dbe3b16f24f)
+voz: 5 fala(s), 26.7 s de fala, 2 s; registro em narracao.voz.json

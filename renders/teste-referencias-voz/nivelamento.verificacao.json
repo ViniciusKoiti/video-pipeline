@@ -1,0 +1,153 @@
+{
+  "target_lufs": -16,
+  "true_peak_limit_dbtp": -1.5,
+  "normalization": "two-pass EBU R128 per clip, before concatenation",
+  "source_recordings_unchanged": true,
+  "raw_synthesis_unchanged": true,
+  "perceptual_listening": "approved_in_normalized_comparison",
+  "comparisons": [
+    {
+      "language": "pt-BR",
+      "wav": "renders/teste-referencias-voz/comparacao.nivelada.pt.wav",
+      "mp3": "renders/teste-referencias-voz/comparacao.nivelada.pt.mp3",
+      "mp3_bytes": 831404,
+      "parts": [
+        {
+          "order": 1,
+          "delivery": "referência antiga",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-base-pt/voice/neutral-chatterbox_modal-ptbr-8687cde03d.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/pt-BR/01-original.wav",
+          "original_lufs": -13.45,
+          "normalized_lufs": -15.83,
+          "true_peak_dbtp": -2.5,
+          "sha256": "4c5bc4cbc1aea3695a3971fe2d4ef4cc0de56c62eecc592e3a3984e7c1194fcf"
+        },
+        {
+          "order": 2,
+          "delivery": "neutral",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/neutral-chatterbox_modal-ptbr-226c008b8a.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/pt-BR/02-neutral.wav",
+          "original_lufs": -28.14,
+          "normalized_lufs": -16.12,
+          "true_peak_dbtp": -1.5,
+          "sha256": "7bdb14afd147267068291957fa1ddb43d3947c8c5e4870f9c346b7f65e16c63a"
+        },
+        {
+          "order": 3,
+          "delivery": "hook",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/hook-chatterbox_modal-ptbr-4495d73c8d.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/pt-BR/03-hook.wav",
+          "original_lufs": -21.83,
+          "normalized_lufs": -16.25,
+          "true_peak_dbtp": -1.5,
+          "sha256": "1df2df74ed08a6549cb8386908a91fbd3f31b280d66becbe4b375088b44cdb73"
+        },
+        {
+          "order": 4,
+          "delivery": "calm",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/calm-chatterbox_modal-ptbr-0565d4f5f7.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/pt-BR/04-calm.wav",
+          "original_lufs": -21.28,
+          "normalized_lufs": -16.23,
+          "true_peak_dbtp": -1.5,
+          "sha256": "ba63b07393ea15a7500a8d085398bf3c14167102a824cc350ed3c527ab5d9590"
+        },
+        {
+          "order": 5,
+          "delivery": "turn",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/turn-chatterbox_modal-ptbr-cea92d72cc.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/pt-BR/05-turn.wav",
+          "original_lufs": -18.32,
+          "normalized_lufs": -16.2,
+          "true_peak_dbtp": -1.5,
+          "sha256": "8f11c3e148b5dbaf9b4ceccc56928b1dd95e8bc133b4c40f58468e6b45669d4d"
+        },
+        {
+          "order": 6,
+          "delivery": "invite",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/invite-chatterbox_modal-ptbr-d68b771fb0.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/pt-BR/06-invite.wav",
+          "original_lufs": -21.62,
+          "normalized_lufs": -15.97,
+          "true_peak_dbtp": -1.5,
+          "sha256": "ec35bc2cd3b6ded41fa094a3ead9ce175890e874a1a1a85262c110b6981f1de8"
+        }
+      ]
+    },
+    {
+      "language": "en",
+      "wav": "renders/teste-referencias-voz/comparacao.nivelada.en.wav",
+      "mp3": "renders/teste-referencias-voz/comparacao.nivelada.en.mp3",
+      "mp3_bytes": 779564,
+      "parts": [
+        {
+          "order": 1,
+          "delivery": "referência antiga",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-base-en/voice/neutral-chatterbox_modal-en-dd609ea517.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/en/01-original.wav",
+          "original_lufs": -14.91,
+          "normalized_lufs": -16.35,
+          "true_peak_dbtp": -1.5,
+          "sha256": "6caa2b2806f8fc87770ea2ac284e1350435dd0defc3d375c7060a084c5860def"
+        },
+        {
+          "order": 2,
+          "delivery": "neutral",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/neutral-chatterbox_modal-en-882fbb0f7c.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/en/02-neutral.wav",
+          "original_lufs": -23.32,
+          "normalized_lufs": -16.53,
+          "true_peak_dbtp": -1.5,
+          "sha256": "fe5f5ff3dd181340a035c40288dffce27155f27f848a4de97cfd241cf3a5b58c"
+        },
+        {
+          "order": 3,
+          "delivery": "hook",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/hook-chatterbox_modal-en-7d1720c945.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/en/03-hook.wav",
+          "original_lufs": -24.75,
+          "normalized_lufs": -15.99,
+          "true_peak_dbtp": -1.57,
+          "sha256": "1095fe6635950f604e176a7024b449c1cd9d7ea210432e7fd5e814f472267271"
+        },
+        {
+          "order": 4,
+          "delivery": "calm",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/calm-chatterbox_modal-en-874df5916c.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/en/04-calm.wav",
+          "original_lufs": -26.75,
+          "normalized_lufs": -16.05,
+          "true_peak_dbtp": -1.5,
+          "sha256": "7af63b2eec13211f1950c47a698f8b02404df32a200d4e8fcfd254cc8b020f29"
+        },
+        {
+          "order": 5,
+          "delivery": "turn",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/turn-chatterbox_modal-en-325404de8a.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/en/05-turn.wav",
+          "original_lufs": -23.84,
+          "normalized_lufs": -16.37,
+          "true_peak_dbtp": -1.5,
+          "sha256": "4335a7e101c9985657b3e2fffde00925532214be9de7a4e667747f89d15c3685"
+        },
+        {
+          "order": 6,
+          "delivery": "invite",
+          "source": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/invite-chatterbox_modal-en-c8b676f529.wav",
+          "file": "renders/teste-referencias-voz/niveladas-v1/en/06-invite.wav",
+          "original_lufs": -21.42,
+          "normalized_lufs": -16.41,
+          "true_peak_dbtp": -1.51,
+          "sha256": "4e0697e3004a606b510b53a272f17a85ee00c0ddb606cfa725a6232de5ce266e"
+        }
+      ]
+    }
+  ],
+  "human_approval": {
+    "reviewer": "Vinicius Koiti Nakahara (aprovação na conversa)",
+    "at": "2026-11-01T20:53:51.592582-03:00",
+    "decision": "approved",
+    "scope": "Comparações de voz niveladas em português e inglês; não é aprovação de vídeo ou publicação",
+    "notes": "Gostei, me parece adequado agora"
+  }
+}

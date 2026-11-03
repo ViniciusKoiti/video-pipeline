@@ -112,7 +112,7 @@ def test_delivery_values_come_from_the_config(tmp_path: Path) -> None:
     tts.synthesize_speech(request)
     assert (worker.jobs[0]["exaggeration"], worker.jobs[0]["cfg_weight"]) == (1.0, 0.2)
     settings = load_settings(REPO_ROOT)
-    assert settings.chatterbox.delivery["hook"].exaggeration == 0.8
+    assert settings.chatterbox.delivery["hook"].exaggeration == 1.0
     assert settings.chatterbox.delivery["neutral"].cfg_weight == 0.5
     assert list(settings.chatterbox.delivery) == ["hook", "turn", "invite", "neutral", "calm"]
 

@@ -47,10 +47,12 @@ pause_ms = 400
 # Entrega da fala por cena (ADR 022): `delivery` no scenes.json escolhe a linha; sem o campo, `neutral`.
 # exaggeration = ênfase (padrão do modelo 0,5); cfg_weight: quanto menor, mais vivo e rápido (padrão 0,5).
 # Do mais ao menos enfático: hook (abertura, chamado), turn (a virada), invite (pergunta final), neutral, calm (a conta).
+# hook/turn/invite mais fortes desde 2026-11-02 (antes 0,8/0,3, 0,7/0,4, 0,6/0,4), aprovados pelo dono na escuta de
+# renders/teste-referencias-voz/variacao-2026-11-02/; o contraste vale porque a maioria das falas fica neutra.
 [chatterbox.delivery]
-hook = { exaggeration = 0.8, cfg_weight = 0.3 }
-turn = { exaggeration = 0.7, cfg_weight = 0.4 }
-invite = { exaggeration = 0.6, cfg_weight = 0.4 }
+hook = { exaggeration = 1.0, cfg_weight = 0.3 }
+turn = { exaggeration = 0.9, cfg_weight = 0.35 }
+invite = { exaggeration = 0.8, cfg_weight = 0.35 }
 neutral = { exaggeration = 0.5, cfg_weight = 0.5 }
 calm = { exaggeration = 0.4, cfg_weight = 0.6 }
 

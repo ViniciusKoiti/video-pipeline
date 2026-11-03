@@ -1,0 +1,52 @@
+{
+  "checks": [
+    {
+      "language": "pt-BR",
+      "command": [
+        "short",
+        "voz",
+        "data/episodes/teste-referencias-voz-pt",
+        "data/episodes/teste-referencias-voz-pt/narracao.json"
+      ],
+      "raw_unchanged": true,
+      "leveled_wavs": [
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/leveled/hook-chatterbox_modal-ptbr-4495d73c8d-81095effd339.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/leveled/neutral-chatterbox_modal-ptbr-226c008b8a-f0a8cd19b7fe.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/leveled/calm-chatterbox_modal-ptbr-0565d4f5f7-3f2707517b0b.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/leveled/turn-chatterbox_modal-ptbr-cea92d72cc-f5ba9b81df98.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/leveled/invite-chatterbox_modal-ptbr-d68b771fb0-9c357a30633b.wav"
+      ],
+      "cache_reused": true,
+      "record": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/narracao.voz.json"
+    },
+    {
+      "language": "en",
+      "command": [
+        "short",
+        "voz",
+        "data/episodes/teste-referencias-voz-en",
+        "data/episodes/teste-referencias-voz-en/narracao.json"
+      ],
+      "raw_unchanged": true,
+      "leveled_wavs": [
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/leveled/hook-chatterbox_modal-en-7d1720c945-876a78df3b94.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/leveled/neutral-chatterbox_modal-en-882fbb0f7c-3b83680caca2.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/leveled/calm-chatterbox_modal-en-874df5916c-4f9ce7b718a7.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/leveled/turn-chatterbox_modal-en-325404de8a-27db821f48fc.wav",
+        "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/leveled/invite-chatterbox_modal-en-c8b676f529-a62f0ca4959b.wav"
+      ],
+      "cache_reused": true,
+      "record": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/narracao.voz.json"
+    }
+  ],
+  "published_videos_unchanged": true,
+  "tts_calls": "none; all raw voices already cached",
+  "human_preview": "required for each new video",
+  "quality": {
+    "pytest": "1495 passed, 8 deselected",
+    "ruff": "passed",
+    "mypy": "470 source files, no issues",
+    "architecture_models_constants_size": "passed",
+    "log": "/tmp/auto-play-voice-level-quality-final.log"
+  }
+}

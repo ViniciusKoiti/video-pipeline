@@ -1,0 +1,34 @@
+hook              5.68 s (fala 0.24–5.12)  leveled/hook-chatterbox_modal-en-7d1720c945-876a78df3b94.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/hook-01.wav (d20374693e11)
+  volume: -24.8 → -16.0 LUFS
+neutral           5.04 s (fala 0.00–4.61)  leveled/neutral-chatterbox_modal-en-882fbb0f7c-3b83680caca2.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav (60ed099bd3e3)
+  volume: -23.3 → -16.5 LUFS
+calm              6.48 s (fala 0.11–5.87)  leveled/calm-chatterbox_modal-en-874df5916c-4f9ce7b718a7.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/calm-01.wav (79342d49b99e)
+  volume: -26.8 → -16.1 LUFS
+turn              8.16 s (fala 0.37–7.69)  leveled/turn-chatterbox_modal-en-325404de8a-27db821f48fc.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/turn-01.wav (ea3fc41905ca)
+  volume: -23.8 → -16.4 LUFS
+invite            5.20 s (fala 0.32–4.72)  leveled/invite-chatterbox_modal-en-c8b676f529-a62f0ca4959b.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/invite-01.wav (0dbe3b16f24f)
+  volume: -21.4 → -16.4 LUFS
+voz: 5 fala(s), 27.0 s de fala, 12 s; registro em narracao.voz.json
+
+REEXECUÇÃO
+hook              5.68 s (fala 0.24–5.12)  leveled/hook-chatterbox_modal-en-7d1720c945-876a78df3b94.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/hook-01.wav (d20374693e11)
+  volume: -24.8 → -16.0 LUFS
+neutral           5.04 s (fala 0.00–4.61)  leveled/neutral-chatterbox_modal-en-882fbb0f7c-3b83680caca2.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav (60ed099bd3e3)
+  volume: -23.3 → -16.5 LUFS
+calm              6.48 s (fala 0.11–5.87)  leveled/calm-chatterbox_modal-en-874df5916c-4f9ce7b718a7.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/calm-01.wav (79342d49b99e)
+  volume: -26.8 → -16.1 LUFS
+turn              8.16 s (fala 0.37–7.69)  leveled/turn-chatterbox_modal-en-325404de8a-27db821f48fc.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/turn-01.wav (ea3fc41905ca)
+  volume: -23.8 → -16.4 LUFS
+invite            5.20 s (fala 0.32–4.72)  leveled/invite-chatterbox_modal-en-c8b676f529-a62f0ca4959b.wav
+  referência: /home/viniciusk/projetos/auto-play/data/voice-references/en/invite-01.wav (0dbe3b16f24f)
+  volume: -21.4 → -16.4 LUFS
+voz: 5 fala(s), 27.0 s de fala, 2 s; registro em narracao.voz.json

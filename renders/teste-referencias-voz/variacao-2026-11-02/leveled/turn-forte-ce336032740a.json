@@ -1,0 +1,10 @@
+{
+  "source": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/turn-forte.wav",
+  "source_sha256": "b07639c1a8599c515eb009fa109ea63877ab56719783e61942bf0d4f91af43f5",
+  "wav_sha256": "9e630abf1c43412ba5a97b804dcbf5841fdf8e89d2ed30dcaaf8f4eb8627991e",
+  "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+  "target_lufs": -16.0,
+  "input_lufs": -18.74,
+  "output_lufs": -16.2,
+  "true_peak_dbtp": -1.5
+}

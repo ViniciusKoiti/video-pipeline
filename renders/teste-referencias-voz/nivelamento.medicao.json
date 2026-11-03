@@ -1,0 +1,206 @@
+[
+  {
+    "language": "pt-BR",
+    "delivery": "referência antiga",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-base-pt/voice/neutral-chatterbox_modal-ptbr-8687cde03d.wav",
+    "loudnorm": {
+      "input_i": "-13.45",
+      "input_tp": "0.05",
+      "input_lra": "2.70",
+      "input_thresh": "-24.39",
+      "output_i": "-15.09",
+      "output_tp": "-1.70",
+      "output_lra": "2.30",
+      "output_thresh": "-25.92",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.91"
+    }
+  },
+  {
+    "language": "pt-BR",
+    "delivery": "neutral",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/neutral-chatterbox_modal-ptbr-226c008b8a.wav",
+    "loudnorm": {
+      "input_i": "-28.14",
+      "input_tp": "-12.26",
+      "input_lra": "1.20",
+      "input_thresh": "-38.87",
+      "output_i": "-16.40",
+      "output_tp": "-1.50",
+      "output_lra": "0.90",
+      "output_thresh": "-27.10",
+      "normalization_type": "dynamic",
+      "target_offset": "0.40"
+    }
+  },
+  {
+    "language": "pt-BR",
+    "delivery": "hook",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/hook-chatterbox_modal-ptbr-4495d73c8d.wav",
+    "loudnorm": {
+      "input_i": "-21.83",
+      "input_tp": "-3.71",
+      "input_lra": "1.90",
+      "input_thresh": "-32.31",
+      "output_i": "-17.07",
+      "output_tp": "-1.50",
+      "output_lra": "1.90",
+      "output_thresh": "-27.40",
+      "normalization_type": "dynamic",
+      "target_offset": "1.07"
+    }
+  },
+  {
+    "language": "pt-BR",
+    "delivery": "calm",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/calm-chatterbox_modal-ptbr-0565d4f5f7.wav",
+    "loudnorm": {
+      "input_i": "-21.28",
+      "input_tp": "-5.22",
+      "input_lra": "1.50",
+      "input_thresh": "-32.14",
+      "output_i": "-15.77",
+      "output_tp": "-1.50",
+      "output_lra": "1.20",
+      "output_thresh": "-26.72",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.23"
+    }
+  },
+  {
+    "language": "pt-BR",
+    "delivery": "turn",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/turn-chatterbox_modal-ptbr-cea92d72cc.wav",
+    "loudnorm": {
+      "input_i": "-18.32",
+      "input_tp": "-1.63",
+      "input_lra": "3.20",
+      "input_thresh": "-29.53",
+      "output_i": "-15.82",
+      "output_tp": "-1.50",
+      "output_lra": "2.40",
+      "output_thresh": "-26.88",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.18"
+    }
+  },
+  {
+    "language": "pt-BR",
+    "delivery": "invite",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/invite-chatterbox_modal-ptbr-d68b771fb0.wav",
+    "loudnorm": {
+      "input_i": "-21.62",
+      "input_tp": "-6.56",
+      "input_lra": "2.20",
+      "input_thresh": "-32.26",
+      "output_i": "-15.24",
+      "output_tp": "-1.50",
+      "output_lra": "1.60",
+      "output_thresh": "-25.79",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.76"
+    }
+  },
+  {
+    "language": "en",
+    "delivery": "referência antiga",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-base-en/voice/neutral-chatterbox_modal-en-dd609ea517.wav",
+    "loudnorm": {
+      "input_i": "-14.91",
+      "input_tp": "0.02",
+      "input_lra": "2.70",
+      "input_thresh": "-25.67",
+      "output_i": "-16.56",
+      "output_tp": "-1.98",
+      "output_lra": "1.40",
+      "output_thresh": "-27.19",
+      "normalization_type": "dynamic",
+      "target_offset": "0.56"
+    }
+  },
+  {
+    "language": "en",
+    "delivery": "neutral",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/neutral-chatterbox_modal-en-882fbb0f7c.wav",
+    "loudnorm": {
+      "input_i": "-23.32",
+      "input_tp": "-8.09",
+      "input_lra": "1.50",
+      "input_thresh": "-33.94",
+      "output_i": "-15.49",
+      "output_tp": "-1.50",
+      "output_lra": "1.00",
+      "output_thresh": "-26.27",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.51"
+    }
+  },
+  {
+    "language": "en",
+    "delivery": "hook",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/hook-chatterbox_modal-en-7d1720c945.wav",
+    "loudnorm": {
+      "input_i": "-24.75",
+      "input_tp": "-10.32",
+      "input_lra": "2.30",
+      "input_thresh": "-35.32",
+      "output_i": "-16.22",
+      "output_tp": "-1.80",
+      "output_lra": "0.50",
+      "output_thresh": "-26.56",
+      "normalization_type": "dynamic",
+      "target_offset": "0.22"
+    }
+  },
+  {
+    "language": "en",
+    "delivery": "calm",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/calm-chatterbox_modal-en-874df5916c.wav",
+    "loudnorm": {
+      "input_i": "-26.75",
+      "input_tp": "-11.02",
+      "input_lra": "1.30",
+      "input_thresh": "-37.41",
+      "output_i": "-16.05",
+      "output_tp": "-1.50",
+      "output_lra": "1.40",
+      "output_thresh": "-26.73",
+      "normalization_type": "dynamic",
+      "target_offset": "0.05"
+    }
+  },
+  {
+    "language": "en",
+    "delivery": "turn",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/turn-chatterbox_modal-en-325404de8a.wav",
+    "loudnorm": {
+      "input_i": "-23.84",
+      "input_tp": "-6.51",
+      "input_lra": "1.60",
+      "input_thresh": "-34.65",
+      "output_i": "-16.07",
+      "output_tp": "-1.50",
+      "output_lra": "1.20",
+      "output_thresh": "-27.06",
+      "normalization_type": "dynamic",
+      "target_offset": "0.07"
+    }
+  },
+  {
+    "language": "en",
+    "delivery": "invite",
+    "file": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/invite-chatterbox_modal-en-c8b676f529.wav",
+    "loudnorm": {
+      "input_i": "-21.42",
+      "input_tp": "-6.32",
+      "input_lra": "1.50",
+      "input_thresh": "-31.96",
+      "output_i": "-15.90",
+      "output_tp": "-1.50",
+      "output_lra": "1.10",
+      "output_thresh": "-26.38",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.10"
+    }
+  }
+]
