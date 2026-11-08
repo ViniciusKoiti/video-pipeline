@@ -145,7 +145,7 @@ Window = Literal["d7", "d28"]
 Platform = Literal["youtube", "instagram", "tiktok"]
 
 
-PublicationFormat = Literal["longo", "reel", "clipe", "story"]
+PublicationFormat = Literal["longo", "short", "reel", "clipe", "story"]
 
 
 RequestKind = Literal["planilha", "modelo", "duvida", "outro"]

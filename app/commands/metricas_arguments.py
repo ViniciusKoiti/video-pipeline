@@ -31,7 +31,7 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     start = commands.add_parser("iniciar", help="cria o metrics.json vazio de uma publicação")
     start.add_argument("publication_id", metavar="id")
     start.add_argument("--platform", required=True, choices=["youtube", "instagram", "tiktok"])
-    start.add_argument("--format", required=True, choices=["longo", "reel", "clipe", "story"])
+    start.add_argument("--format", required=True, choices=["longo", "short", "reel", "clipe", "story"])
     start.add_argument("--channel")
     start.add_argument("--published-at", type=datetime.fromisoformat, help="ISO com fuso; padrão: o registro")
     start.add_argument("--post-id")

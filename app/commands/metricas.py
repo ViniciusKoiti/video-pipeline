@@ -1,9 +1,11 @@
 """`vp metricas`: métricas de publicação aos 7 e 28 dias (§12), lidas à mão no Studio e no Instagram.
 
-- `vp metricas iniciar <id> --platform youtube --format longo [--channel] [--published-at ISO]
-  [--post-id] [--url] [--series] [--duration-s N] [--hypothesis "..."]`: cria o arquivo vazio. Data, canal
-  e id do post vêm do registro do Postiz (`data/publicacoes/registro.jsonl`) quando o id é de um episódio
-  agendado por ele; as opções completam ou sobrescrevem. Nunca sobrescreve um arquivo que já existe.
+- `vp metricas iniciar <id> --platform youtube --format longo|short|reel|clipe|story [--channel]
+  [--published-at ISO] [--post-id] [--url] [--series] [--duration-s N] [--hypothesis "..."]`: cria o arquivo
+  vazio. Data, canal e id do post vêm do registro do Postiz (`data/publicacoes/registro.jsonl`) quando o id é
+  de um episódio agendado por ele; as opções completam ou sobrescrevem. Nunca sobrescreve um arquivo que já
+  existe. É o único jeito certo de criar o arquivo: um `metrics.json` escrito à mão fora do contrato aparece
+  em `pendentes` e `tabela` como INVÁLIDO (saída 1) sem esconder as outras publicações.
 - `vp metricas ler <id> d7|d28 [--read-at AAAA-MM-DD] --views N ... [--origem "Nome=42"]
   [--pedido "tipo: resumo"] [--nota] [--refazer]`: grava uma janela; o que não foi informado fica `null`,
   nunca zero. Recusa leitura antes de a janela fechar e segunda leitura da mesma janela sem `--refazer`.
@@ -27,8 +29,10 @@ from app.pipeline.constants.metrics_constants import MetricsConstants
 from app.pipeline.metrics import (
     MetricsError,
     all_metrics,
+    invalid_metrics,
     load_metrics,
     metrics_path,
+    publication_id,
     record_reading,
     registry_path,
     save_metrics,
@@ -116,19 +120,30 @@ def _read(args: argparse.Namespace, data_dir: Path) -> int:
 def _pending(args: argparse.Namespace, data_dir: Path) -> int:
     today = args.hoje or date.today()
     items = all_metrics(data_dir)
-    if not items:
+    invalid = invalid_metrics(data_dir)
+    if not items and not invalid:
         print("nenhum metrics.json (rode `vp metricas iniciar` para cada publicação)")
         return 0
     for _, metrics in items:
         print(f"{metrics.id:32} {summary_line(metrics, today)}")
+    _print_invalid(invalid)
     print(f"vencidas e não lidas: {sum(len(m.pending(today)) for _, m in items)}")
-    return 0
+    return 1 if invalid else 0
 
 
 def _table(args: argparse.Namespace, data_dir: Path) -> int:
     items = [metrics for _, metrics in all_metrics(data_dir)]
+    invalid = invalid_metrics(data_dir)
     rows = table_rows(items)
     out = args.saida or data_dir / MetricsConstants.PUBLICATIONS_DIR / MetricsConstants.TABLE_FILE
     write_table(out, rows)
     print(f"{out}: {len(items)} publicação(ões), {len(rows)} linha(s)")
-    return 0
+    _print_invalid(invalid)
+    return 1 if invalid else 0
+
+
+def _print_invalid(invalid: list[tuple[Path, str]]) -> None:
+    """Um arquivo fora do contrato fica visível e fora da conta; o comando sai com 1 para ninguém o perder."""
+    for path, reason in invalid:
+        hint = "corrija o arquivo ou refaça com `vp metricas iniciar`"
+        print(f"{publication_id(path):32} INVÁLIDO ({reason}); {hint}")

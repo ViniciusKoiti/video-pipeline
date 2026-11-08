@@ -10,6 +10,8 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
+
 from app.errors import PipelineError
 from app.pipeline.constants.metrics_constants import MetricsConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
@@ -81,14 +83,43 @@ def save_metrics(path: Path, metrics: PublicationMetrics) -> None:
     tmp.replace(path)  # atômico: o arquivo nunca fica pela metade
 
 
-def all_metrics(data_dir: Path) -> list[tuple[Path, PublicationMetrics]]:
-    """Todos os arquivos de métricas, dos episódios e das publicações sem episódio, por id."""
+def metrics_files(data_dir: Path) -> list[Path]:
+    """Todos os arquivos de métricas: dos episódios e das publicações sem episódio."""
     paths = list((data_dir / MetricsConstants.EPISODES_DIR).glob(f"*/{SchemasConstants.METRICS_FILE}"))
     paths += list(
         (data_dir / MetricsConstants.PUBLICATIONS_DIR / MetricsConstants.METRICS_DIR).glob("*.json")
     )
-    items = [(path, load_metrics(path)) for path in paths]
+    return paths
+
+
+def all_metrics(data_dir: Path) -> list[tuple[Path, PublicationMetrics]]:
+    """Os arquivos de métricas dentro do contrato, por id. Um arquivo fora do contrato não esconde os outros:
+    ele aparece em `invalid_metrics` (e no `vp check` do episódio), nunca derruba a listagem inteira."""
+    items: list[tuple[Path, PublicationMetrics]] = []
+    for path in metrics_files(data_dir):
+        try:
+            items.append((path, load_metrics(path)))
+        except ValidationError:
+            continue
     return sorted(items, key=lambda item: item[1].id)
+
+
+def invalid_metrics(data_dir: Path) -> list[tuple[Path, str]]:
+    """Arquivos de métricas fora do contrato, cada um com o primeiro motivo em uma linha."""
+    problems: list[tuple[Path, str]] = []
+    for path in metrics_files(data_dir):
+        try:
+            load_metrics(path)
+        except ValidationError as error:
+            first = error.errors()[0]
+            where = ".".join(str(part) for part in first["loc"]) or "arquivo"
+            problems.append((path, f"{where}: {first['msg']}"))
+    return sorted(problems)
+
+
+def publication_id(path: Path) -> str:
+    """O id da publicação a partir do caminho: a pasta do episódio ou o nome do arquivo avulso."""
+    return path.parent.name if path.name == SchemasConstants.METRICS_FILE else path.stem
 
 
 def record_reading(

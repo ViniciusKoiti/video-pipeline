@@ -15,6 +15,7 @@ from app.cli import main
 from app.pipeline.check import check_episode
 from app.pipeline.metrics import (
     all_metrics,
+    invalid_metrics,
     load_metrics,
     metrics_path,
     pending_lines,
@@ -153,6 +154,35 @@ def test_save_load_and_list_all(tmp_path: Path) -> None:
     assert [m.id for _, m in items] == [EPISODE, "nabote-clipe"]
     assert load_metrics(items[0][0]).published_at == PUBLISHED
     assert not list((data / "episodes" / EPISODE).glob(".*.tmp"))
+
+
+def test_short_is_a_publication_format() -> None:
+    assert metrics(format="short").format == "short"
+    with pytest.raises(ValidationError):
+        metrics(format="tiktok-video")
+
+
+def test_invalid_file_is_reported_without_hiding_the_others(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = make_root(tmp_path)
+    data = root / "data"
+    (data / "episodes" / EPISODE).mkdir(parents=True, exist_ok=True)
+    save_metrics(metrics_path(data, EPISODE), metrics())
+    broken = data / "episodes" / "short-x-pt"
+    broken.mkdir()
+    by_hand = {**metrics().model_dump(mode="json"), "id": "short-x-pt", "hypothesis": {"statement": "x"}}
+    (broken / "metrics.json").write_text(json.dumps(by_hand), encoding="utf-8")
+    assert [m.id for _, m in all_metrics(data)] == [EPISODE]
+    [(path, reason)] = invalid_metrics(data)
+    assert path == broken / "metrics.json" and reason.startswith("hypothesis:")
+    monkeypatch.chdir(root)
+    assert main(["metricas", "pendentes", "--hoje", "2026-10-23"]) == 1
+    out = capsys.readouterr().out
+    assert f"{EPISODE:32} publicado 2026-10-20" in out
+    assert "short-x-pt" in out and "INVÁLIDO (hypothesis:" in out and "vencidas e não lidas: 0" in out
+    assert main(["metricas", "tabela", "--saida", str(tmp_path / "t.csv")]) == 1
+    assert "1 publicação(ões), 2 linha(s)" in capsys.readouterr().out
 
 
 # --- vp status e vp check ---------------------------------------------------------------------------
