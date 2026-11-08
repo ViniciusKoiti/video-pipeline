@@ -13,7 +13,9 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
   no `assets/<id>.json`, e o schema recusa sem licença, crédito, `sha256` ou conferência (ADR 007);
 - gate 4 (`preview`): o render mais acabado (`renders/final.mp4`, senão `renders/preview.mp4`), o
   `episode.json`, a legenda e o texto do post, quando existem. Aprovar a prévia e depois renderizar o final
-  (voz final, legenda refeita) faz o gate mudar: a versão final é revista de novo (#120);
+  (voz final, legenda refeita) faz o gate mudar: a versão final é revista de novo (#120). Aprovar exige a
+  medição limpa quando há `medicao.json` e a conferência do render sem problema quando há
+  `renders/checks-<render>.json` (`app/pipeline/render_checks.py`);
 - gate de tradução (`translation`, ADR 034), só em pasta com `traducao.json`: a narração traduzida, o vínculo
   e o original de que ela vem. Aprovar exige que a conferência em código (`vp traducao`) não ache problema.
 
@@ -34,6 +36,7 @@ from app.pipeline.file_hash import sha256_file
 from app.pipeline.medicao import medicao_problems
 from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
+from app.pipeline.render_checks import render_problems
 from app.pipeline.review_hashes import content_hash as content_hash
 from app.pipeline.schemas import (
     Asset,
@@ -87,24 +90,25 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
 
 
 def _validate_reports(store: ManifestStore, episode_id: str, step: Step, decision: Decision) -> None:
-    if step is Step.TRANSLATION and decision is Decision.APPROVED:
-        problems = translation_problems(store, episode_id)
+    """Aprovar exige as conferências em código limpas: tradução no gate de tradução; medição (quando há
+    `medicao.json`) e render (quando há `renders/checks-*.json`) no gate 4."""
+    reports = (
+        (Step.TRANSLATION, translation_problems, "da tradução", "vp traducao"),
+        (Step.PREVIEW, _medicao, "da medição", "vp medicao"),
+        (Step.PREVIEW, render_problems, "do render", "vp render"),
+    )
+    for gated, check, what, command in reports:
+        problems = check(store, episode_id) if gated is step and decision is Decision.APPROVED else []
         if problems:
             raise GateError(
-                f"{episode_id}: a conferência da tradução achou {len(problems)} problema(s), "
-                f"rode `vp traducao {episode_id}`: " + "; ".join(problems)
+                f"{episode_id}: a conferência {what} achou {len(problems)} problema(s), "
+                f"rode `{command} {episode_id}`: " + "; ".join(problems)
             )
-    if (
-        step is Step.PREVIEW
-        and decision is Decision.APPROVED
-        and store.exists(episode_id, MedicaoConstants.MEDICAO_FILE)
-    ):
-        problems, _ = medicao_problems(store, episode_id)
-        if problems:
-            raise GateError(
-                f"{episode_id}: a conferência da medição achou {len(problems)} problema(s), "
-                f"rode `vp medicao {episode_id}`: " + "; ".join(problems)
-            )
+
+
+def _medicao(store: ManifestStore, episode_id: str) -> list[str]:
+    measured = store.exists(episode_id, MedicaoConstants.MEDICAO_FILE)
+    return medicao_problems(store, episode_id)[0] if measured else []
 
 
 def record_decision(

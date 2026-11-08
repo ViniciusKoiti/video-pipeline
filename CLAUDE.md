@@ -205,8 +205,10 @@ Método, hipótese H01 e limites: `docs/pesquisa/crescimento-youtube-embalagem-h
 
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
-(**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
-áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado) → prévia e descrição (**gate 4**) →
+(**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos no MP4, gravados em
+`renders/checks-<render>.json` (`app/pipeline/render_checks.py`: abre no ffprobe, áudio presente, dimensão do
+perfil e duração = voz bloqueiam o gate 4; volume fora de −14 LUFS e silêncio ≥ 3 s são alertas; cena sem ativo
+aprovado barra o render final antes do motor) → prévia e descrição (**gate 4**) →
 export. Na descrição, os livros citados levam o link de afiliado da Amazon com o aviso exigido pelo contrato
 (`vp export livros <id>`, a partir de `livros.json` do episódio). No gate 4, "ajustar imagem" volta à
 busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
@@ -408,7 +410,8 @@ lacuna fica registrada.
   Trilha (ADR 030): faixas da YouTube Audio Library baixadas à mão pelo dono, catálogo em `data/music/`
   (`vp music`), plano em `music.json` do agente `diretor-musical` (âncoras na
   narração, como os planos). A música entra na junção, por baixo da voz (ducking), com o volume final perto de
-  −14 LUFS, e trocar a faixa refaz só a junção. A licença só vale no YouTube.
+  −14 LUFS, e trocar a faixa refaz só a junção. Sem trilha, a voz vai ao mesmo alvo com o mesmo limitador
+  (emenda de 2026-11-07 da ADR 030). A licença só vale no YouTube.
   Efeitos sonoros nos Shorts (ADR 035, proposta): o SFX Kit (CC0, sintetizado em código) clonado pelo dono em
   `data/sfx/kit/`, lido direto do `sounds.json` dele com o `sha256` conferido; plano `sfx.json` por vídeo
   (som + cena + trecho da fala ou deslocamento), conferido por `app/pipeline/sfx.py` e misturado em

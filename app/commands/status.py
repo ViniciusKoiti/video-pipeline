@@ -1,8 +1,9 @@
 """`vp status <id>`: onde está cada gate de um episódio (CLAUDE.md §5).
 
 Uma linha por gate e por ativo (decisão, quem, quando, e se ela ainda vale para o conteúdo de hoje), o parecer
-do verificador, as janelas de métricas vencidas (§12) e a lista de pendências, com a legenda que falta no
-vertical e as falas que ficaram para trás (ADR 052). Só lê.
+do verificador, a conferência do render carimbável (§4), as janelas de métricas vencidas (§12) e a lista de
+pendências, com a legenda que falta no vertical, as falas que ficaram para trás (ADR 052) e o render com
+problema. Só lê.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from app.pipeline.gates import GateStatus, gate_report, latest_check
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.pending import pending_pieces
 from app.pipeline.ports import Context
+from app.pipeline.render_checks import status_line as render_status_line
 from app.pipeline.schemas import Decision, Step
 
 
@@ -24,6 +26,8 @@ def run(args: argparse.Namespace, context: Context) -> int:
         print(_status_line(row))
         if row.step is Step.SCRIPT:
             print(_check_line(context, args.episode_id))
+    if (render := render_status_line(context.store, args.episode_id)) is not None:
+        print(render)
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
     pending += pending_pieces(context.store, args.episode_id)
     pending += _metrics_status(context, args.episode_id)

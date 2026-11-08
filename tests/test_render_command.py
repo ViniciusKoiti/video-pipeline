@@ -10,7 +10,7 @@ import pytest
 
 from app.cli import HANDLERS, build_parser
 from app.commands.errors import run as handled
-from app.pipeline.gates import record_decision
+from app.pipeline.gates import GateError, record_decision
 from app.pipeline.schemas import Asset, Decision, EpisodeManifest, Status, Step
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore, JsonReviewGate
@@ -242,13 +242,37 @@ def test_a_render_with_music_prints_the_music_and_the_final_loudness_with_the_al
     env: Env, tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     with_music(env, tmp_path)
-    monkeypatch.setattr("app.commands.render.integrated_lufs", lambda path: -14.0)
+    monkeypatch.setattr("app.pipeline.render_checks.integrated_lufs", lambda path: -14.0)
     assert run(env, tmp_path, "--preview") == 0
     out = capsys.readouterr().out
-    assert "trilha: 1 trecho(s), 1 faixa(s)" in out and out.rstrip().endswith("volume: -14.0 LUFS ok")
-    monkeypatch.setattr("app.commands.render.integrated_lufs", lambda path: -20.0)
+    assert "trilha: 1 trecho(s), 1 faixa(s)" in out and "conferência: ok" in out
+    assert "volume -14.0 LUFS" in out
+    monkeypatch.setattr("app.pipeline.render_checks.integrated_lufs", lambda path: -20.0)
     env.path("renders/preview.mp4").unlink()
+    assert run(env, tmp_path, "--preview") == 0  # volume fora do alvo é alerta, não problema
+    out = capsys.readouterr().out
+    assert "conferência: ok" in out and "  alerta: volume final -20.0 LUFS, alvo -14 ± 1.5" in out
+    assert run(env, tmp_path, "--no-render") == 0  # sem render, nada se mede
+    assert "conferência:" not in capsys.readouterr().out
+
+
+def test_the_render_is_checked_and_a_problem_fails_the_command_and_the_gate(
+    env: Env, tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
     assert run(env, tmp_path, "--preview") == 0
-    assert "volume: -20.0 LUFS — alerta: volume final -20.0 LUFS" in capsys.readouterr().out
-    assert run(env, tmp_path, "--no-render") == 0  # sem render, a loudness não se mede
-    assert "volume:" not in capsys.readouterr().out
+    checks = json.loads(env.path("renders/checks-preview.json").read_text())
+    assert checks["problems"] == [] and checks["has_audio"] and checks["opens"]
+    assert (checks["width"], checks["height"]) == (1280, 720) and checks["render"] == "renders/preview.mp4"
+    assert abs(checks["duration_ms"] - checks["expected_ms"]) <= 500 and -17 < checks["lufs"] < -11
+    assert "conferência: ok; áudio sim; 1280×720;" in capsys.readouterr().out
+    monkeypatch.setattr("app.pipeline.render_checks.probe_streams", lambda path: [])
+    env.path("renders/preview.mp4").unlink()
+    assert run(env, tmp_path, "--preview") == 1
+    out = capsys.readouterr().out
+    assert "conferência: 2 problema(s)" in out and "  problema: sem trilha de áudio" in out
+    assert "  problema: dimensão None×None, o perfil pede 1280×720" in out
+    with pytest.raises(GateError, match="a conferência do render achou 2 problema"):
+        record_decision(
+            env.store, env.review, EP, Step.PREVIEW, Decision.APPROVED,
+            reviewer="Dono", now=lambda: FIXED_TIME,
+        )
