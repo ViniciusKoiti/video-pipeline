@@ -22,6 +22,7 @@ from app.pipeline.models.format_brief import FormatBrief as FormatBrief
 from app.pipeline.models.format_measure import FormatMeasure as FormatMeasure
 from app.pipeline.models.script_numbers import ScriptNumbers as ScriptNumbers
 from app.pipeline.models.shot_timing import ShotTiming as ShotTiming
+from app.pipeline.numbers_citations import citation_lines, citation_of
 from app.pipeline.schemas import (
     Asset,
     BrollShot,
@@ -148,9 +149,9 @@ def script_numbers(
         if asset and timing.scene_id not in used.setdefault(asset, []):
             used[asset].append(timing.scene_id)
     citations = [
-        Citation(t.scene_id, t.shot.anchor, asset, t.ms)
+        citation_of(t, assets[asset])
         for t in timings
-        if isinstance(t.shot, PhotoShot)
+        if isinstance(t.shot, PhotoShot | BrollShot)
         and (asset := t.shot.asset_id) is not None
         and asset in assets
         and assets[asset].license_id == SchemasConstants.CITATION_LICENSE
@@ -234,14 +235,7 @@ def render_block(numbers: ScriptNumbers, brief: FormatBrief | None, chars_per_se
         + ("" if n.rhythm_alerts else " nenhum."),
     ]
     lines += [f'  - {t.scene_id} {t.shot.kind} "{t.shot.anchor}" {_seconds(t.ms)}' for t in n.rhythm_alerts]
-    distinct = len({c.asset_id for c in n.citations})
-    lines += ["", f"### Quadros citados (`Citacao`): {len(n.citations)} usos de {distinct} ativos", ""]
-    if n.citations:
-        lines += ["| # | Cena | Âncora | Ativo | Tempo |", "|---|---|---|---|---|"]
-        lines += [
-            f'| {i} | {c.scene_id} | "{c.anchor}" | `{c.asset_id}` | {_seconds(c.ms)} |'
-            for i, c in enumerate(n.citations, 1)
-        ]
+    lines += citation_lines(n.citations)
     lines += ["", f"### Ativos usados: {len(n.assets_by_use)}", ""]
     if n.unused_assets:
         lines.append("Baixados e fora do vídeo: " + ", ".join(f"`{a}`" for a in n.unused_assets) + ".")

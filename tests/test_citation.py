@@ -86,11 +86,43 @@ def test_citation_limits_frames_and_screen_time() -> None:
     ]
 
 
-def test_citation_is_never_motion() -> None:
+def test_still_citation_never_goes_in_broll() -> None:
     broll = media("broll", "q0")
     assets = {"q0": Asset.model_validate(citation("q0"))}
     assert citation_violations([("S01", broll, 3000)], assets) == [
-        "S01: citação q0 só como quadro parado, nunca B-roll"
+        "S01: citação q0 é quadro parado e não vai em B-roll"
+    ]
+
+
+def clip(asset_id: str = "c0", **changes: Any) -> dict[str, Any]:
+    defaults = {
+        "provider": "owner_capture",
+        "page_url": None,
+        "media": "clip",
+        "origin": "captura do dono, episódio 01",
+        "timecode": "00:12:03-00:12:08",
+    }
+    return citation(asset_id, **{**defaults, **changes})
+
+
+def test_clip_needs_origin_timecode_and_citation_license() -> None:
+    assert Asset.model_validate(clip()).media == "clip"
+    for changes, message in [
+        ({"origin": " "}, "clipe exige origin"),
+        ({"timecode": None}, "clipe exige origin"),
+        ({"license_id": "CC0-1.0", "provider": "pexels"}, "clipe só na licença Citacao"),
+        ({"media": "still"}, "captura do dono só vale para clipe"),
+    ]:
+        with pytest.raises(ValidationError, match=message):
+            Asset.model_validate(clip(**changes))
+
+
+def test_clip_has_no_numeric_cap_but_only_goes_in_broll() -> None:
+    assets = {f"c{i}": Asset.model_validate(clip(f"c{i}")) for i in range(30)}
+    many = [("S01", media("broll", f"c{i}"), 20000) for i in range(30)]
+    assert citation_violations(many, assets) == []
+    assert citation_violations([("S01", photo("c0"), 3000)], assets) == [
+        "S01: citação c0 é clipe e só vai em B-roll"
     ]
 
 

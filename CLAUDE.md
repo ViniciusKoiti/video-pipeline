@@ -299,7 +299,9 @@ revela:
   Quadro de obra citada para crítica (`Citacao`, emenda de citação da ADR 007, 2026-10-17):
   - só material oficial público do detentor (`provider: official`), com `work`, crédito e a justificativa em
     `usage_notes`;
-  - no vídeo, só quadro parado, até 10 por vídeo e 8 s cada (`vp check`);
+  - no vídeo, quadro parado até 10 por vídeo e 8 s cada (`vp check`); clipe em movimento (`media: clip` + `origin` e `timecode`, provider `official` (material oficial público) ou `owner_capture` (arquivo do dono), só em B-roll, sem o áudio
+    da obra, sem teto numérico, só YouTube) por decisão do dono em 2026-11-03 (emenda de 2026-11-03 da ADR 007; o
+    `vp numeros` já lista os clipes; falta bloquear o `vp postiz` fora do YouTube e conferir o render mudo);
   - a miniatura com quadro da obra é decisão do dono no gate 4;
   - um strike suspende a série.
 - **`review.json`:** fonte única das decisões humanas; entradas só acrescentadas, com `input_hash` do conteúdo

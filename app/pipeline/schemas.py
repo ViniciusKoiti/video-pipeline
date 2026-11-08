@@ -256,8 +256,9 @@ def unknown_source_refs(scenes: ScenesManifest, sources: SourcesManifest) -> lis
 
 
 def citation_violations(planned: Sequence[tuple[str, Shot, float]], assets: dict[str, Asset]) -> list[str]:
-    """Quadros citados (licença Citacao) fora dos limites da emenda: só imagem parada, no máximo
-    MAX_CITATION_FRAMES por vídeo e MAX_CITATION_MS na tela cada. `planned`: (cena, plano, duração em ms)."""
+    """Citações (licença Citacao) fora das regras da emenda: quadro parado só em foto, no máximo
+    MAX_CITATION_FRAMES por vídeo e MAX_CITATION_MS na tela cada; clipe só em B-roll e sem teto numérico
+    (emenda de 2026-11-03). `planned`: (cena, plano, duração em ms)."""
     problems, frames = [], 0
     for scene_id, shot, ms in planned:
         if not isinstance(shot, PhotoShot | BrollShot) or shot.asset_id is None:
@@ -265,15 +266,19 @@ def citation_violations(planned: Sequence[tuple[str, Shot, float]], assets: dict
         asset = assets.get(shot.asset_id)
         if asset is None or asset.license_id != SchemasConstants.CITATION_LICENSE:
             continue
-        if isinstance(shot, BrollShot):
-            problems.append(f"{scene_id}: citação {shot.asset_id} só como quadro parado, nunca B-roll")
-            continue
-        frames += 1
-        if ms > SchemasConstants.MAX_CITATION_MS:
+        clip, motion = asset.media == "clip", isinstance(shot, BrollShot)
+        if clip != motion:
             problems.append(
-                f"{scene_id}: citação {shot.asset_id} com ~{ms / 1000:.1f} s na tela (máximo "
-                f"{SchemasConstants.MAX_CITATION_MS / 1000:.0f} s)"
+                f"{scene_id}: citação {shot.asset_id} é "
+                + ("clipe e só vai em B-roll" if clip else "quadro parado e não vai em B-roll")
             )
+        elif not clip:
+            frames += 1
+            if ms > SchemasConstants.MAX_CITATION_MS:
+                problems.append(
+                    f"{scene_id}: citação {shot.asset_id} com ~{ms / 1000:.1f} s na tela (máximo "
+                    f"{SchemasConstants.MAX_CITATION_MS / 1000:.0f} s)"
+                )
     if frames > SchemasConstants.MAX_CITATION_FRAMES:
         problems.append(f"{frames} quadros citados no vídeo (máximo {SchemasConstants.MAX_CITATION_FRAMES})")
     return problems

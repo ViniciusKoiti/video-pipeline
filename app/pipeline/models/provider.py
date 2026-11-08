@@ -14,4 +14,5 @@ class Provider(StrEnum):
     WORKERS_AI = "workers_ai"
     ORIGINAL = "original"  # mapa, cronologia ou tela gráfica feitos pelo projeto
     OFFICIAL = "official"  # material oficial público do detentor da obra (emenda de citação, ADR 007)
+    OWNER_CAPTURE = "owner_capture"  # clipe de origem escolhida pelo dono (ADR 007, 2026-11-03)
     YOUTUBE_AUDIO_LIBRARY = "youtube_audio_library"  # faixa baixada à mão pelo Studio (ADR 030)

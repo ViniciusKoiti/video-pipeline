@@ -9,3 +9,7 @@ class Citation:
     anchor: str
     asset_id: str
     ms: float
+    clip: bool = False
+    work: str = ""
+    timecode: str = ""
+    origin: str = ""

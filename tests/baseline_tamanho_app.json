@@ -4,10 +4,10 @@
   "files": {
     "app/media/evolution.py": 239,
     "app/pipeline/bench.py": 240,
-    "app/pipeline/check.py": 547,
+    "app/pipeline/check.py": 543,
     "app/pipeline/gates.py": 231,
     "app/pipeline/molde.py": 212,
-    "app/pipeline/numbers.py": 264,
+    "app/pipeline/numbers.py": 258,
     "app/render/ffmpeg.py": 364,
     "app/render/remotion.py": 294,
     "app/storage/usage_sqlite.py": 303
@@ -18,7 +18,6 @@
     "app/pipeline/bench.py::run_bench": 54,
     "app/pipeline/check.py::_check_scenes": 73,
     "app/pipeline/molde.py::molde_warnings": 56,
-    "app/pipeline/numbers.py::render_block": 51,
     "app/pipeline/sfx.py::plan_problems": 53,
     "app/render/ffmpeg.py::FfmpegEngine._render_segment": 51,
     "app/render/remotion.py::RemotionEngine.scene_props": 67

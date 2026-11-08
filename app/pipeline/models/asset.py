@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import AwareDatetime, model_validator
 
@@ -29,6 +29,9 @@ class Asset(Model):
     used_in_scenes: list[SceneId] = []  # plural: um mapa pode voltar em várias cenas (§9)
     generation: Generation | None = None  # obrigatório para imagem gerada
     work: str | None = None  # obra citada: título, estúdio e detentor conhecido (licença Citacao)
+    media: Literal["still", "clip"] = "still"  # clipe só na licença Citacao (emenda de 2026-11-03 da ADR 007)
+    origin: str | None = None  # clipe: de onde veio (o dono escolhe e responde)
+    timecode: str | None = None  # clipe: entrada e saída na obra, ex. "00:12:03-00:12:08"
 
     @property
     def is_synthetic(self) -> bool:
@@ -42,6 +45,27 @@ class Asset(Model):
         if generated and self.license_id not in (None, "Generated"):
             raise ValueError("imagem gerada usa license_id 'Generated'")
         return self
+
+    def _citation_problems(self) -> list[str]:
+        """Emenda de citação (ADR 007): quadro parado oficial ou clipe de origem declarada."""
+        problems: list[str] = []
+        cited_providers = (Provider.OFFICIAL, Provider.OWNER_CAPTURE)
+        if (self.license_id == SchemasConstants.CITATION_LICENSE) != (self.provider in cited_providers):
+            problems.append("citação só de material oficial público do detentor (provider official)")
+        if self.provider is Provider.OWNER_CAPTURE and self.media != "clip":
+            problems.append("captura do dono só vale para clipe (quadro parado exige material oficial)")
+        if self.media == "clip" and self.license_id != SchemasConstants.CITATION_LICENSE:
+            problems.append("clipe só na licença Citacao")
+        if self.media == "clip" and not (self.origin and self.origin.strip() and self.timecode):
+            problems.append("clipe exige origin (de onde veio) e timecode (entrada e saída na obra)")
+        if self.license_id == SchemasConstants.CITATION_LICENSE:
+            if not (self.work and self.work.strip()):
+                problems.append("citação exige work (título, estúdio e detentor da obra)")
+            if not self.attribution_text.strip():
+                problems.append("citação exige attribution_text (crédito da obra na descrição)")
+            if not self.usage_notes.strip():
+                problems.append("citação exige usage_notes: o trecho que o quadro ilustra e por quê")
+        return problems
 
     @model_validator(mode="after")
     def _approval_requires_rights(self) -> Self:
@@ -59,17 +83,10 @@ class Asset(Model):
             self.author and self.attribution_text.strip()
         ):
             problems.append("CC-BY exige author e attribution_text")
-        if self.provider not in (Provider.WORKERS_AI, Provider.ORIGINAL) and not self.page_url:
+        no_page = (Provider.WORKERS_AI, Provider.ORIGINAL, Provider.OWNER_CAPTURE)
+        if self.provider not in no_page and not self.page_url:
             problems.append("ativo de acervo exige page_url")
-        if (self.license_id == SchemasConstants.CITATION_LICENSE) != (self.provider is Provider.OFFICIAL):
-            problems.append("citação só de material oficial público do detentor (provider official)")
-        if self.license_id == SchemasConstants.CITATION_LICENSE:
-            if not (self.work and self.work.strip()):
-                problems.append("citação exige work (título, estúdio e detentor da obra)")
-            if not self.attribution_text.strip():
-                problems.append("citação exige attribution_text (crédito da obra na descrição)")
-            if not self.usage_notes.strip():
-                problems.append("citação exige usage_notes: o trecho que o quadro ilustra e por quê")
+        problems += self._citation_problems()
         library = self.provider is Provider.YOUTUBE_AUDIO_LIBRARY
         if self.license_id == SchemasConstants.AUDIO_LIBRARY_LICENSE and not library:
             problems.append("licença da Audio Library só com provider youtube_audio_library")

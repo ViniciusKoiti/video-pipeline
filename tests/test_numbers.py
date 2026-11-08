@@ -337,3 +337,23 @@ def test_cli_numeros_writes_once_and_respects_approved_assets(
     assert fixed["used_in_scenes"][0] == "S119"
     kant = json.loads((folder / "assets" / "commons-kant-c1790.json").read_text())
     assert kant["used_in_scenes"] == []
+
+
+def test_clips_are_listed_with_work_timecode_and_origin() -> None:
+    from tests.test_citation import citation, clip
+
+    assets = {
+        "q0": Asset.model_validate(citation("q0")),
+        "c0": Asset.model_validate(clip("c0", work="The Mentalist (2008), Warner Bros.")),
+    }
+    scenes = scenes_of(
+        {"id": "S01", "narration": "Primeira menção ao quadro.", "shots": [photo("Primeira", "q0")]},
+        {"id": "S02", "narration": "Segunda menção, agora o clipe.", "shots": [broll("Segunda", "c0")]},
+    )
+    n = script_numbers(scenes, assets, CPS)
+    assert [(c.asset_id, c.clip) for c in n.citations] == [("q0", False), ("c0", True)]
+    text = render_block(n, None, CPS)
+    assert "1 quadros e 1 clipes" in text
+    assert "| 2 | clipe | S02 |" in text
+    assert "The Mentalist (2008), Warner Bros." in text and "00:12:03-00:12:08" in text
+    assert "o clipe sai mudo" in text
