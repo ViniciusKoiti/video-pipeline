@@ -96,6 +96,12 @@ no plano do Claude do dono, sem API paga.
 | `duvida-cega` | `sonnet` | Checklist com data, fuso e JSON exato antes do agendamento; o dono ainda confirma pela regra `ask`. |
 | `diretor-musical` | `haiku` | Escolhe faixa por etiqueta e texto; o `vp check` confere as âncoras e o dono decide na escuta. |
 
+**Nota de 2026-11-07 (registro ao commitar).** O frontmatter do `roteirista` está em `model: sonnet` com
+`effort: xhigh` desde 2026-11-05 (data do arquivo na árvore de trabalho), diferente do `fable` desta tabela, e o motivo
+não ficou registrado. Entrou no Git como estava; confirmar ou reverter é decisão do dono. Os agentes criados depois
+(`roteirista-ficcao-historica`, `sonnet`/`xhigh`, ADR 055; `diretor-animacao`, sem `model`, herda o da sessão) também
+não constam da tabela.
+
 ## Emenda (2026-10-24): rodadas de checagem no mesmo contexto
 
 Decisão do dono. No `montaigne-desapego` a checagem levou quatro rodadas, cada uma em contexto limpo relendo as

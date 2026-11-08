@@ -88,9 +88,15 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
    usado pelos agentes das etapas criativas, não conta como API paga (ADR 009). Em 429, cota esgotada,
    modelo ausente ou licença incompatível: registrar o motivo em `review.json`, marcar a etapa como
    `needs_review` e parar **aquela cena**, sem bloquear as demais.
-2. **Nenhuma fonte inventada.** O LLM escreve somente a partir de trechos extraídos de fontes reais já
-   baixadas em `sources.json`. Toda `claim` tem `source_ids` — **inclusive o que aparece na tela**
-   (número, data, citação, cargo, gráfico; ADR 008). Roteiro com claim sem suporte não passa da validação.
+2. **Nenhuma fonte inventada; a regra de fato do roteiro é de cada roteirista** (decisão do dono, 2026-11-05;
+   ADR 055). A pesquisa nunca inventa: o `pesquisador` só ficha o que está em trechos extraídos de fontes reais
+   já baixadas em `sources.json`, com citação literal conferida pelo `vp check`. O roteiro segue o roteirista do
+   formato (agente em `.claude/agents/` e skill dele, §15): o `roteirista` (ensaio e explicativo) exige `claims`
+   com `source_ids` em toda afirmação de fato **e em tudo o que aparece na tela** (número, data, citação, cargo,
+   gráfico; ADR 008); o `roteirista-ficcao-historica` ("sua vida em cada nível", "como era ser X") **dispensa
+   fichas, fontes e claims** (decisão do dono, 2026-11-05) e só se obriga a não afirmar com precisão o que não
+   saiba sustentar. O `vp check` e os schemas seguem validando as claims que existirem.
+   Roteiro ou vídeo de outro canal é pista de forma, nunca fonte nem texto-base.
 3. **Nenhum ativo sem licença registrada entra no render.** Campos obrigatórios em §6. Imagem sem
    licença identificável vai para `needs_review`.
 4. **Stock e imagem gerada são ilustração**, nunca "registro" do fato. `visual_need` correto sempre;
@@ -563,6 +569,7 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 |---|---|---|---|
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
+| `roteirista-ficcao-historica` | `roteiro-ficcao-historica`, `humanizer-narracao` | `outline.md`, `scenes.json` | as mesmas do `roteirista` (ADR 055; formato "sua vida em cada nível") |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 | `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `vp music`) |
