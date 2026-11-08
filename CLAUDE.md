@@ -575,6 +575,16 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 | `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `vp music`) |
+| `diretor-animacao` | `vp-direcao-animacao` | `direcao-animacao.md`; prévia isolada quando solicitada | Read, Grep, Glob, Write, Bash (render local e conferência) |
+
+**Direção de animação (pedido do dono, 2026-11-05):** planeja atuação de personagens,
+poses, cenários, enquadramentos e continuidade, com aparência de desenho à mão no teste
+de `agostinho-estoicos-compaixao`. O planejamento pode começar pela pauta, marcado como
+proposta; a direção final acompanha o roteiro aprovado e o plano de imagens. Como exceção
+ao escopo de dados acima, um piloto visual expressamente solicitado pode ter código em
+`video/src/previews/<id>/` e saídas em `renders/<id>/`, sem alterar o template compartilhado.
+O diretor não substitui a conferência de direitos nem aprova gates. O método fica em
+`.agents/skills/vp-direcao-animacao/SKILL.md`, também acessível em `.claude/skills/`.
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →
