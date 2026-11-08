@@ -61,6 +61,27 @@ O primeiro caso é o teaser do motion-kit
    virada, `calm` para acompanhar contas/fluxos, `neutral` na explicação e `invite` no fecho.
    Pela ADR 053, idioma + `delivery` escolhem a gravação em `[chatterbox.references]`; não inserir caminhos
    pessoais no roteiro. Planejar a intenção e as pausas junto dos estados da animação.
+   **Música planejada junto do plano de animação (obrigatório; pedido do dono em 2026-11-05).** Todo Short de
+   conceito tem a trilha decidida **antes da voz**, numa seção "Música" do `plano-animacao.md` (e, se o vídeo
+   leva faixa, um `music.json` no formato da skill `trilha`, na pasta do short). A seção responde, por cena:
+   fundo, silêncio ou transição; faixa do `data/music/catalog.json` (nunca fora dele; `vocals: false`); nível
+   (`low` por padrão); entrada e saída ancoradas em cena + trecho literal da fala; fade; e o motivo (`why`).
+   O clima segue a `delivery`: `hook` entra já no primeiro quadro; `calm`/fluxo animado = fundo baixo, sem
+   competir com a leitura dos blocos; `turn` = troca de faixa ou silêncio curto; a frase que fecha a lição e o
+   resultado medido ficam sem música ou com o fundo já saindo; `invite` pode trazer a faixa da abertura de volta.
+   Faixa com duração menor que o vídeo não serve (o catálogo não tem loop); preferir uma só faixa por Short.
+   Efeito sonoro (ADR 035) e música não disputam o mesmo instante: o SFX do corte vence, a música abaixa ou já
+   saiu. Sem música só por decisão escrita na pauta ou no plano, com o motivo (ex.: o Short é só demonstração
+   em silêncio); "sem música" por esquecimento é lacuna do controle editorial.
+   **Direitos:** as faixas da YouTube Audio Library só valem no YouTube (`data/benchmarks/termos-musica.md`).
+   As saídas YouTube (pt, en) levam a faixa; o Reel do Instagram sai sem ela, ou com faixa de licença
+   registrada para esse uso. A descrição do YouTube leva o crédito (`attribution_text` quando a faixa é CC).
+   A rotina nunca baixa faixa nem aprova ativo: `vp music usar` copia a faixa para o episódio e o gate 3 da
+   faixa (`vp approve ... --step assets --asset <faixa>`) é do dono, que também ouve na prévia.
+   **Lacuna atual:** `vp short juntar` mistura voz e SFX, não música (ADR 035; a ADR 030 só cobre o `vp render`
+   do longo). Enquanto não houver mistura de música no Short, o plano é entregue e a mistura fica registrada como
+   pendência (`música planejada, mistura pendente`); não declarar um vídeo "com música" sem ela, e não inventar
+   um `ffmpeg` avulso que o dono não pediu.
    A voz clonada fala a ~2,5 palavras por segundo: uma linha de 8 palavras ocupa
    3 s, e a cena precisa ter esse tempo depois de pronta para ler. Passe a `humanizer-narracao` antes de gravar.
    Pronto quando as afirmações se apoiam no código, nas fontes registradas ou na medição. Com medição própria (ADR 034), escreva o
@@ -106,7 +127,10 @@ O primeiro caso é o teaser do motion-kit
    `vp approve <id>-<idioma> --step preview`, que grava no `review.json` dele com o hash do MP4 e da legenda.
    O `vp postiz pacote --episode <id>-<idioma>` lê essa aprovação, e a dúvida cega a encontra. Pronto quando
    `vp status` mostra o gate 4 aprovado e válido para o MP4 que vai ser enviado. O agendamento segue a cadeia da
-   ADR 025 (`pacote`, dúvida cega, `schedule` com a confirmação dele).
+   ADR 025 (`pacote`, dúvida cega, `schedule` com a confirmação dele). Logo depois do `schedule`, o
+   `metrics.json` de cada saída nasce de `vp metricas iniciar <id>-<idioma> --platform youtube --format short
+   --hypothesis "..."`, que puxa data, canal e post do registro; nunca escrito à mão (fora do contrato ele sai
+   como INVÁLIDO no `vp metricas pendentes` e a janela de 7 dias passa em branco).
 
 ## Regras
 
@@ -120,6 +144,7 @@ O primeiro caso é o teaser do motion-kit
 
 ## Fora da v1
 
-Legenda queimada (o `motion-video` não tem campo de legenda; a `WordCaption` é do template do auto-play),
-trilha (efeitos sonoros entraram na ADR 035; música ainda não). A voz clonada em inglês foi aprovada
+Legenda queimada (o `motion-video` não tem campo de legenda; a `WordCaption` é do template do auto-play) e
+a **mistura** da música no `juntar` (efeitos sonoros entraram na ADR 035; o **plano** da música já é
+obrigatório, no passo 2). A voz clonada em inglês foi aprovada
 pelo dono na versão de concorrência em C; referências novas ainda exigem escuta da prévia gerada.

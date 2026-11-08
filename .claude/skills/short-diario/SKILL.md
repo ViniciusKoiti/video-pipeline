@@ -18,6 +18,11 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
    diz na **fala** uma regra ou consequência, não só o número; a tela repete a lição, nunca a substitui.
    Mostrar 501 contra 310 sem dizer o porquê não ensina. Sem a lição dita na fala, não gerar voz.
 4. `plano-animacao.md` com trecho da fala, estado inicial/final, blocos, conexões, ação visível e fonte por cena de explicação, incluindo o impacto no fluxo e nos recursos da aplicação (System Design). Conferir na pauta o quadro obrigatório da direção editorial: aplicação, decisão, benefício/limite e sequência animada. Lacuna impede voz/render e deve ser registrada. Depois `narracao.pt.json` (humanizer-narracao) e `narracao.en.json`, na duração planejada na pauta, sem prender a história a cinco cenas. Copiar como `narracao.json` nas pastas de episódio.
+   **Música, no mesmo plano (pedido do dono em 2026-11-05):** o `plano-animacao.md` traz a seção "Música" definida
+   na skill `shorts-tec` (passo 2): faixa do catálogo, entrada/saída por cena e trecho, nível, silêncios, motivo e
+   saída sem música para o Instagram (licença só do YouTube). Sem a seção, não gerar voz. O `music.json` do Short
+   sai da skill `trilha`; `vp music usar` copia a faixa, mas a aprovação do ativo é do dono. Mistura no Short
+   ainda não existe: registrar "música planejada, mistura pendente" no log do dia.
    **Porta do texto, antes da primeira voz** (cada fala refeita custa uma chamada ao Modal; fechar o texto primeiro):
    - humanizer **antes** da primeira `vp short voz`, nunca depois; frases ligadas por "e/ou/mas", sem série de frases curtas (cada ponto vira pausa na voz clonada);
    - `voice/glossary.json` para toda sigla dita (API → "á pi", JSON → "jêison"); sigla nova sem entrada no glossário não vai à voz;
@@ -51,6 +56,6 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
    veredito: não chamar de efeito o que não está no plano.
    Se `uv run` tentar sincronizar o ambiente e falhar sem rede, usar `uv run --no-sync` (ou `.venv/bin/vp`).
 9. `post.json` por saída (título provisório da pauta, origem dos números, divulgação da voz clonada, link do baixo-nivel-demos); `vp short gate` por saída; `vp postiz upload` e `vp postiz pacote --episode` por saída; confira os ids em `vp postiz integrations`.
-10. Conferir novamente o quadro obrigatório de System Design e animação no render final; item não conferido impede apresentar a versão como pronta. `data/rotina/AAAA-MM-DD.md`: o que foi feito, os avisos, os quadros para olhar e os comandos que faltam ao dono (`vp approve ... --step translation`, `--step preview` ×3, push, `vp postiz duvida` e `schedule` ×3).
+10. Conferir novamente o quadro obrigatório de System Design e animação, e a seção "Música" do plano (faixa, saída do Instagram sem ela, mistura feita ou pendente), no render final; item não conferido impede apresentar a versão como pronta. `data/rotina/AAAA-MM-DD.md`: o que foi feito, os avisos, os quadros para olhar e os comandos que faltam ao dono (`vp approve ... --step translation`, `--step preview` ×3, push, `vp postiz duvida` e `schedule` ×3, e depois de cada `schedule` o `vp metricas iniciar <id> --platform youtube --format short --hypothesis "..."`, que puxa data, canal e post do registro). Nunca escrever `metrics.json` à mão: fora do contrato ele sai como INVÁLIDO no `vp metricas pendentes`.
 ## Regras
 Tudo da skill `shorts-tec` vale. Resultados saem da medição; explicações, das fontes registradas. Java exige fontes e medições próprias do ambiente Java. Não refazer o que existe com o mesmo hash; não apagar saídas. Uma execução por dia.
