@@ -13,12 +13,9 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
+from app.media.constants.host_constants import HostConstants
 from app.media.envelope import mouth_levels
 from app.media.host import (
-    KIT_CLI,
-    MANIFEST_FILE,
-    ORIGIN_FILE,
-    SPRITES_DIR,
     SpriteCheckError,
     blocked_corners,
     check_sprites,
@@ -299,12 +296,12 @@ def test_portrait_corner_table_follows_the_vertical_layout() -> None:
 
 
 def write_dono_sprites(episode_dir: Path, *, skip: str | None = None) -> None:
-    folder = episode_dir / SPRITES_DIR
+    folder = episode_dir / HostConstants.SPRITES_DIR
     folder.mkdir(parents=True)
     for file in sprite_files(episode_dir):
         if file.name != skip:
             file.write_bytes(b"png " + file.name.encode())
-    (folder / ORIGIN_FILE).write_text('{"author": "dono", "review_status": "needs_review"}')
+    (folder / HostConstants.ORIGIN_FILE).write_text('{"author": "dono", "review_status": "needs_review"}')
 
 
 def test_dono_skin_is_a_ready_drawing_without_parts() -> None:
@@ -322,7 +319,7 @@ def test_dono_sprites_are_twelve_images_and_part_of_the_scene_cache(tmp_path: Pa
     assert len(names) == 12 and {"rest.png", "rest-piscada.png", "fv.png", "ou-piscada.png"} <= set(names)
     write_dono_sprites(tmp_path)
     first = sprites_hash(tmp_path)
-    (tmp_path / SPRITES_DIR / "a.png").write_bytes(b"outra boca")
+    (tmp_path / HostConstants.SPRITES_DIR / "a.png").write_bytes(b"outra boca")
     assert sprites_hash(tmp_path) != first  # trocar um desenho refaz as cenas
 
 
@@ -330,8 +327,8 @@ def test_dono_sprites_need_every_image_and_the_origin_record(tmp_path: Path) -> 
     write_dono_sprites(tmp_path, skip="mbp-piscada.png")
     with pytest.raises(FileNotFoundError, match="mbp-piscada.png"):
         sprites_hash(tmp_path)
-    (tmp_path / SPRITES_DIR / "mbp-piscada.png").write_bytes(b"png")
-    (tmp_path / SPRITES_DIR / ORIGIN_FILE).unlink()
+    (tmp_path / HostConstants.SPRITES_DIR / "mbp-piscada.png").write_bytes(b"png")
+    (tmp_path / HostConstants.SPRITES_DIR / HostConstants.ORIGIN_FILE).unlink()
     with pytest.raises(FileNotFoundError, match="origem.json"):  # sem origem registrada não entra no render
         sprites_hash(tmp_path)
 
@@ -370,25 +367,25 @@ MANIFEST = {
 
 
 def write_dono_layers(episode_dir: Path) -> Path:
-    folder = episode_dir / SPRITES_DIR
+    folder = episode_dir / HostConstants.SPRITES_DIR
     folder.mkdir(parents=True)
-    (folder / MANIFEST_FILE).write_text(json.dumps(MANIFEST))
+    (folder / HostConstants.MANIFEST_FILE).write_text(json.dumps(MANIFEST))
     for name in ("base.png", "boca-a.png"):
         (folder / name).write_bytes(b"png " + name.encode())
-    (folder / ORIGIN_FILE).write_text('{"author": "dono", "review_status": "needs_review"}')
+    (folder / HostConstants.ORIGIN_FILE).write_text('{"author": "dono", "review_status": "needs_review"}')
     return folder
 
 
 def test_layered_dono_hashes_the_manifest_and_the_files_it_cites(tmp_path: Path) -> None:
     folder = write_dono_layers(tmp_path)
-    assert [f.name for f in sprite_files(tmp_path)] == [MANIFEST_FILE, "base.png", "boca-a.png"]
+    assert [f.name for f in sprite_files(tmp_path)] == [HostConstants.MANIFEST_FILE, "base.png", "boca-a.png"]
     first = sprites_hash(tmp_path)
     (folder / "nao-citado.png").write_bytes(b"rascunho")
     assert sprites_hash(tmp_path) == first  # imagem fora do manifesto não entra no render
     (folder / "boca-a.png").write_bytes(b"outra boca")
     second = sprites_hash(tmp_path)
     assert second != first
-    (folder / MANIFEST_FILE).write_text(json.dumps({**MANIFEST, "layers": ["boca", "base"]}))
+    (folder / HostConstants.MANIFEST_FILE).write_text(json.dumps({**MANIFEST, "layers": ["boca", "base"]}))
     assert sprites_hash(tmp_path) != second  # mudar o manifesto também refaz as cenas
     (folder / "base.png").unlink()
     with pytest.raises(FileNotFoundError, match="base.png"):
@@ -397,7 +394,7 @@ def test_layered_dono_hashes_the_manifest_and_the_files_it_cites(tmp_path: Path)
 
 def fake_kit(project: Path, code: int, message: str) -> None:
     """O comando do kit no lugar do de verdade: um script que o teste roda com o próprio Python."""
-    cli = project / KIT_CLI
+    cli = project / HostConstants.KIT_CLI
     cli.parent.mkdir(parents=True)
     cli.write_text(f"import sys\nprint(sys.argv[1:], {message!r}, file=sys.stderr)\nsys.exit({code})\n")
 
@@ -422,7 +419,6 @@ def test_scene_props_carry_the_layered_manifest(tmp_path: Path) -> None:
     assert props["host"]["manifest"] == MANIFEST
     assert props["host"]["sprites"] == sprites_hash(tmp_path)
     assert set(props["host"]["direction"]) >= {"look", "expression"}
-
 
 
 def test_host_looks_toward_the_content_and_follows_the_delivery() -> None:

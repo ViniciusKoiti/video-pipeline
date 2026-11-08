@@ -18,36 +18,33 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from app.errors import PipelineError
+from app.media.constants.word_captions_constants import WordCaptionsConstants
 from app.media.envelope import mouth_levels
 from app.media.host import check_sprites, host_corners, host_direction, sprites_hash, sprites_manifest
 from app.media.narration import strip_pauses
 from app.media.probe import ProbeError, dimensions, duration_ms
-from app.media.word_captions import WORDS, scene_word_frames
+from app.media.word_captions import scene_word_frames
 from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
+from app.render.constants.remotion_constants import RemotionConstants as Constants
 from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, parse_srt
 
-PROJECT = Path(__file__).resolve().parents[2] / "video"
-TEMPLATE_GLOBS = (
-    "src/*.ts", "src/*.tsx", "src/fonts/*", "src/geo/*.json", "src/geo/*.ts", "render-scenes.mjs",
-    "package-lock.json",
-)
 
-
-class RemotionError(RuntimeError):
-    pass
+class RemotionError(PipelineError, RuntimeError):
+    """O render do Remotion falhou, ou o template não está pronto."""
 
 
 def template_hash(project: Path) -> str:
     digest = hashlib.sha256()
-    for pattern in TEMPLATE_GLOBS:
+    for pattern in Constants.TEMPLATE_GLOBS:
         for path in sorted(project.glob(pattern)):
             digest.update(path.name.encode() + path.read_bytes())
     return digest.hexdigest()
 
 
-def region_codes(project: Path = PROJECT) -> frozenset[str]:
+def region_codes(project: Path = Constants.PROJECT) -> frozenset[str]:
     """Códigos de país e estado dos contornos do template (`src/geo/*.json`): o `vp check` recusa os outros
     em `map.highlight` (ADR 011)."""
     codes: set[str] = set()
@@ -79,13 +76,11 @@ def _editorial(shot: EpisodeShot, fps: int) -> dict[str, Any]:
     return extra
 
 
-MEDIA_KINDS = frozenset({"photo", "broll"})
-
-
 def _media_frames(shots: list[dict[str, Any]], index: int, scene_frames: int) -> int:
     """Quadros em que a mídia fica na tela: até a próxima mídia da cena, como em `Scene.tsx` (ADR 011)."""
-    later = (s["from"] for s in shots[index + 1 :] if s["spec"]["kind"] in MEDIA_KINDS)
-    return next(later, scene_frames) - shots[index]["from"]
+    later = (s["from"] for s in shots[index + 1 :] if s["spec"]["kind"] in Constants.MEDIA_KINDS)
+    frames: int = next(later, scene_frames) - shots[index]["from"]
+    return frames
 
 
 def footage_continuity(props: list[dict[str, Any]], clip_frames: Callable[[str], int]) -> None:
@@ -95,7 +90,7 @@ def footage_continuity(props: list[dict[str, Any]], clip_frames: Callable[[str],
     playing: tuple[str, int] | None = None  # vídeo da última mídia e quadros já tocados dele
     for i, scene in enumerate(props):
         for j, shot in enumerate(scene["shots"]):
-            if shot["spec"]["kind"] not in MEDIA_KINDS:
+            if shot["spec"]["kind"] not in Constants.MEDIA_KINDS:
                 continue
             shown = _media_frames(scene["shots"], j, scene["frames"])
             if shot["spec"]["kind"] != "broll" or not shot["media"]:
@@ -138,7 +133,7 @@ class RemotionEngine:
     def __init__(
         self,
         *,
-        project: Path = PROJECT,
+        project: Path = Constants.PROJECT,
         node: str = "node",
         crf: int = 20,
         fade_s: float = 0.3,
@@ -210,7 +205,7 @@ class RemotionEngine:
         self, episode: EpisodeManifest, episode_dir: Path, *, preview: bool
     ) -> list[dict[str, Any]]:
         spec = target_spec(episode, preview=preview)
-        fps = spec.fps
+        fps, words_path = spec.fps, episode_dir / WordCaptionsConstants.WORDS
         cues = []
         # No vertical o final também sai com a legenda queimada (ADR 014): quem assiste sem som lê.
         if (self._burn[preview] or episode.video.portrait) and episode.captions:
@@ -219,7 +214,7 @@ class RemotionEngine:
         corners = []
         if episode.host is not None:
             corners = host_corners(episode.scenes, portrait=episode.video.portrait)
-        props = []
+        props: list[dict[str, Any]] = []
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]
             window = cues_between(cues, bounds[i] * 1000 // fps, bounds[i + 1] * 1000 // fps)
@@ -243,7 +238,7 @@ class RemotionEngine:
             )
             # Legenda palavra a palavra (ADR 023): só no vertical e só na cena que tem palavras reconhecidas;
             # sem elas, as props (e o cache) ficam como estavam e a cena mostra a legenda por frase.
-            words = scene_word_frames(episode_dir / WORDS, scene.audio, fps) if episode.video.portrait else []
+            words = scene_word_frames(words_path, scene.audio, fps) if episode.video.portrait else []
             if words:
                 props[-1]["words"] = [{**w, "to": min(w["to"], frames)} for w in words if w["from"] < frames]
             # pt-BR é o padrão do template: as props (e o cache) dos vídeos em português ficam como estavam
@@ -260,8 +255,7 @@ class RemotionEngine:
                 }
                 if episode.host.skin == "dono":  # trocar o desenho refaz as cenas (cache por props)
                     props[-1]["host"]["sprites"] = sprites_hash(episode_dir)
-                    manifest = sprites_manifest(episode_dir)
-                    if manifest is not None:  # pele em camadas (ADR 029); sem ele, as 12 imagens
+                    if (manifest := sprites_manifest(episode_dir)) is not None:  # pele em camadas (ADR 029)
                         props[-1]["host"]["manifest"] = manifest
             if episode.series is not None:  # selo do cartão final (ADR 028)
                 for shot in props[-1]["shots"]:

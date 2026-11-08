@@ -1,0 +1,35 @@
+{
+  "arquivo": "renders/short-concorrencia/final.pt.fluxo.mp4",
+  "sha256": "ab4c380f76b535e2472f17039802dca9c8fb9596cbd1e8842a21fb13b2943f26",
+  "duracao_s": 51.4,
+  "resolucao": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "falas": 7,
+  "efeitos": 7,
+  "audio": {
+    "lufs": -14.3,
+    "true_peak_dbtp": -1.4,
+    "problemas": []
+  },
+  "animacoes": {
+    "codigo": "Leitura concorrente de 10 e gravações de 11; uma soma perdida.",
+    "mutex": "A entra no trecho protegido; B espera a mesma trava; depois B entra.",
+    "atomic": "Leitura, soma e gravação na operação indivisível; contador 10, 11 e 12."
+  },
+  "revisao_visual": "Sete quadros de leitura, faixas de movimento, sete quadros do MP4 e recortes do contador em estados distintos.",
+  "avisos_lottie": "Texto Noto Sans local e cores originais; fontes e margens conferidas nas imagens.",
+  "rastreio_numeros": "medicao.json e plano-animacao.md; 10/11/12 didáticos, não medição ou trace real.",
+  "versao_anterior_preservada": "renders/short-concorrencia/final.pt.explicado.mp4",
+  "escuta_humana": "pendente",
+  "gate_humano": "pendente",
+  "qualidade": {
+    "pytest": "1417 passaram, 8 desmarcados",
+    "ruff": "passou",
+    "short_diario": "quick_validate passou",
+    "shorts_tec": "YAML legível; argument-hint existente é metadado do Claude não aceito pelo quick_validate do Codex"
+  },
+  "direcao_futura": "Java primeiro; CompletableFuture escolhido; todo tema técnico exige impacto visual em System Design e controle antes/depois da produção."
+}

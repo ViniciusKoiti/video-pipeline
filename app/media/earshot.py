@@ -10,51 +10,26 @@ medidas e a lista do que fugiu do alvo, para o `juntar` e para a prévia do dono
 
 from __future__ import annotations
 
-import json
 import os
 import subprocess
-from dataclasses import dataclass
+from collections.abc import Set
 from pathlib import Path
+from typing import Any
 
+from pydantic import TypeAdapter
+
+from app.errors import PipelineError
+from app.media.constants.earshot_constants import EarshotConstants
 from app.media.loudness import loudness_problem
+from app.media.models.audio_review import AudioReview as AudioReview
+from app.media.models.cue_sync import CueSync as CueSync
 
-SYNC_TOLERANCE_MS = 40  # um quadro a 25 fps; o earshot usa o mesmo limiar nos `--cues`
-MAX_TRUE_PEAK_DBTP = -1.0  # acima disso o encoder já passou do teto; o loudnorm pede −1,5
 
-
-class EarshotError(RuntimeError):
+class EarshotError(PipelineError, RuntimeError):
     pass
 
 
-@dataclass(frozen=True)
-class CueSync:
-    at_s: float  # o corte que pedimos
-    status: str  # OK | near | swell | peak | no hit (como o earshot classifica)
-    offset_ms: float | None  # o ataque mais próximo, em ms depois (+) ou antes (−) do corte
-    event: str | None  # a etiqueta do earshot para o som ali (palpite dele, não medida)
-
-    @property
-    def hit(self) -> bool:
-        return self.offset_ms is not None and abs(self.offset_ms) <= SYNC_TOLERANCE_MS
-
-
-@dataclass(frozen=True)
-class AudioReview:
-    duration_s: float
-    integrated_lufs: float  # BS.1770, mono contado nos dois lados: o número que o YouTube usa
-    true_peak_dbtp: float
-    tempo_bpm: float | None
-    pulse_clarity: float | None  # < 0,15 = sem batida que preste (o earshot não monta grade)
-    cues: list[CueSync]
-    median_abs_offset_ms: float | None
-    chance_within_tolerance: float | None  # quantos cortes teriam um ataque perto por acaso
-
-    @property
-    def has_beat(self) -> bool:
-        return self.pulse_clarity is not None and self.pulse_clarity >= 0.15
-
-
-def parse_review(data: dict) -> AudioReview:
+def parse_review(data: dict[str, Any]) -> AudioReview:
     """O que usamos do JSON do `earshot timeline`."""
     loud = data.get("loudness") or {}
     music = data.get("music") or {}
@@ -81,7 +56,7 @@ def parse_review(data: dict) -> AudioReview:
     )
 
 
-def run_timeline(python: Path, media: Path, cuts: list[float], out: Path, threads: int = 4) -> dict:
+def run_timeline(python: Path, media: Path, cuts: list[float], out: Path, threads: int = 4) -> dict[str, Any]:
     """Roda `earshot timeline` sobre `media` (áudio e vídeo do mesmo arquivo), com os nossos cortes como cues,
     offline, e devolve o JSON gravado em `out`. Carrega os modelos a cada chamada (~30 s)."""
     command = [str(python), "-m", "earshot", "timeline", str(media), "--video", str(media)]
@@ -92,18 +67,20 @@ def run_timeline(python: Path, media: Path, cuts: list[float], out: Path, thread
     result = subprocess.run(command, capture_output=True, text=True, env=env, check=False)
     if result.returncode != 0 or not out.is_file():
         raise EarshotError(f"earshot timeline falhou em {media.name}: {result.stderr.strip()[-300:]}")
-    return json.loads(out.read_text(encoding="utf-8"))
+    return TypeAdapter(dict[str, Any]).validate_json(out.read_text(encoding="utf-8"))
 
 
-def review_problems(review: AudioReview, expected_hits: set[float] = frozenset()) -> list[str]:
+def review_problems(review: AudioReview, expected_hits: Set[float] = frozenset()) -> list[str]:
     """O que fugiu do alvo: loudness efetiva fora do alvo, pico real acima do teto e, nos cortes em que o
     plano pôs um som (`expected_hits`, em segundos), um corte sem ataque a 40 ms."""
     problems = []
     loud = loudness_problem(review.integrated_lufs)
     if loud:
         problems.append(f"volume efetivo (mono nos dois alto-falantes, como o YouTube mede): {loud}")
-    if review.true_peak_dbtp > MAX_TRUE_PEAK_DBTP:
-        problems.append(f"pico real {review.true_peak_dbtp:.1f} dBTP acima de {MAX_TRUE_PEAK_DBTP:.0f}")
+    if review.true_peak_dbtp > EarshotConstants.MAX_TRUE_PEAK_DBTP:
+        problems.append(
+            f"pico real {review.true_peak_dbtp:.1f} dBTP acima de {EarshotConstants.MAX_TRUE_PEAK_DBTP:.0f}"
+        )
     for cue in review.cues:
         if any(abs(cue.at_s - at) < 0.02 for at in expected_hits) and not cue.hit:
             where = "sem som" if cue.offset_ms is None else f"ataque a {cue.offset_ms:+.0f} ms"

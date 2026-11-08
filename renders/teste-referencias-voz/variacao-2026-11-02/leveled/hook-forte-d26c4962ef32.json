@@ -1,0 +1,10 @@
+{
+  "source": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/hook-forte.wav",
+  "source_sha256": "09afb28aac59454db635708f53fcf8f8bf1d020427b45cf4f4e20cbc883b5582",
+  "wav_sha256": "51afa8448ca820889a2e513d15b6a7a920fb20b8966862ecfb69d0f9961582c2",
+  "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+  "target_lufs": -16.0,
+  "input_lufs": -21.15,
+  "output_lufs": -16.22,
+  "true_peak_dbtp": -1.44
+}

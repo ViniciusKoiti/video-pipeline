@@ -1,0 +1,930 @@
+{
+  "runId": "1793884047821-274bcec2",
+  "command": "review",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-05T13:07:27.821Z",
+  "contentFile": "pronto/content.pt.voz.json",
+  "artifacts": [
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-start-f0.png",
+      "sceneId": "gancho",
+      "frame": 0,
+      "localFrame": 0,
+      "timeSec": 0
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-read-f72.png",
+      "sceneId": "gancho",
+      "frame": 72,
+      "localFrame": 72,
+      "timeSec": 2.4
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-end-f131.png",
+      "sceneId": "gancho",
+      "frame": 131,
+      "localFrame": 131,
+      "timeSec": 4.366666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-gancho-motion.png",
+      "sceneId": "gancho",
+      "frames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "localFrames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fechado-start-f132.png",
+      "sceneId": "fechado",
+      "frame": 132,
+      "localFrame": 0,
+      "timeSec": 4.4
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fechado-read-f275.png",
+      "sceneId": "fechado",
+      "frame": 275,
+      "localFrame": 143,
+      "timeSec": 9.166666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fechado-end-f305.png",
+      "sceneId": "fechado",
+      "frame": 305,
+      "localFrame": 173,
+      "timeSec": 10.166666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-fechado-motion.png",
+      "sceneId": "fechado",
+      "frames": [
+        156,
+        180,
+        204,
+        227,
+        251,
+        275
+      ],
+      "localFrames": [
+        24,
+        48,
+        72,
+        95,
+        119,
+        143
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-aberto-start-f306.png",
+      "sceneId": "aberto",
+      "frame": 306,
+      "localFrame": 0,
+      "timeSec": 10.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-aberto-read-f419.png",
+      "sceneId": "aberto",
+      "frame": 419,
+      "localFrame": 113,
+      "timeSec": 13.966666666666667
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-aberto-end-f449.png",
+      "sceneId": "aberto",
+      "frame": 449,
+      "localFrame": 143,
+      "timeSec": 14.966666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-aberto-motion.png",
+      "sceneId": "aberto",
+      "frames": [
+        325,
+        344,
+        363,
+        381,
+        400,
+        419
+      ],
+      "localFrames": [
+        19,
+        38,
+        57,
+        75,
+        94,
+        113
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-meio-aberto-start-f450.png",
+      "sceneId": "meio-aberto",
+      "frame": 450,
+      "localFrame": 0,
+      "timeSec": 15
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-meio-aberto-read-f542.png",
+      "sceneId": "meio-aberto",
+      "frame": 542,
+      "localFrame": 92,
+      "timeSec": 18.066666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-meio-aberto-end-f572.png",
+      "sceneId": "meio-aberto",
+      "frame": 572,
+      "localFrame": 122,
+      "timeSec": 19.066666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-meio-aberto-motion.png",
+      "sceneId": "meio-aberto",
+      "frames": [
+        465,
+        481,
+        496,
+        511,
+        527,
+        542
+      ],
+      "localFrames": [
+        15,
+        31,
+        46,
+        61,
+        77,
+        92
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-teste-start-f573.png",
+      "sceneId": "teste",
+      "frame": 573,
+      "localFrame": 0,
+      "timeSec": 19.1
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-teste-read-f674.png",
+      "sceneId": "teste",
+      "frame": 674,
+      "localFrame": 101,
+      "timeSec": 22.466666666666665
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-teste-end-f704.png",
+      "sceneId": "teste",
+      "frame": 704,
+      "localFrame": 131,
+      "timeSec": 23.466666666666665
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-teste-motion.png",
+      "sceneId": "teste",
+      "frames": [
+        590,
+        607,
+        624,
+        640,
+        657,
+        674
+      ],
+      "localFrames": [
+        17,
+        34,
+        51,
+        67,
+        84,
+        101
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-start-f705.png",
+      "sceneId": "medido",
+      "frame": 705,
+      "localFrame": 0,
+      "timeSec": 23.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-read-f842.png",
+      "sceneId": "medido",
+      "frame": 842,
+      "localFrame": 137,
+      "timeSec": 28.066666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-end-f872.png",
+      "sceneId": "medido",
+      "frame": 872,
+      "localFrame": 167,
+      "timeSec": 29.066666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-medido-motion.png",
+      "sceneId": "medido",
+      "frames": [
+        728,
+        751,
+        774,
+        796,
+        819,
+        842
+      ],
+      "localFrames": [
+        23,
+        46,
+        69,
+        91,
+        114,
+        137
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-limite-start-f873.png",
+      "sceneId": "limite",
+      "frame": 873,
+      "localFrame": 0,
+      "timeSec": 29.1
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-limite-read-f1028.png",
+      "sceneId": "limite",
+      "frame": 1028,
+      "localFrame": 155,
+      "timeSec": 34.266666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-limite-end-f1058.png",
+      "sceneId": "limite",
+      "frame": 1058,
+      "localFrame": 185,
+      "timeSec": 35.266666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-limite-motion.png",
+      "sceneId": "limite",
+      "frames": [
+        899,
+        925,
+        951,
+        976,
+        1002,
+        1028
+      ],
+      "localFrames": [
+        26,
+        52,
+        78,
+        103,
+        129,
+        155
+      ]
+    },
+    {
+      "kind": "review",
+      "file": "review.mp4",
+      "frameRange": [
+        102,
+        221
+      ],
+      "cutFrame": 132
+    }
+  ],
+  "style": "editorial",
+  "locale": "pt-BR",
+  "media": {},
+  "versions": {
+    "node": "v22.22.3",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciusk/motion-video": "0.3.0",
+    "@viniciusk/motion-kit": "0.9.0",
+    "@viniciusk/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "7923eb609fdc00fb1637a8102cb927b8ed35ce825b4dbf909c8aa1160628105b",
+    "composition/content.schema.ts": "e5f3071fcca16639d4544dfdf90fcd68d24ae94fb667c489cb45cb892063cd6d",
+    "composition/host.ts": "f4cc396d9a9fbbad2d9308516739d14a452eb6f00268e0bc4e793d9ceceef37b",
+    "src/production.mjs": "5e3082bf20073fcae16a878881c66b142ba971bb6bdb788ea2b541ffa1db5f3a",
+    "dist/composition/index.js": "aae5bae563d02dd46319b461598da0bc08f28fb7ed753e771a8ca9fdd8ac21fa"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1059,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4.4,
+        "type": "hook",
+        "text": "Pagamento caiu.\nThreads esperando?",
+        "highlight": "Threads esperando?",
+        "kicker": "Java · circuit breaker",
+        "from": 0,
+        "durationInFrames": 132,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "fechado",
+        "durationSec": 5.8,
+        "type": "flow",
+        "title": "5 falhas seguidas: abre",
+        "nodes": [
+          {
+            "id": "closed",
+            "label": "Fechado",
+            "sublabel": "passa chamadas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "falha simulada",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Aberto",
+            "sublabel": "barra novas chamadas",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "closed",
+            "to": "pay",
+            "label": "chama"
+          },
+          {
+            "from": "pay",
+            "to": "closed",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "closed",
+            "to": "open",
+            "label": "5 falhas",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "closed",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.1,
+            "state": "failed"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.1,
+            "state": "waiting"
+          },
+          {
+            "node": "closed",
+            "atSec": 3.6,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 4.4,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "call",
+            "from": "closed",
+            "to": "pay",
+            "atSec": 1.3,
+            "durationSec": 0.8,
+            "label": "chamada"
+          },
+          {
+            "id": "error",
+            "from": "pay",
+            "to": "closed",
+            "atSec": 2.2,
+            "durationSec": 0.8,
+            "label": "erro"
+          },
+          {
+            "id": "trip",
+            "from": "closed",
+            "to": "open",
+            "atSec": 3.6,
+            "durationSec": 0.8,
+            "label": "limiar"
+          }
+        ],
+        "legend": false,
+        "from": 132,
+        "durationInFrames": 174,
+        "readableFrame": 143,
+        "readableFrom": 275
+      },
+      {
+        "id": "aberto",
+        "durationSec": 4.8,
+        "type": "flow",
+        "title": "Erro sem chamar",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Pedidos Java",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Aberto",
+            "sublabel": "sem espera nova",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "não é chamado",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "pedido"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 3.4,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "request",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 1.3,
+            "durationSec": 0.933,
+            "label": "pedido"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 2.467,
+            "durationSec": 0.933,
+            "label": "recusado"
+          }
+        ],
+        "legend": false,
+        "from": 306,
+        "durationInFrames": 144,
+        "readableFrame": 113,
+        "readableFrom": 419
+      },
+      {
+        "id": "meio-aberto",
+        "durationSec": 4.1,
+        "type": "flow",
+        "title": "Após 2 s: um teste",
+        "nodes": [
+          {
+            "id": "open",
+            "label": "Aberto",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "half",
+            "label": "Meio-aberto",
+            "sublabel": "uma sonda por vez",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "open",
+            "to": "half",
+            "label": "2 s",
+            "kind": "scheduling"
+          },
+          {
+            "from": "half",
+            "to": "pay",
+            "label": "teste"
+          }
+        ],
+        "states": [
+          {
+            "node": "open",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "half",
+            "atSec": 1.787,
+            "state": "running"
+          },
+          {
+            "node": "open",
+            "atSec": 1.787,
+            "state": "idle"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.7,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "window",
+            "from": "open",
+            "to": "half",
+            "atSec": 1.3,
+            "durationSec": 0.487,
+            "label": "janela passou"
+          },
+          {
+            "id": "probe",
+            "from": "half",
+            "to": "pay",
+            "atSec": 2.213,
+            "durationSec": 0.487,
+            "label": "teste"
+          }
+        ],
+        "legend": false,
+        "from": 450,
+        "durationInFrames": 123,
+        "readableFrame": 92,
+        "readableFrom": 542
+      },
+      {
+        "id": "teste",
+        "durationSec": 4.4,
+        "type": "flow",
+        "title": "Sucesso fecha; falha abre",
+        "nodes": [
+          {
+            "id": "half",
+            "label": "Meio-aberto",
+            "sublabel": "resultado do teste",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "closed",
+            "label": "Fechado",
+            "sublabel": "retoma chamadas",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Aberto",
+            "sublabel": "reinicia espera",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "half",
+            "to": "closed",
+            "label": "se sucesso",
+            "dashed": true
+          },
+          {
+            "from": "half",
+            "to": "open",
+            "label": "se falha",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "half",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "closed",
+            "atSec": 1.912,
+            "state": "done"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.456,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 3,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "ok",
+            "from": "half",
+            "to": "closed",
+            "atSec": 1.368,
+            "durationSec": 0.544,
+            "label": "sucesso"
+          },
+          {
+            "id": "fail",
+            "from": "half",
+            "to": "open",
+            "atSec": 2.456,
+            "durationSec": 0.544,
+            "label": "falha"
+          }
+        ],
+        "legend": false,
+        "from": 573,
+        "durationInFrames": 132,
+        "readableFrame": 101,
+        "readableFrom": 674
+      },
+      {
+        "id": "medido",
+        "durationSec": 5.6,
+        "type": "flow",
+        "title": "Chamadas na falha",
+        "nodes": [
+          {
+            "id": "without",
+            "label": "Sem breaker",
+            "sublabel": "60 chamadas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "with",
+            "label": "Com breaker",
+            "sublabel": "24 chamadas",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "medianas na simulação",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "without",
+            "to": "pay",
+            "label": "na falha"
+          },
+          {
+            "from": "with",
+            "to": "pay",
+            "label": "na falha"
+          }
+        ],
+        "states": [
+          {
+            "node": "without",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "without",
+            "atSec": 2.091,
+            "state": "failed"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.091,
+            "state": "failed"
+          },
+          {
+            "node": "with",
+            "atSec": 3.409,
+            "state": "running"
+          },
+          {
+            "node": "with",
+            "atSec": 4.2,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "baseline",
+            "from": "without",
+            "to": "pay",
+            "atSec": 1.388,
+            "durationSec": 0.703,
+            "label": "60 chamadas"
+          },
+          {
+            "id": "protected",
+            "from": "with",
+            "to": "pay",
+            "atSec": 3.497,
+            "durationSec": 0.703,
+            "label": "24 chamadas"
+          }
+        ],
+        "legend": false,
+        "from": 705,
+        "durationInFrames": 168,
+        "readableFrame": 137,
+        "readableFrom": 842
+      },
+      {
+        "id": "limite",
+        "durationSec": 6.2,
+        "type": "flow",
+        "title": "Proteção custa recusas",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Pedidos",
+            "sublabel": "7 após retorno",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Aberto",
+            "sublabel": "133 recusas totais",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "já voltou; medianas",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "novo pedido"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "pay",
+            "atSec": 1.3,
+            "state": "done"
+          },
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "app",
+            "atSec": 2.09,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 4.8,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "after",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 2.09,
+            "durationSec": 0.903,
+            "label": "pedido"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 3.897,
+            "durationSec": 0.903,
+            "label": "recusado"
+          }
+        ],
+        "legend": false,
+        "from": 873,
+        "durationInFrames": 186,
+        "readableFrame": 155,
+        "readableFrom": 1028
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [],
+  "finishedAt": "2026-11-05T13:08:40.610Z",
+  "elapsedMs": 72787,
+  "directory": "/home/viniciusk/projetos/auto-play/renders/short-circuit-breaker-java/out/production/1793884047821-274bcec2"
+}

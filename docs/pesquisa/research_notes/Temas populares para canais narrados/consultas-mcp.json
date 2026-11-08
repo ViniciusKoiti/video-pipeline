@@ -1,0 +1,187 @@
+{
+  "date": "2026-11-01",
+  "source": "MCP vidIQ outliers",
+  "filters": {
+    "language": "pt",
+    "contentType": "long",
+    "requireAllTitleTerms": true,
+    "publishedWithin": "default six months"
+  },
+  "queries": {
+    "obsolescência": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "No breakout long-form videos found for \"obsolescência\"."
+          }
+        ],
+        "structuredContent": {
+          "answer": "No breakout long-form videos found for \"obsolescência\".",
+          "_credits": {
+            "used": 0
+          }
+        }
+      }
+    },
+    "Kodak": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "No breakout long-form videos found for \"Kodak\"."
+          }
+        ],
+        "structuredContent": {
+          "answer": "No breakout long-form videos found for \"Kodak\".",
+          "_credits": {
+            "used": 0
+          }
+        }
+      }
+    },
+    "golpe Pix": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 2 breakout long-form videos for \"golpe Pix\".\n\n### 1. SARA É PRESA SUSPEITA DE APLICAR GOLPE DO PIX FALSO EM LOJAS EM BACABAL-MA\n- **Channel:** Repórter Romario Alves Bacabal · 216K subscribers · channelId `UCj4YufWze8gT9ENYOyS2Eaw`\n- **Performance:** 10K views · 2.6x breakout · 2.5 views/hour · 3.3% engagement\n- **Details:** published 2026-05-15 (5 months ago) · 10:13\n- **Video:** videoId `oSGndCRnmLI` · thumbnail https://i.ytimg.com/vi/oSGndCRnmLI/maxresdefault.jpg\n\n### 2. Caiu no Golpe do PIX? Veja como recuperar o seu Dinheiro...\n- **Channel:** NSC Total · 63.6K subscribers · channelId `UCsPv08UoSB-_XZkelDzKeQQ`\n- **Performance:** 5.2K views · 12x breakout · 3.5 views/hour · 0.7% engagement\n- **Details:** published 2026-08-30 (2 months ago) · 1:03\n- **Video:** videoId `pyps68y9fxA` · thumbnail https://i.ytimg.com/vi/pyps68y9fxA/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 2 breakout long-form videos for \"golpe Pix\".\n\n### 1. SARA É PRESA SUSPEITA DE APLICAR GOLPE DO PIX FALSO EM LOJAS EM BACABAL-MA\n- **Channel:** Repórter Romario Alves Bacabal · 216K subscribers · channelId `UCj4YufWze8gT9ENYOyS2Eaw`\n- **Performance:** 10K views · 2.6x breakout · 2.5 views/hour · 3.3% engagement\n- **Details:** published 2026-05-15 (5 months ago) · 10:13\n- **Video:** videoId `oSGndCRnmLI` · thumbnail https://i.ytimg.com/vi/oSGndCRnmLI/maxresdefault.jpg\n\n### 2. Caiu no Golpe do PIX? Veja como recuperar o seu Dinheiro...\n- **Channel:** NSC Total · 63.6K subscribers · channelId `UCsPv08UoSB-_XZkelDzKeQQ`\n- **Performance:** 5.2K views · 12x breakout · 3.5 views/hour · 0.7% engagement\n- **Details:** published 2026-08-30 (2 months ago) · 1:03\n- **Video:** videoId `pyps68y9fxA` · thumbnail https://i.ytimg.com/vi/pyps68y9fxA/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "Titanic": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 5 breakout long-form videos for \"Titanic\".\n\n### 1. Um Drone Submarino Entrou no Titanic — as Imagens são ATERRORIZANTES!\n- **Channel:** Verdade Histórica Descoberta · 15.3K subscribers · US · channelId `UCjFbh305d3nU2To8gpYhL5w`\n- **Performance:** 57.4K views · 12x breakout · 26.1 views/hour · 3.8% engagement\n- **Details:** published 2026-07-31 (3 months ago) · 33:37\n- **Video:** videoId `jhK9N1iDeyI` · thumbnail https://i.ytimg.com/vi/jhK9N1iDeyI/maxresdefault.jpg\n\n### 2. TITANIC: AS ÚLTIMAS 2 HORAS E 40 MINUTOS\n- **Channel:** Estopim · 969K subscribers · AU · channelId `UC9BpqRrQx7wYM6YCovEHrHA`\n- **Performance:** 1.7K views · 2x breakout · 0.9 views/hour · 1.2% engagement\n- **Details:** published 2026-08-20 (2 months ago) · 18:24\n- **Video:** videoId `bnS25mTU4mY` · thumbnail https://i.ytimg.com/vi/bnS25mTU4mY/maxresdefault.jpg\n\n### 3. O Mistério do Titanic | As últimas imagens revelam toda a verdade\n- **Channel:** Wild Nature Science PT · 9K subscribers · PT · channelId `UCPekoAn39fQIBr_4lrss9tg`\n- **Performance:** 150K views · 25x breakout · 16.2 views/hour · 1.0% engagement\n- **Details:** published 2026-08-14 (2 months ago) · 1:01:49\n- **Video:** videoId `cfxmxnNV41Q` · thumbnail https://i.ytimg.com/vi/cfxmxnNV41Q/maxresdefault.jpg\n\n### 4. TITANIC: ESPECIAL 1 HORA | Segredos, Sobreviventes e Teorias Inacreditáveis\n- **Channel:** ContaEssaRaffa · 98.7K subscribers · channelId `UCPte6llc-4bQZ9Zk8B7fBrg`\n- **Performance:** 61.4K views · 2.5x breakout · 22.7 views/hour · 2.4% engagement\n- **Details:** published 2026-07-10 (3 months ago) · 1:00:46\n- **Video:** videoId `Rkk5xwje3nA` · thumbnail https://i.ytimg.com/vi/Rkk5xwje3nA/maxresdefault.jpg\n\n### 5. Titanic: O Lado Real e Humano da Tragédia\n- **Channel:** Por aí com Lê Reffet · 6.6K subscribers · DE · channelId `UC3qcnB8JLz3MLIkVKGAr92g`\n- **Performance:** 14.9K views · 10x breakout · 4.8 views/hour · 4.1% engagement\n- **Details:** published 2026-06-18 (4 months ago) · 29:28\n- **Video:** videoId `TbdBXIvacbs` · thumbnail https://i.ytimg.com/vi/TbdBXIvacbs/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 5 breakout long-form videos for \"Titanic\".\n\n### 1. Um Drone Submarino Entrou no Titanic — as Imagens são ATERRORIZANTES!\n- **Channel:** Verdade Histórica Descoberta · 15.3K subscribers · US · channelId `UCjFbh305d3nU2To8gpYhL5w`\n- **Performance:** 57.4K views · 12x breakout · 26.1 views/hour · 3.8% engagement\n- **Details:** published 2026-07-31 (3 months ago) · 33:37\n- **Video:** videoId `jhK9N1iDeyI` · thumbnail https://i.ytimg.com/vi/jhK9N1iDeyI/maxresdefault.jpg\n\n### 2. TITANIC: AS ÚLTIMAS 2 HORAS E 40 MINUTOS\n- **Channel:** Estopim · 969K subscribers · AU · channelId `UC9BpqRrQx7wYM6YCovEHrHA`\n- **Performance:** 1.7K views · 2x breakout · 0.9 views/hour · 1.2% engagement\n- **Details:** published 2026-08-20 (2 months ago) · 18:24\n- **Video:** videoId `bnS25mTU4mY` · thumbnail https://i.ytimg.com/vi/bnS25mTU4mY/maxresdefault.jpg\n\n### 3. O Mistério do Titanic | As últimas imagens revelam toda a verdade\n- **Channel:** Wild Nature Science PT · 9K subscribers · PT · channelId `UCPekoAn39fQIBr_4lrss9tg`\n- **Performance:** 150K views · 25x breakout · 16.2 views/hour · 1.0% engagement\n- **Details:** published 2026-08-14 (2 months ago) · 1:01:49\n- **Video:** videoId `cfxmxnNV41Q` · thumbnail https://i.ytimg.com/vi/cfxmxnNV41Q/maxresdefault.jpg\n\n### 4. TITANIC: ESPECIAL 1 HORA | Segredos, Sobreviventes e Teorias Inacreditáveis\n- **Channel:** ContaEssaRaffa · 98.7K subscribers · channelId `UCPte6llc-4bQZ9Zk8B7fBrg`\n- **Performance:** 61.4K views · 2.5x breakout · 22.7 views/hour · 2.4% engagement\n- **Details:** published 2026-07-10 (3 months ago) · 1:00:46\n- **Video:** videoId `Rkk5xwje3nA` · thumbnail https://i.ytimg.com/vi/Rkk5xwje3nA/maxresdefault.jpg\n\n### 5. Titanic: O Lado Real e Humano da Tragédia\n- **Channel:** Por aí com Lê Reffet · 6.6K subscribers · DE · channelId `UC3qcnB8JLz3MLIkVKGAr92g`\n- **Performance:** 14.9K views · 10x breakout · 4.8 views/hour · 4.1% engagement\n- **Details:** published 2026-06-18 (4 months ago) · 29:28\n- **Video:** videoId `TbdBXIvacbs` · thumbnail https://i.ytimg.com/vi/TbdBXIvacbs/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "Nokia": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 1 breakout long-form video for \"Nokia\".\n\n### 1. A Queda da Nokia: Como a Empresa Mais Poderosa do Mundo Perdeu Tudo\n- **Channel:** Coroas Oxidadas- portu · 1.1K subscribers · CL · channelId `UC1fgpgebrpiUuhH_7cDlhtA`\n- **Performance:** 3.3K views · 19x breakout · 0.9 views/hour · 2.4% engagement\n- **Details:** published 2026-05-28 (5 months ago) · 44:05\n- **Video:** videoId `ZRHaGXaLfV8` · thumbnail https://i.ytimg.com/vi/ZRHaGXaLfV8/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 1 breakout long-form video for \"Nokia\".\n\n### 1. A Queda da Nokia: Como a Empresa Mais Poderosa do Mundo Perdeu Tudo\n- **Channel:** Coroas Oxidadas- portu · 1.1K subscribers · CL · channelId `UC1fgpgebrpiUuhH_7cDlhtA`\n- **Performance:** 3.3K views · 19x breakout · 0.9 views/hour · 2.4% engagement\n- **Details:** published 2026-05-28 (5 months ago) · 44:05\n- **Video:** videoId `ZRHaGXaLfV8` · thumbnail https://i.ytimg.com/vi/ZRHaGXaLfV8/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "supermercado": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 6 breakout long-form videos for \"supermercado\".\n\n### 1. PERFUME DE SUPERMERCADO ( UMA DELÍCIA ) \n- **Channel:** taiguara almeida · 438K subscribers · channelId `UCTzkKo6zDOafWgmeKU6yQsA`\n- **Performance:** 7.4K views · 1.9x breakout · 24.9 views/hour · 5.9% engagement\n- **Details:** published 2026-10-29 (3 days ago) · 8:34\n- **Video:** videoId `z5gzQEFEye8` · thumbnail https://i.ytimg.com/vi/z5gzQEFEye8/maxresdefault.jpg\n\n### 2. Como Economizar no Supermercado Fazendo ESTOQUE?\n- **Channel:** Sid Medina · 3.1K subscribers · channelId `UCegaQybxvljKtmM_vyc40tA`\n- **Performance:** 3.9K views · 7.2x breakout · 1.6 views/hour · 7.5% engagement\n- **Details:** published 2026-07-23 (3 months ago) · 11:35\n- **Video:** videoId `JAlUtV5d828` · thumbnail https://i.ytimg.com/vi/JAlUtV5d828/maxresdefault.jpg\n\n### 3. Economizando no supermercado na prática | Dicas econômicas\n- **Channel:** Sheila  Araújo  · 1.8K subscribers · channelId `UCI5W62VXY3b3zOPtJ0hti6Q`\n- **Performance:** 6.1K views · 3.1x breakout · 2.4 views/hour · 6.2% engagement\n- **Details:** published 2026-06-30 (4 months ago) · 10:54\n- **Video:** videoId `UWU4pwA6cMQ` · thumbnail https://i.ytimg.com/vi/UWU4pwA6cMQ/sddefault.jpg\n\n### 4. UM DIA COMIGO NO LUXEMBURGO | supermercado e receitas\n- **Channel:** Andreia Rodrigues · 4.5K subscribers · channelId `UCbUiF6G26nc5ligSNhuw-Lg`\n- **Performance:** 1.8K views · 1.6x breakout · 0.5 views/hour · 9.9% engagement\n- **Details:** published 2026-06-12 (4 months ago) · 19:38\n- **Video:** videoId `nKK0ZffbdKU` · thumbnail https://i.ytimg.com/vi/nKK0ZffbdKU/maxresdefault.jpg\n\n### 5. Natal RN feirão do carro no supermercado carrefour \n- **Channel:** Eduardo Peres vlog · 14.8K subscribers · channelId `UCDnefByYOXf1HPMNLa0f4xg`\n- **Performance:** 1.4K views · 1.8x breakout · 0.4 views/hour · 5.3% engagement\n- **Details:** published 2026-06-01 (5 months ago) · 8:51\n- **Video:** videoId `Hu3_66z0yG0` · thumbnail https://i.ytimg.com/vi/Hu3_66z0yG0/sddefault.jpg\n\n### 6. DIA DE FOLGA | supermercado, Action, vet, nespresso, etc\n- **Channel:** Margarida Gomes · 3.5K subscribers · PT · channelId `UCLJqKynOv2MV1f-5p2FlRcw`\n- **Performance:** 8K views · 1.6x breakout · 2.3 views/hour · 4.0% engagement\n- **Details:** published 2026-06-07 (4 months ago) · 26:40\n- **Video:** videoId `FVYbif50PBQ` · thumbnail https://i.ytimg.com/vi/FVYbif50PBQ/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 6 breakout long-form videos for \"supermercado\".\n\n### 1. PERFUME DE SUPERMERCADO ( UMA DELÍCIA ) \n- **Channel:** taiguara almeida · 438K subscribers · channelId `UCTzkKo6zDOafWgmeKU6yQsA`\n- **Performance:** 7.4K views · 1.9x breakout · 24.9 views/hour · 5.9% engagement\n- **Details:** published 2026-10-29 (3 days ago) · 8:34\n- **Video:** videoId `z5gzQEFEye8` · thumbnail https://i.ytimg.com/vi/z5gzQEFEye8/maxresdefault.jpg\n\n### 2. Como Economizar no Supermercado Fazendo ESTOQUE?\n- **Channel:** Sid Medina · 3.1K subscribers · channelId `UCegaQybxvljKtmM_vyc40tA`\n- **Performance:** 3.9K views · 7.2x breakout · 1.6 views/hour · 7.5% engagement\n- **Details:** published 2026-07-23 (3 months ago) · 11:35\n- **Video:** videoId `JAlUtV5d828` · thumbnail https://i.ytimg.com/vi/JAlUtV5d828/maxresdefault.jpg\n\n### 3. Economizando no supermercado na prática | Dicas econômicas\n- **Channel:** Sheila  Araújo  · 1.8K subscribers · channelId `UCI5W62VXY3b3zOPtJ0hti6Q`\n- **Performance:** 6.1K views · 3.1x breakout · 2.4 views/hour · 6.2% engagement\n- **Details:** published 2026-06-30 (4 months ago) · 10:54\n- **Video:** videoId `UWU4pwA6cMQ` · thumbnail https://i.ytimg.com/vi/UWU4pwA6cMQ/sddefault.jpg\n\n### 4. UM DIA COMIGO NO LUXEMBURGO | supermercado e receitas\n- **Channel:** Andreia Rodrigues · 4.5K subscribers · channelId `UCbUiF6G26nc5ligSNhuw-Lg`\n- **Performance:** 1.8K views · 1.6x breakout · 0.5 views/hour · 9.9% engagement\n- **Details:** published 2026-06-12 (4 months ago) · 19:38\n- **Video:** videoId `nKK0ZffbdKU` · thumbnail https://i.ytimg.com/vi/nKK0ZffbdKU/maxresdefault.jpg\n\n### 5. Natal RN feirão do carro no supermercado carrefour \n- **Channel:** Eduardo Peres vlog · 14.8K subscribers · channelId `UCDnefByYOXf1HPMNLa0f4xg`\n- **Performance:** 1.4K views · 1.8x breakout · 0.4 views/hour · 5.3% engagement\n- **Details:** published 2026-06-01 (5 months ago) · 8:51\n- **Video:** videoId `Hu3_66z0yG0` · thumbnail https://i.ytimg.com/vi/Hu3_66z0yG0/sddefault.jpg\n\n### 6. DIA DE FOLGA | supermercado, Action, vet, nespresso, etc\n- **Channel:** Margarida Gomes · 3.5K subscribers · PT · channelId `UCLJqKynOv2MV1f-5p2FlRcw`\n- **Performance:** 8K views · 1.6x breakout · 2.3 views/hour · 4.0% engagement\n- **Details:** published 2026-06-07 (4 months ago) · 26:40\n- **Video:** videoId `FVYbif50PBQ` · thumbnail https://i.ytimg.com/vi/FVYbif50PBQ/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "apagão": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 6 breakout long-form videos for \"apagão\".\n\n### 1. Aconteceu um apagão no Brookhaven rp\n- **Channel:** HelixOfYoutube · 12.8K subscribers · channelId `UCXvXhDA0O0QMFfzPFpnSb-Q`\n- **Performance:** 2.6K views · 4.2x breakout · 1.6 views/hour · 2.0% engagement\n- **Details:** published 2026-09-07 (1 month ago) · 7:41\n- **Video:** videoId `76gvVbABAMc` · thumbnail https://i.ytimg.com/vi/76gvVbABAMc/maxresdefault.jpg\n\n### 2. TREVOSOS SERÃO CAPTURADOS DURANTE O APAGÃO? O ALERTA DE LUÍSE CASTANHEDO\n- **Channel:** Astro Vibes  · 85.3K subscribers · channelId `UC0zY6dwn6oorb6zQrhB5TGw`\n- **Performance:** 27.9K views · 9.2x breakout · 0.5 views/hour · 3.5% engagement\n- **Details:** published 2026-10-08 (3 weeks ago) · 28:02\n- **Video:** videoId `4LBa2cmCNtc` · thumbnail https://i.ytimg.com/vi/4LBa2cmCNtc/maxresdefault.jpg\n\n### 3. MEU CARRO DEU UM APAGÃO! 😱\n- **Channel:** Canal do Tio Pila · 8.5K subscribers · channelId `UCCUxVzhNh1CIHGhDXUZh20w`\n- **Performance:** 10K views · 2.1x breakout · 6.5 views/hour · 6.0% engagement\n- **Details:** published 2026-08-28 (2 months ago) · 17:24\n- **Video:** videoId `P9A7o8sGVRE` · thumbnail https://i.ytimg.com/vi/P9A7o8sGVRE/maxresdefault.jpg\n\n### 4. apagão de memória  não \n- **Channel:** Rica Nastacio  · 44.1K subscribers · channelId `UC-h_D6hOxqq63MA_TsnkmmQ`\n- **Performance:** 148K views · 715x breakout · 196.4 views/hour · 3.9% engagement\n- **Details:** published 2026-09-30 (1 month ago) · 3:34\n- **Video:** videoId `7_svgxGPMNo` · thumbnail https://i.ytimg.com/vi/7_svgxGPMNo/maxresdefault.jpg\n\n### 5. ALERTA ESPIRITUAL: A PROFECIA DO GRANDE APAGÃO |Cíntia Camerin\n- **Channel:** Astro Vibes  · 85.3K subscribers · channelId `UC0zY6dwn6oorb6zQrhB5TGw`\n- **Performance:** 7.5K views · 1.6x breakout · 3.3 views/hour · 9.9% engagement\n- **Details:** published 2026-07-28 (3 months ago) · 26:03\n- **Video:** videoId `3U1RLPPMPxI` · thumbnail https://i.ytimg.com/vi/3U1RLPPMPxI/maxresdefault.jpg\n\n### 6. O APAGÃO E OS 3 DIAS DE ESCURIDÃO | Louise Castanhedo\n- **Channel:** Cortes Flavio Valle · 41.1K subscribers · channelId `UCEoQSDmi_jDGPkVdqmUtqsw`\n- **Performance:** 12.9K views · 1.8x breakout · 7.2 views/hour · 11.4% engagement\n- **Details:** published 2026-08-17 (2 months ago) · 18:13\n- **Video:** videoId `sChmxA0YWug` · thumbnail https://i.ytimg.com/vi/sChmxA0YWug/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 6 breakout long-form videos for \"apagão\".\n\n### 1. Aconteceu um apagão no Brookhaven rp\n- **Channel:** HelixOfYoutube · 12.8K subscribers · channelId `UCXvXhDA0O0QMFfzPFpnSb-Q`\n- **Performance:** 2.6K views · 4.2x breakout · 1.6 views/hour · 2.0% engagement\n- **Details:** published 2026-09-07 (1 month ago) · 7:41\n- **Video:** videoId `76gvVbABAMc` · thumbnail https://i.ytimg.com/vi/76gvVbABAMc/maxresdefault.jpg\n\n### 2. TREVOSOS SERÃO CAPTURADOS DURANTE O APAGÃO? O ALERTA DE LUÍSE CASTANHEDO\n- **Channel:** Astro Vibes  · 85.3K subscribers · channelId `UC0zY6dwn6oorb6zQrhB5TGw`\n- **Performance:** 27.9K views · 9.2x breakout · 0.5 views/hour · 3.5% engagement\n- **Details:** published 2026-10-08 (3 weeks ago) · 28:02\n- **Video:** videoId `4LBa2cmCNtc` · thumbnail https://i.ytimg.com/vi/4LBa2cmCNtc/maxresdefault.jpg\n\n### 3. MEU CARRO DEU UM APAGÃO! 😱\n- **Channel:** Canal do Tio Pila · 8.5K subscribers · channelId `UCCUxVzhNh1CIHGhDXUZh20w`\n- **Performance:** 10K views · 2.1x breakout · 6.5 views/hour · 6.0% engagement\n- **Details:** published 2026-08-28 (2 months ago) · 17:24\n- **Video:** videoId `P9A7o8sGVRE` · thumbnail https://i.ytimg.com/vi/P9A7o8sGVRE/maxresdefault.jpg\n\n### 4. apagão de memória  não \n- **Channel:** Rica Nastacio  · 44.1K subscribers · channelId `UC-h_D6hOxqq63MA_TsnkmmQ`\n- **Performance:** 148K views · 715x breakout · 196.4 views/hour · 3.9% engagement\n- **Details:** published 2026-09-30 (1 month ago) · 3:34\n- **Video:** videoId `7_svgxGPMNo` · thumbnail https://i.ytimg.com/vi/7_svgxGPMNo/maxresdefault.jpg\n\n### 5. ALERTA ESPIRITUAL: A PROFECIA DO GRANDE APAGÃO |Cíntia Camerin\n- **Channel:** Astro Vibes  · 85.3K subscribers · channelId `UC0zY6dwn6oorb6zQrhB5TGw`\n- **Performance:** 7.5K views · 1.6x breakout · 3.3 views/hour · 9.9% engagement\n- **Details:** published 2026-07-28 (3 months ago) · 26:03\n- **Video:** videoId `3U1RLPPMPxI` · thumbnail https://i.ytimg.com/vi/3U1RLPPMPxI/maxresdefault.jpg\n\n### 6. O APAGÃO E OS 3 DIAS DE ESCURIDÃO | Louise Castanhedo\n- **Channel:** Cortes Flavio Valle · 41.1K subscribers · channelId `UCEoQSDmi_jDGPkVdqmUtqsw`\n- **Performance:** 12.9K views · 1.8x breakout · 7.2 views/hour · 11.4% engagement\n- **Details:** published 2026-08-17 (2 months ago) · 18:13\n- **Video:** videoId `sChmxA0YWug` · thumbnail https://i.ytimg.com/vi/sChmxA0YWug/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "marcas": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 6 breakout long-form videos for \"marcas\".\n\n### 1. MARCAS de CELEBRIDADES que são FRACASSOS COMPLETOS\n- **Channel:** In The Zone Pop · 45.5K subscribers · channelId `UCGOuLnh7gk-vJiIAJ_EkPmw`\n- **Performance:** 76.7K views · 4.3x breakout · 29.8 views/hour · 3.9% engagement\n- **Details:** published 2026-07-15 (3 months ago) · 12:39\n- **Video:** videoId `yE2VkVpi7Ps` · thumbnail https://i.ytimg.com/vi/yE2VkVpi7Ps/maxresdefault.jpg\n\n### 2. UM POUCO SOBRE CONCEITO DAS MARCAS DE VIOLINO!\n- **Channel:** atelier kamroyan · 36.8K subscribers · channelId `UC83KgfnQet-Tvycut8r5Iwg`\n- **Performance:** 1K views · 6.2x breakout · 0.7 views/hour · 2.1% engagement\n- **Details:** published 2026-08-21 (2 months ago) · 9:07\n- **Video:** videoId `rYnfVMo5URc` · thumbnail https://i.ytimg.com/vi/rYnfVMo5URc/maxresdefault.jpg\n\n### 3. 8 Marcas de LEITE Que Só GENTE BURRA Compra!\n- **Channel:** Brasil no Prato · 44K subscribers · channelId `UCaKDABnQuIEs6EEWG2165Rw`\n- **Performance:** 16.2K views · 2.8x breakout · 4.4 views/hour · 7.3% engagement\n- **Details:** published 2026-05-29 (5 months ago) · 24:27\n- **Video:** videoId `WtN9CtXwziw` · thumbnail https://i.ytimg.com/vi/WtN9CtXwziw/maxresdefault.jpg\n\n### 4. 10 marcas de relógios americanas para conhecer\n- **Channel:** Felipe Cubas · 5.7K subscribers · channelId `UCMKcpWuEIeME3UgWjiz-rWw`\n- **Performance:** 25.1K views · 8.5x breakout · 22.4 views/hour · 2.6% engagement\n- **Details:** published 2026-09-14 (1 month ago) · 10:55\n- **Video:** videoId `l9fdGNj9qA0` · thumbnail https://i.ytimg.com/vi/l9fdGNj9qA0/maxresdefault.jpg\n\n### 5. 10 Marcas de relógio Italianas para conhecer\n- **Channel:** Felipe Cubas · 5.7K subscribers · channelId `UCMKcpWuEIeME3UgWjiz-rWw`\n- **Performance:** 16.5K views · 5.2x breakout · 11.4 views/hour · 2.9% engagement\n- **Details:** published 2026-08-31 (2 months ago) · 12:16\n- **Video:** videoId `7RR-We5AiGU` · thumbnail https://i.ytimg.com/vi/7RR-We5AiGU/maxresdefault.jpg\n\n### 6. MARCAS DE UM OBREIRO APROVADO | Pr. Osiel Gomes \n- **Channel:** Nicolas Maxel · 180K subscribers · channelId `UC756AiPibKG_qZ4O6CgaW7A`\n- **Performance:** 117.7K views · 5.2x breakout · 4.5 views/hour · 1.6% engagement\n- **Details:** published 2026-09-08 (1 month ago) · 1:07:36\n- **Video:** videoId `HFYW3cIEzKw` · thumbnail https://i.ytimg.com/vi/HFYW3cIEzKw/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 6 breakout long-form videos for \"marcas\".\n\n### 1. MARCAS de CELEBRIDADES que são FRACASSOS COMPLETOS\n- **Channel:** In The Zone Pop · 45.5K subscribers · channelId `UCGOuLnh7gk-vJiIAJ_EkPmw`\n- **Performance:** 76.7K views · 4.3x breakout · 29.8 views/hour · 3.9% engagement\n- **Details:** published 2026-07-15 (3 months ago) · 12:39\n- **Video:** videoId `yE2VkVpi7Ps` · thumbnail https://i.ytimg.com/vi/yE2VkVpi7Ps/maxresdefault.jpg\n\n### 2. UM POUCO SOBRE CONCEITO DAS MARCAS DE VIOLINO!\n- **Channel:** atelier kamroyan · 36.8K subscribers · channelId `UC83KgfnQet-Tvycut8r5Iwg`\n- **Performance:** 1K views · 6.2x breakout · 0.7 views/hour · 2.1% engagement\n- **Details:** published 2026-08-21 (2 months ago) · 9:07\n- **Video:** videoId `rYnfVMo5URc` · thumbnail https://i.ytimg.com/vi/rYnfVMo5URc/maxresdefault.jpg\n\n### 3. 8 Marcas de LEITE Que Só GENTE BURRA Compra!\n- **Channel:** Brasil no Prato · 44K subscribers · channelId `UCaKDABnQuIEs6EEWG2165Rw`\n- **Performance:** 16.2K views · 2.8x breakout · 4.4 views/hour · 7.3% engagement\n- **Details:** published 2026-05-29 (5 months ago) · 24:27\n- **Video:** videoId `WtN9CtXwziw` · thumbnail https://i.ytimg.com/vi/WtN9CtXwziw/maxresdefault.jpg\n\n### 4. 10 marcas de relógios americanas para conhecer\n- **Channel:** Felipe Cubas · 5.7K subscribers · channelId `UCMKcpWuEIeME3UgWjiz-rWw`\n- **Performance:** 25.1K views · 8.5x breakout · 22.4 views/hour · 2.6% engagement\n- **Details:** published 2026-09-14 (1 month ago) · 10:55\n- **Video:** videoId `l9fdGNj9qA0` · thumbnail https://i.ytimg.com/vi/l9fdGNj9qA0/maxresdefault.jpg\n\n### 5. 10 Marcas de relógio Italianas para conhecer\n- **Channel:** Felipe Cubas · 5.7K subscribers · channelId `UCMKcpWuEIeME3UgWjiz-rWw`\n- **Performance:** 16.5K views · 5.2x breakout · 11.4 views/hour · 2.9% engagement\n- **Details:** published 2026-08-31 (2 months ago) · 12:16\n- **Video:** videoId `7RR-We5AiGU` · thumbnail https://i.ytimg.com/vi/7RR-We5AiGU/maxresdefault.jpg\n\n### 6. MARCAS DE UM OBREIRO APROVADO | Pr. Osiel Gomes \n- **Channel:** Nicolas Maxel · 180K subscribers · channelId `UC756AiPibKG_qZ4O6CgaW7A`\n- **Performance:** 117.7K views · 5.2x breakout · 4.5 views/hour · 1.6% engagement\n- **Details:** published 2026-09-08 (1 month ago) · 1:07:36\n- **Video:** videoId `HFYW3cIEzKw` · thumbnail https://i.ytimg.com/vi/HFYW3cIEzKw/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "fábrica": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 6 breakout long-form videos for \"fábrica\".\n\n### 1. Prata no atacado representação de fábrica \n- **Channel:** Soares jóias · 5.5K subscribers · channelId `UCW22AoVqcuufPopZIwOhQqA`\n- **Performance:** 4K views · 7.7x breakout · 1.4 views/hour · 2.6% engagement\n- **Details:** published 2026-06-29 (4 months ago) · 9:08\n- **Video:** videoId `w26FGmSwgQ4` · thumbnail https://i.ytimg.com/vi/w26FGmSwgQ4/maxresdefault.jpg\n\n### 2. Como as Pringles São Feitas em uma Fábrica Gigante\n- **Channel:** Dentro das Fábricas · 48.2K subscribers · ES · channelId `UCVhJYKnNijFN6xxMSKmMbAw`\n- **Performance:** 89.2K views · 3x breakout · 6.5 views/hour · 1.0% engagement\n- **Details:** published 2026-07-03 (3 months ago) · 8:36\n- **Video:** videoId `nIK9y_qoWmU` · thumbnail https://i.ytimg.com/vi/nIK9y_qoWmU/maxresdefault.jpg\n\n### 3. Como o Sorvete Nestlê É Feito na Fábrica\n- **Channel:** Dentro das Fábricas · 48.2K subscribers · ES · channelId `UCVhJYKnNijFN6xxMSKmMbAw`\n- **Performance:** 320.3K views · 23x breakout · 282 views/hour · 0.5% engagement\n- **Details:** published 2026-09-13 (1 month ago) · 9:58 · AI-labeled\n- **Video:** videoId `54Bk76WRzyM` · thumbnail https://i.ytimg.com/vi/54Bk76WRzyM/maxresdefault.jpg\n\n### 4. Antiga fábrica da Xerox em Itatiaia RJ. \n- **Channel:** Cristiano Sodré  · 25.9K subscribers · channelId `UCYxAzwODVX6Nw49FC20CzFg`\n- **Performance:** 8.7K views · 7.2x breakout · 11.4 views/hour · 3.6% engagement\n- **Details:** published 2026-09-25 (1 month ago) · 21:24\n- **Video:** videoId `eI_C0DbLShg` · thumbnail https://i.ytimg.com/vi/eI_C0DbLShg/maxresdefault.jpg\n\n### 5. Mostrando a fábrica de rabiola para todas as Pipas Em BH \n- **Channel:** Nilo Designer🪁 · 124K subscribers · channelId `UC1_fuJqRoA7k22nwSum0W4g`\n- **Performance:** 35K views · 3.4x breakout · 27.1 views/hour · 1.9% engagement\n- **Details:** published 2026-09-05 (1 month ago) · 16:29\n- **Video:** videoId `kwMyKzTUGR8` · thumbnail https://i.ytimg.com/vi/kwMyKzTUGR8/maxresdefault.jpg\n\n### 6. Como a MAIONESE é FABRICADA? Da Criação à Fábrica Industrial\n- **Channel:** Dentro das Fábricas · 48.2K subscribers · ES · channelId `UCVhJYKnNijFN6xxMSKmMbAw`\n- **Performance:** 3.9K views · 5.5x breakout · 0.3 views/hour · 1.5% engagement\n- **Details:** published 2026-05-10 (5 months ago) · 11:10\n- **Video:** videoId `2J0pWC2oMgw` · thumbnail https://i.ytimg.com/vi/2J0pWC2oMgw/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 6 breakout long-form videos for \"fábrica\".\n\n### 1. Prata no atacado representação de fábrica \n- **Channel:** Soares jóias · 5.5K subscribers · channelId `UCW22AoVqcuufPopZIwOhQqA`\n- **Performance:** 4K views · 7.7x breakout · 1.4 views/hour · 2.6% engagement\n- **Details:** published 2026-06-29 (4 months ago) · 9:08\n- **Video:** videoId `w26FGmSwgQ4` · thumbnail https://i.ytimg.com/vi/w26FGmSwgQ4/maxresdefault.jpg\n\n### 2. Como as Pringles São Feitas em uma Fábrica Gigante\n- **Channel:** Dentro das Fábricas · 48.2K subscribers · ES · channelId `UCVhJYKnNijFN6xxMSKmMbAw`\n- **Performance:** 89.2K views · 3x breakout · 6.5 views/hour · 1.0% engagement\n- **Details:** published 2026-07-03 (3 months ago) · 8:36\n- **Video:** videoId `nIK9y_qoWmU` · thumbnail https://i.ytimg.com/vi/nIK9y_qoWmU/maxresdefault.jpg\n\n### 3. Como o Sorvete Nestlê É Feito na Fábrica\n- **Channel:** Dentro das Fábricas · 48.2K subscribers · ES · channelId `UCVhJYKnNijFN6xxMSKmMbAw`\n- **Performance:** 320.3K views · 23x breakout · 282 views/hour · 0.5% engagement\n- **Details:** published 2026-09-13 (1 month ago) · 9:58 · AI-labeled\n- **Video:** videoId `54Bk76WRzyM` · thumbnail https://i.ytimg.com/vi/54Bk76WRzyM/maxresdefault.jpg\n\n### 4. Antiga fábrica da Xerox em Itatiaia RJ. \n- **Channel:** Cristiano Sodré  · 25.9K subscribers · channelId `UCYxAzwODVX6Nw49FC20CzFg`\n- **Performance:** 8.7K views · 7.2x breakout · 11.4 views/hour · 3.6% engagement\n- **Details:** published 2026-09-25 (1 month ago) · 21:24\n- **Video:** videoId `eI_C0DbLShg` · thumbnail https://i.ytimg.com/vi/eI_C0DbLShg/maxresdefault.jpg\n\n### 5. Mostrando a fábrica de rabiola para todas as Pipas Em BH \n- **Channel:** Nilo Designer🪁 · 124K subscribers · channelId `UC1_fuJqRoA7k22nwSum0W4g`\n- **Performance:** 35K views · 3.4x breakout · 27.1 views/hour · 1.9% engagement\n- **Details:** published 2026-09-05 (1 month ago) · 16:29\n- **Video:** videoId `kwMyKzTUGR8` · thumbnail https://i.ytimg.com/vi/kwMyKzTUGR8/maxresdefault.jpg\n\n### 6. Como a MAIONESE é FABRICADA? Da Criação à Fábrica Industrial\n- **Channel:** Dentro das Fábricas · 48.2K subscribers · ES · channelId `UCVhJYKnNijFN6xxMSKmMbAw`\n- **Performance:** 3.9K views · 5.5x breakout · 0.3 views/hour · 1.5% engagement\n- **Details:** published 2026-05-10 (5 months ago) · 11:10\n- **Video:** videoId `2J0pWC2oMgw` · thumbnail https://i.ytimg.com/vi/2J0pWC2oMgw/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    "aviões": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Found 6 breakout long-form videos for \"aviões\".\n\n### 1. Porta aviões/ treinamento militar \n- **Channel:** Fernando Gois · 1.6K subscribers · channelId `UCHrY2P53XF4SvbFKhcLa2NQ`\n- **Performance:** 2K views · 21x breakout · 0.9 views/hour · 1.6% engagement\n- **Details:** published 2026-08-03 (2 months ago) · 1:58\n- **Video:** videoId `CbshZblcSwc` · thumbnail https://i.ytimg.com/vi/CbshZblcSwc/maxresdefault.jpg\n\n### 2. Movimentação de aviões da Agrishow 2026 parte 01\n- **Channel:** Aviões e Ônibus · 10.5K subscribers · channelId `UCytYFZJTV9PE-2IVQZBGlmA`\n- **Performance:** 2.3K views · 6.6x breakout · 0.6 views/hour · 4.2% engagement\n- **Details:** published 2026-05-06 (5 months ago) · 34:31\n- **Video:** videoId `m8qjySZvZxU` · thumbnail https://i.ytimg.com/vi/m8qjySZvZxU/maxresdefault.jpg\n\n### 3. 8 Aviões Tão Feios Que Você Não Vai Acreditar Que Realmente Voaram!\n- **Channel:** Motores a Pulso · 7.7K subscribers · ES · channelId `UCWDojptoyjV-aFDcClT8K_w`\n- **Performance:** 35.7K views · 33x breakout · 15.7 views/hour · 1.5% engagement\n- **Details:** published 2026-07-28 (3 months ago) · 15:34\n- **Video:** videoId `cdG5CH7rEUo` · thumbnail https://i.ytimg.com/vi/cdG5CH7rEUo/maxresdefault.jpg\n\n### 4. O VOO 1907: Como Dois Aviões Colidiram no Céu Sem Ninguém Ver.\n- **Channel:** REAL E CURIOSO · 72 subscribers · channelId `UC3m5qI8r_kqxSvqMFeg_HaQ`\n- **Performance:** 21.6K views · 1351x breakout · 0 views/hour · 0.4% engagement\n- **Details:** published 2026-08-26 (2 months ago) · 20:18\n- **Video:** videoId `Kvb3ppkIBI4` · thumbnail https://i.ytimg.com/vi/Kvb3ppkIBI4/maxresdefault.jpg\n\n### 5. ¡8 Aviões Tão Estranhos Que Você Vai Pensar Que São Falsos!\n- **Channel:** Motores a Pulso · 7.7K subscribers · ES · channelId `UCWDojptoyjV-aFDcClT8K_w`\n- **Performance:** 4K views · 2.4x breakout · 1.8 views/hour · 2.3% engagement\n- **Details:** published 2026-08-01 (3 months ago) · 15:03\n- **Video:** videoId `yQTjCd3e8VI` · thumbnail https://i.ytimg.com/vi/yQTjCd3e8VI/maxresdefault.jpg\n\n### 6. 10 Aviões Tão Absurdos Que Você Não Vai Acreditar Que Realmente Voaram\n- **Channel:** Motores a Pulso · 7.7K subscribers · ES · channelId `UCWDojptoyjV-aFDcClT8K_w`\n- **Performance:** 2.9K views · 3.7x breakout · 3.5 views/hour · 1.6% engagement\n- **Details:** published 2026-09-28 (1 month ago) · 17:08\n- **Video:** videoId `YH_I3AbysuM` · thumbnail https://i.ytimg.com/vi/YH_I3AbysuM/maxresdefault.jpg"
+          }
+        ],
+        "structuredContent": {
+          "answer": "Found 6 breakout long-form videos for \"aviões\".\n\n### 1. Porta aviões/ treinamento militar \n- **Channel:** Fernando Gois · 1.6K subscribers · channelId `UCHrY2P53XF4SvbFKhcLa2NQ`\n- **Performance:** 2K views · 21x breakout · 0.9 views/hour · 1.6% engagement\n- **Details:** published 2026-08-03 (2 months ago) · 1:58\n- **Video:** videoId `CbshZblcSwc` · thumbnail https://i.ytimg.com/vi/CbshZblcSwc/maxresdefault.jpg\n\n### 2. Movimentação de aviões da Agrishow 2026 parte 01\n- **Channel:** Aviões e Ônibus · 10.5K subscribers · channelId `UCytYFZJTV9PE-2IVQZBGlmA`\n- **Performance:** 2.3K views · 6.6x breakout · 0.6 views/hour · 4.2% engagement\n- **Details:** published 2026-05-06 (5 months ago) · 34:31\n- **Video:** videoId `m8qjySZvZxU` · thumbnail https://i.ytimg.com/vi/m8qjySZvZxU/maxresdefault.jpg\n\n### 3. 8 Aviões Tão Feios Que Você Não Vai Acreditar Que Realmente Voaram!\n- **Channel:** Motores a Pulso · 7.7K subscribers · ES · channelId `UCWDojptoyjV-aFDcClT8K_w`\n- **Performance:** 35.7K views · 33x breakout · 15.7 views/hour · 1.5% engagement\n- **Details:** published 2026-07-28 (3 months ago) · 15:34\n- **Video:** videoId `cdG5CH7rEUo` · thumbnail https://i.ytimg.com/vi/cdG5CH7rEUo/maxresdefault.jpg\n\n### 4. O VOO 1907: Como Dois Aviões Colidiram no Céu Sem Ninguém Ver.\n- **Channel:** REAL E CURIOSO · 72 subscribers · channelId `UC3m5qI8r_kqxSvqMFeg_HaQ`\n- **Performance:** 21.6K views · 1351x breakout · 0 views/hour · 0.4% engagement\n- **Details:** published 2026-08-26 (2 months ago) · 20:18\n- **Video:** videoId `Kvb3ppkIBI4` · thumbnail https://i.ytimg.com/vi/Kvb3ppkIBI4/maxresdefault.jpg\n\n### 5. ¡8 Aviões Tão Estranhos Que Você Vai Pensar Que São Falsos!\n- **Channel:** Motores a Pulso · 7.7K subscribers · ES · channelId `UCWDojptoyjV-aFDcClT8K_w`\n- **Performance:** 4K views · 2.4x breakout · 1.8 views/hour · 2.3% engagement\n- **Details:** published 2026-08-01 (3 months ago) · 15:03\n- **Video:** videoId `yQTjCd3e8VI` · thumbnail https://i.ytimg.com/vi/yQTjCd3e8VI/maxresdefault.jpg\n\n### 6. 10 Aviões Tão Absurdos Que Você Não Vai Acreditar Que Realmente Voaram\n- **Channel:** Motores a Pulso · 7.7K subscribers · ES · channelId `UCWDojptoyjV-aFDcClT8K_w`\n- **Performance:** 2.9K views · 3.7x breakout · 3.5 views/hour · 1.6% engagement\n- **Details:** published 2026-09-28 (1 month ago) · 17:08\n- **Video:** videoId `YH_I3AbysuM` · thumbnail https://i.ytimg.com/vi/YH_I3AbysuM/maxresdefault.jpg",
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    }
+  },
+  "limits": [
+    "Exploratory selected breakout results, not representative channel medians.",
+    "Provider classification of language/format not audiovisual verification.",
+    "Views and breakout metrics do not establish monetization, rights or factual accuracy."
+  ]
+}

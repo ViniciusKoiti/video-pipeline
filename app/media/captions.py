@@ -13,73 +13,29 @@ from __future__ import annotations
 
 import hashlib
 import re
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
-from app.media.narration import PAUSE_CHARS, split_pauses
-
-CAPTIONS = "captions.srt"
-OLD_CAPTIONS = "captions.old.srt"
-KEY = "captions.key"
-VERSION = 1  # muda quando a divisão ou o tempo mudam: a legenda gerada antes é refeita
-
-MAX_CHARS = 60  # duas linhas da legenda em retrato (54 px em 86% de 1080 cabem ~31 caracteres por linha)
-MIN_CUE_MS = 600  # bloco mais curto que isto não dá tempo de ler
-SNAP_MS = 600  # distância máxima entre a posição proporcional e o silêncio onde a fronteira cai
-PAUSE_SNAP_MS = 1500  # numa marca `<short pause>` o silêncio existe com certeza: procura mais longe
-END_SLACK_MS = 40  # arredondamento tolerado no fim do áudio
-
-_SENTENCE = re.compile(r"(?<=[.!?;:])\s+")
-_COMMA = re.compile(r"(?<=,)\s+")
-_SRT_TIME = re.compile(r"(\d{2}):(\d{2}):(\d{2}),(\d{3})")
-_WORD = re.compile(r"[\wÀ-ÿ]+(?:-[\wÀ-ÿ]+)*")
-_NUMBER_WORDS = frozenset(
-    {
-        "dois", "duas", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze", "doze",
-        "treze", "catorze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove", "vinte",
-        "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa", "cem", "cento",
-        "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos",
-        "novecentos", "mil", "milhão", "milhões", "bilhão", "bilhões", "real", "reais", "centavo", "centavos",
-        "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "twenty",
-        "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million",
-        "billion",
-    }
-)
-
-
-@dataclass(frozen=True)
-class Cue:
-    start_ms: int
-    end_ms: int
-    text: str
-
-
-@dataclass(frozen=True)
-class Phrase:
-    text: str
-    pause_after: bool = False  # termina numa marca `<short pause>`
-
-
-@dataclass(frozen=True)
-class SceneAudio:
-    """O que a legenda precisa de uma cena: onde ela começa no episódio, a fala e o áudio medido."""
-
-    start_ms: int
-    duration_ms: int
-    narration: str
-    silences_ms: Sequence[tuple[int, int]]  # silêncios internos do WAV (início, fim), em ms da cena
-
+from app.media.constants.captions_constants import CaptionsConstants
+from app.media.constants.narration_constants import NarrationConstants
+from app.media.models.cue import Cue as Cue
+from app.media.models.phrase import Phrase as Phrase
+from app.media.models.scene_audio import SceneAudio as SceneAudio
+from app.media.narration import split_pauses
 
 # --- divisão em frases -----------------------------------------------------------------------------
 
 
-def phrases(narration: str, max_chars: int = MAX_CHARS) -> list[Phrase]:
+def phrases(narration: str, max_chars: int = CaptionsConstants.MAX_CHARS) -> list[Phrase]:
     """Frases da fala, na ordem, sem as marcas de pausa; nenhuma passa de `max_chars` se der para quebrar."""
     parts = split_pauses(narration) or [narration.strip()]
     result: list[Phrase] = []
     for i, part in enumerate(parts):
-        chunks = [chunk for sentence in _SENTENCE.split(part) for chunk in _fit(sentence.strip(), max_chars)]
+        chunks = [
+            chunk
+            for sentence in CaptionsConstants._SENTENCE.split(part)
+            for chunk in _fit(sentence.strip(), max_chars)
+        ]
         chunks = [c for c in chunks if c]
         for j, chunk in enumerate(chunks):
             result.append(Phrase(chunk, pause_after=j == len(chunks) - 1 and i < len(parts) - 1))
@@ -90,7 +46,7 @@ def _fit(text: str, max_chars: int) -> list[str]:
     if len(text) <= max_chars:
         return [text]
     chunks: list[str] = []
-    for piece in _COMMA.split(text):
+    for piece in CaptionsConstants._COMMA.split(text):
         if chunks and len(chunks[-1]) + 1 + len(piece) <= max_chars:
             chunks[-1] = f"{chunks[-1]} {piece}"
         else:
@@ -111,18 +67,19 @@ def _halve(text: str, max_chars: int) -> list[str]:
 # --- tempo -------------------------------------------------------------------------------------------
 
 
-def scene_cues(scene: SceneAudio, max_chars: int = MAX_CHARS) -> tuple[list[Cue], int]:
+def scene_cues(scene: SceneAudio, max_chars: int = CaptionsConstants.MAX_CHARS) -> tuple[list[Cue], int]:
     """Blocos da cena em ms do episódio, cobrindo a cena inteira, e quantas fronteiras ficaram aproximadas."""
     found = phrases(scene.narration, max_chars)
     if not found:
         return [], 0
-    weights = [len(p.text) + 1 + (PAUSE_CHARS if p.pause_after else 0) for p in found]
+    weights = [len(p.text) + 1 + (NarrationConstants.PAUSE_CHARS if p.pause_after else 0) for p in found]
     total = sum(weights)
-    edges, used, approximate, cumulative = [0], set(), 0, 0
+    used: set[int] = set()
+    edges, approximate, cumulative = [0], 0, 0
     for k, phrase in enumerate(found[:-1]):
         cumulative += weights[k]
         estimate = round(scene.duration_ms * cumulative / total)
-        window = PAUSE_SNAP_MS if phrase.pause_after else SNAP_MS
+        window = CaptionsConstants.PAUSE_SNAP_MS if phrase.pause_after else CaptionsConstants.SNAP_MS
         edge = _snap(estimate, window, scene.silences_ms, used, edges[-1], scene.duration_ms)
         if edge is None:
             edge = estimate
@@ -148,8 +105,8 @@ def _snap(
         for i, (start, stop) in enumerate(silences)
         if i not in used
         and abs((start + stop) // 2 - estimate) <= window
-        and stop - after >= MIN_CUE_MS
-        and end - stop >= MIN_CUE_MS
+        and stop - after >= CaptionsConstants.MIN_CUE_MS
+        and end - stop >= CaptionsConstants.MIN_CUE_MS
     ]
     if not candidates:
         return None
@@ -158,7 +115,9 @@ def _snap(
     return stop
 
 
-def episode_cues(scenes: Sequence[SceneAudio], max_chars: int = MAX_CHARS) -> tuple[list[Cue], int]:
+def episode_cues(
+    scenes: Sequence[SceneAudio], max_chars: int = CaptionsConstants.MAX_CHARS
+) -> tuple[list[Cue], int]:
     cues: list[Cue] = []
     approximate = 0
     for scene in scenes:
@@ -189,7 +148,7 @@ def parse_srt(text: str) -> tuple[list[Cue], list[str]]:
         lines = block.strip().splitlines()
         if not lines:
             continue
-        times = _SRT_TIME.findall(lines[1]) if len(lines) >= 2 else []
+        times = CaptionsConstants._SRT_TIME.findall(lines[1]) if len(lines) >= 2 else []
         if len(times) != 2:
             problems.append(f"bloco {n}: sem a linha de tempo 'hh:mm:ss,mmm --> hh:mm:ss,mmm'")
             continue
@@ -213,7 +172,7 @@ def timing_problems(cues: Sequence[Cue], total_ms: int) -> list[str]:
             problems.append(f"bloco {n}: fim {_srt_time(cue.end_ms)} não vem depois do início")
         if cue.start_ms < previous_end:
             problems.append(f"bloco {n}: começa antes de o bloco {n - 1} acabar")
-        if cue.end_ms > total_ms + END_SLACK_MS:
+        if cue.end_ms > total_ms + CaptionsConstants.END_SLACK_MS:
             problems.append(
                 f"bloco {n}: termina em {_srt_time(cue.end_ms)}, depois do áudio ({_srt_time(total_ms)})"
             )
@@ -230,7 +189,7 @@ def review_hints(cues: Sequence[Cue]) -> list[tuple[int, str]]:
     for n, cue in enumerate(cues, 1):
         reasons = []
         if any(ch.isdigit() for ch in cue.text) or any(
-            w.lower() in _NUMBER_WORDS for w in _WORD.findall(cue.text)
+            w.lower() in CaptionsConstants._NUMBER_WORDS for w in CaptionsConstants._WORD.findall(cue.text)
         ):
             reasons.append("número")
         if _proper_names(cue.text):
@@ -244,7 +203,7 @@ def _proper_names(text: str) -> list[str]:
     names, sentence_start = [], True
     for match in re.finditer(r"[^\s]+", text):
         token = match.group()
-        word = _WORD.search(token)
+        word = CaptionsConstants._WORD.search(token)
         if word and word.group()[0].isupper() and not sentence_start:
             names.append(word.group())
         sentence_start = token[-1] in ".!?:"
@@ -254,22 +213,31 @@ def _proper_names(text: str) -> list[str]:
 # --- arquivo editável ---------------------------------------------------------------------------------
 
 
-def captions_key(audio_names: Sequence[str], max_chars: int = MAX_CHARS) -> str:
+def captions_key(audio_names: Sequence[str], max_chars: int = CaptionsConstants.MAX_CHARS) -> str:
     """O que, mudando, refaz a legenda: os WAVs (o nome já leva texto e voz), o limite e a versão."""
-    raw = f"v{VERSION}|{max_chars}|" + "|".join(audio_names)
+    raw = f"v{CaptionsConstants.VERSION}|{max_chars}|" + "|".join(audio_names)
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
 
-def sync_captions(episode_dir: Path, cues: Sequence[Cue], key: str) -> str:
-    """Grava `captions.srt` se ele não existe ou se a fala mudou; senão mantém o arquivo (talvez revisado)."""
-    srt, key_file = episode_dir / CAPTIONS, episode_dir / KEY
+def sync_captions(
+    episode_dir: Path, cues: Sequence[Cue], key: str, before_change: Callable[[str], None] | None = None
+) -> str:
+    """Grava `captions.srt` se ele não existe ou se a fala mudou; senão mantém o arquivo (talvez revisado).
+    `before_change` recebe o texto novo antes de qualquer escrita ou renomeação, e pode recusar (o gate 4)."""
+    srt, key_file = episode_dir / CaptionsConstants.CAPTIONS, episode_dir / CaptionsConstants.KEY
     if srt.is_file() and key_file.is_file() and key_file.read_text().strip() == key:
         return "mantida (pode ter revisão à mão)"
+    text = to_srt(cues)
+    if before_change is not None:
+        before_change(text)
     if srt.is_file():
-        srt.replace(episode_dir / OLD_CAPTIONS)
-        note = f"refeita porque a fala mudou; a anterior ficou em {OLD_CAPTIONS}: revise de novo"
+        srt.replace(episode_dir / CaptionsConstants.OLD_CAPTIONS)
+        note = (
+        f'refeita porque a fala mudou; a anterior ficou em {CaptionsConstants.OLD_CAPTIONS}'
+        f': revise de novo'
+    )
     else:
         note = "gerada; revise números, nomes e pausas"
-    srt.write_text(to_srt(cues))
+    srt.write_text(text)
     key_file.write_text(key + "\n")
     return note

@@ -1,0 +1,137 @@
+{
+ "status": "rascunho-fase-0 (nada enviado; hashes locais; trechos ainda nao montados)",
+ "avaliador": {
+  "ferramenta": "mcp__earshot__llm_critique",
+  "modelo": "gemini-3.8-flash",
+  "synth_intended": true,
+  "with_timeline": false,
+  "video": null,
+  "consent": "so apos autorizacao do dono nesta sessao",
+  "meta_no_prompt": false
+ },
+ "montagem_do_controle": "WAVs brutos de voice/ -> level_voice (loudnorm-v1, -16 LUFS, -1,5 dBTP) -> concatenados na ordem da linha do tempo, sem intervalo (episode.json mostra gap 0). Provocacao usa voice/leveled/ ja existente (conferir wav_sha256).",
+ "trechos": {
+  "A1": {
+   "episodio": "ayanokoji-provocacao-epicteto",
+   "cenas": [
+    {
+     "scene": "S01",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S01-chatterbox_modal-28e83247b1.wav",
+     "sha256": "8fb1f5df3139e5acf1a5968a8be4ba2afd68cb8bb5e1a94a72b650204c358711",
+     "dur_s": 12.92
+    },
+    {
+     "scene": "S23",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S23-chatterbox_modal-b86fb28384.wav",
+     "sha256": "7d95c8d287480ac94482420d9f0afeb8c4130c8c29e6584002c640ed30b4ab43",
+     "dur_s": 10.2
+    },
+    {
+     "scene": "S24",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S24-chatterbox_modal-f18431f1b2.wav",
+     "sha256": "69c4bb7b878fa28cbbfe52c47c0fe9ae30f6a34ea66d081cbc23b94e18783491",
+     "dur_s": 8.68
+    }
+   ],
+   "dur_s": 31.8,
+   "conjunto": "ajuste"
+  },
+  "A2": {
+   "episodio": "ayanokoji-provocacao-epicteto",
+   "cenas": [
+    {
+     "scene": "S16",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S16-chatterbox_modal-30d1efd3d0.wav",
+     "sha256": "83959ba7d757e121cf3fb0dd2a1f0bd6f3ebea6a94ea1b5cec59a274f453515f",
+     "dur_s": 20.6
+    },
+    {
+     "scene": "S17",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S17-chatterbox_modal-470696c25e.wav",
+     "sha256": "2f3142973aafb6dcfc158a23ac9ef56a668a5dbbf3d0d93cd709d12065fa31ea",
+     "dur_s": 14.56
+    }
+   ],
+   "dur_s": 35.16,
+   "conjunto": "ajuste"
+  },
+  "A3": {
+   "episodio": "ayanokoji-provocacao-epicteto",
+   "cenas": [
+    {
+     "scene": "S09",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S09-chatterbox_modal-4245e5682f.wav",
+     "sha256": "fef2c0dbbd3237ad52903fa43bbe6be1858340d120211bd00fa3d7c604e2605e",
+     "dur_s": 8.92
+    },
+    {
+     "scene": "S10",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S10-chatterbox_modal-3cddf402c0.wav",
+     "sha256": "d88a3cac7df7a25e3e9cab7dafed432f11332b047569e6b4f2ebe23bf1759700",
+     "dur_s": 20.75
+    }
+   ],
+   "dur_s": 29.67,
+   "conjunto": "ajuste"
+  },
+  "R1": {
+   "episodio": "ayanokoji-ser-parecido",
+   "cenas": [
+    {
+     "scene": "S01",
+     "file": "data/episodes/ayanokoji-ser-parecido/voice/S01-chatterbox_modal-d846669809.wav",
+     "sha256": "ef747d4ab97d0616160018b451b19808cd04fe9997be0c84b956566c7ac24840",
+     "dur_s": 9.96
+    },
+    {
+     "scene": "S02",
+     "file": "data/episodes/ayanokoji-ser-parecido/voice/S02-chatterbox_modal-dd5da984b1.wav",
+     "sha256": "a49c92961ab29810ec4e699d772883b9c216d91b5658c1ae8f511449ca037a0e",
+     "dur_s": 31.67
+    }
+   ],
+   "dur_s": 41.63,
+   "conjunto": "reservado"
+  },
+  "R2": {
+   "episodio": "manipulacao-linguagem-politica",
+   "cenas": [
+    {
+     "scene": "S06",
+     "file": "data/episodes/manipulacao-linguagem-politica/voice/S06-chatterbox_modal-989d257d2a.wav",
+     "sha256": "8bf1ae7cdb4818bc4cbe1abf8cb55ee26cf3320b6b9a9fbfbabfaefac220a022",
+     "dur_s": 32.71
+    }
+   ],
+   "dur_s": 32.71,
+   "conjunto": "reservado"
+  },
+  "R3": {
+   "episodio": "ayanokoji-provocacao-epicteto",
+   "cenas": [
+    {
+     "scene": "S42",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S42-chatterbox_modal-2b3405a79a.wav",
+     "sha256": "48e35d18419397af59222cc0f2e222f8a6893bdc6dd3874c1b5b698639c320c9",
+     "dur_s": 26.27
+    },
+    {
+     "scene": "S43",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S43-chatterbox_modal-185c7c42f4.wav",
+     "sha256": "7ec8c50a3cb5798c7f4a60a244d22ad5f99c784696ec5b014b70342c5c5541b2",
+     "dur_s": 7.12
+    },
+    {
+     "scene": "S44",
+     "file": "data/episodes/ayanokoji-provocacao-epicteto/voice/S44-chatterbox_modal-0fb021db2f.wav",
+     "sha256": "6ab43f2b5d7b12e0027d2e8ef87ef3f4217480f06da2d4d398f4897d66ad222e",
+     "dur_s": 4.64
+    }
+   ],
+   "dur_s": 38.03,
+   "conjunto": "reservado"
+  }
+ },
+ "dispersao_do_avaliador": null,
+ "notas_do_controle": null
+}

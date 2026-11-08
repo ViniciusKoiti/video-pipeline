@@ -42,7 +42,7 @@ o dono continua ouvindo a prévia.
 ## No pipeline (2026-10-31)
 
 Registrado como servidor MCP do usuário (`claude mcp add earshot --scope user`, offline, 3 threads) e como passo de
-conferência: `scripts/provisorio/conferir_audio.py` chama o `timeline` por subprocesso (`app/media/earshot.py`),
+conferência: `vp audio` (`app/commands/audio.py`) chama o `timeline` por subprocesso (`app/media/earshot.py`),
 com os cortes do `episode.json` (longo) ou do `content.voz.json` (Short, e o `sfx.json` para saber onde havia
 efeito), e grava o JSON ao lado do vídeo. `EARSHOT_PYTHON` no `.env` aponta o ambiente.
 

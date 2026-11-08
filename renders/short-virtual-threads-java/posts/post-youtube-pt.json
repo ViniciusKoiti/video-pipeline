@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-11-09T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0omyy0005l26yggavdqpu"
+      },
+      "value": [
+        {
+          "content": "Em Java, 10 mil requisições esperam uma chamada bloqueante (simulada com Thread.sleep de 100 ms). Uma thread executa uma requisição e, num pool tradicional, cada uma segura uma thread do sistema operacional, que é cara: com 200 threads, só 200 requisições esperam por vez e o resto fica na fila. A virtual thread é gerenciada pela JVM e não segura a thread do sistema enquanto espera. Mas o gargalo se move: com um pool de 50 conexões (Semaphore), a fila volta para as conexões.\n\nMedido nesta máquina: OpenJDK 25.0.4.1, Ryzen 7 5700U, 15 rodadas, JVM nova a cada rodada. Medianas: pool de 200 threads 5.088,6 ms; virtual threads 179,4 ms; virtual threads com 50 conexões 20.139 ms. A espera é simulada, não é rede nem banco reais.\n\nFontes do mecanismo: JEP 444 (Virtual Threads) e a documentação de Executors do JDK 25.\n\nA voz é a minha, clonada com IA. As animações foram criadas para este vídeo.\n\n#Shorts #Java #VirtualThreads",
+          "image": [
+            {
+              "id": "a7457b3f-f9cd-4da1-8fd3-96b2dbde790b",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/04/ad0f63c524974a45aa5fcc99db29d1df.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "10 mil requisições em Java: threads ou virtual threads?",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

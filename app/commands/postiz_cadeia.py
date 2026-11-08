@@ -12,31 +12,24 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
-import urllib.error
-import urllib.request
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from app.commands.constants.postiz_cadeia_constants import PostizCadeiaConstants
+from app.commands.postiz_links import LinkFetch, caption_links, link_findings, link_status
+from app.errors import PipelineError
 from app.pipeline.gates import gate_report
+from app.pipeline.package import package_problems
 from app.pipeline.ports import Context
 from app.pipeline.schemas import Decision, Step
 from app.providers.errors import ProviderError
-from app.providers.postiz_validation import visible_text
+from app.providers.postiz_validation import ScheduleClient, visible_text
 
-REGISTRO = Path("publicacoes/registro.jsonl")
-UNDO = (
-    "Antes do horário: apagar o post no Postiz (os ids saem no registro e em `vp postiz posts`). "
-    "Depois do horário: apagar a publicação na rede; o Postiz não desfaz o que já saiu."
-)
-FIXED_RISKS = (
-    "O Postiz não garante idempotência: se o envio falhar, consultar a fila antes de repetir.",
-    "A API não marca conteúdo alterado ou sintético: com voz ou imagem gerada, marcar à mão na rede.",
-    "Depois de publicar: conferir no Studio (ERROR no Postiz não prova falha), fixar o primeiro comentário "
-    "e marcar o conteúdo alterado, tudo à mão.",
-)
+__all__ = ["LinkFetch", "caption_links", "link_findings", "link_status"]
+
+
 Clock = Callable[[], datetime]
 
 
@@ -45,10 +38,10 @@ def _now() -> datetime:
 
 
 def registro_path(context: Context) -> Path:
-    return context.settings.data_dir / REGISTRO
+    return context.settings.data_dir / PostizCadeiaConstants.REGISTRO
 
 
-def payload_hash(payload: dict) -> str:
+def payload_hash(payload: dict[str, Any]) -> str:
     canonical = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return "sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
 
@@ -61,20 +54,22 @@ def file_sha256(path: Path) -> str:
     return "sha256:" + digest.hexdigest()
 
 
-def append(path: Path, event: str, fields: dict, now: Clock = _now) -> None:
+def append(path: Path, event: str, fields: dict[str, Any], now: Clock = _now) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     line = {"at": now().isoformat(timespec="seconds"), "event": event, **fields}
     with path.open("a", encoding="utf-8") as registro:
         registro.write(json.dumps(line, ensure_ascii=False) + "\n")
 
 
-def read(path: Path) -> list[dict]:
+def read(path: Path) -> list[dict[str, Any]]:
     if not path.is_file():
         return []
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def record_upload(context: Context, file: Path, sha256: str, media: dict, now: Clock = _now) -> None:
+def record_upload(
+    context: Context, file: Path, sha256: str, media: dict[str, Any], now: Clock = _now
+) -> None:
     resolved = file.resolve()
     try:
         shown = str(resolved.relative_to(context.settings.data_dir.resolve().parent))
@@ -89,69 +84,29 @@ def record_upload(context: Context, file: Path, sha256: str, media: dict, now: C
 
 
 def gate4(context: Context, episode_id: str | None) -> str:
-    """Gate 4 do episódio: "aprovado", "não aprovado", "mudou depois da aprovação" ou "sem episódio"."""
+    """Gate 4 do episódio: "aprovado", "não aprovado", "mudou depois da aprovação", "pacote incompleto" ou
+    "sem episódio"."""
     if episode_id is None:
         return "sem episódio"
     status = next(s for s in gate_report(context.store, context.review, episode_id) if s.step is Step.PREVIEW)
     if status.entry is None or status.entry.decision is not Decision.APPROVED:
         return "não aprovado"
-    return "aprovado" if status.valid else "mudou depois da aprovação"
-
-
-LINK = re.compile(r"https?://[^\s<>\"')]+")
-LINK_TIMEOUT_S = 8
-GONE = (404, 410)  # o que um repositório privado ou apagado devolve a quem não está logado
-
-LinkFetch = Callable[[str], "int | None"]
-
-
-def link_status(url: str) -> int | None:
-    """Código HTTP do link (HEAD, depois GET se o HEAD não for aceito); None se não houve resposta."""
-    for method in ("HEAD", "GET"):
-        request = urllib.request.Request(url, method=method, headers={"User-Agent": "vp-postiz-pacote"})
-        try:
-            with urllib.request.urlopen(request, timeout=LINK_TIMEOUT_S) as response:
-                return response.status
-        except urllib.error.HTTPError as error:
-            if method == "GET" or error.code not in (403, 405, 501):
-                return error.code
-        except (urllib.error.URLError, TimeoutError, OSError):
-            return None
-    return None
-
-
-def caption_links(text: str) -> list[str]:
-    """Os links da legenda, sem pontuação final e sem repetição, na ordem em que aparecem."""
-    return list(dict.fromkeys(url.rstrip(".,;:!?") for url in LINK.findall(text)))
-
-
-def link_findings(posts: list[dict], fetch: LinkFetch) -> tuple[list[str], list[str]]:
-    """(bloqueios, riscos) dos links das legendas: 404/410 bloqueia; outro erro ou sem resposta é risco."""
-    blocking, risks, seen = [], [], {}
-    for post in posts:
-        for url in caption_links(post["legenda"]):
-            if url not in seen:
-                seen[url] = fetch(url)
-            status = seen[url]
-            if status is None:
-                risks.append(f"Link da legenda de {post['canal']} sem resposta, não conferido: {url}")
-            elif status in GONE:
-                blocking.append(f"Link da legenda de {post['canal']} não abre (HTTP {status}): {url}")
-            elif status >= 400:
-                risks.append(f"Link da legenda de {post['canal']} respondeu HTTP {status}: {url}")
-    return blocking, risks
+    if not status.valid:
+        return "mudou depois da aprovação"
+    problems = package_problems(context.store, episode_id)  # gravação interrompida ou trocado (ADR 050)
+    return "aprovado" if not problems else f"pacote incompleto ({problems[0]})"
 
 
 def build_package(
-    payload: dict,
-    check: dict,
-    uploads: list[dict],
+    payload: dict[str, Any],
+    check: dict[str, Any],
+    uploads: list[dict[str, Any]],
     gate: str,
     episode_id: str | None,
     fetch: LinkFetch | None = None,
-) -> dict:
+) -> dict[str, Any]:
     by_media = {u["midia"]["id"]: u for u in uploads}
-    posts, risks, blocking = [], list(FIXED_RISKS), []
+    posts, risks, blocking = [], list(PostizCadeiaConstants.FIXED_RISKS), []
     for post in payload["posts"]:
         integration_id = post["integration"]["id"]
         media = []
@@ -193,19 +148,19 @@ def build_package(
             "defesas": "data futura, canal ativo, sem duplicata na fila",
         },
         "riscos": blocking + risks,
-        "como_desfazer": UNDO,
+        "como_desfazer": PostizCadeiaConstants.UNDO,
         "recomendacao": "não agendar: " + " ".join(blocking) if blocking else "agendar, se o dono autorizar",
     }
 
 
 def package(
     context: Context,
-    client: Any,
-    payload: dict,
+    client: ScheduleClient,
+    payload: dict[str, Any],
     episode_id: str | None,
     now: Clock = _now,
     fetch: LinkFetch | None = link_status,
-) -> dict:
+) -> dict[str, Any]:
     check = client.check_schedule(payload)
     uploads = [e for e in read(registro_path(context)) if e["event"] == "upload"]
     result = build_package(payload, check, uploads, gate4(context, episode_id), episode_id, fetch)
@@ -214,29 +169,27 @@ def package(
     return result
 
 
-class ChainError(ValueError):
+class ChainError(PipelineError, ValueError):
     """O agendamento não tem o pacote de decisão ou a dúvida cega exigidos."""
 
 
-VERDICTS = ("segue", "não segue")
-NO_PACKAGE = "sem pacote de decisão para este JSON: rode `vp postiz pacote` e mostre o pacote ao dono"
-
-
-def _last_package(entries: list[dict], digest: str) -> int:
+def _last_package(entries: list[dict[str, Any]], digest: str) -> int:
     for index in range(len(entries) - 1, -1, -1):
         if entries[index]["event"] == "pacote" and entries[index]["payload"] == digest:
             return index
-    raise ChainError(NO_PACKAGE)
+    raise ChainError(PostizCadeiaConstants.NO_PACKAGE)
 
 
-def record_doubt(context: Context, payload: dict, report: dict, now: Clock = _now) -> dict:
+def record_doubt(
+    context: Context, payload: dict[str, Any], report: dict[str, Any], now: Clock = _now
+) -> dict[str, Any]:
     """Grava o parecer da dúvida cega sobre o último pacote deste JSON."""
     digest = payload_hash(payload)
     _last_package(read(registro_path(context)), digest)
     report = report if isinstance(report, dict) else {}
     risks, reviewer = report.get("riscos"), report.get("revisor")
     if (
-        report.get("veredito") not in VERDICTS
+        report.get("veredito") not in PostizCadeiaConstants.VERDICTS
         or not isinstance(risks, list)
         or not all(isinstance(r, str) and r.strip() for r in risks)
         or not isinstance(reviewer, str)
@@ -248,7 +201,9 @@ def record_doubt(context: Context, payload: dict, report: dict, now: Clock = _no
     return line
 
 
-def schedule(context: Context, client: Any, payload: dict, now: Clock = _now) -> list[dict]:
+def schedule(
+    context: Context, client: ScheduleClient, payload: dict[str, Any], now: Clock = _now
+) -> list[dict[str, Any]]:
     digest = payload_hash(payload)
     entries = read(registro_path(context))
     index = _last_package(entries, digest)

@@ -1,0 +1,810 @@
+{
+  "consulted_on": "2026-11-01",
+  "channel_id": "UClKrjY4dCi1AWSuiWKZuGHg",
+  "overall_analytics": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"startDate\":\"2026-10-04\",\"endDate\":\"2026-11-01\",\"columnHeaders\":[{\"name\":\"video\",\"dataType\":\"STRING\",\"columnType\":\"DIMENSION\"},{\"name\":\"views\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"engagedViews\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"estimatedMinutesWatched\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewDuration\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewPercentage\",\"dataType\":\"FLOAT\",\"columnType\":\"METRIC\"},{\"name\":\"subscribersGained\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"comments\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"}],\"rows\":[[\"Bh3XO7lzq0c\",258,84,279,195,27.800000000000004,0,1],[\"bzjfrT_tOME\",86,20,40,114,16.57,0,0],[\"EiC5A-bkKW4\",65,56,62,66,17.5,0,1],[\"ft49XnUmiQY\",48,19,17,52,7.51,0,0],[\"MzEa6wj9Ct4\",4,3,0,9,1.26,0,0],[\"oPHC1FGM5HQ\",4,4,1,15,2.05,0,0],[\"VzQG5TBbeT8\",1,0,0,0,0,0,0]],\"_credits\":{\"used\":5}}"
+        }
+      ],
+      "structuredContent": {
+        "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+        "startDate": "2026-10-04",
+        "endDate": "2026-11-01",
+        "columnHeaders": [
+          {
+            "name": "video",
+            "dataType": "STRING",
+            "columnType": "DIMENSION"
+          },
+          {
+            "name": "views",
+            "dataType": "INTEGER",
+            "columnType": "METRIC"
+          },
+          {
+            "name": "engagedViews",
+            "dataType": "INTEGER",
+            "columnType": "METRIC"
+          },
+          {
+            "name": "estimatedMinutesWatched",
+            "dataType": "INTEGER",
+            "columnType": "METRIC"
+          },
+          {
+            "name": "averageViewDuration",
+            "dataType": "INTEGER",
+            "columnType": "METRIC"
+          },
+          {
+            "name": "averageViewPercentage",
+            "dataType": "FLOAT",
+            "columnType": "METRIC"
+          },
+          {
+            "name": "subscribersGained",
+            "dataType": "INTEGER",
+            "columnType": "METRIC"
+          },
+          {
+            "name": "comments",
+            "dataType": "INTEGER",
+            "columnType": "METRIC"
+          }
+        ],
+        "rows": [
+          [
+            "Bh3XO7lzq0c",
+            258,
+            84,
+            279,
+            195,
+            27.800000000000004,
+            0,
+            1
+          ],
+          [
+            "bzjfrT_tOME",
+            86,
+            20,
+            40,
+            114,
+            16.57,
+            0,
+            0
+          ],
+          [
+            "EiC5A-bkKW4",
+            65,
+            56,
+            62,
+            66,
+            17.5,
+            0,
+            1
+          ],
+          [
+            "ft49XnUmiQY",
+            48,
+            19,
+            17,
+            52,
+            7.51,
+            0,
+            0
+          ],
+          [
+            "MzEa6wj9Ct4",
+            4,
+            3,
+            0,
+            9,
+            1.26,
+            0,
+            0
+          ],
+          [
+            "oPHC1FGM5HQ",
+            4,
+            4,
+            1,
+            15,
+            2.05,
+            0,
+            0
+          ],
+          [
+            "VzQG5TBbeT8",
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "_credits": {
+          "used": 5
+        }
+      }
+    }
+  },
+  "equal_window_queries": [
+    {
+      "label": "Montaigne",
+      "video": "Bh3XO7lzq0c",
+      "start": "2026-10-28",
+      "end": "2026-10-30"
+    },
+    {
+      "label": "Epicteto",
+      "video": "bzjfrT_tOME",
+      "start": "2026-10-24",
+      "end": "2026-10-26"
+    },
+    {
+      "label": "Kira Brasil",
+      "video": "EiC5A-bkKW4",
+      "start": "2026-10-22",
+      "end": "2026-10-24"
+    },
+    {
+      "label": "Death Note fins meios",
+      "video": "oPHC1FGM5HQ",
+      "start": "2026-10-21",
+      "end": "2026-10-23"
+    },
+    {
+      "label": "Light venceu",
+      "video": "MzEa6wj9Ct4",
+      "start": "2026-10-23",
+      "end": "2026-10-25"
+    }
+  ],
+  "equal_windows": [
+    {
+      "query": {
+        "label": "Montaigne",
+        "video": "Bh3XO7lzq0c",
+        "start": "2026-10-28",
+        "end": "2026-10-30"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"startDate\":\"2026-10-28\",\"endDate\":\"2026-10-30\",\"columnHeaders\":[{\"name\":\"views\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"engagedViews\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewDuration\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewPercentage\",\"dataType\":\"FLOAT\",\"columnType\":\"METRIC\"},{\"name\":\"estimatedMinutesWatched\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"}],\"rows\":[[162,19,199,28.4,67]],\"_credits\":{\"used\":5}}"
+          }
+        ],
+        "structuredContent": {
+          "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+          "startDate": "2026-10-28",
+          "endDate": "2026-10-30",
+          "columnHeaders": [
+            {
+              "name": "views",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "engagedViews",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewDuration",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewPercentage",
+              "dataType": "FLOAT",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "estimatedMinutesWatched",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            }
+          ],
+          "rows": [
+            [
+              162,
+              19,
+              199,
+              28.4,
+              67
+            ]
+          ],
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    {
+      "query": {
+        "label": "Epicteto",
+        "video": "bzjfrT_tOME",
+        "start": "2026-10-24",
+        "end": "2026-10-26"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"startDate\":\"2026-10-24\",\"endDate\":\"2026-10-26\",\"columnHeaders\":[{\"name\":\"views\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"engagedViews\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewDuration\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewPercentage\",\"dataType\":\"FLOAT\",\"columnType\":\"METRIC\"},{\"name\":\"estimatedMinutesWatched\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"}],\"rows\":[[60,11,92,13.320000000000002,18]],\"_credits\":{\"used\":5}}"
+          }
+        ],
+        "structuredContent": {
+          "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+          "startDate": "2026-10-24",
+          "endDate": "2026-10-26",
+          "columnHeaders": [
+            {
+              "name": "views",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "engagedViews",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewDuration",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewPercentage",
+              "dataType": "FLOAT",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "estimatedMinutesWatched",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            }
+          ],
+          "rows": [
+            [
+              60,
+              11,
+              92,
+              13.320000000000002,
+              18
+            ]
+          ],
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    {
+      "query": {
+        "label": "Kira Brasil",
+        "video": "EiC5A-bkKW4",
+        "start": "2026-10-22",
+        "end": "2026-10-24"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"startDate\":\"2026-10-22\",\"endDate\":\"2026-10-24\",\"columnHeaders\":[{\"name\":\"views\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"engagedViews\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewDuration\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewPercentage\",\"dataType\":\"FLOAT\",\"columnType\":\"METRIC\"},{\"name\":\"estimatedMinutesWatched\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"}],\"rows\":[[57,50,73,19.52,61]],\"_credits\":{\"used\":5}}"
+          }
+        ],
+        "structuredContent": {
+          "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+          "startDate": "2026-10-22",
+          "endDate": "2026-10-24",
+          "columnHeaders": [
+            {
+              "name": "views",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "engagedViews",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewDuration",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewPercentage",
+              "dataType": "FLOAT",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "estimatedMinutesWatched",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            }
+          ],
+          "rows": [
+            [
+              57,
+              50,
+              73,
+              19.52,
+              61
+            ]
+          ],
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    {
+      "query": {
+        "label": "Death Note fins meios",
+        "video": "oPHC1FGM5HQ",
+        "start": "2026-10-21",
+        "end": "2026-10-23"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"startDate\":\"2026-10-21\",\"endDate\":\"2026-10-23\",\"columnHeaders\":[{\"name\":\"views\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"engagedViews\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewDuration\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewPercentage\",\"dataType\":\"FLOAT\",\"columnType\":\"METRIC\"},{\"name\":\"estimatedMinutesWatched\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"}],\"rows\":[[0,0,0,0,0]],\"_credits\":{\"used\":5}}"
+          }
+        ],
+        "structuredContent": {
+          "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+          "startDate": "2026-10-21",
+          "endDate": "2026-10-23",
+          "columnHeaders": [
+            {
+              "name": "views",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "engagedViews",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewDuration",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewPercentage",
+              "dataType": "FLOAT",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "estimatedMinutesWatched",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            }
+          ],
+          "rows": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    },
+    {
+      "query": {
+        "label": "Light venceu",
+        "video": "MzEa6wj9Ct4",
+        "start": "2026-10-23",
+        "end": "2026-10-25"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"startDate\":\"2026-10-23\",\"endDate\":\"2026-10-25\",\"columnHeaders\":[{\"name\":\"views\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"engagedViews\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewDuration\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"},{\"name\":\"averageViewPercentage\",\"dataType\":\"FLOAT\",\"columnType\":\"METRIC\"},{\"name\":\"estimatedMinutesWatched\",\"dataType\":\"INTEGER\",\"columnType\":\"METRIC\"}],\"rows\":[[1,1,28,3.74,0]],\"_credits\":{\"used\":5}}"
+          }
+        ],
+        "structuredContent": {
+          "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+          "startDate": "2026-10-23",
+          "endDate": "2026-10-25",
+          "columnHeaders": [
+            {
+              "name": "views",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "engagedViews",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewDuration",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "averageViewPercentage",
+              "dataType": "FLOAT",
+              "columnType": "METRIC"
+            },
+            {
+              "name": "estimatedMinutesWatched",
+              "dataType": "INTEGER",
+              "columnType": "METRIC"
+            }
+          ],
+          "rows": [
+            [
+              1,
+              1,
+              28,
+              3.74,
+              0
+            ]
+          ],
+          "_credits": {
+            "used": 5
+          }
+        }
+      }
+    }
+  ],
+  "research": {
+    "uploads": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"channelId\":\"UClKrjY4dCi1AWSuiWKZuGHg\",\"videos\":[{\"videoId\":\"bmQQapSkZ_U\",\"title\":\"Como se parecer mais com o Ayanokoji: Epicteto aprovaria?\",\"tags\":[\"anime\",\"ayanokoji\",\"classroom of the elite\",\"diógenes laércio\",\"epicteto\",\"estoicismo\",\"filosofia\",\"marco aurélio\",\"sêneca\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-11-01T15:02:02Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT12M35S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/bmQQapSkZ_U/maxresdefault.jpg\",\"viewCount\":7,\"likeCount\":1,\"commentCount\":6,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"Qyefkeg_zXo\",\"title\":\"Cansada de carregar tudo? A lição estoica que você precisa\",\"tags\":[\"apatia\",\"epicteto\",\"estoicismo\",\"estoicismo para mulheres\",\"filosofia\",\"filosofia estoica\",\"sêneca\",\"vida estoica\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-31T16:16:25Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT17M3S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/Qyefkeg_zXo/maxresdefault.jpg\",\"viewCount\":14,\"likeCount\":0,\"commentCount\":0,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"ft49XnUmiQY\",\"title\":\"A manipulação que não precisa de mentira | Orwell\",\"tags\":[\"1984\",\"filosofia\",\"linguagem política\",\"manipulação\",\"orwell\",\"propaganda\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-29T01:10:14Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT11M39S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/ft49XnUmiQY/maxresdefault.jpg\",\"viewCount\":68,\"likeCount\":3,\"commentCount\":0,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"Bh3XO7lzq0c\",\"title\":\"Por que ser bonzinho não te protege, segundo Montaigne\",\"tags\":[],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-27T00:00:08Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT11M43S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/Bh3XO7lzq0c/hqdefault.jpg\",\"viewCount\":258,\"likeCount\":3,\"commentCount\":10,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"bzjfrT_tOME\",\"title\":\"O Que Não Está na Sua Mão | Epicteto e a única coisa que você controla\",\"tags\":[\"dicotomia do controle\",\"epicteto\",\"estoicismo\",\"filosofia\",\"marco aurélio\",\"sêneca\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-23T21:01:15Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT11M32S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/bzjfrT_tOME/maxresdefault.jpg\",\"viewCount\":87,\"likeCount\":0,\"commentCount\":0,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"MzEa6wj9Ct4\",\"title\":\"E se o Light tivesse ganhado?\",\"tags\":[\"anime\",\"crime e castigo\",\"death note\",\"filosofia\",\"light yagami\",\"maquiavel\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-22T15:01:38Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT12M40S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/MzEa6wj9Ct4/maxresdefault.jpg\",\"viewCount\":4,\"likeCount\":0,\"commentCount\":0,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"EiC5A-bkKW4\",\"title\":\"Kira teria voto no Brasil? Death Note, o medo e a justiça\",\"tags\":[\"anime\",\"death note\",\"filosofia\",\"kira\",\"segurança pública\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-21T22:01:08Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT6M19S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/EiC5A-bkKW4/maxresdefault.jpg\",\"viewCount\":65,\"likeCount\":4,\"commentCount\":3,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null},{\"videoId\":\"oPHC1FGM5HQ\",\"title\":\"Por que torcemos pelo Light? Os fins justificam os meios em Death Note\",\"tags\":[\"anime\",\"death note\",\"filosofia\",\"light yagami\",\"maquiavel\"],\"privacyStatus\":\"public\",\"uploadStatus\":\"processed\",\"publishedAt\":\"2026-10-20T22:01:31Z\",\"scheduledPublishAt\":null,\"videoType\":\"long\",\"duration\":\"PT12M49S\",\"thumbnailUrl\":\"https://i.ytimg.com/vi/oPHC1FGM5HQ/maxresdefault.jpg\",\"viewCount\":4,\"likeCount\":1,\"commentCount\":0,\"scheduledStartTime\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"concurrentViewers\":null}],\"nextPageToken\":null,\"_credits\":{\"used\":5}}"
+        }
+      ],
+      "structuredContent": {
+        "channelId": "UClKrjY4dCi1AWSuiWKZuGHg",
+        "videos": [
+          {
+            "videoId": "bmQQapSkZ_U",
+            "title": "Como se parecer mais com o Ayanokoji: Epicteto aprovaria?",
+            "tags": [
+              "anime",
+              "ayanokoji",
+              "classroom of the elite",
+              "diógenes laércio",
+              "epicteto",
+              "estoicismo",
+              "filosofia",
+              "marco aurélio",
+              "sêneca"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-11-01T15:02:02Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT12M35S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/bmQQapSkZ_U/maxresdefault.jpg",
+            "viewCount": 7,
+            "likeCount": 1,
+            "commentCount": 6,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "Qyefkeg_zXo",
+            "title": "Cansada de carregar tudo? A lição estoica que você precisa",
+            "tags": [
+              "apatia",
+              "epicteto",
+              "estoicismo",
+              "estoicismo para mulheres",
+              "filosofia",
+              "filosofia estoica",
+              "sêneca",
+              "vida estoica"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-31T16:16:25Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT17M3S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/Qyefkeg_zXo/maxresdefault.jpg",
+            "viewCount": 14,
+            "likeCount": 0,
+            "commentCount": 0,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "ft49XnUmiQY",
+            "title": "A manipulação que não precisa de mentira | Orwell",
+            "tags": [
+              "1984",
+              "filosofia",
+              "linguagem política",
+              "manipulação",
+              "orwell",
+              "propaganda"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-29T01:10:14Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT11M39S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/ft49XnUmiQY/maxresdefault.jpg",
+            "viewCount": 68,
+            "likeCount": 3,
+            "commentCount": 0,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "Bh3XO7lzq0c",
+            "title": "Por que ser bonzinho não te protege, segundo Montaigne",
+            "tags": [],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-27T00:00:08Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT11M43S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/Bh3XO7lzq0c/hqdefault.jpg",
+            "viewCount": 258,
+            "likeCount": 3,
+            "commentCount": 10,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "bzjfrT_tOME",
+            "title": "O Que Não Está na Sua Mão | Epicteto e a única coisa que você controla",
+            "tags": [
+              "dicotomia do controle",
+              "epicteto",
+              "estoicismo",
+              "filosofia",
+              "marco aurélio",
+              "sêneca"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-23T21:01:15Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT11M32S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/bzjfrT_tOME/maxresdefault.jpg",
+            "viewCount": 87,
+            "likeCount": 0,
+            "commentCount": 0,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "MzEa6wj9Ct4",
+            "title": "E se o Light tivesse ganhado?",
+            "tags": [
+              "anime",
+              "crime e castigo",
+              "death note",
+              "filosofia",
+              "light yagami",
+              "maquiavel"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-22T15:01:38Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT12M40S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/MzEa6wj9Ct4/maxresdefault.jpg",
+            "viewCount": 4,
+            "likeCount": 0,
+            "commentCount": 0,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "EiC5A-bkKW4",
+            "title": "Kira teria voto no Brasil? Death Note, o medo e a justiça",
+            "tags": [
+              "anime",
+              "death note",
+              "filosofia",
+              "kira",
+              "segurança pública"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-21T22:01:08Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT6M19S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/EiC5A-bkKW4/maxresdefault.jpg",
+            "viewCount": 65,
+            "likeCount": 4,
+            "commentCount": 3,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          },
+          {
+            "videoId": "oPHC1FGM5HQ",
+            "title": "Por que torcemos pelo Light? Os fins justificam os meios em Death Note",
+            "tags": [
+              "anime",
+              "death note",
+              "filosofia",
+              "light yagami",
+              "maquiavel"
+            ],
+            "privacyStatus": "public",
+            "uploadStatus": "processed",
+            "publishedAt": "2026-10-20T22:01:31Z",
+            "scheduledPublishAt": null,
+            "videoType": "long",
+            "duration": "PT12M49S",
+            "thumbnailUrl": "https://i.ytimg.com/vi/oPHC1FGM5HQ/maxresdefault.jpg",
+            "viewCount": 4,
+            "likeCount": 1,
+            "commentCount": 0,
+            "scheduledStartTime": null,
+            "actualStartTime": null,
+            "actualEndTime": null,
+            "concurrentViewers": null
+          }
+        ],
+        "nextPageToken": null,
+        "_credits": {
+          "used": 5
+        }
+      }
+    },
+    "outliers:Evangelion": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No breakout long-form videos found for \"Evangelion\"."
+        }
+      ],
+      "structuredContent": {
+        "answer": "No breakout long-form videos found for \"Evangelion\".",
+        "_credits": {
+          "used": 0
+        }
+      }
+    },
+    "outliers:Saitama": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Found 8 breakout long-form videos for \"Saitama\".\n\n### 1. QUE EDIÇÃO FOI ESSA?! | M4rkim - ONE PUNCH (Saitama) | TUGA REACT\n- **Channel:** Tuga React · 7.6K subscribers · PT · channelId `UClfnzKLu09oiifB4FGAOgLA`\n- **Performance:** 3.8K views · 2.2x breakout · 1.2 views/hour · 12.6% engagement\n- **Details:** published 2026-06-20 (4 months ago) · 13:21\n- **Video:** videoId `cgqqKiIzIRA` · thumbnail https://i.ytimg.com/vi/cgqqKiIzIRA/maxresdefault.jpg\n\n### 2. REACT (ELE FOI CANCELADO!) | CARECA ATRAI DANADAS - Saitama (One-Botada Man) | Kaji\n- **Channel:** Porão Do React · 2.6K subscribers · CA · channelId `UCdIdfSI_tB-OGYf34_N0uEA`\n- **Performance:** 2.2K views · 2.3x breakout · 1.5 views/hour · 4.3% engagement\n- **Details:** published 2026-08-29 (2 months ago) · 11:26\n- **Video:** videoId `6YXQkcmPj7M` · thumbnail https://i.ytimg.com/vi/6YXQkcmPj7M/maxresdefault.jpg\n\n### 3. O Treino do Saitama Realmente Funciona?\n- **Channel:** Gabriel Macineli · 314K subscribers · channelId `UCvCKWFQRaS8xn73DHlPWrPg`\n- **Performance:** 33.5K views · 3.1x breakout · 3.2 views/hour · 2.7% engagement\n- **Details:** published 2026-09-12 (1 month ago) · 6:34\n- **Video:** videoId `sJonFQDDwd8` · thumbnail https://i.ytimg.com/vi/sJonFQDDwd8/maxresdefault.jpg\n\n### 4. |👊• Vilões dos Animes |React to ♪ Saitama ( ONE PUNCH )| M4rkim| •🌏|\n- **Channel:** ŁuciTtor · 60.9K subscribers · channelId `UCOL3UrCuyPGoGH3jYqJXH2g`\n- **Performance:** 165.9K views · 1.5x breakout · 33.6 views/hour · 3.8% engagement\n- **Details:** published 2026-09-29 (1 month ago) · 5:56\n- **Video:** videoId `aNvNP3j4Uc4` · thumbnail https://i.ytimg.com/vi/aNvNP3j4Uc4/maxresdefault.jpg\n- **Trend categories:** reaction\n\n### 5. Não, Saitama Não É Nem Nível Sistema Solar | Refutando Todos Os Exageros Sobre One Punch Man.\n- **Channel:** Shadow · 3.4K subscribers · channelId `UCvq6qWEsdMd7BV5IT83RmyA`\n- **Performance:** 9.5K views · 22x breakout · 5.9 views/hour · 15.5% engagement\n- **Details:** published 2026-08-25 (2 months ago) · 34:47\n- **Video:** videoId `AzssjHx1z7Y` · thumbnail https://i.ytimg.com/vi/AzssjHx1z7Y/maxresdefault.jpg\n\n### 6. 👊🏻🪐•♪|One Punch|♪ Henry Danger Reagindo ao Rap do Saitama |Not As| [M4rkim]•🪐👊🏻\n- **Channel:** Sr uchiha · 125K subscribers · channelId `UCv50uLMsqcfd2voCcGS3HBA`\n- **Performance:** 132.4K views · 1.3x breakout · 22.5 views/hour · 5.7% engagement\n- **Details:** published 2026-06-28 (4 months ago) · 6:47\n- **Video:** videoId `VDk_1l6XYY8` · thumbnail https://i.ytimg.com/vi/VDk_1l6XYY8/maxresdefault.jpg\n\n### 7. Não é Justo !!! Goku vs Saitama, deathbattle errou ?(COMPLETA)\n- **Channel:** Tilapando · 2.9K subscribers · channelId `UCXrgXx3NgL3wmRp5ihhmMVQ`\n- **Performance:** 3.1K views · 2.1x breakout · 0.4 views/hour · 5.0% engagement\n- **Details:** published 2026-10-24 (1 week ago) · 7:29\n- **Video:** videoId `pZiSp47DD-I` · thumbnail https://i.ytimg.com/vi/pZiSp47DD-I/maxresdefault.jpg\n\n### 8. Rap Motivacional - Treino, Foco e Determinação (Saitama, Netero, Ippo) | Arcadion Beats\n- **Channel:** Arcadion Beats · 1.9K subscribers · channelId `UCADoI8WXoR-CQvPZpfijC7Q`\n- **Performance:** 1.1K views · 8.9x breakout · 0.1 views/hour · 1.1% engagement\n- **Details:** published 2026-10-17 (2 weeks ago) · 5:05\n- **Video:** videoId `FZ6NSYtmyOE` · thumbnail https://i.ytimg.com/vi/FZ6NSYtmyOE/maxresdefault.jpg"
+        }
+      ],
+      "structuredContent": {
+        "answer": "Found 8 breakout long-form videos for \"Saitama\".\n\n### 1. QUE EDIÇÃO FOI ESSA?! | M4rkim - ONE PUNCH (Saitama) | TUGA REACT\n- **Channel:** Tuga React · 7.6K subscribers · PT · channelId `UClfnzKLu09oiifB4FGAOgLA`\n- **Performance:** 3.8K views · 2.2x breakout · 1.2 views/hour · 12.6% engagement\n- **Details:** published 2026-06-20 (4 months ago) · 13:21\n- **Video:** videoId `cgqqKiIzIRA` · thumbnail https://i.ytimg.com/vi/cgqqKiIzIRA/maxresdefault.jpg\n\n### 2. REACT (ELE FOI CANCELADO!) | CARECA ATRAI DANADAS - Saitama (One-Botada Man) | Kaji\n- **Channel:** Porão Do React · 2.6K subscribers · CA · channelId `UCdIdfSI_tB-OGYf34_N0uEA`\n- **Performance:** 2.2K views · 2.3x breakout · 1.5 views/hour · 4.3% engagement\n- **Details:** published 2026-08-29 (2 months ago) · 11:26\n- **Video:** videoId `6YXQkcmPj7M` · thumbnail https://i.ytimg.com/vi/6YXQkcmPj7M/maxresdefault.jpg\n\n### 3. O Treino do Saitama Realmente Funciona?\n- **Channel:** Gabriel Macineli · 314K subscribers · channelId `UCvCKWFQRaS8xn73DHlPWrPg`\n- **Performance:** 33.5K views · 3.1x breakout · 3.2 views/hour · 2.7% engagement\n- **Details:** published 2026-09-12 (1 month ago) · 6:34\n- **Video:** videoId `sJonFQDDwd8` · thumbnail https://i.ytimg.com/vi/sJonFQDDwd8/maxresdefault.jpg\n\n### 4. |👊• Vilões dos Animes |React to ♪ Saitama ( ONE PUNCH )| M4rkim| •🌏|\n- **Channel:** ŁuciTtor · 60.9K subscribers · channelId `UCOL3UrCuyPGoGH3jYqJXH2g`\n- **Performance:** 165.9K views · 1.5x breakout · 33.6 views/hour · 3.8% engagement\n- **Details:** published 2026-09-29 (1 month ago) · 5:56\n- **Video:** videoId `aNvNP3j4Uc4` · thumbnail https://i.ytimg.com/vi/aNvNP3j4Uc4/maxresdefault.jpg\n- **Trend categories:** reaction\n\n### 5. Não, Saitama Não É Nem Nível Sistema Solar | Refutando Todos Os Exageros Sobre One Punch Man.\n- **Channel:** Shadow · 3.4K subscribers · channelId `UCvq6qWEsdMd7BV5IT83RmyA`\n- **Performance:** 9.5K views · 22x breakout · 5.9 views/hour · 15.5% engagement\n- **Details:** published 2026-08-25 (2 months ago) · 34:47\n- **Video:** videoId `AzssjHx1z7Y` · thumbnail https://i.ytimg.com/vi/AzssjHx1z7Y/maxresdefault.jpg\n\n### 6. 👊🏻🪐•♪|One Punch|♪ Henry Danger Reagindo ao Rap do Saitama |Not As| [M4rkim]•🪐👊🏻\n- **Channel:** Sr uchiha · 125K subscribers · channelId `UCv50uLMsqcfd2voCcGS3HBA`\n- **Performance:** 132.4K views · 1.3x breakout · 22.5 views/hour · 5.7% engagement\n- **Details:** published 2026-06-28 (4 months ago) · 6:47\n- **Video:** videoId `VDk_1l6XYY8` · thumbnail https://i.ytimg.com/vi/VDk_1l6XYY8/maxresdefault.jpg\n\n### 7. Não é Justo !!! Goku vs Saitama, deathbattle errou ?(COMPLETA)\n- **Channel:** Tilapando · 2.9K subscribers · channelId `UCXrgXx3NgL3wmRp5ihhmMVQ`\n- **Performance:** 3.1K views · 2.1x breakout · 0.4 views/hour · 5.0% engagement\n- **Details:** published 2026-10-24 (1 week ago) · 7:29\n- **Video:** videoId `pZiSp47DD-I` · thumbnail https://i.ytimg.com/vi/pZiSp47DD-I/maxresdefault.jpg\n\n### 8. Rap Motivacional - Treino, Foco e Determinação (Saitama, Netero, Ippo) | Arcadion Beats\n- **Channel:** Arcadion Beats · 1.9K subscribers · channelId `UCADoI8WXoR-CQvPZpfijC7Q`\n- **Performance:** 1.1K views · 8.9x breakout · 0.1 views/hour · 1.1% engagement\n- **Details:** published 2026-10-17 (2 weeks ago) · 5:05\n- **Video:** videoId `FZ6NSYtmyOE` · thumbnail https://i.ytimg.com/vi/FZ6NSYtmyOE/maxresdefault.jpg",
+        "_credits": {
+          "used": 5
+        }
+      }
+    },
+    "outliers:Spy x Family": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Found 1 breakout long-form video for \"Spy x Family\".\n\n### 1. Spy x family reagem a Anya sendo a Makomo!🌼🌸\n- **Channel:** •Lüa Chan• · 24K subscribers · channelId `UCcsQOJsu3ei3fCdyGRkyAjg`\n- **Performance:** 13.5K views · 1.7x breakout · 17 views/hour · 3.9% engagement\n- **Details:** published 2026-09-26 (1 month ago) · 3:31\n- **Video:** videoId `ky2-_F9wHZg` · thumbnail https://i.ytimg.com/vi/ky2-_F9wHZg/sddefault.jpg"
+        }
+      ],
+      "structuredContent": {
+        "answer": "Found 1 breakout long-form video for \"Spy x Family\".\n\n### 1. Spy x family reagem a Anya sendo a Makomo!🌼🌸\n- **Channel:** •Lüa Chan• · 24K subscribers · channelId `UCcsQOJsu3ei3fCdyGRkyAjg`\n- **Performance:** 13.5K views · 1.7x breakout · 17 views/hour · 3.9% engagement\n- **Details:** published 2026-09-26 (1 month ago) · 3:31\n- **Video:** videoId `ky2-_F9wHZg` · thumbnail https://i.ytimg.com/vi/ky2-_F9wHZg/sddefault.jpg",
+        "_credits": {
+          "used": 5
+        }
+      }
+    },
+    "outliers:Psycho Pass": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No breakout long-form videos found for \"Psycho Pass\"."
+        }
+      ],
+      "structuredContent": {
+        "answer": "No breakout long-form videos found for \"Psycho Pass\".",
+        "_credits": {
+          "used": 0
+        }
+      }
+    },
+    "outliers:Eren": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Found 8 breakout long-form videos for \"Eren\".\n\n### 1. REACT - 7 Minutoz e AniRap - O PODER DA MINHA IRA 3 | Guts, Sukuna e Eren\n- **Channel:** Anijuh · 24.3K subscribers · channelId `UCewuo9Qnble90FR57Sqn-4g`\n- **Performance:** 5.9K views · 2.1x breakout · 4.2 views/hour · 3.6% engagement\n- **Details:** published 2026-09-02 (1 month ago) · 5:32\n- **Video:** videoId `el2Vm59VR5o` · thumbnail https://i.ytimg.com/vi/el2Vm59VR5o/maxresdefault.jpg\n\n### 2. REACT/ANÁLISE -  7 Minutoz e AniRap - O PODER DA MINHA IRA 3 | Guts, Sukuna e Eren\n- **Channel:** Canto dos Cortes · 1.4K subscribers · channelId `UCIdskfUL-4ja8JWLlftV2Ug`\n- **Performance:** 2.2K views · 2x breakout · 0.7 views/hour · 10.2% engagement\n- **Details:** published 2026-06-15 (4 months ago) · 13:32\n- **Video:** videoId `oGkS6X6kyIU` · thumbnail https://i.ytimg.com/vi/oGkS6X6kyIU/maxresdefault.jpg\n\n### 3. (MEUS FAVORITOS) REACT 7 Minutoz e AniRap - O PODER DA MINHA IRA 3 | Guts, Sukuna e Eren\n- **Channel:** REAGE CARLOS!!! · 232K subscribers · channelId `UC20fTyoiXnM5a5Pwpu9OnvQ`\n- **Performance:** 49.4K views · 5.8x breakout · 19.4 views/hour · 7.9% engagement\n- **Details:** published 2026-09-03 (1 month ago) · 11:34\n- **Video:** videoId `JHibmhoLNyI` · thumbnail https://i.ytimg.com/vi/JHibmhoLNyI/maxresdefault.jpg\n\n### 4. Eren Yeager é o Super-Homem do Nietzsche — e é por isso que ele é o vilão #filosofia\n- **Channel:** Filosofatos · 472K subscribers · channelId `UCJTwI-poPqq46asRTpdbXWQ`\n- **Performance:** 312.5K views · 3.1x breakout · 118.4 views/hour · 5.6% engagement\n- **Details:** published 2026-06-26 (4 months ago) · 23:11\n- **Video:** videoId `d3VxGiFa-aE` · thumbnail https://i.ytimg.com/vi/d3VxGiFa-aE/maxresdefault.jpg\n\n### 5. 🩸💢•♪|O Sacrifício do Vilão|♪ Tropa de Exploração (AOT) Reagindo ao Rap do Eren [Anirap]•💢🩸\n- **Channel:** Sr uchiha · 125K subscribers · channelId `UCv50uLMsqcfd2voCcGS3HBA`\n- **Performance:** 178.4K views · 1.3x breakout · 32.4 views/hour · 3.8% engagement\n- **Details:** published 2026-10-10 (3 weeks ago) · 6:56\n- **Video:** videoId `SOyjvpn-7VM` · thumbnail https://i.ytimg.com/vi/SOyjvpn-7VM/sddefault.jpg\n\n### 6. EREN PRESO!😱 HISTORIA GRAVIDA? REACT ATTACK ON TITAN 4T EP 69 PRIMEIRA VEZ ASSISTINDO\n- **Channel:** Dois olhares Geek · 15.9K subscribers · PT · channelId `UCeIq0NG4SyE6YvtGQ042OGQ`\n- **Performance:** 8.3K views · 1.7x breakout · 7.5 views/hour · 11.9% engagement\n- **Details:** published 2026-10-21 (1 week ago) · 36:01\n- **Video:** videoId `28vx-145Y3A` · thumbnail https://i.ytimg.com/vi/28vx-145Y3A/maxresdefault.jpg\n\n### 7. 💔 EREN NÃO É MAIS O MESMO!😱 O PLANO DE ZEKE! REACT ATTACK ON TITAN 4T EP 68 PRIMEIRA VEZ ASSISTINDO\n- **Channel:** Dois olhares Geek · 15.9K subscribers · PT · channelId `UCeIq0NG4SyE6YvtGQ042OGQ`\n- **Performance:** 7.3K views · 1.7x breakout · 1.7 views/hour · 14.4% engagement\n- **Details:** published 2026-10-19 (1 week ago) · 40:14\n- **Video:** videoId `fIgTorpaW4Q` · thumbnail https://i.ytimg.com/vi/fIgTorpaW4Q/maxresdefault.jpg\n\n### 8. EREN DESCOBRE SEU VERDADEIRO PODER! 🔥 O FINAL MAIS CHOCANTE DA 2ª TEMPORADA | REACT EP 37\n- **Channel:** Dois olhares Geek · 15.9K subscribers · PT · channelId `UCeIq0NG4SyE6YvtGQ042OGQ`\n- **Performance:** 7.1K views · 1.9x breakout · 3.6 views/hour · 15.7% engagement\n- **Details:** published 2026-08-09 (2 months ago) · 37:11\n- **Video:** videoId `DJeFNCUVus8` · thumbnail https://i.ytimg.com/vi/DJeFNCUVus8/maxresdefault.jpg"
+        }
+      ],
+      "structuredContent": {
+        "answer": "Found 8 breakout long-form videos for \"Eren\".\n\n### 1. REACT - 7 Minutoz e AniRap - O PODER DA MINHA IRA 3 | Guts, Sukuna e Eren\n- **Channel:** Anijuh · 24.3K subscribers · channelId `UCewuo9Qnble90FR57Sqn-4g`\n- **Performance:** 5.9K views · 2.1x breakout · 4.2 views/hour · 3.6% engagement\n- **Details:** published 2026-09-02 (1 month ago) · 5:32\n- **Video:** videoId `el2Vm59VR5o` · thumbnail https://i.ytimg.com/vi/el2Vm59VR5o/maxresdefault.jpg\n\n### 2. REACT/ANÁLISE -  7 Minutoz e AniRap - O PODER DA MINHA IRA 3 | Guts, Sukuna e Eren\n- **Channel:** Canto dos Cortes · 1.4K subscribers · channelId `UCIdskfUL-4ja8JWLlftV2Ug`\n- **Performance:** 2.2K views · 2x breakout · 0.7 views/hour · 10.2% engagement\n- **Details:** published 2026-06-15 (4 months ago) · 13:32\n- **Video:** videoId `oGkS6X6kyIU` · thumbnail https://i.ytimg.com/vi/oGkS6X6kyIU/maxresdefault.jpg\n\n### 3. (MEUS FAVORITOS) REACT 7 Minutoz e AniRap - O PODER DA MINHA IRA 3 | Guts, Sukuna e Eren\n- **Channel:** REAGE CARLOS!!! · 232K subscribers · channelId `UC20fTyoiXnM5a5Pwpu9OnvQ`\n- **Performance:** 49.4K views · 5.8x breakout · 19.4 views/hour · 7.9% engagement\n- **Details:** published 2026-09-03 (1 month ago) · 11:34\n- **Video:** videoId `JHibmhoLNyI` · thumbnail https://i.ytimg.com/vi/JHibmhoLNyI/maxresdefault.jpg\n\n### 4. Eren Yeager é o Super-Homem do Nietzsche — e é por isso que ele é o vilão #filosofia\n- **Channel:** Filosofatos · 472K subscribers · channelId `UCJTwI-poPqq46asRTpdbXWQ`\n- **Performance:** 312.5K views · 3.1x breakout · 118.4 views/hour · 5.6% engagement\n- **Details:** published 2026-06-26 (4 months ago) · 23:11\n- **Video:** videoId `d3VxGiFa-aE` · thumbnail https://i.ytimg.com/vi/d3VxGiFa-aE/maxresdefault.jpg\n\n### 5. 🩸💢•♪|O Sacrifício do Vilão|♪ Tropa de Exploração (AOT) Reagindo ao Rap do Eren [Anirap]•💢🩸\n- **Channel:** Sr uchiha · 125K subscribers · channelId `UCv50uLMsqcfd2voCcGS3HBA`\n- **Performance:** 178.4K views · 1.3x breakout · 32.4 views/hour · 3.8% engagement\n- **Details:** published 2026-10-10 (3 weeks ago) · 6:56\n- **Video:** videoId `SOyjvpn-7VM` · thumbnail https://i.ytimg.com/vi/SOyjvpn-7VM/sddefault.jpg\n\n### 6. EREN PRESO!😱 HISTORIA GRAVIDA? REACT ATTACK ON TITAN 4T EP 69 PRIMEIRA VEZ ASSISTINDO\n- **Channel:** Dois olhares Geek · 15.9K subscribers · PT · channelId `UCeIq0NG4SyE6YvtGQ042OGQ`\n- **Performance:** 8.3K views · 1.7x breakout · 7.5 views/hour · 11.9% engagement\n- **Details:** published 2026-10-21 (1 week ago) · 36:01\n- **Video:** videoId `28vx-145Y3A` · thumbnail https://i.ytimg.com/vi/28vx-145Y3A/maxresdefault.jpg\n\n### 7. 💔 EREN NÃO É MAIS O MESMO!😱 O PLANO DE ZEKE! REACT ATTACK ON TITAN 4T EP 68 PRIMEIRA VEZ ASSISTINDO\n- **Channel:** Dois olhares Geek · 15.9K subscribers · PT · channelId `UCeIq0NG4SyE6YvtGQ042OGQ`\n- **Performance:** 7.3K views · 1.7x breakout · 1.7 views/hour · 14.4% engagement\n- **Details:** published 2026-10-19 (1 week ago) · 40:14\n- **Video:** videoId `fIgTorpaW4Q` · thumbnail https://i.ytimg.com/vi/fIgTorpaW4Q/maxresdefault.jpg\n\n### 8. EREN DESCOBRE SEU VERDADEIRO PODER! 🔥 O FINAL MAIS CHOCANTE DA 2ª TEMPORADA | REACT EP 37\n- **Channel:** Dois olhares Geek · 15.9K subscribers · PT · channelId `UCeIq0NG4SyE6YvtGQ042OGQ`\n- **Performance:** 7.1K views · 1.9x breakout · 3.6 views/hour · 15.7% engagement\n- **Details:** published 2026-08-09 (2 months ago) · 37:11\n- **Video:** videoId `DJeFNCUVus8` · thumbnail https://i.ytimg.com/vi/DJeFNCUVus8/maxresdefault.jpg",
+        "_credits": {
+          "used": 5
+        }
+      }
+    },
+    "keyword:dilema do porco espinho": {
+      "content": [
+        {
+          "type": "text",
+          "text": "## Keyword research — mode: research · country: BR\n\n### seedKeyword (1)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| dilema do porco espinho | 52 | 44 | 54 | 3236 | null | null | none |\n\n### relatedKeywords (20)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| porco espinho | 57 | 42 | 57 | 6415 | +74.3% | null | none |\n| leandro karnal | 71 | 68 | 56 | 61437 | +53.7% | 55293 | BR 90%, AO 5%, MZ 5% |\n| solidão | 69 | 60 | 57 | 40583 | -19.4% | 36894 | BR 90%, GE 10% |\n| comportamento humano | 71 | 52 | 62 | 54341 | +2.3% | 51322 | BR 94%, VN 6% |\n| desenvolvimento pessoal | 79 | 55 | 66 | 195024 | +2.5% | 166420 | BR 84%, PT 6%, FR 3% |\n| inteligência emocional | 63 | 53 | 57 | 17449 | +135.8% | null | none |\n| psicologia | 88 | 64 | 67 | 798903 | +11.4% | 166804 | BR 22%, ES 18%, AR 9% |\n| autoconhecimento | 69 | 57 | 59 | 44063 | -38.9% | 33895 | BR 77%, PT 15%, GB 8% |\n| relacionamentos | 64 | 62 | 53 | 18136 | +28.5% | null | none |\n| amizade | 58 | 43 | 57 | 7642 | -31.3% | null | none |\n| schopenhauer | 82 | 47 | 70 | 293048 | +46.8% | 76987 | BR 28%, PK 15%, VN 7% |\n| filosofia | 83 | 66 | 63 | 369908 | +17.7% | 207922 | BR 59%, ES 10%, AR 4% |\n| resenha de livro | 53 | 39 | 56 | 3431 | null | null | none |\n| lições de vida | 61 | 41 | 60 | 11460 | +161.5% | null | none |\n| filosofia de vida | 66 | 33 | 67 | 27890 | +41.8% | null | none |\n| crescimento pessoal | 59 | 37 | 61 | 9356 | -0.3% | null | none |\n| motivação | 80 | 53 | 66 | 213963 | +9.7% | 203526 | BR 95%, PK 4%, US 1% |\n| karnal | 70 | 71 | 53 | 46396 | +4.7% | 40210 | BR 85%, MZ 8%, IN 8% |\n| leitura | 66 | 50 | 60 | 28262 | -59.3% | null | none |\n| solitude | 80 | 47 | 69 | 238774 | -6.2% | 48782 | BR 21%, IN 10%, US 8% |\n\nNote: Null or missing values are unknown, not 0: report those rows separately and keep real zeros and negative changes.\nNote: topMarkets shows at most the top three countries by search share: an absent country is unknown, not 0%."
+        }
+      ]
+    },
+    "keyword:tédio": {
+      "content": [
+        {
+          "type": "text",
+          "text": "## Keyword research — mode: research · country: BR\n\n### seedKeyword (1)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| tédio | 61 | 57 | 54 | 11601 | +28.5% | null | none |\n\n### relatedKeywords (20)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| saúde mental | 64 | 64 | 53 | 19815 | -28.9% | null | none |\n| psicologia | 88 | 64 | 67 | 798903 | +11.4% | 166804 | BR 22%, ES 18%, AR 9% |\n| neurociência | 68 | 53 | 60 | 35892 | -52% | 33131 | BR 92%, AO 8% |\n| tedio | 62 | 37 | 62 | 13354 | +157.7% | null | none |\n| desenvolvimento pessoal | 79 | 55 | 66 | 195024 | +2.5% | 166420 | BR 84%, PT 6%, FR 3% |\n| biquini cavadão | 63 | 56 | 56 | 17177 | +21.4% | null | none |\n| educação | 58 | 69 | 47 | 7193 | -63.1% | null | none |\n| ansiedade | 76 | 61 | 62 | 132969 | -9.9% | 127542 | BR 96%, NZ 2%, PT 2% |\n| psiquiatra | 57 | 62 | 50 | 6684 | -46.9% | null | none |\n| terapia | 69 | 54 | 60 | 40529 | -39.3% | 29476 | BR 73%, ES 18%, IT 9% |\n| biquini | 63 | 29 | 66 | 16101 | -39.8% | null | none |\n| depressão | 67 | 57 | 58 | 30955 | -1.7% | 28375 | BR 91%, PT 9% |\n| comportamento | 54 | 57 | 49 | 3966 | null | null | none |\n| cansaço | 61 | 55 | 55 | 12096 | -4.1% | null | none |\n| ciência | 68 | 72 | 52 | 34433 | +147.2% | 28172 | BR 82%, RU 9%, KZ 9% |\n| saúde | 69 | 60 | 57 | 41611 | -21.7% | 34045 | BR 82%, RU 9%, US 9% |\n| criatividade | 58 | 52 | 54 | 7341 | -70.2% | null | none |\n| tdah | 78 | 57 | 64 | 177855 | +29% | 61055 | BR 35%, ES 31%, FR 8% |\n| angústia | 53 | 55 | 50 | 3666 | null | null | none |\n| eslen delanogare podcast | 69 | 59 | 58 | 44745 | -30.1% | 41549 | BR 93%, ES 7% |\n\nNote: Null or missing values are unknown, not 0: report those rows separately and keep real zeros and negative changes.\nNote: topMarkets shows at most the top three countries by search share: an absent country is unknown, not 0%."
+        }
+      ]
+    },
+    "keyword:mentir": {
+      "content": [
+        {
+          "type": "text",
+          "text": "## Keyword research — mode: research · country: BR\n\n### seedKeyword (1)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| mentir | 0 | 67 | 13 | <750 | null | null | none |\n\n### relatedKeywords (20)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| 7 frases que delatan una mentira psicología aplicada | 59 | 38 | 60 | 8691 | -29.7% | null | none |\n| mientes | 65 | 57 | 56 | 22432 | -23.2% | null | none |\n| la mentira | 72 | 45 | 65 | 65322 | -12.6% | 5938 | NI 16%, CH 11%, VN 11% |\n| mentiras | 65 | 68 | 52 | 22671 | -61.3% | null | none |\n| mentira | 70 | 69 | 54 | 45476 | -29% | null | ES 31%, CO 15%, VN 15% |\n| por que te mientes | 67 | 50 | 60 | 30262 | +3.3% | null | none |\n| si te pudiera mentir | 65 | 69 | 52 | 24240 | -15.5% | null | none |\n| el me mintio | 71 | 62 | 58 | 54555 | -14.8% | null | CO 25%, AR 25%, MX 25% |\n| detector de mentiras | 64 | 71 | 50 | 20151 | -28.1% | null | none |\n| mentiroso | 65 | 46 | 60 | 22363 | +33% | null | none |\n| porque te mientes | 75 | 50 | 65 | 104332 | -1.3% | null | ES 32%, MX 14%, PE 11% |\n| yo no queria engañarte | 64 | 61 | 54 | 19801 | -24.1% | null | none |\n| mientes tan bien | 63 | 54 | 56 | 17187 | -41.9% | null | none |\n| la mentira luis miguel | 64 | 22 | 70 | 20404 | +21.5% | null | none |\n| tus mentiras | 70 | 70 | 54 | 49730 | +48.5% | null | MX 86%, NL 7%, GT 7% |\n| mentira ou verdade | 73 | 57 | 61 | 78575 | +108.8% | 78575 | BR 100% |\n| verdade ou mentira | 63 | 52 | 57 | 17592 | +22.6% | null | none |\n| é mentira | 68 | 54 | 59 | 38583 | +313.4% | 34725 | BR 90%, PT 10% |\n| ojitos mentirosos | 71 | 48 | 63 | 57509 | -20.2% | null | MX 50%, EC 11%, CO 11% |\n| mentirosa | 65 | 45 | 61 | 24181 | -38.7% | null | none |\n\nNote: Null or missing values are unknown, not 0: report those rows separately and keep real zeros and negative changes.\nNote: topMarkets shows at most the top three countries by search share: an absent country is unknown, not 0%."
+        }
+      ]
+    },
+    "keyword:psycho pass": {
+      "content": [
+        {
+          "type": "text",
+          "text": "## Keyword research — mode: research · country: BR\n\n### seedKeyword (1)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| psycho pass | 63 | 55 | 56 | 16602 | -20.6% | null | none |\n\n### relatedKeywords (9)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| psycho pass episode 1 | 53 | 34 | 58 | 3645 | null | null | none |\n| psycho-pass | 64 | 57 | 56 | 20458 | -2.9% | null | none |\n| psycho-pass trailer | 56 | 46 | 55 | 5264 | null | null | none |\n| psycho pass op 2 | 61 | 21 | 68 | 11795 | -28.5% | null | none |\n| psycho pass trailer | 59 | 38 | 60 | 9136 | -30.6% | null | none |\n| psycho pass op | 65 | 29 | 68 | 23991 | -54.8% | null | none |\n| psycho pass ost | 62 | 26 | 67 | 13530 | +41.1% | null | none |\n| psycho pass reaction | 59 | 24 | 66 | 8459 | null | null | none |\n| abnormalize psycho pass | 55 | 9 | 69 | 4635 | null | null | none |\n\nNote: Null or missing values are unknown, not 0: report those rows separately and keep real zeros and negative changes."
+        }
+      ]
+    },
+    "keyword:livre arbítrio": {
+      "content": [
+        {
+          "type": "text",
+          "text": "## Keyword research — mode: research · country: BR\n\n### seedKeyword (1)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| livre arbítrio | 0 | 51 | 19 | <750 | null | null | none |\n\n### relatedKeywords (20)\n| keyword | volume | competition | overall | estimatedMonthlySearch | searchDemandGrowthPct | countryVolume | topMarkets (top 3) |\n|---|---|---|---|---|---|---|---|\n| livre-arbítrio | 55 | 53 | 52 | 4785 | null | null | none |\n| bíblia | 71 | 53 | 61 | 56127 | -19.1% | 43654 | BR 78%, VN 6%, US 6% |\n| liberdade | 66 | 70 | 52 | 28145 | -23.4% | null | none |\n| deus | 77 | 66 | 60 | 149962 | -34.7% | 100884 | BR 67%, RU 11%, JP 7% |\n| predestinação | 52 | 58 | 48 | 3136 | null | null | none |\n| augustus nicodemus | 71 | 86 | 48 | 54783 | -37.6% | 54783 | BR 100% |\n| estudo bíblico | 67 | 51 | 60 | 30490 | +10.3% | 27441 | BR 90%, VN 10% |\n| amor | 84 | 70 | 62 | 393626 | -7.5% | 50098 | BR 13%, RU 9%, MX 8% |\n| evangelho | 69 | 70 | 53 | 42718 | +24.2% | 39432 | BR 91%, VN 9% |\n| pregação | 79 | 59 | 64 | 198351 | +22.4% | 185128 | BR 93%, AO 1%, US 1% |\n| pecado | 67 | 75 | 50 | 29220 | +126.5% | 17532 | BR 60%, ES 20%, MX 10% |\n| verdade | 60 | 61 | 52 | 11120 | -0.2% | null | none |\n| filosofia | 83 | 66 | 63 | 369908 | +17.7% | 207922 | BR 59%, ES 10%, AR 4% |\n| cruz | 91 | 61 | 70 | 1206131 | -22.6% | 18781 | US 36%, CA 7%, GB 7% |\n| allan kardec | 62 | 35 | 63 | 14860 | +308.9% | null | none |\n| livre arbitrio | 64 | 54 | 57 | 19568 | +53.6% | null | none |\n| o livro dos espíritos | 53 | 43 | 55 | 3452 | null | null | none |\n| espiritismo | 69 | 54 | 60 | 44543 | +50.5% | 34998 | BR 79%, EC 14%, CY 7% |\n| alma | 75 | 63 | 60 | 110705 | 0% | 31224 | BR 29%, VN 11%, AR 5% |\n| debate | 98 | 70 | 71 | 3843424 | +435.7% | 3520214 | BR 91%, US 2%, PT 1% |\n\nNote: Null or missing values are unknown, not 0: report those rows separately and keep real zeros and negative changes.\nNote: topMarkets shows at most the top three countries by search share: an absent country is unknown, not 0%."
+        }
+      ]
+    }
+  },
+  "notes": [
+    "Outliers: idioma pt, longos, requireAllTitleTerms=true, limit=8, janela padrao de seis meses. Resultados fora do angulo foram excluidos da recomendacao.",
+    "Keyword research: mode=research, country=BR; countryVolume ausente nao comprova demanda brasileira; estimativas nao sao audiencia observada.",
+    "Janelas de tres datas com inicio apos a data UTC de publicacao. Nao sao primeiras 72h exatas. Fuso diario nao explicitado no retorno.",
+    "Arquivos metrics.json locais nao foram alterados."
+  ]
+}

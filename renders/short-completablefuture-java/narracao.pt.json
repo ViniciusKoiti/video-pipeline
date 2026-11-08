@@ -1,0 +1,36 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Em Java, a API consulta preço e estoque. Espera um e depois o outro, ou junta os dois?",
+      "delivery": "hook"
+    },
+    {
+      "scene": "desenho",
+      "text": "Cada consulta vira um CompletableFuture, uma caixa que ainda não tem o resultado, e o thenCombine espera as duas caixas encherem."
+    },
+    {
+      "scene": "codigo",
+      "text": "As duas partem juntas no pool, então a resposta não espera a soma das duas, espera só a mais lenta."
+    },
+    {
+      "scene": "comparacao",
+      "text": "Em sequência, quinhentos e um. Composto, perto de trezentos e dez, o tempo da consulta mais lenta.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "prazo",
+      "text": "Com prazo de meio segundo, a resposta volta com timeout, mas a tarefa continua rodando e a thread do pool segue presa."
+    },
+    {
+      "scene": "prazo-medido",
+      "text": "A resposta saiu em quinhentos e oito, e a thread só ficou livre aos dois mil e seis. O prazo protege quem chamou, não o pool."
+    },
+    {
+      "scene": "fecho",
+      "text": "Na sua aplicação, em que ponto você deixaria a espera sem limite?",
+      "delivery": "invite"
+    }
+  ]
+}

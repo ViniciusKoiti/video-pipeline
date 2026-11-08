@@ -1,0 +1,29 @@
+{
+  "pt": {
+    "validate": {
+      "success": true,
+      "diagnostics": []
+    },
+    "inspect": {
+      "success": true,
+      "diagnostics": []
+    },
+    "duration_s": 35.1,
+    "voice_record": "data/episodes/short-circuit-breaker-java-pt/narracao.voz.json",
+    "max_actual_silence_s": 0.964562
+  },
+  "en": {
+    "validate": {
+      "success": true,
+      "diagnostics": []
+    },
+    "inspect": {
+      "success": true,
+      "diagnostics": []
+    },
+    "duration_s": 39.2,
+    "voice_record": "data/episodes/short-circuit-breaker-java-en/narracao.voz.json",
+    "max_actual_silence_s": 0.561041
+  },
+  "cross_language": "Only localized text and time fields differ; scene/node/edge/token identities, states, routes and numbers retained."
+}

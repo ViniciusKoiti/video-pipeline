@@ -1,0 +1,397 @@
+{
+  "success": true,
+  "command": "inspect",
+  "composition": "ProductionExplainer",
+  "contentFile": "/home/viniciusk/projetos/auto-play/renders/short-concorrencia/fluxo/content.pt.json",
+  "content": {
+    "version": 2,
+    "format": "vertical",
+    "fps": 30,
+    "style": "editorial",
+    "safeArea": "shorts",
+    "cover": true,
+    "footer": "Medido em 01/11/2026 · gcc 15.2 -O2 · Ryzen 7 5700U · 2 threads · esperado: 2.000.000 · 15 rodadas",
+    "assets": {
+      "codigo": {
+        "kind": "lottie",
+        "path": "lottie/codigo.json"
+      },
+      "mutex": {
+        "kind": "lottie",
+        "path": "lottie/mutex.json"
+      },
+      "atomic": {
+        "kind": "lottie",
+        "path": "lottie/atomic.json"
+      }
+    },
+    "scenes": [
+      {
+        "id": "gancho",
+        "durationSec": 4,
+        "type": "hook",
+        "text": "Em C: 2 threads. 1 contador. Deveria dar 2.000.000.",
+        "highlight": "deveria dar 2.000.000",
+        "kicker": "C · concorrência"
+      },
+      {
+        "id": "resultado",
+        "durationSec": 3.5,
+        "type": "comparison",
+        "left": {
+          "label": "sem proteção (mediana)",
+          "value": 1130174
+        },
+        "right": {
+          "label": "mutex e atomic",
+          "value": 2000000
+        },
+        "mode": "side",
+        "showRatio": false
+      },
+      {
+        "id": "codigo",
+        "durationSec": 12.4,
+        "type": "animation",
+        "assetId": "codigo",
+        "colors": "original"
+      },
+      {
+        "id": "mutex",
+        "durationSec": 4,
+        "type": "animation",
+        "assetId": "mutex",
+        "colors": "original"
+      },
+      {
+        "id": "atomic",
+        "durationSec": 7.9,
+        "type": "animation",
+        "assetId": "atomic",
+        "colors": "original"
+      },
+      {
+        "id": "tempo",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "Tempo da rodada",
+        "items": [
+          {
+            "label": "sem proteção · errado",
+            "value": 11
+          },
+          {
+            "label": "atomic",
+            "value": 21.4
+          },
+          {
+            "label": "mutex",
+            "value": 92.2
+          }
+        ],
+        "unit": "ms",
+        "decimals": 1,
+        "highlight": "mutex"
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "E em outras linguagens?",
+        "sub": "Comenta qual você quer ver"
+      }
+    ]
+  },
+  "media": {
+    "codigo": {
+      "kind": "lottie",
+      "path": "lottie/codigo.json",
+      "sha256": "a19af34a88210e062daff3baccd8e9babfa94b826c4ac9c384bb93996e8288da",
+      "bytes": 27159,
+      "lottie": {
+        "width": 1000,
+        "height": 1000,
+        "fps": 30,
+        "frames": 360,
+        "seconds": 12,
+        "slots": [],
+        "ready": 276,
+        "colors": [
+          "#FF8C86",
+          "#69C9F1",
+          "#F2B134",
+          "#1A222D",
+          "#536171"
+        ],
+        "features": [
+          {
+            "code": "text",
+            "support": "avoid",
+            "count": 21,
+            "where": "Em C: comportamento indefinido"
+          }
+        ],
+        "roles": []
+      }
+    },
+    "mutex": {
+      "kind": "lottie",
+      "path": "lottie/mutex.json",
+      "sha256": "02fb6bfe1e0cd351afcbe0f4c425b5f18bbb9af755c43e1309d699c76d23c2bd",
+      "bytes": 13083,
+      "lottie": {
+        "width": 1000,
+        "height": 1000,
+        "fps": 30,
+        "frames": 114,
+        "seconds": 3.8,
+        "slots": [],
+        "ready": 84,
+        "colors": [
+          "#69C9F1",
+          "#F2B134",
+          "#1A222D",
+          "#536171"
+        ],
+        "features": [
+          {
+            "code": "text",
+            "support": "avoid",
+            "count": 10,
+            "where": "Um thread por vez nesse trecho"
+          }
+        ],
+        "roles": []
+      }
+    },
+    "atomic": {
+      "kind": "lottie",
+      "path": "lottie/atomic.json",
+      "sha256": "91e50cdf9fb6e6965f5938374e0f10ee357cff3628a391d2464b80619424ddbe",
+      "bytes": 17584,
+      "lottie": {
+        "width": 1000,
+        "height": 1000,
+        "fps": 30,
+        "frames": 213,
+        "seconds": 7.1,
+        "slots": [],
+        "ready": 165,
+        "colors": [
+          "#69C9F1",
+          "#F2B134",
+          "#1A222D",
+          "#536171"
+        ],
+        "features": [
+          {
+            "code": "text",
+            "support": "avoid",
+            "count": 12,
+            "where": "10 → 11 → 12: cada soma conta"
+          }
+        ],
+        "roles": []
+      }
+    }
+  },
+  "metadata": {
+    "fps": 30,
+    "durationInFrames": 1374,
+    "durationSec": 45.8,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4,
+        "type": "hook",
+        "text": "Em C: 2 threads. 1 contador. Deveria dar 2.000.000.",
+        "highlight": "deveria dar 2.000.000",
+        "kicker": "C · concorrência",
+        "from": 0,
+        "durationInFrames": 120,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "resultado",
+        "durationSec": 3.5,
+        "type": "comparison",
+        "left": {
+          "label": "sem proteção (mediana)",
+          "value": 1130174
+        },
+        "right": {
+          "label": "mutex e atomic",
+          "value": 2000000
+        },
+        "mode": "side",
+        "showRatio": false,
+        "from": 120,
+        "durationInFrames": 105,
+        "readableFrame": 70,
+        "readableFrom": 190
+      },
+      {
+        "id": "codigo",
+        "durationSec": 12.4,
+        "type": "animation",
+        "assetId": "codigo",
+        "colors": "original",
+        "from": 225,
+        "durationInFrames": 372,
+        "readableFrame": 276,
+        "readableFrom": 501
+      },
+      {
+        "id": "mutex",
+        "durationSec": 4,
+        "type": "animation",
+        "assetId": "mutex",
+        "colors": "original",
+        "from": 597,
+        "durationInFrames": 120,
+        "readableFrame": 84,
+        "readableFrom": 681
+      },
+      {
+        "id": "atomic",
+        "durationSec": 7.9,
+        "type": "animation",
+        "assetId": "atomic",
+        "colors": "original",
+        "from": 717,
+        "durationInFrames": 237,
+        "readableFrame": 165,
+        "readableFrom": 882
+      },
+      {
+        "id": "tempo",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "Tempo da rodada",
+        "items": [
+          {
+            "label": "sem proteção · errado",
+            "value": 11
+          },
+          {
+            "label": "atomic",
+            "value": 21.4
+          },
+          {
+            "label": "mutex",
+            "value": 92.2
+          }
+        ],
+        "unit": "ms",
+        "decimals": 1,
+        "highlight": "mutex",
+        "from": 954,
+        "durationInFrames": 270,
+        "readableFrame": 44,
+        "readableFrom": 998
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "E em outras linguagens?",
+        "sub": "Comenta qual você quer ver",
+        "from": 1224,
+        "durationInFrames": 150,
+        "readableFrame": 26,
+        "readableFrom": 1250
+      }
+    ]
+  },
+  "style": {
+    "slug": "editorial",
+    "reviewNeeds": "frames",
+    "humanReview": false,
+    "cost": "light",
+    "referenceStills": [
+      "docs/stills/explainer-opening-read.png",
+      "docs/stills/explainer-context-read.png",
+      "docs/stills/explainer-comparison-read.png"
+    ],
+    "contrast": {
+      "min": 7.5,
+      "pairs": [
+        {
+          "role": "muted on ground",
+          "color": "#9AA4B2",
+          "on": "#0E1116",
+          "ratio": 7.5,
+          "min": 4.5,
+          "ok": true,
+          "kind": "text"
+        },
+        {
+          "role": "text on ground",
+          "color": "#EDEDE8",
+          "on": "#0E1116",
+          "ratio": 16.1,
+          "min": 4.5,
+          "ok": true,
+          "kind": "text"
+        },
+        {
+          "role": "highlight",
+          "color": "#F2B134",
+          "on": "#0E1116",
+          "ratio": 10.01,
+          "min": 3,
+          "ok": true,
+          "kind": "text"
+        }
+      ]
+    }
+  },
+  "reviewRequired": true,
+  "diagnostics": [
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.2.type",
+      "sceneId": "codigo",
+      "message": "A cena animation não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    },
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.3.type",
+      "sceneId": "mutex",
+      "message": "A cena animation não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    },
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.4.type",
+      "sceneId": "atomic",
+      "message": "A cena animation não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    },
+    {
+      "code": "LOTTIE_TEXT",
+      "severity": "warning",
+      "path": "assets.codigo.path",
+      "sceneId": "codigo",
+      "message": "camada de texto (21×, a primeira em \"Em C: comportamento indefinido\"): o texto do arquivo não usa as fontes nem as cores do estilo. Ponha a frase em text e deixe o movimento no Lottie."
+    },
+    {
+      "code": "LOTTIE_TEXT",
+      "severity": "warning",
+      "path": "assets.mutex.path",
+      "sceneId": "mutex",
+      "message": "camada de texto (10×, a primeira em \"Um thread por vez nesse trecho\"): o texto do arquivo não usa as fontes nem as cores do estilo. Ponha a frase em text e deixe o movimento no Lottie."
+    },
+    {
+      "code": "LOTTIE_TEXT",
+      "severity": "warning",
+      "path": "assets.atomic.path",
+      "sceneId": "atomic",
+      "message": "camada de texto (12×, a primeira em \"10 → 11 → 12: cada soma conta\"): o texto do arquivo não usa as fontes nem as cores do estilo. Ponha a frase em text e deixe o movimento no Lottie."
+    }
+  ]
+}

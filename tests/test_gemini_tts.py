@@ -16,8 +16,10 @@ from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import TransportError
 from app.providers.tts.base import SpeechRequest, SpeechResult
-from app.providers.tts.gemini import API, SCENE_BREAK, TIMEOUT_S, GeminiTTS
-from app.settings import CONFIG_FILE, load_settings, speech_chars_per_second
+from app.providers.tts.constants.gemini_constants import GeminiConstants
+from app.providers.tts.gemini import GeminiTTS
+from app.settings import load_settings, speech_chars_per_second
+from app.settings.constants.settings_constants import SettingsConstants
 from tests.test_pauses import THREE_SCENES, narration
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -91,7 +93,7 @@ def test_writes_the_wav_and_sends_voice_and_style_without_the_key_in_the_body(tm
     assert result == SpeechResult(path=out, model="gemini-3.8-flash-tts", voice="Charon")
     assert result.path.read_bytes() == wav_bytes()
     (url, body, headers), = post.calls
-    assert url == API and headers == {"x-goog-api-key": "chave-secreta"}
+    assert url == GeminiConstants.API and headers == {"x-goog-api-key": "chave-secreta"}
     assert "chave-secreta" not in repr(body)
     content = body["input"][0]["content"][0]
     assert content["text"] == "Em janeiro de 1918."  # o texto vai ao pé da letra
@@ -163,11 +165,11 @@ def test_gemini_is_still_a_voice_by_name_after_the_cloned_voice_became_the_final
 
 
 def test_check_estimates_with_the_gemini_rate_when_it_is_the_final_voice(tmp_path: Path) -> None:
-    config = (REPO_ROOT / CONFIG_FILE).read_text().replace(
+    config = (REPO_ROOT / SettingsConstants.CONFIG_FILE).read_text().replace(
         'tts_final = "chatterbox_modal"', 'tts_final = "gemini"'
     )
-    (tmp_path / CONFIG_FILE.parent).mkdir()
-    (tmp_path / CONFIG_FILE).write_text(config)
+    (tmp_path / SettingsConstants.CONFIG_FILE.parent).mkdir()
+    (tmp_path / SettingsConstants.CONFIG_FILE).write_text(config)
     settings = load_settings(tmp_path, {})
     assert settings.providers.tts_final == "gemini"
     assert speech_chars_per_second(settings) == settings.gemini_tts.chars_per_second
@@ -175,9 +177,11 @@ def test_check_estimates_with_the_gemini_rate_when_it_is_the_final_voice(tmp_pat
 
 def test_without_a_final_voice_the_draft_voice_is_used(tmp_path: Path) -> None:
     root = tmp_path / "repo"
-    (root / CONFIG_FILE).parent.mkdir(parents=True)
-    lines = (REPO_ROOT / CONFIG_FILE).read_text().splitlines()
-    (root / CONFIG_FILE).write_text("\n".join(line for line in lines if not line.startswith("tts_final")))
+    (root / SettingsConstants.CONFIG_FILE).parent.mkdir(parents=True)
+    lines = (REPO_ROOT / SettingsConstants.CONFIG_FILE).read_text().splitlines()
+    (root / SettingsConstants.CONFIG_FILE).write_text(
+        "\n".join(line for line in lines if not line.startswith("tts_final"))
+    )
     settings = load_settings(root, environ={})
     assert settings.providers.tts_final is None
     assert speech_chars_per_second(settings) == settings.kokoro.chars_per_second
@@ -209,8 +213,10 @@ def test_several_scenes_go_in_one_call_and_come_back_cut(tmp_path: Path) -> None
     assert [r.path for r in results] == [r.out_path for r in requests]
     assert all(r.path.is_file() and r.voice == "Charon" for r in results)
     (_, body, _), = post.calls
-    assert body["input"][0]["content"][0]["text"] == SCENE_BREAK.join(r.text for r in requests)
-    assert post.timeouts[0] > TIMEOUT_S  # lote demora mais que uma fala
+    assert body["input"][0]["content"][0]["text"] == GeminiConstants.SCENE_BREAK.join(
+        r.text for r in requests
+    )
+    assert post.timeouts[0] > GeminiConstants.TIMEOUT_S  # lote demora mais que uma fala
     assert not list((tmp_path / "voice").glob("tmp*"))  # o arquivo do lote não fica para trás
 
 
@@ -229,3 +235,42 @@ def test_one_scene_is_a_plain_call_and_mixed_languages_are_refused(tmp_path: Pat
     mixed = scene_requests(tmp_path, ["Uma."]) + scene_requests(tmp_path / "en", ["Two."], language="en")
     with pytest.raises(ProviderError, match="um idioma só"):
         tts.synthesize_many(mixed)
+
+
+# --- RF3: contrato de lote e arquivo íntegro ----------------------------------------------------
+
+
+def test_gemini_declares_the_batch_contract_with_the_legacy_limit() -> None:
+    from app.providers.tts.base import BatchTTS
+
+    tts = make(FakePost())
+    assert isinstance(tts, BatchTTS) and tts.max_batch_chars == 1200
+    assert tts.identity == "gemini" and tts.info.name == "gemini_tts"
+
+
+def test_a_failed_call_publishes_nothing_and_keeps_the_previous_wav(tmp_path: Path) -> None:
+    out = tmp_path / "voice" / "S01.wav"
+    out.parent.mkdir()
+    out.write_bytes(wav_bytes(480))
+    before = out.read_bytes()
+    post = FakePost(TransportError(500, "erro"), TransportError(500, "erro"))
+    with pytest.raises(ProviderError):
+        make(post).synthesize_speech(SpeechRequest(text="Oi.", out_path=out, language="pt-BR"))
+    assert out.read_bytes() == before and sorted(p.name for p in out.parent.iterdir()) == ["S01.wav"]
+
+
+def test_a_batch_with_one_invalid_cut_publishes_no_scene(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.providers.tts import gemini
+
+    def bad_cut(path: Path, outs: list[Path]) -> list[Path]:
+        for i, out in enumerate(outs):
+            out.write_bytes(wav_bytes() if i == 0 else b"corte quebrado")
+        return outs
+
+    monkeypatch.setattr(gemini, "split_at_pauses", bad_cut)
+    requests = scene_requests(tmp_path, ["Uma.", "Duas."])
+    with pytest.raises(InvalidOutput, match="corte inválido"):
+        make(FakePost(audio_response(wav_bytes()))).synthesize_many(requests)
+    assert not list((tmp_path / "voice").glob("*.wav"))  # nem a cena boa: o lote cai para cena a cena

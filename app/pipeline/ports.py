@@ -13,8 +13,9 @@ from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
+from app.errors import PipelineError
 from app.pipeline.schemas import EpisodeFormat, ReviewEntry, ReviewLog
-from app.providers.alignment.base import SubtitleAligner
+from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.image_gen.base import ImageGenProvider
 from app.providers.text.base import TextProvider
@@ -25,15 +26,24 @@ from app.settings import Settings
 M = TypeVar("M", bound=BaseModel)
 
 
-class ManifestNotFound(LookupError):
+class ManifestNotFound(PipelineError, LookupError):
     pass
 
 
-class ImmutableManifest(PermissionError):
+class ManifestInvalid(PipelineError, ValueError):
+    """O arquivo existe, mas não segue o contrato: editado à mão, de uma versão antiga ou cortado. `details`
+    traz os primeiros campos com problema (`campo: motivo`), para quem mostra ou junta os erros."""
+
+    def __init__(self, where: str, details: str) -> None:
+        super().__init__(f"{where} fora do contrato: {details}")
+        self.details = details
+
+
+class ImmutableManifest(PipelineError, PermissionError):
     """§2.6: arquivo aprovado não é sobrescrito pelo código; reabrir é explícito (vp reopen)."""
 
 
-class EpisodeLocked(RuntimeError):
+class EpisodeLocked(PipelineError, RuntimeError):
     """Outra execução já está trabalhando neste episódio (uma de cada vez, §3)."""
 
 
@@ -69,6 +79,16 @@ class ReviewGate(Protocol):
     def log(self, episode_id: str) -> ReviewLog: ...
 
 
+class WriteGuard(Protocol):
+    """Regra única de proteção de escrita (§2.6), consultada antes de gravar ou de substituir um arquivo.
+
+    `candidate` é o conteúdo que seria gravado: uma escrita que não muda o que o gate carimbou passa; sem ele
+    (troca de binário), qualquer alteração de arquivo carimbado é recusada. Violação → `ImmutableManifest`.
+    """
+
+    def check(self, episode_id: str, name: str, candidate: bytes | None = None) -> None: ...
+
+
 class Context(Protocol):
     """Tudo o que uma etapa pode usar, passado explicitamente (sem estado global)."""
 
@@ -83,9 +103,14 @@ class Context(Protocol):
     @property
     def tts(self) -> TTSProvider: ...
     @property
+    def tts_final(self) -> TTSProvider: ...  # voz do vídeo final (ADR 012); sem ela, a dos rascunhos
+    def tts_named(self, name: str) -> TTSProvider: ...  # voz registrada, fora do providers.toml
+    @property
     def image_gen(self) -> ImageGenProvider: ...
     @property
     def archives(self) -> Sequence[ArchiveProvider]: ...  # na ordem da cascata
     @property
     def aligner(self) -> SubtitleAligner: ...
+    @property
+    def word_aligner(self) -> WordAligner: ...  # reconhecimento remoto: só com pedido do dono (ADR 023)
     def renderer(self, episode_format: EpisodeFormat) -> RenderEngine: ...  # motor do formato (ADR 001)

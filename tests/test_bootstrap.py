@@ -16,10 +16,11 @@ from app.bootstrap import (
 )
 from app.pipeline.schemas import EpisodeFormat, Provider
 from app.providers.errors import PaidApiBlocked
-from app.settings import CONFIG_FILE, load_settings
+from app.settings import load_settings
+from app.settings.constants.settings_constants import SettingsConstants
 from tests.fakes import REPO_ROOT, FakeArchive, FakeText, make_root
 
-CONFIG = (REPO_ROOT / CONFIG_FILE).read_text()
+CONFIG = (REPO_ROOT / SettingsConstants.CONFIG_FILE).read_text()
 CASCADE = re.search(r"^archives = \[[^\]]*\]", CONFIG, re.MULTILINE).group(0)  # type: ignore[union-attr]
 
 

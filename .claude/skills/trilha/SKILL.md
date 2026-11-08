@@ -10,6 +10,16 @@ argument-hint: "<episode-id>"
 
 # Trilha: a música segue a virada do roteiro
 
+**Todo ensaio longo do canal leva trilha.** O passo vem depois do gate 2 e dos ativos, e antes da voz final e do
+render; o `vp render` e o gate 4 não cobram, então quem monta o episódio confere. Sem trilha só por decisão do
+dono, escrita no `outline.md`. Se o roteiro muda depois (cena nova, ordem trocada, abertura refeita), o plano
+volta aqui: as âncoras são cenas e trechos literais da fala. Com trilha, a descrição leva "Música da Biblioteca
+de Áudio do YouTube" e o `credits.txt` a seção "Música" com as faixas.
+
+**Shorts técnicos também têm o plano da trilha** (skill `shorts-tec`, passo 2): mesma escolha por etiquetas e
+mesmas âncoras, feita junto do `plano-animacao.md` e antes da voz, com saída sem música para o Instagram. A mistura
+no Short ainda não existe (`vp short juntar` só mistura voz e efeitos).
+
 Você não ouve as faixas. Escolhe pelas etiquetas do catálogo (clima, intensidade, voz cantada, loop) e pelo
 que a narração faz em cada cena. O dono ouve na prévia e decide no gate 4; "ajustar a música" volta só aqui.
 
@@ -59,6 +69,6 @@ que a narração faz em cada cena. O dono ouve na prévia e decide no gate 4; "a
 ## Antes de entregar
 
 - `.venv/bin/vp check <id>` sem erro de `music.json`.
-- Para cada faixa usada: `scripts/provisorio/catalogo_musica.py usar <id> <faixa>` copia o ativo para o
+- Para cada faixa usada: `vp music usar <id> <faixa>` copia o ativo para o
   episódio; o gate 3 da faixa é do dono (`vp approve <id> --step assets --asset <faixa>`).
 - Entregue: faixas escolhidas e por quê, onde ficam os silêncios, e o que o dono precisa ouvir com atenção.

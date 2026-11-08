@@ -1,0 +1,29 @@
+{
+  "type": "schedule",
+  "date": "2026-11-11T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {"id": "cmvx0nn9g0003l26yf4npmb66"},
+      "value": [
+        {
+          "content": "Java circuit breaker: the cost of failing fast.\n\nIn this example, orders call a simulated payment service. A closed breaker lets calls through; five consecutive failures in completion order open it. While open, it returns an error without calling payments. After two seconds, it allows one test call: success closes it, failure opens it again.\n\nLocal simulation: 300 requests at 50 per second, a pool of 20 threads, a 1 s timeout and a 3 s payment outage. A hand-written teaching example using Thread.sleep and an unbounded queue, without a circuit breaker library. OpenJDK 25.0.4.1; 15 runs per mode, fresh JVMs without warm-up and alternating order. Not a production, network or database benchmark.\n\nPer-run medians: dependency calls during the outage dropped from 60 without the breaker to 24 with it. With the breaker, there were 133 total rejections, including 7 after payments recovered, based on scheduled request arrival times. Rejections are errors, not completed payments. Fewer calls do not prove more success; we do not compare latency because it includes errors and rejections. Thresholds are choices for this demo, not Java defaults.\n\nMechanism sources:\nhttps://martinfowler.com/bliki/CircuitBreaker.html\nhttps://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker\n\nThe author's voice is cloned with AI. Animations made for this video; no on-screen presenter.\n\n#Shorts #Java #CircuitBreaker #SystemDesign",
+          "image": [
+            {
+              "id": "12e7ef0b-f589-4705-9b3b-94ed03e121ee",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/05/b7c3d61ceeb010dd640a75b410f727793c.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Java circuit breaker: the cost of failing fast",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

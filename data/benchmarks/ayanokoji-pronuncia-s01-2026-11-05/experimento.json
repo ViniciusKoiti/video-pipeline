@@ -1,0 +1,67 @@
+{
+  "status": "ready_for_comparison",
+  "scene": "S01",
+  "cpu_probe_s": 0.091,
+  "before_hashes": {
+    "data/episodes/ayanokoji-provocacao-epicteto/voice/glossary.json": "34c88277c0ac6ecca33961e0cf08a455337e9ce764e195c4a2d1b714e74c7c1a",
+    "data/episodes/ayanokoji-provocacao-epicteto/manifest.json": "5ecc7801de70feaf62adb278fd43a5f9c08897b62d88f93e5026ecb1bbcc0012",
+    "data/episodes/ayanokoji-provocacao-epicteto/scenes.json": "c628aee8696ade09fb403b4c4a81e15a9f58854c37c7e24593ffc3ad1387eb9f",
+    "data/episodes/ayanokoji-provocacao-epicteto/renders/baseline-voz-2026-11-04/episode.json": "ff42a654c69488314654b1d1ca0846451c3c555a3b4d05b8b93f67c7c7a3d840",
+    "data/episodes/ayanokoji-provocacao-epicteto/renders/baseline-voz-2026-11-04/preview.baseline.mp4": "674841536cba4f426eabe6afa411f9705674ab996f5273e884a0e43cb14d0543",
+    "data/episodes/ayanokoji-provocacao-epicteto/voice/leveled/S01-chatterbox_modal-28e83247b1-dbfe9115f5e6.wav": "a10cb88b22c7a157de117d3a28fb6307a762d51514616f3d6c7d348cd68497eb"
+  },
+  "original_text": "E você, quando alguém provoca, consegue não explodir? Epicteto, autor do Enqueirídion, tratou disso. Aviso de spoiler: há cenas das duas primeiras temporadas de Clássrum óv di Ilít.",
+  "candidate_text": "E você, quando alguém provoca, consegue não explodir? Epicteto, autor do Enquirídion, tratou disso. Aviso de spoiler: há cenas das duas primeiras temporadas de Cláss rum óv di ilít.",
+  "changes": {
+    "Encheirídion": "Enquirídion",
+    "Classroom of the Elite": "Cláss rum óv di ilít"
+  },
+  "tts_identity": "chatterbox_modal|v3|pt|b2e04b2a6b77|entrega:hook=1,0.3",
+  "reference_sha256": "b2e04b2a6b778881de1c043d71fc9bc9e6c22426fee323c153c1cb39952ab766",
+  "reference_remote_name": "references/pt-BR/hook.wav",
+  "synthesis_calls_authorized": 1,
+  "production_changed": false,
+  "limitation": "Nova realizacao de TTS pode variar mesmo com os mesmos parametros.",
+  "synthesis_seconds": 62.42,
+  "result_model": "chatterbox-multilingual-v3",
+  "raw_sha256": "7569e51a67802ec2e94e3976b2e815bc706badb50c3b400c5a61b59958172569",
+  "tts_calls": 1,
+  "variants": [
+    {
+      "file": "atual.wav",
+      "stats": {
+        "input_i": -16.4,
+        "input_tp": -1.82,
+        "input_lra": 2.6,
+        "input_thresh": -26.84,
+        "target_offset": -0.04
+      },
+      "duration_ms": 12920,
+      "sha256": "78d00e4253e8a61e3d078cb4de2159e784da656b7c2ddf1657d152eac1707c28",
+      "final_match_gain_db": -0.21999999999999886
+    },
+    {
+      "file": "candidata.wav",
+      "stats": {
+        "input_i": -16.4,
+        "input_tp": -1.62,
+        "input_lra": 6.3,
+        "input_thresh": -26.69,
+        "target_offset": -0.11
+      },
+      "duration_ms": 12920,
+      "sha256": "35ecec609cb559affd550340daa9cf4b38818439c70d4526f75dc7a31dfd5275",
+      "final_match_gain_db": 0.0
+    }
+  ],
+  "duration_s_each": 12.92,
+  "candidate_speech_duration_s": 11.84,
+  "candidate_tail_padding_s": 1.08,
+  "time_stretch": false,
+  "highpass": false,
+  "deesser": false,
+  "eq": false,
+  "source_integrity_verified": true,
+  "comparison_sha256": "f7110705309a0d7040d9c037dbb9b0e27b5a19abf2fb2847f93dc9e9531c994f",
+  "cpu_probe_finish_s": 0.08
+}

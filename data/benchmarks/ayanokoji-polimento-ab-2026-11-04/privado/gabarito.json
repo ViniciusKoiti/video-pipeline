@@ -1,0 +1,132 @@
+{
+  "baseline": "data/episodes/ayanokoji-provocacao-epicteto/renders/baseline-voz-2026-11-04/episode.json",
+  "baseline_sha256": "ff42a654c69488314654b1d1ca0846451c3c555a3b4d05b8b93f67c7c7a3d840",
+  "cpu_probe_s": 0.072,
+  "polish": {
+    "highpass_hz": 65.0,
+    "eq_hz": 3000.0,
+    "eq_width_octaves": 1.0,
+    "eq_gain_db": 0.0,
+    "deesser_intensity": 0.3,
+    "deesser_max": 0.98,
+    "deesser_frequency": 1.0
+  },
+  "pairs": [
+    {
+      "index": 1,
+      "start_s": 8.0,
+      "end_s": 12.5,
+      "scene": "S01",
+      "raw": "/home/viniciusk/projetos/auto-play/data/episodes/ayanokoji-provocacao-epicteto/voice/S01-chatterbox_modal-28e83247b1.wav",
+      "raw_sha256": "8fb1f5df3139e5acf1a5968a8be4ba2afd68cb8bb5e1a94a72b650204c358711",
+      "baseline_wav_sha256": "a10cb88b22c7a157de117d3a28fb6307a762d51514616f3d6c7d348cd68497eb",
+      "target_lufs": -16.0,
+      "variants": [
+        {
+          "name": "atual",
+          "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+          "before": {
+            "input_i": -15.77,
+            "input_tp": -1.5,
+            "input_lra": 1.4,
+            "input_thresh": -25.77,
+            "target_offset": 0.63
+          },
+          "gain_db": -0.23000000000000043,
+          "measured": {
+            "input_i": -16.01,
+            "input_tp": -1.73,
+            "input_lra": 1.5,
+            "input_thresh": -26.01,
+            "target_offset": 0.63
+          },
+          "duration_ms": 4500,
+          "label": "A",
+          "file": "par-01-A.wav",
+          "sha256": "1e5afda2204a3e56d91ba368dfe1793666135a440582aaa475aa893d656b1dd7"
+        },
+        {
+          "name": "polida",
+          "policy": "loudnorm-v1:-16.0:-1.5:11:48000:polish-v2:highpass=f=65.0,deesser=i=0.3:m=0.98:f=1.0,",
+          "before": {
+            "input_i": -15.83,
+            "input_tp": -1.5,
+            "input_lra": 1.4,
+            "input_thresh": -25.83,
+            "target_offset": 0.62
+          },
+          "gain_db": -0.16999999999999993,
+          "measured": {
+            "input_i": -16.0,
+            "input_tp": -1.67,
+            "input_lra": 1.5,
+            "input_thresh": -26.0,
+            "target_offset": 0.62
+          },
+          "duration_ms": 4500,
+          "label": "B",
+          "file": "par-01-B.wav",
+          "sha256": "22ad7b1556a7a1edaeee3c3fa34188c208b7f22fd45dea0802f64ea37f101264"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "start_s": 40.5,
+      "end_s": 45.0,
+      "scene": "S25",
+      "raw": "/home/viniciusk/projetos/auto-play/data/episodes/ayanokoji-provocacao-epicteto/voice/S25-chatterbox_modal-9272e6ea3c.wav",
+      "raw_sha256": "b53e85c12883c4214813a936e556dfc99f30135a40d4e94b520231d24c846492",
+      "baseline_wav_sha256": "7df2a97781e2a42781809ef47d70b0737caf8d9d6a2304a3d2038f22003f9e09",
+      "target_lufs": -16.130000000000003,
+      "variants": [
+        {
+          "name": "atual",
+          "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+          "before": {
+            "input_i": -16.01,
+            "input_tp": -1.5,
+            "input_lra": 0.4,
+            "input_thresh": -26.01,
+            "target_offset": 0.27
+          },
+          "gain_db": -0.120000000000001,
+          "measured": {
+            "input_i": -16.15,
+            "input_tp": -1.62,
+            "input_lra": 0.4,
+            "input_thresh": -26.15,
+            "target_offset": 0.26
+          },
+          "duration_ms": 4500,
+          "label": "A",
+          "file": "par-02-A.wav",
+          "sha256": "c4864b0166e33e5c4a519af01cb848c6098995dc106e37df7f5419e87128eacf"
+        },
+        {
+          "name": "polida",
+          "policy": "loudnorm-v1:-16.0:-1.5:11:48000:polish-v2:highpass=f=65.0,deesser=i=0.3:m=0.98:f=1.0,",
+          "before": {
+            "input_i": -16.03,
+            "input_tp": -1.5,
+            "input_lra": 0.4,
+            "input_thresh": -26.03,
+            "target_offset": 0.26
+          },
+          "gain_db": -0.10000000000000142,
+          "measured": {
+            "input_i": -16.13,
+            "input_tp": -1.6,
+            "input_lra": 0.4,
+            "input_thresh": -26.13,
+            "target_offset": 0.26
+          },
+          "duration_ms": 4500,
+          "label": "B",
+          "file": "par-02-B.wav",
+          "sha256": "ee10c8fbb3b119ab40b7125aee4643b9da123498c6af45307386add1b9bd6db2"
+        }
+      ]
+    }
+  ]
+}

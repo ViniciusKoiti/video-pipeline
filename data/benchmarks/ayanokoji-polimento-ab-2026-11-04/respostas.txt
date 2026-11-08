@@ -1,0 +1,14 @@
+Escuta do dono, informada antes de abrir o gabarito.
+
+Par 1 (8-12.5 s): A. Observacao literal: "A me parece interessante".
+Par 2 (40.5-45 s): empate. Sem observacao adicional de artefato.
+
+Gabarito conferido apos receber as escolhas:
+Par 1: A = atual (loudnorm-v1); B = polida (highpass + deesser, EQ desligado).
+Par 2: A = atual (loudnorm-v1); B = polida (highpass + deesser, EQ desligado).
+
+Resultado desta rodada: 1 preferencia pela atual, 1 empate, 0 preferencias pela polida.
+Conclusao limitada a estes dois trechos: nao demonstrou vantagem da cadeia candidata.
+Manter voice_polish.enabled = false. Nao aprova nem reprova toda configuracao de de-esser.
+O criterio proposto de 4 preferencias em 5 nao foi exercitado: esta rodada tem apenas 2 pares.
+A comparacao cega remota nao foi concluida: Gemini retornou HTTP 503 na primeira tentativa.

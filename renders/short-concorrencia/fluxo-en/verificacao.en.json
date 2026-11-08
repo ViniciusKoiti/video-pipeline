@@ -1,0 +1,78 @@
+{
+  "arquivo": "renders/short-concorrencia/final.en.fluxo.mp4",
+  "sha256": "1f7892f3b6357eff076ef23b0c8ff105d6a8f62c142b057406c2750edaeda3eb",
+  "duracao_s": 47.6,
+  "resolucao": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "falas": 7,
+  "efeitos": 6,
+  "audio": {
+    "lufs": -13.9,
+    "true_peak_dbtp": -1.4,
+    "problemas": [],
+    "ataques_verificados_s": [
+      5.489,
+      7.722,
+      8.989,
+      21.389,
+      33.289
+    ],
+    "nota": "Pop inicial anterior à janela de análise de 0,25 s; cortes sem efeito não exigem ataque."
+  },
+  "traducao": "vp traducao short-concorrencia-fluxo-en: sem problemas",
+  "medicao": "vp medicao: sem problemas; 12 didático conferido dentro da animação, fora do parser",
+  "revisao_visual": "Sete quadros de leitura, três faixas de movimento e sete quadros extraídos do MP4 abertos e conferidos.",
+  "ativos_originais": [
+    {
+      "id": "codigo",
+      "file": "data/episodes/short-concorrencia-fluxo-en/public/lottie/codigo.json",
+      "license": "Original",
+      "sha256": "1aa17bd6d8878c85829ecacc7799e2737cdf93f2d8bbb8dc4e952cbf66fd4d9f",
+      "time_scale": 0.9258248573554949,
+      "source_speech_s": 12.093,
+      "english_speech_s": 11.196,
+      "usage_notes": "Original C diagram with English text; only timeline scaled to voice."
+    },
+    {
+      "id": "mutex",
+      "file": "data/episodes/short-concorrencia-fluxo-en/public/lottie/mutex.json",
+      "license": "Original",
+      "sha256": "ca286e946c71fcb51ec9f8905a2c95acc71c9c2042f48dbba855430176bc25b5",
+      "time_scale": 1.012004466778336,
+      "source_speech_s": 3.582,
+      "english_speech_s": 3.625,
+      "usage_notes": "Original C diagram with English text; only timeline scaled to voice."
+    },
+    {
+      "id": "atomic",
+      "file": "data/episodes/short-concorrencia-fluxo-en/public/lottie/atomic.json",
+      "license": "Original",
+      "sha256": "38b7622153865c53b20291260272f41d0d3ef79cf1a39cd3b2f84ae7100e8e0f",
+      "time_scale": 0.9952012796587577,
+      "source_speech_s": 7.502,
+      "english_speech_s": 7.466,
+      "usage_notes": "Original C diagram with English text; only timeline scaled to voice."
+    }
+  ],
+  "portugues_publicado_preservado": {
+    "arquivo": "renders/short-concorrencia/final.pt.fluxo.mp4",
+    "sha256": "ab4c380f76b535e2472f17039802dca9c8fb9596cbd1e8842a21fb13b2943f26"
+  },
+  "qualidade": {
+    "pytest": "1446 passaram, 8 desmarcados",
+    "ruff": "passou"
+  },
+  "limite_localizacao": "Componentes numéricos do kit ainda formatam milhares/decimais em pt-BR; textos e voz em inglês.",
+  "escuta_humana": "Aprovada pelo dono na conversa: Acho que esta adequado pode esta ok nesse caos",
+  "gate_humano": "Tradução e preview aprovados via vp approve; autorização de publicar recebida na conversa: Pode publicar por favor",
+  "publicacao": {
+    "postiz_id": "cmvy5ouu10007n16tsxmtzjh2",
+    "state": "PUBLISHED",
+    "publishDate": "2026-11-01T18:22:05.000Z",
+    "channel": "@baixo.nivel.dev.s",
+    "url": "https://www.youtube.com/watch?v=ubt9aMaDaMs"
+  }
+}

@@ -58,6 +58,23 @@ Na dúvida entre dois tipos, o que a batida faz para quem ouve decide: se conta,
 fala de quem ouve, `APLICA`. Trechos curtos (menos de ~10 s) entram na batida vizinha, salvo os de ponto,
 `CONFISSAO` e `PERGUNTA`: esses são marcados mesmo quando são uma frase só, porque são o que se quer contar.
 
+## Desempates (emenda de 2026-11-03)
+
+A primeira concordância entre duas marcações do mesmo vídeo deu 70,5% do tempo com o mesmo tipo, abaixo dos 80%
+que a análise pede. As divergências foram nestes pares; os desempates abaixo valem a partir desta emenda. Análises
+marcadas antes dela usam o texto anterior: para comparar com elas, é preciso remarcar.
+
+- **`APLICA` × `CONCEITO`.** Se a frase fala de uma situação da vida de quem assiste (um ato, um hábito, um gasto,
+  "você", "a gente", "quem ganha pouco"), é `APLICA`, mesmo quando também explica a ideia. `CONCEITO` é a ideia dita em
+  geral, sem situação de quem ouve.
+- **`CASO`.** Exige personagem e sequência no tempo. Comparar dois exemplos sem sequência é `APLICA`.
+- **`OPINIAO` × `APLICA`.** Se a frase traz um juízo do narrador ("não é…", "é arriscado", "é um erro",
+  "infelizmente"), é `OPINIAO`, mesmo que fale de quem assiste.
+- **`PONTE` × `GANCHO-PLANTA`.** `PONTE` liga dois pontos do mesmo vídeo. Anúncio de outro vídeo ou episódio ("no
+  segundo episódio", "terá um vídeo sobre isso") é `GANCHO-PLANTA`, com `ref`, mesmo no fim de um bloco.
+- **Blocos.** Um bloco novo começa quando a fala passa a responder outra pergunta (de "o que fazer com o gasto" para
+  "como investir"). Outro exemplo ou conceito dentro da mesma pergunta fica no mesmo bloco.
+
 ## Exemplo
 
 Inventado, só para mostrar a forma:

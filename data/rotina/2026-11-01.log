@@ -1,0 +1,27 @@
+2026-11-01T06:00:33-03:00 cpu_probe 0.059
+custo_usd_equivalente 1.0648255 | turnos 46 | modelos ['claude-sonnet-5-5'] | duracao_s 217
+A rotina parou na etapa 5 e o Short 2 (concorrência) ficou pela metade. O `node` desta execução não roda o kit, então não há `validate`, `inspect` nem `review`. A causa do `node`: o `node` do PATH é o `/usr/bin/node` 22.22.1, e o `video.mjs` falha com `ERR_UNKNOWN_FILE_EXTENSION .ts`. Na sessão interativa o Node vem do nvm. `node --experimental-strip-types` não está na allowlist.
+
+**Pronto**
+- **Pauta:** a de hoje é a 02, porque a 01 já tem `renders/short-memory-leak/`. A sonda de CPU do script deu 0,059 s às 06:00. Não consegui rodar a sonda de novo, porque o comando não está na allowlist.
+- **Pastas:** `renders/short-concorrencia/{demo,posts}` e `data/episodes/short-concorrencia-{pt,en,ig}`.
+- **Medição:** 15 rodadas por versão, em `demo/resultado.txt` (gcc 15.2 `-O2 -pthread`, Ryzen 7 5700U):
+
+| Versão | Total (esperado 2.000.000) | Tempo (mediana) |
+|---|---|---|
+| sem proteção | de 999.916 a 1.325.842, mediana 1.130.174; nunca 2.000.000 | 11,0 ms |
+| mutex | 2.000.000 nas 15 | 92,2 ms |
+| atomic | 2.000.000 nas 15 | 21,4 ms |
+
+- **Objdump:** o laço da versão sem proteção não tem `lock`, então o erro não vem de otimização do compilador.
+- **Textos:** `roteiro.md`, `narracao.pt.json` e `narracao.en.json` (cinco cenas, cerca de 39 s), com `narracao.json` copiada para as três pastas de episódio.
+- **Content:** `content.pt.json` e `content.en.json` estão escritos, mas não foram conferidos. Os rótulos longos e a grade de 4 células da cena `codigo` são o que mais pode precisar de ajuste.
+
+**Pendente**
+- **Etapas 6 a 10:** `medicao.json`, `vp medicao`, `vp traducao`, voz no Modal, renders, SFX, `post.json`, gate e pacote do Postiz. Não rodei nada disso.
+- **Log do dia:** a escrita em `data/rotina/2026-11-01.md` foi negada. O registro está em `renders/short-concorrencia/rotina-2026-11-01.md`; copie para `data/rotina/` se quiser.
+- **Para destravar:** ponha o Node do nvm no PATH de `deploy/rotina/short-diario.sh` e do `.service`, e confira com `validate` na pasta `renders/short-concorrencia/`. Depois é só rodar `/short-diario` de novo, que reaproveita o que já existe.
+- **Código:** `contador.c` e `medir.sh` precisam ir para `baixo-nivel-demos/concorrencia/` antes de agendar, porque a fala diz "código na descrição". O push é seu.
+
+Não aprovei gate, não agendei nada e não usei vidIQ.
+2026-11-01T06:04:15-03:00 fim

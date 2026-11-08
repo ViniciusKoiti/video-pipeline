@@ -1,0 +1,52 @@
+{
+  "type": "schedule",
+  "date": "2026-11-01T15:22:05-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0nn9g0003l26yf4npmb66"
+      },
+      "value": [
+        {
+          "content": "Two threads each increment the same counter a million times in C. Why does the total fall short of two million?\n\nThe animation shows an illustrative lost update, a section protected by a mutex, and the indivisible increment performed by atomic_fetch_add. In C, the data race in the unprotected version has undefined behavior; the diagram is not an execution trace.\n\nMeasured on this machine: gcc 15.2.0, -O2 -pthread, Ryzen 7 5700U, 15 runs per version on November 1, 2026. Median times: no protection, 11.0 ms with an incorrect total; mutex, 92.2 ms; atomic, 21.4 ms. Mutex and atomic reached 2,000,000 in all 15 runs. These results apply to this program and environment, not a general performance rule.\n\nSources for the explanation:\nC11/WG14 N1570, sections 5.1.2.4 and 7.17.7.5: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf\npthread_mutex_lock documentation: https://docs.oracle.com/cd/E19120-01/open.solaris/816-5137/sync-117/index.html\n\nWant to see how concurrency works in another language? Comment which one you want next.\n\nThis is my voice, cloned with AI. Original animations created for this demonstration.\n\n#Shorts #CProgramming #Concurrency #Mutex #Atomic",
+          "image": [
+            {
+              "id": "2855b154-64a5-441a-be70-ba542e877702",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/01/e13b2c5fb424122da7589b2b81053925e.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Why does a C counter lose updates? Mutex vs atomic",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": [
+          {
+            "value": "C",
+            "label": "C"
+          },
+          {
+            "value": "concurrency",
+            "label": "concurrency"
+          },
+          {
+            "value": "mutex",
+            "label": "mutex"
+          },
+          {
+            "value": "atomic",
+            "label": "atomic"
+          },
+          {
+            "value": "programming",
+            "label": "programming"
+          }
+        ]
+      }
+    }
+  ]
+}

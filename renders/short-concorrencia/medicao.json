@@ -1,0 +1,20 @@
+{
+  "arquivo": "renders/short-concorrencia/demo/resultado.txt",
+  "ambiente": "gcc 15.2.0 -O2 -pthread, Ryzen 7 5700U, 2 threads de 1.000.000 somas, 15 rodadas por versão, 2026-11-01; sonda da medição: 0,059 s",
+  "numeros": [
+    {"valor": 1, "cenas": ["gancho", "codigo"], "nota": "Um contador compartilhado; Versão 1 é o nome da variante sem proteção."},
+    {"valor": 2, "trechos": ["2 threads x 1000000 somas"], "medidos": [2], "cenas": ["gancho", "codigo"], "nota": "Duas threads; Versão 2 nomeia a variante mutex e as outras duas versões são mutex e atomic."},
+    {"valor": 3, "cenas": ["codigo"], "nota": "Versão 3 é o nome da variante atomic."},
+    {"valor": 1000000, "trechos": ["2 threads x 1000000 somas"], "medidos": [1000000], "cenas": ["gancho", "codigo"]},
+    {"valor": 1000000, "trechos": ["## resumo versao=sem total mediana=1130174 minimo=999916 maximo=1325842"], "medidos": [999916], "tolerancia": 0.0001, "cenas": ["resultado"], "nota": "Perto de um milhão: mínimo de 999.916."},
+    {"valor": 1300000, "trechos": ["## resumo versao=sem total mediana=1130174 minimo=999916 maximo=1325842"], "medidos": [1325842], "tolerancia": 0.02, "cenas": ["resultado"], "nota": "Mais de um milhão e trezentos mil: máximo de 1.325.842."},
+    {"valor": 1130174, "trechos": ["## resumo versao=sem total mediana=1130174"], "medidos": [1130174], "cenas": ["resultado"]},
+    {"valor": 2000000, "trechos": ["2 threads x 1000000 somas", "## resumo versao=mutex total mediana=2000000 minimo=2000000 maximo=2000000"], "medidos": [2000000], "cenas": ["gancho", "resultado"], "nota": "Total esperado de 2 × 1.000.000; mutex acertou nas 15 rodadas."},
+    {"valor": 15, "trechos": ["15 rodadas por versao", "versao=mutex rodada=15 total=2000000"], "medidos": [15], "cenas": ["resultado"]},
+    {"valor": 11, "trechos": ["## resumo versao=sem ms mediana=11.0"], "medidos": [11.0], "cenas": ["tempo"]},
+    {"valor": 21.4, "trechos": ["## resumo versao=atomic ms mediana=21.4"], "medidos": [21.4], "cenas": ["tempo"]},
+    {"valor": 21, "trechos": ["## resumo versao=atomic ms mediana=21.4"], "medidos": [21.4], "tolerancia": 0.02, "cenas": ["tempo"], "nota": "Vinte e um milissegundos na fala, arredondado da mediana de 21,4."},
+    {"valor": 92.2, "trechos": ["## resumo versao=mutex ms mediana=92.2"], "medidos": [92.2], "cenas": ["tempo"]},
+    {"valor": 92, "trechos": ["## resumo versao=mutex ms mediana=92.2"], "medidos": [92.2], "tolerancia": 0.003, "cenas": ["tempo"], "nota": "Noventa e dois milissegundos na fala, arredondado da mediana de 92,2."}
+  ]
+}

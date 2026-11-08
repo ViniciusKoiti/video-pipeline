@@ -1,0 +1,79 @@
+# 2026-11-01T06:01:53-03:00 | gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0 -O2 -pthread | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | 2 threads x 1000000 somas | 15 rodadas por versao
+## objdump da funcao soma (laco presente)
+objdump 0000000000001380 <soma>:
+objdump     1380:	endbr64
+objdump     1384:	push   %rbx
+objdump     1385:	mov    $0xf4240,%ebx
+objdump     138a:	jmp    13d8 <soma+0x58>
+objdump     138c:	nopl   0x0(%rax,%rax,1)
+objdump     1394:	data16 cs nopw 0x0(%rax,%rax,1)
+objdump     139f:	data16 cs nopw 0x0(%rax,%rax,1)
+objdump     13aa:	data16 cs nopw 0x0(%rax,%rax,1)
+objdump     13b5:	data16 cs nopw 0x0(%rax,%rax,1)
+objdump     13c0:	mov    0x2cd1(%rip),%rax        # 4098 <sem_protecao>
+objdump     13c7:	add    $0x1,%rax
+objdump     13cb:	mov    %rax,0x2cc6(%rip)        # 4098 <sem_protecao>
+objdump     13d2:	sub    $0x1,%rbx
+objdump     13d6:	je     13f6 <soma+0x76>
+objdump     13d8:	mov    0x2c62(%rip),%eax        # 4040 <modo>
+objdump     13de:	test   %eax,%eax
+objdump     13e0:	je     13c0 <soma+0x40>
+objdump     13e2:	cmp    $0x1,%eax
+objdump     13e5:	je     1400 <soma+0x80>
+objdump     13e7:	lock addq $0x1,0x2c98(%rip)        # 4088 <com_atomic>
+objdump     13f0:	sub    $0x1,%rbx
+objdump     13f4:	jne    13d8 <soma+0x58>
+objdump     13f6:	xor    %eax,%eax
+objdump     13f8:	pop    %rbx
+objdump     13f9:	ret
+versao=sem rodada=1 total=1290121 ms=11.3
+versao=sem rodada=2 total=1271888 ms=9.5
+versao=sem rodada=3 total=1087215 ms=11.0
+versao=sem rodada=4 total=1075824 ms=11.4
+versao=sem rodada=5 total=1277616 ms=10.5
+versao=sem rodada=6 total=1264722 ms=11.6
+versao=sem rodada=7 total=1036794 ms=6.2
+versao=sem rodada=8 total=1325842 ms=9.3
+versao=sem rodada=9 total=1130174 ms=10.7
+versao=sem rodada=10 total=1317525 ms=10.6
+versao=sem rodada=11 total=999916 ms=6.7
+versao=sem rodada=12 total=1092058 ms=11.2
+versao=sem rodada=13 total=1120873 ms=11.6
+versao=sem rodada=14 total=1220827 ms=12.3
+versao=sem rodada=15 total=1051719 ms=11.7
+## resumo versao=sem total mediana=1130174 minimo=999916 maximo=1325842
+## resumo versao=sem ms mediana=11.0 minimo=6.2 maximo=12.3
+versao=mutex rodada=1 total=2000000 ms=104.5
+versao=mutex rodada=2 total=2000000 ms=107.9
+versao=mutex rodada=3 total=2000000 ms=103.3
+versao=mutex rodada=4 total=2000000 ms=94.8
+versao=mutex rodada=5 total=2000000 ms=96.8
+versao=mutex rodada=6 total=2000000 ms=92.2
+versao=mutex rodada=7 total=2000000 ms=101.6
+versao=mutex rodada=8 total=2000000 ms=89.1
+versao=mutex rodada=9 total=2000000 ms=89.0
+versao=mutex rodada=10 total=2000000 ms=92.8
+versao=mutex rodada=11 total=2000000 ms=84.7
+versao=mutex rodada=12 total=2000000 ms=76.4
+versao=mutex rodada=13 total=2000000 ms=78.5
+versao=mutex rodada=14 total=2000000 ms=76.5
+versao=mutex rodada=15 total=2000000 ms=85.5
+## resumo versao=mutex total mediana=2000000 minimo=2000000 maximo=2000000
+## resumo versao=mutex ms mediana=92.2 minimo=76.4 maximo=107.9
+versao=atomic rodada=1 total=2000000 ms=21.4
+versao=atomic rodada=2 total=2000000 ms=18.1
+versao=atomic rodada=3 total=2000000 ms=22.4
+versao=atomic rodada=4 total=2000000 ms=21.4
+versao=atomic rodada=5 total=2000000 ms=19.6
+versao=atomic rodada=6 total=2000000 ms=18.9
+versao=atomic rodada=7 total=2000000 ms=19.4
+versao=atomic rodada=8 total=2000000 ms=18.7
+versao=atomic rodada=9 total=2000000 ms=18.7
+versao=atomic rodada=10 total=2000000 ms=19.0
+versao=atomic rodada=11 total=2000000 ms=22.7
+versao=atomic rodada=12 total=2000000 ms=24.0
+versao=atomic rodada=13 total=2000000 ms=22.9
+versao=atomic rodada=14 total=2000000 ms=23.5
+versao=atomic rodada=15 total=2000000 ms=24.7
+## resumo versao=atomic total mediana=2000000 minimo=2000000 maximo=2000000
+## resumo versao=atomic ms mediana=21.4 minimo=18.1 maximo=24.7

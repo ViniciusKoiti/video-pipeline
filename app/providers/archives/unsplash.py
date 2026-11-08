@@ -14,19 +14,17 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlencode
 
-from app.pipeline.schemas import Asset, Provider
+from app.pipeline.schemas import Asset
 from app.providers.archives.base import AssetCandidate, AssetQuery
+from app.providers.archives.constants.unsplash_constants import UnsplashConstants
 from app.providers.archives.stock import StockArchive, normalize_query, provider_error
 from app.providers.http import TransportError
 
-API = "https://api.unsplash.com"
-PER_PAGE = 20
-
 
 class UnsplashArchive(StockArchive):
-    provider = Provider.UNSPLASH
-    license_id = "Unsplash"
-    license_url = "https://unsplash.com/license"
+    provider = UnsplashConstants.PROVIDER
+    license_id = UnsplashConstants.LICENSE_ID
+    license_url = UnsplashConstants.LICENSE_URL
 
     def __init__(self, access_key: str, *, app_name: str = "video_pipeline", **options: Any) -> None:
         super().__init__(**options)
@@ -36,7 +34,9 @@ class UnsplashArchive(StockArchive):
     def download_asset(self, asset: Asset, dest: Path) -> Path:
         """Termos da API: avisar cada download no endpoint de rastreio, com a chave, antes de baixar."""
         try:
-            self._get(f"{API}/photos/{asset.provider_id}/download", self._headers, self._timeout_s)
+            self._get(
+                f"{UnsplashConstants.API}/photos/{asset.provider_id}/download", self._headers, self._timeout_s
+            )
         except TransportError as error:
             raise provider_error(self.info.name, error) from None
         return super().download_asset(asset, dest)
@@ -48,10 +48,12 @@ class UnsplashArchive(StockArchive):
             "query": normalize_query(query.text),
             "orientation": query.orientation,
             "content_filter": "high",
-            "per_page": PER_PAGE,
+            "per_page": UnsplashConstants.PER_PAGE,
         }
-        data = self._fetch(f"{API}/search/photos?{urlencode(params)}", self._headers, params)
-        return data.get("results", [])
+        data = self._fetch(
+            f"{UnsplashConstants.API}/search/photos?{urlencode(params)}", self._headers, params
+        )
+        return self._items(data, "results")
 
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         width, height = int(item.get("width") or 0), int(item.get("height") or 0)

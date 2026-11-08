@@ -11,7 +11,7 @@ da tela ficam na skill `checagem` (agente `verificador`); aqui só a conferênci
   comparação e só depois decide.
 - **Quem decide é o `vp check` e o dono.** O veredito é um alerta para a revisão humana; `SUSTENTA` não
   aprova nada.
-- **Medição:** `scripts/provisorio/checagem_local.py` roda este prompt sobre um episódio aprovado.
+- **Medição:** `scripts/bench/checagem_local.py` roda este prompt sobre um episódio aprovado.
   Versão editorial: `checagem-v2` (2026-10-12); compare com o histórico somente após nova medição.
 
 ## Sistema

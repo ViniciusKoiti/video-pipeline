@@ -1,0 +1,13 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: o_que.data 2026-11-09T12:00:00-03:00 (15:00 UTC) é segunda 09/11/2026, 12h de Brasília; bate com data/rotina/2026-11-04.md ('segunda 09/11/2026 12h') e com a fila.md ('seg 09/11 12h'). O pacote registrado (linha 194 de registro.jsonl) tem o mesmo instante.",
+    "Canal: o integration.id cmv8r4jw30001l2863lr8x1lo é 'Desenvolvedor Plen' no registro e o __type é instagram-standalone com post_type 'post'. O mesmo id é usado nos outros posts de Instagram em inglês (short-indices-sqlite, short-completablefuture-java, short-claude-mods). Combina com o tipo; o id do YouTube (cmvx0nn9g, baixo.nivel.dev.s) não aparece neste JSON.",
+    "Mídia: o arquivo final.en.mp4 (sha256:e595954258fe016128b83913bc3af763e58830f87387685e38d6fe30f849ed03) tem upload registrado (linha 191). O id 807711ea-d9a9-478e-b3a3-4b8edf3c0872 e o path do JSON batem com o upload. A legenda é a do corte em inglês (Java, virtual threads, medianas 5.088,6 / 179,4 / 20.139 ms) e bate com os números do resumo da rotina. Não reconferi o hash do arquivo em disco contra o enviado. Instagram usa o vídeo en do episódio -en, como planejado.",
+    "Legenda: li inteira e não achei erro de digitação, link, @menção nem afirmação sobre pessoa ou empresa. Há divulgação ('The voice is mine, cloned with AI. The animations were made for this video.'). A hashtag #Shorts é típica do YouTube e pouco útil no Instagram; é cosmético. O JSON do Instagram não marca conteúdo sintético: com voz clonada, marcar o rótulo de IA à mão na rede depois de publicar.",
+    "Gate 4: evidencia.gate_4 = 'aprovado' para short-virtual-threads-java-en (review.json: preview aprovado por Vinicius Koiti em 04/11 11:16 com a nota 'assisti', tradução aprovada às 11:14). Isso mostra que o dono viu o vídeo, mas o hash da aprovação (sha256:4e351b72...) não foi reconferido por mim contra o final.en.mp4 enviado. A fila.md ainda diz 'gate 4 pendente' para este item; está desatualizada, não afeta o post.",
+    "Repetição: não há linha 'agendado' anterior para este canal, este dia ou esta mídia. As únicas ocorrências de 2026-11-09 no registro são os três pacotes de virtual threads (YouTube pt, YouTube en, Instagram en). O pacote de YouTube en e este usam a mesma legenda e o mesmo vídeo em canais diferentes, o que é intencional.",
+    "Tempo para desfazer: o horário é daqui a 5 dias (hoje 04/11), então sobra bastante tempo para apagar o post no Postiz. O Postiz não garante idempotência: se o envio falhar, consultar a fila antes de repetir. Depois de publicar, conferir no Instagram, porque ERROR no Postiz não prova falha."
+  ],
+  "revisor": "duvida-cega"
+}

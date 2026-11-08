@@ -1,0 +1,516 @@
+{
+  "runId": "1793527693008-cdfe9b4c",
+  "command": "review",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-01T10:08:13.009Z",
+  "contentFile": "content.pt.json",
+  "artifacts": [
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-start-f0.png",
+      "sceneId": "gancho",
+      "frame": 0,
+      "localFrame": 0,
+      "timeSec": 0
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-read-f66.png",
+      "sceneId": "gancho",
+      "frame": 66,
+      "localFrame": 66,
+      "timeSec": 2.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-end-f119.png",
+      "sceneId": "gancho",
+      "frame": 119,
+      "localFrame": 119,
+      "timeSec": 3.966666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-gancho-motion.png",
+      "sceneId": "gancho",
+      "frames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "localFrames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-resultado-start-f120.png",
+      "sceneId": "resultado",
+      "frame": 120,
+      "localFrame": 0,
+      "timeSec": 4
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-resultado-read-f190.png",
+      "sceneId": "resultado",
+      "frame": 190,
+      "localFrame": 70,
+      "timeSec": 6.333333333333333
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-resultado-end-f224.png",
+      "sceneId": "resultado",
+      "frame": 224,
+      "localFrame": 104,
+      "timeSec": 7.466666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-resultado-motion.png",
+      "sceneId": "resultado",
+      "frames": [
+        132,
+        143,
+        155,
+        167,
+        178,
+        190
+      ],
+      "localFrames": [
+        12,
+        23,
+        35,
+        47,
+        58,
+        70
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-start-f225.png",
+      "sceneId": "codigo",
+      "frame": 225,
+      "localFrame": 0,
+      "timeSec": 7.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-read-f406.png",
+      "sceneId": "codigo",
+      "frame": 406,
+      "localFrame": 181,
+      "timeSec": 13.533333333333333
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-end-f554.png",
+      "sceneId": "codigo",
+      "frame": 554,
+      "localFrame": 329,
+      "timeSec": 18.466666666666665
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-codigo-motion.png",
+      "sceneId": "codigo",
+      "frames": [
+        231,
+        237,
+        244,
+        250,
+        256,
+        262
+      ],
+      "localFrames": [
+        6,
+        12,
+        19,
+        25,
+        31,
+        37
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-mutex-start-f555.png",
+      "sceneId": "mutex",
+      "frame": 555,
+      "localFrame": 0,
+      "timeSec": 18.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-mutex-read-f621.png",
+      "sceneId": "mutex",
+      "frame": 621,
+      "localFrame": 66,
+      "timeSec": 20.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-mutex-end-f674.png",
+      "sceneId": "mutex",
+      "frame": 674,
+      "localFrame": 119,
+      "timeSec": 22.466666666666665
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-mutex-motion.png",
+      "sceneId": "mutex",
+      "frames": [
+        564,
+        574,
+        583,
+        592,
+        602,
+        611
+      ],
+      "localFrames": [
+        9,
+        19,
+        28,
+        37,
+        47,
+        56
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-atomic-start-f675.png",
+      "sceneId": "atomic",
+      "frame": 675,
+      "localFrame": 0,
+      "timeSec": 22.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-atomic-read-f790.png",
+      "sceneId": "atomic",
+      "frame": 790,
+      "localFrame": 115,
+      "timeSec": 26.333333333333332
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-atomic-end-f884.png",
+      "sceneId": "atomic",
+      "frame": 884,
+      "localFrame": 209,
+      "timeSec": 29.466666666666665
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-atomic-motion.png",
+      "sceneId": "atomic",
+      "frames": [
+        680,
+        686,
+        691,
+        696,
+        702,
+        707
+      ],
+      "localFrames": [
+        5,
+        11,
+        16,
+        21,
+        27,
+        32
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-tempo-start-f885.png",
+      "sceneId": "tempo",
+      "frame": 885,
+      "localFrame": 0,
+      "timeSec": 29.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-tempo-read-f1033.png",
+      "sceneId": "tempo",
+      "frame": 1033,
+      "localFrame": 148,
+      "timeSec": 34.43333333333333
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-tempo-end-f1154.png",
+      "sceneId": "tempo",
+      "frame": 1154,
+      "localFrame": 269,
+      "timeSec": 38.46666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-tempo-motion.png",
+      "sceneId": "tempo",
+      "frames": [
+        892,
+        900,
+        907,
+        914,
+        922,
+        929
+      ],
+      "localFrames": [
+        7,
+        15,
+        22,
+        29,
+        37,
+        44
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-start-f1155.png",
+      "sceneId": "fecho",
+      "frame": 1155,
+      "localFrame": 0,
+      "timeSec": 38.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-read-f1237.png",
+      "sceneId": "fecho",
+      "frame": 1237,
+      "localFrame": 82,
+      "timeSec": 41.233333333333334
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-end-f1304.png",
+      "sceneId": "fecho",
+      "frame": 1304,
+      "localFrame": 149,
+      "timeSec": 43.46666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-fecho-motion.png",
+      "sceneId": "fecho",
+      "frames": [
+        1159,
+        1164,
+        1168,
+        1172,
+        1177,
+        1181
+      ],
+      "localFrames": [
+        4,
+        9,
+        13,
+        17,
+        22,
+        26
+      ]
+    },
+    {
+      "kind": "review",
+      "file": "review.mp4",
+      "frameRange": [
+        90,
+        209
+      ],
+      "cutFrame": 120
+    }
+  ],
+  "style": "editorial",
+  "media": {},
+  "versions": {
+    "node": "v24.16.0",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciusk/motion-video": "0.3.0",
+    "@viniciusk/motion-kit": "0.7.1",
+    "@viniciusk/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "a0f99d6c00c989877eaa25c8a77438e93e5d1a3bd9356699dc62ef2f6436acf4",
+    "composition/content.schema.ts": "3ff6933905abebc826388d465c0b11940f947b617e5861b815914177d112aafb",
+    "composition/host.ts": "451e61198dde4ab7e1ac2de2d6b257c73e9903d635cb5567f6015c255ad76bce",
+    "src/production.mjs": "15003c9b7f6c692a5316a7daad175fcda02059f6f2001352cac7cc6b77078771",
+    "dist/composition/index.js": "4a712de138f39a52e30895ae4180dbf37d65ecebf98b2868932a23ad555f318f"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1305,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4,
+        "type": "hook",
+        "text": "2 threads. 1 contador. O total deveria dar 2.000.000.",
+        "highlight": "deveria dar 2.000.000",
+        "kicker": "concorrência",
+        "from": 0,
+        "durationInFrames": 120,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "resultado",
+        "durationSec": 3.5,
+        "type": "comparison",
+        "left": {
+          "label": "sem proteção (mediana)",
+          "value": 1130174
+        },
+        "right": {
+          "label": "mutex e atomic",
+          "value": 2000000
+        },
+        "mode": "side",
+        "showRatio": false,
+        "from": 120,
+        "durationInFrames": 105,
+        "readableFrame": 70,
+        "readableFrom": 190
+      },
+      {
+        "id": "codigo",
+        "durationSec": 11,
+        "type": "grid",
+        "title": "Exemplo didático · Em C, data race é comportamento indefinido",
+        "layout": "rows",
+        "cells": [
+          {
+            "kind": "text",
+            "text": "A lê 10 · B lê 10"
+          },
+          {
+            "kind": "text",
+            "text": "A soma e grava 11"
+          },
+          {
+            "kind": "text",
+            "text": "B soma e grava 11"
+          },
+          {
+            "kind": "text",
+            "text": "Uma soma se perde"
+          }
+        ],
+        "from": 225,
+        "durationInFrames": 330,
+        "readableFrame": 37,
+        "readableFrom": 262
+      },
+      {
+        "id": "mutex",
+        "durationSec": 4,
+        "type": "headline",
+        "text": "mutex: um thread por vez no trecho protegido.",
+        "highlight": "um thread por vez",
+        "from": 555,
+        "durationInFrames": 120,
+        "readableFrame": 56,
+        "readableFrom": 611
+      },
+      {
+        "id": "atomic",
+        "durationSec": 7,
+        "type": "grid",
+        "title": "atomic: soma indivisível",
+        "layout": "rows",
+        "cells": [
+          {
+            "kind": "text",
+            "text": "atomic_fetch_add(&com_atomic, 1)"
+          },
+          {
+            "kind": "text",
+            "text": "Primeiro incremento: 10 → 11"
+          },
+          {
+            "kind": "text",
+            "text": "Próximo incremento: 11 → 12"
+          }
+        ],
+        "from": 675,
+        "durationInFrames": 210,
+        "readableFrame": 32,
+        "readableFrom": 707
+      },
+      {
+        "id": "tempo",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "Tempo da rodada",
+        "items": [
+          {
+            "label": "sem proteção · errado",
+            "value": 11
+          },
+          {
+            "label": "atomic",
+            "value": 21.4
+          },
+          {
+            "label": "mutex",
+            "value": 92.2
+          }
+        ],
+        "unit": "ms",
+        "decimals": 1,
+        "highlight": "mutex",
+        "from": 885,
+        "durationInFrames": 270,
+        "readableFrame": 44,
+        "readableFrom": 929
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "Cada soma conta",
+        "sub": "atomic no contador · mutex no trecho",
+        "from": 1155,
+        "durationInFrames": 150,
+        "readableFrame": 26,
+        "readableFrom": 1181
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.2.type",
+      "sceneId": "codigo",
+      "message": "A cena grid não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    },
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.4.type",
+      "sceneId": "atomic",
+      "message": "A cena grid não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    }
+  ],
+  "finishedAt": "2026-11-01T10:09:49.598Z",
+  "elapsedMs": 96585
+}

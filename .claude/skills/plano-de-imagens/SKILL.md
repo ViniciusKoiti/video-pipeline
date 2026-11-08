@@ -45,12 +45,12 @@ citação (quadros da obra).
    do que reusar e do que buscar, e as decisões em aberto, numa pergunta só. Provedor externo (bancos, Commons,
    YouTube) só com pedido do dono na sessão.
 4. **Buscar candidatos.** Escreva um `pedidos.json` com um pedido por trecho: consultas em inglês, `midias`, duração
-   mínima e orientação. Rode `scripts/provisorio/buscar_candidatos.py <id> pedidos.json --limit 4`. Monte as folhas
+   mínima e orientação. Rode `vp assets search <id> pedidos.json --limit 4`. Monte as folhas
    com `folhas.py` (nesta pasta).
    - **Triagem:** abra cada folha. Descarte o que tem rosto, marca, logo, texto legível ou contexto político, e
      indique um ou dois números por trecho. O dono escolhe.
    - **Folha fraca:** se um tema vier fraco, refaça a busca com outras palavras antes de mostrar.
-5. **Baixar e conferir.** Rode `scripts/provisorio/baixar_escolhidos.py <id> <cena> <asset-id>`.
+5. **Baixar e conferir.** Rode `vp assets take <id> <cena> <asset-id>`.
    - **Conferência do vídeo:** confira o vídeo **inteiro** com `conferencia.py` (quadros espaçados do começo ao
      fim), não a miniatura. Uma pessoa pode entrar no segundo 1.
    - **Conferência da foto:** confira a foto em resolução cheia. Letreiros ilegíveis na miniatura aparecem a 2.000

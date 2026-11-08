@@ -2,7 +2,7 @@ import planilha from "./letra.json";
 import vinha from "./vinha/letra.json";
 
 // O que muda de uma música para a outra no clipe de letra. A composição (`Clipe.tsx`) é a mesma: três vozes
-// tipográficas, cores e brasão do Nabote. Cada letra vem de `scripts/provisorio/clipe_tempos.py`.
+// tipográficas, cores e brasão do Nabote. Cada letra vem de `scripts/ferramentas/clipe_tempos.py`.
 
 export type Palavra = {t: string; ini: number; ok: boolean};
 export type Linha = {secao: string; vez: number; texto: string; ini: number; fim: number; palavras: Palavra[]};

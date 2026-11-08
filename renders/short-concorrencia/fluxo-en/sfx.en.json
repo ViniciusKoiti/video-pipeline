@@ -1,0 +1,46 @@
+{
+  "cues": [
+    {
+      "sound": "pop-medium-in",
+      "scene": "gancho",
+      "offset_s": 0.05,
+      "note": "Capa montada no primeiro quadro."
+    },
+    {
+      "sound": "pop-medium-in",
+      "scene": "resultado",
+      "offset_s": 0.1,
+      "note": "Entrada da comparação."
+    },
+    {
+      "sound": "impact-light-firm",
+      "scene": "resultado",
+      "offset_s": 2.333,
+      "note": "Os totais terminam de entrar."
+    },
+    {
+      "sound": "pop-medium-in",
+      "scene": "codigo",
+      "offset_s": 0.1,
+      "note": "Entrada do exemplo didático."
+    },
+    {
+      "sound": "pop-medium-in",
+      "scene": "mutex",
+      "offset_s": 0.1,
+      "note": "Entrada da explicação do mutex."
+    },
+    {
+      "sound": "pop-medium-in",
+      "scene": "atomic",
+      "offset_s": 0.1,
+      "note": "Entrada da soma indivisível."
+    },
+    {
+      "sound": "pop-medium-in",
+      "scene": "tempo",
+      "offset_s": 0.1,
+      "note": "Entrada dos tempos medidos."
+    }
+  ]
+}

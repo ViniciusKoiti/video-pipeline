@@ -1,0 +1,73 @@
+# ADR 049 — `VoiceKey`, biblioteca de falas e narrador
+
+Data: 2026-11-01. Status: aceita. Fatia 1 do RF6 do
+[fluxo de refatoração](../fluxo-refatoracao-solid-2026-11-01.md). Decisão do dono em 2026-11-01: **manter o nome
+atual dos WAVs** (pendência da seção 5 do fluxo, ADR 041).
+
+## Contexto
+
+`montar_episodio.py` (longo) e `shorts_tec.py` (Short) montavam, cada um a seu jeito, a chave do WAV, o laço de
+`glob`/`unlink` das versões antigas, o lote e o fechamento do TTS. Os dois **apagavam as versões antigas antes
+de gerar a nova**: uma falha ou uma cota esgotada deixava a cena sem fala. Os nomes eram fórmulas diferentes
+(`<cena>-<provedor>-<hash>.wav` e `<cena>-<provedor>-<idioma>-<hash>.wav`).
+
+## Decisão
+
+- **`VoiceKey`** (`app/pipeline/models/voice_key.py`): cena, provedor (a **identidade** do cache,
+  `TTSProvider.identity`, não o nome de exibição), idioma, `fingerprint` e texto falado. O hash é
+  `sha256(f"{fingerprint}|{spoken}")[:10]`, e o nome vem do `Naming` da biblioteca: `LONG` ou `SHORT`.
+- **Os nomes de hoje não mudam, nos dois formatos.** No **longo**, o `fingerprint` é a identidade do adapter
+  (ADR 041: pausa, fala longa e entrega) **sem os valores da entrega clonada**: `|entrega:hook=0.8,0.3` volta a ser
+  `|entrega:hook`, como era. No **Short**, por decisão do dono, é o nome de hoje: a identidade de um pedido **sem
+  texto** (sem `|pausa` nem `|frases`) mais a entrega pelo nome, no formato antigo, só nas vozes clonadas. Isso mantém
+  os WAVs já gerados e aprovados na escuta, com pausa ou entrega. O custo está registrado: o nome não acompanha uma
+  mudança dos valores de `exaggeration` e `cfg_weight` da entrega (no Short, nem de `pause_ms`); trocar esses valores
+  pede apagar os WAVs afetados. Os testes comparam, para Kokoro, Gemini e Chatterbox (local e Modal), quatro textos e
+  as cinco entregas, com as funções reais `wav_name`, `voice_fingerprint` e `long_speech_tag`.
+  **Emenda de 2026-11-01 (dado real):** a primeira versão deixava os valores da entrega no nome do longo (a mudança
+  declarada da ADR 041) e o teste só cobria a entrega neutra. Contra os episódios reais, 53 de 89 falas do
+  `death-note-fins-meios` e as de entrega não neutra de vários outros episódios seriam regeradas. Com os valores fora do
+  nome, nenhuma fala final regera (conferido em todos os episódios com WAV, só leitura).
+- **`VoiceLibrary`** (`app/pipeline/voice.py`) é só arquivos: `path`, `has` (o arquivo é um WAV válido, e um
+  corrompido no lugar da fala conta como ausente), `stale` (mesmo começo de nome e **exatamente** um hash de 10
+  caracteres; nada de outra cena, provedor, idioma ou arquivo que não seja um hash) e `prune`.
+- **`Narrator`** gera as falas que faltam com um `TTSProvider` emprestado (quem o constrói o fecha,
+  `closing_tts`): `plan` (só as sem WAV), `synthesize` (lote, fallback e cota da ADR 041 por
+  `synthesize_requests`) e `produce` (uma saída por fala, na ordem). **A fala nova só substitui a antiga depois
+  de pronta:** o WAV é medido (finito e maior que zero; falha do ffprobe vale como inválido) e só então as versões
+  antigas são podadas. Falha, WAV inválido ou cota esgotada deixam o anterior utilizável, e um WAV novo que não
+  mede some. Retomar é rodar de novo: o cache são os nomes dos arquivos, e um processo novo só pede o que falta.
+- A medida do WAV e o glossário (`respell`) entram como funções injetadas: o núcleo não roda ffprobe nem lê
+  arquivo de glossário.
+
+## Fatia 2: os scripts de voz usam o narrador
+
+`montar_episodio.py` (longo, `generate_voice` com `Naming.LONG`) e `shorts_tec.py` (Short, `generate_voice` com
+`Naming.SHORT`) deixaram de calcular a chave, de apagar as versões antigas antes de gerar e de decidir o lote: os
+dois chamam `Narrator.produce` e `Narrator.require`, dentro de `closing_tts` (a voz clonada fecha também na falha;
+antes, uma parada no meio deixava o processo do modelo aberto). Falta de fala é `VoiceIncomplete` (um
+`PipelineError`, tratado pelo handler central da ADR 045), com o motivo de cada fala; as prontas ficam, e rodar de
+novo pede só as que faltam. O registro `<narração>.voz.json` e o trecho falado (`speech_bounds`) seguem no script.
+
+As fórmulas dos nomes de antes (`voice_fingerprint`, `long_speech_tag`, `wav_name` e o laço do longo) saíram dos
+scripts e ficaram **congeladas em `tests/legacy_voice_names.py`**, que é a especificação do nome de hoje: o RF7 pode
+apagar os scripts sem perder a prova. `batches`/`generate` e as constantes `CLONED`/`BATCH_CHARS` saíram do script
+(o lote é `app/media/speech_batches.py`).
+
+**Prova com dado real (só leitura, nenhuma síntese):** para os 18 registros de fala dos Shorts em
+`data/episodes/` (todos `chatterbox_modal`, com o adaptador real e o hash da gravação de referência real), o
+`Narrator.plan` devolveu **zero falas faltando**: todos os WAVs existentes seriam reaproveitados, sem chamada de TTS.
+
+## Fora do escopo
+
+`Production`, `subs` e `render` (próximas fatias do RF6); a escolha do provedor da voz (`tts_final`) e o registro
+`<narração>.voz.json` continuam nos scripts.
+
+## Emenda de 2026-11-01 (RF7, fatia 7a)
+
+A voz do Short saiu do script: `vp short voz <pasta> <narracao.json> [--voz NOME]` (`app/commands/short_voz.py`)
+usa `produce_short_voice` e escreve o registro `<narração>.voz.json` (`app/pipeline/short_voice.py`); o trecho
+falado de cada WAV vem de `app/media/speech_bounds.py` (era `speech_bounds` e `bounds_from_log` do script, com
+as mesmas constantes). Os nomes dos WAVs não mudam (oráculo em `tests/legacy_voice_names.py`). A voz padrão
+continua sendo a `tts_final`; a falha de leitura do ffmpeg passou de `SystemExit` a `SpeechBoundsError`, com a
+mesma mensagem e saída 1 pelo tratamento central.

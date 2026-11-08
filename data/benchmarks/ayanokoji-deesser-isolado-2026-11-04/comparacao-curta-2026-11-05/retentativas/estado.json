@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "attempts": 2,
+  "created_at": 1793847150.7858033,
+  "deadline": 1793854350.7858033,
+  "next_at": 1793848050.8404772,
+  "media_sha256": "4ebc7f231010460c5a30498aafed63dfbd81c9055306d9be6ec95f717b851826",
+  "model": "gemini-3.8-flash",
+  "max_attempts": 5,
+  "interval_s": 300,
+  "comparison": {
+    "duration_s": 12.92,
+    "lufs": -16.11,
+    "max_attempts": 5
+  },
+  "cpu_probe_s": 0.076,
+  "last_attempt_at": 1793847537.3447082,
+  "result": "/home/viniciusk/projetos/auto-play/data/benchmarks/ayanokoji-deesser-isolado-2026-11-04/comparacao-curta-2026-11-05/retentativas/tentativa-02.json",
+  "updated_at": 1793847750.840477,
+  "reason": "gemini (gemini-3.8-flash) rates the soundtrack 7/10: Narração clonada limpa e inteligível em ambas as partes, sem diferenças acústicas perceptíveis que justifiquem alteração no fluxo de trabalho. 2 issues (0 high). Top fix: Refinar a fonética de termos estrangeiros ('Enchiridion' e 'Classroom of the Elite'). LLM opinion, timestamps approximate; verify with earshot timeline/ab."
+}

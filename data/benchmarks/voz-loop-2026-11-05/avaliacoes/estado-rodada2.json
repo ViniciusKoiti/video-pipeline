@@ -1,0 +1,42 @@
+{
+ "http": 2,
+ "validas": {},
+ "feitas": [],
+ "slots_gastos": [
+  "U:solo"
+ ],
+ "tentativas": [
+  {
+   "rodada": 2,
+   "http": 1,
+   "slot": "U:solo",
+   "trecho": "U",
+   "status": "indisponivel",
+   "at": 1793926248.6535027,
+   "arquivo": "data/benchmarks/voz-loop-2026-11-05/avaliacoes/r2-http-01-U-solo.json",
+   "alvo_sha256": "45c812dd1c1a02dc99662199ff32a7cabbf7e6d4529bdc2e009cdfb64600e888",
+   "modo": "solo",
+   "modelo": "gemini-3.8-flash",
+   "notas_AB": null,
+   "nota_solo": null,
+   "overall": null,
+   "erro": "Gemini HTTP 503: request failed. This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+  },
+  {
+   "rodada": 2,
+   "http": 2,
+   "slot": "U:solo",
+   "trecho": "U",
+   "status": "indisponivel",
+   "at": 1793927017.329569,
+   "arquivo": "data/benchmarks/voz-loop-2026-11-05/avaliacoes/r2-http-02-U-solo.json",
+   "alvo_sha256": "45c812dd1c1a02dc99662199ff32a7cabbf7e6d4529bdc2e009cdfb64600e888",
+   "modo": "solo",
+   "modelo": "gemini-3.8-flash",
+   "notas_AB": null,
+   "nota_solo": null,
+   "overall": null,
+   "erro": "Gemini HTTP 503: request failed. This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+  }
+ ]
+}

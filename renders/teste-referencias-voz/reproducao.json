@@ -1,0 +1,44 @@
+{
+  "wav_decode": "passed",
+  "source_clips_decode": "all 12 passed",
+  "concatenation": "all samples equal to original clips",
+  "mp3": [
+    {
+      "file": "renders/teste-referencias-voz/comparacao.pt.mp3",
+      "sha256": "9cae02fcb633cee98152804db95a6891075f763975a322b85be13e47a71658f2",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "41.510000"
+        }
+      }
+    },
+    {
+      "file": "renders/teste-referencias-voz/comparacao.en.mp3",
+      "sha256": "032507b6996d47026b38e5b3df10b2128bd315dca2a0eee75adf0630a16924f6",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "38.910000"
+        }
+      }
+    }
+  ],
+  "perceptual_quality": "not verified; waiting for clarification about playback vs generated speech"
+}

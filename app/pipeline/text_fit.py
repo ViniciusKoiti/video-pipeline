@@ -10,23 +10,12 @@ humana decide.
 
 from __future__ import annotations
 
+from app.pipeline.constants.text_fit_constants import TextFitConstants
 from app.pipeline.schemas import CompareShot, LowerThirdShot, NetworkShot, NumberShot, Shot, TimelineShot
 
 # (caracteres por linha, linhas que cabem)
-NUMBER_OVER_MEDIA = (60, 1)  # painel sobre a imagem, até 1100 px, letra 32; com 2 linhas cobre a imagem
-NUMBER_FULL = (54, 2)  # número em tela cheia, 1200 px, letra 44
-COMPARE_LABEL = (44, 2)  # metade de 1600 px menos o espaço do meio, letra 36 (ValueCompare)
-TIMELINE_LABEL = (31, 3)  # caixa de 457 px (0,88 × 520), letra 30 (YearTimeline)
-LOWER_THIRD_NAME = (34, 1)  # 46% da tela menos as margens (831 px), letra 44 em negrito (LowerThird)
-LOWER_THIRD_ROLE = (60, 2)  # a mesma caixa, letra 27
 # Rede, na tela de 1280×720 em que ela é desenhada: caixa de 260 px (ExpandingNetwork).
-NODE_LABEL_PER_LINE = 23  # letra 21 em negrito
-NODE_ROLE_PER_LINE = 30  # letra 17
-NODE_LINES = 2  # nome + papel de um nó com seta saindo: com mais, o bloco encosta no texto dessa seta
-EDGE_LABEL_CHARS = 40  # etiqueta sobre a seta, letra 17 fixa no kit (~450 px)
-EDGE_VALUE_CHARS = 24  # valor na seta, letra 16 fixa no kit
 # Texto na tela que a narração não lê junto precisa de tempo: ritmo usual de legenda para adultos.
-READING_CHARS_PER_SECOND = 17.0
 
 
 def lines(text: str, per_line: int) -> int:
@@ -54,18 +43,22 @@ def text_fit_warnings(scene_id: str, shot: Shot, ms: float, over_media: bool) ->
 
     if isinstance(shot, NumberShot):
         where = "sobre a imagem" if over_media else "em tela cheia"
-        fit(shot.label, NUMBER_OVER_MEDIA if over_media else NUMBER_FULL, f"texto do número {where}")
+        fit(
+            shot.label,
+            TextFitConstants.NUMBER_OVER_MEDIA if over_media else TextFitConstants.NUMBER_FULL,
+            f"texto do número {where}",
+        )
     elif isinstance(shot, CompareShot):
         for side in (shot.left, shot.right):
-            fit(side.label, COMPARE_LABEL, "texto da comparação")
+            fit(side.label, TextFitConstants.COMPARE_LABEL, "texto da comparação")
     elif isinstance(shot, LowerThirdShot):
-        fit(shot.name, LOWER_THIRD_NAME, "nome da tarja")
-        fit(shot.role, LOWER_THIRD_ROLE, "cargo da tarja")
+        fit(shot.name, TextFitConstants.LOWER_THIRD_NAME, "nome da tarja")
+        fit(shot.role, TextFitConstants.LOWER_THIRD_ROLE, "cargo da tarja")
     elif isinstance(shot, TimelineShot):
         for event in shot.events:
-            fit(event.label, TIMELINE_LABEL, f"evento {event.date!r} da linha do tempo")
+            fit(event.label, TextFitConstants.TIMELINE_LABEL, f"evento {event.date!r} da linha do tempo")
         chars = sum(len(e.label) for e in shot.events)
-        readable = READING_CHARS_PER_SECOND * ms / 1000
+        readable = TextFitConstants.READING_CHARS_PER_SECOND * ms / 1000
         if chars > readable:
             found.append(f"{scene_id}: linha do tempo com {chars} caracteres de texto em ~{ms / 1000:.1f} s; "
                          f"dá para ler ~{readable:.0f}")
@@ -75,17 +68,19 @@ def text_fit_warnings(scene_id: str, shot: Shot, ms: float, over_media: bool) ->
         for node in shot.nodes:
             if shot.layout == "layered" and node.id not in sources:
                 continue
-            used = lines(node.label, NODE_LABEL_PER_LINE)
-            used += lines(node.role, NODE_ROLE_PER_LINE) if node.role else 0
-            if used > NODE_LINES:
-                found.append(f"{scene_id}: nó {node.label!r} ocupa {used} linhas com o papel, "
-                             f"cabem {NODE_LINES}; use um nome curto (a sigla, apresentada antes)")
+            used = lines(node.label, TextFitConstants.NODE_LABEL_PER_LINE)
+            used += lines(node.role, TextFitConstants.NODE_ROLE_PER_LINE) if node.role else 0
+            if used > TextFitConstants.NODE_LINES:
+                found.append(
+                    f"{scene_id}: nó {node.label!r} ocupa {used} linhas com o papel, "
+                    f"cabem {TextFitConstants.NODE_LINES}; use um nome curto (a sigla, apresentada antes)"
+                )
         for edge in shot.edges:
             arrow = f"{edge.from_}→{edge.to}"
-            if len(edge.label) > EDGE_LABEL_CHARS:
+            if len(edge.label) > TextFitConstants.EDGE_LABEL_CHARS:
                 found.append(f"{scene_id}: texto da seta {arrow} com {len(edge.label)} caracteres, "
-                             f"cabem ~{EDGE_LABEL_CHARS}: {edge.label!r}")
-            if len(edge.value) > EDGE_VALUE_CHARS:
+                             f"cabem ~{TextFitConstants.EDGE_LABEL_CHARS}: {edge.label!r}")
+            if len(edge.value) > TextFitConstants.EDGE_VALUE_CHARS:
                 found.append(f"{scene_id}: valor da seta {arrow} com {len(edge.value)} caracteres, "
-                             f"cabem ~{EDGE_VALUE_CHARS}: {edge.value!r}")
+                             f"cabem ~{TextFitConstants.EDGE_VALUE_CHARS}: {edge.value!r}")
     return found

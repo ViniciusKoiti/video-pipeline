@@ -10,20 +10,21 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from dataclasses import dataclass, field
 from datetime import date
 
-from pydantic import ValidationError
-
 from app.media.narration import strip_pauses, timeline_length
+from app.pipeline.constants.check_constants import CheckConstants as Constants
+from app.pipeline.constants.molde_constants import MoldeConstants
+from app.pipeline.constants.numbers_constants import NumbersConstants
+from app.pipeline.constants.radar_constants import RadarConstants
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.constants.shots_constants import ShotsConstants
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.metrics import summary_line
-from app.pipeline.molde import MOLDE_FILE, Molde, claimless_statements, molde_summary, molde_warnings
+from app.pipeline.models.check_report import CheckReport as CheckReport
+from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
 from app.pipeline.numbers import (
-    FORMAT_FILE,
-    LONG_KINDS,
-    MAX_SHOT_MS,
     FormatBrief,
     current_block,
     format_warnings,
@@ -33,21 +34,9 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
-from app.pipeline.ports import M, ManifestStore
-from app.pipeline.radar import (
-    BRIEF_FILE,
-    CAPTION_FILE,
-    RadarBrief,
-    brief_summary,
-    form_warnings,
-    unmeasured_patterns,
-)
+from app.pipeline.ports import M, ManifestInvalid, ManifestStore
+from app.pipeline.radar import RadarBrief, brief_summary, form_warnings, unmeasured_patterns
 from app.pipeline.schemas import (
-    MEDIA_SHOT_KINDS,
-    METRICS_FILE,
-    MUSIC_PLAN_FILE,
-    NUMBER_SEPARATORS,
-    OVERLAY_SHOT_KINDS,
     Asset,
     BrollShot,
     CalculationShot,
@@ -77,33 +66,14 @@ from app.pipeline.schemas import (
     screen_parts,
     unknown_source_refs,
 )
-from app.pipeline.shots import MIN_SHOT_MS
 from app.pipeline.text_fit import text_fit_warnings
 
 # Ritmo de fala padrão, medido no exemplo com pm_alex (150 caracteres em 9,95 s); a CLI passa o da voz
 # configurada. Só estimativa: o tempo real vem do WAV (§9).
-CHARS_PER_SECOND = 15.0
+
 # Alertas de variedade (ADR 011, decisão 9): a revisão humana decide.
-MAX_GRAPHIC_RUN = 4  # planos gráficos seguidos sem foto nem B-roll na tela
-MAX_STAMP_SHARE = 0.10
-MIN_SHOTS_FOR_SHARE = 10  # porcentagem de poucos planos não diz nada
-READING_MS = 4000  # tempo mínimo de leitura de gráfico, comparação, rede, cronologia e documento
-READING_KINDS = frozenset({"chart", "compare", "network", "timeline", "calculation", "receipt"})
 # O BarChart do motion-kit fixado formata os valores em pt-BR (sem prop `locale`): em inglês só serve onde as
 # duas convenções coincidem, que é inteiro abaixo de mil. Retirar quando o kit ganhar a prop e o pin subir.
-BAR_TYPES = frozenset({"bar", "bar_horizontal"})
-BAR_PLAIN_BELOW = 1000
-
-
-@dataclass
-class CheckReport:
-    errors: list[str] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
-    checked: list[str] = field(default_factory=list)
-
-    @property
-    def ok(self) -> bool:
-        return not self.errors
 
 
 def _read(
@@ -113,11 +83,8 @@ def _read(
         return None
     try:
         return store.read(episode_id, name, model)
-    except ValidationError as error:
-        problems = "; ".join(
-            f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in error.errors()[:5]
-        )
-        report.errors.append(f"{name}: {problems}")
+    except ManifestInvalid as error:
+        report.errors.append(f"{name}: {error.details}")
         return None
 
 
@@ -207,7 +174,7 @@ def _check_scenes(
     excerpts: dict[str, str],
     report: CheckReport,
     region_codes: frozenset[str] | None = None,
-    chars_per_second: float = CHARS_PER_SECOND,
+    chars_per_second: float = Constants.CHARS_PER_SECOND,
 ) -> list[tuple[str, Shot, float]]:
     """Valida as cenas e devolve cada plano com a duração estimada, para as regras que dependem dos ativos."""
     planned_ms: list[tuple[str, Shot, float]] = []
@@ -238,7 +205,7 @@ def _check_scenes(
         for shot, _, ms in timed:
             planned_ms.append((scene.id, shot, ms))
             report.warnings += text_fit_warnings(
-                scene.id, shot, ms, media_before and shot.kind in OVERLAY_SHOT_KINDS
+                scene.id, shot, ms, media_before and shot.kind in SchemasConstants.OVERLAY_SHOT_KINDS
             )
             report.errors += number_errors(scene.id, shot, scenes.language)
             report.errors += arithmetic_errors(scene.id, shot, scenes.language)
@@ -248,16 +215,16 @@ def _check_scenes(
                     f"{scene.id}: {shot.kind} ({shot.anchor!r}): conta na tela só em vídeo que explica "
                     "(ADR 020)"
                 )
-            media_before = media_before or shot.kind in MEDIA_SHOT_KINDS
-            too_long = ms > MAX_SHOT_MS and shot.kind not in LONG_KINDS
-            if ms < MIN_SHOT_MS or too_long:
+            media_before = media_before or shot.kind in SchemasConstants.MEDIA_SHOT_KINDS
+            too_long = ms > NumbersConstants.MAX_SHOT_MS and shot.kind not in NumbersConstants.LONG_KINDS
+            if ms < ShotsConstants.MIN_SHOT_MS or too_long:
                 report.warnings.append(
                     f"{scene.id}: plano {shot.kind} ({shot.anchor!r}) com ~{ms / 1000:.1f} s"
                 )
-            elif ms < READING_MS and _needs_reading_time(shot):
+            elif ms < Constants.READING_MS and _needs_reading_time(shot):
                 report.warnings.append(
                     f"{scene.id}: {shot.kind} ({shot.anchor!r}) com ~{ms / 1000:.1f} s; "
-                    f"precisa de {READING_MS / 1000:.0f} s para ser lido"
+                    f"precisa de {Constants.READING_MS / 1000:.0f} s para ser lido"
                 )
             if isinstance(shot, MapShot) and region_codes is not None:
                 for code in shot.highlight:
@@ -278,7 +245,7 @@ def _check_scenes(
 
 
 def _needs_reading_time(shot: Shot) -> bool:
-    return shot.kind in READING_KINDS or (isinstance(shot, QuoteShot) and shot.style == "document")
+    return shot.kind in Constants.READING_KINDS or (isinstance(shot, QuoteShot) and shot.style == "document")
 
 
 def number_errors(scene_id: str, shot: Shot, language: Language) -> list[str]:
@@ -301,8 +268,8 @@ def number_errors(scene_id: str, shot: Shot, language: Language) -> list[str]:
     if (
         language == "en"
         and isinstance(shot, ChartShot)
-        and shot.type in BAR_TYPES
-        and any(abs(p.value) >= BAR_PLAIN_BELOW or p.value != round(p.value) for p in shot.points)
+        and shot.type in Constants.BAR_TYPES
+        and any(abs(p.value) >= Constants.BAR_PLAIN_BELOW or p.value != round(p.value) for p in shot.points)
     ):
         errors.append(
             f"{scene_id}: gráfico de barras ({shot.anchor!r}) em inglês com valor que o motion-kit fixado "
@@ -317,14 +284,14 @@ def _amount(text: str, language: Language) -> tuple[float, int, str, str] | None
     if parts is None or number is None:
         return None
     prefix, value, suffix = number
-    _, separator, fraction = parts[1].partition(NUMBER_SEPARATORS[language][1])
+    _, separator, fraction = parts[1].partition(SchemasConstants.NUMBER_SEPARATORS[language][1])
     decimals = len(fraction) if separator else 0
     return (value / 100 if suffix.startswith("%") else value), decimals, prefix, suffix
 
 
 def _written(value: float, decimals: int, language: Language) -> str:
     """Número com as casas e o separador decimal do idioma, para a mensagem."""
-    return f"{value:.{decimals}f}".replace(".", NUMBER_SEPARATORS[language][1])
+    return f"{value:.{decimals}f}".replace(".", SchemasConstants.NUMBER_SEPARATORS[language][1])
 
 
 def _evaluate(values: list[float], operators: list[str]) -> float:
@@ -400,7 +367,7 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
     previous: tuple[str, str] | None = None  # (cena, tipo) do plano gráfico anterior
 
     def close_run() -> None:
-        if len(run) > MAX_GRAPHIC_RUN:
+        if len(run) > Constants.MAX_GRAPHIC_RUN:
             where = run[0] if run[0] == run[-1] else f"{run[0]}–{run[-1]}"
             warnings.append(f"{where}: {len(run)} planos gráficos seguidos sem foto nem B-roll")
         run.clear()
@@ -412,21 +379,21 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
             total += 1
             stamps += shot.kind == "stamp"
             keywords += shot.kind == "keyword"
-            if shot.kind in MEDIA_SHOT_KINDS:
+            if shot.kind in SchemasConstants.MEDIA_SHOT_KINDS:
                 media_before = True
                 previous = None
                 close_run()
                 continue
             if shot.kind == "lower_third" and not media_before:
                 warnings.append(f"{scene.id}: tarja ({shot.anchor!r}) sem foto nem B-roll por baixo")
-            two_bars = isinstance(shot, ChartShot) and shot.type in ("bar", "bar_horizontal")
-            if two_bars and len(shot.points) == 2:
+            bar = shot if isinstance(shot, ChartShot) and shot.type in ("bar", "bar_horizontal") else None
+            if bar is not None and len(bar.points) == 2:
                 warnings.append(f"{scene.id}: gráfico de barras com 2 pontos ({shot.anchor!r}); use compare")
             if previous is not None and previous[1] == shot.kind:
                 where = scene.id if previous[0] == scene.id else f"{previous[0]}–{scene.id}"
                 warnings.append(f"{where}: {shot.kind} duas vezes seguidas")
             previous = (scene.id, shot.kind)
-            if shot.kind in OVERLAY_SHOT_KINDS and media_before:
+            if shot.kind in SchemasConstants.OVERLAY_SHOT_KINDS and media_before:
                 close_run()  # desenhado sobre a mídia da cena: ainda há imagem na tela
             else:
                 run.append(scene.id)
@@ -434,14 +401,12 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
             warnings.append(f"{scene.id}: {keywords} frases na tela na mesma cena; use uma")
         media_before = False
     close_run()
-    if total >= MIN_SHOTS_FOR_SHARE and stamps / total > MAX_STAMP_SHARE:
+    if total >= Constants.MIN_SHOTS_FOR_SHARE and stamps / total > Constants.MAX_STAMP_SHARE:
         warnings.append(
-            f"carimbos em {stamps} de {total} planos ({stamps / total:.0%}); o limite é {MAX_STAMP_SHARE:.0%}"
+            f"carimbos em {stamps} de {total} planos ({stamps / total:.0%}); o limite é "
+            f"{Constants.MAX_STAMP_SHARE:.0%}"
         )
     return warnings
-
-
-NEWS_MAX_AGE_DAYS = 30  # depois disso o fato não é mais notícia: o vídeo explica ou opina (ADR 019)
 
 
 def objective_warnings(scenes: ScenesManifest, today: date | None = None) -> list[str]:
@@ -454,10 +419,12 @@ def objective_warnings(scenes: ScenesManifest, today: date | None = None) -> lis
         when = f"{objective.event_date:%d/%m/%Y}"
         if age < 0:
             return [f"objetivo noticiar com data no futuro ({when})"]
-        if age > NEWS_MAX_AGE_DAYS:
+        if age > Constants.NEWS_MAX_AGE_DAYS:
             return [
-                f"objetivo noticiar, mas o fato é de {when} ({age} dias): depois de {NEWS_MAX_AGE_DAYS} "
-                "dias não é notícia; o vídeo explica ou opina"
+                (
+        f'objetivo noticiar, mas o fato é de {when} ({age} dias): depois de '
+        f'{Constants.NEWS_MAX_AGE_DAYS} dias não é notícia; o vídeo explica ou opina'
+    )
             ]
     return []
 
@@ -471,14 +438,9 @@ def objective_summary(scenes: ScenesManifest) -> str | None:
 
 # O que a chamada de cada estágio pede (ADR 026), como começo de palavra sem acento: "salva", "salvar" e
 # "salve" valem para "salv". Chamada sem nenhum deles pede outra coisa que o estágio, e gera alerta.
-FUNNEL_ASKS: dict[str, tuple[str, tuple[str, ...]]] = {
-    "topo": ("seguir ou compartilhar", ("segu", "compartilh", "manda", "envia")),
-    "meio": ("salvar ou comentar", ("salv", "coment")),
-    "fundo": ("pedir o que é oferecido", ("coment", "link", "bio", "direct", "ped", "baix", "chama")),
-}
+
 # A variante do cartão final por estágio (ADR 028); `next` vale em qualquer um, quando a série continua. O
 # fundo ainda não tem variante (decisão 4): o contrato recusa o cartão final nele.
-END_CARD_VARIANTS = {"topo": "follow", "meio": "save"}
 
 
 def _words(text: str) -> list[str]:
@@ -498,7 +460,7 @@ def funnel_warnings(scenes: ScenesManifest) -> list[str]:
     if funnel is None:
         return ["roteiro sem estágio do funil (topo, meio ou fundo; ADR 026)"]
     warnings = []
-    asks, starts = FUNNEL_ASKS[funnel.stage]
+    asks, starts = Constants.FUNNEL_ASKS[funnel.stage]
     cta = _words(funnel.cta)
     if not any(word.startswith(starts) for word in cta):
         warnings.append(f"funil {funnel.stage}: a chamada \"{funnel.cta}\" não pede para {asks}")
@@ -507,7 +469,7 @@ def funnel_warnings(scenes: ScenesManifest) -> list[str]:
         warnings.append(f"funil: a chamada \"{funnel.cta}\" não está na narração da última cena ({last.id})")
     card = last.shots[-1] if last.shots and isinstance(last.shots[-1], EndCardShot) else None
     if card is not None:
-        expected = END_CARD_VARIANTS.get(funnel.stage)
+        expected = Constants.END_CARD_VARIANTS.get(funnel.stage)
         if card.variant != "next" and card.variant != expected:
             warnings.append(f"funil {funnel.stage}: cartão final {card.variant}; o estágio pede {expected}")
         spoken = strip_pauses(last.narration)
@@ -536,10 +498,10 @@ def _check_radar(
 ) -> None:
     """Forma do roteiro contra o resumo do reels-radar, se o episódio tiver um (ADR 018). Só alertas: o
     resumo é observação de amostra pequena e nunca fonte de fato."""
-    brief = _read(store, episode_id, BRIEF_FILE, RadarBrief, report)
+    brief = _read(store, episode_id, RadarConstants.BRIEF_FILE, RadarBrief, report)
     if brief is None:
         return
-    caption_path = store.path(episode_id, CAPTION_FILE)
+    caption_path = store.path(episode_id, RadarConstants.CAPTION_FILE)
     caption = caption_path.read_text(encoding="utf-8") if caption_path.is_file() else None
     line = brief_summary(brief)
     unmeasured = unmeasured_patterns(scenes, brief, chars_per_second, caption)
@@ -556,7 +518,7 @@ def episode_assets(store: ManifestStore, episode_id: str) -> dict[str, Asset]:
     for path in sorted(folder.glob("*.json")) if folder.is_dir() else []:
         try:
             found[path.stem] = store.read(episode_id, f"assets/{path.name}", Asset)
-        except ValidationError:
+        except ManifestInvalid:
             continue
     return found
 
@@ -570,7 +532,7 @@ def _check_numbers(
 ) -> None:
     """Bloco de números do outline (#170), `used_in_scenes` dos ativos e o perfil do nicho (ADR 031, D)."""
     assets = episode_assets(store, episode_id)
-    brief = _read(store, episode_id, FORMAT_FILE, FormatBrief, report)
+    brief = _read(store, episode_id, NumbersConstants.FORMAT_FILE, FormatBrief, report)
     try:
         numbers = script_numbers(scenes, assets, chars_per_second)
     except ValueError:
@@ -599,7 +561,7 @@ def _check_molde(
 ) -> None:
     """Forma do roteiro longo contra o molde do nicho copiado no episódio pela partitura (ADR 031). Só
     alertas: o molde é descrição de amostra e nunca fonte de fato."""
-    molde = _read(store, episode_id, MOLDE_FILE, Molde, report)
+    molde = _read(store, episode_id, MoldeConstants.MOLDE_FILE, Molde, report)
     if molde is None:
         return
     report.checked.append(molde_summary(molde))
@@ -615,7 +577,7 @@ def _check_music(
     chars_per_second: float,
 ) -> None:
     """Plano da trilha (ADR 030), quando o episódio tem `music.json`."""
-    plan = _read(store, episode_id, MUSIC_PLAN_FILE, MusicPlan, report)
+    plan = _read(store, episode_id, SchemasConstants.MUSIC_PLAN_FILE, MusicPlan, report)
     if plan is None:
         return
     if catalog is None:
@@ -639,7 +601,7 @@ def _check_metrics(
     store: ManifestStore, episode_id: str, report: CheckReport, today: date | None
 ) -> None:
     """Métricas de publicação (§12), quando o episódio tem `metrics.json`: contrato e janelas vencidas."""
-    metrics = _read(store, episode_id, METRICS_FILE, PublicationMetrics, report)
+    metrics = _read(store, episode_id, SchemasConstants.METRICS_FILE, PublicationMetrics, report)
     if metrics is None:
         return
     today = today or date.today()
@@ -654,7 +616,7 @@ def check_episode(
     store: ManifestStore,
     episode_id: str,
     region_codes: frozenset[str] | None = None,
-    chars_per_second: float = CHARS_PER_SECOND,
+    chars_per_second: float = Constants.CHARS_PER_SECOND,
     today: date | None = None,
     music_catalog: MusicCatalog | None = None,
 ) -> CheckReport:

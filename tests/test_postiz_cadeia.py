@@ -248,7 +248,6 @@ def test_doubt_agent_is_read_only() -> None:
     assert tools == "tools: Read, Grep, Glob"
 
 
-
 def package_of(caption: str, fetch) -> dict:
     from app.commands import postiz_cadeia
 
@@ -295,3 +294,22 @@ def test_package_fetches_each_link_once() -> None:
 
     package_of("<p>https://github.com/a/b e de novo https://github.com/a/b</p>", fetch)
     assert calls == ["https://github.com/a/b"]
+
+
+def test_an_interrupted_package_blocks_the_package_and_the_schedule(
+    root: Path, client: Mock, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """ADR 050: o gate 4 está aprovado, mas a gravação do pacote parou no meio (marcador `writing`)."""
+    folder = approve_preview(root, monkeypatch)
+    marker = {"state": "writing", "video_sha256": "a" * 64, "text_sha256": "b" * 64}
+    (folder / "renders" / "pacote.json").write_text(json.dumps(marker))
+    capsys.readouterr()
+    path = write_payload(root, payload())
+    assert cli.main(["postiz", "pacote", path, "--episode", EPISODE]) == 0
+    package = json.loads(capsys.readouterr().out)
+    gate_4 = package["evidencia"]["gate_4"]
+    assert gate_4.startswith("pacote incompleto (a gravação do pacote foi interrompida")
+    assert package["recomendacao"].startswith("não agendar")
+    doubt(root, path)
+    assert cli.main(["postiz", "schedule", path]) == 1
+    client.schedule.assert_not_called()

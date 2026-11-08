@@ -1,0 +1,28 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Dois threads somam um milhão de vezes cada. O total deveria dar dois milhões.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "codigo",
+      "text": "Os dois somam no mesmo contador, num laço de um milhão. Numa versão eu não protejo nada. Nas outras duas, uso mutex e atomic."
+    },
+    {
+      "scene": "resultado",
+      "text": "Sem proteção, o total foi de perto de um milhão a mais de um milhão e trezentos mil, e mudou a cada rodada. Com mutex, deu dois milhões em todas as quinze.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "tempo",
+      "text": "Sem proteção, onze milissegundos, e errado. Com mutex, noventa e dois, e certo. Com atomic, 21, e certo."
+    },
+    {
+      "scene": "fecho",
+      "text": "Por que o total encolhe sem o mutex? Comenta aqui, que o código está na descrição.",
+      "delivery": "invite"
+    }
+  ]
+}

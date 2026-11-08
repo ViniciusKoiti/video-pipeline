@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-08T17:00:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0nn9g0003l26yf4npmb66"
+   },
+   "value": [
+    {
+     "content": "The app didn't get the response, so it sent the request again. Without a mark on the request, the server treats the second attempt as a new payment. The fix is one key per payment: with the same key, the server returns the stored result instead of charging again.\n\nI simulated ten thousand payments, with three in ten responses lost (a parameter of the simulation, not measured on a real network). Without a key: 4,194 duplicate charges. With a key: none. The cost is real too: in memory, each request took more than twice as long (0.52 µs vs 1.58 µs, median of 15 runs). With a real database and network, the number changes.\n\nWould you keep that key for 1 minute, 1 hour, or 1 day? Pick one in the comments.\n\nCloned voice made with AI. Music: \"Spirit of Fire\" by Jesse Gallagher, YouTube Audio Library.\n\n#Shorts #Java #Payments #Backend",
+     "image": [
+      {
+       "id": "8c036f4c-a78a-42f0-ad68-36d0c53bd155",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/07/8a8f364bb9971af70529d65c37ad75cb.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "You clicked pay twice. Why were you charged only once?",
+    "type": "public",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

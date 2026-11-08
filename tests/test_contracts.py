@@ -17,16 +17,9 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, ManifestStore, ReviewGate
-from app.pipeline.schemas import (
-    APPROVED_STATES,
-    Asset,
-    Decision,
-    EpisodeManifest,
-    ReviewEntry,
-    Status,
-    VisualNeed,
-)
+from app.pipeline.schemas import Asset, Decision, EpisodeManifest, ReviewEntry, Status, VisualNeed
 from app.providers.alignment.base import SubtitleAligner
 from app.providers.archives.base import ArchiveProvider, AssetQuery
 from app.providers.archives.pexels import PexelsArchive
@@ -38,8 +31,8 @@ from app.providers.text.base import TextProvider, TextRequest
 from app.providers.text.ollama import OllamaText
 from app.providers.tts.base import SpeechRequest, TTSProvider
 from app.render.base import RenderEngine
+from app.render.constants.remotion_constants import RemotionConstants
 from app.render.ffmpeg import FfmpegEngine
-from app.render.remotion import PROJECT as REMOTION_PROJECT
 from app.render.remotion import RemotionEngine
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import (
@@ -145,7 +138,7 @@ RENDERERS: list[Callable[[], RenderEngine]] = [
         marks=[
             pytest.mark.slow,
             pytest.mark.skipif(
-                not (REMOTION_PROJECT / "node_modules").exists(), reason="Remotion não instalado"
+                not (RemotionConstants.PROJECT / "node_modules").exists(), reason="Remotion não instalado"
             ),
         ],
     ),
@@ -202,6 +195,55 @@ def test_tts_writes_wav_at_requested_path(make: Callable[[], TTSProvider], tmp_p
         assert wav.getnframes() > 0
 
 
+@pytest.mark.parametrize("make", TTS)
+def test_tts_identity_and_fingerprint_follow_the_port_contract(
+    make: Callable[[], TTSProvider], tmp_path: Path
+) -> None:
+    tts = make()
+    plain = SpeechRequest(text="A expedição saiu do porto.", out_path=tmp_path / "a.wav", language="en")
+    other = SpeechRequest(text="Outra fala, sem pausa.", out_path=tmp_path / "b.wav", language="en")
+    assert tts.identity and tts.fingerprint(plain).startswith(tts.identity)  # começa pela identidade
+    assert tts.fingerprint(plain) == tts.fingerprint(plain)  # a mesma entrada efetiva, a mesma identidade
+    assert tts.fingerprint(plain) == tts.fingerprint(other)  # o texto não entra: quem monta o nome o junta
+
+
+@pytest.mark.parametrize("make", TTS)
+def test_tts_leaves_no_partial_file_beside_the_wav(make: Callable[[], TTSProvider], tmp_path: Path) -> None:
+    out = tmp_path / "voice" / "S01.wav"
+    make().synthesize_speech(SpeechRequest(text="A expedição saiu do porto.", out_path=out, language="en"))
+    assert sorted(p.name for p in out.parent.iterdir()) == ["S01.wav"]
+
+
+def make_fake_batch() -> TTSProvider:
+    from tests.fakes import FakeBatchTTS
+
+    return FakeBatchTTS()
+
+
+BATCH_TTS: list[Callable[[], TTSProvider]] = [
+    pytest.param(make_fake_batch, id="fake-batch"),
+]
+
+
+@pytest.mark.parametrize("make", BATCH_TTS)
+def test_batch_tts_returns_one_result_per_request_in_order_and_refuses_mixed_voices(
+    make: Callable[[], TTSProvider], tmp_path: Path
+) -> None:
+    from app.providers.errors import ProviderError
+    from app.providers.tts.base import BatchTTS
+
+    tts = make()
+    assert isinstance(tts, BatchTTS) and tts.max_batch_chars > 0
+    requests = [
+        SpeechRequest(text=f"Cena {i}.", out_path=tmp_path / f"S0{i}.wav", language="en") for i in (1, 2, 3)
+    ]
+    results = tts.synthesize_many(requests)
+    assert [r.path for r in results] == [r.out_path for r in requests]
+    mixed = [requests[0], SpeechRequest(text="Cena.", out_path=tmp_path / "x.wav", language="pt-BR")]
+    with pytest.raises(ProviderError, match="uma voz e um idioma"):
+        tts.synthesize_many(mixed)
+
+
 # --- Geração de imagem --------------------------------------------------------------------------
 
 
@@ -229,7 +271,9 @@ def test_archive_candidates_respect_limit_and_never_come_approved(
     )
     assert 0 < len(candidates) <= 2
     for candidate in candidates:
-        assert candidate.asset.review_status not in APPROVED_STATES  # aprovar é humano (§2.5)
+        assert (
+            candidate.asset.review_status not in SchemasConstants.APPROVED_STATES
+        )  # aprovar é humano (§2.5)
         assert candidate.asset.provider.value == provider.info.name
     downloaded = provider.download_asset(candidates[0].asset, tmp_path / "assets" / "a.jpg")
     assert downloaded.stat().st_size > 0

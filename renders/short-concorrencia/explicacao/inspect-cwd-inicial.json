@@ -1,0 +1,13 @@
+{
+  "success": false,
+  "command": "inspect",
+  "composition": "ProductionExplainer",
+  "contentFile": "content.pt.json",
+  "diagnostics": [
+    {
+      "code": "FILE_NOT_FOUND",
+      "path": "content",
+      "message": "Arquivo não encontrado."
+    }
+  ]
+}

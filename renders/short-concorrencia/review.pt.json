@@ -1,0 +1,384 @@
+{
+  "runId": "1793525083611-8cdc1cbe",
+  "command": "review",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-01T09:24:43.611Z",
+  "contentFile": "content.pt.json",
+  "artifacts": [
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-start-f0.png",
+      "sceneId": "gancho",
+      "frame": 0,
+      "localFrame": 0,
+      "timeSec": 0
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-read-f66.png",
+      "sceneId": "gancho",
+      "frame": 66,
+      "localFrame": 66,
+      "timeSec": 2.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-end-f119.png",
+      "sceneId": "gancho",
+      "frame": 119,
+      "localFrame": 119,
+      "timeSec": 3.966666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-gancho-motion.png",
+      "sceneId": "gancho",
+      "frames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "localFrames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-start-f120.png",
+      "sceneId": "codigo",
+      "frame": 120,
+      "localFrame": 0,
+      "timeSec": 4
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-read-f268.png",
+      "sceneId": "codigo",
+      "frame": 268,
+      "localFrame": 148,
+      "timeSec": 8.933333333333334
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-end-f389.png",
+      "sceneId": "codigo",
+      "frame": 389,
+      "localFrame": 269,
+      "timeSec": 12.966666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-codigo-motion.png",
+      "sceneId": "codigo",
+      "frames": [
+        128,
+        137,
+        145,
+        153,
+        162,
+        170
+      ],
+      "localFrames": [
+        8,
+        17,
+        25,
+        33,
+        42,
+        50
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-resultado-start-f390.png",
+      "sceneId": "resultado",
+      "frame": 390,
+      "localFrame": 0,
+      "timeSec": 13
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-resultado-read-f555.png",
+      "sceneId": "resultado",
+      "frame": 555,
+      "localFrame": 165,
+      "timeSec": 18.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-resultado-end-f689.png",
+      "sceneId": "resultado",
+      "frame": 689,
+      "localFrame": 299,
+      "timeSec": 22.966666666666665
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-resultado-motion.png",
+      "sceneId": "resultado",
+      "frames": [
+        402,
+        413,
+        425,
+        437,
+        448,
+        460
+      ],
+      "localFrames": [
+        12,
+        23,
+        35,
+        47,
+        58,
+        70
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-tempo-start-f690.png",
+      "sceneId": "tempo",
+      "frame": 690,
+      "localFrame": 0,
+      "timeSec": 23
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-tempo-read-f838.png",
+      "sceneId": "tempo",
+      "frame": 838,
+      "localFrame": 148,
+      "timeSec": 27.933333333333334
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-tempo-end-f959.png",
+      "sceneId": "tempo",
+      "frame": 959,
+      "localFrame": 269,
+      "timeSec": 31.966666666666665
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-tempo-motion.png",
+      "sceneId": "tempo",
+      "frames": [
+        697,
+        705,
+        712,
+        719,
+        727,
+        734
+      ],
+      "localFrames": [
+        7,
+        15,
+        22,
+        29,
+        37,
+        44
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-start-f960.png",
+      "sceneId": "fecho",
+      "frame": 960,
+      "localFrame": 0,
+      "timeSec": 32
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-read-f1059.png",
+      "sceneId": "fecho",
+      "frame": 1059,
+      "localFrame": 99,
+      "timeSec": 35.3
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-end-f1139.png",
+      "sceneId": "fecho",
+      "frame": 1139,
+      "localFrame": 179,
+      "timeSec": 37.96666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-fecho-motion.png",
+      "sceneId": "fecho",
+      "frames": [
+        964,
+        969,
+        973,
+        977,
+        982,
+        986
+      ],
+      "localFrames": [
+        4,
+        9,
+        13,
+        17,
+        22,
+        26
+      ]
+    },
+    {
+      "kind": "review",
+      "file": "review.mp4",
+      "frameRange": [
+        90,
+        209
+      ],
+      "cutFrame": 120
+    }
+  ],
+  "style": "editorial",
+  "media": {},
+  "versions": {
+    "node": "v24.16.0",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciusk/motion-video": "0.3.0",
+    "@viniciusk/motion-kit": "0.7.1",
+    "@viniciusk/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "a0f99d6c00c989877eaa25c8a77438e93e5d1a3bd9356699dc62ef2f6436acf4",
+    "composition/content.schema.ts": "3ff6933905abebc826388d465c0b11940f947b617e5861b815914177d112aafb",
+    "composition/host.ts": "451e61198dde4ab7e1ac2de2d6b257c73e9903d635cb5567f6015c255ad76bce",
+    "src/production.mjs": "15003c9b7f6c692a5316a7daad175fcda02059f6f2001352cac7cc6b77078771",
+    "dist/composition/index.js": "4a712de138f39a52e30895ae4180dbf37d65ecebf98b2868932a23ad555f318f"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1140,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4,
+        "type": "hook",
+        "text": "2 threads. 1 contador. O total deveria dar 2.000.000.",
+        "highlight": "deveria dar 2.000.000",
+        "kicker": "concorrência",
+        "from": 0,
+        "durationInFrames": 120,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "codigo",
+        "durationSec": 9,
+        "type": "grid",
+        "layout": "two-by-two",
+        "cells": [
+          {
+            "kind": "number",
+            "label": "somas por thread",
+            "value": 1000000
+          },
+          {
+            "kind": "text",
+            "text": "Versão 1: sem proteção"
+          },
+          {
+            "kind": "text",
+            "text": "Versão 2: mutex"
+          },
+          {
+            "kind": "text",
+            "text": "Versão 3: atomic"
+          }
+        ],
+        "from": 120,
+        "durationInFrames": 270,
+        "readableFrame": 50,
+        "readableFrom": 170
+      },
+      {
+        "id": "resultado",
+        "durationSec": 10,
+        "type": "comparison",
+        "left": {
+          "label": "sem proteção (mediana)",
+          "value": 1130174
+        },
+        "right": {
+          "label": "mutex · 15 rodadas",
+          "value": 2000000
+        },
+        "mode": "side",
+        "showRatio": false,
+        "from": 390,
+        "durationInFrames": 300,
+        "readableFrame": 70,
+        "readableFrom": 460
+      },
+      {
+        "id": "tempo",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "Tempo da rodada",
+        "items": [
+          {
+            "label": "sem proteção · errado",
+            "value": 11
+          },
+          {
+            "label": "atomic",
+            "value": 21.4
+          },
+          {
+            "label": "mutex",
+            "value": 92.2
+          }
+        ],
+        "unit": "ms",
+        "decimals": 1,
+        "highlight": "mutex",
+        "from": 690,
+        "durationInFrames": 270,
+        "readableFrame": 44,
+        "readableFrom": 734
+      },
+      {
+        "id": "fecho",
+        "durationSec": 6,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "baixo nível",
+        "sub": "código na descrição",
+        "from": 960,
+        "durationInFrames": 180,
+        "readableFrame": 26,
+        "readableFrom": 986
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.1.type",
+      "sceneId": "codigo",
+      "message": "A cena grid não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    }
+  ],
+  "finishedAt": "2026-11-01T09:25:47.516Z",
+  "elapsedMs": 63904,
+  "directory": "/home/viniciusk/projetos/auto-play/renders/short-concorrencia/out/production/1793525083611-8cdc1cbe"
+}

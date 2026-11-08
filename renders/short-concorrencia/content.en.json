@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Measured 2026-11-01 · gcc 15.2 -O2 · Ryzen 7 5700U · 2 threads · expected: 2,000,000 · 15 runs",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 4,
+      "kicker": "concurrency",
+      "text": "2 threads. 1 counter. The total should be 2,000,000.",
+      "highlight": "should be 2,000,000"
+    },
+    {
+      "id": "codigo",
+      "type": "grid",
+      "durationSec": 9,
+      "layout": "hero-top",
+      "cells": [
+        {"kind": "number", "value": 1000000, "label": "adds per thread, same counter"},
+        {"kind": "text", "text": "Version 1: no protection"},
+        {"kind": "text", "text": "Version 2: mutex"},
+        {"kind": "text", "text": "Version 3: atomic"}
+      ]
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 10,
+      "mode": "side",
+      "showRatio": false,
+      "left": {"label": "no protection (median)", "value": 1130174},
+      "right": {"label": "with mutex (all 15 runs)", "value": 2000000}
+    },
+    {
+      "id": "tempo",
+      "type": "categories",
+      "durationSec": 9,
+      "title": "Time per run",
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "mutex",
+      "items": [
+        {"label": "no protection (wrong total)", "value": 11.0},
+        {"label": "atomic", "value": 21.4},
+        {"label": "mutex", "value": 92.2}
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 6,
+      "variant": "follow",
+      "text": "low level",
+      "sub": "code in the description"
+    }
+  ]
+}

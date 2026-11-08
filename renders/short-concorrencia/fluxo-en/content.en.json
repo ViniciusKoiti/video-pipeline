@@ -1,0 +1,100 @@
+{
+  "version": 2,
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Measured 2026-11-01 · gcc 15.2 -O2 · Ryzen 7 5700U · 2 threads · expected: 2,000,000 · 15 runs",
+  "assets": {
+    "codigo": {
+      "kind": "lottie",
+      "path": "lottie/codigo.json"
+    },
+    "mutex": {
+      "kind": "lottie",
+      "path": "lottie/mutex.json"
+    },
+    "atomic": {
+      "kind": "lottie",
+      "path": "lottie/atomic.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 4,
+      "kicker": "C · concurrency",
+      "text": "In C: 2 threads. 1 counter. It should total 2,000,000.",
+      "highlight": "should total 2,000,000"
+    },
+    {
+      "id": "resultado",
+      "type": "comparison",
+      "durationSec": 3.5,
+      "mode": "side",
+      "showRatio": false,
+      "left": {
+        "label": "no protection (median)",
+        "value": 1130174
+      },
+      "right": {
+        "label": "mutex and atomic",
+        "value": 2000000
+      }
+    },
+    {
+      "id": "codigo",
+      "type": "animation",
+      "durationSec": 12.4,
+      "assetId": "codigo",
+      "colors": "original"
+    },
+    {
+      "id": "mutex",
+      "type": "animation",
+      "durationSec": 4,
+      "assetId": "mutex",
+      "colors": "original"
+    },
+    {
+      "id": "atomic",
+      "type": "animation",
+      "durationSec": 7.9,
+      "assetId": "atomic",
+      "colors": "original"
+    },
+    {
+      "id": "tempo",
+      "type": "categories",
+      "durationSec": 9,
+      "title": "Time per run",
+      "unit": "ms",
+      "decimals": 1,
+      "highlight": "mutex",
+      "items": [
+        {
+          "label": "no protection · wrong",
+          "value": 11.0
+        },
+        {
+          "label": "atomic",
+          "value": 21.4
+        },
+        {
+          "label": "mutex",
+          "value": 92.2
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 5,
+      "variant": "follow",
+      "text": "What about other languages?",
+      "sub": "Comment which one you want next"
+    }
+  ]
+}

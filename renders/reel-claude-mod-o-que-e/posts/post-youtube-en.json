@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-10-28T19:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "A Claude Code mod is text and configuration inside your project that changes what the agent does. In this video: skill, agent and configuration, with examples from this repository (13 skills, 5 agents and one rule that asks for confirmation before scheduling a post).\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #ClaudeCode #Programming #Dev",
+          "image": [
+            {
+              "id": "20d7ad60-563b-4f75-8149-bc11491b346f",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/cf9e4b10716ab32eb8beca3438dfe87dc.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "What a Claude Code mod is",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

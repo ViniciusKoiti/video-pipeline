@@ -1,0 +1,13 @@
+{
+  "language": "en",
+  "lines": [
+    {"scene": "gancho", "text": "One line of SQL made this query over a thousand times faster and it came at a price.", "delivery": "hook"},
+    {"scene": "sem-indice", "text": "Without an index, the database reads the whole table, a million rows, to find one customer's orders."},
+    {"scene": "codigo", "text": "With a CREATE INDEX, the query plan switches from SCAN to SEARCH."},
+    {"scene": "com-indice", "text": "The index is a tree sorted by customer, and the search goes straight down to their rows."},
+    {"scene": "comparacao", "text": "Without reading the table, the query dropped from eighty-six milliseconds to five hundredths."},
+    {"scene": "escrita", "text": "But every new order also goes into the index and writing got thirteen times slower.", "delivery": "turn"},
+    {"scene": "custo", "text": "Building the index took seven hundred thirty-six milliseconds and almost thirteen megabytes of file."},
+    {"scene": "fecho", "text": "So it depends on how much the table is read and written. Which column would you index?", "delivery": "invite"}
+  ]
+}

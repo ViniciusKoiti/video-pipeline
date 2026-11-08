@@ -23,6 +23,7 @@ vp = "app.cli:main"
 
 [dependency-groups]
 dev = [
+    "mypy>=2.4,<3",     # MIT — checagem estática de portas, adapters e modelos; partes sob PSF-2.0
     "pytest>=9.1,<10",  # MIT
     "ruff>=0.16,<0.17", # MIT
 ]
@@ -54,6 +55,21 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# Demos dos Shorts mostram o bug de propósito (argumento mutável); corrigir mudaria o vídeo.
+"renders/**/demo/*.py" = ["B006"]
+
+[tool.mypy]
+files = ["app"]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+cache_dir = "data/cache/mypy"
+mypy_path = "stubs"
+
+[tool.pydantic-mypy]
+init_typed = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

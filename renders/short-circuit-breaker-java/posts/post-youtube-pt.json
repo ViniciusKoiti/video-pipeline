@@ -1,0 +1,29 @@
+{
+  "type": "schedule",
+  "date": "2026-11-11T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {"id": "cmvx0omyy0005l26yggavdqpu"},
+      "value": [
+        {
+          "content": "Circuit breaker em Java: o custo de falhar rápido.\n\nNeste exemplo, pedidos chamam um pagamento simulado. Fechado, o breaker passa chamadas; cinco falhas consecutivas na ordem de conclusão abrem o circuito. Aberto, ele devolve erro sem chamar o pagamento. Após dois segundos, libera uma chamada de teste: sucesso fecha, falha reabre.\n\nSimulação local: 300 requisições a 50 por segundo, pool de 20 threads, timeout de 1 s e pagamento em falha por 3 s. Implementação didática com Thread.sleep, fila ilimitada e breaker escrito à mão, sem biblioteca. OpenJDK 25.0.4.1; 15 rodadas por modo, JVM nova sem aquecimento e ordem alternada. Não é benchmark de produção, rede ou banco.\n\nMedianas por rodada: as chamadas à dependência durante a falha caíram de 60 sem breaker para 24 com breaker. Com breaker houve 133 recusas totais, incluindo 7 após o retorno do pagamento, pela chegada programada dos pedidos. Recusas são erros, não pagamentos concluídos. Menos chamadas não prova mais sucesso; não comparamos latência porque ela inclui erros e recusas. Os limiares são escolhas desta demo, não defaults de Java.\n\nFontes do mecanismo:\nhttps://martinfowler.com/bliki/CircuitBreaker.html\nhttps://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker\n\nVoz do autor clonada com IA. Animações criadas para este vídeo; sem apresentador em imagem.\n\n#Shorts #Java #CircuitBreaker #SystemDesign",
+          "image": [
+            {
+              "id": "ebdff499-f571-4510-9edd-8535640f436f",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/05/b8fe884e9f718d9e08c3515fe25f8d70.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "Circuit breaker em Java: o custo de falhar rápido",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

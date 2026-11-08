@@ -1,0 +1,12 @@
+2026-11-07T06:00:31-03:00 cpu_probe 0.063
+custo_usd_equivalente 0.4252822 | turnos 15 | modelos ['claude-sonnet-5-5'] | duracao_s 49
+A rotina de hoje parou no passo 1 e não produziu nenhum vídeo. O motivo é o mesmo de 05 e 06/11: `java` e `.venv/bin/vp` pedem aprovação nesta sessão não interativa, e não há quem aprove. Sem a medição em Java, a skill proíbe inventar números, e nenhum comando que executa algo rodou, então não deu para criar pastas nem medir.
+
+- **Sonda de CPU:** 0,063, abaixo de 0,3. Esse valor veio do `.log` das 06:00, porque eu não consegui rodar a sonda.
+- **Pauta escolhida:** consistent hashing em Java, aprovada em 03/11. O calendário de novembro marca a produção para 07/11 e a publicação para 16/11.
+- **Divergência para o dono:** a `fila.md` ainda lista o garbage collector como "Próxima produção, 06/11", mas ele não foi produzido. Segui o calendário porque o consistent hashing publica antes (16/11, contra 25/11 do GC). Se você preferir o GC primeiro, é só dizer.
+- **Feito:** apenas o registro em `data/rotina/2026-11-07.md`. Não houve medição, voz, render, post, gate, Postiz nem chamada ao Modal.
+- **Risco no calendário:** o rate limiter publica em 14/11 e a produção dele precisa começar até cerca de 10–11/11.
+- **Para destravar:** rode `/short-diario` numa sessão interativa. Outra opção é liberar em `.claude/settings.local.json` `mkdir`, `java`, `javac`, `curl`, `uv run`/`.venv/bin/vp`, `npx motion-video`, `ffmpeg` e `ffprobe`. Esse é o terceiro dia seguido que a rotina termina só em registro, então vale decidir se o timer deve continuar rodando sem essas permissões.
+- **Pendentes de 05/11:** assistir `final.pt.v2.mp4` e `final.en.mp4` do circuit breaker e, se aprovar, fazer os `vp approve` (translation e preview ×3), o push, o `vp postiz duvida` e os `schedule` ×3.
+2026-11-07T06:01:27-03:00 fim

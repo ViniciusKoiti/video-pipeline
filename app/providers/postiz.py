@@ -14,8 +14,9 @@ from typing import Any
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlsplit
 from uuid import uuid4
 
+from app.providers.constants.http_constants import HttpConstants
 from app.providers.errors import ProviderError
-from app.providers.http import USER_AGENT, TransportError, get_json, post_json_with_headers
+from app.providers.http import TransportError, get_json, post_json_with_headers
 from app.providers.postiz_validation import (
     parse_instant,
     reject_queued_duplicates,
@@ -29,7 +30,7 @@ def _error(message: str = "resposta inesperada da API") -> ProviderError:
     return ProviderError("postiz", message)
 
 
-def _fields(data: dict, names: tuple[str, ...]) -> dict:
+def _fields(data: dict[str, Any], names: tuple[str, ...]) -> dict[str, Any]:
     return {name: data[name] for name in names if name in data and isinstance(data[name], str)}
 
 
@@ -64,7 +65,7 @@ class PostizClient:
             status = getattr(error, "status", None)
             raise _error(f"consulta falhou (HTTP {status})" if status else "consulta falhou") from None
 
-    def _post(self, path: str, payload: dict) -> Any:
+    def _post(self, path: str, payload: dict[str, Any]) -> Any:
         try:
             return post_json_with_headers(self._api + path, payload, self._headers, 60)
         except (TransportError, ValueError, TypeError) as error:
@@ -72,7 +73,7 @@ class PostizClient:
             message = f"envio falhou (HTTP {status})" if status else "envio falhou"
             raise _error(message + "; consulte a fila antes de repetir") from None
 
-    def integrations(self) -> list[dict]:
+    def integrations(self) -> list[dict[str, Any]]:
         data = self._get("/integrations")
         if not isinstance(data, list) or any(
             not isinstance(item, dict)
@@ -86,7 +87,7 @@ class PostizClient:
             for item in data
         ]
 
-    def posts(self, start: str, end: str) -> dict:
+    def posts(self, start: str, end: str) -> dict[str, Any]:
         if parse_instant(start) >= parse_instant(end):
             raise _error("início do intervalo deve ser anterior ao fim")
         data = self._get("/posts?" + urlencode({"startDate": start, "endDate": end}))
@@ -108,7 +109,7 @@ class PostizClient:
             posts.append(post)
         return {"posts": posts}
 
-    def connect(self, provider: str) -> dict:
+    def connect(self, provider: str) -> dict[str, Any]:
         if not isinstance(provider, str) or not provider.strip():
             raise _error("informe o identificador da rede")
         data = self._get("/social/" + quote(provider, safe=""))
@@ -134,7 +135,7 @@ class PostizClient:
             raise _error("URL de conexão insegura na resposta")
         return {"url": url}
 
-    def integration_settings(self, integration_id: str) -> dict:
+    def integration_settings(self, integration_id: str) -> dict[str, Any]:
         if not isinstance(integration_id, str) or not integration_id.strip():
             raise _error("informe o ID da integração")
         data = self._get("/integration-settings/" + quote(integration_id, safe=""))
@@ -142,7 +143,7 @@ class PostizClient:
             raise _error()
         return data
 
-    def upload(self, path: Path) -> dict:
+    def upload(self, path: Path) -> dict[str, Any]:
         media_type = mimetypes.guess_type(path.name)[0] or ""
         if not media_type.startswith(("image/", "video/")):
             raise _error("upload aceita somente arquivo de imagem ou vídeo")
@@ -165,7 +166,7 @@ class PostizClient:
                     method="POST",
                     headers={
                         **self._headers,
-                        "User-Agent": USER_AGENT,
+                        "User-Agent": HttpConstants.USER_AGENT,
                         "Content-Type": f"multipart/form-data; boundary={boundary}",
                         "Content-Length": str(len(head) + size + len(tail)),
                     },
@@ -183,7 +184,7 @@ class PostizClient:
             raise _error()
         return {"id": data["id"], "path": data["path"]}
 
-    def check_schedule(self, payload: dict) -> dict:
+    def check_schedule(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Todas as defesas do agendamento, só com consultas: nada é criado (pacote de decisão)."""
         instant, requested = validate_schedule(payload, datetime.now(UTC))
         integrations = self.integrations()
@@ -198,7 +199,7 @@ class PostizClient:
             "integrations": {i["id"]: i.get("name", i["id"]) for i in integrations if i["id"] in used},
         }
 
-    def schedule(self, payload: dict) -> list[dict]:
+    def schedule(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
         instant = parse_instant(self.check_schedule(payload)["date"])
         # shortcut: consulta/criação não são atômicas; usar idempotência do servidor com vários escritores.
         require_future_date(instant, datetime.now(UTC))

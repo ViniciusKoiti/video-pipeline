@@ -1,0 +1,23 @@
+2026-11-03T06:00:04-03:00 cpu_probe 0.044
+custo_usd_equivalente 0.37369680000000005 | turnos 8 | modelos ['claude-sonnet-5-5'] | duracao_s 44
+Não consegui gravar `data/rotina/2026-11-03.md`: a permissão de escrita foi negada e a sessão não é interativa. Não contornei isso com outro comando. O registro que eu ia gravar está abaixo.
+
+**A rotina de hoje parou na entrada, sem produzir nada.**
+
+- **Máquina livre:** `cpu_probe()` deu 0,044 s às 06:00, então a máquina não foi o motivo.
+- **Fila sem pauta Java aprovada:** o `CompletableFuture` era o único item Java. Ele já foi produzido e está agendado para hoje às 10h BRT (pt `cmvzmtdpx0008n16ty74cof4m`, en `cmvzmzqsy0009n16tpv81ulfy`, conforme `data/rotina/2026-11-02.md`).
+- **O que sobrou é adiado:** Árvores, Índices com SQLite e a ideia do contador (`i++`, `synchronized`, `AtomicInteger`). Os três são do lote antigo ou backlog sem prioridade, e a skill e a direção editorial de 01/11 proíbem escolher um deles sozinha. A pasta `renders/serie-conceitos/pautas/` só tem as quatro pautas de 31/10, todas anteriores à prioridade Java.
+- **Nada foi criado nem enviado:** nenhuma pasta de episódio, medição, voz ou render. Não houve `vp approve`, push, Postiz, vidIQ nem download de ativo.
+
+**Falta o dono decidir o próximo tema Java.** Pode ser um tema novo com recorte aprovado, ou a aprovação explícita de uma pauta adiada. O contador seria o encaixe natural depois do vídeo de concorrência em C.
+
+**Cadência a considerar:** já são três Shorts técnicos em sete dias no mesmo canal (01, 03 e 07/11).
+
+**Pendências do vídeo de hoje, ainda do dono:**
+- o rótulo de conteúdo sintético no YouTube Studio;
+- o comentário fixado;
+- a conferência depois de publicar;
+- as métricas aos 7 e 28 dias.
+
+Se você liberar a escrita em `data/rotina/`, gravo esse registro como `2026-11-03.md`.
+2026-11-03T06:00:52-03:00 fim

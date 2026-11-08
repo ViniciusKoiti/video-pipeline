@@ -365,15 +365,15 @@ def test_cli_checagem_records_and_status_shows_it(
 def test_reviewer_comes_from_env_then_dotenv_then_git_with_a_warning(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    from app import cli
+    from app.commands import reviewer
 
-    monkeypatch.chdir(make_root(tmp_path))
+    root = make_root(tmp_path)
     monkeypatch.delenv("VP_REVIEWER", raising=False)
-    monkeypatch.setattr(cli, "_git_user", lambda: "test")
-    assert cli._default_reviewer() == "test"
+    monkeypatch.setattr(reviewer, "_git_user", lambda: "test")
+    assert reviewer.default_reviewer(root) == "test"
     assert "assinada como 'test'" in capsys.readouterr().err
     (tmp_path / ".env").write_text("VP_REVIEWER=Dono do .env\n", encoding="utf-8")
-    assert cli._default_reviewer() == "Dono do .env"
+    assert reviewer.default_reviewer(root) == "Dono do .env"
     assert capsys.readouterr().err == ""
     monkeypatch.setenv("VP_REVIEWER", "Dono do ambiente")
-    assert cli._default_reviewer() == "Dono do ambiente"
+    assert reviewer.default_reviewer(root) == "Dono do ambiente"

@@ -1,0 +1,10 @@
+{
+  "source": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/invite-forte.wav",
+  "source_sha256": "12fe563e7fd204702adeb6e29a16e3c39d50f56aad9a6316fff5478d76def8d3",
+  "wav_sha256": "8335e609745ba60aaae470dddb5294ed51112ed54bc6e02b2118b7aba7ab5edb",
+  "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+  "target_lufs": -16.0,
+  "input_lufs": -20.36,
+  "output_lufs": -16.7,
+  "true_peak_dbtp": -1.5
+}

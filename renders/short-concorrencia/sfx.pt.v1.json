@@ -1,0 +1,11 @@
+{
+  "cues": [
+    {"sound": "pop-medium-in", "scene": "gancho", "offset_s": 0.05, "note": "Capa já montada no começo."},
+    {"sound": "whoosh-medium-soft", "scene": "codigo", "offset_s": 0.2, "note": "Corte para as quatro células."},
+    {"sound": "data-number-land", "scene": "codigo", "offset_s": 1.667, "note": "O milhão de somas termina de entrar no frame 50."},
+    {"sound": "whoosh-medium-soft", "scene": "resultado", "offset_s": 0.2, "note": "Corte para a comparação."},
+    {"sound": "impact-light-firm", "scene": "resultado", "offset_s": 2.333, "note": "Os totais terminam de entrar no frame 70."},
+    {"sound": "data-chart-reveal", "scene": "tempo", "offset_s": 0.1, "note": "Entrada das barras de tempo."},
+    {"sound": "whoosh-medium-soft", "scene": "fecho", "offset_s": 0.2, "note": "Corte para o cartão final."}
+  ]
+}

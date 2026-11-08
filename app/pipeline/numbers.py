@@ -10,19 +10,20 @@ nicho; o perfil medido chega ao episódio como `formato-brief.json` (cópia data
 
 from __future__ import annotations
 
-import re
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
-from datetime import date
-from typing import Literal
-
-from pydantic import BaseModel, ConfigDict, Field
 
 from app.media.narration import pause_positions, strip_pauses, timeline_length
+from app.pipeline.constants.numbers_constants import NumbersConstants as Constants
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.constants.shots_constants import ShotsConstants
+from app.pipeline.models._numbers_brief import _Brief as _Brief
+from app.pipeline.models.citation import Citation as Citation
+from app.pipeline.models.format_brief import FormatBrief as FormatBrief
+from app.pipeline.models.format_measure import FormatMeasure as FormatMeasure
+from app.pipeline.models.script_numbers import ScriptNumbers as ScriptNumbers
+from app.pipeline.models.shot_timing import ShotTiming as ShotTiming
+from app.pipeline.numbers_citations import citation_lines, citation_of
 from app.pipeline.schemas import (
-    CITATION_LICENSE,
-    MEDIA_SHOT_KINDS,
-    OVERLAY_SHOT_KINDS,
     Asset,
     BrollShot,
     PhotoShot,
@@ -31,48 +32,12 @@ from app.pipeline.schemas import (
     Shot,
     effective_shots,
 )
-from app.pipeline.shots import MIN_SHOT_MS, shot_bounds
+from app.pipeline.shots import shot_bounds
 
-MAX_SHOT_MS = 6000
 # Sem teto de duração: a câmera percorre o plano (rede, cronologia) ou o vídeo se move sozinho e segurar a
 # textura é o ritmo do formato (B-roll, ADR 031)
-LONG_KINDS = frozenset({"network", "timeline", "broll"})
-OPENING_SHARE = 0.10  # a abertura é o primeiro décimo da duração estimada (decisão D2 da spec)
-OPENING_S = 60  # as medidas "_60s" do nicho olham o primeiro minuto
-BLOCK_START = "<!-- números: gerado por `vp numeros`; não editar à mão -->"
-BLOCK_END = "<!-- números: fim -->"
-FORMAT_FILE = "formato-brief.json"
-IMAGE_PLAN_FILE = "plano-imagens.md"
+
 # As mesmas palavras que o `analisar.py` conta nos vídeos do nicho; o teste confere que não se separam.
-SPOKEN = {
-    "voce": re.compile(r"\b(você|vocês)\b", re.I),
-    "nos": re.compile(r"\b(a gente|nós|nosso|nossa|nossos|nossas)\b", re.I),
-    "eu": re.compile(r"\b(eu|meu|minha|pra mim|para mim|acho)\b", re.I),
-    "fonte": re.compile(
-        r"\b(segundo|de acordo com|estudo|estudos|pesquisa|pesquisas|pesquisadores|artigo)\b", re.I
-    ),
-}
-MEASURE_LABELS = {
-    "duracao_s": "duração (s)",
-    "palavras_min": "palavras por minuto",
-    "cortes_min": "trocas de imagem por minuto",
-    "plano_medio_s": "plano médio (s)",
-    "voce_por_mil": '"você" por mil palavras',
-    "nos_por_mil": '"a gente" por mil palavras',
-    "eu_por_mil": '"eu" por mil palavras',
-    "fonte_por_mil": "fonte citada por mil palavras",
-    "palavras_60s": "palavras no primeiro minuto",
-    "voce_60s": '"você" no primeiro minuto',
-    "cortes_60s": "trocas de imagem no primeiro minuto",
-}
-
-
-@dataclass(frozen=True)
-class ShotTiming:
-    scene_id: str
-    shot: Shot
-    start_ms: float  # desde o começo do vídeo
-    ms: float
 
 
 def scene_duration_ms(scene: Scene, chars_per_second: float) -> float:
@@ -97,7 +62,9 @@ def shot_timings(scenes: ScenesManifest, chars_per_second: float) -> list[ShotTi
 
 def rhythm_alert(shot: Shot, ms: float) -> bool:
     """Plano curto demais ou, fora dos que seguram de propósito, longo demais (mesma regra do `vp check`)."""
-    return ms < MIN_SHOT_MS or (ms > MAX_SHOT_MS and shot.kind not in LONG_KINDS)
+    return ms < ShotsConstants.MIN_SHOT_MS or (
+        ms > Constants.MAX_SHOT_MS and shot.kind not in Constants.LONG_KINDS
+    )
 
 
 def _asset_id(shot: Shot) -> str | None:
@@ -113,45 +80,17 @@ def image_changes(timings: Sequence[ShotTiming]) -> list[float]:
     changes, previous, media_on = [], object(), False
     for timing in timings:
         shot = timing.shot
-        if shot.kind in MEDIA_SHOT_KINDS:
+        if shot.kind in SchemasConstants.MEDIA_SHOT_KINDS:
             asset = _asset_id(shot)
             if asset is None or asset != previous:
                 changes.append(timing.start_ms)
             previous, media_on = asset, True
-        elif shot.kind in OVERLAY_SHOT_KINDS and media_on:
+        elif shot.kind in SchemasConstants.OVERLAY_SHOT_KINDS and media_on:
             continue
         else:
             changes.append(timing.start_ms)
             previous = object()
     return changes
-
-
-@dataclass(frozen=True)
-class Citation:
-    scene_id: str
-    anchor: str
-    asset_id: str
-    ms: float
-
-
-@dataclass(frozen=True)
-class ScriptNumbers:
-    scenes: int
-    shots: int
-    text_shots: int
-    pauses: int
-    words: int
-    duration_ms: float
-    voce: int
-    voce_scenes: int
-    voce_closing: int
-    opening: tuple[int, float]  # planos que começam no primeiro décimo, e a duração desse décimo (ms)
-    rest: tuple[int, float]
-    rhythm_alerts: list[ShotTiming]
-    citations: list[Citation]
-    assets_by_use: dict[str, list[str]]  # ativo -> cenas, na ordem da primeira aparição
-    unused_assets: list[str]
-    measures: dict[str, float] = field(default_factory=dict)  # as medidas na unidade do nicho
 
 
 def _plain(scenes: ScenesManifest) -> list[tuple[str, str]]:
@@ -168,13 +107,15 @@ def niche_measures(
     changes = image_changes(timings)
     opening, offset = [], 0.0
     for scene, text in zip(scenes.scenes, texts, strict=True):
-        if offset < OPENING_S * 1000:
+        if offset < Constants.OPENING_S * 1000:
             opening.append(text)
         offset += scene_duration_ms(scene, chars_per_second)
     joined, first = " ".join(texts), " ".join(opening)
     if not words or not duration_s:
         return {}
-    per_thousand = {f"{name}_por_mil": len(rx.findall(joined)) / words * 1000 for name, rx in SPOKEN.items()}
+    per_thousand = {
+        f"{name}_por_mil": len(rx.findall(joined)) / words * 1000 for name, rx in Constants.SPOKEN.items()
+    }
     return {
         "duracao_s": duration_s,
         "palavras_min": words / duration_s * 60,
@@ -182,8 +123,8 @@ def niche_measures(
         "plano_medio_s": duration_s / len(changes) if changes else duration_s,
         **per_thousand,
         "palavras_60s": len(first.split()),
-        "voce_60s": len(SPOKEN["voce"].findall(first)),
-        "cortes_60s": sum(1 for start in changes if start < OPENING_S * 1000),
+        "voce_60s": len(Constants.SPOKEN["voce"].findall(first)),
+        "cortes_60s": sum(1 for start in changes if start < Constants.OPENING_S * 1000),
     }
 
 
@@ -195,12 +136,12 @@ def script_numbers(
     total_ms = sum(scene_duration_ms(s, chars_per_second) for s in scenes.scenes)
     positions, cursor, scenes_with = [], 0, set()
     for scene_id, text in plain:
-        for match in SPOKEN["voce"].finditer(text):
+        for match in Constants.SPOKEN["voce"].finditer(text):
             positions.append(cursor + match.start())
             scenes_with.add(scene_id)
         cursor += len(text) + 1
     closing_from = 0.9 * max(cursor - 1, 0)
-    opening_ms = OPENING_SHARE * total_ms
+    opening_ms = Constants.OPENING_SHARE * total_ms
     in_opening = sum(1 for t in timings if t.start_ms < opening_ms)
     used: dict[str, list[str]] = {}
     for timing in timings:
@@ -208,17 +149,17 @@ def script_numbers(
         if asset and timing.scene_id not in used.setdefault(asset, []):
             used[asset].append(timing.scene_id)
     citations = [
-        Citation(t.scene_id, t.shot.anchor, asset, t.ms)
+        citation_of(t, assets[asset])
         for t in timings
-        if isinstance(t.shot, PhotoShot)
+        if isinstance(t.shot, PhotoShot | BrollShot)
         and (asset := t.shot.asset_id) is not None
         and asset in assets
-        and assets[asset].license_id == CITATION_LICENSE
+        and assets[asset].license_id == SchemasConstants.CITATION_LICENSE
     ]
     return ScriptNumbers(
         scenes=len(scenes.scenes),
         shots=len(timings),
-        text_shots=sum(1 for t in timings if t.shot.kind not in MEDIA_SHOT_KINDS),
+        text_shots=sum(1 for t in timings if t.shot.kind not in SchemasConstants.MEDIA_SHOT_KINDS),
         pauses=sum(len(pause_positions(s.narration)) for s in scenes.scenes),
         words=sum(len(text.split()) for _, text in plain),
         duration_ms=total_ms,
@@ -238,32 +179,6 @@ def script_numbers(
 # --- perfil de formato do nicho (ADR 031, parte B) ---
 
 
-class _Brief(BaseModel):
-    # O contrato é da skill `analise-de-formato` e pode ganhar campos: o que não é lido aqui é ignorado.
-    model_config = ConfigDict(extra="ignore", frozen=True, populate_by_name=True)
-
-
-class FormatMeasure(_Brief):
-    alto: float  # mediana do terço de mais views
-    baixo: float  # mediana do terço de menos views
-    rho: float | None = None  # Spearman com log das views
-    n: int
-    forca: Literal["pattern", "hint"]
-
-    def bottom_side(self, value: float) -> bool:
-        """O valor do roteiro está mais perto do terço de baixo que do de cima."""
-        return abs(value - self.baixo) < abs(value - self.alto)
-
-
-class FormatBrief(_Brief):
-    schema_name: Literal["formato_brief.v1"] = Field(alias="schema")
-    nicho: str
-    grupo: str
-    data: date
-    n: int
-    medidas: dict[str, FormatMeasure]
-
-
 def format_warnings(numbers: ScriptNumbers, brief: FormatBrief | None) -> list[str]:
     """Só padrões fortes (`pattern`) geram alerta, e só quando o roteiro está do lado do terço de baixo."""
     if brief is None:
@@ -275,8 +190,9 @@ def format_warnings(numbers: ScriptNumbers, brief: FormatBrief | None) -> list[s
             continue
         rho = f", ρ {_num(measure.rho, 2)}" if measure.rho is not None else ""
         out.append(
-            f"formato: {MEASURE_LABELS.get(name, name)} = {_num(value)}; o terço de cima do nicho tem "
-            f"{_num(measure.alto)} e o de baixo {_num(measure.baixo)} (pattern{rho}, perfil de {brief.data})"
+            f"formato: {Constants.MEASURE_LABELS.get(name, name)} = {_num(value)}"
+            f"; o terço de cima do nicho tem {_num(measure.alto)} e o de baixo "
+            f"{_num(measure.baixo)} (pattern{rho}, perfil de {brief.data})"
         )
     return out
 
@@ -303,7 +219,7 @@ def render_block(numbers: ScriptNumbers, brief: FormatBrief | None, chars_per_se
     n = numbers
     minutes = n.duration_ms / 60000
     lines = [
-        BLOCK_START,
+        Constants.BLOCK_START,
         "## Números do roteiro (gerado)",
         "",
         f"Estimativa a {_num(chars_per_second)} caracteres por segundo, a mesma do `vp check`; o tempo real "
@@ -319,20 +235,13 @@ def render_block(numbers: ScriptNumbers, brief: FormatBrief | None, chars_per_se
         + ("" if n.rhythm_alerts else " nenhum."),
     ]
     lines += [f'  - {t.scene_id} {t.shot.kind} "{t.shot.anchor}" {_seconds(t.ms)}' for t in n.rhythm_alerts]
-    distinct = len({c.asset_id for c in n.citations})
-    lines += ["", f"### Quadros citados (`Citacao`): {len(n.citations)} usos de {distinct} ativos", ""]
-    if n.citations:
-        lines += ["| # | Cena | Âncora | Ativo | Tempo |", "|---|---|---|---|---|"]
-        lines += [
-            f'| {i} | {c.scene_id} | "{c.anchor}" | `{c.asset_id}` | {_seconds(c.ms)} |'
-            for i, c in enumerate(n.citations, 1)
-        ]
+    lines += citation_lines(n.citations)
     lines += ["", f"### Ativos usados: {len(n.assets_by_use)}", ""]
     if n.unused_assets:
         lines.append("Baixados e fora do vídeo: " + ", ".join(f"`{a}`" for a in n.unused_assets) + ".")
     lines += ["", "### Formato × nicho", ""]
     if brief is None:
-        lines.append(f"Sem `{FORMAT_FILE}` no episódio: nada a comparar.")
+        lines.append(f"Sem `{Constants.FORMAT_FILE}` no episódio: nada a comparar.")
     else:
         lines += [
             f"Perfil de {brief.data}, {brief.nicho}, grupo {brief.grupo}, n = {brief.n}. Medidas do roteiro "
@@ -345,18 +254,18 @@ def render_block(numbers: ScriptNumbers, brief: FormatBrief | None, chars_per_se
             ours = n.measures.get(name)
             rho = f" (ρ {_num(measure.rho, 2)})" if measure.rho is not None else ""
             lines.append(
-                f"| {MEASURE_LABELS.get(name, name)} | {_num(ours)} | {_num(measure.alto)} | "
+                f"| {Constants.MEASURE_LABELS.get(name, name)} | {_num(ours)} | {_num(measure.alto)} | "
                 f"{_num(measure.baixo)} | {measure.forca}{rho} |"
             )
-    lines += ["", BLOCK_END]
+    lines += ["", Constants.BLOCK_END]
     return "\n".join(lines)
 
 
 def current_block(text: str) -> str | None:
-    start, end = text.find(BLOCK_START), text.find(BLOCK_END)
+    start, end = text.find(Constants.BLOCK_START), text.find(Constants.BLOCK_END)
     if start < 0 or end < start:
         return None
-    return text[start : end + len(BLOCK_END)]
+    return text[start : end + len(Constants.BLOCK_END)]
 
 
 def replace_block(text: str, block: str) -> str:
@@ -372,10 +281,10 @@ def strip_block(data: bytes) -> bytes:
 
     Sem bloco, os bytes voltam iguais. Com bloco, sai também a linha em branco que o `replace_block` põe antes
     dele: o outline aprovado antes do bloco tem o mesmo carimbo depois de ganhá-lo."""
-    start, end = data.find(BLOCK_START.encode()), data.find(BLOCK_END.encode())
+    start, end = data.find(Constants.BLOCK_START.encode()), data.find(Constants.BLOCK_END.encode())
     if start < 0 or end < start:
         return data
-    before, after = data[:start].rstrip(b"\n"), data[end + len(BLOCK_END.encode()) :]
+    before, after = data[:start].rstrip(b"\n"), data[end + len(Constants.BLOCK_END.encode()) :]
     if not after.strip():
         return before + b"\n"
     return before + b"\n\n" + after.lstrip(b"\n")
@@ -397,13 +306,13 @@ def render_image_plan(
     for timing in shot_timings(scenes, chars_per_second):
         asset = _asset_id(timing.shot)
         clock = f"{int(timing.start_ms // 60000)}:{int(timing.start_ms % 60000 // 1000):02d}"
-        if timing.shot.kind in MEDIA_SHOT_KINDS:
-            license_id = assets[asset].license_id if asset in assets else "sem registro"
+        if timing.shot.kind in SchemasConstants.MEDIA_SHOT_KINDS:
+            license_id = assets[asset].license_id if asset is not None and asset in assets else None
             shown = f"`{asset}`" if asset else "(sem ativo)"
         else:
             license_id, shown = "—", "(gráfico do template)"
         shot = timing.shot
-        row = (timing.scene_id, clock, shot.anchor, shot.kind, shown, license_id)
+        row = (timing.scene_id, clock, shot.anchor, shot.kind, shown, license_id or "sem registro")
         lines.append("| " + " | ".join(row) + " |")
     lines += ["", f"## Ativos usados ({len(numbers.assets_by_use)})", "", "| Ativo | Licença | Cenas |"]
     lines.append("|---|---|---|")

@@ -1,0 +1,16 @@
+{
+  "filter": "silencedetect=noise=-50dB:d=0.5",
+  "method": "In-memory audio-only concat of leveled WAV speech trims, padded to frame-aligned scene durations. No audio/video file rendered or original WAV modified.",
+  "silences": [
+    [
+      11.528917,
+      12.089958
+    ],
+    [
+      31.013917,
+      31.535646
+    ]
+  ],
+  "max_silence_s": 0.561041,
+  "problems": []
+}

@@ -1,0 +1,328 @@
+{
+  "success": true,
+  "command": "inspect",
+  "composition": "ProductionExplainer",
+  "contentFile": "/home/viniciusk/projetos/auto-play/renders/short-concorrencia/explicacao/content.pt.json",
+  "content": {
+    "version": 2,
+    "format": "vertical",
+    "fps": 30,
+    "style": "editorial",
+    "safeArea": "shorts",
+    "cover": true,
+    "footer": "Medido em 01/11/2026 · gcc 15.2 -O2 · Ryzen 7 5700U · 2 threads · esperado: 2.000.000 · 15 rodadas",
+    "assets": {},
+    "scenes": [
+      {
+        "id": "gancho",
+        "durationSec": 4,
+        "type": "hook",
+        "text": "2 threads. 1 contador. O total deveria dar 2.000.000.",
+        "highlight": "deveria dar 2.000.000",
+        "kicker": "concorrência"
+      },
+      {
+        "id": "resultado",
+        "durationSec": 3.5,
+        "type": "comparison",
+        "left": {
+          "label": "sem proteção (mediana)",
+          "value": 1130174
+        },
+        "right": {
+          "label": "mutex e atomic",
+          "value": 2000000
+        },
+        "mode": "side",
+        "showRatio": false
+      },
+      {
+        "id": "codigo",
+        "durationSec": 11,
+        "type": "grid",
+        "title": "Exemplo didático · Em C, data race é comportamento indefinido",
+        "layout": "rows",
+        "cells": [
+          {
+            "kind": "text",
+            "text": "A lê 10 · B lê 10"
+          },
+          {
+            "kind": "text",
+            "text": "A soma e grava 11"
+          },
+          {
+            "kind": "text",
+            "text": "B soma e grava 11"
+          },
+          {
+            "kind": "text",
+            "text": "Uma soma se perde"
+          }
+        ]
+      },
+      {
+        "id": "mutex",
+        "durationSec": 4,
+        "type": "headline",
+        "text": "mutex: um thread por vez no trecho protegido.",
+        "highlight": "um thread por vez"
+      },
+      {
+        "id": "atomic",
+        "durationSec": 7,
+        "type": "grid",
+        "title": "atomic: soma indivisível",
+        "layout": "rows",
+        "cells": [
+          {
+            "kind": "text",
+            "text": "atomic_fetch_add(&com_atomic, 1)"
+          },
+          {
+            "kind": "text",
+            "text": "Primeiro incremento: 10 → 11"
+          },
+          {
+            "kind": "text",
+            "text": "Próximo incremento: 11 → 12"
+          }
+        ]
+      },
+      {
+        "id": "tempo",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "Tempo da rodada",
+        "items": [
+          {
+            "label": "sem proteção · errado",
+            "value": 11
+          },
+          {
+            "label": "atomic",
+            "value": 21.4
+          },
+          {
+            "label": "mutex",
+            "value": 92.2
+          }
+        ],
+        "unit": "ms",
+        "decimals": 1,
+        "highlight": "mutex"
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "Cada soma conta",
+        "sub": "atomic no contador · mutex no trecho"
+      }
+    ]
+  },
+  "media": {},
+  "metadata": {
+    "fps": 30,
+    "durationInFrames": 1305,
+    "durationSec": 43.5,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4,
+        "type": "hook",
+        "text": "2 threads. 1 contador. O total deveria dar 2.000.000.",
+        "highlight": "deveria dar 2.000.000",
+        "kicker": "concorrência",
+        "from": 0,
+        "durationInFrames": 120,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "resultado",
+        "durationSec": 3.5,
+        "type": "comparison",
+        "left": {
+          "label": "sem proteção (mediana)",
+          "value": 1130174
+        },
+        "right": {
+          "label": "mutex e atomic",
+          "value": 2000000
+        },
+        "mode": "side",
+        "showRatio": false,
+        "from": 120,
+        "durationInFrames": 105,
+        "readableFrame": 70,
+        "readableFrom": 190
+      },
+      {
+        "id": "codigo",
+        "durationSec": 11,
+        "type": "grid",
+        "title": "Exemplo didático · Em C, data race é comportamento indefinido",
+        "layout": "rows",
+        "cells": [
+          {
+            "kind": "text",
+            "text": "A lê 10 · B lê 10"
+          },
+          {
+            "kind": "text",
+            "text": "A soma e grava 11"
+          },
+          {
+            "kind": "text",
+            "text": "B soma e grava 11"
+          },
+          {
+            "kind": "text",
+            "text": "Uma soma se perde"
+          }
+        ],
+        "from": 225,
+        "durationInFrames": 330,
+        "readableFrame": 37,
+        "readableFrom": 262
+      },
+      {
+        "id": "mutex",
+        "durationSec": 4,
+        "type": "headline",
+        "text": "mutex: um thread por vez no trecho protegido.",
+        "highlight": "um thread por vez",
+        "from": 555,
+        "durationInFrames": 120,
+        "readableFrame": 56,
+        "readableFrom": 611
+      },
+      {
+        "id": "atomic",
+        "durationSec": 7,
+        "type": "grid",
+        "title": "atomic: soma indivisível",
+        "layout": "rows",
+        "cells": [
+          {
+            "kind": "text",
+            "text": "atomic_fetch_add(&com_atomic, 1)"
+          },
+          {
+            "kind": "text",
+            "text": "Primeiro incremento: 10 → 11"
+          },
+          {
+            "kind": "text",
+            "text": "Próximo incremento: 11 → 12"
+          }
+        ],
+        "from": 675,
+        "durationInFrames": 210,
+        "readableFrame": 32,
+        "readableFrom": 707
+      },
+      {
+        "id": "tempo",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "Tempo da rodada",
+        "items": [
+          {
+            "label": "sem proteção · errado",
+            "value": 11
+          },
+          {
+            "label": "atomic",
+            "value": 21.4
+          },
+          {
+            "label": "mutex",
+            "value": 92.2
+          }
+        ],
+        "unit": "ms",
+        "decimals": 1,
+        "highlight": "mutex",
+        "from": 885,
+        "durationInFrames": 270,
+        "readableFrame": 44,
+        "readableFrom": 929
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "Cada soma conta",
+        "sub": "atomic no contador · mutex no trecho",
+        "from": 1155,
+        "durationInFrames": 150,
+        "readableFrame": 26,
+        "readableFrom": 1181
+      }
+    ]
+  },
+  "style": {
+    "slug": "editorial",
+    "reviewNeeds": "frames",
+    "humanReview": false,
+    "cost": "light",
+    "referenceStills": [
+      "docs/stills/explainer-opening-read.png",
+      "docs/stills/explainer-context-read.png",
+      "docs/stills/explainer-comparison-read.png"
+    ],
+    "contrast": {
+      "min": 7.5,
+      "pairs": [
+        {
+          "role": "muted on ground",
+          "color": "#9AA4B2",
+          "on": "#0E1116",
+          "ratio": 7.5,
+          "min": 4.5,
+          "ok": true,
+          "kind": "text"
+        },
+        {
+          "role": "text on ground",
+          "color": "#EDEDE8",
+          "on": "#0E1116",
+          "ratio": 16.1,
+          "min": 4.5,
+          "ok": true,
+          "kind": "text"
+        },
+        {
+          "role": "highlight",
+          "color": "#F2B134",
+          "on": "#0E1116",
+          "ratio": 10.01,
+          "min": 3,
+          "ok": true,
+          "kind": "text"
+        }
+      ]
+    }
+  },
+  "reviewRequired": true,
+  "diagnostics": [
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.2.type",
+      "sceneId": "codigo",
+      "message": "A cena grid não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    },
+    {
+      "code": "SAFE_AREA_UNCHECKED",
+      "severity": "warning",
+      "path": "scenes.4.type",
+      "sceneId": "atomic",
+      "message": "A cena grid não segue a área segura (shorts) em todos os estilos: confira no review se algo cai embaixo da interface do app."
+    }
+  ]
+}

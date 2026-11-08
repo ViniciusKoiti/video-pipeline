@@ -1,0 +1,132 @@
+{
+  "comparisons": [
+    {
+      "language": "pt-BR",
+      "file": "renders/teste-referencias-voz/comparacao.pt.wav",
+      "duration_s": 41.51,
+      "sha256": "791b6c86be3a8c6e55b0bfc7de95b16251bec403336d4a03c7304873d82216e5",
+      "parts": [
+        {
+          "order": 1,
+          "delivery": "referência antiga",
+          "start_s": 0.0,
+          "end_s": 6.48,
+          "reference_sha256": "2703e85826591f589f33c5a81234872c9396d702a8e393534a13d6121e609b43",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-base-pt/voice/neutral-chatterbox_modal-ptbr-8687cde03d.wav"
+        },
+        {
+          "order": 2,
+          "delivery": "neutral",
+          "start_s": 7.23,
+          "end_s": 12.11,
+          "reference_sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/neutral-chatterbox_modal-ptbr-226c008b8a.wav"
+        },
+        {
+          "order": 3,
+          "delivery": "hook",
+          "start_s": 12.86,
+          "end_s": 18.78,
+          "reference_sha256": "b2e04b2a6b778881de1c043d71fc9bc9e6c22426fee323c153c1cb39952ab766",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/hook-chatterbox_modal-ptbr-4495d73c8d.wav"
+        },
+        {
+          "order": 4,
+          "delivery": "calm",
+          "start_s": 19.53,
+          "end_s": 25.89,
+          "reference_sha256": "5d89480bcdbd1db953c4cc6814371ff9f93685a0a2d6fa529106a1a5e06afaf3",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/calm-chatterbox_modal-ptbr-0565d4f5f7.wav"
+        },
+        {
+          "order": 5,
+          "delivery": "turn",
+          "start_s": 26.64,
+          "end_s": 34.24,
+          "reference_sha256": "267b648ad820920701dae09834dc5664fd8c68fa217067db07fe0ab7c2baa052",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/turn-chatterbox_modal-ptbr-cea92d72cc.wav"
+        },
+        {
+          "order": 6,
+          "delivery": "invite",
+          "start_s": 34.99,
+          "end_s": 41.51,
+          "reference_sha256": "b41eafec8ada298ef4f843b8c4989a979dc9cdf8397e18994291c8d9ce68c80b",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-pt/voice/invite-chatterbox_modal-ptbr-d68b771fb0.wav"
+        }
+      ],
+      "cache_reused_without_changing_wavs": true
+    },
+    {
+      "language": "en",
+      "file": "renders/teste-referencias-voz/comparacao.en.wav",
+      "duration_s": 38.91,
+      "sha256": "ef1a38d102d9ab2b0583eff852b7ffc57108c43d6e187feebb65ee6bd3fac4d8",
+      "parts": [
+        {
+          "order": 1,
+          "delivery": "referência antiga",
+          "start_s": 0.0,
+          "end_s": 4.6,
+          "reference_sha256": "2703e85826591f589f33c5a81234872c9396d702a8e393534a13d6121e609b43",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-base-en/voice/neutral-chatterbox_modal-en-dd609ea517.wav"
+        },
+        {
+          "order": 2,
+          "delivery": "neutral",
+          "start_s": 5.35,
+          "end_s": 10.39,
+          "reference_sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/neutral-chatterbox_modal-en-882fbb0f7c.wav"
+        },
+        {
+          "order": 3,
+          "delivery": "hook",
+          "start_s": 11.14,
+          "end_s": 16.82,
+          "reference_sha256": "d20374693e11d041af3bc66f2092ff92a33160588ccc3b86ee98a29ce7eb2792",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/hook-chatterbox_modal-en-7d1720c945.wav"
+        },
+        {
+          "order": 4,
+          "delivery": "calm",
+          "start_s": 17.57,
+          "end_s": 24.05,
+          "reference_sha256": "79342d49b99e53ed27ae9c3969da26ff6e2b1b3789ddf4304897c6f241ef0cf8",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/calm-chatterbox_modal-en-874df5916c.wav"
+        },
+        {
+          "order": 5,
+          "delivery": "turn",
+          "start_s": 24.8,
+          "end_s": 32.96,
+          "reference_sha256": "ea3fc41905cac90d9f0bcc61f036e6575f3b909e9c7646b977971344972c7c16",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/turn-chatterbox_modal-en-325404de8a.wav"
+        },
+        {
+          "order": 6,
+          "delivery": "invite",
+          "start_s": 33.71,
+          "end_s": 38.91,
+          "reference_sha256": "0dbe3b16f24f76dc3c7f3a030ebd0cbd75df0be653bc8edd88cc701f781915a6",
+          "source_wav": "/home/viniciusk/projetos/auto-play/data/episodes/teste-referencias-voz-en/voice/invite-chatterbox_modal-en-c8b676f529.wav"
+        }
+      ],
+      "cache_reused_without_changing_wavs": true
+    }
+  ],
+  "human_listening": "approved_in_normalized_comparison; see nivelamento.verificacao.json",
+  "original_references_preserved": true,
+  "published_videos_unchanged": true,
+  "notes": "As amostras usam os parâmetros de produção de cada delivery; variação de referência e parâmetros não está isolada. Não houve normalização, alteração de velocidade ou cortes nas falas; junção com pausas de 750 ms.",
+  "quality": {
+    "pytest": "1487 passed, 8 deselected",
+    "mypy": "467 source files, no issues",
+    "ruff": "passed after final whitespace correction",
+    "diff_check": "passed",
+    "skills": "short-diario quick_validate passed; YAML of all three Claude skills validated"
+  },
+  "scope": "Reference selection for Short and long voice flows; real Modal synthesis and CLI cache verified. No real CPU model run or complete daily video render in this verification.",
+  "preferred_listening": "nivelamento.verificacao.json; comparacao.nivelada.pt.mp3 and comparacao.nivelada.en.mp3",
+  "owner_feedback": "Neutral voice too quiet; measured and leveled comparison per clip, preserving synthesis originals."
+}

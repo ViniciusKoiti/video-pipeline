@@ -1,0 +1,15 @@
+# 2026-11-07T14:55:36-03:00 | openjdk version "25.0.4.1" 2026-08-18 | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | pagamentos: 10000, perda simulada de 30% das respostas (semente 42), ate 10 tentativas por pagamento | tempo por pedido so em memoria (sem rede, sem banco) | sonda abaixo de 0.12 s antes de cada rodada, pausa de 10 s | 15 rodadas
+rodada=1 cpu_probe=0.069 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.3357
+rodada=1 cpu_probe=0.069 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.3172
+rodada=2 cpu_probe=0.113 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.4976
+rodada=2 cpu_probe=0.113 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.0752
+rodada=3 cpu_probe=0.094 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.4572
+rodada=3 cpu_probe=0.094 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=2.3907
+rodada=4 cpu_probe=0.098 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.5352
+rodada=4 cpu_probe=0.098 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=3.2917
+rodada=5 cpu_probe=0.084 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=1.9953
+rodada=5 cpu_probe=0.084 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=2.4681
+rodada=6 cpu_probe=0.119 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.7331
+rodada=6 cpu_probe=0.119 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=3.9056
+rodada=7 cpu_probe=0.103 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=1.2601
+rodada=7 cpu_probe=0.103 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=4.6075

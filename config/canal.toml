@@ -3,6 +3,6 @@
 nome = "Cena e Conceito"
 handle = "@cenaeconceito"
 
-# Programa de Associados da Amazon.com.br: a tag vai em todo link de livro citado (scripts/provisorio/livros_afiliado.py)
+# Programa de Associados da Amazon.com.br: a tag vai em todo link de livro citado (`vp export livros`)
 [amazon]
 tag = "viniciuscode-20"

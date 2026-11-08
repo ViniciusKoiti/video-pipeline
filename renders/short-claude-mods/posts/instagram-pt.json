@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-10-27T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Um mod do Claude Code é um arquivo de instruções. Esse aqui ensina o agente a analisar um binário sem o código: file, strings e objdump, com a saída real na tela, até a senha.\n\nCada afirmação aponta para uma linha da saída. Só em binário seu, ou de CTF.\n\nApresentador desenhado a partir de fotos minhas; voz clonada da minha por IA.\n\n#engenhariareversa #claudecode #assembly #linux #programacao #dev",
+          "image": [
+            {
+              "id": "7b5489b7-9351-416f-8373-ed9ed81dfe54",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/7910ece47fef2c4943cb5b98bc47d27d9.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

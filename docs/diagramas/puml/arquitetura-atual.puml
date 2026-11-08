@@ -1,0 +1,131 @@
+@startuml arquitetura-atual
+!pragma layout smetana
+title auto-play — arquitetura implementada\nÁrvore local de 01/11/2026 · depois do RF7 (base Git dbb41ea)
+
+left to right direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 12
+skinparam ArrowColor #536275
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam roundcorner 8
+skinparam nodesep 35
+skinparam ranksep 55
+skinparam noteBackgroundColor #FFF4D6
+skinparam noteBorderColor #C98C1C
+
+actor "Dono\ndecide e aprova" as owner #FFF4D6
+actor "Agentes / skills\nedição assistida" as agents #E7F0FF
+component "radar-de-reels\nbrief disponível (opcional)" as radar #EEE8FA
+
+rectangle "Workspace auto-play · Python + Node.js · operação local" {
+  package "Entradas" #F4F7FA {
+    component "CLI vp\napp/cli.py: HANDLERS + build_parser\nerros pelo tratamento único (ADR 045)" as cli #E7F0FF
+    component "Comandos\napp/commands/*\nsources · assets · briefs · music · export\nmetricas · voice · render · short · audio\nstatus · approve/reject/reopen · postiz · usage" as commands #E7F0FF
+    component "Scripts avulsos\nprovisorio: evolucao, sprites\nbench · ferramentas" as scripts #FFF4D6
+  }
+
+  package "Núcleo Python" #F4F7FA {
+    component "Composição sob demanda\napp/bootstrap + app/settings\nproviders.toml / ambiente" as boot #E7F0FF
+    component "Domínio e portas\napp/pipeline\nschemas · check · gates · protection\nvoice · assembly · package · sources\nepisode_build · short_* · audio_review" as core #E5F3EA
+    component "Mídia e tempos\napp/media\nWAV · legenda · palavras · loudness\nspeech_bounds · short_mix · earshot" as media #E5F3EA
+  }
+
+  package "Adaptadores" #F4F7FA {
+    component "Armazenamento\napp/storage\nJsonFileStore · JsonReviewGate\nlock + gravação atômica\nManifestInvalid na leitura\nSQLite de consumo (ADR 032)" as store #E5F3EA
+    component "Provedores\napp/providers\ntexto · TTS · alinhamento · acervo\nimagem · vídeo · HTTP" as providers #E5F3EA
+    component "Motores de render\napp/render\nffmpeg: documental\nRemotion: explicativo" as render #E5F3EA
+    component "Publicação autorizada\nPostizClient + validação\ncadeia: pacote · dúvida · envio" as posting #E5F3EA
+  }
+
+  package "Template de vídeo · video/" #F4F7FA {
+    component "Remotion + React\nrender-scenes.mjs → Scene\nShot: prévia de plano\nClipe: composição independente" as template #E7F0FF
+    component "@viniciusk/motion-kit 0.7.1\nvendor/*.tgz + package-lock.json" as kit #EEE8FA
+  }
+
+  folder "Artefatos locais" as files #F4F7FA {
+    artifact "data/episodes/<id>/\npauta · fontes · facts · scenes · outline\nreview · checagem · assets · voice\ncaptions · episode · renders\nmanifest: estado por etapa e por cena" as episode
+    artifact "data/publicacoes/registro.jsonl\nupload · pacote · dúvida · envio" as registry
+    artifact "data/music · data/sfx/kit\ncatálogo de trilha e SFX Kit (CC0)" as catalogs
+  }
+}
+
+component "Serviços e modelos locais\nOllama · Kokoro\nChatterbox e earshot em Python externo" as local #EEE8FA
+cloud "Serviços remotos, conforme uso\nPexels · Pixabay · Unsplash\nGemini TTS · Modal · Groq" as remote #EEE8FA
+component "FFmpeg / ffprobe\nmedição, junção e montagem final" as ffmpeg #EEE8FA
+cloud "Postiz\ncanais e agendamentos" as postiz #EEE8FA
+
+owner --> cli : comandos / decisões humanas
+owner --> scripts : ferramentas avulsas
+agents --> episode : escrevem artefatos editoriais
+radar --> commands : briefs copiados por arquivo (vp briefs)
+
+cli --> commands : despacha o verbo
+cli --> boot : monta o contexto
+commands --> core : serviços: voz, montagem, pacote, fontes, ativos
+commands --> media : medidas, legendas, mixagem
+commands --> posting : postiz
+scripts --> boot : obtém provedores
+boot ..> store : instancia
+boot ..> providers : instancia sob demanda
+boot ..> render : instancia por formato
+core --> store : lê / grava / confere hashes
+store --> episode : filesystem
+core --> providers : só pelas portas (Protocol)
+core --> render : só pela porta renderer(formato)
+commands --> catalogs : música e SFX
+
+media --> ffmpeg : mede WAV, silêncios e loudness
+providers --> local : chamadas locais / worker
+providers --> remote : HTTP / cliente Modal
+media --> local : earshot (vp audio)
+
+render --> episode : entrada e saídas / cache por cena
+render --> template : Node + props JSON
+render --> ffmpeg : segmentos / concatenação / áudio
+template ..> kit : importa pacote instalado
+owner ..> template : Clipe via CLI Remotion
+
+posting --> store : consulta o gate de preview
+posting --> episode : upload do arquivo escolhido
+posting --> registry : acrescenta eventos
+posting --> postiz : consultas / upload / schedule
+
+note top of core
+  tests/test_architecture: o pipeline só conhece portas;
+  só app/bootstrap conhece adaptadores concretos.
+  Gates sources, script, assets, preview: review.json é a
+  única autoridade; ReviewWriteGuard protege o aprovado.
+end note
+
+note top of commands
+  Cada verbo é um módulo com add_arguments e run.
+  Comandos ainda "não implementados": new, script,
+  scenes, gallery, subs.
+end note
+
+note bottom of media
+  Gate de tamanho: 200 linhas por arquivo e
+  50 por função em app/ (catraca em tests/).
+end note
+
+note bottom of render
+  EpisodeRenderer: montagem incompleta não chega ao
+  motor; o gate 4 aprovado recusa render por cima.
+end note
+
+note bottom of template
+  Scene, Shot e Clipe são as composições reais.
+  Voz e render reais não são exercitados nos testes.
+end note
+
+legend bottom left
+  |= Convenção |= Significado |
+  | Seta contínua | Execução, leitura, gravação ou transferência indicada no rótulo |
+  | Seta tracejada | Composição, dependência ou acionamento direto do operador |
+  A ordem editorial depende de decisões humanas e de comandos separados.
+  Refatoração SOLID: docs/fluxo-refatoracao-solid-2026-11-01.md (RF1 a RF7).
+endlegend
+@enduml

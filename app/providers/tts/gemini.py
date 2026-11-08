@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import base64
+import os
 import tempfile
 import time
 from collections.abc import Callable, Mapping, Sequence
@@ -23,20 +24,19 @@ from pathlib import Path
 from typing import Any
 
 from app.media.pauses import SplitError, split_at_pauses
+from app.media.wav import wav_is_valid
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import AuthPost, TransportError, post_json_with_headers
 from app.providers.tts.base import SpeechRequest, SpeechResult
-
-API = "https://generativelanguage.googleapis.com/v1beta/interactions"
-TIMEOUT_S = 90.0  # a fala mais longa do teste (188 caracteres) levou 27,5 s
-SECONDS_PER_CHAR = 3 / 13  # tempo a mais por caractere num lote (~3 s de espera por segundo de fala)
-SCENE_BREAK = " <long pause> "  # marca da documentação; em inglês mesmo com texto em português
-TRANSIENT = frozenset({429, 500, 503})  # e status None: tempo esgotado ou rede
-MARGIN_S = 1.0  # folga sobre 60 / chamadas por minuto
+from app.providers.tts.constants.gemini_constants import GeminiConstants
+from app.providers.tts.files import atomic_wav
 
 
 class GeminiTTS:
+    identity = GeminiConstants.IDENTITY  # alias legado do nome `gemini_tts` (ADR 041)
+    max_batch_chars = GeminiConstants.BATCH_CHARS  # ~90 s de fala por chamada (ADR 012)
+
     def __init__(
         self,
         api_key: str,
@@ -54,7 +54,7 @@ class GeminiTTS:
         self._model = model
         self._voices = dict(voices)  # idioma -> voz (ex.: {"pt-BR": "Charon"})
         self._styles = dict(styles)  # idioma -> direção de fala
-        self._interval = 60 / requests_per_minute + MARGIN_S
+        self._interval = 60 / requests_per_minute + GeminiConstants.MARGIN_S
         self._post = post
         self._clock = clock
         self._sleep = sleep
@@ -66,11 +66,18 @@ class GeminiTTS:
             raise ModelUnavailable(self.info.name, f"sem voz configurada para o idioma {request.language!r}")
         return voice
 
+    def fingerprint(self, request: SpeechRequest) -> str:
+        """`gemini|<modelo>|<voz>|<direção de fala do idioma>`; pausa e entrega vão no texto."""
+        style = self._styles.get(request.language, "")
+        return f"{self.identity}|{self._model}|{self._check(request)}|{style}"
+
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         voice = self._check(request)
-        audio = self._audio(self._call(self._body(request.text, request.language, voice), TIMEOUT_S))
-        request.out_path.parent.mkdir(parents=True, exist_ok=True)
-        request.out_path.write_bytes(audio)
+        audio = self._audio(
+            self._call(self._body(request.text, request.language, voice), GeminiConstants.TIMEOUT_S)
+        )
+        with atomic_wav(request.out_path, self.info.name) as partial:
+            partial.write_bytes(audio)
         return SpeechResult(path=request.out_path, model=self._model, voice=voice)
 
     def synthesize_many(self, requests: Sequence[SpeechRequest]) -> list[SpeechResult]:
@@ -83,18 +90,25 @@ class GeminiTTS:
         if len(voices) != 1 or len(languages) != 1:
             raise ProviderError(self.info.name, "um lote precisa de uma voz e um idioma só")
         voice, language = voices.pop(), languages.pop()
-        text = SCENE_BREAK.join(r.text for r in requests)
-        timeout = TIMEOUT_S + SECONDS_PER_CHAR * len(text)
+        text = GeminiConstants.SCENE_BREAK.join(r.text for r in requests)
+        timeout = GeminiConstants.TIMEOUT_S + GeminiConstants.SECONDS_PER_CHAR * len(text)
         audio = self._audio(self._call(self._body(text, language, voice), timeout))
         folder = requests[0].out_path.parent
         folder.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=folder) as tmp:
             batch = Path(tmp) / "lote.wav"
             batch.write_bytes(audio)
+            parts = [Path(tmp) / f"{i:03d}.wav" for i in range(len(requests))]
             try:
-                split_at_pauses(batch, [r.out_path for r in requests])
+                split_at_pauses(batch, parts)
             except SplitError as error:
                 raise InvalidOutput(self.info.name, f"lote de {len(requests)} cenas: {error}") from None
+            pairs = list(zip(requests, parts, strict=True))
+            invalid = [r.out_path.name for r, part in pairs if not wav_is_valid(part)]
+            if invalid:  # nada é publicado se algum corte saiu inválido: o lote cai para cena a cena
+                raise InvalidOutput(self.info.name, f"corte inválido em {', '.join(invalid)}")
+            for request, part in pairs:
+                os.replace(part, request.out_path)  # só depois de todos os cortes conferidos
         return [SpeechResult(path=r.out_path, model=self._model, voice=voice) for r in requests]
 
     def _check(self, request: SpeechRequest) -> str:
@@ -118,10 +132,17 @@ class GeminiTTS:
         for attempt in (1, 2):
             self._wait()
             try:
-                return self._post(API, body, {"x-goog-api-key": self._key}, timeout)
+                response = self._post(GeminiConstants.API, body, {"x-goog-api-key": self._key}, timeout)
+                if not isinstance(response, dict):
+                    raise InvalidOutput(self.info.name, "resposta JSON deve ser um objeto")
+                return response
             except TransportError as error:
                 daily = error.status == 429 and "per day" in str(error)  # 10 por dia: esperar não adianta
-                if attempt == 1 and not daily and (error.status is None or error.status in TRANSIENT):
+                if (
+                    attempt == 1
+                    and not daily
+                    and (error.status is None or error.status in GeminiConstants.TRANSIENT)
+                ):
                     continue  # limite por minuto, serviço sobrecarregado ou rede: espera e tenta uma vez mais
                 if error.status == 429:  # a mensagem do serviço diz qual limite (por minuto ou por dia)
                     detail = f"cota da camada gratuita esgotada: {error}"
@@ -129,6 +150,8 @@ class GeminiTTS:
                 if error.status == 404:
                     raise ModelUnavailable(self.info.name, f"modelo {self._model} indisponível") from None
                 raise ProviderError(self.info.name, str(error)) from None
+            except ValueError:
+                raise InvalidOutput(self.info.name, "resposta JSON inválida") from None
         raise AssertionError("inalcançável")
 
     def _wait(self) -> None:

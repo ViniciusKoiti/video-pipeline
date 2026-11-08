@@ -1,0 +1,25 @@
+# 2026-11-03T07:51:48-03:00 | SQLite 3.46.1 | Python 3.14.4 | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | pedidos: 1000000 linhas, 100000 clientes, consulta WHERE cliente_id = ? | 20 consultas sem indice, 1000 com indice (ms por consulta) | 10000 insercoes por lote | banco em disco, cache do SO quente | 15 rodadas
+rodada=1 sem_indice_ms=113.180 com_indice_ms=0.0707 criar_indice_ms=1395.2 inserir_sem_indice_ms=27.8 inserir_com_indice_ms=338.6 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+## plano_sem_indice=SCAN pedidos
+## plano_com_indice=SEARCH pedidos USING INDEX pedidos_cliente (cliente_id=?)
+rodada=2 sem_indice_ms=583.676 com_indice_ms=0.4119 criar_indice_ms=3768.5 inserir_sem_indice_ms=110.0 inserir_com_indice_ms=1735.2 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=3 sem_indice_ms=260.035 com_indice_ms=0.0960 criar_indice_ms=3908.5 inserir_sem_indice_ms=70.9 inserir_com_indice_ms=363.6 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=4 sem_indice_ms=358.721 com_indice_ms=0.3608 criar_indice_ms=4550.5 inserir_sem_indice_ms=56.9 inserir_com_indice_ms=1571.1 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=5 sem_indice_ms=484.179 com_indice_ms=0.3126 criar_indice_ms=3717.8 inserir_sem_indice_ms=103.6 inserir_com_indice_ms=1533.5 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=6 sem_indice_ms=496.009 com_indice_ms=0.4459 criar_indice_ms=4550.2 inserir_sem_indice_ms=120.6 inserir_com_indice_ms=1691.4 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=7 sem_indice_ms=418.865 com_indice_ms=0.3470 criar_indice_ms=4091.6 inserir_sem_indice_ms=30.0 inserir_com_indice_ms=1469.3 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=8 sem_indice_ms=472.119 com_indice_ms=0.3973 criar_indice_ms=5304.7 inserir_sem_indice_ms=107.2 inserir_com_indice_ms=1602.5 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=9 sem_indice_ms=554.121 com_indice_ms=0.4221 criar_indice_ms=6299.4 inserir_sem_indice_ms=152.6 inserir_com_indice_ms=1861.7 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=10 sem_indice_ms=547.203 com_indice_ms=0.3592 criar_indice_ms=5427.6 inserir_sem_indice_ms=131.9 inserir_com_indice_ms=1373.1 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=11 sem_indice_ms=536.152 com_indice_ms=0.3278 criar_indice_ms=4987.4 inserir_sem_indice_ms=122.6 inserir_com_indice_ms=2063.7 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=12 sem_indice_ms=388.455 com_indice_ms=0.3399 criar_indice_ms=5040.1 inserir_sem_indice_ms=89.1 inserir_com_indice_ms=1614.0 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=13 sem_indice_ms=386.622 com_indice_ms=0.2805 criar_indice_ms=4753.5 inserir_sem_indice_ms=35.5 inserir_com_indice_ms=1414.6 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=14 sem_indice_ms=445.712 com_indice_ms=0.2145 criar_indice_ms=4060.6 inserir_sem_indice_ms=116.7 inserir_com_indice_ms=1196.8 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+rodada=15 sem_indice_ms=478.290 com_indice_ms=0.2993 criar_indice_ms=4469.4 inserir_sem_indice_ms=92.1 inserir_com_indice_ms=1136.7 tamanho_antes_mb=74.6 tamanho_depois_mb=87.2 linhas_sem=199 linhas_esperadas=200 linhas_com_indice=200 confere=sim cache_size=-2000
+## resumo sem_indice_ms mediana=472.119 minimo=113.180 maximo=583.676
+## resumo com_indice_ms mediana=0.3399 minimo=0.0707 maximo=0.4459
+## resumo criar_indice_ms mediana=4550.2 minimo=1395.2 maximo=6299.4
+## resumo inserir_sem_indice_ms mediana=103.6 minimo=27.8 maximo=152.6
+## resumo inserir_com_indice_ms mediana=1533.5 minimo=338.6 maximo=2063.7
+## resumo tamanho_antes_mb mediana=74.6 minimo=74.6 maximo=74.6
+## resumo tamanho_depois_mb mediana=87.2 minimo=87.2 maximo=87.2

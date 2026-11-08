@@ -19,6 +19,6 @@ cada cena (`delivery`, viradas, frases do dono). As âncoras são trechos litera
 narração, sem as marcas de pausa. O dono decide ouvindo a prévia.
 
 Execute `.venv/bin/vp check <id>` e corrija só os erros de `music.json`. Para cada faixa
-usada, `scripts/provisorio/catalogo_musica.py usar <id> <faixa>` copia o ativo; a
+usada, `vp music usar <id> <faixa>` copia o ativo; a
 aprovação da faixa é do dono. Entregue as faixas escolhidas e por quê, onde ficam os
 silêncios e o que o dono precisa ouvir com atenção.

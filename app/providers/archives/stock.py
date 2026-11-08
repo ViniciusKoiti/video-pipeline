@@ -19,11 +19,10 @@ from urllib.parse import urlparse
 
 from app.pipeline.schemas import Asset, Orientation, Provider, Status
 from app.providers.archives.base import AssetCandidate, AssetQuery
+from app.providers.archives.constants.stock_constants import StockConstants
 from app.providers.base import ProviderInfo
-from app.providers.errors import ProviderError, QuotaExhausted
+from app.providers.errors import InvalidOutput, ProviderError, QuotaExhausted
 from app.providers.http import FileGet, JsonGet, JsonResponse, TransportError, download, get_json
-
-IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp")
 
 
 def normalize_query(text: str) -> str:
@@ -61,8 +60,13 @@ class ArchiveCache:
         encoded = json.dumps(params, sort_keys=True, ensure_ascii=False)
         path = self._dir / "search" / f"{hashlib.sha256(encoded.encode()).hexdigest()[:16]}.json"
         if path.is_file():
-            return json.loads(path.read_text())["response"]
+            cached: object = json.loads(path.read_text())["response"]
+            if not isinstance(cached, dict):
+                raise ValueError("cache de busca deve conter um objeto JSON")
+            return cached
         response = fetch()
+        if not isinstance(response.data, dict):
+            raise ValueError("resposta de busca deve ser um objeto JSON")
         self._write(
             path, {"params": dict(params), "fetched_at": self._now().isoformat(), "response": response.data}
         )
@@ -76,7 +80,11 @@ class ArchiveCache:
 
     def thumbnail(self, asset_id: str, url: str, fetch: Callable[[str, Path], Path]) -> Path:
         suffix = Path(urlparse(url).path).suffix.lower()
-        path = self._dir / "thumbs" / f"{asset_id}{suffix if suffix in IMAGE_SUFFIXES else '.jpg'}"
+        path = (
+            self._dir
+            / "thumbs"
+            / f"{asset_id}{suffix if suffix in StockConstants.IMAGE_SUFFIXES else '.jpg'}"
+        )
         return path if path.is_file() else fetch(url, path)
 
     @staticmethod
@@ -136,6 +144,12 @@ class StockArchive:
     def _results(self, query: AssetQuery) -> list[Mapping[str, Any]]:
         raise NotImplementedError
 
+    def _items(self, data: Mapping[str, Any], key: str) -> list[Mapping[str, Any]]:
+        items = data.get(key, [])
+        if not isinstance(items, list) or any(not isinstance(item, dict) for item in items):
+            raise InvalidOutput(self.info.name, "resultados da busca devem ser uma lista de objetos")
+        return items
+
     def _parse(self, item: Mapping[str, Any], query: AssetQuery) -> AssetCandidate | None:
         raise NotImplementedError
 
@@ -146,9 +160,14 @@ class StockArchive:
             return self._get(url, headers, self._timeout_s)
 
         try:
-            return fetch().data if self._cache is None else self._cache.search(cache_key, fetch)
+            data = fetch().data if self._cache is None else self._cache.search(cache_key, fetch)
+            if not isinstance(data, dict):
+                raise InvalidOutput(self.info.name, "resposta de busca deve ser um objeto JSON")
+            return data
         except TransportError as error:
             raise provider_error(self.info.name, error) from None
+        except (TypeError, ValueError):
+            raise InvalidOutput(self.info.name, "resposta ou cache de busca contém JSON inválido") from None
 
     def _fits(self, width: int | None, height: int | None, orientation: Orientation = "landscape") -> bool:
         """Na orientação do vídeo e pelo menos 1920×1080 (em pé, 1080×1920): o vídeo é 16:9 ou 9:16."""

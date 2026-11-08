@@ -47,17 +47,46 @@ pause_ms = 400
 # Entrega da fala por cena (ADR 022): `delivery` no scenes.json escolhe a linha; sem o campo, `neutral`.
 # exaggeration = ênfase (padrão do modelo 0,5); cfg_weight: quanto menor, mais vivo e rápido (padrão 0,5).
 # Do mais ao menos enfático: hook (abertura, chamado), turn (a virada), invite (pergunta final), neutral, calm (a conta).
+# hook/turn/invite mais fortes desde 2026-11-02 (antes 0,8/0,3, 0,7/0,4, 0,6/0,4), aprovados pelo dono na escuta de
+# renders/teste-referencias-voz/variacao-2026-11-02/; o contraste vale porque a maioria das falas fica neutra.
 [chatterbox.delivery]
-hook = { exaggeration = 0.8, cfg_weight = 0.3 }
-turn = { exaggeration = 0.7, cfg_weight = 0.4 }
-invite = { exaggeration = 0.6, cfg_weight = 0.4 }
+hook = { exaggeration = 1.0, cfg_weight = 0.3 }
+turn = { exaggeration = 0.9, cfg_weight = 0.35 }
+invite = { exaggeration = 0.8, cfg_weight = 0.35 }
 neutral = { exaggeration = 0.5, cfg_weight = 0.5 }
 calm = { exaggeration = 0.4, cfg_weight = 0.6 }
+
+# Referência por idioma e entrega (ADR 053); caminhos relativos à raiz do projeto.
+# Sem mapeamento usa CHATTERBOX_REFERENCE; arquivo mapeado ausente é erro, não troca silenciosa.
+[chatterbox.references."pt-BR"]
+hook = "data/voice-references/pt-BR/hook-01.wav"
+turn = "data/voice-references/pt-BR/turn-01.wav"
+invite = "data/voice-references/pt-BR/invite-01.wav"
+neutral = "data/voice-references/pt-BR/neutral-01.wav"
+calm = "data/voice-references/pt-BR/calm-01.wav"
+
+[chatterbox.references.en]
+hook = "data/voice-references/en/hook-01.wav"
+turn = "data/voice-references/en/turn-01.wav"
+invite = "data/voice-references/en/invite-01.wav"
+neutral = "data/voice-references/en/neutral-01.wav"
+calm = "data/voice-references/en/calm-01.wav"
 
 [chatterbox_modal]  # a mesma voz numa GPU do Modal (ADR 024); modelo, entrega e gravação vêm de [chatterbox]
 python = "~/.local/share/uv/tools/modal/bin/python"  # o Python da CLI do Modal (uv tool install modal)
 app = "voz-dono"  # publicado com `modal deploy deploy/modal_chatterbox.py`
 reference_name = "referencia.wav"  # no volume privado voz-dono-referencia, enviado pelo dono
+
+# Experimental (ADR 054): ligar somente depois da escuta cega aprovada pelo dono.
+[voice_polish]
+enabled = false
+highpass_hz = 65.0
+eq_hz = 3000.0
+eq_width_octaves = 1.0
+eq_gain_db = 0.0  # EQ omitido ate a escuta pedir
+deesser_intensity = 0.3
+deesser_max = 0.98  # neste filtro, perto de 1 limita mais a reducao (~0,96 dB)
+deesser_frequency = 1.0  # parametro normalizado do FFmpeg, nao Hz
 
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"

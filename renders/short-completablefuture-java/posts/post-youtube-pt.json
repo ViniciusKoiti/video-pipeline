@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-11-03T10:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0omyy0005l26yggavdqpu"
+      },
+      "value": [
+        {
+          "content": "Em Java, uma API consulta preço e estoque. Com CompletableFuture, as duas consultas partem juntas e o thenCombine espera as duas. Nesta medição, a resposta composta levou a da consulta mais lenta, não a soma.\n\nMedido nesta máquina: OpenJDK 25.0.4, Ryzen 7 5700U, 15 rodadas por modo. As latências de preço (300 ms) e estoque (200 ms) são simuladas no código da demonstração. Medianas: sequencial 501 ms; composto 309,5 ms; resposta com prazo de 500 ms em 508,1 ms, com a tarefa terminando só aos 2006,1 ms.\n\nFonte do mecanismo: Javadoc do CompletableFuture (JDK 25).\n\nA voz é a minha, clonada com IA. As animações foram criadas para este vídeo.\n\n#Shorts #Java #CompletableFuture",
+          "image": [
+            {
+              "id": "aef16184-9e07-40fa-87c0-7a506d63e046",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/02/615caea3c7af9d453a0ebef9ed1c2cc5.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "CompletableFuture: duas chamadas, uma resposta — e o custo disso",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+# 2026-11-04T10:35:41-03:00 | openjdk version "25.0.4.1" 2026-08-18 | OpenJDK 64-Bit Server VM | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | 10000 tarefas, espera simulada de 100 ms (Thread.sleep) | plataforma: pool fixo de 200 threads | virtual: uma virtual thread por tarefa | virtual-com-pool: virtuais com Semaphore de 50 conexoes | JVM nova por modo e por rodada, flags padrao | sonda abaixo de 0.12 s antes de cada rodada, pausa de 10 s | 15 rodadas
+rodada=1 cpu_probe=0.055 plataforma_ms=5109.5 plataforma_concluidas=10000 virtual_ms=181.6 virtual_concluidas=10000 virtual_com_pool_ms=20142.4 virtual_com_pool_concluidas=10000
+rodada=2 cpu_probe=0.045 plataforma_ms=5091.9 plataforma_concluidas=10000 virtual_ms=174.0 virtual_concluidas=10000 virtual_com_pool_ms=20139.0 virtual_com_pool_concluidas=10000
+rodada=3 cpu_probe=0.045 plataforma_ms=5088.6 plataforma_concluidas=10000 virtual_ms=191.4 virtual_concluidas=10000 virtual_com_pool_ms=20136.5 virtual_com_pool_concluidas=10000
+rodada=4 cpu_probe=0.043 plataforma_ms=5088.3 plataforma_concluidas=10000 virtual_ms=177.0 virtual_concluidas=10000 virtual_com_pool_ms=20133.5 virtual_com_pool_concluidas=10000
+rodada=5 cpu_probe=0.044 plataforma_ms=5083.8 plataforma_concluidas=10000 virtual_ms=168.9 virtual_concluidas=10000 virtual_com_pool_ms=20140.5 virtual_com_pool_concluidas=10000
+rodada=6 cpu_probe=0.044 plataforma_ms=5080.2 plataforma_concluidas=10000 virtual_ms=186.2 virtual_concluidas=10000 virtual_com_pool_ms=20129.7 virtual_com_pool_concluidas=10000
+rodada=7 cpu_probe=0.047 plataforma_ms=5098.2 plataforma_concluidas=10000 virtual_ms=187.6 virtual_concluidas=10000 virtual_com_pool_ms=20140.1 virtual_com_pool_concluidas=10000
+rodada=8 cpu_probe=0.044 plataforma_ms=5079.3 plataforma_concluidas=10000 virtual_ms=174.0 virtual_concluidas=10000 virtual_com_pool_ms=20134.3 virtual_com_pool_concluidas=10000
+rodada=9 cpu_probe=0.044 plataforma_ms=5085.6 plataforma_concluidas=10000 virtual_ms=172.6 virtual_concluidas=10000 virtual_com_pool_ms=20132.6 virtual_com_pool_concluidas=10000
+rodada=10 cpu_probe=0.044 plataforma_ms=5077.6 plataforma_concluidas=10000 virtual_ms=204.8 virtual_concluidas=10000 virtual_com_pool_ms=20133.3 virtual_com_pool_concluidas=10000
+rodada=11 cpu_probe=0.043 plataforma_ms=5084.7 plataforma_concluidas=10000 virtual_ms=167.9 virtual_concluidas=10000 virtual_com_pool_ms=20139.6 virtual_com_pool_concluidas=10000
+rodada=12 cpu_probe=0.055 plataforma_ms=5105.3 plataforma_concluidas=10000 virtual_ms=174.7 virtual_concluidas=10000 virtual_com_pool_ms=20120.7 virtual_com_pool_concluidas=10000
+rodada=13 cpu_probe=0.057 plataforma_ms=5120.4 plataforma_concluidas=10000 virtual_ms=218.5 virtual_concluidas=10000 virtual_com_pool_ms=20177.7 virtual_com_pool_concluidas=10000
+rodada=14 cpu_probe=0.058 plataforma_ms=5107.1 plataforma_concluidas=10000 virtual_ms=179.4 virtual_concluidas=10000 virtual_com_pool_ms=20202.7 virtual_com_pool_concluidas=10000
+rodada=15 cpu_probe=0.082 plataforma_ms=5221.4 plataforma_concluidas=10000 virtual_ms=318.0 virtual_concluidas=10000 virtual_com_pool_ms=20203.1 virtual_com_pool_concluidas=10000
+## cpu_probe ao fim: 0.060
+## resumo plataforma_ms mediana=5088.6 minimo=5077.6 maximo=5221.4
+## resumo virtual_ms mediana=179.4 minimo=167.9 maximo=318.0
+## resumo virtual_com_pool_ms mediana=20139.0 minimo=20120.7 maximo=20203.1
+## razoes derivadas por razoes.sh (a partir das medianas acima)
+## razao plataforma/virtual (medianas) = 28.4
+## razao virtual-com-pool/virtual (medianas) = 112.3
+## razao virtual-com-pool/plataforma (medianas) = 3.96
+## esperado teorico plataforma = 10000/200*100 ms = 5000 ms; com pool = 10000/50*100 ms = 20000 ms

@@ -18,18 +18,20 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
+from app.bootstrap.registry import ConfigurationError
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest, ManifestNotFound, is_approved_json
 from app.pipeline.schemas import Asset, EpisodeManifest, Generation, Provider, ReviewEntry, ReviewLog, Status
-from app.providers.alignment.base import Cue
+from app.providers.alignment.base import Cue, TimedWord
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
-from app.providers.errors import InvalidOutput
+from app.providers.errors import InvalidOutput, ProviderError
 from app.providers.http import JsonPost, JsonResponse, TransportError
 from app.providers.image_gen.base import CostEstimate, GeneratedImage, ImageRequest
 from app.providers.text.base import TextRequest, TextResult, Usage
 from app.providers.tts.base import SpeechRequest, SpeechResult
 from app.render.base import RenderResult, target_spec
-from app.settings import CONFIG_FILE, Settings, load_settings
+from app.settings import Settings, load_settings
+from app.settings.constants.settings_constants import SettingsConstants
 
 T = TypeVar("T", bound=BaseModel)
 M = TypeVar("M", bound=BaseModel)
@@ -43,10 +45,10 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 def make_root(tmp_path: Path, config: str | None = None) -> Path:
     """Pasta de projeto isolada com config/providers.toml (o real, ou `config`) e sem .env."""
-    target = tmp_path / CONFIG_FILE
+    target = tmp_path / SettingsConstants.CONFIG_FILE
     target.parent.mkdir(parents=True, exist_ok=True)
     if config is None:
-        shutil.copy(REPO_ROOT / CONFIG_FILE, target)
+        shutil.copy(REPO_ROOT / SettingsConstants.CONFIG_FILE, target)
     else:
         target.write_text(config)
     return tmp_path
@@ -92,13 +94,59 @@ class FakeText:
 class FakeTTS:
     """WAV de silêncio com 300 ms por palavra."""
 
+    identity = "fake"
+
     def __init__(self) -> None:
         self.info = ProviderInfo("fake-tts", remote=False)
+
+    def fingerprint(self, request: SpeechRequest) -> str:
+        return f"{self.identity}|{request.language}|{request.voice or ''}"
 
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         write_silence(request.out_path, MS_PER_WORD * max(1, len(request.text.split())))
         voice = request.voice or f"fake-{request.language}"
         return SpeechResult(path=request.out_path, model="fake", voice=voice)
+
+
+class FakeBatchTTS(FakeTTS):
+    """`FakeTTS` que declara `BatchTTS` e `Closeable`: registra as chamadas e falha onde mandarem.
+
+    `batch_error` falha toda chamada em lote; `scene_errors` falha a síntese da cena (pelo nome do WAV), em
+    lote ou sozinha; `calls` guarda, por chamada, os nomes dos WAVs."""
+
+    def __init__(
+        self,
+        max_batch_chars: int = 1200,
+        *,
+        batch_error: Exception | None = None,
+        scene_errors: Mapping[str, Exception] | None = None,
+    ) -> None:
+        super().__init__()
+        self.max_batch_chars = max_batch_chars
+        self.batch_error = batch_error
+        self.scene_errors = dict(scene_errors or {})
+        self.calls: list[list[str]] = []
+        self.closed = 0
+
+    def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
+        self.calls.append([request.out_path.name])
+        if error := self.scene_errors.get(request.out_path.name):
+            raise error
+        return super().synthesize_speech(request)
+
+    def synthesize_many(self, requests: Sequence[SpeechRequest]) -> list[SpeechResult]:
+        self.calls.append([r.out_path.name for r in requests])
+        if len({(r.voice, r.language) for r in requests}) != 1:
+            raise ProviderError(self.info.name, "um lote precisa de uma voz e um idioma só")
+        if self.batch_error:
+            raise self.batch_error
+        failed = [r.out_path.name for r in requests if r.out_path.name in self.scene_errors]
+        if failed:
+            raise self.scene_errors[failed[0]]
+        return [FakeTTS.synthesize_speech(self, r) for r in requests]
+
+    def close(self) -> None:
+        self.closed += 1
 
 
 class FakeImageGen:
@@ -145,6 +193,20 @@ class FakeArchive:
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(asset.id.encode())
         return dest
+
+
+class FakeWordAligner:
+    """Reparte as palavras do `prompt` (o texto esperado) pela duração do WAV."""
+
+    def __init__(self) -> None:
+        self.info = ProviderInfo("fake-word-aligner", remote=False)
+
+    def recognize_words(self, audio: Path, language: str, prompt: str = "") -> list[TimedWord]:
+        words, total = prompt.split(), wav_duration_ms(audio)
+        return [
+            TimedWord(word, total * i // len(words), total * (i + 1) // len(words))
+            for i, word in enumerate(words)
+        ]
 
 
 class FakeAligner:
@@ -237,7 +299,19 @@ class FakeContext:
     image_gen: FakeImageGen = field(default_factory=FakeImageGen)
     archives: tuple[FakeArchive, ...] = (FakeArchive(),)
     aligner: FakeAligner = field(default_factory=FakeAligner)
+    word_aligner: FakeWordAligner = field(default_factory=FakeWordAligner)
+    final_tts: FakeTTS | None = None  # sem ele, `tts_final` é o `tts`, como no LazyContext
+    voices: dict[str, FakeTTS] = field(default_factory=dict)  # vozes por nome, para `tts_named`
     renderers: dict[str, FakeRender] = field(default_factory=dict)
+
+    @property
+    def tts_final(self) -> FakeTTS:
+        return self.final_tts or self.tts
+
+    def tts_named(self, name: str) -> FakeTTS:
+        if name not in self.voices:
+            raise ConfigurationError(f"tts = {name!r} não existe (opções: {', '.join(sorted(self.voices))})")
+        return self.voices[name]
 
     def renderer(self, episode_format: str) -> FakeRender:
         return self.renderers.setdefault(episode_format, FakeRender())

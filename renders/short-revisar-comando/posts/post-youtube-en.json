@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-10-30T19:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmr030qdh000glw83on440hxi"
+      },
+      "value": [
+        {
+          "content": "A slash command is a Markdown file in .claude/commands, and its file name becomes the command. This one, /revisar, runs ruff check and pytest and returns only the errors, with file and line. Here the output points to the same kind of bug: a list default that keeps data between calls.\n\nThe presenter is a drawing made from my photos; the voice is mine, cloned by AI.\n\n#Shorts #ClaudeCode #Programming #Dev",
+          "image": [
+            {
+              "id": "d42a468f-7737-45ca-9c01-5c5ef03a234b",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/26/9e6b4aeb11cae15334ecf771ce9d8d84.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "One slash command runs your linter and tests",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

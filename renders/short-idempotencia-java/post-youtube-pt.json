@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-08T17:00:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0omyy0005l26yggavdqpu"
+   },
+   "value": [
+    {
+     "content": "O app não recebeu a resposta e mandou o pedido de novo. Sem uma marca no pedido, o servidor trata a segunda tentativa como um pagamento novo. A solução é uma chave por pagamento: com a mesma chave, o servidor devolve o resultado guardado, sem cobrar de novo.\n\nSimulei 10 mil pagamentos com 3 em cada 10 respostas perdidas (parâmetro da simulação, não medido na rede): sem chave, sobraram 4.194 cobranças repetidas; com chave, nenhuma. O custo também existe: em memória, cada pedido levou mais que o dobro do tempo (0,52 µs × 1,58 µs, mediana de 15 rodadas). Num banco com rede, o número muda.\n\nVocê guardaria essa chave por 1 minuto, 1 hora ou 1 dia? Escolha nos comentários.\n\nVoz clonada com IA. Música: \"Spirit of Fire\", de Jesse Gallagher, YouTube Audio Library.\n\n#Shorts #Java #Pagamentos #Backend",
+     "image": [
+      {
+       "id": "822f20be-76aa-4561-b974-c4643b9a0c91",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/07/1010976a58b8b5afdbade8ef615831ee1.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "Você clicou duas vezes em pagar. Por que cobrou só uma?",
+    "type": "public",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

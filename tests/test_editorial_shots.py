@@ -24,6 +24,7 @@ from app.pipeline.schemas import (
     screen_number,
 )
 from app.pipeline.shots import episode_shots
+from app.render.constants.remotion_constants import RemotionConstants
 from app.render.remotion import RemotionEngine
 from tests.test_research import EP, episode, facts_file, scenes, source
 from tests.test_shots import CLAIM, photo
@@ -385,10 +386,9 @@ def test_template_handles_every_shot_kind() -> None:
     """Todo tipo que o contrato aceita tem um `case` no despacho do template (video/src/ShotView.tsx)."""
     from typing import get_args
 
-    from app.render.remotion import PROJECT
 
     kinds = {model.model_fields["kind"].default for model in get_args(get_args(Shot)[0])}
-    dispatch = (PROJECT / "src" / "ShotView.tsx").read_text()
+    dispatch = (RemotionConstants.PROJECT / "src" / "ShotView.tsx").read_text()
     missing = sorted(kind for kind in kinds if f'case "{kind}":' not in dispatch)
     assert missing == []
 

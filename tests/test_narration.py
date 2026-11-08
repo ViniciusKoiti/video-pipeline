@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import importlib.util
 from pathlib import Path
 from typing import Any
 
 import pytest
 from pydantic import ValidationError
 
+from app.media.constants.narration_constants import NarrationConstants
 from app.media.narration import (
-    PAUSE_CHARS,
     has_pauses,
     narration_problems,
     pause_positions,
@@ -19,6 +18,7 @@ from app.media.narration import (
     timeline_length,
     timeline_position,
 )
+from app.media.speech_batches import group_requests
 from app.pipeline.schemas import Scene
 from app.pipeline.shots import shot_bounds
 from app.providers.tts.base import SpeechRequest
@@ -36,13 +36,16 @@ def test_marks_leave_the_plain_text_and_count_in_the_timeline() -> None:
         "Se você quer realmente", "aprender sobre isso, você", "deve começar pelo dinheiro."
     ]
     assert [PLAIN[p:].split()[0] for p in pause_positions(TEXT)] == ["aprender", "deve"]
-    assert timeline_length(TEXT) == len(PLAIN) + 2 * PAUSE_CHARS
+    assert timeline_length(TEXT) == len(PLAIN) + 2 * NarrationConstants.PAUSE_CHARS
     assert timeline_length(PLAIN) == len(PLAIN)
     # um ponto depois de uma pausa anda a pausa inteira; antes dela, nada
     deve = PLAIN.index("deve")
     assert timeline_position(TEXT, PLAIN.index("quer")) == PLAIN.index("quer")
-    assert timeline_position(TEXT, PLAIN.index("aprender")) == PLAIN.index("aprender") + PAUSE_CHARS
-    assert timeline_position(TEXT, deve) == deve + 2 * PAUSE_CHARS
+    assert (
+        timeline_position(TEXT, PLAIN.index("aprender"))
+        == PLAIN.index("aprender") + NarrationConstants.PAUSE_CHARS
+    )
+    assert timeline_position(TEXT, deve) == deve + 2 * NarrationConstants.PAUSE_CHARS
 
 
 @pytest.mark.parametrize(
@@ -93,7 +96,11 @@ def test_marks_shift_the_shots_after_the_pause() -> None:
     (_, _), (without_pause, _) = shot_bounds(PLAIN, plain_shots, 10_000)
     deve = PLAIN.index("deve")
     assert without_pause == round(deve / len(PLAIN) * 10_000)
-    assert with_pause == round((deve + 2 * PAUSE_CHARS) / (len(PLAIN) + 2 * PAUSE_CHARS) * 10_000)
+    assert with_pause == round(
+        (deve + 2 * NarrationConstants.PAUSE_CHARS)
+        / (len(PLAIN) + 2 * NarrationConstants.PAUSE_CHARS)
+        * 10_000
+    )
     assert with_pause > without_pause  # duas pausas empurram o plano para depois, onde a fala de fato está
 
 
@@ -131,21 +138,11 @@ def test_kokoro_synthesizes_each_piece_with_silence_between(tmp_path: Path) -> N
     assert fake.texts == [PLAIN]
 
 
-def montar_module() -> Any:
-    path = Path(__file__).resolve().parents[1] / "scripts" / "provisorio" / "montar_episodio.py"
-    spec = importlib.util.spec_from_file_location("montar_episodio", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def test_scenes_with_pauses_never_share_a_gemini_batch(tmp_path: Path) -> None:
-    montar = montar_module()
     req = lambda text: SpeechRequest(text=text, out_path=tmp_path / "x.wav", language="pt-BR")  # noqa: E731
     plain = [req("Primeira."), req("Segunda."), req("Terceira.")]
-    assert [len(g) for g in montar.batches(plain)] == [3]  # sem pausas, juntas, como antes
+    assert [len(g) for g in group_requests(plain, 1200)] == [3]  # sem pausas, juntas, como antes
     mixed = [req("Primeira."), req(f"Com {SP} pausa."), req("Terceira."), req("Quarta.")]
-    assert [[r.text for r in g] for g in montar.batches(mixed)] == [
+    assert [[r.text for r in g] for g in group_requests(mixed, 1200)] == [
         ["Primeira."], [f"Com {SP} pausa."], ["Terceira.", "Quarta."]
     ]

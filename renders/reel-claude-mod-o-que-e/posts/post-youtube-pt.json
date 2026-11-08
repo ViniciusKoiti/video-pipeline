@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "[DATA: quarta 2026-10-28, horário a definir]",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "[CANAL_YOUTUBE]"
+      },
+      "value": [
+        {
+          "content": "Um mod do Claude Code é texto e configuração dentro do projeto que muda o que o agente faz. Neste vídeo: skill, agente e configuração, com exemplos deste repositório (13 skills, 5 agentes e uma regra que pede confirmação antes de agendar post).\n\nO apresentador é um desenho feito a partir de fotos minhas; a voz é minha, clonada por IA.\n\n#Shorts #ClaudeCode #Programação #Dev",
+          "image": [
+            {
+              "id": "[MIDIA]",
+              "path": "[UPLOAD_DO_MP4]"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "O que é um mod do Claude Code",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

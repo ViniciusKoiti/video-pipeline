@@ -30,6 +30,29 @@ Canal: **Cena e Conceito** (`@cenaeconceito`; nome e tag de afiliado em `config/
 
 ### Estado atual (2026-10-22)
 
+**Vídeos técnicos — direção do dono em 2026-11-01:** todo vídeo deve explicar e representar visualmente
+o impacto do conceito no **System Design da aplicação**: onde entra no fluxo, qual decisão muda e seus
+benefícios, custos e limites. Priorizar conteúdo sobre **Java** nas próximas gerações da série "eu medi";
+o próximo tema escolhido pelo dono é **CompletableFuture**. Planejar a explicação e os estados da animação antes da voz/render;
+usar blocos conectados, setas e mudanças de estado para mostrar o mecanismo, com a linguagem explícita.
+O vídeo explica o porquê com fontes; o fecho pode perguntar qual linguagem ou continuação o público quer.
+Direção e critérios: `renders/serie-conceitos/direcao-editorial.md`; ordem atual em
+`renders/serie-conceitos/fila.md`. O calendário original da série fica como histórico.
+O quadro "Controle obrigatório em todo tema" da direção editorial deve estar preenchido na pauta
+e conferido antes de voz/render e depois da montagem; uma lacuna impede avançar ou considerar a versão pronta.
+
+**Referências da voz por cena (ADR 053, pedido do dono em 2026-11-01):** o `delivery` e o idioma
+selecionam o WAV em `[chatterbox.references]` de `config/providers.toml`, para Shorts e vídeos longos,
+localmente ou no Modal. Gravações em `data/voice-references/{pt-BR,en}/`, fora do Git; guia em
+`docs/guia-gravacao-referencias-voz.md`. Sem mapeamento, usa a referência antiga; referência mapeada
+ausente/inválida deixa a cena pendente. O cache usa a referência efetiva e os parâmetros da fala;
+o manifest registra sua identidade por cena e o Short também registra arquivo/hash em `narracao.voz.json`.
+O cliente não envia gravações junto da síntese: os WAVs precisam estar previamente no volume privado do Modal.
+Com esse banco ativo, a geração também prepara cópias por cena em `voice/leveled/`, com alvo de −16 LUFS
+e pico de −1,5 dBTP (ADR 054). A montagem usa essas cópias, preservando os WAVs brutos; mudar o volume
+não exige chamar o TTS novamente. O Short registra as medições em `lines[].level`; o volume final
+do vídeo continua sendo conferido depois da mistura com efeitos/trilha.
+
 Primeiros agendamentos pelo Postiz em outubro de 2026, todos pela cadeia do §2.8 (clipes do Nabote em 17/10; o Reel
 `confeitaria-erro-2-pt` em 19/10; `death-note-fins-meios`, `kira-voto-brasil`, `historia-vencedores` e
 `epicteto-na-sua-mao` no Cena e Conceito, de 20 a 23/10; trilha em `data/publicacoes/registro.jsonl`). Agendado não
@@ -47,7 +70,7 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
   `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`. A folha de quadros marca os planos que
   mudaram: um PR de visual deve mudar só os que pretendia.
 - **Voz (ADR 016, aceita em 2026-10-12):** Kokoro nos rascunhos (`tts`), voz clonada do dono no vídeo final
-  (`montar_episodio.py --voz-final`). Desde 2026-10-15 a voz final é `tts_final = "chatterbox_modal"` (ADR 024,
+  (`vp voice --voz-final`). Desde 2026-10-15 a voz final é `tts_final = "chatterbox_modal"` (ADR 024,
   aprovada pelo dono na escuta: a mesma voz numa GPU do Modal, segundos por cena). A alternativa local
   (`--voz=chatterbox`) é o Chatterbox na CPU, no ambiente próprio dele
   (`CHATTERBOX_PYTHON` e `CHATTERBOX_REFERENCE` no `.env`), uma cena por vez e ~30 vezes mais lenta que o tempo
@@ -65,9 +88,15 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
    usado pelos agentes das etapas criativas, não conta como API paga (ADR 009). Em 429, cota esgotada,
    modelo ausente ou licença incompatível: registrar o motivo em `review.json`, marcar a etapa como
    `needs_review` e parar **aquela cena**, sem bloquear as demais.
-2. **Nenhuma fonte inventada.** O LLM escreve somente a partir de trechos extraídos de fontes reais já
-   baixadas em `sources.json`. Toda `claim` tem `source_ids` — **inclusive o que aparece na tela**
-   (número, data, citação, cargo, gráfico; ADR 008). Roteiro com claim sem suporte não passa da validação.
+2. **Nenhuma fonte inventada; a regra de fato do roteiro é de cada roteirista** (decisão do dono, 2026-11-05;
+   ADR 055). A pesquisa nunca inventa: o `pesquisador` só ficha o que está em trechos extraídos de fontes reais
+   já baixadas em `sources.json`, com citação literal conferida pelo `vp check`. O roteiro segue o roteirista do
+   formato (agente em `.claude/agents/` e skill dele, §15): o `roteirista` (ensaio e explicativo) exige `claims`
+   com `source_ids` em toda afirmação de fato **e em tudo o que aparece na tela** (número, data, citação, cargo,
+   gráfico; ADR 008); o `roteirista-ficcao-historica` ("sua vida em cada nível", "como era ser X") **dispensa
+   fichas, fontes e claims** (decisão do dono, 2026-11-05) e só se obriga a não afirmar com precisão o que não
+   saiba sustentar. O `vp check` e os schemas seguem validando as claims que existirem.
+   Roteiro ou vídeo de outro canal é pista de forma, nunca fonte nem texto-base.
 3. **Nenhum ativo sem licença registrada entra no render.** Campos obrigatórios em §6. Imagem sem
    licença identificável vai para `needs_review`.
 4. **Stock e imagem gerada são ilustração**, nunca "registro" do fato. `visual_need` correto sempre;
@@ -75,7 +104,8 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
 5. **Revisão humana obrigatória** nos 4 gates: tema/fontes, roteiro, ativos/direitos, prévia/descrição.
    Score de IA não aprova direitos nem autenticidade histórica.
 6. **Arquivos com `review_status: approved` são imutáveis para o código.** Nova execução reutiliza,
-   nunca sobrescreve.
+   nunca sobrescreve. O que um gate aprovado carimba também (ADR 039): a proteção sai do `review.json` e só
+   `vp reopen --step S --reason ...` a libera, para aquele alvo.
 7. **Segredos só em `.env`** (fora do Git). Adapters não logam tokens, headers de auth nem URLs assinadas.
 8. **No MVP não existe:** upload automático, Docker, banco de dados, FastAPI, LiteLLM, framework
    multiagente **no código**, segundo editor visual, render em nuvem. Exceção ao upload (ADR 025): `vp postiz`
@@ -116,7 +146,7 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
 ### Mapa do repositório
 
 `app/pipeline/` etapas, estados e schemas · `app/providers/<função>/` porta (`base.py`) + um adapter por provedor ·
-`app/bootstrap.py` único módulo que conhece adapters concretos · `config/canal.toml` nome do canal e tag de
+`app/bootstrap/` raiz de composição que conhece adapters concretos · `config/canal.toml` nome do canal e tag de
 associado da Amazon (pública) · `app/render/` motor por formato · `app/media/` áudio, legenda e apresentador
 (pausas, loudness, ffprobe, pronúncia, janela do host) · `app/commands/` subcomandos `vp` com verbos próprios (hoje
 `postiz`) · `app/storage/` leitura e escrita dos JSON do episódio · `video/` template Remotion do `explainer`
@@ -124,8 +154,8 @@ associado da Amazon (pública) · `app/render/` motor por formato · `app/media/
 etapas criativas (§15) · `.agents/skills/` skills para Codex/OpenAI (apontado por `AGENTS.md`;
 `analise-de-formato` e `validacao-de-nicho` moram aqui, e `.claude/skills/` só as aponta por symlink) ·
 `prompts/local/` prompts para modelo local · `config/providers.toml` implementação por função ·
-`scripts/provisorio/` scripts até
-virarem comandos `vp` · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
+`scripts/provisorio/` ferramentas do dono ainda sem comando (`evolucao.py`, `sprites_apresentador.py`) ·
+`scripts/bench/` medições de modelo e de voz · `scripts/ferramentas/` ferramentas de uma vez (letra do clipe do Nabote) · `data/episodes/<id>/` (`manifest.json`, `episode.json`, `sources.json`, `facts.json`,
 `outline.md`, `scenes.json`, `review.json`, `radar-brief.json`, `molde.json`, `partitura.md`, `pauta.md`, `sources/`,
 `excerpts/`, `assets/`, `voice/`, `renders/`) ·
 `data/benchmarks/` medições e termos dos provedores · `data/publicacoes/registro.jsonl` trilha dos agendamentos
@@ -138,15 +168,35 @@ do template e do `vp numeros`. Variáveis de ambiente: nomes e exemplos não sec
 
 - Portas e adaptadores: cada função tem um `Protocol` em `app/providers/<função>/base.py` (ou
   `app/render/base.py`); as etapas recebem um `Context` explícito e só conhecem portas.
-- Trocar de abordagem = novo adapter + registro em `app/bootstrap.py` + passar em
+- Trocar de abordagem = novo adapter + registro em `app/bootstrap/__init__.py` + passar em
   `tests/test_contracts.py` + **uma linha** em `config/providers.toml`.
 - Todo adapter declara `ProviderInfo(name, remote, usd_per_call)`; custo > 0 é recusado sem
   `ALLOW_PAID_API=true` e `MAX_API_SPEND_USD > 0`. `ProviderError` vira `needs_review` só na cena.
 - `tests/test_architecture.py` falha se `app/pipeline/` importar adapter concreto ou biblioteca pesada.
+- O núcleo (`app/pipeline`, `app/media`, `app/render`, `app/storage`) não lê `Settings`: recebe portas e valores
+  da composição (ADR 042). `Context` declara tudo o que o CLI e os scripts usam (`tts_final`, `tts_named`,
+  `word_aligner` incluídos) e o `FakeContext` o acompanha; `app.pipeline.production`/`short` só os comandos importam.
+- Modelos de dados de **todos os fluxos** ficam em `app/<área>/models/<nome_em_snake_case>.py`,
+  uma classe por arquivo (ADR 037; gate em `tests/test_model_layout.py`). Inclui Pydantic, dataclasses,
+  enums e TypedDicts. Validadores acompanham seus modelos; serviços, adapters e Protocols ficam fora.
+  Provedores usam também `app/providers/<função>/models/`. Não criar pastas vazias nem um catálogo global.
+  Imports novos usam o módulo específico; `app.pipeline.schemas` e os demais módulos anteriores mantêm
+  reexports de compatibilidade. `app.settings/` e `app.bootstrap/` são pacotes com seus próprios modelos.
+- **Erros esperados (ADR 045):** toda classe de erro de `app/` herda de `app.errors.PipelineError` (e da base de
+  antes). Comandos e scripts não têm `try/except` de erro do projeto: levantam, e `app.commands.errors.run` é o
+  único ponto que imprime `vp <comando>: <mensagem>` e sai com 1 (`VP_DEBUG=1` sobe o traceback; manifesto fora do schema é `ManifestInvalid`, levantado pelo store). Bug nunca é
+  capturado ali. A recuperação por cena ou por item fica onde ela é possível. `postiz` e `usage` mantêm o erro em
+  JSON. Gate em `tests/test_errors_layout.py`; script novo termina com `raise SystemExit(run("nome", main))`.
+- Constantes de todos os fluxos de `app/`, inclusive valores privados e de validação, usam classes em
+  `app/<área>/constants/<responsabilidade>_constants.py`, com atributos `Final` e coleções imutáveis
+  (ADR 038; gate `tests/test_constants_layout.py`). Mapas aninhados também são imutáveis: usar
+  `MappingProxyType`, `tuple` e `frozenset`. Campos/defaults dos modelos, aliases de tipos e variáveis locais
+  mantêm seu papel; parâmetros configuráveis mantêm sua configuração própria. Os únicos registros mutáveis
+  globais permitidos são `app.cli.HANDLERS` e `app.bootstrap.DEFAULT_REGISTRY`, por serem composição.
 
 ## 4. Fluxo de trabalho
 
-Nos Reels, antes das fontes: resumo do nicho no reels-radar (`radar_resumo.py`) → pauta (skill `pauta`), que o
+Nos Reels, antes das fontes: resumo do nicho no reels-radar (`vp briefs radar`) → pauta (skill `pauta`), que o
 dono aprova (ADR 018). O resumo é forma, nunca fato; o `vp check` avisa onde o roteiro foge dos padrões dele.
 No vídeo longo, o mesmo desenho com o molde do nicho (ADR 031): a skill `analise-de-formato` gera `molde.json` e
 a `partitura.md` do episódio, o roteirista lê a partitura antes do outline e o `vp check` avisa pelo molde.
@@ -164,12 +214,12 @@ roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → 
 (**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
 áudio presente, sem silêncio longo, 16:9, nenhuma cena sem ativo aprovado) → prévia e descrição (**gate 4**) →
 export. Na descrição, os livros citados levam o link de afiliado da Amazon com o aviso exigido pelo contrato
-(`scripts/provisorio/livros_afiliado.py`, a partir de `livros.json` do episódio). No gate 4, "ajustar imagem" volta à
+(`vp export livros <id>`, a partir de `livros.json` do episódio). No gate 4, "ajustar imagem" volta à
 busca visual e "ajustar texto" volta ao roteiro. Depois, upload manual
 ou agendamento autorizado pelo dono (`vp postiz`, §2.8), métricas aos 7 e 28 dias e a decisão após 4 vídeos no
 mesmo recorte (§12).
-Diagrama do estado atual, longo e curto, com as lacunas marcadas: `docs/pipeline-hoje.mermaid` (2026-10-31); o plano
-original de 2026-09-26 está em `docs/pesquisa/pipeline-plano-2026-09-26.mermaid`.
+Diagrama do estado atual, longo e curto, com as lacunas marcadas: `docs/diagramas/mermaid/pipeline-hoje.mermaid` (2026-11-01); o plano
+original de 2026-09-26 está em `docs/diagramas/mermaid/pipeline-plano-2026-09-26.mermaid`.
 
 ## 5. Estados, cache e invalidação
 
@@ -178,8 +228,13 @@ original de 2026-09-26 está em `docs/pesquisa/pipeline-plano-2026-09-26.mermaid
 - Chave de cache: `(episode_id, step, input_hash)`. O `input_hash` cobre o conteúdo das entradas **e** os
   parâmetros que mudam o resultado (modelo, voz, versão do motor). Hash igual = reutiliza a saída; hash
   diferente = reexecuta, **exceto** etapa `approved`: essa nunca é refeita nem sobrescrita sem
-  `vp reopen <id> --step <s> --reason "..."`, registrado no `review.json` (§2.6).
+  `vp reopen <id> --step <s> --reason "..."`, registrado no `review.json` (§2.6; hoje só nas etapas com gate:
+  `sources`, `script`, `assets` com `--asset`, `translation` e `preview`, ADR 039).
 - Uma execução por episódio de cada vez: trava em `data/episodes/<id>/.lock`.
+- **Etapa por cena (ADR 040, `app/pipeline/scene_step.py`):** o `manifest.json` guarda um registro por cena. Uma
+  rodada refaz só as cenas que faltam (falha de provedor, bloqueada, saída ausente ou vazia); `needs_review` com
+  cena pendente roda de novo com a mesma entrada, `needs_review` de gate humano com tudo íntegro não. Etapa
+  aprovada com saída ausente é erro (`OutputMissing`), nunca recriada. Um lock só: não aninhar `store.lock`.
 - Invalidação: trocar uma imagem invalida **só** montagem e prévia; alterar texto narrado invalida voz do bloco,
   timing, legendas e render; alterar fonte invalida roteiro e tudo abaixo. Erros de rede, cota ou licença param a
   cena, não o episódio.
@@ -230,7 +285,9 @@ revela:
 - **`sources.json`:** mínimo de 2 fontes independentes para os fatos principais. `Source.interested` marca fonte
   interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só.
   `kind: declared` é material do próprio dono (receita, nota de compra), sem URL: o `vp check` avisa e o dono
-  responde por ele no gate 1 (`scripts/provisorio/fonte_declarada.py`, até `vp sources`, #26).
+  responde por ele no gate 1 (`vp sources declared`, #26). Registro único em
+  `app/pipeline/sources.py` (ADR 043): id livre sob lock, a mesma URL não duplica, gate 1 aprovado recusa (`vp reopen
+  --step sources`) e o `sources.json` é gravado por último.
 - **`facts.json` (ADR 009):** as fichas são a única base do roteiro. Cada evidência traz `excerpt_id` (parágrafo do
   texto extraído, `source-01#E7`) e uma `quote` **literal**, conferida pelo `vp check`; `open_questions` guarda o
   que as fontes não respondem. Com `facts.json`, toda afirmação do roteiro cita um trecho fichado.
@@ -242,7 +299,9 @@ revela:
   Quadro de obra citada para crítica (`Citacao`, emenda de citação da ADR 007, 2026-10-17):
   - só material oficial público do detentor (`provider: official`), com `work`, crédito e a justificativa em
     `usage_notes`;
-  - no vídeo, só quadro parado, até 10 por vídeo e 8 s cada (`vp check`);
+  - no vídeo, quadro parado até 10 por vídeo e 8 s cada (`vp check`); clipe em movimento (`media: clip` + `origin` e `timecode`, provider `official` (material oficial público) ou `owner_capture` (arquivo do dono), só em B-roll, sem o áudio
+    da obra, sem teto numérico, só YouTube) por decisão do dono em 2026-11-03 (emenda de 2026-11-03 da ADR 007; o
+    `vp numeros` já lista os clipes; falta bloquear o `vp postiz` fora do YouTube e conferir o render mudo);
   - a miniatura com quadro da obra é decisão do dono no gate 4;
   - um strike suspende a série.
 - **`review.json`:** fonte única das decisões humanas; entradas só acrescentadas, com `input_hash` do conteúdo
@@ -295,6 +354,10 @@ Pixabay e Unsplash por API, Coverr só à mão pelo site → (4) Workers AI, no 
 (5) mapa, cronologia, citação curta permitida ou tela gráfica original. Cada cena recebe imagem relevante ou a
 lacuna fica registrada.
 
+- **Entrada (ADR 044, `app/pipeline/assets.py`):** a busca registra a falha de cada banco com o motivo; nenhum banco
+  disponível é erro (sem arquivos vazios) e `PaidApiBlocked` interrompe a busca. O download de um ativo já baixado e
+  íntegro só acrescenta a cena em `used_in_scenes`; ativo aprovado nunca é alterado (JSON nem mídia) e, sem a mídia,
+  é erro: reabrir (`vp reopen --step assets --asset <id>`).
 - Busca em lote por consulta normalizada; cache de metadados e miniaturas; `sha256` para deduplicar;
   redimensionar só o ativo final escolhido; registrar headers de cota dos bancos quando existirem.
 - Termos de cada banco em `data/benchmarks/termos-bancos-de-imagem.md`. Imagem de banco sem pessoa
@@ -315,6 +378,26 @@ lacuna fica registrada.
   texto enviado à voz, por palavra inteira, e vale para qualquer voz; tela, legenda e âncoras ficam com a do
   roteiro, e o `scenes.json` não muda.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
+- **Nome do WAV e narrador (ADR 049, `app/pipeline/voice.py`):** `VoiceKey` + `VoiceLibrary` + `Narrator`. Os nomes de
+  hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs já gerados fica
+  como está** (decisão do dono, 2026-11-01; os valores da entrega clonada não entram no nome). Fala nova só substitui a antiga depois de pronta e medida. `vp voice` (`produce_voice`, em `app/pipeline/voice_production.py`) e `vp short voz` (`produce_short_voice`, em
+  `app/pipeline/short_voice.py`) geram a voz por `Narrator`, e as fórmulas dos nomes de antes estão congeladas em `tests/legacy_voice_names.py`.
+- **Estado da voz (ADR 052, `app/pipeline/voice_state.py`):** cada rodada de voz grava no `manifest.json` um registro por
+  fala (pronta, ou pendente com o motivo); o `vp status` lista as pendências e um WAV que sumiu. Retomar é rodar de novo:
+  o cache são os nomes dos arquivos.
+- **Montagem e render (ADR 051, `app/pipeline/assembly.py`):** `vp render` (`app/commands/render.py`) usa `EpisodeRenderer` e o
+  motor da porta por formato (`context.renderer`); o tempo dos planos e o `episode.json` saem de
+  `app/pipeline/episode_build.py` e as legendas de `app/pipeline/caption_production.py`. Montagem incompleta (WAV ou mídia ausente) não chega ao motor; o render
+  final exige os ativos aprovados (a prévia, não). O gate 4 aprovado recusa render por cima do MP4, do `episode.json`
+  e do `captions.srt` carimbados (reabrir libera); prévia e final são arquivos distintos.
+- **Pacote do gate 4 (ADR 050, `app/pipeline/package.py`):** `vp short gate` valida o MP4 e o `post.json` antes
+  de escrever, recusa trocar o que o gate 4 aprovou (antes da primeira cópia; reabrir libera) e só vale completo: o
+  marcador `renders/pacote.json` fica `writing` até o último arquivo. Pacote interrompido bloqueia o `vp postiz`.
+- **Porta de voz (ADR 041):** cada TTS tem `identity` (chave do cache, no nome do WAV; `gemini` é alias de
+  `gemini_tts`) e `fingerprint(request)` com os parâmetros efetivos da síntese, sem o texto. O WAV só aparece
+  inteiro e válido (`atomic_wav`). Lote e fallback em `app/media/speech_batches.py`: só o corte recusado
+  (`InvalidOutput`) gera cena a cena, e cota esgotada para as chamadas. Quem constrói o TTS o fecha
+  (`closing_tts`). Os scripts de voz ainda usam a lógica própria até migrarem.
 - **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
@@ -331,18 +414,26 @@ lacuna fica registrada.
 - Montagem: 20–35 entradas visuais para 5–7 min. Reutilizar um mapa quando o roteiro volta ao mesmo local.
   Movimento leve em foto só se o recorte preservar o assunto. Música e efeitos só com licença registrada por faixa.
   Trilha (ADR 030): faixas da YouTube Audio Library baixadas à mão pelo dono, catálogo em `data/music/`
-  (`scripts/provisorio/catalogo_musica.py`), plano em `music.json` do agente `diretor-musical` (âncoras na
+  (`vp music`), plano em `music.json` do agente `diretor-musical` (âncoras na
   narração, como os planos). A música entra na junção, por baixo da voz (ducking), com o volume final perto de
   −14 LUFS, e trocar a faixa refaz só a junção. A licença só vale no YouTube.
   Efeitos sonoros nos Shorts (ADR 035, proposta): o SFX Kit (CC0, sintetizado em código) clonado pelo dono em
   `data/sfx/kit/`, lido direto do `sounds.json` dele com o `sha256` conferido; plano `sfx.json` por vídeo
   (som + cena + trecho da fala ou deslocamento), conferido por `app/pipeline/sfx.py` e misturado em
-  `shorts_tec.py juntar --sfx=`, cada som no momento menos o `sync.at` do kit e abaixado sob a fala.
-  Conferência de áudio com o earshot (`scripts/provisorio/conferir_audio.py`, `app/media/earshot.py`; ambiente
+  `vp short juntar --sfx`, cada som no momento menos o `sync.at` do kit e abaixado sob a fala.
+  Conferência de áudio com o earshot (`vp audio`, `app/commands/audio.py`, `app/media/earshot.py`; ambiente
   próprio em `EARSHOT_PYTHON`, termos em `data/benchmarks/termos-earshot.md`): só com pedido do dono e a sonda de
   CPU; mede a loudness como o YouTube mede (mono contado nos dois alto-falantes: o `ebur128` do ffmpeg dá 3 dB a
   menos num Short mono, por isso o `juntar` sai em estéreo desde 2026-10-31), o pico real, a batida da trilha e se
   cada corte com efeito no plano tem um ataque a 40 ms.
+  O conteúdo do `motion-video` (`MotionContent`), a narração e o registro de fala são validados na leitura (ADR 048,
+  `MotionInputError`): `fps` e `durationSec` finitos e positivos, id de cena único, fala dentro do WAV, WAV dentro da
+  pasta, `delivery` entre as cinco da ADR 022; `fitted` devolve outro conteúdo e o JSON do kit volta intacto.
+  Catálogo de música (ADR 047, `app/pipeline/music_library.py`): `adicionar` nunca substitui faixa e valida antes de
+  copiar; `usar` confere o `sha256` do ativo e nunca troca o que o episódio já tem. Resumos do radar e do formato
+  (`app/pipeline/briefs.py`): só trocam com `--atualizar`, e o anterior fica com a data, sem sobrescrever outro.
+  O `sounds.json` do kit e o `sfx.json` são validados na leitura (ADR 046, `SfxInputError`): tempos finitos, `onset <=
+  body_end <= duração`, `file` dentro do kit, `sha256` bem formado, id sem repetição.
   B-roll como textura (ADR 031, parte A): o mesmo vídeo em planos seguidos continua de onde parou, também entre
   cenas e sem fade, e recomeça quando o clipe acaba; o `vp check` não põe teto de duração no `broll`.
 - Motor **por formato** (ADR 001, `render` em `config/providers.toml`): `archival_documentary` → **ffmpeg puro**
@@ -356,15 +447,15 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `status`, `numeros`, `traducao`, `medicao`, `postiz` e `usage`. `vp traducao <id>` confere uma pasta de tradução
+`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `render`, `traducao`, `medicao`, `short`, `audio`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]` faz voz, tempo dos planos, legendas, `episode.json` e render (RF7). `vp short voz <pasta> <narracao.json> [--voz NOME]` gera a fala de cada linha da narração de um Short e `vp short gate <mp4> <post.json> --episodio ID` monta o pacote do gate 4 dele (skill `shorts-tec`, ADR 048 e 050; RF7). `vp audio <mp4> (--episodio ID | --content content.voz.json) [--sfx sfx.json]` confere o áudio de um vídeo pronto com o earshot (só com pedido do dono e a sonda de CPU; ADR 035; RF7). `vp short tempos|sfx|juntar|boca` fecham o resto da montagem (`tempos` estica as cenas até a fala caber, `sfx` confere o plano de efeitos, `juntar` põe voz e efeitos sobre o MP4 do kit, `boca` gera os dados de uma montagem em TSX). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
 contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
 medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
 do `outline.md` (bloco
 entre marcadores, fora do carimbo do gate 2) e o `plano-imagens.md`, com as contas do `vp check`, e compara o
-roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `reopen`, `sources`, `script`, `scenes`, `assets`, `gallery`, `voice`, `subs`, `render` e `export`
-saem com "ainda não implementado" e a etapa pendente; scripts em `scripts/provisorio/` cobrem fonte, voz e render
-até virarem comandos. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
+roteiro com o perfil do nicho (`formato-brief.json`, ADR 031 B e D; #170). `new`, `script`, `scenes`, `gallery` e `subs`
+saem com "ainda não implementado" e a etapa pendente; o Short é o `vp short` e a conferência de áudio, o `vp audio`; ferramentas
+avulsas ficam em `scripts/provisorio/`, `scripts/bench/` e `scripts/ferramentas/`. Um comando novo é um handler `(args, context)` registrado em `HANDLERS` (`app/cli.py`); um
 comando com subcomandos próprios vira módulo em `app/commands/` com `add_arguments` e `run`, como o `postiz`. Cada
 comando é idempotente: reexecutar com o mesmo `input_hash` não refaz trabalho.
 
@@ -480,13 +571,26 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 |---|---|---|---|
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
+| `roteirista-ficcao-historica` | `roteiro-ficcao-historica`, `humanizer-narracao` | `outline.md`, `scenes.json` | as mesmas do `roteirista` (ADR 055; formato "sua vida em cada nível") |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
-| `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `catalogo_musica.py`) |
+| `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `vp music`) |
+| `diretor-animacao` | `vp-direcao-animacao` | `direcao-animacao.md`; prévia isolada quando solicitada | Read, Grep, Glob, Write, Bash (render local e conferência) |
+
+**Direção de animação (pedido do dono, 2026-11-05):** planeja atuação de personagens,
+poses, cenários, enquadramentos e continuidade, com aparência de desenho à mão no teste
+de `agostinho-estoicos-compaixao`. O planejamento pode começar pela pauta, marcado como
+proposta; a direção final acompanha o roteiro aprovado e o plano de imagens. Como exceção
+ao escopo de dados acima, um piloto visual expressamente solicitado pode ter código em
+`video/src/previews/<id>/` e saídas em `renders/<id>/`, sem alterar o template compartilhado.
+O diretor não substitui a conferência de direitos nem aprova gates. O método fica em
+`.agents/skills/vp-direcao-animacao/SKILL.md`, também acessível em `.claude/skills/`.
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →
-voz + render → gate 2 → diretor musical (`music.json`, se o vídeo tem trilha) → render → gate 4. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
+voz + render → gate 2 → diretor musical (`music.json`; **todo ensaio longo leva trilha**, e sem ela só por decisão do dono no `outline.md`;
+nada no render nem no gate 4 cobra, então conferir `music` no `episode.json` antes do gate 4; roteiro que muda
+depois devolve o plano ao diretor) → render → gate 4. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
 que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
 pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).
 
@@ -496,12 +600,11 @@ Reels; `plano-de-imagens` entre os gates 2 e 3 (o dono valida o plano antes de q
 produz a arte entre os gates 3 e 4, partindo do conceito planejado na pauta e do canal de referência;
 `componentes-do-kit` ao mexer no template (§14); a rotina do Short diário (ADR 036, proposta; timer desligado e a skill `short-diario` ainda por criar, pelo dono):
 um Short da série até o pacote do Postiz, sem gates; `shorts-tec` para um Short ou teaser de uma ferramenta do dono,
-montado por JSON no `motion-video` do kit com o dono numa janela e a voz clonada (voz, tempos e junção em
-`scripts/provisorio/shorts_tec.py`; primeiro caso: o teaser do motion-kit, 2026-10-25).
+montado por JSON no `motion-video` do kit com o dono numa janela e a voz clonada (`vp short`: voz, tempos, SFX, junção, boca e pacote do gate; primeiro caso: o teaser do motion-kit, 2026-10-25).
 
 **Modelo local (Ollama, #27).** `prompts/local/` guarda o método das etapas em prompts curtos, uma chamada por
 unidade (uma afirmação, uma cena), com o schema de saída em código. Hoje só `checagem.md` (afirmação × trecho),
-medido por `scripts/provisorio/checagem_local.py` (resultados em `data/benchmarks/checagem-local.md`). O `vp check`
+medido por `scripts/bench/checagem_local.py` (resultados em `data/benchmarks/checagem-local.md`). O `vp check`
 e os gates continuam decidindo; o veredito do modelo é alerta.
 
 **Agentes mais específicos (candidatos).** Criar só quando a etapa existir no código e houver necessidade

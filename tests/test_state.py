@@ -7,11 +7,13 @@ from pathlib import Path
 
 import pytest
 
+from app.pipeline.constants.state_constants import StateConstants
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
+from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import SourcesManifest, Status, Step
 from app.pipeline.state import (
-    MANIFEST,
     Action,
+    InputChanged,
     InvalidTransition,
     StaleApproval,
     StepResult,
@@ -47,11 +49,12 @@ class Counter:
 
     def __init__(self, store: JsonFileStore, needs_review: bool = True) -> None:
         self.store, self.needs_review, self.calls = store, needs_review, 0
+        self.guard = ReviewWriteGuard(store, InMemoryReviewGate())
 
     def __call__(self) -> StepResult:
         self.calls += 1
         sources = SourcesManifest.model_validate_json((FIXTURE / "sources.json").read_text())
-        write_output(self.store, EP, "sources.json", sources)
+        write_output(self.store, EP, "sources.json", sources, guard=self.guard)
         return StepResult(outputs=["sources.json"], needs_review=self.needs_review)
 
 
@@ -115,7 +118,7 @@ def test_same_input_does_not_redo_work(store: JsonFileStore) -> None:
     second = run_step(store, EP, Step.SOURCES, "sha256:v1", action, now=clock)
     assert (first.action, second.action, action.calls) == (Action.RUN, Action.REUSE, 1)
     assert load_state(store, EP).get(Step.SOURCES).status is Status.NEEDS_REVIEW
-    assert store.path(EP, MANIFEST).is_file()
+    assert store.path(EP, StateConstants.MANIFEST).is_file()
 
 
 def test_step_without_human_gate_reruns_when_input_changes(store: JsonFileStore) -> None:
@@ -133,7 +136,7 @@ def test_approved_output_is_never_overwritten(store: JsonFileStore) -> None:
         run_step(store, EP, Step.SOURCES, "sha256:v2", action, now=clock)
     sources = SourcesManifest.model_validate_json((FIXTURE / "sources.json").read_text())
     with pytest.raises(ImmutableManifest):  # nem escrita direta no arquivo aprovado
-        write_output(store, EP, "sources.json", sources)
+        write_output(store, EP, "sources.json", sources, guard=ReviewWriteGuard(store, review))
     assert action.calls == 1
     assert review.log(EP).entries[-1].input_hash == "sha256:v1"
 
@@ -169,3 +172,25 @@ def test_one_execution_per_episode(store: JsonFileStore) -> None:
 
     with pytest.raises(EpisodeLocked):
         run_step(store, EP, Step.SOURCES, "sha256:v1", nested, now=Clock())
+
+
+def test_a_recorded_output_that_vanished_is_rebuilt_not_reused(store: JsonFileStore) -> None:
+    action, clock = Counter(store, needs_review=False), Clock()
+    run_step(store, EP, Step.SOURCES, "sha256:v1", action, now=clock)
+    store.path(EP, "sources.json").unlink()
+    rerun = run_step(store, EP, Step.SOURCES, "sha256:v1", action, now=clock)
+    assert (rerun.action, action.calls) == (Action.RUN, 2) and store.path(EP, "sources.json").is_file()
+
+
+def test_the_input_is_checked_under_the_lock_and_again_at_the_end(store: JsonFileStore) -> None:
+    current = {"hash": "sha256:v1"}
+    action = Counter(store)
+
+    def edits_midway() -> StepResult:
+        result = action()
+        current["hash"] = "sha256:v2"
+        return result
+
+    with pytest.raises(InputChanged):
+        run_step(store, EP, Step.SOURCES, lambda: current["hash"], edits_midway, now=Clock())
+    assert load_state(store, EP).get(Step.SOURCES).status is Status.FAILED  # nunca "concluída" com mistura

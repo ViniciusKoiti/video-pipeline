@@ -1,0 +1,67 @@
+{
+  "originals_preserved": [
+    "renders/short-circuit-breaker-java/originais/short-circuit-breaker-java-content.pt-56918c2c7760.json",
+    "renders/short-circuit-breaker-java/originais/short-circuit-breaker-java-pt-narracao.voz-a883a1d150ab.json"
+  ],
+  "languages": {
+    "pt": {
+      "voice_record": "data/episodes/short-circuit-breaker-java-pt/narracao.voz.json",
+      "input": "renders/short-circuit-breaker-java/pronto/content.pt.json",
+      "total_s": 35.1,
+      "speech_s": 29.283,
+      "scenes": [
+        {
+          "scene": "gancho",
+          "speech_s": 3.531,
+          "original_s": 5.6,
+          "duration_s": 4.4,
+          "reading_tail_s": 0.869
+        },
+        {
+          "scene": "fechado",
+          "speech_s": 4.929,
+          "original_s": 6.7,
+          "duration_s": 5.8,
+          "reading_tail_s": 0.871
+        },
+        {
+          "scene": "aberto",
+          "speech_s": 3.931,
+          "original_s": 5.5,
+          "duration_s": 4.7,
+          "reading_tail_s": 0.769
+        },
+        {
+          "scene": "meio-aberto",
+          "speech_s": 3.219,
+          "original_s": 5,
+          "duration_s": 4.1,
+          "reading_tail_s": 0.881
+        },
+        {
+          "scene": "teste",
+          "speech_s": 3.586,
+          "original_s": 5.2,
+          "duration_s": 4.4,
+          "reading_tail_s": 0.814
+        },
+        {
+          "scene": "medido",
+          "speech_s": 4.71,
+          "original_s": 7.2,
+          "duration_s": 5.5,
+          "reading_tail_s": 0.79
+        },
+        {
+          "scene": "limite",
+          "speech_s": 5.377,
+          "original_s": 8.2,
+          "duration_s": 6.2,
+          "reading_tail_s": 0.823
+        }
+      ]
+    }
+  },
+  "shared_timeline": false,
+  "note": "Derived per-language timings only; original common authoring inputs remain unchanged. vp traducao checks authoring content.json, not these timed derivatives. No approval granted. Join trims each WAV to speech bounds. PT reading tails keep the planned duration at least 35 seconds."
+}

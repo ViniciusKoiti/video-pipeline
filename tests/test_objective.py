@@ -8,7 +8,8 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from app.pipeline.check import NEWS_MAX_AGE_DAYS, objective_summary, objective_warnings
+from app.pipeline.check import objective_summary, objective_warnings
+from app.pipeline.constants.check_constants import CheckConstants
 from app.pipeline.schemas import Objective, ScenesManifest
 
 PROMISE = "A pessoa entende o que o contrato compra."
@@ -73,7 +74,7 @@ def test_script_without_an_objective_warns_and_old_scripts_still_load() -> None:
 
 
 def test_old_news_is_not_news() -> None:
-    fresh = date(2026, 10, 1 + NEWS_MAX_AGE_DAYS)
+    fresh = date(2026, 10, 1 + CheckConstants.NEWS_MAX_AGE_DAYS)
     assert objective_warnings(manifest(NEWS), today=fresh) == []
     (old,) = objective_warnings(manifest(NEWS), today=date(2026, 12, 1))
     assert "fato é de 01/10/2026 (61 dias)" in old and "explica ou opina" in old

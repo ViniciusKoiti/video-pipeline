@@ -1,0 +1,19 @@
+{
+ "enabled": true,
+ "ok": false,
+ "path": "/home/viniciusk/projetos/auto-play/data/benchmarks/voz-loop-2026-11-05/trechos/U.wav",
+ "provider": "gemini",
+ "model": "gemini-3.8-flash",
+ "uploaded": {
+  "start": 0.0,
+  "end": 32.04,
+  "seconds": 32.04,
+  "file_duration": 32.04,
+  "trimmed": false,
+  "bytes": 256670,
+  "codec": "mp3 mono 64 kbps"
+ },
+ "summary": "LLM critique failed: Gemini HTTP 503: request failed. This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+ "text": "LLM critique failed: Gemini HTTP 503: request failed. This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+ "error": "Gemini HTTP 503: request failed. This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+}

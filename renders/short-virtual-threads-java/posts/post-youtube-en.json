@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-11-09T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0nn9g0003l26yf4npmb66"
+      },
+      "value": [
+        {
+          "content": "In Java, 10,000 requests wait on a blocking call (simulated with a 100 ms Thread.sleep). A thread runs one request and, in a traditional pool, each one holds an operating system thread, which is expensive: with 200 threads, only 200 requests wait at a time and the rest queue up. A virtual thread is managed by the JVM and doesn't hold the OS thread while it waits. But the bottleneck moves: with a pool of 50 connections (a Semaphore), the queue comes back at the connections.\n\nMeasured on this machine: OpenJDK 25.0.4.1, Ryzen 7 5700U, 15 runs, a fresh JVM each run. Medians: pool of 200 threads 5,088.6 ms; virtual threads 179.4 ms; virtual threads with 50 connections 20,139 ms. The wait is simulated, not a real network or database.\n\nMechanism sources: JEP 444 (Virtual Threads) and the JDK 25 Executors documentation.\n\nThe voice is mine, cloned with AI. The animations were made for this video.\n\n#Shorts #Java #VirtualThreads",
+          "image": [
+            {
+              "id": "807711ea-d9a9-478e-b3a3-4b8edf3c0872",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/04/3d4bc5dca454afc310c4a5d7bfa709955.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "10,000 requests in Java: threads or virtual threads?",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

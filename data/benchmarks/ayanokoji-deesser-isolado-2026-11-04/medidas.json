@@ -1,0 +1,41 @@
+{
+  "source": "data/episodes/ayanokoji-provocacao-epicteto/renders/preview.mp4",
+  "source_sha256": "674841536cba4f426eabe6afa411f9705674ab996f5273e884a0e43cb14d0543",
+  "start_s": 0,
+  "end_s": 45.64,
+  "cpu_probe_s": 0.071,
+  "target_lufs": -16.16,
+  "experiment": "deesser isolado apos o nivelamento existente; sem highpass ou EQ",
+  "limitation": "audio extraido do MP4/AAC; nao e matriz bruta de TTS",
+  "production_enabled": false,
+  "variants": [
+    {
+      "file": "atual.wav",
+      "chain": "",
+      "stats": {
+        "input_i": -16.16,
+        "input_tp": -1.61,
+        "input_lra": 2.5,
+        "input_thresh": -26.5,
+        "target_offset": 0.08
+      },
+      "gain_match_db": -0.10999999999999943,
+      "duration_ms": 45640,
+      "sha256": "6ca18130ead4a161de325e2dd96f69b69633858174e4b5f0edd2b4334b340dad"
+    },
+    {
+      "file": "candidata.wav",
+      "chain": "deesser=i=0.4:m=0.97:f=1.0",
+      "stats": {
+        "input_i": -16.16,
+        "input_tp": -1.6,
+        "input_lra": 2.5,
+        "input_thresh": -26.49,
+        "target_offset": 0.08
+      },
+      "gain_match_db": -0.10000000000000142,
+      "duration_ms": 45640,
+      "sha256": "4f3f41fcc12c72f735b19491264f8971213e10daee744c8200f14b474c56c28b"
+    }
+  ]
+}

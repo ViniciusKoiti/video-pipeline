@@ -7,9 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from app.media.constants.word_captions_constants import WordCaptionsConstants
 from app.media.word_captions import (
-    VERSION,
-    WORDS,
     CaptionWord,
     SceneSpeech,
     match_words,
@@ -73,25 +72,27 @@ def recognizer(calls: list[str]):  # type: ignore[no-untyped-def]
 
 
 def test_only_scenes_with_a_new_audio_are_recognized(tmp_path: Path) -> None:
-    path, calls = tmp_path / WORDS, []
+    path, calls = tmp_path / WordCaptionsConstants.WORDS, []
     report = sync_words(path, SCENES, recognizer(calls), "groq/whisper")
     assert calls == ["S01", "S02"] and report.with_words == ["S01", "S02"] and report.unmatched == 0
     changed = [SCENES[0], SceneSpeech("S02", "voice/S02-c.wav", "Quanto custa agora?", 1500)]
     sync_words(path, changed, recognizer(calls), "groq/whisper")
     assert calls == ["S01", "S02", "S02"]
     data = json.loads(path.read_text())
-    assert data["version"] == VERSION and [s["audio"] for s in data["scenes"]] == [s.audio for s in changed]
+    assert data["version"] == WordCaptionsConstants.VERSION and [s["audio"] for s in data["scenes"]] == [
+        s.audio for s in changed
+    ]
 
 
 def test_without_the_request_a_scene_without_words_stays_on_phrase_captions(tmp_path: Path) -> None:
-    path = tmp_path / WORDS
+    path = tmp_path / WordCaptionsConstants.WORDS
     sync_words(path, SCENES[:1], recognizer([]), "groq/whisper")
     report = sync_words(path, SCENES, None, "groq/whisper")
     assert report.with_words == ["S01"] and report.without == ["S02"]
 
 
 def test_a_quota_error_keeps_what_was_already_recognized(tmp_path: Path) -> None:
-    path, calls = tmp_path / WORDS, []
+    path, calls = tmp_path / WordCaptionsConstants.WORDS, []
     ok = recognizer(calls)
 
     def recognize(scene: SceneSpeech) -> list[TimedWord]:
@@ -105,10 +106,10 @@ def test_a_quota_error_keeps_what_was_already_recognized(tmp_path: Path) -> None
 
 
 def test_scene_word_frames_are_relative_to_the_scene(tmp_path: Path) -> None:
-    path = tmp_path / WORDS
+    path = tmp_path / WordCaptionsConstants.WORDS
     sync_words(path, SCENES, recognizer([]), "groq/whisper")
     frames = scene_word_frames(path, "voice/S02-b.wav", 30)
     assert frames == [{"text": "Quanto", "from": 0, "to": 8}, {"text": "custa?", "from": 9, "to": 16}]
     assert scene_word_frames(path, "voice/outra.wav", 30) == []
-    path.write_text(json.dumps({"version": VERSION + 1, "scenes": []}))
+    path.write_text(json.dumps({"version": WordCaptionsConstants.VERSION + 1, "scenes": []}))
     assert scene_word_frames(path, "voice/S02-b.wav", 30) == []

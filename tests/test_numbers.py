@@ -12,11 +12,9 @@ import pytest
 
 from app.cli import main
 from app.pipeline.check import check_episode
+from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.gates import gate_report, record_check, record_decision
 from app.pipeline.numbers import (
-    BLOCK_END,
-    BLOCK_START,
-    SPOKEN,
     FormatBrief,
     format_warnings,
     image_changes,
@@ -177,7 +175,7 @@ def test_same_patterns_as_the_niche_analysis() -> None:
         if isinstance(n, ast.Assign) and any(getattr(t, "id", "") == "SPOKEN" for t in n.targets)
     )
     theirs = {k.value: v.args[0].value for k, v in zip(node.keys, node.values, strict=True)}
-    assert theirs == {name: rx.pattern for name, rx in SPOKEN.items()}
+    assert theirs == {name: rx.pattern for name, rx in NumbersConstants.SPOKEN.items()}
 
 
 # --- bloco no outline ---
@@ -186,7 +184,7 @@ def test_same_patterns_as_the_niche_analysis() -> None:
 def test_block_is_stable_and_only_replaces_itself() -> None:
     scenes, assets = fixture()
     block = render_block(script_numbers(scenes, assets, CPS), None, CPS)
-    assert block.startswith(BLOCK_START) and block.endswith(BLOCK_END)
+    assert block.startswith(NumbersConstants.BLOCK_START) and block.endswith(NumbersConstants.BLOCK_END)
     assert render_block(script_numbers(scenes, assets, CPS), None, CPS) == block
     outline = "# Outline\n\nTexto à mão.\n"
     once = replace_block(outline, block)
@@ -339,3 +337,23 @@ def test_cli_numeros_writes_once_and_respects_approved_assets(
     assert fixed["used_in_scenes"][0] == "S119"
     kant = json.loads((folder / "assets" / "commons-kant-c1790.json").read_text())
     assert kant["used_in_scenes"] == []
+
+
+def test_clips_are_listed_with_work_timecode_and_origin() -> None:
+    from tests.test_citation import citation, clip
+
+    assets = {
+        "q0": Asset.model_validate(citation("q0")),
+        "c0": Asset.model_validate(clip("c0", work="The Mentalist (2008), Warner Bros.")),
+    }
+    scenes = scenes_of(
+        {"id": "S01", "narration": "Primeira menção ao quadro.", "shots": [photo("Primeira", "q0")]},
+        {"id": "S02", "narration": "Segunda menção, agora o clipe.", "shots": [broll("Segunda", "c0")]},
+    )
+    n = script_numbers(scenes, assets, CPS)
+    assert [(c.asset_id, c.clip) for c in n.citations] == [("q0", False), ("c0", True)]
+    text = render_block(n, None, CPS)
+    assert "1 quadros e 1 clipes" in text
+    assert "| 2 | clipe | S02 |" in text
+    assert "The Mentalist (2008), Warner Bros." in text and "00:12:03-00:12:08" in text
+    assert "o clipe sai mudo" in text

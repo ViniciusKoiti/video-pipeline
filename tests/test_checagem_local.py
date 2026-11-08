@@ -9,7 +9,6 @@ import pytest
 from pydantic import ValidationError
 
 from app.pipeline.checagem_local import (
-    EXPECTED,
     Case,
     Result,
     Veredito,
@@ -20,6 +19,7 @@ from app.pipeline.checagem_local import (
     run,
     score,
 )
+from app.pipeline.constants.checagem_local_constants import ChecagemLocalConstants
 from app.providers.text.ollama import OllamaText
 from tests.fakes import FakeText, fake_ollama_post
 
@@ -124,7 +124,7 @@ def test_clean_claim_drops_the_fact_id() -> None:
 
 def test_build_cases_makes_one_case_of_each_kind(episode: Path) -> None:
     cases = {c.kind: c for c in build_cases(episode)}
-    assert set(cases) == set(EXPECTED)
+    assert set(cases) == set(ChecagemLocalConstants.EXPECTED)
     assert cases["real"].claim == "Em 1950, a Empresa A comprou a fábrica de Cidade B"
     assert "1950" not in cases["numero"].claim and "(F01)" not in cases["numero"].claim
     assert cases["superlativo"].claim.endswith("o maior de todo o país.")

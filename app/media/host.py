@@ -15,43 +15,32 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from app.pipeline.schemas import (
-    HOST_CORNERS,
-    MEDIA_SHOT_KINDS,
-    OVERLAY_SHOT_KINDS,
-    EpisodeScene,
-    HostCorner,
-)
+from app.errors import PipelineError
+from app.media.constants.host_constants import HostConstants
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.schemas import EpisodeScene, HostCorner
 
 # --- pele `dono` (ADR 017, parte A) ------------------------------------------------------------------
 
-SPRITES_DIR = "host/dono"  # dentro da pasta do episódio, que é a pasta pública do render e fica fora do Git
-VISEMES = ("rest", "mbp", "ei", "a", "ou", "fv")  # o vocabulário do `<Host>` do motion-kit
-ORIGIN_FILE = "origem.json"  # de onde veio o desenho: autor, gerador e licença (§2.3)
-
-
 # Pele em camadas (ADR 029): com `sprites.json` na pasta, valem as camadas que ele cita, no formato
 # `host-sprites.v1` do motion-kit; sem ele, as 12 imagens inteiras da ADR 017.
-MANIFEST_FILE = "sprites.json"
-KIT_CLI = Path("node_modules/@viniciusk/motion-kit/bin/motion-kit.mjs")  # dentro de `video/`
 
-
-class SpriteCheckError(RuntimeError):
+class SpriteCheckError(PipelineError, RuntimeError):
     """A pasta da pele não passou na conferência do motion-kit."""
 
 
 def sprites_manifest(episode_dir: Path) -> dict[str, Any] | None:
     """O `sprites.json` da pele `dono`, ou `None` na pele de 12 imagens."""
-    file = episode_dir / SPRITES_DIR / MANIFEST_FILE
+    file = episode_dir / HostConstants.SPRITES_DIR / HostConstants.MANIFEST_FILE
     return json.loads(file.read_text()) if file.is_file() else None
 
 
 def check_sprites(episode_dir: Path, project: Path, *, node: str = "node") -> None:
     """Confere a pasta pelo comando do kit instalado em `video/` (`motion-kit sprites check`): o formato é
     do kit, e o Python não o reimplementa. Para com a mensagem do comando."""
-    folder = episode_dir / SPRITES_DIR
+    folder = episode_dir / HostConstants.SPRITES_DIR
     result = subprocess.run(
-        [node, str(project / KIT_CLI), "sprites", "check", str(folder)],
+        [node, str(project / HostConstants.KIT_CLI), "sprites", "check", str(folder)],
         capture_output=True,
         text=True,
         check=False,
@@ -63,22 +52,22 @@ def check_sprites(episode_dir: Path, project: Path, *, node: str = "node") -> No
 def sprite_files(episode_dir: Path) -> list[Path]:
     """As imagens da pele `dono`. Com `sprites.json`, o manifesto e os arquivos que ele cita; sem ele, cada
     visema de olho aberto e de olho fechado (`<visema>-piscada.png`)."""
-    folder = episode_dir / SPRITES_DIR
+    folder = episode_dir / HostConstants.SPRITES_DIR
     manifest = sprites_manifest(episode_dir)
     if manifest is not None:
         cited = sorted({str(sprite["file"]) for sprite in manifest.get("sprites", [])})
-        return [folder / MANIFEST_FILE, *(folder / name for name in cited)]
-    return [folder / f"{viseme}{blink}.png" for viseme in VISEMES for blink in ("", "-piscada")]
+        return [folder / HostConstants.MANIFEST_FILE, *(folder / name for name in cited)]
+    return [folder / f"{viseme}{blink}.png" for viseme in HostConstants.VISEMES for blink in ("", "-piscada")]
 
 
 def sprites_hash(episode_dir: Path) -> str:
     """Hash das imagens (e do manifesto) e do registro de origem; entra nas props da cena, e com isso no cache
     do render. Falta de imagem ou de registro é erro: ativo sem origem registrada não entra no render
     (§2.3)."""
-    files = [*sprite_files(episode_dir), episode_dir / SPRITES_DIR / ORIGIN_FILE]
+    files = [*sprite_files(episode_dir), episode_dir / HostConstants.SPRITES_DIR / HostConstants.ORIGIN_FILE]
     missing = [f.name for f in files if not f.is_file()]
     if missing:
-        raise FileNotFoundError(f"pele dono: faltam em {SPRITES_DIR}/: {', '.join(missing)}")
+        raise FileNotFoundError(f"pele dono: faltam em {HostConstants.SPRITES_DIR}/: {', '.join(missing)}")
     digest = hashlib.sha256()
     for file in files:
         digest.update(file.name.encode())
@@ -100,11 +89,11 @@ def blocked_corners(scene: EpisodeScene, *, portrait: bool = False) -> set[HostC
     media_seen = False
     for shot in scene.shots:
         kind = shot.spec.kind
-        if kind in MEDIA_SHOT_KINDS:
+        if kind in SchemasConstants.MEDIA_SHOT_KINDS:
             layer = "media"
             media_seen = True
         else:  # camadas de Scene.tsx: tarja, carimbo, número e frase vão sobre a mídia anterior
-            layer = "overlay" if kind in OVERLAY_SHOT_KINDS and media_seen else "full"
+            layer = "overlay" if kind in SchemasConstants.OVERLAY_SHOT_KINDS and media_seen else "full"
         if portrait:
             if kind == "chart":
                 blocked |= {"top-left", "top-right"}
@@ -132,8 +121,11 @@ def host_corners(scenes: Sequence[EpisodeScene], *, portrait: bool = False) -> l
         if scene.host_corner is not None:
             chosen = scene.host_corner
         else:
-            start = HOST_CORNERS.index(previous) + 1 if previous else 0
-            ring = [HOST_CORNERS[(start + i) % len(HOST_CORNERS)] for i in range(len(HOST_CORNERS))]
+            start = SchemasConstants.HOST_CORNERS.index(previous) + 1 if previous else 0
+            ring = [
+                SchemasConstants.HOST_CORNERS[(start + i) % len(SchemasConstants.HOST_CORNERS)]
+                for i in range(len(SchemasConstants.HOST_CORNERS))
+            ]
             candidates = [c for c in ring if c != previous]
             blocked = blocked_corners(scene, portrait=portrait)
             stay = [previous] if previous and previous not in blocked else []
@@ -146,14 +138,12 @@ def host_corners(scenes: Sequence[EpisodeScene], *, portrait: bool = False) -> l
 # --- direção automática (ADR 029) --------------------------------------------------------------------
 
 # Planos em que o apresentador aponta para o conteúdo quando entram.
-POINT_SHOT_KINDS = frozenset({"number", "compare", "calculation", "receipt", "chart"})
-POINT_MS = 1500
+
+
 # Expressão pela entrega da fala (ADR 022); as outras entregas ficam na neutra.
-DELIVERY_EXPRESSIONS = {"hook": "raised", "turn": "furrow"}
+
 # O ciclo de gesticular do `<Host>` (repouso ↔ explicando, 21 quadros por gesto), escrito por extenso nas
 # cenas em que ele aponta: o kit não mistura gesto agendado com o ciclo.
-GESTURE_CYCLE = ("rest", "open")
-GESTURE_EVERY = 21
 
 
 def host_direction(scene: EpisodeScene, corner: HostCorner, fps: int) -> dict[str, Any]:
@@ -164,14 +154,14 @@ def host_direction(scene: EpisodeScene, corner: HostCorner, fps: int) -> dict[st
     frames = max(1, round(scene.duration_ms * fps / 1000))
     direction: dict[str, Any] = {
         "look": "left" if corner.endswith("right") else "right",
-        "expression": DELIVERY_EXPRESSIONS.get(scene.delivery or "neutral", "neutral"),
+        "expression": HostConstants.DELIVERY_EXPRESSIONS.get(scene.delivery or "neutral", "neutral"),
     }
     windows: list[tuple[int, int]] = []
     for shot in scene.shots:
-        if shot.spec.kind not in POINT_SHOT_KINDS:
+        if shot.spec.kind not in HostConstants.POINT_SHOT_KINDS:
             continue
         start = round(shot.start_ms * fps / 1000)
-        end = min(frames, start + round(POINT_MS * fps / 1000))
+        end = min(frames, start + round(HostConstants.POINT_MS * fps / 1000))
         if windows and start <= windows[-1][1]:  # apontar de novo emenda com o anterior
             windows[-1] = (windows[-1][0], max(windows[-1][1], end))
         else:
@@ -184,14 +174,16 @@ def host_direction(scene: EpisodeScene, corner: HostCorner, fps: int) -> dict[st
     for start, end in windows:
         # o ciclo para meia volta antes de apontar: um gesto de poucos quadros antes do apontar só pisca
         cues += [
-            {"at": at, "gesture": GESTURE_CYCLE[i % len(GESTURE_CYCLE)]}
-            for i, at in enumerate(range(cursor, start - GESTURE_EVERY // 2, GESTURE_EVERY))
+            {"at": at, "gesture": HostConstants.GESTURE_CYCLE[i % len(HostConstants.GESTURE_CYCLE)]}
+            for i, at in enumerate(
+                range(cursor, start - HostConstants.GESTURE_EVERY // 2, HostConstants.GESTURE_EVERY)
+            )
         ]
         cues.append({"at": start, "gesture": "point"})
         cursor = end
     cues += [
-        {"at": at, "gesture": GESTURE_CYCLE[i % len(GESTURE_CYCLE)]}
-        for i, at in enumerate(range(cursor, frames, GESTURE_EVERY))
+        {"at": at, "gesture": HostConstants.GESTURE_CYCLE[i % len(HostConstants.GESTURE_CYCLE)]}
+        for i, at in enumerate(range(cursor, frames, HostConstants.GESTURE_EVERY))
     ]
     direction["gestures"] = cues
     return direction

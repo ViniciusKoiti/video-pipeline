@@ -1,0 +1,16 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: domingo, 01/11/2026, às 14h14min08s de Brasília (17h14min08s UTC), igual em post-youtube-pt.json e no último pacote do registro.jsonl, linha 148; não encontrei agenda*.md em renders/short-concorrencia.",
+    "Canal: cmvx0omyy0005l26yggavdqpu aparece como Vinicius Koiti Nakahara no pacote e usa settings.__type youtube no post; o parecer anterior da linha 135 do registro identifica esse mesmo id como @viniciusnakahara, coerente com o destino mencionado no review.json.",
+    "Mídia: id, URL, arquivo final.pt.fluxo.mp4 e sha256 coincidem entre o post, o pacote e o upload da linha 147 do registro; verificacao.pt.json registra o mesmo hash, duração de 51,4 segundos e resolução 1080×1920, mas não reconferi o arquivo binário.",
+    "Legenda: li integralmente post-youtube-pt.json e legenda-post.txt, que concordam; a explicação distingue a animação didática do comportamento indefinido em C, limita os resultados à máquina medida e inclui dois links de fontes, sem @menções ou acusações sobre pessoas ou empresas.",
+    "Os números 11,0 ms, 92,2 ms, 21,4 ms e 15 rodadas estão na legenda, mas os arquivos recebidos não incluem os resultados brutos da medição; sua exatidão não foi conferida independentemente neste parecer.",
+    "Gate 4: o pacote registra aprovado e review.json contém aprovação de preview às 13h59min50s de Brasília pelo dono; verificacao.pt.json ainda registra gate_humano e escuta_humana como pendentes, portanto esse relatório anterior não comprova uma escuta humana concluída.",
+    "Divulgação: a legenda declara a voz clonada por IA, mas pacote.pt.json informa que a API não marca conteúdo sintético e deixa a conferência do rótulo no YouTube Studio como tarefa manual.",
+    "Repetição: não há evento agendado anterior para esta mídia nem para este canal em 01/11 no registro consultado; o mesmo canal tem outro vídeo agendado para 07/11, com mídia diferente.",
+    "Tempo para desfazer: às 14h08min51s de Brasília restavam somente 5 minutos e 17 segundos até o horário do post; pacote.pt.json informa que antes desse horário é possível apagar no Postiz e depois é necessário apagar diretamente na rede.",
+    "O pacote alerta que o Postiz não garante idempotência; se houver erro ou demora no envio, conferir a fila e o YouTube Studio antes de repetir."
+  ],
+  "revisor": "duvida-cega"
+}

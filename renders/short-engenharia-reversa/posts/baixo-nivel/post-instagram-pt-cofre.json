@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-10-26T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Pedi ao Claude Code para abrir um cofre sem a senha e sem o código-fonte. Ele abriu em cinco passos, todos na tela: o que o binário entrega de graça, onde ele decide, a tabela de dez bytes, o XOR desfeito letra a letra, e o cofre aberto.\n\nTudo que aparece é saída real de file, strings e objdump. Nenhuma ferramenta além dessas.\n\nSó em binário seu, ou de CTF. Código e binário em github.com/ViniciusKoiti/baixo-nivel-demos\n\nApresentador desenhado a partir de fotos minhas; voz clonada da minha por IA.\n\n#engenhariareversa #claudecode #assembly #linux #programacao #dev",
+          "image": [
+            {
+              "id": "3cabcbe6-50b1-46e2-b25b-dfe0235b48a9",
+              "path": "https://postizis.duckdns.org/uploads/2026/10/25/5d5c632284f87de3c020f5af0a9649c7.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}

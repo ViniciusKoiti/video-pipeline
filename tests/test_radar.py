@@ -11,8 +11,8 @@ import pytest
 from pydantic import ValidationError
 
 from app.pipeline.check import check_episode
+from app.pipeline.constants.radar_constants import RadarConstants
 from app.pipeline.radar import (
-    BRIEF_FILE,
     RadarBrief,
     brief_summary,
     form_warnings,
@@ -185,7 +185,7 @@ def write_episode(root: Path, brief_raw: dict[str, Any] | None) -> JsonFileStore
     manifest = scenes("A empresa assinou um contrato.")
     (folder / "scenes.json").write_text(manifest.model_dump_json())
     if brief_raw is not None:
-        (folder / BRIEF_FILE).write_text(json.dumps(brief_raw))
+        (folder / RadarConstants.BRIEF_FILE).write_text(json.dumps(brief_raw))
     return JsonFileStore(root)
 
 

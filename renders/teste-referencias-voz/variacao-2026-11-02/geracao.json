@@ -1,0 +1,32 @@
+{
+  "text": "Vamos acompanhar esta requisição, observar a espera e entender a decisão de arquitetura.",
+  "novo": [
+    {
+      "delivery": "hook",
+      "params": {
+        "exaggeration": 1.0,
+        "cfg_weight": 0.3
+      },
+      "wav": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/hook-forte.wav",
+      "leveled": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/leveled/hook-forte-d26c4962ef32.wav"
+    },
+    {
+      "delivery": "turn",
+      "params": {
+        "exaggeration": 0.9,
+        "cfg_weight": 0.35
+      },
+      "wav": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/turn-forte.wav",
+      "leveled": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/leveled/turn-forte-ce336032740a.wav"
+    },
+    {
+      "delivery": "invite",
+      "params": {
+        "exaggeration": 0.8,
+        "cfg_weight": 0.35
+      },
+      "wav": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/invite-forte.wav",
+      "leveled": "/home/viniciusk/projetos/auto-play/renders/teste-referencias-voz/variacao-2026-11-02/leveled/invite-forte-7f736193dd7d.wav"
+    }
+  ]
+}

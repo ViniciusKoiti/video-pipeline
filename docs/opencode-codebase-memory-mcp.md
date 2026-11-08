@@ -114,7 +114,7 @@ automaticamente o código de todos eles; a cobertura dos vizinhos não foi audit
 - **Lab-voz:** o adapter executa um worker com Python externo configurado; o grafo
   do auto-play não comprova o valor atual de `CHATTERBOX_PYTHON`.
 
-O [mapa do workspace](WORKSPACE-ATUAL-E-COMPONENTES.md) descreve essas integrações.
+O mapa do repositório está no `CLAUDE.md` (§3, "Mapa do repositório").
 Indexar projetos vizinhos separadamente pode ajudar uma análise posterior; isso
 não substitui a revisão dos imports, arquivos transferidos e caminhos configurados.
 
@@ -133,7 +133,7 @@ Após mapear `.MD`, `CLAUDE.md` também passou a ter `metadata_match`.
 Isso confirma a configuração consultada, sem provar resolução de toda chamada dinâmica.
 
 O parser 0.11.0 reportou falha em `docs/pipeline-flowchart.mermaid` e
-`docs/pipeline-hoje.mermaid`. Os arquivos continuam no repositório; leia os
+`docs/diagramas/mermaid/pipeline-hoje.mermaid`. Os arquivos continuam no repositório; leia os
 diagramas diretamente e não use o grafo como prova da sua interpretação.
 Arquivos excluídos intencionalmente também não podem ser usados como evidência
 a partir de uma busca vazia.

@@ -1,0 +1,36 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "In C, two threads each add a million times. The total should be two million.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "resultado",
+      "text": "Without protection, the total fell short.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "codigo",
+      "text": "An increment reads the value, adds, and writes it back. Imagine the two threads reading ten and writing eleven: an update is lost. In C, this data race has undefined behavior."
+    },
+    {
+      "scene": "mutex",
+      "text": "The mutex lets one thread at a time enter this section."
+    },
+    {
+      "scene": "atomic",
+      "text": "The atomic increment makes the read, add, and write one indivisible operation, so this counter does not lose increments."
+    },
+    {
+      "scene": "tempo",
+      "text": "Without protection, eleven milliseconds, and wrong. With a mutex, ninety-two, and correct. With atomic, 21, and correct."
+    },
+    {
+      "scene": "fecho",
+      "text": "How does this work in other languages? Comment which language you would like to see in the next video.",
+      "delivery": "invite"
+    }
+  ]
+}

@@ -7,22 +7,17 @@ fichas e roteiro (agente, modelo local ou pessoa) cita o trecho, e o código con
 
 from __future__ import annotations
 
-import re
-
+from app.pipeline.constants.excerpts_constants import ExcerptsConstants
 from app.pipeline.schemas import Source
-
-_BLANK_LINE = re.compile(r"\n\s*\n")
-_ELISION = re.compile(r"\s*(?:\[\.\.\.\]|\[…\]|\.\.\.|…)\s*")
-_TYPOGRAPHY = str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'", "–": "-", "—": "-", " ": " "})
 
 
 def _normalize(text: str) -> str:
-    return " ".join(text.translate(_TYPOGRAPHY).split())
+    return " ".join(text.translate(ExcerptsConstants._TYPOGRAPHY).split())
 
 
 def split_excerpts(text: str) -> list[str]:
     """Parágrafos do texto, com espaços normalizados; o índice 0 é o trecho E1."""
-    return [" ".join(block.split()) for block in _BLANK_LINE.split(text) if block.strip()]
+    return [" ".join(block.split()) for block in ExcerptsConstants._BLANK_LINE.split(text) if block.strip()]
 
 
 def excerpts_of(source: Source, text: str) -> dict[str, str]:
@@ -33,7 +28,7 @@ def quote_in_excerpt(quote: str, excerpt: str) -> bool:
     """A citação é cópia literal do trecho; "..." ou "[...]" marcam cortes, e as partes vêm em ordem.
     Aspas curvas, travessões e espaços não contam como diferença."""
     haystack, cursor = _normalize(excerpt), 0
-    for part in _ELISION.split(quote):
+    for part in ExcerptsConstants._ELISION.split(quote):
         part = _normalize(part)
         if not part:
             continue

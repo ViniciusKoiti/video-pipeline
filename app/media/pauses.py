@@ -12,26 +12,33 @@ import re
 import subprocess
 from pathlib import Path
 
+from app.errors import PipelineError
+from app.media.constants.pauses_constants import PausesConstants
 from app.media.probe import duration_ms
 
-NOISE_DB = -40  # abaixo disto é silêncio
-MIN_SILENCE_S = 0.2  # silêncios mais curtos nem entram na conta
-MIN_BOUNDARY_S = 0.6  # uma fronteira entre cenas dura pelo menos isto
-MARGIN = 1.3  # a fronteira mais curta é 30% maior que a pausa mais longa dentro das cenas
-LEAD_S = 0.2  # silêncio mantido antes da fala de cada cena (o Kokoro deixa ~0,2 s)
-TAIL_S = 0.15  # silêncio mantido depois da fala
 
-
-class SplitError(RuntimeError):
+class SplitError(PipelineError, RuntimeError):
     pass
 
 
 def silences(path: Path) -> list[tuple[float, float]]:
     """Silêncios internos (início, fim) em segundos; os das pontas do arquivo ficam de fora."""
     result = subprocess.run(
-        ["ffmpeg", "-hide_banner", "-nostats", "-i", str(path),
-         "-af", f"silencedetect=noise={NOISE_DB}dB:d={MIN_SILENCE_S}", "-f", "null", "-"],
-        capture_output=True, text=True, check=False,
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-nostats",
+            "-i",
+            str(path),
+            "-af",
+            f"silencedetect=noise={PausesConstants.NOISE_DB}dB:d={PausesConstants.MIN_SILENCE_S}",
+            "-f",
+            "null",
+            "-",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
     )
     if result.returncode != 0:
         raise SplitError(f"ffmpeg não leu {path.name}: {result.stderr.strip()[-200:]}")
@@ -51,7 +58,7 @@ def boundaries(found: list[tuple[float, float]], parts: int) -> list[tuple[float
     chosen, rest = by_length[: parts - 1], by_length[parts - 1 :]
     shortest = min(e - s for s, e in chosen)
     longest_rest = max((e - s for s, e in rest), default=0.0)
-    if shortest < MIN_BOUNDARY_S or shortest < longest_rest * MARGIN:
+    if shortest < PausesConstants.MIN_BOUNDARY_S or shortest < longest_rest * PausesConstants.MARGIN:
         raise SplitError(
             f"fronteira de {shortest:.2f} s não se destaca da pausa interna de {longest_rest:.2f} s"
         )
@@ -62,8 +69,8 @@ def split_at_pauses(path: Path, outs: list[Path]) -> list[Path]:
     """Grava uma cena em cada `outs`, na ordem; WAV PCM 16 bits, mesma taxa do original."""
     cuts = boundaries(silences(path), len(outs))
     total = duration_ms(path) / 1000
-    starts = [0.0] + [e - LEAD_S for _, e in cuts]
-    ends = [s + TAIL_S for s, _ in cuts] + [total]
+    starts = [0.0] + [e - PausesConstants.LEAD_S for _, e in cuts]
+    ends = [s + PausesConstants.TAIL_S for s, _ in cuts] + [total]
     for out, start, end in zip(outs, starts, ends, strict=True):
         out.parent.mkdir(parents=True, exist_ok=True)
         result = subprocess.run(

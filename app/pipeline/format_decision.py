@@ -11,56 +11,26 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime
-from enum import StrEnum
 from typing import Literal
 
-from pydantic import AwareDatetime, Field
-
+from app.errors import PipelineError
+from app.pipeline.constants.format_decision_constants import FormatDecisionConstants
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models.format_decision import FormatDecision as FormatDecision
+from app.pipeline.models.topic_assessment import TopicAssessment as TopicAssessment
+from app.pipeline.models.topic_kind import TopicKind as TopicKind
 from app.pipeline.schemas import (
-    GRAPHIC_SHOT_KINDS,
     Decision,
     EpisodeFormat,
-    Model,
     ReviewLog,
-    SceneId,
     ScenesManifest,
     Shot,
     Step,
-    VisualNeed,
     effective_shots,
 )
 
-PUBLIC_DOMAIN_CUTOFF_YEAR = 1930  # publicado até 1930 = domínio público nos EUA (§8)
-EXPLAINER_GRAPHIC_SHARE = 0.6  # a partir desta fração de cenas gráficas, o vídeo é um explicativo
-GRAPHIC_NEEDS = frozenset({VisualNeed.MAP_OR_GRAPHIC})  # visual gerado a partir de dados
-PHOTO_NEEDS = frozenset({VisualNeed.HISTORICAL_EXACT, VisualNeed.CONTEXTUAL_STOCK})
 
-
-class TopicKind(StrEnum):
-    HISTORICAL_EVENT = "historical_event"
-    CONCEPT = "concept"
-    UNCLEAR = "unclear"
-
-
-class TopicAssessment(Model):
-    """Leitura do tema — produzida pelo adapter de texto (etapa 27) ou informada à mão."""
-
-    kind: TopicKind
-    period_year: int | None = None  # ano central do evento, se histórico
-    rationale: str = ""
-
-
-class FormatDecision(Model):
-    stage: Literal["topic", "scenes"]
-    recommended: EpisodeFormat
-    scores: dict[EpisodeFormat, float]
-    reasons: list[str] = Field(min_length=1)
-    graphic_scenes_as_assets: list[SceneId] = []  # cenas para o caminho "gráfico como ativo" (etapa #42)
-    input_hash: str
-    decided_at: AwareDatetime
-
-
-class FormatNotConfirmed(LookupError):
+class FormatNotConfirmed(PipelineError, LookupError):
     pass
 
 
@@ -118,17 +88,18 @@ def decide_from_topic(topic: TopicAssessment, *, now: datetime) -> FormatDecisio
     if topic.period_year is None:
         documentary = 0.7
         reasons.append("período não informado: disponibilidade de fotos em domínio público incerta")
-    elif topic.period_year <= PUBLIC_DOMAIN_CUTOFF_YEAR:
+    elif topic.period_year <= FormatDecisionConstants.PUBLIC_DOMAIN_CUTOFF_YEAR:
         documentary = 0.9
         reasons.append(
-            f"{topic.period_year} ≤ {PUBLIC_DOMAIN_CUTOFF_YEAR}: fotos publicadas até 1930 são "
-            "domínio público nos EUA (§8)"
+            f"{topic.period_year} ≤ {FormatDecisionConstants.PUBLIC_DOMAIN_CUTOFF_YEAR}"
+            f": fotos publicadas até 1930 são domínio público nos EUA (§8)"
         )
     else:
         documentary = 0.45
         reasons.append(
-            f"{topic.period_year} > {PUBLIC_DOMAIN_CUTOFF_YEAR}: fotos raramente em domínio público; "
-            "risco de virar 100% ilustração, que o §1 manda evitar"
+            f"{topic.period_year} > {FormatDecisionConstants.PUBLIC_DOMAIN_CUTOFF_YEAR}"
+            f": fotos raramente em domínio público; risco de virar 100% ilustração, que o §1 m"
+            f"anda evitar"
         )
     return _decision("topic", documentary, reasons, topic.model_dump(), now)
 
@@ -146,10 +117,13 @@ def decide_from_scenes(scenes: ScenesManifest, *, now: datetime) -> FormatDecisi
     share = graphic / len(kinds)
     reasons = [
         f"{photos} de {len(kinds)} planos pedem foto (historical_exact/contextual_stock)",
-        f"{graphic} de {len(kinds)} planos são gráficos (número, gráfico, mapa, citação...): {share:.0%}",
+        (f"{graphic} de {len(kinds)} planos são gráficos (número, gráfico, mapa, citação...): {share:.0%}"),
     ]
-    if share >= EXPLAINER_GRAPHIC_SHARE:
-        reasons.append(f"≥ {EXPLAINER_GRAPHIC_SHARE:.0%} de planos gráficos: o vídeo é um explicativo")
+    if share >= FormatDecisionConstants.EXPLAINER_GRAPHIC_SHARE:
+        reasons.append(
+            f"≥ {FormatDecisionConstants.EXPLAINER_GRAPHIC_SHARE:.0%}"
+            f" de planos gráficos: o vídeo é um explicativo"
+        )
         return _decision("scenes", 1 - share, reasons, kinds, now)
     if graphic_scenes:
         reasons.append(
@@ -160,9 +134,12 @@ def decide_from_scenes(scenes: ScenesManifest, *, now: datetime) -> FormatDecisi
 
 
 def _shot_class(shot: Shot) -> str:
-    if shot.kind in GRAPHIC_SHOT_KINDS or getattr(shot, "visual_need", None) in GRAPHIC_NEEDS:
+    if (
+        shot.kind in SchemasConstants.GRAPHIC_SHOT_KINDS
+        or getattr(shot, "visual_need", None) in FormatDecisionConstants.GRAPHIC_NEEDS
+    ):
         return "graphic"
-    return "photo" if getattr(shot, "visual_need", None) in PHOTO_NEEDS else "other"
+    return "photo" if getattr(shot, "visual_need", None) in FormatDecisionConstants.PHOTO_NEEDS else "other"
 
 
 def confirmed_format(decision: FormatDecision, review: ReviewLog) -> EpisodeFormat:

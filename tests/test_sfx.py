@@ -133,7 +133,7 @@ def test_each_sound_starts_at_its_moment_minus_the_sync_point(data_dir: Path) ->
 
 
 def test_mix_filter_adds_effects_after_the_voices() -> None:
-    from scripts.provisorio.shorts_tec import mix_filter
+    from app.media.short_mix import mix_filter
 
     graph = mix_filter([0, 5000], 12.0, trims=[(0, 4), (0, 8)], effects=[(4900, 0.0, -2.0), (0, 2.0, 1.0)])
     assert "[3:a]aformat=sample_rates=48000:channel_layouts=mono,volume=-2.0dB,adelay=4900|4900[e0]" in graph
@@ -142,7 +142,7 @@ def test_mix_filter_adds_effects_after_the_voices() -> None:
 
 
 def test_mix_goes_stereo_before_loudnorm_so_the_measure_matches_playback() -> None:
-    from scripts.provisorio.shorts_tec import mix_filter
+    from app.media.short_mix import mix_filter
 
     graph = mix_filter([0], 5.0, trims=[(0, 4)])
     tail = graph.split("amix=")[1]

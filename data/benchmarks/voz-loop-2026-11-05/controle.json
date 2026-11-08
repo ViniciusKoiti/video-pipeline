@@ -1,0 +1,166 @@
+{
+ "status": "RECONSTRUIDO em 2026-11-05 a partir de proposta-fase0.md (revisao 2): o controle.json original foi sobrescrito por engano e nao e recuperavel; este nao e identico a ele",
+ "fase": "0 (nada enviado ao Gemini; nenhum trecho montado; nenhuma voz gerada)",
+ "avaliador": {
+  "ferramenta": "mcp__earshot__llm_critique",
+  "modelo": "gemini-3.8-flash",
+  "synth_intended": true,
+  "formato_enviado": "MP3 mono 64 kbps (conversao do earshot)",
+  "meta_no_prompt": false,
+  "prompt": "scripts/bench/earshot_retry.py, constante PROMPT, mais a linha final 'NOTAS A=<n> B=<n>' (proposta, ver rubrica.md)",
+  "avaliacoes_por_trecho": 3
+ },
+ "desenho": "controle x controle (o mesmo audio como A e como B) mede o ruido do avaliador",
+ "trechos": {
+  "U": {
+   "conjunto": "ajuste",
+   "episodio": "short-circuit-breaker-java-pt",
+   "cenas": [
+    {
+     "scene": "gancho",
+     "texto": "O pagamento cai na aplicação Java e as threads ficam esperando.",
+     "delivery": "hook",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/gancho-chatterbox_modal-ptbr-55182eed01-d9c97096dc2f.wav",
+     "leveled_sha256": "f0efe4311fc47e1798c1ffaf364417c3ccf1004c4f7f20077d5d405bca74752e",
+     "source_sha256": "b97e2c7a74763045c814813a1feebf27b797b2eb1aac0c5c2ff135de1221028f",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 3.8
+    },
+    {
+     "scene": "fechado",
+     "texto": "O circuit breaker fechado passa chamadas, mas cinco falhas seguidas abrem o circuito.",
+     "delivery": "neutral",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/fechado-chatterbox_modal-ptbr-b9c4853d39-8e9d6a5516cd.wav",
+     "leveled_sha256": "c5cc394bee6f31f577fbb8f5b657a18efca2a05a386685379762775a5992038d",
+     "source_sha256": "b5d9e58a2ec787db12714062bd88c4c0c01262a36c461398fb9db1040a7dd583",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 5.32
+    },
+    {
+     "scene": "aberto",
+     "texto": "Aberto, devolve erro sem chamar o pagamento e evita esperar.",
+     "delivery": "neutral",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/aberto-chatterbox_modal-ptbr-5dae346d1a-937410f8467b.wav",
+     "leveled_sha256": "0c1904e4c51a009d35a7d923ed417379b94fc6fa6043cb3ec9b73edc1db72140",
+     "source_sha256": "21f279816e3c97339e613299426fef5e227a11dc6810d30167d58f22fd5ed58b",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 4.36
+    },
+    {
+     "scene": "meio-aberto",
+     "texto": "Após dois segundos, fica meio-aberto e libera um teste.",
+     "delivery": "neutral",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/meio-aberto-chatterbox_modal-ptbr-4739a96555-1a434d9c412d.wav",
+     "leveled_sha256": "2c81475b5c24f6115e141eefaa166cb9a27424b9f72a82fa197bea43fd03f6c0",
+     "source_sha256": "e0b3eadf6a76b62c754bb159e941c59e327a9e27ac0c56e3282e6a453448ddc0",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 3.64
+    },
+    {
+     "scene": "teste",
+     "texto": "Se funcionar, fecha e retoma chamadas; se falhar, reabre.",
+     "delivery": "neutral",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/teste-chatterbox_modal-ptbr-9fe53c6bcb-34b6f93b870a.wav",
+     "leveled_sha256": "9c82dd3abc93feb4576a95ea8463f79c9fb97ecfbae01bb0cf75303de9f98766",
+     "source_sha256": "8e5b53be8f13d452ab956e481a12ed221d9a81c03a66109465fbed010d013162",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 4.0
+    },
+    {
+     "scene": "medido",
+     "texto": "Na simulação, as chamadas durante a falha caíram de sessenta para vinte e quatro.",
+     "delivery": "neutral",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/medido-chatterbox_modal-ptbr-a219f955fb-3e92c8429931.wav",
+     "leveled_sha256": "c76f8e66f7323ff5dbad4394c3ce33e87c5fb763ee591d80919b8d95277fcd1c",
+     "source_sha256": "f2b4665af7f7e1319f59ec6997928c04c9dfaef03f0c35e402a1917ad626b912",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 5.12
+    },
+    {
+     "scene": "limite",
+     "texto": "Mas ainda recusou sete pedidos depois da volta do pagamento: proteger recursos também custa recusas.",
+     "delivery": "neutral",
+     "leveled": "data/episodes/short-circuit-breaker-java-pt/voice/leveled/limite-chatterbox_modal-ptbr-de368342bb-285ece127a31.wav",
+     "leveled_sha256": "f9ecbd0478930c389257d67e18ab3ccea7fd3cb8818615fdaece36959af82ce1",
+     "source_sha256": "0452a0cc8aa945d21e066f5f58208fb387a040db271f9ee3d0440d9785380bc1",
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+     "dur_s": 5.8
+    }
+   ],
+   "dur_total_s": 32.04
+  },
+  "R1": {
+   "conjunto": "reservado",
+   "episodio": "guia-mastermind-estoico",
+   "cenas": [
+    {
+     "scene": "S01",
+     "raw": "data/episodes/guia-mastermind-estoico/voice/S01-chatterbox_modal-d37c8c1913.wav",
+     "raw_sha256": "f00e34b389628f7e881eee741d5e038677e2c83e386a38a851d1d518891b5371",
+     "raw_dur_s": 15.32,
+     "leveled": "data/episodes/guia-mastermind-estoico/voice/leveled/S01-chatterbox_modal-d37c8c1913-4fcb5de8f3a8.wav",
+     "leveled_sha256": "1f316304109232b5290af5ac21d0b38246437ce3df63a59c48ffa6d4511655bc",
+     "dur_s": 15.32,
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000"
+    },
+    {
+     "scene": "S02",
+     "raw": "data/episodes/guia-mastermind-estoico/voice/S02-chatterbox_modal-c7de61e1f2.wav",
+     "raw_sha256": "e9444d50064d450ff2187f2a3409e77a5d001410ba5df4dbdf917e8b0aa08fd5",
+     "raw_dur_s": 16.76,
+     "leveled": "data/episodes/guia-mastermind-estoico/voice/leveled/S02-chatterbox_modal-c7de61e1f2-c79bbf5603be.wav",
+     "leveled_sha256": "3f7e431114b02d103c7eebfdce745ee8c35b0faac71f6211bc8b6541eb65c0a6",
+     "dur_s": 16.76,
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000"
+    }
+   ],
+   "dur_total_s": 32.08
+  },
+  "R2": {
+   "conjunto": "reservado",
+   "episodio": "guia-mastermind-estoico",
+   "cenas": [
+    {
+     "scene": "S22",
+     "raw": "data/episodes/guia-mastermind-estoico/voice/S22-chatterbox_modal-a140777ee9.wav",
+     "raw_sha256": "81d4b6a2cdc2e0effdb50b5f6fedc1fa9b092dd7a22b421fbb526c7f03ca8c72",
+     "raw_dur_s": 16.96,
+     "leveled": "data/episodes/guia-mastermind-estoico/voice/leveled/S22-chatterbox_modal-a140777ee9-f618f7776b45.wav",
+     "leveled_sha256": "53656a448e0013b312cd9339dd23b483e83764cede300c04c8bcf2d1501a3ab7",
+     "dur_s": 16.96,
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000"
+    },
+    {
+     "scene": "S23",
+     "raw": "data/episodes/guia-mastermind-estoico/voice/S23-chatterbox_modal-fbcc598bf1.wav",
+     "raw_sha256": "3724e923c3d0b2c119303a41646fc723a4fd3a407fba435fe078826eb5adf5e1",
+     "raw_dur_s": 20.59,
+     "leveled": "data/episodes/guia-mastermind-estoico/voice/leveled/S23-chatterbox_modal-fbcc598bf1-ec6899292d4e.wav",
+     "leveled_sha256": "0b19f97fe301dbfaa4575421d44d010ea02e36148d248aad27663080e46f8d98",
+     "dur_s": 20.59,
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000"
+    }
+   ],
+   "dur_total_s": 37.55
+  },
+  "R3": {
+   "conjunto": "reservado",
+   "episodio": "ayanokoji-provocacao-epicteto",
+   "cenas": [
+    {
+     "scene": "S27",
+     "raw": "data/episodes/ayanokoji-provocacao-epicteto/voice/S27-chatterbox_modal-55cdcab642.wav",
+     "raw_sha256": "82efba8db1c48121bb1c503475b6ccd57e1a783c93c2fcd9aa45a127ed45428f",
+     "raw_dur_s": 29.12,
+     "leveled": "data/episodes/ayanokoji-provocacao-epicteto/voice/leveled/S27-chatterbox_modal-55cdcab642-319be2a6ae99.wav",
+     "leveled_sha256": "962a2bd106615a76dea73de5f2023fadba3ce02eba808b46fa7df5e37b7558d0",
+     "dur_s": 29.12,
+     "policy": "loudnorm-v1:-16.0:-1.5:11:48000"
+    }
+   ],
+   "dur_total_s": 29.12
+  }
+ },
+ "dispersao_do_avaliador": null,
+ "notas_do_controle": null
+}

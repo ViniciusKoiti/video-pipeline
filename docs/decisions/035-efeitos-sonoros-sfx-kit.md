@@ -78,3 +78,21 @@ Três ferramentas foram conferidas na fonte (não só na descrição do vidIQ):
 - Pendente: o mesmo plano no `-en` (as âncoras de texto mudam de idioma; o gate de tradução da ADR 034 não
   cobre o `sfx.json`), a nota na skill `shorts-tec`, o earshot como check, e a hipótese de retenção com e sem
   efeitos, medida aos 7 e 28 dias.
+
+## Emenda de 2026-11-01 (RF7, fatia 7b)
+
+A mistura e a conferência dos efeitos são `vp short juntar --sfx <sfx.json>` e `vp short sfx` (antes, verbos do
+`shorts_tec.py`); o filtro do ffmpeg é `app/media/short_mix.py::mix_filter`, o mesmo de antes. Conferido com dado
+real (`short-lista-ligada-pt`, com plano de efeitos): a saída impressa, o `content.voz.json` e o MP4 misturado
+saíram idênticos, byte a byte, entre o script antigo e o comando novo.
+
+## Emenda de 2026-11-01 (RF7, fatia 8)
+
+A conferência de áudio com o earshot é `vp audio <mp4> (--episodio ID | --content content.voz.json) [--sfx
+sfx.json] [--saida JSON]` (`app/commands/audio.py`; antes, `scripts/provisorio/conferir_audio.py`). Os cortes e os
+momentos esperados dos efeitos saem de `app/pipeline/audio_review.py`, com as mesmas contas. O comando sai com 1
+se algo fugiu do alvo; ambiente do earshot ausente, kit ausente e máquina limitada (sonda acima de 0,3 s) são
+`AudioReviewError`, antes de rodar o earshot. Uma das duas fontes de cortes é obrigatória (`--episodio` e
+`--content` se excluem; o script antigo deixava o `--episodio` vencer). Conferido com dado real, sem rodar o
+earshot (só com pedido do dono): os cortes de 23 conteúdos, os momentos esperados de 14 planos de efeitos e os
+cortes de 33 `episode.json` saíram iguais aos do script.

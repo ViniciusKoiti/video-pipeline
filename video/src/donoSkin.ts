@@ -1,6 +1,6 @@
 import {staticFile} from "remotion";
-import {createSpriteSkin} from "@viniciusk/motion-kit/host";
-import type {HostSkin, SpriteManifest} from "@viniciusk/motion-kit/host";
+import {createSpriteSkin} from "@viniciuskoitin/motion-kit/host";
+import type {HostSkin, SpriteManifest} from "@viniciuskoitin/motion-kit/host";
 
 // Pele `dono` (ADR 017, parte A): o desenho do dono em 12 imagens, uma por visema, de olho aberto e de olho
 // fechado. As imagens são dado pessoal e ficam fora do Git, em `host/dono/` da pasta do episódio (a pasta

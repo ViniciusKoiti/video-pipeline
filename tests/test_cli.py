@@ -1,23 +1,28 @@
+
 import argparse
 from pathlib import Path
 
 import pytest
 
-from app.cli import COMMANDS, EXIT_NOT_IMPLEMENTED, HANDLERS, main
+from app.cli import HANDLERS, main
+from app.commands.constants.cli_constants import CliConstants
 from app.pipeline.ports import Context
 from tests.fakes import make_root
 
 # Comandos do CLAUDE.md §10; um comando não pode sumir sem atualizar a spec.
 SPEC_COMMANDS = {
-    "bench", "new", "sources", "script", "scenes", "assets", "gallery",
-    "voice", "subs", "render", "export", "approve", "reject", "status", "reopen", "excerpts", "check",
+    "bench", "new", "script", "scenes", "gallery",
+    "voice", "subs", "render", "approve", "reject", "status", "reopen", "excerpts", "check",
     "checagem", "numeros", "traducao",
     "medicao",
+}
+OWN_PARSER_COMMANDS = {  # módulos de app/commands, com subcomandos próprios
+    "sources", "assets", "briefs", "music", "export", "metricas", "postiz", "usage",
 }
 
 
 def test_commands_match_spec() -> None:
-    assert {c.name for c in COMMANDS} == SPEC_COMMANDS
+    assert {c.name for c in CliConstants.COMMANDS} == SPEC_COMMANDS
 
 
 def test_help_lists_every_command(capsys: pytest.CaptureFixture[str]) -> None:
@@ -25,7 +30,7 @@ def test_help_lists_every_command(capsys: pytest.CaptureFixture[str]) -> None:
         main(["--help"])
     assert exc.value.code == 0
     out = capsys.readouterr().out
-    for name in SPEC_COMMANDS:
+    for name in SPEC_COMMANDS | OWN_PARSER_COMMANDS:
         assert name in out
 
 
@@ -41,12 +46,11 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
     [
         (["new", "pilot-001", "--topic", "Greely expedition"], 12),
         (["script", "pilot-001"], 27),
-        (["render", "pilot-001", "--preview"], 13),
-        (["reopen", "pilot-001", "--step", "script", "--reason", "refazer"], 12),
+        (["scenes", "pilot-001"], 28),
     ],
 )
 def test_stub_points_to_roadmap_step(argv: list[str], step: int, capsys: pytest.CaptureFixture[str]) -> None:
-    assert main(argv) == EXIT_NOT_IMPLEMENTED
+    assert main(argv) == CliConstants.EXIT_NOT_IMPLEMENTED
     assert f"etapa #{step}" in capsys.readouterr().err
 
 

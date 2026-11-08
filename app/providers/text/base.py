@@ -3,43 +3,13 @@ Prompts, recuperação de trechos e validação de claims ficam no pipeline (ADR
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Generic, Protocol, TypeVar
-
-from pydantic import BaseModel
+from typing import Protocol
 
 from app.providers.base import ProviderInfo
-
-T = TypeVar("T", bound=BaseModel)
-
-
-@dataclass(frozen=True)
-class TextRequest(Generic[T]):
-    prompt: str
-    output: type[T]  # o adapter pede JSON neste schema e valida a resposta; falha → InvalidOutput
-    system: str = ""
-    temperature: float = 0.0
-    max_tokens: int | None = None
-    model: str | None = None  # None = modelo configurado; outro valor só por escolha explícita (vp bench)
-
-
-@dataclass(frozen=True)
-class Usage:
-    input_tokens: int
-    output_tokens: int
-    duration_ms: int
-    # Detalhamento opcional, quando o provedor informa (usado pelo vp bench):
-    load_ms: int | None = None
-    prompt_ms: int | None = None
-    generation_ms: int | None = None
-    cached_input_tokens: int | None = None
-
-
-@dataclass(frozen=True)
-class TextResult(Generic[T]):
-    data: T
-    model: str
-    usage: Usage
+from app.providers.text.models._base_types import T as T
+from app.providers.text.models.text_request import TextRequest as TextRequest
+from app.providers.text.models.text_result import TextResult as TextResult
+from app.providers.text.models.usage import Usage as Usage
 
 
 class TextProvider(Protocol):

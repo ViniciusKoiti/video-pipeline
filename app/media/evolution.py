@@ -18,73 +18,22 @@ from datetime import datetime
 from itertools import pairwise
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict
-
+from app.errors import PipelineError
+from app.media.constants.evolution_constants import EvolutionConstants as Constants
+from app.media.models.sample import Sample as Sample
+from app.media.models.version import Version as Version
 from app.media.probe import duration_ms
 from app.pipeline.schemas import EpisodeManifest
 
-SAMPLE_AT = 0.7  # fração do plano: depois da entrada, antes da transição
-CELL_W, CELL_H = 480, 270
-LABEL_W, HEADER_H = 300, 56
-SIDE_W, SIDE_H = 960, 540
-DURATION_TOLERANCE_MS = 500
-BACKGROUND, EMPTY = "0x16181d", "0x2a2d33"
-MARK, MARK_PX = "0xF2B134", 6  # borda do quadro que mudou (a cor de destaque do template)
 # Um quadro por plano: abaixo disto, o plano mudou. O mesmo template dá quadros idênticos (PSNR infinito).
-CHANGE_PSNR_DB = 50.0
-VERSION = re.compile(r"^v(\d+)$")
+
+
 # O kit fixado: um commit do GitLab (`...archive.tar.gz?sha=<sha>`, até a 0.3.0) ou o tarball versionado em
 # `video/vendor/` (`file:vendor/viniciusk-motion-kit-<versão>.tgz`, ADR 027).
-MOTION_KIT_SHA = re.compile(r"motion-kit[^\"]*\"\s*:\s*\"[^\"]*sha=([0-9a-f]{7,40})")
-MOTION_KIT_TARBALL = re.compile(r"motion-kit\"\s*:\s*\"file:[^\"]*motion-kit-(\d+\.\d+\.\d+[^\"]*)\.tgz\"")
-
-REGISTRY_HEADER = """# Evolução do template (vídeo-régua)
-
-Uma versão por mudança no visual do formato explicativo, sempre do mesmo vídeo com o conteúdo congelado
-(roteiro, imagens e voz aprovados): só o template muda entre as versões. Os vídeos ficam fora do Git, em
-`data/episodes/<id>/renders/evolucao/` (`vN.mp4` e `vN.json`); a folha de quadros e o vídeo lado a lado saem
-de `scripts/provisorio/evolucao.py`. "Tempo" é o do `montar_episodio.py --preview` (voz em cache + render);
-a sonda de CPU acima de 0,3 s indica máquina limitada (CLAUDE.md §3). "Planos que mudaram" compara um quadro
-por plano com a versão anterior; um PR de visual deve mudar só os planos que pretendia.
-
-"""
-REGISTRY_COLUMNS = [
-    "Versão", "Vídeo-régua", "Render em", "Commit", "motion-kit", "Template", "Tempo", "Sonda de CPU",
-    "Planos que mudaram", "O que mudou",
-]
-REGISTRY_HEADER += "| " + " | ".join(REGISTRY_COLUMNS) + " |\n" + "|---" * len(REGISTRY_COLUMNS) + "|\n"
 
 
-class EvolutionError(RuntimeError):
-    pass
-
-
-class Sample(BaseModel):
-    """Um instante por plano: uma linha da folha de quadros."""
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    key: str  # "S01#2": cena e posição do plano na cena
-    kind: str
-    at_ms: int
-
-
-class Version(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    name: str
-    episode_id: str
-    rendered_at: str  # hora do arquivo renderizado
-    commit: str
-    template_hash: str
-    motion_kit: str
-    sha256: str
-    duration_ms: int
-    render_s: float | None = None
-    cpu_probe_s: float | None = None
-    note: str
-    samples: list[Sample]
-    changed: list[str] | None = None  # planos que mudaram em relação à versão anterior; None na primeira
+class EvolutionError(PipelineError, RuntimeError):
+    """Vídeo-régua que não pode ser guardado ou comparado (versão inexistente, igual à anterior)."""
 
 
 def samples(episode: EpisodeManifest) -> list[Sample]:
@@ -92,25 +41,25 @@ def samples(episode: EpisodeManifest) -> list[Sample]:
     for scene in episode.scenes:
         if not scene.shots:  # v1: um visual por cena
             found.append(Sample(key=f"{scene.id}#1", kind="photo",
-                                at_ms=scene.start_ms + round(scene.duration_ms * SAMPLE_AT)))
+                                at_ms=scene.start_ms + round(scene.duration_ms * Constants.SAMPLE_AT)))
         for index, shot in enumerate(scene.shots, start=1):
-            at = scene.start_ms + shot.start_ms + round(shot.duration_ms * SAMPLE_AT)
+            at = scene.start_ms + shot.start_ms + round(shot.duration_ms * Constants.SAMPLE_AT)
             found.append(Sample(key=f"{scene.id}#{index}", kind=shot.spec.kind, at_ms=at))
     return found
 
 
 def motion_kit_pin(package_json: str) -> str:
     """O kit fixado no `package.json`: o sha curto do commit ou a versão do tarball versionado."""
-    if match := MOTION_KIT_TARBALL.search(package_json):
+    if match := Constants.MOTION_KIT_TARBALL.search(package_json):
         return match.group(1)
-    if match := MOTION_KIT_SHA.search(package_json):
+    if match := Constants.MOTION_KIT_SHA.search(package_json):
         return match.group(1)[:7]
     raise EvolutionError("package.json sem o sha nem o tarball do @viniciusk/motion-kit")
 
 
 def versions(folder: Path) -> list[str]:
     """Versões guardadas, em ordem numérica (v2 antes de v10)."""
-    names = [p.stem for p in folder.glob("v*.json") if VERSION.match(p.stem)]
+    names = [p.stem for p in folder.glob("v*.json") if Constants.VERSION.match(p.stem)]
     return sorted(names, key=lambda name: int(name[1:]))
 
 
@@ -141,7 +90,7 @@ def store(
         if load(folder, name).sha256 == digest:
             raise EvolutionError(f"o render é igual à {name}: nada mudou no vídeo")
     length = duration_ms(render)
-    if abs(length - episode.duration_ms) > DURATION_TOLERANCE_MS:
+    if abs(length - episode.duration_ms) > Constants.DURATION_TOLERANCE_MS:
         raise EvolutionError(
             f"render com {length} ms e episode.json com {episode.duration_ms} ms: "
             "o episode.json não é o deste render"
@@ -171,7 +120,7 @@ def changed_shots(folder: Path, before: Version, after: Version) -> list[str]:
         if old is None or _psnr(
             folder / f"{before.name}.mp4", min(old.at_ms, before.duration_ms - 100),
             folder / f"{after.name}.mp4", min(sample.at_ms, after.duration_ms - 100),
-        ) < CHANGE_PSNR_DB:
+        ) < Constants.CHANGE_PSNR_DB:
             changed.append(sample.key)
     return changed
 
@@ -189,7 +138,7 @@ def registry_row(version: Version) -> str:
 
 
 def append_registry(path: Path, version: Version) -> None:
-    text = path.read_text() if path.is_file() else REGISTRY_HEADER
+    text = path.read_text() if path.is_file() else Constants.REGISTRY_HEADER
     if not text.endswith("\n"):
         text += "\n"
     path.write_text(text + registry_row(version) + "\n")
@@ -237,7 +186,7 @@ def side_by_side(folder: Path, before: str, after: str, out: Path) -> Path:
         for i, version in enumerate(versions_):
             lines = [f"{version.name} · {version.rendered_at}"]
             label = _text(work / f"side{i}", lines, 26, 20, 16, box=True)
-            filters.append(f"[{i}:v]{_fit(SIDE_W, SIDE_H)},{label}[s{i}]")
+            filters.append(f"[{i}:v]{_fit(Constants.SIDE_W, Constants.SIDE_H)},{label}[s{i}]")
         filters.append("[s0][s1]hstack=inputs=2[out]")
         out.parent.mkdir(parents=True, exist_ok=True)
         _run([
@@ -251,14 +200,14 @@ def side_by_side(folder: Path, before: str, after: str, out: Path) -> Path:
 
 
 def _header(work: Path, loaded: list[Version]) -> Path:
-    width = LABEL_W + CELL_W * len(loaded)
+    width = Constants.LABEL_W + Constants.CELL_W * len(loaded)
     texts = [_text(work / "legend", ["borda: mudou"], 20, 16, 18)] if len(loaded) > 1 else []
     for i, version in enumerate(loaded):
         lines = [f"{version.name} · {version.rendered_at[:10]}"]
-        texts.append(_text(work / f"header{i}", lines, 24, LABEL_W + i * CELL_W + 16, 16))
+        texts.append(_text(work / f"header{i}", lines, 24, Constants.LABEL_W + i * Constants.CELL_W + 16, 16))
     out = work / "header.png"
     _run(["ffmpeg", "-v", "error", "-y",
-          "-f", "lavfi", "-i", f"color=c={BACKGROUND}:s={width}x{HEADER_H}:d=1",
+          "-f", "lavfi", "-i", f"color=c={Constants.BACKGROUND}:s={width}x{Constants.HEADER_H}:d=1",
           "-vf", ",".join([*texts, "format=rgb24"]), "-frames:v", "1", str(out)])
     return out
 
@@ -268,13 +217,28 @@ def _row(work: Path, index: int, label: list[str], cells: list[tuple[Path, int, 
     for i, cell in enumerate(cells):
         mark = ""
         if cell is None:  # plano que não existia nessa versão
-            args += ["-f", "lavfi", "-i", f"color=c={EMPTY}:s={CELL_W}x{CELL_H}:d=1"]
+            args += [
+                "-f",
+                "lavfi",
+                "-i",
+                f"color=c={Constants.EMPTY}:s={Constants.CELL_W}x{Constants.CELL_H}:d=1",
+            ]
         else:
             video, at_ms, changed = cell
             args += ["-ss", f"{max(at_ms, 0) / 1000:.3f}", "-i", str(video)]
-            mark = f",drawbox=x=0:y=0:w=iw:h=ih:color={MARK}:t={MARK_PX}" if changed else ""
-        filters.append(f"[{i}:v]{_fit(CELL_W, CELL_H)}{mark},format=rgb24,trim=end_frame=1[c{i}]")
-    args += ["-f", "lavfi", "-i", f"color=c={BACKGROUND}:s={LABEL_W}x{CELL_H}:d=1"]
+            mark = (
+                f",drawbox=x=0:y=0:w=iw:h=ih:color={Constants.MARK}:t={Constants.MARK_PX}" if changed else ""
+            )
+        filters.append(
+        f'[{i}:v]{_fit(Constants.CELL_W, Constants.CELL_H)}{mark}'
+        f',format=rgb24,trim=end_frame=1[c{i}]'
+    )
+    args += [
+        "-f",
+        "lavfi",
+        "-i",
+        f"color=c={Constants.BACKGROUND}:s={Constants.LABEL_W}x{Constants.CELL_H}:d=1",
+    ]
     text = _text(work / f"row{index:03d}", label, 22, 16, 16)
     filters.append(f"[{len(cells)}:v]{text},format=rgb24,trim=end_frame=1[label]")
     stack = "[label]" + "".join(f"[c{i}]" for i in range(len(cells)))

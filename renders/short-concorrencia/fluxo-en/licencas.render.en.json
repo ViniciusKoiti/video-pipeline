@@ -1,0 +1,32 @@
+[
+  {
+    "id": "codigo",
+    "file": "data/episodes/short-concorrencia-fluxo-en/public/lottie/codigo.json",
+    "license": "Original",
+    "sha256": "1aa17bd6d8878c85829ecacc7799e2737cdf93f2d8bbb8dc4e952cbf66fd4d9f",
+    "time_scale": 0.9258248573554949,
+    "source_speech_s": 12.093,
+    "english_speech_s": 11.196,
+    "usage_notes": "Original C diagram with English text; only timeline scaled to voice."
+  },
+  {
+    "id": "mutex",
+    "file": "data/episodes/short-concorrencia-fluxo-en/public/lottie/mutex.json",
+    "license": "Original",
+    "sha256": "ca286e946c71fcb51ec9f8905a2c95acc71c9c2042f48dbba855430176bc25b5",
+    "time_scale": 1.012004466778336,
+    "source_speech_s": 3.582,
+    "english_speech_s": 3.625,
+    "usage_notes": "Original C diagram with English text; only timeline scaled to voice."
+  },
+  {
+    "id": "atomic",
+    "file": "data/episodes/short-concorrencia-fluxo-en/public/lottie/atomic.json",
+    "license": "Original",
+    "sha256": "38b7622153865c53b20291260272f41d0d3ef79cf1a39cd3b2f84ae7100e8e0f",
+    "time_scale": 0.9952012796587577,
+    "source_speech_s": 7.502,
+    "english_speech_s": 7.466,
+    "usage_notes": "Original C diagram with English text; only timeline scaled to voice."
+  }
+]

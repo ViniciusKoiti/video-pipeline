@@ -8,13 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from app.pipeline.check import check_episode
-from app.pipeline.molde import (
-    MOLDE_FILE,
-    Molde,
-    claimless_statements,
-    molde_summary,
-    molde_warnings,
-)
+from app.pipeline.constants.molde_constants import MoldeConstants
+from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.schemas import ScenesManifest
 from app.storage.json_files import JsonFileStore
 
@@ -35,6 +30,14 @@ def medida(mediana: float, q1: float | None = None, q3: float | None = None, n: 
     if q1 is not None:
         item["q1"], item["q3"] = q1, q3
     return item
+
+
+def test_viewer_rate_with_only_a_lower_quartile_does_not_compare_against_none() -> None:
+    profile = molde()
+    measure = profile.medidas["voce_por_mil"]
+    profile.medidas["voce_por_mil"] = measure.model_copy(update={"q1": 0.0, "q3": None})
+    warnings = molde_warnings(scenes("Você olha, você conta, você decide."), profile, CPS)
+    assert not any("por mil palavras" in warning for warning in warnings)
 
 
 def traco(com: int, n: int = 13, forca: str = "padrao") -> dict[str, Any]:
@@ -237,7 +240,7 @@ def write_episode(root: Path, molde_raw: dict[str, Any] | None, manifest: Scenes
     folder.mkdir(parents=True)
     (folder / "scenes.json").write_text(manifest.model_dump_json())
     if molde_raw is not None:
-        (folder / MOLDE_FILE).write_text(json.dumps(molde_raw))
+        (folder / MoldeConstants.MOLDE_FILE).write_text(json.dumps(molde_raw))
     return JsonFileStore(root)
 
 

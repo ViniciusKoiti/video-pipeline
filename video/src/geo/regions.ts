@@ -1,4 +1,4 @@
-import type {GeoBox, GeoRegion, LonLat} from "@viniciusk/motion-kit/geo";
+import type {GeoBox, GeoRegion, LonLat} from "@viniciuskoitin/motion-kit/geo";
 import southAmerica from "./america-do-sul.json";
 import world from "./world-110m.json";
 

@@ -17,88 +17,22 @@ from collections.abc import Callable, Sequence
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import BaseModel
-
 from app.media.probe import duration_ms
 from app.pipeline import bench_data
+from app.pipeline.constants.bench_constants import BenchConstants
+from app.pipeline.constants.bench_data_constants import BenchDataConstants
+from app.pipeline.models.bench_report import BenchReport as BenchReport
+from app.pipeline.models.llm_run import LlmRun as LlmRun
+from app.pipeline.models.machine import Machine as Machine
+from app.pipeline.models.render_run import RenderRun as RenderRun
+from app.pipeline.models.tts_run import TtsRun as TtsRun
 from app.pipeline.ports import Context
 from app.pipeline.schemas import EpisodeManifest
 from app.providers.errors import ProviderError
 from app.providers.text.base import TextRequest
 from app.providers.tts.base import SpeechRequest
 
-BUSY_LOAD_PER_CPU = 0.25
-CPU_PROBE_SLOW_S = 0.3  # sha256 de 64 MB leva centésimos numa CPU livre; muito mais = CPU estrangulada
-MAX_OUTPUT_TOKENS = 600
-
 Progress = Callable[[str], None]
-
-
-class Machine(BaseModel):
-    cpu_model: str
-    cpus: int
-    mem_total_mb: int
-    mem_available_mb: int
-    load_1m: float
-    python: str
-    cpu_probe_s: float = 0.0  # tempo da sonda de CPU (sha256 de 64 MB)
-    busy: bool
-
-
-class LlmRun(BaseModel):
-    provider: str
-    model: str
-    run: int
-    prompt_sha256: str = ""  # relatórios antigos não registravam o prompt
-    ok: bool
-    error: str = ""
-    wall_s: float
-    input_tokens: int = 0
-    cached_input_tokens: int | None = None
-    output_tokens: int = 0
-    load_s: float | None = None
-    prompt_tok_s: float | None = None
-    generation_tok_s: float | None = None
-    claims: int = 0
-    unknown_excerpts: list[str] = []
-    mem_available_mb_after: int = 0
-    output: bench_data.BenchScript | None = None  # texto gerado, para avaliação humana de fidelidade (§7)
-
-
-class TtsRun(BaseModel):
-    provider: str
-    voice: str = ""
-    run: int
-    ok: bool
-    error: str = ""
-    wall_s: float
-    audio_s: float = 0.0
-    rtf: float | None = None  # segundos de síntese por segundo de áudio
-    seconds_per_audio_minute: float | None = None
-
-
-class RenderRun(BaseModel):
-    engine: str
-    mode: str  # final-frio | final-cache | preview-frio
-    ok: bool
-    error: str = ""
-    wall_s: float
-    video_s: float = 0.0
-    width: int = 0
-    height: int = 0
-    output_mb: float = 0.0
-    realtime_factor: float | None = None  # segundos de vídeo por segundo de render (> 1 = mais rápido)
-    peak_child_rss_mb: int = 0  # maior processo filho (ffmpeg) medido até aqui
-
-
-class BenchReport(BaseModel):
-    created_at: datetime
-    machine: Machine
-    warnings: list[str]
-    llm: list[LlmRun]
-    tts: list[TtsRun]
-    render: list[RenderRun] = []
-    peak_rss_mb: int  # deste processo (inclui o Kokoro); o Ollama roda em outro processo
 
 
 def cpu_probe() -> float:
@@ -131,7 +65,7 @@ def read_machine(proc: Path = Path("/proc"), probe: Callable[[], float] = cpu_pr
         load_1m=load,
         python=platform.python_version(),
         cpu_probe_s=probe_s,
-        busy=load / cpus > BUSY_LOAD_PER_CPU or probe_s > CPU_PROBE_SLOW_S,
+        busy=load / cpus > BenchConstants.BUSY_LOAD_PER_CPU or probe_s > BenchConstants.CPU_PROBE_SLOW_S,
     )
 
 
@@ -151,8 +85,8 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
     request = TextRequest(
         prompt=bench_data.prompt(run),
         output=bench_data.BenchScript,
-        system=bench_data.SYSTEM,
-        max_tokens=MAX_OUTPUT_TOKENS,
+        system=BenchDataConstants.SYSTEM,
+        max_tokens=BenchConstants.MAX_OUTPUT_TOKENS,
         model=model,
     )
     prompt_sha256 = hashlib.sha256(f"{request.system}\n\n{request.prompt}".encode()).hexdigest()
@@ -171,7 +105,7 @@ def bench_llm(context: Context, model: str | None, run: int, proc: Path = Path("
             mem_available_mb_after=_available_mb(proc),
         )
     usage = result.usage
-    known = {excerpt_id for excerpt_id, _ in bench_data.EXCERPTS}
+    known = {excerpt_id for excerpt_id, _ in BenchDataConstants.EXCERPTS}
     cited = {e for claim in result.data.claims for e in claim.excerpt_ids}
     return LlmRun(
         provider=provider,
@@ -198,7 +132,7 @@ def bench_tts(context: Context, run: int, workdir: Path) -> TtsRun:
     out = workdir / f"tts-run{run}.wav"
     start = time.perf_counter()
     try:
-        result = context.tts.synthesize_speech(SpeechRequest(text=bench_data.NARRATION, out_path=out))
+        result = context.tts.synthesize_speech(SpeechRequest(text=BenchDataConstants.NARRATION, out_path=out))
     except ProviderError as error:
         return TtsRun(provider=provider, run=run, ok=False, error=f"{error.reason}: {error}",
                       wall_s=round(time.perf_counter() - start, 1))
@@ -217,9 +151,6 @@ def bench_tts(context: Context, run: int, workdir: Path) -> TtsRun:
     )
 
 
-RENDER_MODES = (("final-frio", False, True), ("final-cache", False, False), ("preview-frio", True, True))
-
-
 def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
     """Renderiza o episódio pela porta RenderEngine: final sem cache, final com cache e prévia."""
     episode = EpisodeManifest.model_validate_json((episode_dir / "episode.json").read_text())
@@ -227,7 +158,7 @@ def bench_render(context: Context, episode_dir: Path) -> list[RenderRun]:
     engine = renderer.info.name
     out_dir = context.settings.data_dir / "benchmarks" / "renders" / engine
     runs = []
-    for mode, preview, cold in RENDER_MODES:
+    for mode, preview, cold in BenchConstants.RENDER_MODES:
         out = out_dir / f"{episode.episode_id}-{'preview' if preview else 'final'}.mp4"
         if cold:
             shutil.rmtree(out_dir / f".segments-{'preview' if preview else 'final'}", ignore_errors=True)
@@ -329,11 +260,11 @@ def summary(report: BenchReport) -> list[str]:
             if t.ok
             else f"TTS {t.provider} #{t.run}: FALHOU ({t.error})"
         )
-    for r in report.render:
+    for v in report.render:
         lines.append(
-            f"render {r.engine} {r.mode}: {r.wall_s}s para {r.video_s}s de vídeo ({r.realtime_factor}x) · "
-            f"{r.width}x{r.height} · {r.output_mb} MB · ffmpeg até {r.peak_child_rss_mb} MB"
-            if r.ok
-            else f"render {r.engine} {r.mode}: FALHOU ({r.error})"
+            f"render {v.engine} {v.mode}: {v.wall_s}s para {v.video_s}s de vídeo ({v.realtime_factor}x) · "
+            f"{v.width}x{v.height} · {v.output_mb} MB · ffmpeg até {v.peak_child_rss_mb} MB"
+            if v.ok
+            else f"render {v.engine} {v.mode}: FALHOU ({v.error})"
         )
     return lines + [f"aviso: {w}" for w in report.warnings]

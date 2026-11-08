@@ -5,9 +5,12 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from app.errors import PipelineError
+from app.providers.constants.errors_constants import ErrorsConstants
 
-class ProviderError(Exception):
-    reason: ClassVar[str] = "provider_error"
+
+class ProviderError(PipelineError):
+    reason: ClassVar[str] = ErrorsConstants.PROVIDER_ERROR_REASON
 
     def __init__(self, provider: str, message: str) -> None:
         super().__init__(f"{provider}: {message}")
@@ -15,24 +18,24 @@ class ProviderError(Exception):
 
 
 class QuotaExhausted(ProviderError):
-    reason = "quota_exhausted"
+    reason = ErrorsConstants.QUOTA_EXHAUSTED_REASON
 
 
 class ModelUnavailable(ProviderError):
     """Modelo ausente ou aposentado. Nunca trocar de modelo sozinho (§2.1, §8)."""
 
-    reason = "model_unavailable"
+    reason = ErrorsConstants.MODEL_UNAVAILABLE_REASON
 
 
 class LicenseUnknown(ProviderError):
-    reason = "license_unknown"
+    reason = ErrorsConstants.LICENSE_UNKNOWN_REASON
 
 
 class InvalidOutput(ProviderError):
     """Resposta fora do schema pedido (ex.: JSON do LLM que não valida)."""
 
-    reason = "invalid_output"
+    reason = ErrorsConstants.INVALID_OUTPUT_REASON
 
 
 class PaidApiBlocked(ProviderError):
-    reason = "paid_api_blocked"
+    reason = ErrorsConstants.PAID_API_BLOCKED_REASON

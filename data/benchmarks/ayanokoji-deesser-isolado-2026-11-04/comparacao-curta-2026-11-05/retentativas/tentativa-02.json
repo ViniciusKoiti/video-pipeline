@@ -1,0 +1,90 @@
+{
+ "enabled": true,
+ "ok": true,
+ "path": "/home/viniciusk/projetos/auto-play/data/benchmarks/ayanokoji-deesser-isolado-2026-11-04/comparacao-curta-2026-11-05/comparacao-A-pausa-B.wav",
+ "provider": "gemini",
+ "model": "gemini-3.8-flash",
+ "uploaded": {
+  "start": 0.0,
+  "end": 26.84,
+  "seconds": 26.84,
+  "file_duration": 26.84,
+  "trimmed": false,
+  "bytes": 215084,
+  "codec": "mp3 mono 64 kbps",
+  "method": "inline"
+ },
+ "seconds": 213.0,
+ "usage": {
+  "promptTokenCount": 2119,
+  "candidatesTokenCount": 1155,
+  "thoughtsTokenCount": 1351,
+  "totalTokenCount": 4625
+ },
+ "finish_reason": "STOP",
+ "context_sent": "Clip under review: 26.8 s (file seconds 0.0-26.8 of a 26.8 s file), sent as mp3 mono 64 kbps for this review.\nMeasured by earshot (exact; use these, never estimate loudness): integrated loudness -16.0 LUFS, true peak -1.6 dBTP, loudness range 3.9 LU, short-term max -14.9 LUFS, quietest 20 ms level (10th percentile) -200.0 dBFS, clipped samples 0.",
+ "notes": [],
+ "critique": {
+  "overall": {
+   "score": 7.0,
+   "verdict": "Narração clonada limpa e inteligível em ambas as partes, sem diferenças acústicas perceptíveis que justifiquem alteração no fluxo de trabalho."
+  },
+  "scores": {
+   "sync": null,
+   "realism": 7.0,
+   "mix_balance": 8.0,
+   "loudness": 8.0,
+   "music": null
+  },
+  "notes": {
+   "sync": "Sem referência visual para sincronia.",
+   "realism": "A síntese/clonagem vocal é competente e consistente, apresentando apenas cadência levemente mecânica em termos estrangeiros.",
+   "mix_balance": "Voz seca, centralizada, com equilíbrio espectral adequado entre graves e clareza nos médios-altos.",
+   "loudness": "Níveis controlados em -16,0 LUFS integrado e pico de -1,6 dBTP, em conformidade com o perfil pretendido.",
+   "music": "Sem trilha musical presente."
+  },
+  "synthetic_or_cheap": [
+   {
+    "start": 5.2,
+    "end": 6.2,
+    "what": "Pronúncia sintetizada de 'Enchiridion'",
+    "why": "Entonação e acentuação fonética ligeiramente artificiais típicas de conversão texto-fala."
+   },
+   {
+    "start": 11.0,
+    "end": 12.8,
+    "what": "Pronúncia sintetizada de 'Classroom of the Elite'",
+    "why": "Transição fonética anglófona com cadência rígida da clonagem."
+   }
+  ],
+  "issues": [
+   {
+    "start": 5.0,
+    "end": 6.5,
+    "severity": "low",
+    "category": "realism",
+    "problem": "Articulação sintética um pouco travada na palavra 'Enchiridion' em ambas as versões.",
+    "fix": "Ajustar o fonema no motor de TTS/clonagem para pronúncia mais natural ou fluida."
+   },
+   {
+    "start": 10.8,
+    "end": 12.8,
+    "severity": "low",
+    "category": "realism",
+    "problem": "Prosódia dura ao pronunciar o título em inglês 'Classroom of the Elite'.",
+    "fix": "Inserir pausas sutis ou ajustar o modelo fonético para termos em inglês."
+   }
+  ],
+  "strengths": [
+   "Controle dinâmico consistente sem estalos ou distorções evidentes.",
+   "Clareza fonética sólida na maior parte das frases em português.",
+   "Boa articulação de sibilantes sem agressividade excessiva."
+  ],
+  "top_fixes": [
+   "Refinar a fonética de termos estrangeiros ('Enchiridion' e 'Classroom of the Elite')."
+  ],
+  "answer": "Avaliação Perceptual:\n- Versão A (0.0 a 12.92 s): Nota 7,5/10\n- Versão B (13.92 a 26.84 s): Nota 7,5/10\n- Preferência: Empate (indistinguíveis na escuta).\n- Confiança: Média-alta.\n\nJustificativa e Análise Comparativa:\n- Sibilância (s/ch/x): Em palavras críticas como 'você', 'consegue', 'disso', 'cenas' e 'primeiras', o comportamento sibilante soa idêntico em energia e duração em ambas as versões, sem aspereza adicional ou corte audível em B.\n- Corpo e Brilho: Ambas mantêm a mesma extensão em médios-graves e a mesma sensação de presença. Nenhuma soa abafada ou com sensação de língua presa em comparação à outra.\n- Prosódia e Artefatos: A inflexão, o tempo de fala e os artefatos de clonagem em 'Enchiridion' (~0:05.5 e ~19.5 s) e 'Classroom of the Elite' (~0:11.5 e ~25.5 s) são réplicas exatas.\n- Limitação do Formato: O envio em MP3 mono a 64 kbps impõe uma limitação técnica severa nas altas frequências (comum corte passa-baixas e perda de resolução acima de 11-12 kHz), o que impede aferir variações ultra-sutis de ar ('air band') ou microdinâmica de de-esser caso tenham sido aplicadas.\n\nDecisão de Produção:\nA diferença perceptual é nula ou irrelevante na prática; portanto, não sustenta qualquer alteração no fluxo de produção. (Observação: esta avaliação reflete a opinião analítica de um modelo de linguagem e não um teste MOS estatisticamente validado com painel de ouvintes)."
+ },
+ "summary": "gemini (gemini-3.8-flash) rates the soundtrack 7/10: Narração clonada limpa e inteligível em ambas as partes, sem diferenças acústicas perceptíveis que justifiquem alteração no fluxo de trabalho. 2 issues (0 high). Top fix: Refinar a fonética de termos estrangeiros ('Enchiridion' e 'Classroom of the Elite'). LLM opinion, timestamps approximate; verify with earshot timeline/ab.",
+ "text": "gemini (gemini-3.8-flash) rates the soundtrack 7/10: Narração clonada limpa e inteligível em ambas as partes, sem diferenças acústicas perceptíveis que justifiquem alteração no fluxo de trabalho. 2 issues (0 high). Top fix: Refinar a fonética de termos estrangeiros ('Enchiridion' e 'Classroom of the Elite'). LLM opinion, timestamps approximate; verify with earshot timeline/ab.\nanswer: Avaliação Perceptual:\n- Versão A (0.0 a 12.92 s): Nota 7,5/10\n- Versão B (13.92 a 26.84 s): Nota 7,5/10\n- Preferência: Empate (indistinguíveis na escuta).\n- Confiança: Média-alta.\n\nJustificativa e Análise Comparativa:\n- Sibilância (s/ch/x): Em palavras críticas como 'você', 'consegue', 'disso', 'cenas' e 'primeiras', o comportamento sibilante soa idêntico em energia e duração em ambas as versões, sem aspereza adicional ou corte audível em B.\n- Corpo e Brilho: Ambas mantêm a mesma extensão em médios-graves e a mesma sensação de presença. Nenhuma soa abafada ou com sensação de língua presa em comparação à outra.\n- Prosódia e Artefatos: A inflexão, o tempo de fala e os artefatos de clonagem em 'Enchiridion' (~0:05.5 e ~19.5 s) e 'Classroom of the Elite' (~0:11.5 e ~25.5 s) são réplicas exatas.\n- Limitação do Formato: O envio em MP3 mono a 64 kbps impõe uma limitação técnica severa nas altas frequências (comum corte passa-baixas e perda de resolução acima de 11-12 kHz), o que impede aferir variações ultra-sutis de ar ('air band') ou microdinâmica de de-esser caso tenham sido aplicadas.\n\nDecisão de Produção:\nA diferença perceptual é nula ou irrelevante na prática; portanto, não sustenta qualquer alteração no fluxo de produção. (Observação: esta avaliação reflete a opinião analítica de um modelo de linguagem e não um teste MOS estatisticamente validado com painel de ouvintes).\nscores (1-10, LLM opinion): realism 7, mix_balance 8, loudness 8\n  sync: Sem referência visual para sincronia.\n  realism: A síntese/clonagem vocal é competente e consistente, apresentando apenas cadência levemente mecânica em termos estrangeiros.\n  mix_balance: Voz seca, centralizada, com equilíbrio espectral adequado entre graves e clareza nos médios-altos.\n  loudness: Níveis controlados em -16,0 LUFS integrado e pico de -1,6 dBTP, em conformidade com o perfil pretendido.\n  music: Sem trilha musical presente.\nissues (most severe first; times = file seconds, approximate):\n  0:05.00-0:06.50 low realism: Articulação sintética um pouco travada na palavra 'Enchiridion' em ambas as versões. -> fix: Ajustar o fonema no motor de TTS/clonagem para pronúncia mais natural ou fluida.\n  0:10.80-0:12.80 low realism: Prosódia dura ao pronunciar o título em inglês 'Classroom of the Elite'. -> fix: Inserir pausas sutis ou ajustar o modelo fonético para termos em inglês.\nsounds that read as synthetic / cheap:\n  0:05.20-0:06.20 Pronúncia sintetizada de 'Enchiridion': Entonação e acentuação fonética ligeiramente artificiais típicas de conversão texto-fala.\n  0:11.00-0:12.80 Pronúncia sintetizada de 'Classroom of the Elite': Transição fonética anglófona com cadência rígida da clonagem.\nstrengths: Controle dinâmico consistente sem estalos ou distorções evidentes.; Clareza fonética sólida na maior parte das frases em português.; Boa articulação de sibilantes sem agressividade excessiva.\ntop fixes: 1. Refinar a fonética de termos estrangeiros ('Enchiridion' e 'Classroom of the Elite')."
+}

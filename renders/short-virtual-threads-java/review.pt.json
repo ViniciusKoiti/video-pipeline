@@ -1,0 +1,910 @@
+{
+  "runId": "1793800560345-eb037763",
+  "command": "review",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-04T13:56:00.346Z",
+  "contentFile": "content.pt.voz.json",
+  "artifacts": [
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-start-f0.png",
+      "sceneId": "gancho",
+      "frame": 0,
+      "localFrame": 0,
+      "timeSec": 0
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-read-f77.png",
+      "sceneId": "gancho",
+      "frame": 77,
+      "localFrame": 77,
+      "timeSec": 2.566666666666667
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-end-f140.png",
+      "sceneId": "gancho",
+      "frame": 140,
+      "localFrame": 140,
+      "timeSec": 4.666666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-gancho-motion.png",
+      "sceneId": "gancho",
+      "frames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "localFrames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-threads-start-f141.png",
+      "sceneId": "threads",
+      "frame": 141,
+      "localFrame": 0,
+      "timeSec": 4.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-threads-read-f332.png",
+      "sceneId": "threads",
+      "frame": 332,
+      "localFrame": 191,
+      "timeSec": 11.066666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-threads-end-f362.png",
+      "sceneId": "threads",
+      "frame": 362,
+      "localFrame": 221,
+      "timeSec": 12.066666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-threads-motion.png",
+      "sceneId": "threads",
+      "frames": [
+        173,
+        205,
+        237,
+        268,
+        300,
+        332
+      ],
+      "localFrames": [
+        32,
+        64,
+        96,
+        127,
+        159,
+        191
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-plataforma-start-f363.png",
+      "sceneId": "plataforma",
+      "frame": 363,
+      "localFrame": 0,
+      "timeSec": 12.1
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-plataforma-read-f452.png",
+      "sceneId": "plataforma",
+      "frame": 452,
+      "localFrame": 89,
+      "timeSec": 15.066666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-plataforma-end-f515.png",
+      "sceneId": "plataforma",
+      "frame": 515,
+      "localFrame": 152,
+      "timeSec": 17.166666666666668
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-plataforma-motion.png",
+      "sceneId": "plataforma",
+      "frames": [
+        378,
+        393,
+        408,
+        422,
+        437,
+        452
+      ],
+      "localFrames": [
+        15,
+        30,
+        45,
+        59,
+        74,
+        89
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-start-f516.png",
+      "sceneId": "codigo",
+      "frame": 516,
+      "localFrame": 0,
+      "timeSec": 17.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-read-f571.png",
+      "sceneId": "codigo",
+      "frame": 571,
+      "localFrame": 55,
+      "timeSec": 19.033333333333335
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-end-f608.png",
+      "sceneId": "codigo",
+      "frame": 608,
+      "localFrame": 92,
+      "timeSec": 20.266666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-codigo-motion.png",
+      "sceneId": "codigo",
+      "frames": [
+        525,
+        534,
+        544,
+        553,
+        562,
+        571
+      ],
+      "localFrames": [
+        9,
+        18,
+        28,
+        37,
+        46,
+        55
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-virtual-start-f609.png",
+      "sceneId": "virtual",
+      "frame": 609,
+      "localFrame": 0,
+      "timeSec": 20.3
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-virtual-read-f752.png",
+      "sceneId": "virtual",
+      "frame": 752,
+      "localFrame": 143,
+      "timeSec": 25.066666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-virtual-end-f812.png",
+      "sceneId": "virtual",
+      "frame": 812,
+      "localFrame": 203,
+      "timeSec": 27.066666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-virtual-motion.png",
+      "sceneId": "virtual",
+      "frames": [
+        633,
+        657,
+        681,
+        704,
+        728,
+        752
+      ],
+      "localFrames": [
+        24,
+        48,
+        72,
+        95,
+        119,
+        143
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-conexoes-start-f813.png",
+      "sceneId": "conexoes",
+      "frame": 813,
+      "localFrame": 0,
+      "timeSec": 27.1
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-conexoes-read-f920.png",
+      "sceneId": "conexoes",
+      "frame": 920,
+      "localFrame": 107,
+      "timeSec": 30.666666666666668
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-conexoes-end-f965.png",
+      "sceneId": "conexoes",
+      "frame": 965,
+      "localFrame": 152,
+      "timeSec": 32.166666666666664
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-conexoes-motion.png",
+      "sceneId": "conexoes",
+      "frames": [
+        831,
+        849,
+        867,
+        884,
+        902,
+        920
+      ],
+      "localFrames": [
+        18,
+        36,
+        54,
+        71,
+        89,
+        107
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-start-f966.png",
+      "sceneId": "medido",
+      "frame": 966,
+      "localFrame": 0,
+      "timeSec": 32.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-read-f1114.png",
+      "sceneId": "medido",
+      "frame": 1114,
+      "localFrame": 148,
+      "timeSec": 37.13333333333333
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-end-f1235.png",
+      "sceneId": "medido",
+      "frame": 1235,
+      "localFrame": 269,
+      "timeSec": 41.166666666666664
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-medido-motion.png",
+      "sceneId": "medido",
+      "frames": [
+        973,
+        981,
+        988,
+        995,
+        1003,
+        1010
+      ],
+      "localFrames": [
+        7,
+        15,
+        22,
+        29,
+        37,
+        44
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-start-f1236.png",
+      "sceneId": "fecho",
+      "frame": 1236,
+      "localFrame": 0,
+      "timeSec": 41.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-read-f1320.png",
+      "sceneId": "fecho",
+      "frame": 1320,
+      "localFrame": 84,
+      "timeSec": 44
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-end-f1388.png",
+      "sceneId": "fecho",
+      "frame": 1388,
+      "localFrame": 152,
+      "timeSec": 46.266666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-fecho-motion.png",
+      "sceneId": "fecho",
+      "frames": [
+        1240,
+        1245,
+        1249,
+        1253,
+        1258,
+        1262
+      ],
+      "localFrames": [
+        4,
+        9,
+        13,
+        17,
+        22,
+        26
+      ]
+    },
+    {
+      "kind": "review",
+      "file": "review.mp4",
+      "frameRange": [
+        111,
+        230
+      ],
+      "cutFrame": 141
+    }
+  ],
+  "style": "editorial",
+  "locale": "pt-BR",
+  "media": {},
+  "versions": {
+    "node": "v22.22.3",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciusk/motion-video": "0.3.0",
+    "@viniciusk/motion-kit": "0.9.0",
+    "@viniciusk/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "7923eb609fdc00fb1637a8102cb927b8ed35ce825b4dbf909c8aa1160628105b",
+    "composition/content.schema.ts": "e5f3071fcca16639d4544dfdf90fcd68d24ae94fb667c489cb45cb892063cd6d",
+    "composition/host.ts": "f4cc396d9a9fbbad2d9308516739d14a452eb6f00268e0bc4e793d9ceceef37b",
+    "src/production.mjs": "5e3082bf20073fcae16a878881c66b142ba971bb6bdb788ea2b541ffa1db5f3a",
+    "dist/composition/index.js": "aae5bae563d02dd46319b461598da0bc08f28fb7ed753e771a8ca9fdd8ac21fa"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1389,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4.7,
+        "type": "hook",
+        "text": "10 mil requisições esperando I/O: onde vai parar o gargalo?",
+        "highlight": "o gargalo",
+        "kicker": "Java · JDK 25",
+        "from": 0,
+        "durationInFrames": 141,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "threads",
+        "durationSec": 7.4,
+        "type": "flow",
+        "title": "O que é uma thread",
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Requisição",
+            "sublabel": "um pedido ao serviço",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "th",
+            "label": "Thread Java",
+            "sublabel": "executa o código dela",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "so",
+            "label": "Thread do SO",
+            "sublabel": "cara: fica presa",
+            "column": 1,
+            "lane": 1
+          },
+          {
+            "id": "io",
+            "label": "Chamada bloqueante",
+            "sublabel": "espera 100 ms",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "th",
+            "label": "atende",
+            "kind": "data"
+          },
+          {
+            "from": "th",
+            "to": "so",
+            "kind": "scheduling"
+          },
+          {
+            "from": "th",
+            "to": "io",
+            "label": "espera",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "req",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "th",
+            "atSec": 1.9,
+            "state": "running"
+          },
+          {
+            "node": "req",
+            "atSec": 2.2,
+            "state": "done"
+          },
+          {
+            "node": "so",
+            "atSec": 3.4,
+            "state": "running"
+          },
+          {
+            "node": "io",
+            "atSec": 5.6,
+            "state": "running"
+          },
+          {
+            "node": "th",
+            "atSec": 5.8,
+            "state": "waiting"
+          },
+          {
+            "node": "so",
+            "atSec": 6,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "r1",
+            "from": "req",
+            "to": "th",
+            "atSec": 1.3,
+            "durationSec": 0.6,
+            "label": "requisição"
+          }
+        ],
+        "legend": true,
+        "from": 141,
+        "durationInFrames": 222,
+        "readableFrame": 191,
+        "readableFrom": 332
+      },
+      {
+        "id": "plataforma",
+        "durationSec": 5.1,
+        "type": "flow",
+        "title": "Pool de 200 threads",
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Requisições",
+            "sublabel": "10.000"
+          },
+          {
+            "id": "pool",
+            "label": "Pool de threads",
+            "sublabel": "200 threads"
+          },
+          {
+            "id": "io",
+            "label": "Chamada bloqueante",
+            "sublabel": "espera 100 ms"
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "pool",
+            "label": "fila",
+            "kind": "data"
+          },
+          {
+            "from": "pool",
+            "to": "io",
+            "label": "200 por vez",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "req",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "pool",
+            "atSec": 2,
+            "state": "running"
+          },
+          {
+            "node": "io",
+            "atSec": 2.6,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "r1",
+            "from": "req",
+            "to": "pool",
+            "atSec": 1.3,
+            "durationSec": 0.6,
+            "label": "requisição"
+          },
+          {
+            "id": "r2",
+            "from": "req",
+            "to": "pool",
+            "atSec": 1.6,
+            "durationSec": 0.6,
+            "label": "requisição"
+          },
+          {
+            "id": "r3",
+            "from": "req",
+            "to": "pool",
+            "atSec": 1.9,
+            "durationSec": 0.6,
+            "label": "requisição"
+          }
+        ],
+        "legend": true,
+        "from": 363,
+        "durationInFrames": 153,
+        "readableFrame": 89,
+        "readableFrom": 452
+      },
+      {
+        "id": "codigo",
+        "durationSec": 3.1,
+        "type": "code",
+        "title": "Uma linha muda o executor",
+        "lines": [
+          "// antes: pool de 200 threads",
+          "var pool = Executors",
+          "  .newFixedThreadPool(200);",
+          "",
+          "// depois: uma virtual por tarefa",
+          "var pool = Executors",
+          "  .newVirtualThreadPerTaskExecutor();"
+        ],
+        "steps": [
+          {
+            "atSec": 0.3,
+            "lines": [
+              2,
+              3
+            ],
+            "note": "Pool de 200 threads"
+          },
+          {
+            "atSec": 1.5,
+            "lines": [
+              6,
+              7
+            ],
+            "note": "Uma virtual thread por tarefa"
+          }
+        ],
+        "highlight": [
+          {
+            "token": "newFixedThreadPool"
+          },
+          {
+            "token": "newVirtualThreadPerTaskExecutor"
+          }
+        ],
+        "from": 516,
+        "durationInFrames": 93,
+        "readableFrame": 55,
+        "readableFrom": 571
+      },
+      {
+        "id": "virtual",
+        "durationSec": 6.8,
+        "type": "flow",
+        "title": "Virtual threads, gerenciadas pela JVM",
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Requisições",
+            "sublabel": "10.000",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "vt",
+            "label": "Virtual threads",
+            "sublabel": "gerenciadas pela JVM",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "io",
+            "label": "Chamada bloqueante",
+            "sublabel": "espera 100 ms",
+            "column": 2,
+            "lane": 0
+          },
+          {
+            "id": "so",
+            "label": "Threads do SO",
+            "sublabel": "livres enquanto espera",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "vt",
+            "label": "uma cada",
+            "kind": "data"
+          },
+          {
+            "from": "vt",
+            "to": "io",
+            "label": "esperam juntas",
+            "kind": "scheduling"
+          },
+          {
+            "from": "vt",
+            "to": "so",
+            "dashed": true,
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "req",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "vt",
+            "atSec": 1.8,
+            "state": "running"
+          },
+          {
+            "node": "so",
+            "atSec": 1.8,
+            "state": "running"
+          },
+          {
+            "node": "so",
+            "atSec": 3,
+            "state": "idle"
+          },
+          {
+            "node": "io",
+            "atSec": 4.4,
+            "state": "running"
+          },
+          {
+            "node": "vt",
+            "atSec": 4.4,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "r1",
+            "from": "req",
+            "to": "vt",
+            "atSec": 1.3,
+            "durationSec": 0.5,
+            "label": "requisição"
+          },
+          {
+            "id": "r2",
+            "from": "req",
+            "to": "vt",
+            "atSec": 1.3,
+            "durationSec": 0.5,
+            "label": "requisição"
+          },
+          {
+            "id": "r3",
+            "from": "req",
+            "to": "vt",
+            "atSec": 1.3,
+            "durationSec": 0.5,
+            "label": "requisição"
+          }
+        ],
+        "legend": true,
+        "from": 609,
+        "durationInFrames": 204,
+        "readableFrame": 143,
+        "readableFrom": 752
+      },
+      {
+        "id": "conexoes",
+        "durationSec": 5.1,
+        "type": "flow",
+        "title": "Agora o banco tem 50 conexões",
+        "nodes": [
+          {
+            "id": "vt",
+            "label": "Virtual threads",
+            "sublabel": "10.000"
+          },
+          {
+            "id": "pool",
+            "label": "Conexões",
+            "sublabel": "Semaphore de 50"
+          },
+          {
+            "id": "db",
+            "label": "Banco",
+            "sublabel": "espera 100 ms"
+          }
+        ],
+        "edges": [
+          {
+            "from": "vt",
+            "to": "pool",
+            "label": "fila",
+            "kind": "data"
+          },
+          {
+            "from": "pool",
+            "to": "db",
+            "label": "50 por vez",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "vt",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "pool",
+            "atSec": 1.8,
+            "state": "running"
+          },
+          {
+            "node": "db",
+            "atSec": 2.2,
+            "state": "running"
+          },
+          {
+            "node": "vt",
+            "atSec": 3.2,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "r1",
+            "from": "vt",
+            "to": "pool",
+            "atSec": 1.3,
+            "durationSec": 0.6,
+            "label": "requisição"
+          },
+          {
+            "id": "r2",
+            "from": "vt",
+            "to": "pool",
+            "atSec": 1.6,
+            "durationSec": 0.6,
+            "label": "requisição"
+          },
+          {
+            "id": "r3",
+            "from": "vt",
+            "to": "pool",
+            "atSec": 1.9,
+            "durationSec": 0.6,
+            "label": "requisição"
+          }
+        ],
+        "legend": true,
+        "from": 813,
+        "durationInFrames": 153,
+        "readableFrame": 107,
+        "readableFrom": 920
+      },
+      {
+        "id": "medido",
+        "durationSec": 9,
+        "type": "categories",
+        "title": "10 mil requisições, medidas (ms)",
+        "items": [
+          {
+            "label": "pool de 200 threads",
+            "value": 5088.6
+          },
+          {
+            "label": "virtuais",
+            "value": 179.4
+          },
+          {
+            "label": "virtuais, 50 conexões",
+            "value": 20139
+          }
+        ],
+        "unit": "ms",
+        "decimals": 0,
+        "highlight": "virtuais, 50 conexões",
+        "from": 966,
+        "durationInFrames": 270,
+        "readableFrame": 44,
+        "readableFrom": 1010
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5.1,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "Qual limite você dimensionaria?",
+        "sub": "Comenta onde o seu serviço espera",
+        "from": 1236,
+        "durationInFrames": 153,
+        "readableFrame": 26,
+        "readableFrom": 1262
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [],
+  "finishedAt": "2026-11-04T13:57:02.750Z",
+  "elapsedMs": 62404,
+  "directory": "/home/viniciusk/projetos/auto-play/renders/short-virtual-threads-java/out/production/1793800560345-eb037763"
+}

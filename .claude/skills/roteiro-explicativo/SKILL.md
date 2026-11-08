@@ -170,6 +170,8 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      abertura (texto curto, em pergunta ou chamado: "Você sabe quanto custa um docinho?"), `turn` na virada ("mas…"),
      `calm` na conta dita inteira, `invite` na pergunta final; cena de explicação não leva o campo. A ênfase vem da
      voz clonada. Explicação longa não cabe numa cena `hook`.
+     Referências por idioma/entrega (ADR 053) são escolhidas pelo gerador em `config/providers.toml`;
+     não inserir caminhos de gravações no roteiro. A prévia confirma se a intenção saiu natural.
    - **A palavra que pesa (pedido do dono, 2026-10-19).** O `delivery` muda o tom da cena inteira. Ele não
      aperta uma palavra, e a voz clonada não aceita marca de ênfase. Sem cuidado, a fala soa como alguém lendo.
      Toda cena que vira, opina, pergunta ou traz um número tem **uma** palavra que pesa: a da virada, do
@@ -370,3 +372,12 @@ fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco n
 - Entregue para o agente `verificador`: contexto limpo na primeira rodada; as rodadas seguintes retomam o mesmo
   agente com a lista do que mudou (skill `checagem`, "Rodadas e contexto"). Teto de duas rodadas; além disso, o dono
   decide.
+- **Ordem do ensaio até o gate 4 (conferir antes de cada render).** Já houve vídeo que saiu sem trilha porque o
+  passo ficou fora da lista (`ayanokoji-provocacao-epicteto`, 2026-11-04). A lista completa é:
+  1. roteiro, `vp check`, verificador (até 2 rodadas), gate 2;
+  2. `plano-de-imagens`, gate 3;
+  3. **trilha: agente `diretor-musical` (skill `trilha`) escreve o `music.json`**, `vp music usar` e gate 3 de cada
+     faixa. Todo ensaio longo leva trilha; sem ela só por decisão do dono, registrada no `outline.md`;
+  4. voz, prévia, miniatura, descrição e créditos (com a linha da música), gate 4.
+  Se o roteiro mudar depois do `music.json` (cena nova, ordem trocada, abertura refeita), o plano da trilha volta
+  ao `diretor-musical` antes do próximo render: as âncoras são cenas e trechos da fala.

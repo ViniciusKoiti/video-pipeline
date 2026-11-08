@@ -5,16 +5,16 @@ Decisão e motivos em [ADR 006](decisions/006-arquitetura-portas-adaptadores.md)
 
 ```mermaid
 flowchart TD
-    CLI["app/cli.py<br/>vp (argparse)"] --> BOOT["app/bootstrap.py<br/>raiz de composição"]
+    CLI["app/cli.py<br/>vp (argparse)"] --> BOOT["app/bootstrap/<br/>raiz de composição"]
     CLI --> PIPE
-    BOOT --> SET["app/settings.py<br/>providers.toml + .env"]
+    BOOT --> SET["app/settings/<br/>providers.toml + .env"]
     BOOT --> ADAPT
     BOOT --> PORTS
 
     subgraph PIPE["app/pipeline/ — etapas"]
         STEPS["etapas (sources, script, voice, ...)"] --> PPORTS["ports.py<br/>Context, ManifestStore, ReviewGate"]
         STEPS --> FAIL["failures.py<br/>erro para a cena"]
-        STEPS --> SCH["schemas.py<br/>contratos §6"]
+        STEPS --> SCH["models/<br/>contratos §6; schemas.py reexporta"]
     end
 
     subgraph PORTS["portas (Protocols)"]
@@ -44,13 +44,37 @@ flowchart TD
 
 | Módulo | Pode importar | Não pode importar |
 |---|---|---|
-| `app/pipeline/**` | `schemas`, `ports`, `app.settings`, módulos `base` e `errors` | adapters concretos, `app.bootstrap`, `app.cli`, bibliotecas pesadas (torch, kokoro…) |
-| `app/providers/**`, `app/render/**` | `app.pipeline.schemas`, outras portas | resto de `app.pipeline`, `app.settings`, `app.bootstrap`, `app.cli` |
-| `app/bootstrap.py` | tudo; é o único que conhece adapters concretos | — |
+| `app/pipeline/**` | modelos, constantes, `schemas`, `ports`, `app.settings`, módulos `base` e `errors` | adapters concretos, `app.bootstrap`, `app.cli`, bibliotecas pesadas (torch, kokoro…) |
+| `app/providers/**`, `app/render/**` | `app.pipeline.models`, `app.pipeline.constants`, `app.pipeline.schemas`, outras portas | resto de `app.pipeline`, `app.settings`, `app.bootstrap`, `app.cli` |
+| `app/media/**` | contratos e constantes de `app.pipeline`, portas e módulos de mídia | orquestração de `app.pipeline`, adapters concretos |
+| `app/bootstrap/**` | tudo; compõem adapters concretos | — |
+
+O teste resolve imports relativos e usa fronteiras exatas de pacote: `app.bootstrap.factories` pertence
+à raiz de composição, `app.bootstrap_extra` não. A exceção já existente de `app.cli` é preservada.
+Arquitetura e tamanho rodam no pré-commit e na suíte do CI; a sequência de migração e os demais critérios
+estão no [fluxo de refatoração SOLID](fluxo-refatoracao-solid-2026-11-01.md).
+
+## Modelos por área
+
+Todos os fluxos usam `app/<área>/models/<nome_em_snake_case>.py`, com uma classe por arquivo
+([ADR 037](decisions/037-modelos-por-fluxo.md)). Inclui Pydantic, dataclasses, enums e TypedDicts;
+validadores acompanham os dados. Provedores também usam `app/providers/<função>/models/`.
+Serviços, adapters, exceções e Protocols mantêm seus módulos próprios. Tipos e funções puras de apoio
+podem ficar junto dos modelos; os `__init__.py` dessa pasta permanecem mínimos.
+
+Os módulos anteriores reexportam as classes para preservar os imports existentes. Novos consumidores
+usam o módulo específico de `models/` da área. `app/models/` guarda somente compatibilidade dos modelos
+Bench; a definição está em `app/pipeline/models/`. O gate aplica a convenção por `tests/test_model_layout.py`.
+
+Constantes de todos os fluxos ficam em classes de `app/<área>/constants/`, com atributos `Final`
+e coleções imutáveis em profundidade ([ADR 038](decisions/038-constantes-por-area.md)). Inclui constantes
+privadas e de validação antes misturadas nos modelos. O gate verifica essa organização e os valores das
+coleções em `tests/test_constants_layout.py`. O [inventário](inventario-constantes-2026-11-01.md) identifica
+os grupos e os dois registros mutáveis de composição; configurações, campos e variáveis locais mantêm seu papel.
 
 ## Como trocar de abordagem
 
 1. Escrever o adapter em `app/providers/<função>/<nome>.py` (ou `app/render/<nome>.py`) implementando a porta.
-2. Registrar em `DEFAULT_REGISTRY` (`app/bootstrap.py`) com a fábrica, que importa o adapter dentro da função.
+2. Registrar em `DEFAULT_REGISTRY` (`app/bootstrap/__init__.py`) com a fábrica, que importa o adapter dentro da função.
 3. Acrescentar o adapter à lista da porta em `tests/test_contracts.py` e fazê-lo passar.
 4. Mudar uma linha em `config/providers.toml`.

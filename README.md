@@ -7,20 +7,9 @@ e autorização humanas.
 
 - Contexto e regras: [CLAUDE.md](CLAUDE.md)
 - Agentes Codex/OpenAI e skills do workspace: [CLAUDE.md](CLAUDE.md)
-- Exploração estrutural com codebase-memory: [guia e configuração local](docs/opencode-codebase-memory-mcp.md)
-- Análise da pipeline e do processo editorial: [docs/analise-pipeline-agentes.md](docs/analise-pipeline-agentes.md)
-- Prompts locais e limites da validação: [docs/analise-prompts-locais.md](docs/analise-prompts-locais.md)
-- Fluxo de hoje, longo e curto, em três faixas (prova, produção, saída) com as lacunas marcadas: [docs/pipeline-hoje.mermaid](docs/pipeline-hoje.mermaid)
-- Funcionamento atual e componentes pendentes: [docs/WORKSPACE-ATUAL-E-COMPONENTES.md](docs/WORKSPACE-ATUAL-E-COMPONENTES.md)
-- Fluxo originalmente planejado (2026-09-26, histórico): [docs/pesquisa/pipeline-plano-2026-09-26.mermaid](docs/pesquisa/pipeline-plano-2026-09-26.mermaid)
-- Plano de entregas (31 etapas): [docs/ROADMAP.md](docs/ROADMAP.md)
-- Questões abertas da análise inicial: [docs/ANALISE.md](docs/ANALISE.md)
-- Arquitetura (portas e adaptadores): [docs/arquitetura.md](docs/arquitetura.md)
-- Arquitetura atual em PlantUML: [fonte](docs/arquitetura-atual.puml) e [diagrama SVG](docs/arquitetura-atual.svg)
-- Visão para apresentação, com a camada de IA destacada: [docs/arquitetura-ia.md](docs/arquitetura-ia.md)
-- Evolução do fluxo por camadas, busca de evidências e atuação 2D: [docs/evolucao-por-camadas.md](docs/evolucao-por-camadas.md)
-- Análise técnica com gaps e verificações: [docs/analise-gaps-tecnicos.md](docs/analise-gaps-tecnicos.md)
-- Pesquisa sobre crescimento no YouTube, embalagem e testes: [afirmações e hipóteses](docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md)
+- Documentação, com o papel de cada documento: [docs/README.md](docs/README.md)
+- Fluxo de hoje, longo e curto, com as lacunas marcadas: [docs/diagramas/mermaid/pipeline-hoje.mermaid](docs/diagramas/mermaid/pipeline-hoje.mermaid)
+- Arquitetura (portas e adaptadores): [docs/arquitetura.md](docs/arquitetura.md) e os [diagramas](docs/diagramas/)
 - Decisões de arquitetura: [docs/decisions/](docs/decisions/)
 
 **Fase atual:** validação do template explicativo e do processo editorial; piloto documental em pausa.
@@ -63,9 +52,15 @@ scripts/check_env.sh
 ```bash
 uv run vp --help           # comandos do CLAUDE.md §10; os ainda não implementados indicam a etapa
 uv run vp bench --models qwen3.5:4b,qwen3.5:9b --runs 2   # rodar com a máquina ociosa
-uv run pytest && uv run ruff check .
+bash scripts/check_qualidade.sh  # lint, tipagem, arquitetura, tamanho e regressão (mesmo gate do CI)
 uv run pytest -m slow      # contratos com modelos locais pesados (Kokoro)
 ```
+
+Critérios, linha de base e próximos passos: [gate de qualidade](docs/gate-qualidade.md).
+Modelos de todos os fluxos seguem `app/<área>/models/`, uma classe por arquivo;
+convenção e compatibilidade na [ADR 037](docs/decisions/037-modelos-por-fluxo.md).
+Constantes seguem classes em `app/<área>/constants/`, com `Final` e coleções imutáveis; o mesmo gate
+verifica a regra no sistema. [Inventário e exceções por responsabilidade](docs/inventario-constantes-2026-11-01.md).
 
 ## Consumo dos agentes em SQLite
 

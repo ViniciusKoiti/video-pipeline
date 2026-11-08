@@ -1,0 +1,36 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "In Java, the API checks price and stock. Wait for one, then the other, or join the two into one response?",
+      "delivery": "hook"
+    },
+    {
+      "scene": "desenho",
+      "text": "Each call becomes a CompletableFuture, a box without the result yet. thenCombine waits for the two boxes to fill."
+    },
+    {
+      "scene": "codigo",
+      "text": "The two start together, so the response doesn't wait for the sum of the two. It waits only for the slower one."
+    },
+    {
+      "scene": "comparacao",
+      "text": "In sequence it took five hundred and one. Composed, about three hundred and ten, the time of the slowest call.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "prazo",
+      "text": "With a half-second deadline, the response comes back as a timeout, but the task keeps running and the pool thread stays blocked."
+    },
+    {
+      "scene": "prazo-medido",
+      "text": "The response came at five hundred and eight, but the thread was free only at two thousand and six."
+    },
+    {
+      "scene": "fecho",
+      "text": "In your application, where would you let the wait go unbounded?",
+      "delivery": "invite"
+    }
+  ]
+}

@@ -205,3 +205,48 @@ fechar o ciclo"). Os vídeos começaram a sair em outubro e não havia onde regi
 - `vp status` mostra as janelas e lista as vencidas sem leitura nas pendências; `vp check` valida o arquivo e avisa.
 - A tabela consolidada (`data/publicacoes/metricas.csv`, uma linha por janela) é gerada, nunca editada à mão, e só
   compara iguais com iguais (longo com longo, Reel com Reel).
+
+## Emenda (2026-11-03): clipe em movimento como citação para crítica
+
+**Status:** aceita pelo dono em 2026-11-03 ("EU ASSUMO OS RISCOS"), a pedido dele, para o guia mastermind estoico
+(`data/episodes/guia-mastermind-estoico/pauta.md`). **Implementada em 2026-11-03 (parcial):** `Asset.media` (`still` ou `clip`), `origin` e `timecode`, o provedor
+`owner_capture`, a regra "clipe só em B-roll, quadro parado só em foto" e a ausência de teto numérico, com testes em
+`tests/test_citation.py`. O `vp numeros` lista quadros e clipes (tipo, cena, âncora, obra, timecode, origem e tempo de tela;
+`app/pipeline/numbers_citations.py`). **Pendente:** o bloqueio do `vp postiz` fora do YouTube e conferir que o render
+do B-roll de clipe sai sem o áudio da obra. Decisão de risco do dono, não parecer jurídico.
+Estende a emenda de 2026-10-17 (citação para crítica); onde esta emenda não diz outra coisa, aquela vale.
+
+1. **Clipe de obra de terceiros que é assunto do argumento** (ensaio, análise, crítica) passa a ser aceito como
+   `Citacao` com `media: clip`, além do quadro parado (`media: still`). Continuam fora: o **áudio da obra** (o clipe
+   entra sem som; a trilha e a voz são nossas), arte promocional e a obra como pano de fundo sem comentário.
+2. **Sem teto numérico de clipes** (decisão do dono, 2026-11-03: "retire todos os limites"). Valem só duas condições,
+   que sustentam a citação:
+   - o clipe entra **sem o áudio da obra**;
+   - cada clipe só está na tela **enquanto a narração comenta aquele trecho**.
+   O `vp check` conta e lista os clipes e o tempo de tela de cada um no pacote do gate 4, sem barrar por número. O
+   limite de 10 quadros parados de 8 s da emenda anterior vale só para `kind: still`.
+3. **Tratamento visual.** Recorte, zoom e grade de cor (inclusive preto e branco) valem como escolha de estilo do
+   canal. Ficam proibidos espelhar a imagem e alterar a velocidade ou a altura do áudio **para escapar da detecção**
+   (continua a regra da emenda de 2026-10-17).
+4. **Origem não precisa mais ser material oficial.** O dono escolhe a origem e responde por ela. Para aprovar o ativo:
+   - `work` (título, episódio, estúdio e detentor conhecido), `timecode` de entrada e saída, `sha256` do clipe e a
+     descrição de onde veio (`origin`);
+   - `usage_notes` com a **justificativa**: que trecho da narração o clipe ilustra e por que o comentário o exige;
+   - `attribution_text` para a descrição e o `credits.txt`;
+   - a decisão do dono de assumir o risco registrada no `review.json` do ativo.
+5. **Franquias.** A regra da emenda anterior (Toei, ShoPro fora) continua. *The Mentalist* (Warner Bros.) e as
+   franquias do guia (*Classroom of the Elite*, *Death Note*) entram por decisão do dono, **um vídeo por vez**, e a
+   primeira publicação com clipe é o teste: se vier reivindicação ou aviso, o próximo episódio com clipe espera a
+   revisão desta emenda.
+6. **Só YouTube.** Vídeo com clipe não é agendado em outra rede pelo `vp postiz`; nas outras redes sai só material
+   próprio que leve ao vídeo.
+7. **Reivindicação ou strike:**
+   - a reivindicação é **esperada** e pode tirar a receita do vídeo ou bloqueá-lo em países; o pacote do gate 4 diz isso;
+   - registro no `review.json`; nenhuma contestação sem decisão do dono;
+   - **um strike suspende a série** até o dono revisar esta emenda.
+8. **Miniatura:** sem mudança; o dono confirma o risco a cada vídeo, no gate 4.
+
+Ao ser implementada, a emenda pede no mesmo commit: o campo `kind` e os campos de origem em
+`app/pipeline/schemas.py` (modelos em arquivos próprios, ADR 037; constantes em classe, ADR 038), a contagem no
+`vp check` (`citation_violations`), o bloqueio no `vp postiz`, testes em `tests/test_citation.py` e a atualização do
+§6 do CLAUDE.md.

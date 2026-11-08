@@ -7,7 +7,7 @@ import wave
 from array import array
 from pathlib import Path
 
-PERCENTILE = 0.95  # o nível que vale 1: picos isolados não achatam o resto da cena
+from app.media.constants.envelope_constants import EnvelopeConstants
 
 
 def mouth_levels(wav: Path, fps: int, frames: int) -> list[float]:
@@ -28,7 +28,7 @@ def mouth_levels(wav: Path, fps: int, frames: int) -> list[float]:
     for i in range(frames):
         chunk = mono[round(i * step) : round((i + 1) * step)]
         rms.append((sum(v * v for v in chunk) / len(chunk)) ** 0.5 / 32768 if chunk else 0.0)
-    reference = sorted(rms)[int(len(rms) * PERCENTILE)] if rms else 0.0
+    reference = sorted(rms)[int(len(rms) * EnvelopeConstants.PERCENTILE)] if rms else 0.0
     if reference <= 0:
         return [0.0] * frames
     return [round(min(1.0, level / reference), 3) for level in rms]

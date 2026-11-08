@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.util
 import tempfile
 import wave
 from collections.abc import Mapping
@@ -16,7 +15,10 @@ from app.providers.base import ProviderInfo
 from app.providers.errors import ModelUnavailable, ProviderError
 from app.providers.tts.base import SpeechRequest
 from app.providers.tts.chatterbox import ChatterboxTTS, reference_hash
-from app.settings import CONFIG_FILE, load_settings, speech_chars_per_second
+from app.providers.tts.constants.chatterbox_constants import ChatterboxConstants
+from app.settings import load_settings, speech_chars_per_second
+from app.settings.constants.settings_constants import SettingsConstants
+from tests.legacy_voice_names import voice_fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SP = "<short pause>"
@@ -83,11 +85,11 @@ def test_one_scene_is_one_job_with_the_reference_voice(tmp_path: Path) -> None:
     result = tts.synthesize_speech(SpeechRequest(text="Uma fala só.", out_path=out, language="pt-BR"))
     assert worker.jobs == [{
         "parts": ["Uma fala só."], "language_id": "pt", "reference": str(tmp_path / "voz.wav"),
-        "out_path": str(out), "pause_ms": 400,
+        "out_path": str(out.with_name(".S01.partial.wav")), "pause_ms": 400,  # escreve ao lado
         "exaggeration": 0.5,
         "cfg_weight": 0.5,
     }]
-    assert result.path == out and out.is_file()
+    assert result.path == out and out.is_file() and not out.with_name(".S01.partial.wav").exists()
     assert result.model == "chatterbox-multilingual-v3"
     assert result.voice == f"clone:{reference_hash(tmp_path / 'voz.wav')}"
 
@@ -110,7 +112,7 @@ def test_delivery_values_come_from_the_config(tmp_path: Path) -> None:
     tts.synthesize_speech(request)
     assert (worker.jobs[0]["exaggeration"], worker.jobs[0]["cfg_weight"]) == (1.0, 0.2)
     settings = load_settings(REPO_ROOT)
-    assert settings.chatterbox.delivery["hook"].exaggeration == 0.8
+    assert settings.chatterbox.delivery["hook"].exaggeration == 1.0
     assert settings.chatterbox.delivery["neutral"].cfg_weight == 0.5
     assert list(settings.chatterbox.delivery) == ["hook", "turn", "invite", "neutral", "calm"]
 
@@ -198,8 +200,12 @@ def test_paths_come_from_the_environment_and_drafts_stay_on_kokoro(tmp_path: Pat
     assert settings.chatterbox.reference == Path("~/voz/referencia.wav")
     # ADR 016: a voz clonada é a do vídeo final; os rascunhos seguem no Kokoro, que é rápido
     assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "chatterbox_modal")  # ADR 024
-    (tmp_path / CONFIG_FILE.parent).mkdir()  # sem `.env` ao lado, para não depender do desta máquina
-    (tmp_path / CONFIG_FILE).write_text((REPO_ROOT / CONFIG_FILE).read_text())
+    (
+        tmp_path / SettingsConstants.CONFIG_FILE.parent
+    ).mkdir()  # sem `.env` ao lado, para não depender do desta máquina
+    (tmp_path / SettingsConstants.CONFIG_FILE).write_text(
+        (REPO_ROOT / SettingsConstants.CONFIG_FILE).read_text()
+    )
     assert load_settings(tmp_path, {}).chatterbox.python is None
 
 
@@ -215,21 +221,11 @@ def test_check_estimates_with_the_cloned_voice_rate() -> None:
     assert speech_chars_per_second(settings) == settings.chatterbox.chars_per_second
 
 
-def montar_module() -> Any:
-    path = REPO_ROOT / "scripts" / "provisorio" / "montar_episodio.py"
-    spec = importlib.util.spec_from_file_location("montar_episodio", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def test_the_reference_recording_is_part_of_the_voice_cache_key(tmp_path: Path) -> None:
-    montar = montar_module()
     first, second = tmp_path / "a.wav", tmp_path / "b.wav"
     write_wav(first, 100)
     write_wav(second, 200)
-    key = lambda ref: montar.voice_fingerprint(  # noqa: E731
+    key = lambda ref: voice_fingerprint(  # noqa: E731
         load_settings(REPO_ROOT, {"CHATTERBOX_REFERENCE": str(ref)}), "chatterbox", "pt-BR"
     )
     assert key(first) != key(second)
@@ -263,11 +259,11 @@ LONG = " ".join(FRASE.format(n=n) for n in range(12))
 
 
 def test_split_long_keeps_every_word_in_order_and_respects_the_limit() -> None:
-    from app.providers.tts.chatterbox import MAX_PART_CHARS, split_long
+    from app.providers.tts.chatterbox import split_long
 
     groups = split_long(LONG)
     assert len(groups) > 1
-    assert all(len(group) <= MAX_PART_CHARS for group in groups)
+    assert all(len(group) <= ChatterboxConstants.MAX_PART_CHARS for group in groups)
     assert " ".join(groups).split() == LONG.split()
     assert all(group.endswith(".") for group in groups)  # corta no fim da frase
 
@@ -284,7 +280,7 @@ def test_split_long_breaks_a_huge_sentence_at_commas_then_words() -> None:
 
 
 def test_short_scene_is_still_one_job_and_long_scene_is_joined_with_the_pauses(tmp_path: Path) -> None:
-    from app.providers.tts.chatterbox import SENTENCE_GAP_MS
+
 
     worker = FakeWorker()
     tts = make_tts(worker, tmp_path)
@@ -293,7 +289,7 @@ def test_short_scene_is_still_one_job_and_long_scene_is_joined_with_the_pauses(t
     tts.synthesize_speech(SpeechRequest(text=text, out_path=out, language="pt-BR"))
     assert len(worker.jobs) == 2  # um pedido por trecho entre pausas
     first, second = worker.jobs
-    assert len(first["parts"]) > 1 and first["pause_ms"] == SENTENCE_GAP_MS
+    assert len(first["parts"]) > 1 and first["pause_ms"] == ChatterboxConstants.SENTENCE_GAP_MS
     assert second["parts"] == ["Fim curto."]
     assert " ".join(first["parts"]).split() == LONG.split()
     assert first["out_path"] != str(out) and not Path(first["out_path"]).exists()  # trechos temporários
@@ -311,12 +307,51 @@ def test_a_failure_in_one_part_of_a_long_scene_is_a_provider_error(tmp_path: Pat
     assert not (tmp_path / "S01.wav").exists()
 
 
-def test_long_cloned_speech_gets_its_own_cache_key_so_cut_wavs_are_redone() -> None:
-    path = REPO_ROOT / "scripts" / "provisorio" / "montar_episodio.py"
-    spec = importlib.util.spec_from_file_location("montar_episodio_chave", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    assert module.long_speech_tag("chatterbox_modal", LONG) == "|frases300"
-    assert module.long_speech_tag("chatterbox", f"Curta. {SP} Também curta.") == ""
-    assert module.long_speech_tag("kokoro", LONG) == ""  # as outras vozes não mudam de chave
+def test_long_cloned_speech_gets_its_own_cache_key_so_cut_wavs_are_redone(tmp_path: Path) -> None:
+    long_request = SpeechRequest(text=LONG, out_path=tmp_path / "a.wav", language="pt-BR")
+    short = f"Curta. {SP} Também curta."
+    short_request = SpeechRequest(text=short, out_path=tmp_path / "b.wav", language="pt-BR")
+    tts = make_tts(None, tmp_path)
+    assert tts.fingerprint(long_request).endswith("|frases300")
+    assert "|frases" not in tts.fingerprint(short_request)  # fala curta não muda de chave
+
+
+# --- RF3: arquivo íntegro, fechamento e reuso ---------------------------------------------------
+
+
+def test_a_failed_scene_publishes_nothing_and_keeps_the_previous_wav(tmp_path: Path) -> None:
+    out = tmp_path / "voice" / "S01.wav"
+    out.parent.mkdir()
+    write_wav(out, frames=480)
+    before = out.read_bytes()
+    failing = FakeWorker(answer={"ok": False, "error": "falhou"})
+    with pytest.raises(ProviderError):
+        request = SpeechRequest(text="Oi.", out_path=out, language="pt-BR")
+        make_tts(failing, tmp_path).synthesize_speech(request)
+    assert out.read_bytes() == before  # a fala anterior segue utilizável
+    assert sorted(p.name for p in out.parent.iterdir()) == ["S01.wav"]  # nenhum temporário sobra
+
+
+def test_an_invalid_wav_from_the_model_is_never_published(tmp_path: Path) -> None:
+    class Junk(FakeWorker):
+        def ask(self, job: Mapping[str, Any]) -> dict[str, Any]:
+            Path(job["out_path"]).write_bytes(b"nao e um wav")
+            return {"ok": True}
+
+    out = tmp_path / "voice" / "S01.wav"
+    with pytest.raises(ProviderError, match="WAV válido"):
+        request = SpeechRequest(text="Oi.", out_path=out, language="pt-BR")
+        make_tts(Junk(), tmp_path).synthesize_speech(request)
+    assert not out.exists() and not list(out.parent.iterdir())
+
+
+def test_close_is_idempotent_and_the_provider_works_again_afterwards(tmp_path: Path) -> None:
+    worker = FakeWorker()
+    tts = make_tts(worker, tmp_path)
+    request = SpeechRequest(text="Oi.", out_path=tmp_path / "a.wav", language="pt-BR")
+    tts.synthesize_speech(request)
+    tts.close()
+    tts.close()  # fechar de novo não é erro
+    assert worker.closed
+    tts.synthesize_speech(SpeechRequest(text="Oi.", out_path=tmp_path / "b.wav", language="pt-BR"))
+    assert len(tts.starts) == 2 and (tmp_path / "b.wav").is_file()  # type: ignore[attr-defined]  # reabriu

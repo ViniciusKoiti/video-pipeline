@@ -1,0 +1,21 @@
+{
+  "status": "failed",
+  "attempts": 5,
+  "created_at": 1793882024.413001,
+  "deadline": 1793889224.413001,
+  "next_at": 1793884491.417318,
+  "media_sha256": "f7110705309a0d7040d9c037dbb9b0e27b5a19abf2fb2847f93dc9e9531c994f",
+  "model": "gemini-3.8-flash",
+  "max_attempts": 5,
+  "interval_s": 300,
+  "comparison": {
+    "duration_s": 12.92,
+    "lufs": -16.4,
+    "max_attempts": 5
+  },
+  "cpu_probe_s": 0.148,
+  "last_attempt_at": 1793883583.719908,
+  "result": "/home/viniciusk/projetos/auto-play/data/benchmarks/ayanokoji-pronuncia-s01-2026-11-05/retentativas/tentativa-05.json",
+  "updated_at": 1793884191.417318,
+  "reason": "Gemini did not answer within 600 s (try a shorter clip)"
+}

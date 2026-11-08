@@ -14,64 +14,22 @@ import statistics
 import time
 from collections import defaultdict
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
 
-from pydantic import Field
-
+from app.pipeline.constants.checagem_local_constants import ChecagemLocalConstants
 from app.pipeline.excerpts import excerpts_of
-from app.pipeline.schemas import Model, ScenesManifest, SourcesManifest
+from app.pipeline.models._checagem_local_types import Rotulo as Rotulo
+from app.pipeline.models.case import Case as Case
+from app.pipeline.models.result import Result as Result
+from app.pipeline.models.veredito import Veredito as Veredito
+from app.pipeline.schemas import ScenesManifest, SourcesManifest
 from app.providers.errors import ProviderError
 from app.providers.text.base import TextProvider, TextRequest
-
-Rotulo = Literal["SUSTENTA", "DIVERGE", "SEM_SUPORTE", "EXAGERO"]
-KINDS = ("real", "numero", "trecho_alheio", "superlativo")
-EXPECTED: dict[str, Rotulo] = {
-    "real": "SUSTENTA",
-    "numero": "DIVERGE",
-    "trecho_alheio": "SEM_SUPORTE",
-    "superlativo": "EXAGERO",
-}
-PROMPT_FILE = Path("prompts/local/checagem.md")
-_FICHA = re.compile(r"\s*\(F\d+(?:[,;]\s*F\d+)*\)")
-_NUMBER = re.compile(r"\d[\d.]*")
-_WORD = re.compile(r"\w{5,}")
-SUPERLATIVE = " Foi o maior de todo o país."
-
-
-class Veredito(Model):
-    """`confronto` vem antes: o modelo escreve a comparação e só depois decide."""
-
-    confronto: str = Field(min_length=1, pattern=r"\S")
-    veredito: Rotulo
-
-
-@dataclass(frozen=True)
-class Case:
-    id: str
-    kind: str
-    claim: str
-    excerpt_ids: tuple[str, ...]
-    excerpt: str
-
-    @property
-    def expected(self) -> Rotulo:
-        return EXPECTED[self.kind]
-
-
-@dataclass(frozen=True)
-class Result:
-    case: Case
-    verdict: Rotulo | None  # None = o modelo não devolveu JSON válido
-    confronto: str
-    error: str
-    seconds: float
 
 
 def load_prompt(root: Path) -> tuple[str, str]:
     """(sistema, modelo do usuário) das seções `## Sistema` e `## Usuário` do arquivo de prompt."""
-    text = (root / PROMPT_FILE).read_text(encoding="utf-8")
+    text = (root / ChecagemLocalConstants.PROMPT_FILE).read_text(encoding="utf-8")
     found = re.finditer(r"^## (\S+)\n(.*?)(?=^## |\Z)", text, re.M | re.S)
     sections = {m.group(1): m.group(2).strip() for m in found}
     return sections["Sistema"], sections["Usuário"]
@@ -88,7 +46,7 @@ def render(template: str, case: Case) -> str:
 
 def clean_claim(text: str) -> str:
     """Tira o id da ficha ("(F54)"): o modelo confere o texto, não a ficha."""
-    return _FICHA.sub("", text).strip()
+    return ChecagemLocalConstants._FICHA.sub("", text).strip()
 
 
 def _claims(scenes: ScenesManifest) -> Iterable[tuple[str, list[str], str]]:
@@ -106,7 +64,7 @@ def _claims(scenes: ScenesManifest) -> Iterable[tuple[str, list[str], str]]:
 
 def _mutate_number(claim: str, excerpt: str, rng: random.Random) -> str | None:
     """Troca o primeiro algarismo da afirmação que também está no trecho por outro que o trecho não traz."""
-    for match in _NUMBER.finditer(claim):
+    for match in ChecagemLocalConstants._NUMBER.finditer(claim):
         token = match.group().rstrip(".")
         if token not in excerpt or not token.replace(".", "").isdigit():
             continue
@@ -118,7 +76,10 @@ def _mutate_number(claim: str, excerpt: str, rng: random.Random) -> str | None:
 
 
 def _overlap(a: str, b: str) -> float:
-    words_a, words_b = set(_WORD.findall(a.lower())), set(_WORD.findall(b.lower()))
+    words_a, words_b = (
+        set(ChecagemLocalConstants._WORD.findall(a.lower())),
+        set(ChecagemLocalConstants._WORD.findall(b.lower())),
+    )
     return len(words_a & words_b) / max(1, min(len(words_a), len(words_b)))
 
 
@@ -154,7 +115,7 @@ def build_cases(
             cases.append(_case(scene_id, "numero", number, ids, excerpt))
         if "maior" not in excerpt.lower() and counts["superlativo"] < per_kind:
             counts["superlativo"] += 1
-            stretched = claim.rstrip(" .") + "." + SUPERLATIVE
+            stretched = claim.rstrip(" .") + "." + ChecagemLocalConstants.SUPERLATIVE
             cases.append(_case(scene_id, "superlativo", stretched, ids, excerpt))
         if counts["trecho_alheio"] < per_kind:
             other = [(i, t) for i, t in pool.items() if i.split("#")[0] not in {x.split("#")[0] for x in ids}
@@ -194,7 +155,7 @@ def score(results: list[Result]) -> dict[str, object]:
     real = [r for r in results if r.case.kind == "real"]
     broken = [r for r in results if r.case.kind != "real"]
     by_kind: dict[str, dict[str, float]] = {}
-    for kind in KINDS:
+    for kind in ChecagemLocalConstants.KINDS:
         group = [r for r in results if r.case.kind == kind]
         if group:
             by_kind[kind] = {

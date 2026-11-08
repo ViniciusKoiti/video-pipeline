@@ -1,6 +1,7 @@
 import React from "react";
 import {Composition} from "remotion";
 import {Clipe, CLIPE_FPS, CLIPE_PADRAO, clipeMetadata} from "./clipe/Clipe";
+import {QUADRO_FPS, QUADRO_FRAMES, QUADRO_H, QUADRO_W, QuadroTeste} from "./quadro/QuadroTeste";
 import {Scene} from "./Scene";
 import type {SceneProps} from "./types";
 import "./theme";
@@ -21,5 +22,8 @@ export const RemotionRoot: React.FC = () => (
     {/* Clipe de letra, fora do contrato do episódio: `inicio`/`fim` em segundos cortam um trecho; `retrato` = 9:16. */}
     <Composition id="Clipe" component={Clipe} durationInFrames={1} fps={CLIPE_FPS} width={1920} height={1080}
       defaultProps={CLIPE_PADRAO} calculateMetadata={clipeMetadata} />
+    {/* Teste de estilo "desenho à mão", fora do contrato do episódio: não usado por nenhum vídeo existente. */}
+    <Composition id="QuadroTeste" component={QuadroTeste} durationInFrames={QUADRO_FRAMES} fps={QUADRO_FPS}
+      width={QUADRO_W} height={QUADRO_H} />
   </>
 );

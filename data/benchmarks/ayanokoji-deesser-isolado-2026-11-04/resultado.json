@@ -1,0 +1,40 @@
+{
+  "status": "needs_review",
+  "goal": "Melhorar conforto e qualidade percebida; faixa de nota desejada pelo dono: 8 a 10",
+  "goal_is_not_a_guarantee": true,
+  "comparison": {
+    "A": "atual.wav",
+    "B": "candidata.wav",
+    "start_s": 0,
+    "duration_s_each": 45.64,
+    "candidate_filter": "deesser=i=0.4:m=0.97:f=1.0",
+    "highpass": false,
+    "equalizer": false,
+    "input": "Audio ja nivelado extraido da previa MP4 existente; sem TTS",
+    "normalization": "loudnorm em duas passagens nas duas versoes, seguido de ganho constante para igualar volume",
+    "integrated_lufs_each": -16.16,
+    "true_peak_dbtp_A": -1.61,
+    "true_peak_dbtp_B": -1.6
+  },
+  "llm": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "attempts": 1,
+    "status": "unavailable",
+    "http_status": 503,
+    "reason": "high demand",
+    "score_A": null,
+    "score_B": null,
+    "automatic_retries": false,
+    "model_fallback": false
+  },
+  "human_preference_for_this_candidate": null,
+  "production_enabled": false,
+  "limitations": [
+    "Este experimento nao e a cadeia highpass + deesser da primeira escuta cega.",
+    "A avaliacao comparativa pelo LLM nao foi concluida; nao ha evidencia de nota 8 a 10.",
+    "A pagina index.html identifica as versoes: esta escuta e aberta, nao cega.",
+    "A fonte e AAC do MP4; a copia recebida pelo earshot/Gemini e MP3 mono 64 kbps.",
+    "Nota de LLM e opiniao, nao MOS validado nem aprovacao automatica."
+  ]
+}

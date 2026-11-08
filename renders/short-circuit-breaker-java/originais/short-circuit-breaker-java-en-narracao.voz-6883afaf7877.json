@@ -1,0 +1,188 @@
+{
+  "language": "en",
+  "provider": "chatterbox_modal",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Payments fail in a Java application and its threads are left waiting.",
+      "delivery": "hook",
+      "wav": "voice/leveled/gancho-chatterbox_modal-en-bade73b5ac-d3b5cb3b483f.wav",
+      "seconds": 5.84,
+      "speech": [
+        0.193,
+        5.413
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/hook-01.wav",
+        "sha256": "d20374693e11d041af3bc66f2092ff92a33160588ccc3b86ee98a29ce7eb2792",
+        "remote_name": "references/en/hook.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/gancho-chatterbox_modal-en-bade73b5ac.wav",
+        "source_sha256": "52fc22de4abde8e83731a8112896dcce596fa525120079e791418190e7034be9",
+        "wav_sha256": "e49675f3e64f5613db8a078b7a165f497328bfebf8d103d82e01f741763a3db5",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -22.12,
+        "output_lufs": -15.97,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "fechado",
+      "text": "A closed circuit breaker lets calls through, but five consecutive failures open it.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/fechado-chatterbox_modal-en-1e9906a547-371043443c2b.wav",
+      "seconds": 6.28,
+      "speech": [
+        0.0,
+        5.967
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav",
+        "sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+        "remote_name": "references/en/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/fechado-chatterbox_modal-en-1e9906a547.wav",
+        "source_sha256": "2decf2833ce4a2265def7441372a0e318741d8d11c6f1f383571c840d4327f9c",
+        "wav_sha256": "263cff54fed9cd714864063c2ec436ef4700ea9e4e694cce77f71ee74cd25556",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -21.23,
+        "output_lufs": -16.19,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "aberto",
+      "text": "While open, it returns an error without calling payments, avoiding the wait.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/aberto-chatterbox_modal-en-d5273cf1c5-adaf8cdafd50.wav",
+      "seconds": 5.48,
+      "speech": [
+        0.0,
+        5.13
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav",
+        "sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+        "remote_name": "references/en/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/aberto-chatterbox_modal-en-d5273cf1c5.wav",
+        "source_sha256": "0fb9557c65c525498807b3d0dc38754b7d2a6574f0db6f0c5d26dafc4ed6356f",
+        "wav_sha256": "f603f57b32ed6da6dad582681bcc310d6765ad9471c315074eb6e1650d2950aa",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -19.92,
+        "output_lufs": -16.1,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "meio-aberto",
+      "text": "After two seconds, it becomes half-open and allows a test call.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/meio-aberto-chatterbox_modal-en-378b5f5ab9-017231d786f9.wav",
+      "seconds": 4.08,
+      "speech": [
+        0.0,
+        3.608
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav",
+        "sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+        "remote_name": "references/en/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/meio-aberto-chatterbox_modal-en-378b5f5ab9.wav",
+        "source_sha256": "81e21969d689658c972efd8099dd0ef5dc5d3ba4718d36fa0f4eb596bf0ad675",
+        "wav_sha256": "3ab5e81eab04bd79f26dc83866156caf902a0dc834f4bca498a2d92f2c96baa6",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -23.36,
+        "output_lufs": -16.41,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "teste",
+      "text": "Success closes it and resumes calls; failure opens it again.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/teste-chatterbox_modal-en-532ee444fe-4cbf748ca940.wav",
+      "seconds": 5.12,
+      "speech": [
+        0.0,
+        4.848
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav",
+        "sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+        "remote_name": "references/en/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/teste-chatterbox_modal-en-532ee444fe.wav",
+        "source_sha256": "002b3885fc978fe133fdc3b63941dcbddec2e48375a13186a88213b9c70f68ee",
+        "wav_sha256": "f1ac0c55ccd274b550d5c9a6708edccbef8c4624f0cda64e771197e3391862dc",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -22.68,
+        "output_lufs": -15.85,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "medido",
+      "text": "In this simulation, the breaker cut calls during the outage from sixty to twenty-four.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/medido-chatterbox_modal-en-f4767f55d3-2567a6c248df.wav",
+      "seconds": 4.92,
+      "speech": [
+        0.128,
+        4.498
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav",
+        "sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+        "remote_name": "references/en/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/medido-chatterbox_modal-en-f4767f55d3.wav",
+        "source_sha256": "7a3e9baa8f256f105745dc75e9bffb1ce596680d298d15c03b04a6c022b2b793",
+        "wav_sha256": "5cee92505e510c2bd500e277486e5e8f43372b5a949c48a90b781e158d4e6991",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -22.98,
+        "output_lufs": -16.75,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "limite",
+      "text": "But it still rejected seven requests after payments recovered: protecting resources also means rejecting requests.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/limite-chatterbox_modal-en-8257bc2897-33c57ae5e107.wav",
+      "seconds": 7.64,
+      "speech": [
+        0.0,
+        7.345
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/en/neutral-01.wav",
+        "sha256": "60ed099bd3e34e0117ee0ca9a82e7c7f4518158dd234fd21359f0778c43691a6",
+        "remote_name": "references/en/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-en/voice/limite-chatterbox_modal-en-8257bc2897.wav",
+        "source_sha256": "0d40ea3c3381a32335bf119501125a88e1efa8010b0f11f623f63d8e03c71bb2",
+        "wav_sha256": "752e408fc7a1e8d42e344e27338cd844352b56035aceffe3970dadce5e0d04ac",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -23.19,
+        "output_lufs": -16.34,
+        "true_peak_dbtp": -1.5
+      }
+    }
+  ]
+}

@@ -10,9 +10,9 @@ from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError
 from app.providers.http import JsonPost, TransportError, post_json
 from app.providers.text.base import TextRequest, TextResult, Usage
+from app.providers.text.constants.ollama_constants import OllamaConstants
 
 T = TypeVar("T", bound=BaseModel)
-NS_PER_MS = 1_000_000
 
 
 class OllamaText:
@@ -57,6 +57,10 @@ class OllamaText:
                 message = f"modelo {model!r} ausente (ollama pull {model})"
                 raise ModelUnavailable(self.info.name, message) from None
             raise ProviderError(self.info.name, str(error)) from None
+        except ValueError:
+            raise InvalidOutput(self.info.name, "resposta JSON inválida") from None
+        if not isinstance(response, dict):
+            raise InvalidOutput(self.info.name, "resposta JSON deve ser um objeto")
         if response.get("done_reason") == "length":
             raise InvalidOutput(self.info.name, f"resposta cortada no limite de {request.max_tokens} tokens")
         try:
@@ -69,7 +73,7 @@ class OllamaText:
 
 def _ms(response: dict[str, Any], key: str) -> int | None:
     value = response.get(key)
-    return None if value is None else int(value) // NS_PER_MS
+    return None if value is None else int(value) // OllamaConstants.NS_PER_MS
 
 
 def _usage(response: dict[str, Any]) -> Usage:

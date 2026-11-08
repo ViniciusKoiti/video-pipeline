@@ -1,0 +1,40 @@
+{
+  "cpu_probe_s": 0.076,
+  "source_start_s": 0,
+  "source_end_s": 12.92,
+  "previous_state": "/home/viniciusk/projetos/auto-play/data/benchmarks/ayanokoji-deesser-isolado-2026-11-04/retentativas/estado.json",
+  "previous_attempts": 7,
+  "new_attempt_budget": 5,
+  "comparison_sha256": "4ebc7f231010460c5a30498aafed63dfbd81c9055306d9be6ec95f717b851826",
+  "variants": [
+    {
+      "file": "atual.wav",
+      "duration_ms": 12920,
+      "stats": {
+        "input_i": -16.11,
+        "input_tp": -1.6,
+        "input_lra": 2.4,
+        "input_thresh": -26.55,
+        "target_offset": 0.01
+      },
+      "source_sha256": "6ca18130ead4a161de325e2dd96f69b69633858174e4b5f0edd2b4334b340dad",
+      "sha256": "5a68e969a48c5e650586e01131abdd6eca1861512d69d3f3ed92107831634abd"
+    },
+    {
+      "file": "candidata.wav",
+      "duration_ms": 12920,
+      "stats": {
+        "input_i": -16.11,
+        "input_tp": -1.6,
+        "input_lra": 2.4,
+        "input_thresh": -26.55,
+        "target_offset": 0.0
+      },
+      "source_sha256": "4f3f41fcc12c72f735b19491264f8971213e10daee744c8200f14b474c56c28b",
+      "sha256": "3458bf393d1a672a89f72421df70ed811547e675c3539362b265ccf06b744264"
+    }
+  ],
+  "A": "atual.wav",
+  "B": "candidata.wav",
+  "production_enabled": false
+}

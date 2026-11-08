@@ -22,17 +22,19 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
 
 from __future__ import annotations
 
-import hashlib
-import json
-import re
-from dataclasses import dataclass
 from pathlib import Path
 
 from pydantic import ValidationError
 
-from app.pipeline.medicao import MEDICAO_FILE, medicao_problems
-from app.pipeline.numbers import strip_block
+from app.errors import PipelineError
+from app.pipeline.constants.gates_constants import GatesConstants as Constants
+from app.pipeline.constants.medicao_constants import MedicaoConstants
+from app.pipeline.constants.translation_constants import TranslationConstants
+from app.pipeline.file_hash import sha256_file
+from app.pipeline.medicao import medicao_problems
+from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
+from app.pipeline.review_hashes import content_hash as content_hash
 from app.pipeline.schemas import (
     Asset,
     CheckEntry,
@@ -45,38 +47,11 @@ from app.pipeline.schemas import (
     Step,
 )
 from app.pipeline.state import Clock, compute_input_hash
-from app.pipeline.translation import LINK_FILE, translation_hash, translation_problems
-
-GATE_FILES: dict[Step, tuple[str, ...]] = {
-    Step.SOURCES: ("sources.json", "facts.json"),
-    Step.SCRIPT: ("scenes.json", "outline.md"),
-}
-RENDERS = ("renders/final.mp4", "renders/preview.mp4")  # o gate 4 revê o mais acabado
-PREVIEW_FILES = ("episode.json", "captions.srt", "legenda-post.txt")  # entram no gate 4 quando existem
-GATED_STEPS = (*GATE_FILES, Step.ASSETS, Step.TRANSLATION, Step.PREVIEW)
-AUDIO_SUFFIXES = (".mp3", ".m4a", ".wav", ".ogg")  # faixas da trilha, aprovadas no gate 3 (ADR 030)
-MEDIA_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", *AUDIO_SUFFIXES)
-CHECK_FILE = "checagem.json"
-CHECKED_FILES = ("facts.json", "scenes.json", "outline.md")  # o que o verificador confere contra os trechos
-ASSET_ID = re.compile(rb'("asset_id"\s*:\s*)"(?:[^"\\]|\\.)*"')  # a imagem escolhida para o plano
+from app.pipeline.translation import translation_hash, translation_problems
 
 
-class GateError(ValueError):
-    pass
-
-
-@dataclass(frozen=True)
-class GateStatus:
-    step: Step
-    asset_id: str | None
-    entry: ReviewEntry | None  # última decisão; None = nenhuma
-    current_hash: str | None  # None = o que foi revisto não existe mais
-    legacy_hash: str | None = None  # carimbo de antes de a imagem sair do gate 2 (decisões já gravadas)
-
-    @property
-    def valid(self) -> bool:
-        accepted = {self.current_hash, self.legacy_hash} - {None}
-        return self.entry is not None and self.entry.input_hash in accepted
+class GateError(PipelineError, ValueError):
+    """Gate que não pode ser decidido, conferido ou reaberto (arquivo faltando, parecer ausente)."""
 
 
 def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str:
@@ -84,19 +59,24 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
     if step is Step.ASSETS:
         if asset_id is None:
             raise GateError("a etapa assets decide ativo por ativo: informe --asset")
-        return "sha256:" + _file_sha256(_media_path(store, episode_id, asset_id))
+        return "sha256:" + sha256_file(_media_path(store, episode_id, asset_id))
     if asset_id is not None:
         raise GateError("--asset só vale para a etapa assets")
     if step is Step.PREVIEW:
         return compute_input_hash(_preview_paths(store, episode_id), {}, base=store.path(episode_id, ""))
     if step is Step.TRANSLATION:
-        if not store.path(episode_id, LINK_FILE).is_file():
-            raise GateError(f"{episode_id}: sem {LINK_FILE}, não é uma tradução (ADR 034)")
+        if not store.path(episode_id, TranslationConstants.LINK_FILE).is_file():
+            raise GateError(
+                f"{episode_id}: sem {TranslationConstants.LINK_FILE}, não é uma tradução (ADR 034)"
+            )
         try:
             return translation_hash(store, episode_id)
         except (ManifestNotFound, ValueError) as error:
-            raise GateError(f"{episode_id}: {LINK_FILE} inválido ou sem o original ({error})") from None
-    names = GATE_FILES.get(step)
+            raise GateError(
+        f'{episode_id}: {TranslationConstants.LINK_FILE} inválido ou sem o original ({error}'
+        f')'
+    ) from None
+    names = Constants.GATE_FILES.get(step)
     if names is None:
         raise GateError(f"a etapa {step.value} ainda não tem gate por comando")
     paths = [store.path(episode_id, name) for name in names]
@@ -106,21 +86,25 @@ def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str |
     return content_hash(paths, base=store.path(episode_id, ""))
 
 
-def content_hash(paths: list[Path], *, base: Path) -> str:
-    """Como `compute_input_hash`, sem o que é derivado ou escolhido depois do roteiro: no `scenes.json`, todo
-    `asset_id` conta como `null`; no `outline.md`, o bloco de números gerado (`vp numeros`) não conta. Um
-    roteiro sem imagens e sem bloco tem o mesmo hash de antes."""
-    digest = hashlib.sha256()
-    for path in sorted(paths):
-        data = path.read_bytes()
-        if path.name == "scenes.json":
-            data = ASSET_ID.sub(rb"\1null", data)
-        elif path.name == "outline.md":
-            data = strip_block(data)  # os números gerados saem do scenes.json, já carimbado (#170)
-        digest.update(path.relative_to(base).as_posix().encode() + b"\0")
-        digest.update(hashlib.sha256(data).digest())
-    digest.update(json.dumps({}).encode())
-    return "sha256:" + digest.hexdigest()
+def _validate_reports(store: ManifestStore, episode_id: str, step: Step, decision: Decision) -> None:
+    if step is Step.TRANSLATION and decision is Decision.APPROVED:
+        problems = translation_problems(store, episode_id)
+        if problems:
+            raise GateError(
+                f"{episode_id}: a conferência da tradução achou {len(problems)} problema(s), "
+                f"rode `vp traducao {episode_id}`: " + "; ".join(problems)
+            )
+    if (
+        step is Step.PREVIEW
+        and decision is Decision.APPROVED
+        and store.exists(episode_id, MedicaoConstants.MEDICAO_FILE)
+    ):
+        problems, _ = medicao_problems(store, episode_id)
+        if problems:
+            raise GateError(
+                f"{episode_id}: a conferência da medição achou {len(problems)} problema(s), "
+                f"rode `vp medicao {episode_id}`: " + "; ".join(problems)
+            )
 
 
 def record_decision(
@@ -149,20 +133,7 @@ def record_decision(
                     'atuais (rode o agente verificador e `vp checagem`), ou --sem-checagem "motivo"'
                 )
             notes = "; ".join(filter(None, [notes, f"sem checagem: {skip_check.strip()}"]))
-        if step is Step.TRANSLATION and decision is Decision.APPROVED:
-            problems = translation_problems(store, episode_id)
-            if problems:
-                raise GateError(
-                    f"{episode_id}: a conferência da tradução achou {len(problems)} problema(s), "
-                    f"rode `vp traducao {episode_id}`: " + "; ".join(problems)
-                )
-        if step is Step.PREVIEW and decision is Decision.APPROVED and store.exists(episode_id, MEDICAO_FILE):
-            problems, _ = medicao_problems(store, episode_id)
-            if problems:
-                raise GateError(
-                    f"{episode_id}: a conferência da medição achou {len(problems)} problema(s), "
-                    f"rode `vp medicao {episode_id}`: " + "; ".join(problems)
-                )
+        _validate_reports(store, episode_id, step, decision)
         approved_asset = None
         if asset_id is not None and decision is Decision.APPROVED:
             approved_asset = _approved(store, review, episode_id, asset_id, input_hash)
@@ -182,7 +153,7 @@ def record_decision(
 
 
 def check_hash(store: ManifestStore, episode_id: str) -> str:
-    paths = [store.path(episode_id, name) for name in CHECKED_FILES]
+    paths = [store.path(episode_id, name) for name in Constants.CHECKED_FILES]
     present = [p for p in paths if p.is_file()]
     if not any(p.name == "scenes.json" for p in present):
         raise GateError(f"{episode_id}: falta scenes.json para o parecer do verificador")
@@ -190,13 +161,13 @@ def check_hash(store: ManifestStore, episode_id: str) -> str:
 
 
 def _legacy_check_hash(store: ManifestStore, episode_id: str) -> str:
-    present = [p for p in (store.path(episode_id, name) for name in CHECKED_FILES) if p.is_file()]
+    present = [p for p in (store.path(episode_id, name) for name in Constants.CHECKED_FILES) if p.is_file()]
     return compute_input_hash(present, {}, base=store.path(episode_id, ""))
 
 
 def check_log(store: ManifestStore, episode_id: str) -> CheckLog:
     try:
-        return store.read(episode_id, CHECK_FILE, CheckLog)
+        return store.read(episode_id, Constants.CHECK_FILE, CheckLog)
     except ManifestNotFound:
         return CheckLog(episode_id=episode_id)
 
@@ -217,7 +188,9 @@ def record_check(
             verdict=verdict, problems=problems, reviewer=reviewer, at=now(), input_hash=input_hash
         )
         log = check_log(store, episode_id)
-        store.write(episode_id, CHECK_FILE, log.model_copy(update={"entries": [*log.entries, entry]}))
+        store.write(
+            episode_id, Constants.CHECK_FILE, log.model_copy(update={"entries": [*log.entries, entry]})
+        )
         return entry
 
 
@@ -242,11 +215,11 @@ def check_is_current(store: ManifestStore, episode_id: str) -> bool:
 def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> list[GateStatus]:
     """Última decisão de cada gate e de cada ativo (os que existem e os que só estão no review.json)."""
     log = review.log(episode_id)
-    targets: list[tuple[Step, str | None]] = [(step, None) for step in GATE_FILES]
+    targets: list[tuple[Step, str | None]] = [(step, None) for step in Constants.GATE_FILES]
     on_disk = {p.stem for p in store.path(episode_id, "assets").glob("*.json")}
     decided = {e.asset_id for e in log.entries if e.step is Step.ASSETS and e.asset_id}
     targets += [(Step.ASSETS, asset_id) for asset_id in sorted(on_disk | decided)]
-    if store.path(episode_id, LINK_FILE).is_file():
+    if store.path(episode_id, TranslationConstants.LINK_FILE).is_file():
         targets.append((Step.TRANSLATION, None))
     targets.append((Step.PREVIEW, None))
     return [
@@ -254,8 +227,8 @@ def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> li
             step,
             asset,
             log.latest(step, asset_id=asset),
-            _current(store, episode_id, step, asset),
-            _legacy(store, episode_id, step),
+            current_hash(store, episode_id, step, asset),
+            legacy_hash(store, episode_id, step),
         )
         for step, asset in targets
     ]
@@ -274,10 +247,12 @@ def missing_pieces(store: ManifestStore, episode_id: str) -> list[str]:
 
 
 def _preview_paths(store: ManifestStore, episode_id: str) -> list[Path]:
-    render = next((store.path(episode_id, r) for r in RENDERS if store.path(episode_id, r).is_file()), None)
+    render = next(
+        (store.path(episode_id, r) for r in Constants.RENDERS if store.path(episode_id, r).is_file()), None
+    )
     if render is None:
         raise GateError(f"{episode_id}: nenhum render em renders/ para o gate da prévia")
-    extras = [store.path(episode_id, name) for name in PREVIEW_FILES]
+    extras = [store.path(episode_id, name) for name in Constants.PREVIEW_FILES]
     return [render, *(p for p in extras if p.is_file())]
 
 
@@ -304,16 +279,16 @@ def _approved(
         raise GateError(f"{asset_id}: {problems}") from None
 
 
-def _current(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str | None:
+def current_hash(store: ManifestStore, episode_id: str, step: Step, asset: str | None = None) -> str | None:
     try:
-        return gate_hash(store, episode_id, step, asset_id)
+        return gate_hash(store, episode_id, step, asset)
     except GateError:
         return None
 
 
-def _legacy(store: ManifestStore, episode_id: str, step: Step) -> str | None:
+def legacy_hash(store: ManifestStore, episode_id: str, step: Step) -> str | None:
     """O hash dos arquivos inteiros, como era gravado antes (decisões antigas continuam valendo)."""
-    names = GATE_FILES.get(step)
+    names = Constants.GATE_FILES.get(step)
     paths = [store.path(episode_id, name) for name in names or ()]
     if not paths or not all(p.is_file() for p in paths):
         return None
@@ -321,16 +296,8 @@ def _legacy(store: ManifestStore, episode_id: str, step: Step) -> str | None:
 
 
 def _media_path(store: ManifestStore, episode_id: str, asset_id: str) -> Path:
-    for suffix in MEDIA_SUFFIXES:
+    for suffix in Constants.MEDIA_SUFFIXES:
         path = store.path(episode_id, f"assets/{asset_id}{suffix}")
         if path.is_file():
             return path
     raise GateError(f"{asset_id}: nenhum arquivo de mídia em assets/")
-
-
-def _file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1 << 20), b""):
-            digest.update(chunk)
-    return digest.hexdigest()

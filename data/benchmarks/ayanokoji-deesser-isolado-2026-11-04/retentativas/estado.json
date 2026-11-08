@@ -1,0 +1,25 @@
+{
+  "status": "failed",
+  "attempts": 7,
+  "created_at": 1793842865.3325708,
+  "deadline": 1793852640.4143298,
+  "next_at": 1793846348.5116787,
+  "media_sha256": "b98ea9c952a4a523d3998262b36366200886cb7843f259cc77da34f1dff72614",
+  "model": "gemini-3.8-flash",
+  "max_attempts": 12,
+  "interval_s": 300,
+  "cpu_probe_s": 0.068,
+  "last_attempt_at": 1793845440.4143298,
+  "result": "/home/viniciusk/projetos/auto-play/data/benchmarks/ayanokoji-deesser-isolado-2026-11-04/retentativas/tentativa-07.json",
+  "updated_at": 1793846048.5116787,
+  "reason": "Gemini did not answer within 600 s (try a shorter clip)",
+  "extensions": [
+    {
+      "at": 1793845440.4143298,
+      "previous_limit": 6,
+      "new_limit": 12,
+      "attempts_kept": 6,
+      "previous_deadline": 1793850065.3325708
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Ten thousand requests waiting on I/O in Java: where does the bottleneck end up?",
+      "delivery": "hook"
+    },
+    {
+      "scene": "threads",
+      "text": "A thread runs one request, and in Java it holds an operating system thread, which is expensive, even when it's only waiting."
+    },
+    {
+      "scene": "plataforma",
+      "text": "So the pool caps at two hundred, and the rest of the requests wait in line."
+    },
+    {
+      "scene": "codigo",
+      "text": "Switching the pool to virtual threads is a one-line change."
+    },
+    {
+      "scene": "virtual",
+      "text": "A virtual thread belongs to the JVM and doesn't hold an OS thread while it waits, so all ten thousand wait together."
+    },
+    {
+      "scene": "conexoes",
+      "text": "But with only fifty connections at the database the line comes back there.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "medido",
+      "text": "The pool of two hundred took five seconds, the virtual threads one hundred seventy-nine milliseconds, and with fifty connections it went back to twenty seconds."
+    },
+    {
+      "scene": "fecho",
+      "text": "The bottleneck went from the threads to the connections, and you, which limit would you size?",
+      "delivery": "invite"
+    }
+  ]
+}

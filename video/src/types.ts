@@ -1,6 +1,6 @@
 // Espelho dos planos do contrato (app/pipeline/schemas.py, ADR 008). Chaves em snake_case como no JSON.
 
-import type {SpriteManifest} from "@viniciusk/motion-kit/host";
+import type {SpriteManifest} from "@viniciuskoitin/motion-kit/host";
 
 export type Crop = {x: number; y: number; width: number; height: number};
 export type Motion = "push_in" | "pull_out" | "pan_left" | "pan_right" | "pan_up" | "pan_down" | "still";

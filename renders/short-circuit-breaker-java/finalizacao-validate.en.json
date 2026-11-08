@@ -1,0 +1,605 @@
+{
+  "runId": "1793884836363-05e40d0f",
+  "command": "validate",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-05T13:20:36.363Z",
+  "contentFile": "content.en.voz.json",
+  "artifacts": [],
+  "style": "editorial",
+  "locale": "en",
+  "media": {},
+  "versions": {
+    "node": "v22.22.3",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciusk/motion-video": "0.3.0",
+    "@viniciusk/motion-kit": "0.9.0",
+    "@viniciusk/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "7923eb609fdc00fb1637a8102cb927b8ed35ce825b4dbf909c8aa1160628105b",
+    "composition/content.schema.ts": "e5f3071fcca16639d4544dfdf90fcd68d24ae94fb667c489cb45cb892063cd6d",
+    "composition/host.ts": "f4cc396d9a9fbbad2d9308516739d14a452eb6f00268e0bc4e793d9ceceef37b",
+    "src/production.mjs": "5e3082bf20073fcae16a878881c66b142ba971bb6bdb788ea2b541ffa1db5f3a",
+    "dist/composition/index.js": "aae5bae563d02dd46319b461598da0bc08f28fb7ed753e771a8ca9fdd8ac21fa"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1176,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 5.6,
+        "type": "hook",
+        "text": "Payments failed.\nThreads waiting?",
+        "highlight": "Threads waiting?",
+        "kicker": "Java · circuit breaker",
+        "from": 0,
+        "durationInFrames": 168,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "fechado",
+        "durationSec": 6.4,
+        "type": "flow",
+        "title": "5 failures in a row: open",
+        "nodes": [
+          {
+            "id": "closed",
+            "label": "Closed",
+            "sublabel": "lets calls through",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Payments",
+            "sublabel": "simulated outage",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Open",
+            "sublabel": "blocks new calls",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "closed",
+            "to": "pay",
+            "label": "call"
+          },
+          {
+            "from": "pay",
+            "to": "closed",
+            "label": "error",
+            "kind": "completion"
+          },
+          {
+            "from": "closed",
+            "to": "open",
+            "label": "5 failures",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "closed",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.255,
+            "state": "failed"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.255,
+            "state": "waiting"
+          },
+          {
+            "node": "closed",
+            "atSec": 4.045,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 5,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "call",
+            "from": "closed",
+            "to": "pay",
+            "atSec": 1.3,
+            "durationSec": 0.955,
+            "label": "call"
+          },
+          {
+            "id": "error",
+            "from": "pay",
+            "to": "closed",
+            "atSec": 2.374,
+            "durationSec": 0.955,
+            "label": "error"
+          },
+          {
+            "id": "trip",
+            "from": "closed",
+            "to": "open",
+            "atSec": 4.045,
+            "durationSec": 0.955,
+            "label": "threshold"
+          }
+        ],
+        "legend": false,
+        "from": 168,
+        "durationInFrames": 192,
+        "readableFrame": 161,
+        "readableFrom": 329
+      },
+      {
+        "id": "aberto",
+        "durationSec": 5.5,
+        "type": "flow",
+        "title": "Error without a call",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Java orders",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Open",
+            "sublabel": "no new wait",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Payments",
+            "sublabel": "not called",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "request"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "error",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "blocked",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 4.1,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "request",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 1.3,
+            "durationSec": 1.244,
+            "label": "request"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 2.856,
+            "durationSec": 1.244,
+            "label": "rejected"
+          }
+        ],
+        "legend": false,
+        "from": 360,
+        "durationInFrames": 165,
+        "readableFrame": 134,
+        "readableFrom": 494
+      },
+      {
+        "id": "meio-aberto",
+        "durationSec": 4,
+        "type": "flow",
+        "title": "After 2 s: a test",
+        "nodes": [
+          {
+            "id": "open",
+            "label": "Open",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "half",
+            "label": "Half-open",
+            "sublabel": "one probe at a time",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Payments",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "open",
+            "to": "half",
+            "label": "2 s",
+            "kind": "scheduling"
+          },
+          {
+            "from": "half",
+            "to": "pay",
+            "label": "test"
+          }
+        ],
+        "states": [
+          {
+            "node": "open",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "half",
+            "atSec": 1.752,
+            "state": "running"
+          },
+          {
+            "node": "open",
+            "atSec": 1.752,
+            "state": "idle"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.6,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "window",
+            "from": "open",
+            "to": "half",
+            "atSec": 1.3,
+            "durationSec": 0.452,
+            "label": "window elapsed"
+          },
+          {
+            "id": "probe",
+            "from": "half",
+            "to": "pay",
+            "atSec": 2.148,
+            "durationSec": 0.452,
+            "label": "test"
+          }
+        ],
+        "legend": false,
+        "from": 525,
+        "durationInFrames": 120,
+        "readableFrame": 89,
+        "readableFrom": 614
+      },
+      {
+        "id": "teste",
+        "durationSec": 5.2,
+        "type": "flow",
+        "title": "Success closes; fail opens",
+        "nodes": [
+          {
+            "id": "half",
+            "label": "Half-open",
+            "sublabel": "test outcome",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "closed",
+            "label": "Closed",
+            "sublabel": "resumes calls",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Open",
+            "sublabel": "restarts wait",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "half",
+            "to": "closed",
+            "label": "if success",
+            "dashed": true
+          },
+          {
+            "from": "half",
+            "to": "open",
+            "label": "if failure",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "half",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.2,
+            "state": "done"
+          },
+          {
+            "node": "closed",
+            "atSec": 3,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 3.8,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "ok",
+            "from": "half",
+            "to": "closed",
+            "atSec": 1.4,
+            "durationSec": 0.8,
+            "label": "success"
+          },
+          {
+            "id": "fail",
+            "from": "half",
+            "to": "open",
+            "atSec": 3,
+            "durationSec": 0.8,
+            "label": "failure"
+          }
+        ],
+        "legend": false,
+        "from": 645,
+        "durationInFrames": 156,
+        "readableFrame": 125,
+        "readableFrom": 770
+      },
+      {
+        "id": "medido",
+        "durationSec": 4.8,
+        "type": "flow",
+        "title": "Calls during the outage",
+        "nodes": [
+          {
+            "id": "without",
+            "label": "No breaker",
+            "sublabel": "60 calls",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "with",
+            "label": "With breaker",
+            "sublabel": "24 calls",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "pay",
+            "label": "Payments",
+            "sublabel": "simulation medians",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "without",
+            "to": "pay",
+            "label": "during outage"
+          },
+          {
+            "from": "with",
+            "to": "pay",
+            "label": "during outage"
+          }
+        ],
+        "states": [
+          {
+            "node": "without",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "without",
+            "atSec": 1.873,
+            "state": "failed"
+          },
+          {
+            "node": "pay",
+            "atSec": 1.873,
+            "state": "failed"
+          },
+          {
+            "node": "with",
+            "atSec": 2.827,
+            "state": "running"
+          },
+          {
+            "node": "with",
+            "atSec": 3.4,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "baseline",
+            "from": "without",
+            "to": "pay",
+            "atSec": 1.364,
+            "durationSec": 0.509,
+            "label": "60 calls"
+          },
+          {
+            "id": "protected",
+            "from": "with",
+            "to": "pay",
+            "atSec": 2.891,
+            "durationSec": 0.509,
+            "label": "24 calls"
+          }
+        ],
+        "legend": false,
+        "from": 801,
+        "durationInFrames": 144,
+        "readableFrame": 113,
+        "readableFrom": 914
+      },
+      {
+        "id": "limite",
+        "durationSec": 7.7,
+        "type": "flow",
+        "title": "Protection costs rejections",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Orders",
+            "sublabel": "7 after recovery",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Open",
+            "sublabel": "133 total rejections",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Payments",
+            "sublabel": "recovered; medians",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "new request"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "error",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "blocked",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "pay",
+            "atSec": 1.3,
+            "state": "done"
+          },
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "app",
+            "atSec": 2.429,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 6.3,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "after",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 2.429,
+            "durationSec": 1.29,
+            "label": "request"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 5.01,
+            "durationSec": 1.29,
+            "label": "rejected"
+          }
+        ],
+        "legend": false,
+        "from": 945,
+        "durationInFrames": 231,
+        "readableFrame": 200,
+        "readableFrom": 1145
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [],
+  "finishedAt": "2026-11-05T13:20:42.049Z",
+  "elapsedMs": 5685,
+  "directory": "/home/viniciusk/projetos/auto-play/renders/short-circuit-breaker-java/pronto/out/production/1793884836363-05e40d0f"
+}

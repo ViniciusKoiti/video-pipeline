@@ -4,6 +4,10 @@ Cada etapa é uma issue no GitHub com o mesmo número (etapa N = issue #N) e per
 que segue a ordem de implementação do §11 do `CLAUDE.md`. Gerado a partir de uma fonte única;
 detalhes e critérios de aceite completos estão nas issues.
 
+Fluxo técnico de refatoração (2026-11-01):
+[sequência SOLID com gates RF0–RF7](fluxo-refatoracao-solid-2026-11-01.md), baseada no inventário dos scripts
+e nos gaps de arquitetura. A situação histórica dos episódios e das issues abaixo é preservada.
+
 ## Situação em 2026-09-29
 
 O formato explicativo (#48, #69–#82, no fim deste arquivo) passou na frente do piloto documentário. O histórico
@@ -14,10 +18,10 @@ e as pendências em ordem estão em "Etapa atual e pendências", logo abaixo da 
 | #1–#10 | Fechadas. |
 | #11 | Em pausa até o modelo de planos estabilizar. |
 | #12 | Parcial: `vp approve`, `vp reject` e `vp status` (PR #67); faltam `vp new` e `vp reopen`. |
-| #13, #16 | Script provisório `scripts/provisorio/montar_episodio.py` faz voz e render; os comandos `vp` não existem. |
+| #13, #16 | `vp voice` e `vp render` (RF7, 2026-11-01) fazem voz e render; o script `montar_episodio.py` saiu. |
 | #15 | Adapter Kokoro existe (usado no `vp bench` e no script de voz); falta o glossário de pronúncia. |
 | #19–#22 | Adapters Pexels, Pixabay e Unsplash feitos na #48 (PRs #61–#63); Commons e Arquivo Nacional só pelos scripts provisórios de busca e download; `vp assets` não existe. |
-| #26 | Parcial: script provisório `baixar_fonte.py` (PR #68) e `vp excerpts`. |
+| #26 | Parcial: `vp sources add\|declared` (RF7, ex-`baixar_fonte.py` do PR #68) e `vp excerpts`. |
 | #27, #28 | Adapter Ollama existe; `vp script` e `vp scenes` não. Desde a ADR 009, fichas, roteiro e cenas saem dos agentes (pesquisador, roteirista, verificador) validados pelo `vp check`; o Ollama ficou como candidato (§7). |
 | #14, #17, #18, #23–#25, #29–#31, #41, #42 | Não começadas. #17 (legendas) e #18 (pacote) são necessárias antes de publicar. |
 | M2–M7 do piloto documentário | Em pausa. |
@@ -63,7 +67,7 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
 
   - **Voz (2026-09-30):** a Charon (Gemini TTS, camada gratuita) ganhou do Kokoro na escuta às cegas; ADR 012
     proposta, aceite depois da v5 do vídeo-régua com ela. Camada gratuita: 3 chamadas por minuto e **10 por dia**.
-    Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `montar_episodio.py --voz-final`), várias
+    Kokoro nos rascunhos (`tts`), Charon no vídeo final (`tts_final`, `vp render --voz-final`), várias
     cenas por chamada cortadas nas pausas. Termos, limites e resultado em `data/benchmarks/termos-gemini-tts.md`.
     Próximos: as 3 falas que faltam do vídeo-régua (S08–S10, um lote) e a v5; depois, o volume (-14 LUFS) como v6.
   - **Voz (2026-10-12 e 2026-10-15):** a voz clonada do dono virou a voz final (ADR 016, Chatterbox na CPU, ~15 min
@@ -80,7 +84,7 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
   - trilha e efeitos com `MusicBed`/`SfxTrack` (#81, licença por faixa decidida pelo dono);
   - `vp render` (#13) no lugar do script provisório; o `npm run render` de `video/package.json` ainda aponta
     para a composição `Episode`, que não existe mais.
-- [ ] **Quando for publicar**, na ordem (análise na `docs/ANALISE.md`, revisão de 2026-09-29):
+- [ ] **Quando for publicar**, na ordem (análise inicial, revisão de 2026-09-29; o documento foi removido em 2026-11-01 e está no histórico do Git):
   1. Decisões do dono, numa rodada só: (a) o `votorantim-completo` sai com o roteiro atual (32 carimbos,
      7 planos com "Fonte:" no texto, que agora duplica o rodapé, trechos de até 18 planos sem imagem) ou é
      reescrito com os planos da ADR 011, o que reabre o gate 2 e cumpre os critérios das #73 e #76–#79;

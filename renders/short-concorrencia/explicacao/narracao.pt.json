@@ -1,0 +1,36 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Dois threads somam um milhão de vezes cada. O total deveria dar dois milhões.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "resultado",
+      "text": "Sem proteção, o resultado ficou abaixo do esperado.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "codigo",
+      "text": "O incremento lê o valor, soma e grava. Imagine os dois lendo dez e gravando onze: uma soma se perde. Em C, essa corrida de dados tem comportamento indefinido."
+    },
+    {
+      "scene": "mutex",
+      "text": "O mutex deixa um thread por vez entrar nesse trecho."
+    },
+    {
+      "scene": "atomic",
+      "text": "Já a soma atômica faz leitura, soma e escrita numa operação indivisível, sem perder incrementos nesse contador."
+    },
+    {
+      "scene": "tempo",
+      "text": "Sem proteção, onze milissegundos, e errado. Com mutex, noventa e dois, e certo. Com atomic, 21, e certo."
+    },
+    {
+      "scene": "fecho",
+      "text": "Aqui, o atomic protege cada soma. O mutex protege o trecho entre travar e destravar.",
+      "delivery": "invite"
+    }
+  ]
+}

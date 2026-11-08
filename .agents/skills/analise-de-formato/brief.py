@@ -10,7 +10,7 @@ de Spearman com log(views) e a força:
 - `hint`: o resto.
 
 Só entram as medidas que o roteiro também calcula (`vp numeros`). O perfil é forma, nunca fonte (§2.2). Para
-levar ao episódio: `scripts/provisorio/formato_resumo.py <episódio> <formato-brief-<grupo>.json>`. Só usa a
+levar ao episódio: `vp briefs formato <episódio> <formato-brief-<grupo>.json>`. Só usa a
 biblioteca padrão.
 """
 

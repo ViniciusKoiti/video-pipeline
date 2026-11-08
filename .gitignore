@@ -20,6 +20,8 @@ data/cache/*
 data/music/*
 # Consumo editorial privado, banco SQLite e arquivos auxiliares (ADR 032)
 data/telemetry/
+# Gravações pessoais de referência de voz, em qualquer formato
+data/voice-references/
 
 # Mídia pesada (exceto fixtures pequenas e revisadas)
 *.mp4
@@ -52,3 +54,8 @@ data/publicacoes/metricas.csv
 data/sfx/*
 renders/*/out/
 renders/*/demo/vazamento
+# saídas do motion-video em qualquer nível de renders/, binários e classes das demos dos Shorts, travas de execução
+renders/**/out/
+renders/*/demo/classes/
+renders/short-concorrencia/demo/contador
+**/.lock

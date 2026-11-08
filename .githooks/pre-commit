@@ -3,6 +3,8 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 python3 scripts/check_tamanho.py
+# Lint, tipagem, arquitetura, tamanho e regressão usam o mesmo gate do CI.
+bash scripts/check_qualidade.sh
 staged=$(git diff --cached --name-only --diff-filter=AM -- '*.py')
 if [ -n "$staged" ]; then
   # o CI roda `ruff check .` nos arquivos versionados; aqui, nos que entram neste commit

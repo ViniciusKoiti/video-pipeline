@@ -1,0 +1,15 @@
+# Saídas reais, ruff 0.16.9 e pytest do .venv do projeto, 2026-10-26
+# O comando /revisar roda estes dois comandos; a saída abaixo é a deles.
+
+$ ruff check .
+B006 Do not use mutable data structures for argument defaults
+ --> lista.py:1:26
+Found 1 error.
+exit 1
+
+$ pytest -q
+F
+FAILED test_lista.py::test_lista_nova_a_cada_chamada - AssertionError: assert ['pão', 'leite'] == ['leite']
+test_lista.py:6: AssertionError
+1 failed in 0.02s
+exit 1
