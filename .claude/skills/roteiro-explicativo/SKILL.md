@@ -372,3 +372,12 @@ fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco n
 - Entregue para o agente `verificador`: contexto limpo na primeira rodada; as rodadas seguintes retomam o mesmo
   agente com a lista do que mudou (skill `checagem`, "Rodadas e contexto"). Teto de duas rodadas; além disso, o dono
   decide.
+- **Ordem do ensaio até o gate 4 (conferir antes de cada render).** Já houve vídeo que saiu sem trilha porque o
+  passo ficou fora da lista (`ayanokoji-provocacao-epicteto`, 2026-11-04). A lista completa é:
+  1. roteiro, `vp check`, verificador (até 2 rodadas), gate 2;
+  2. `plano-de-imagens`, gate 3;
+  3. **trilha: agente `diretor-musical` (skill `trilha`) escreve o `music.json`**, `vp music usar` e gate 3 de cada
+     faixa. Todo ensaio longo leva trilha; sem ela só por decisão do dono, registrada no `outline.md`;
+  4. voz, prévia, miniatura, descrição e créditos (com a linha da música), gate 4.
+  Se o roteiro mudar depois do `music.json` (cena nova, ordem trocada, abertura refeita), o plano da trilha volta
+  ao `diretor-musical` antes do próximo render: as âncoras são cenas e trechos da fala.

@@ -69,6 +69,9 @@ de ativos, conferência em resolução cheia).
 7. **Levar ao dono** numa pergunta só: as versões com caminho, a recomendação, e o comando do gate 3 para a foto nova
    (`vp approve <id> --step assets --asset <asset-id>`). Os gates são do dono.
 8. Depois da escolha, copie para `miniatura-final.jpg` e registre a decisão.
+9. **Antes de levar o gate 4 ao dono, confira o que fecha o pacote:** `music.json` existe e as faixas estão
+   aprovadas (skill `trilha`; `episode.json` com `music` não vazio), a descrição e o `credits.txt` citam a música,
+   e o `final.mp4` foi renderizado depois disso. Faltando, avise antes de pedir a aprovação.
 
 ## O que já deu errado
 

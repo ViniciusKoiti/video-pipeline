@@ -588,7 +588,9 @@ O diretor não substitui a conferência de direitos nem aprova gates. O método 
 
 Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →
-voz + render → gate 2 → diretor musical (`music.json`, se o vídeo tem trilha) → render → gate 4. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
+voz + render → gate 2 → diretor musical (`music.json`; **todo ensaio longo leva trilha**, e sem ela só por decisão do dono no `outline.md`;
+nada no render nem no gate 4 cobra, então conferir `music` no `episode.json` antes do gate 4; roteiro que muda
+depois devolve o plano ao diretor) → render → gate 4. O verificador devolve problema de ficha ao pesquisador e de roteiro ao roteirista; ficha
 que muda faz o gate 1 voltar ao dono. Nos Reels, a skill `pauta` (sem agente próprio ainda) vem antes do
 pesquisador, e pesquisador e roteirista leem o `radar-brief.json` do episódio (ADR 018).
 
