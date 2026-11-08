@@ -1,16 +1,16 @@
 import React from "react";
 import {AbsoluteFill, Loop, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
-import {Odometer} from "@viniciusk/motion-kit";
-import {BarChart, LineChart, ShareChart, ValueCompare, YearTimeline} from "@viniciusk/motion-kit/charts";
+import {Odometer} from "@viniciuskoitin/motion-kit";
+import {BarChart, LineChart, ShareChart, ValueCompare, YearTimeline} from "@viniciuskoitin/motion-kit/charts";
 import {
   ArchivalPhoto, DateStamp, DocumentPage, EndCta, Equation, HookCard, KineticHeadline, LowerThird as KitLowerThird,
   Receipt, fitCard,
-} from "@viniciusk/motion-kit/editorial";
-import {FootageBackground, ImageBackground} from "@viniciusk/motion-kit/fx";
-import {GeoMap} from "@viniciusk/motion-kit/geo";
-import type {LonLat} from "@viniciusk/motion-kit/geo";
-import {ExpandingNetwork, layeredLayout, networkDepths} from "@viniciusk/motion-kit/graph";
-import type {NetworkPositions} from "@viniciusk/motion-kit/graph";
+} from "@viniciuskoitin/motion-kit/editorial";
+import {FootageBackground, ImageBackground} from "@viniciuskoitin/motion-kit/fx";
+import {GeoMap} from "@viniciuskoitin/motion-kit/geo";
+import type {LonLat} from "@viniciuskoitin/motion-kit/geo";
+import {ExpandingNetwork, layeredLayout, networkDepths} from "@viniciuskoitin/motion-kit/graph";
+import type {NetworkPositions} from "@viniciuskoitin/motion-kit/graph";
 import {mapBoxes, regionsFor} from "./geo/regions";
 import {NODE_ICONS} from "./icons";
 import {LABELS} from "./labels";

@@ -1,6 +1,6 @@
 import {continueRender, delayRender, staticFile, useVideoConfig} from "remotion";
-import {floatingSafeArea} from "@viniciusk/motion-kit";
-import {editorial} from "@viniciusk/motion-kit/theme";
+import {floatingSafeArea} from "@viniciuskoitin/motion-kit";
+import {editorial} from "@viniciuskoitin/motion-kit/theme";
 import interUrl from "./fonts/InterVariable.woff2";
 
 // Identidade "negócios moderno" (#48): grafite, branco-gelo e UM destaque dourado.

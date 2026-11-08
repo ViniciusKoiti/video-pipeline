@@ -1,9 +1,9 @@
 import React, {useMemo} from "react";
 import {AbsoluteFill, useVideoConfig} from "remotion";
-import {FloatingWindow} from "@viniciusk/motion-kit";
-import {Host, hostAspect} from "@viniciusk/motion-kit/host";
-import type {HostIdentity} from "@viniciusk/motion-kit/host";
-import {notionistsSkin} from "@viniciusk/motion-kit/host/dicebear";
+import {FloatingWindow} from "@viniciuskoitin/motion-kit";
+import {Host, hostAspect} from "@viniciuskoitin/motion-kit/host";
+import type {HostIdentity} from "@viniciuskoitin/motion-kit/host";
+import {notionistsSkin} from "@viniciuskoitin/motion-kit/host/dicebear";
 import {donoSkin, donoSpriteSkin} from "./donoSkin";
 import {theme, useFrame} from "./theme";
 import type {HostProps, HostSceneDirection} from "./types";

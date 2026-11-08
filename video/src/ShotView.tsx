@@ -1,6 +1,6 @@
 import React from "react";
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
-import {useSpringIn} from "@viniciusk/motion-kit";
+import {useSpringIn} from "@viniciuskoitin/motion-kit";
 import {
   ArchivalShot, BrollShot, CalculationShot, ChartShot, CompareShot, DocumentShot, EndCardShot, HookShot, KeywordShot,
   LowerThirdShot, MapShot, NetworkShot, NumberShot, ReceiptShot, StampShot, StockShot, TimelineShot,

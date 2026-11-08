@@ -1,10 +1,10 @@
 import React from "react";
 import {AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig} from "remotion";
-import {SLIDE_EXIT_FRAMES, SceneSlide} from "@viniciusk/motion-kit";
-import {SourceTag, WordCaption} from "@viniciusk/motion-kit/editorial";
-import {SceneBackground} from "@viniciusk/motion-kit/fx";
-import {CameraRig} from "@viniciusk/motion-kit/motion";
-import {MotionThemeProvider} from "@viniciusk/motion-kit/theme";
+import {SLIDE_EXIT_FRAMES, SceneSlide} from "@viniciuskoitin/motion-kit";
+import {SourceTag, WordCaption} from "@viniciuskoitin/motion-kit/editorial";
+import {SceneBackground} from "@viniciuskoitin/motion-kit/fx";
+import {CameraRig} from "@viniciuskoitin/motion-kit/motion";
+import {MotionThemeProvider} from "@viniciuskoitin/motion-kit/theme";
 import {HostWindow} from "./HostWindow";
 import {LABELS} from "./labels";
 import {LanguageProvider, useLanguage} from "./language";
