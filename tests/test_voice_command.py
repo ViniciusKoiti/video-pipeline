@@ -17,6 +17,7 @@ from app.pipeline.state import load_state
 from app.pipeline.voice import Narrator, VoiceLibrary
 from app.providers.errors import QuotaExhausted
 from app.providers.tts.base import SpeechRequest
+from app.settings.models.voice_polish_settings import VoicePolishSettings
 from app.storage.json_files import JsonFileStore
 from tests.fakes import FakeBatchTTS, wav_duration_ms
 from tests.test_voice_scripts import EP, scenes
@@ -34,7 +35,10 @@ def setup(tmp_path: Path, **voices: FakeBatchTTS) -> tuple[JsonFileStore, Simple
     store.write(EP, "scenes.json", scenes())
     default, final = voices.get("tts", FakeBatchTTS()), voices.get("final", FakeBatchTTS())
     named = {"gemini": voices.get("gemini", FakeBatchTTS())}
-    context = SimpleNamespace(store=store, tts=default, tts_final=final, tts_named=named.__getitem__)
+    context = SimpleNamespace(
+        store=store, tts=default, tts_final=final, tts_named=named.__getitem__,
+        settings=SimpleNamespace(voice_polish=VoicePolishSettings()),
+    )
     return store, context
 
 

@@ -1,0 +1,19 @@
+{
+ "enabled": true,
+ "ok": false,
+ "path": "/home/viniciusk/projetos/auto-play/data/benchmarks/ayanokoji-deesser-isolado-2026-11-04/comparacao-A-pausa-B.wav",
+ "provider": "gemini",
+ "model": "gemini-3.8-flash",
+ "uploaded": {
+  "start": 0.0,
+  "end": 92.28,
+  "seconds": 92.28,
+  "file_duration": 92.28,
+  "trimmed": false,
+  "bytes": 738577,
+  "codec": "mp3 mono 64 kbps"
+ },
+ "summary": "LLM critique failed: Gemini did not answer within 600 s (try a shorter clip)",
+ "text": "LLM critique failed: Gemini did not answer within 600 s (try a shorter clip)",
+ "error": "Gemini did not answer within 600 s (try a shorter clip)"
+}

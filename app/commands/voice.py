@@ -37,7 +37,8 @@ def run(args: argparse.Namespace, context: Context) -> int:
     scenes = context.store.read(args.episode_id, "scenes.json", ScenesManifest)
     started = time.monotonic()
     wavs = produce_voice(
-        select_tts(context, args.voz_final, args.voz), scenes, context.store, args.episode_id
+        select_tts(context, args.voz_final, args.voz), scenes, context.store, args.episode_id,
+        polish=context.settings.voice_polish.active(),
     )
     total = 0
     for scene in scenes.scenes:

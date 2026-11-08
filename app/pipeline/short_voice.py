@@ -19,6 +19,7 @@ from typing import Any
 from app.errors import PipelineError
 from app.media.constants.voice_level_constants import VoiceLevelConstants
 from app.media.models.voice_level_report import VoiceLevelReport
+from app.media.models.voice_polish import VoicePolish
 from app.media.probe import duration_ms
 from app.media.pronunciation import load_glossary, respell
 from app.pipeline.models.naming import Naming
@@ -58,7 +59,8 @@ def speech_lines(narration: Narration) -> list[SpeechLine]:
 
 
 def produce_short_voice(
-    tts: TTSProvider, narration: Narration, store: ManifestStore, episode_id: str
+    tts: TTSProvider, narration: Narration, store: ManifestStore, episode_id: str,
+    *, polish: VoicePolish | None = None,
 ) -> list[Path]:
     """O WAV de cada linha da narração, na ordem, com a voz `tts`. A pasta é o "episódio" do estado."""
     folder = store.path(episode_id, "")
@@ -77,6 +79,7 @@ def produce_short_voice(
         outcomes = produce_with_state(
             narrator, store, episode_id, speech, now=datetime.now().astimezone(),
             level=isinstance(tts, ReferencedTTS) and tts.scene_references,
+            polish=polish,
         )
         wavs = narrator.require(outcomes)
     return [wavs[item.id] for item in speech]

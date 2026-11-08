@@ -15,6 +15,7 @@ from app.settings.models.limits import Limits
 from app.settings.models.ollama_settings import OllamaSettings
 from app.settings.models.provider_choice import ProviderChoice
 from app.settings.models.secrets import Secrets
+from app.settings.models.voice_polish_settings import VoicePolishSettings
 from app.settings.models.workers_ai_settings import WorkersAISettings
 
 
@@ -26,6 +27,7 @@ class Settings(_Model):
     chatterbox: ChatterboxSettings = ChatterboxSettings()
     chatterbox_modal: ChatterboxModalSettings = ChatterboxModalSettings()
     earshot: EarshotSettings = EarshotSettings()
+    voice_polish: VoicePolishSettings = VoicePolishSettings()
     groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()

@@ -13,6 +13,7 @@ from app.commands.errors import run as handled
 from app.pipeline.gates import record_decision
 from app.pipeline.schemas import Asset, Decision, EpisodeManifest, Status, Step
 from app.providers.errors import QuotaExhausted
+from app.settings.models.voice_polish_settings import VoicePolishSettings
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, FakeBatchTTS, FakeRender, FakeWordAligner
 from tests.test_assembly import scenes_manifest
@@ -60,6 +61,7 @@ class Env:
             data_dir=tmp_path / "data",
             providers=SimpleNamespace(word_aligner="fake"),
             groq_whisper=SimpleNamespace(model="fake-whisper"),
+            voice_polish=VoicePolishSettings(),
         )
         return SimpleNamespace(
             store=self.store,

@@ -11,6 +11,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 
+from app.media.models.voice_polish import VoicePolish
 from app.media.probe import duration_ms
 from app.media.pronunciation import load_glossary, respell
 from app.pipeline.models.naming import Naming
@@ -23,7 +24,8 @@ from app.providers.tts.base import ReferencedTTS, TTSProvider, closing_tts
 
 
 def produce_voice(
-    tts: TTSProvider, scenes: ScenesManifest, store: ManifestStore, episode_id: str
+    tts: TTSProvider, scenes: ScenesManifest, store: ManifestStore, episode_id: str,
+    *, polish: VoicePolish | None = None,
 ) -> dict[str, Path]:
     """O WAV de cada cena, por id, com a voz `tts`."""
     voice_dir = store.path(episode_id, "voice")
@@ -41,5 +43,6 @@ def produce_voice(
         outcomes = produce_with_state(
             narrator, store, episode_id, lines, now=datetime.now().astimezone(),
             level=isinstance(tts, ReferencedTTS) and tts.scene_references,
+            polish=polish,
         )
         return narrator.require(outcomes)

@@ -1,0 +1,19 @@
+{
+ "enabled": true,
+ "ok": false,
+ "path": "/home/viniciusk/projetos/auto-play/data/benchmarks/voz-loop-2026-11-05/trechos/par-U.wav",
+ "provider": "gemini",
+ "model": "gemini-3.8-flash",
+ "uploaded": {
+  "start": 0.0,
+  "end": 65.08,
+  "seconds": 65.08,
+  "file_duration": 65.08,
+  "trimmed": false,
+  "bytes": 521030,
+  "codec": "mp3 mono 64 kbps"
+ },
+ "summary": "LLM critique failed: Gemini did not answer within 600 s (try a shorter clip)",
+ "text": "LLM critique failed: Gemini did not answer within 600 s (try a shorter clip)",
+ "error": "Gemini did not answer within 600 s (try a shorter clip)"
+}

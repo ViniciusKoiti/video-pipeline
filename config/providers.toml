@@ -77,6 +77,17 @@ python = "~/.local/share/uv/tools/modal/bin/python"  # o Python da CLI do Modal 
 app = "voz-dono"  # publicado com `modal deploy deploy/modal_chatterbox.py`
 reference_name = "referencia.wav"  # no volume privado voz-dono-referencia, enviado pelo dono
 
+# Experimental (ADR 054): ligar somente depois da escuta cega aprovada pelo dono.
+[voice_polish]
+enabled = false
+highpass_hz = 65.0
+eq_hz = 3000.0
+eq_width_octaves = 1.0
+eq_gain_db = 0.0  # EQ omitido ate a escuta pedir
+deesser_intensity = 0.3
+deesser_max = 0.98  # neste filtro, perto de 1 limita mais a reducao (~0,96 dB)
+deesser_frequency = 1.0  # parametro normalizado do FFmpeg, nao Hz
+
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"
 

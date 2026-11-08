@@ -1,0 +1,34 @@
+{
+ "U": {
+  "clip": "data/benchmarks/voz-loop-2026-11-05/trechos/U.wav",
+  "clip_sha256": "45c812dd1c1a02dc99662199ff32a7cabbf7e6d4529bdc2e009cdfb64600e888",
+  "dur_s": 32.04,
+  "lufs": -16.2,
+  "par": "data/benchmarks/voz-loop-2026-11-05/trechos/par-U.wav",
+  "par_sha256": "b78d7e4b31e8b1b8c71c3e12a1e6b48e7af93c13d8d361b11d4ccf0eaa38bd39"
+ },
+ "R1": {
+  "clip": "data/benchmarks/voz-loop-2026-11-05/trechos/R1.wav",
+  "clip_sha256": "b298c9178ff952c22c4951f28be324d257c7f6ac52d5bac3e9f8b1ce84c209d4",
+  "dur_s": 32.08,
+  "lufs": -16.1,
+  "par": "data/benchmarks/voz-loop-2026-11-05/trechos/par-R1.wav",
+  "par_sha256": "0c4dce1292cf131090a6f2612c0eff728cbe793d10c1457d476df6748bdca3f2"
+ },
+ "R2": {
+  "clip": "data/benchmarks/voz-loop-2026-11-05/trechos/R2.wav",
+  "clip_sha256": "d8826ae93d40530e4eeb9ae19a87ceafb061962ef6d2a1008284911663a5f8fe",
+  "dur_s": 37.55,
+  "lufs": -16.0,
+  "par": "data/benchmarks/voz-loop-2026-11-05/trechos/par-R2.wav",
+  "par_sha256": "422d6df258e7b693034f091bb18045a8a0d771ce46ad89762d7e64c22d292d56"
+ },
+ "R3": {
+  "clip": "data/benchmarks/voz-loop-2026-11-05/trechos/R3.wav",
+  "clip_sha256": "962a2bd106615a76dea73de5f2023fadba3ce02eba808b46fa7df5e37b7558d0",
+  "dur_s": 29.12,
+  "lufs": -16.0,
+  "par": "data/benchmarks/voz-loop-2026-11-05/trechos/par-R3.wav",
+  "par_sha256": "05e8c9bfb573fdcd7cfdaf22c224728b193289630f7f796e759ecf9ac95b47c0"
+ }
+}

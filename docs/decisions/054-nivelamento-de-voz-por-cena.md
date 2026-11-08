@@ -40,3 +40,36 @@ cache íntegro/corrompido e mudança da política. Testes de integração verifi
 Short/longos, metadados, caminhos aninhados e falha por cena com retomada sem TTS.
 A CLI real em pt-BR/en reutilizou dez WAVs brutos, gerou as cópias niveladas e
 voltou a executá-las sem alterar arquivos; os renders publicados mantiveram os hashes.
+
+## Emenda 2026-11-04: Polimento Opcional v2
+
+Implementacao experimental da Fase 1 de `docs/specs/prompt-polimento-de-voz.md`.
+**Desligada por padrao; ativacao pendente da escuta e decisao do dono.**
+
+- `[voice_polish]` em `config/providers.toml` declara `enabled = false` e os
+  parametros. A composicao dos comandos passa um `VoicePolish` ou `None` aos
+  fluxos longo e Short; o nucleo nao importa nem le `Settings`.
+- Com `None`, filtros, politica `loudnorm-v1`, nomes e cache permanecem iguais.
+  Com polimento, a politica ganha o sufixo `polish-v2` e a cadeia efetiva; muda
+  somente a copia em `voice/leveled/`, nunca o WAV bruto ou o cache da sintese.
+  Alterar um parametro efetivo muda tambem o hash do estado da voz. Desligar
+  volta a reutilizar as copias v1 intactas.
+- Ordem antes do loudnorm, nas duas passagens: highpass a 65 Hz, EQ opcional
+  (ganho 0 omite o filtro), deesser `i=0.3:m=0.98:f=1.0`. `i`, `m` e `f` sao
+  valores normalizados do FFmpeg, nao Hz nem dB. Neste filtro, `m` mais perto
+  de 1 limita mais a reducao: 0.98 limita a aproximadamente 0.96 dB. Esses
+  valores sao candidatos tecnicos conservadores, nao calibracao de ouvido.
+- A verificacao da saida mede o WAV pronto sem reaplicar a cadeia. Continuam
+  valendo alvo de loudness, teto de pico e tolerancia de duracao de 20 ms;
+  falhas usam `VoiceLevelError` e a recuperacao por cena existente.
+- Testes sem rede usam apenas sinais sinteticos: regressao byte a byte contra
+  a cadeia anterior, separacao e integridade dos caches, propagacao da politica
+  no estado e nos dois formatos, preservacao de duracao, loudness e pico,
+  reducao da componente sibilante e preservacao do corpo dentro da tolerancia
+  numerica. Nao demonstram preferencia perceptual nem qualidade da voz real.
+
+A Fase 1b continua pendente: cinco falas reais dos WAVs brutos, sem chamar TTS,
+ordem cega e chave separada, somente apos autorizacao para gerar as amostras.
+Comparar com a baseline preservada em
+`data/episodes/ayanokoji-provocacao-epicteto/renders/baseline-voz-2026-11-04/`.
+Nao entram nesta emenda ambiencia, ducking ou porta automatica do earshot.

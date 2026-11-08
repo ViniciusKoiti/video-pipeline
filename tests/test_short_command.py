@@ -15,6 +15,7 @@ import pytest
 from app.cli import HANDLERS, build_parser
 from app.commands.errors import run as handled
 from app.media.speech_bounds import SpeechBoundsError, bounds_from_log, speech_bounds
+from app.settings.models.voice_polish_settings import VoicePolishSettings
 from app.storage.json_files import JsonFileStore
 from tests.fakes import FakeBatchTTS, wav_duration_ms
 
@@ -79,7 +80,7 @@ def make(tmp_path: Path, **voices: FakeBatchTTS) -> tuple[Path, Path, SimpleName
     named = {"kokoro": voices.get("kokoro", FakeBatchTTS())}
     context = SimpleNamespace(
         store=JsonFileStore(tmp_path / "episodes"),
-        settings=SimpleNamespace(providers=providers),
+        settings=SimpleNamespace(providers=providers, voice_polish=VoicePolishSettings()),
         tts=FakeBatchTTS(),
         tts_final=voices.get("final", FakeBatchTTS()),
         tts_named=named.__getitem__,

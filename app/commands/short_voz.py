@@ -31,7 +31,9 @@ def run(args: argparse.Namespace, context: Context) -> int:
         provider, tts = settings.providers.tts_final or settings.providers.tts, context.tts_final
     started = time.monotonic()
     episode_id = production_id(context.store, args.folder)  # a pasta é o "episódio" do estado
-    wavs = produce_short_voice(tts, narration, context.store, episode_id)
+    wavs = produce_short_voice(
+        tts, narration, context.store, episode_id, polish=settings.voice_polish.active()
+    )
     entries = voice_entries(narration, wavs, speech_bounds, tts, args.folder)
     for entry in entries:
         begin, end = entry["speech"]

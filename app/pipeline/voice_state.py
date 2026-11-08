@@ -20,6 +20,7 @@ from datetime import datetime
 from pathlib import Path
 
 from app.media.constants.voice_level_constants import VoiceLevelConstants
+from app.media.models.voice_polish import VoicePolish
 from app.media.voice_level import VoiceLevelError, level_policy, level_voice
 from app.pipeline.models.scene_outcome import SceneOutcome
 from app.pipeline.models.scene_record import SceneRecord
@@ -33,14 +34,14 @@ from app.pipeline.voice import Narrator
 Outcome = SceneOutcome[Path]
 
 
-def _level(outcomes: list[Outcome]) -> list[Outcome]:
+def _level(outcomes: list[Outcome], polish: VoicePolish | None) -> list[Outcome]:
     result = []
     for outcome in outcomes:
         if outcome.status is not Status.COMPLETED or outcome.value is None:
             result.append(outcome)
             continue
         try:
-            wav = level_voice(outcome.value)
+            wav = level_voice(outcome.value, polish)
         except VoiceLevelError as error:
             result.append(SceneOutcome[Path](
                 outcome.scene_id, Status.NEEDS_REVIEW,
@@ -48,7 +49,7 @@ def _level(outcomes: list[Outcome]) -> list[Outcome]:
             ))
         else:
             result.append(replace(
-                outcome, value=wav, detail=f"{outcome.detail}|{level_policy()}"
+                outcome, value=wav, detail=f"{outcome.detail}|{level_policy(polish)}"
             ))
     return result
 
@@ -102,18 +103,18 @@ def _save_failure(
 
 def produce_with_state(
     narrator: Narrator, store: ManifestStore, episode_id: str, lines: Sequence[SpeechLine], *, now: datetime,
-    level: bool = False,
+    level: bool = False, polish: VoicePolish | None = None,
 ) -> list[Outcome]:
     """`Narrator.produce` com o episódio travado e o relatório por cena gravado no fim. Erro que não é de
     provedor fica registrado como `failed` e sobe; não aninhar `store.lock` dentro da geração."""
     digest = narrator.input_hash(lines)
     if level:
-        digest = "sha256:" + hashlib.sha256(f"{digest}|{level_policy()}".encode()).hexdigest()
+        digest = "sha256:" + hashlib.sha256(f"{digest}|{level_policy(polish)}".encode()).hexdigest()
     with store.lock(episode_id):
         try:
             outcomes = narrator.produce(lines)
             if level:
-                outcomes = _level(outcomes)
+                outcomes = _level(outcomes, polish)
         except Exception as error:
             _save_failure(store, episode_id, digest, error, now)
             raise

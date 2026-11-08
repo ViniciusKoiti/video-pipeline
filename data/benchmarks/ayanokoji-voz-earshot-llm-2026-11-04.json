@@ -1,0 +1,93 @@
+{
+ "enabled": true,
+ "ok": true,
+ "path": "data/episodes/ayanokoji-provocacao-epicteto/renders/preview.mp4",
+ "provider": "gemini",
+ "model": "gemini-3.8-flash",
+ "uploaded": {
+  "start": 0.0,
+  "end": 45.64,
+  "seconds": 45.64,
+  "file_duration": 599.8,
+  "trimmed": false,
+  "bytes": 365652,
+  "codec": "mp3 mono 64 kbps",
+  "method": "inline"
+ },
+ "seconds": 81.0,
+ "usage": {
+  "promptTokenCount": 2499,
+  "candidatesTokenCount": 1474,
+  "thoughtsTokenCount": 1405,
+  "totalTokenCount": 5378
+ },
+ "finish_reason": "STOP",
+ "context_sent": "Clip under review: 45.6 s (file seconds 0.0-45.6 of a 599.8 s file), sent as mp3 mono 64 kbps for this review.\nMeasured by earshot (exact; use these, never estimate loudness): integrated loudness -16.1 LUFS, true peak -1.4 dBTP, loudness range 2.6 LU, short-term max -14.9 LUFS, quietest 20 ms level (10th percentile) -71.3 dBFS, clipped samples 0.",
+ "notes": [],
+ "critique": {
+  "overall": {
+   "score": 7.0,
+   "verdict": "Voz clonada com excelente inteligibilidade e prosódia fluida, apresentando apenas leve sibilância que pode ser controlada sem prejuízo à clareza."
+  },
+  "scores": {
+   "sync": null,
+   "realism": 7.0,
+   "mix_balance": 7.0,
+   "loudness": 8.0,
+   "music": null
+  },
+  "notes": {
+   "sync": "Sem pista visual, efeitos sonoros ou referências de corte; nota nula conforme orientações.",
+   "realism": "Para uma voz clonada intencional, a articulação e a cadência em português do Brasil são convincentes e estáveis, com inflexões sintéticas mínimas.",
+   "mix_balance": "Voz isolada com clareza vocal e inteligibilidade consistentes ao longo de todo o trecho.",
+   "loudness": "Loudness integrado de -16,1 LUFS, pico verdadeiro em -1,4 dBTP e LRA de 2,6 LU; dinâmica controlada e adequada para narração contínua.",
+   "music": "Sem trilha musical na amostra analisada."
+  },
+  "synthetic_or_cheap": [
+   {
+    "start": 4.5,
+    "end": 6.8,
+    "what": "Pronúncia e cadência de 'Enchiridion'",
+    "why": "Micro-inflexão ligeiramente linear típica de síntese neural ao verbalizar termos incomuns."
+   },
+   {
+    "start": 30.2,
+    "end": 31.8,
+    "what": "Finalização de frase em 'Ayanokoji'",
+    "why": "Transição tonal com leve decaimento estático característico de clonagem de voz."
+   }
+  ],
+  "issues": [
+   {
+    "start": 8.0,
+    "end": 12.5,
+    "severity": "low",
+    "category": "mix",
+    "problem": "Sibilância moderadamente proeminente em fonemas fricativos ('spoiler', 'cenas', 'primeiras').",
+    "fix": "Aplicar de-esser suave com atuação focada nas sibilantes para arredondar os picos sem tirar o brilho da voz."
+   },
+   {
+    "start": 40.5,
+    "end": 45.0,
+    "severity": "low",
+    "category": "mix",
+    "problem": "Acentuação audível de sibilantes em 'situação', 'interesse' e 'classes'.",
+    "fix": "Ajustar contenção dinâmica nas consoantes sibilantes da passagem."
+   }
+  ],
+  "strengths": [
+   "Inteligibilidade textual impecável em toda a extensão do trecho.",
+   "Prosódia e ritmo narrativo naturais, sem pausas mecânicas ou cortes abruptos.",
+   "Consistência tímbrica uniforme entre o início e o fim da locução.",
+   "Ausência de estalos de edição, clipping ou quedas abruptas de sinal."
+  ],
+  "top_fixes": [
+   "Inserir de-esser suave como primeira prioridade para suavizar consoantes fricativas (s/ch/x).",
+   "Auditar o áudio em formato linear (WAV/AIFF) antes de qualquer equalização corretiva, visto que a compressão MP3 a 64 kbps pode mascarar ou alterar a resposta de agudos.",
+   "Aplicar EQ sutil apenas se, após a checagem em WAV, persistir energia excessiva nos agudos."
+  ],
+  "answer": "Avaliação detalhada da qualidade percebida da voz na amostra de 45,64 s:\n\n1. Itens solicitados:\n- Sibilância em s/ch/x: Presente (moderada). Observação audível: picos fricativos audíveis em palavras como 'spoiler' (0:08), 'cenas' (0:09), 'situação' (0:41), 'interesse' (0:42) e 'classes' (0:43). Hipótese causal: resposta de captação original do locutor-fonte combinada à síntese de alta frequência do modelo neural.\n- Aspereza: Ausente. Não se observam distorções harmônicas abrasivas nem textura áspera na locução.\n- Som metálico: Incerto. Existem pequenas variações no decaimento de agudos, mas não é possível distinguir com segurança se decorrem do vocoder neural da clonagem ou dos artefatos de compressão do MP3 a 64 kbps.\n- Abafamento: Ausente. A voz possui abertura espectral suficiente e não soa opaca ou filtrada no corpo médio.\n- Estalos / cortes: Ausente. Edições e respirações/pausas fluem sem cliques, pops ou gating artificial perceptível.\n- Inteligibilidade: Alta / Sem problemas (ausente de defeito). Todas as palavras são perfeitamente compreensíveis.\n- Prosódia: Presente e natural. A cadência e as ênfases transmitem o sentido do texto de forma orgânica para um ensaio narrado.\n- Consistência de timbre: Presente / Consistente. Não há saltos tímbricos perceptíveis entre as diferentes frases da narrativa.\n\n2. De-esser e EQ:\n- De-esser: Recomendado como prioridade moderada/baixa para conter os picos de sibilância identificados.\n- EQ: Não aparenta ser estritamente necessária no momento. Se aplicada, deve vir depois do de-esser e apenas como ajuste estético.\n\n3. Limitação do formato:\nO arquivo fornecido é um MP3 mono a 64 kbps. Essa taxa de amostragem/bitrate impõe limitações diretas à análise de transientes rápidos e do conteúdo de altas frequências, tornando incerto se eventuais texturas sintéticas finas são intrínsecas ao modelo de clonagem ou decorrentes do codec de compressão. A avaliação definitiva deve ocorrer na matriz PCM/WAV não comprimida.\n\n4. Observações gerais:\nSem imagem ou plano de efeitos, a nota de sincronia foi definida como nula. As notas e diagnósticos refletem opinião crítica de mixagem e supervisão de som, e não um escore MOS validado formalmente."
+ },
+ "summary": "gemini (gemini-3.8-flash) rates the soundtrack 7/10: Voz clonada com excelente inteligibilidade e prosódia fluida, apresentando apenas leve sibilância que pode ser controlada sem prejuízo à clareza. 2 issues (0 high). Top fix: Inserir de-esser suave como primeira prioridade para suavizar consoantes fricativas (s/ch/x). LLM opinion, timestamps approximate; verify with earshot timeline/ab.",
+ "text": "gemini (gemini-3.8-flash) rates the soundtrack 7/10: Voz clonada com excelente inteligibilidade e prosódia fluida, apresentando apenas leve sibilância que pode ser controlada sem prejuízo à clareza. 2 issues (0 high). Top fix: Inserir de-esser suave como primeira prioridade para suavizar consoantes fricativas (s/ch/x). LLM opinion, timestamps approximate; verify with earshot timeline/ab.\nanswer: Avaliação detalhada da qualidade percebida da voz na amostra de 45,64 s:\n\n1. Itens solicitados:\n- Sibilância em s/ch/x: Presente (moderada). Observação audível: picos fricativos audíveis em palavras como 'spoiler' (0:08), 'cenas' (0:09), 'situação' (0:41), 'interesse' (0:42) e 'classes' (0:43). Hipótese causal: resposta de captação original do locutor-fonte combinada à síntese de alta frequência do modelo neural.\n- Aspereza: Ausente. Não se observam distorções harmônicas abrasivas nem textura áspera na locução.\n- Som metálico: Incerto. Existem pequenas variações no decaimento de agudos, mas não é possível distinguir com segurança se decorrem do vocoder neural da clonagem ou dos artefatos de compressão do MP3 a 64 kbps.\n- Abafamento: Ausente. A voz possui abertura espectral suficiente e não soa opaca ou filtrada no corpo médio.\n- Estalos / cortes: Ausente. Edições e respirações/pausas fluem sem cliques, pops ou gating artificial perceptível.\n- Inteligibilidade: Alta / Sem problemas (ausente de defeito). Todas as palavras são perfeitamente compreensíveis.\n- Prosódia: Presente e natural. A cadência e as ênfases transmitem o sentido do texto de forma orgânica para um ensaio narrado.\n- Consistência de timbre: Presente / Consistente. Não há saltos tímbricos perceptíveis entre as diferentes frases da narrativa.\n\n2. De-esser e EQ:\n- De-esser: Recomendado como prioridade moderada/baixa para conter os picos de sibilância identificados.\n- EQ: Não aparenta ser estritamente necessária no momento. Se aplicada, deve vir depois do de-esser e apenas como ajuste estético.\n\n3. Limitação do formato:\nO arquivo fornecido é um MP3 mono a 64 kbps. Essa taxa de amostragem/bitrate impõe limitações diretas à análise de transientes rápidos e do conteúdo de altas frequências, tornando incerto se eventuais texturas sintéticas finas são intrínsecas ao modelo de clonagem ou decorrentes do codec de compressão. A avaliação definitiva deve ocorrer na matriz PCM/WAV não comprimida.\n\n4. Observações gerais:\nSem imagem ou plano de efeitos, a nota de sincronia foi definida como nula. As notas e diagnósticos refletem opinião crítica de mixagem e supervisão de som, e não um escore MOS validado formalmente.\nscores (1-10, LLM opinion): realism 7, mix_balance 7, loudness 8\n  sync: Sem pista visual, efeitos sonoros ou referências de corte; nota nula conforme orientações.\n  realism: Para uma voz clonada intencional, a articulação e a cadência em português do Brasil são convincentes e estáveis, com inflexões sintéticas mínimas.\n  mix_balance: Voz isolada com clareza vocal e inteligibilidade consistentes ao longo de todo o trecho.\n  loudness: Loudness integrado de -16,1 LUFS, pico verdadeiro em -1,4 dBTP e LRA de 2,6 LU; dinâmica controlada e adequada para narração contínua.\n  music: Sem trilha musical na amostra analisada.\nissues (most severe first; times = file seconds, approximate):\n  0:08.00-0:12.50 low mix: Sibilância moderadamente proeminente em fonemas fricativos ('spoiler', 'cenas', 'primeiras'). -> fix: Aplicar de-esser suave com atuação focada nas sibilantes para arredondar os picos sem tirar o brilho da voz.\n  0:40.50-0:45.00 low mix: Acentuação audível de sibilantes em 'situação', 'interesse' e 'classes'. -> fix: Ajustar contenção dinâmica nas consoantes sibilantes da passagem.\nsounds that read as synthetic / cheap:\n  0:04.50-0:06.80 Pronúncia e cadência de 'Enchiridion': Micro-inflexão ligeiramente linear típica de síntese neural ao verbalizar termos incomuns.\n  0:30.20-0:31.80 Finalização de frase em 'Ayanokoji': Transição tonal com leve decaimento estático característico de clonagem de voz.\nstrengths: Inteligibilidade textual impecável em toda a extensão do trecho.; Prosódia e ritmo narrativo naturais, sem pausas mecânicas ou cortes abruptos.; Consistência tímbrica uniforme entre o início e o fim da locução.; Ausência de estalos de edição, clipping ou quedas abruptas de sinal.\ntop fixes: 1. Inserir de-esser suave como primeira prioridade para suavizar consoantes fricativas (s/ch/x). | 2. Auditar o áudio em formato linear (WAV/AIFF) antes de qualquer equalização corretiva, visto que a compressão MP3 a 64 kbps pode mascarar ou alterar a resposta de agudos. | 3. Aplicar EQ sutil apenas se, após a checagem em WAV, persistir energia excessiva nos agudos."
+}

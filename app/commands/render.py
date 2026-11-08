@@ -49,7 +49,10 @@ def run(args: argparse.Namespace, context: Context) -> int:
         else None
     )
     started = time.monotonic()
-    wavs = produce_voice(select_tts(context, args.voz_final, args.voz), scenes, store, episode_id)
+    wavs = produce_voice(
+        select_tts(context, args.voz_final, args.voz), scenes, store, episode_id,
+        polish=context.settings.voice_polish.active(),
+    )
     episode_scenes = build_scenes(scenes, wavs, episode_dir, sources)
     total = sum(scene.duration_ms for scene in episode_scenes)
     for scene in episode_scenes:
