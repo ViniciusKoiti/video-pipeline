@@ -154,8 +154,13 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      `docs/guia-animacao-de-texto.md` (rascunho; onde diz *decisão aberta*, pergunte ao dono). Você não escreve
      tempo de palavra nem animação no `scenes.json`: o `keyword` segue com até 8 palavras copiadas da narração, um
      por cena, e uma lista de passos não vira vários `keyword` na mesma cena.
-8. **Toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena; plano que mostra número,
-   data, nome, cargo, citação ou gráfico → `claims` no plano. Use `source_ids` e `excerpt_ids` das
+8. **Declare o regime de fontes e cumpra-o (ADR 056).** `sources_policy` no `scenes.json`: `documental` para
+   perfil de poder, notícia e tudo que afirma fato sobre pessoa viva, empresa ativa ou produto (regra fixa, sem
+   exceção); `ensaio` para o ensaio de filosofia do canal, em que a fonte vai só na descrição e a claim só no
+   que aparece na tela; `entretenimento` só quando a pauta diz que o vídeo não afirma fato. Sem o campo, vale
+   `documental`. **No `documental`, toda afirmação tem trecho.** Narração que afirma fato → `claims` na cena;
+   plano que mostra número, data, nome, cargo, citação ou gráfico → `claims` no plano (também no `ensaio`). Use
+   `source_ids` e `excerpt_ids` das
    evidências das fichas usadas; cada aresta de `network` tem as suas próprias `claims`. O texto na tela
    repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz. **Conta feita na tela (ADR 020):** só em `explicar`, com a narração dizendo a conta
    inteira, cada insumo e a regra em fichas, e a claim do plano escrevendo a expressão com o resultado

@@ -101,8 +101,17 @@ def test_shots_are_parsed_by_kind() -> None:
     ],
 )
 def test_what_appears_on_screen_needs_a_source(kind_fields: dict[str, Any]) -> None:
-    with pytest.raises(ValidationError, match="claims"):
-        SHOT.validate_python({"anchor": "x", **kind_fields})  # §2.2 vale para a tela
+    shot = {"anchor": "x", **kind_fields}
+    assert SHOT.validate_python(shot).claims == []  # o plano em si aceita: quem exige é o regime do roteiro
+    raw = {
+        "episode_id": "ep",
+        "language": "pt-BR",
+        "scenes": [{"id": "S01", "narration": "x na fala.", "shots": [shot]}],
+    }
+    with pytest.raises(ValidationError, match="na tela sem claim .*regime documental"):  # §2.2 vale na tela
+        ScenesManifest.model_validate(raw)
+    relaxed = ScenesManifest.model_validate({**raw, "sources_policy": "entretenimento"})  # ADR 056
+    assert relaxed.scenes[0].shots[0].claims == []
 
 
 def test_crop_and_family_tree_are_checked() -> None:

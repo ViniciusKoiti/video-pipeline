@@ -13,6 +13,8 @@ mudou o conteúdo) e §15 (nova linha); `.claude/agents/roteirista.md` (recebe a
 **Continua em código (não mudou):** o `vp check` e os schemas validam as claims que existirem e dão **alerta**, não erro, em "frase afirmativa em cena sem claims". **Pendente:** um marcador
 de ficção por cena no `scenes.json`, o ajuste do `vp check` e do `vp numeros` para não alertar nas cenas marcadas, e a skill `checagem` conferir a fronteira entre as duas camadas.
 Enquanto o marcador não existe, o roteirista lista as cenas de ficção na tabela do `outline.md`.
+**Resolvido em 2026-11-07 pela ADR 056:** o marcador é o regime de fontes do vídeo (`sources_policy: entretenimento` no `scenes.json`), não da cena;
+com ele o schema dispensa claims, o rodapé não sai e o `vp check` não alerta frase sem claim.
 
 ## Problema
 

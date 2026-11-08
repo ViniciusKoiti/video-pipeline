@@ -4,10 +4,13 @@ from typing import Self
 
 from pydantic import Field, model_validator
 
+from app.pipeline.constants.sources_policy_constants import SourcesPolicyConstants
+from app.pipeline.models._schemas_factual_shot import _FactualShot
 from app.pipeline.models._schemas_types import (
     EpisodeId,
     Language,
     Orientation,
+    SourcesPolicy,
     _unique,
     portrait_problems,
     reels_shot_problems,
@@ -34,10 +37,29 @@ class ScenesManifest(Model):
     scenes: list[Scene] = Field(min_length=1)
     host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
     orientation: Orientation = "landscape"  # `portrait`: 9:16, só com PORTRAIT_SHOT_KINDS (ADR 014)
+    # regime de fontes do vídeo, decisão do roteirista (ADR 056): `documental` (fichas, claims e rodapé),
+    # `ensaio` (fichas; claim no que vai à tela; fonte só na descrição) ou `entretenimento` (sem claim)
+    sources_policy: SourcesPolicy = "documental"
 
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        return self
+
+    @model_validator(mode="after")
+    def _screen_facts_have_claims(self) -> Self:
+        """Número, data, citação, cargo ou gráfico na tela é afirmação: fora do regime `entretenimento`, o
+        plano precisa de claim (ADR 008 e 056)."""
+        if self.sources_policy not in SourcesPolicyConstants.CLAIMS_ON_SCREEN:
+            return self
+        missing = [
+            f"{scene.id}: {shot.kind} ({shot.anchor!r}) na tela sem claim"
+            for scene in self.scenes
+            for shot in effective_shots(scene)
+            if isinstance(shot, _FactualShot) and not shot.claims
+        ]
+        if missing:
+            raise ValueError("; ".join(missing) + f" (regime {self.sources_policy}, ADR 056)")
         return self
 
     @model_validator(mode="after")

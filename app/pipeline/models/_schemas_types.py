@@ -90,6 +90,10 @@ def _later_steps_anchored(steps: list[_Step], what: str) -> None:
 Orientation = Literal["landscape", "portrait"]  # 16:9 ou 9:16 (ADR 014)
 
 
+# Regime de fontes do vídeo, decidido pelo roteirista (ADR 056): muda o que schema, check e rodapé exigem.
+SourcesPolicy = Literal["documental", "ensaio", "entretenimento"]
+
+
 def reels_shot_problems(scenes: Sequence[tuple[str, Sequence[str]]], *, portrait: bool) -> list[str]:
     """Onde ficam os planos dos Reels (ADR 028): só no vertical; o gancho só no primeiro plano do vídeo e o
     cartão final só no último, um de cada. `scenes`: (id da cena, tipos dos planos), em ordem."""

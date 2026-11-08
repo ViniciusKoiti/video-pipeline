@@ -37,11 +37,13 @@ sem fontes na fala, sem `claims`:** o vídeo não cita ninguém, como os modelos
 
 ## Planos e tela
 
-Os planos são os de `roteiro-explicativo`, sem tipo novo. `keyword` e `quote` só com texto que a narração diz; **sem `number` nem `chart`** (eles exigem `claims`); cena e avatar são
+Os planos são os de `roteiro-explicativo`, sem tipo novo. **Declare `"sources_policy": "entretenimento"` no `scenes.json`** (ADR 056): com isso o
+schema aceita `keyword`, `quote`, `number` e `chart` sem `claims`, o rodapé de fonte não aparece e o `vp check` não alerta frase sem claim. Mesmo assim,
+`number` e `chart` só com valor que você sustentaria (regra acima); `keyword` e `quote` só com texto que a narração diz; cena e avatar são
 `broll` com `visual_need: illustrative_reconstruction`; imagem de acervo é ilustração com crédito. Sem `claims` no `scenes.json`.
 
 ## O que entregar
 
 `outline.md` (pergunta, gancho, blocos, duração estimada, o recorte, a frase de divulgação para a primeira cena e a descrição, e as afirmações de fato mais arriscadas que você
-escreveu, uma lista curta para o dono conferir se quiser) e `scenes.json`. O `vp check` vai dar o alerta "frase afirmativa em cena sem claims" em quase todas as cenas: é esperado neste formato
-e não é erro. Passe a `humanizer-narracao` e rode `vp check` (sem erros; sem `facts.json` nem `sources.json` ele valida só o `scenes.json`).
+escreveu, uma lista curta para o dono conferir se quiser) e `scenes.json`. Com `sources_policy: entretenimento`, o `vp check` não alerta frase sem claim e registra
+"regime de fontes: entretenimento". Passe a `humanizer-narracao` e rode `vp check` (sem erros; sem `facts.json` nem `sources.json` ele valida só o `scenes.json`).
