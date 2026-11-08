@@ -72,6 +72,8 @@ voz e render na quinta, gates e agendamento na sexta. O que atrasar empurra o Sh
 - A medição sustenta os resultados; fontes primárias registradas sustentam a explicação do mecanismo.
   O vídeo responde o porquê com animação; o fecho pode pedir outra linguagem ou continuação.
   Aplicar os critérios de `direcao-editorial.md` e a prioridade de `fila.md`.
+- Só o que a medição mostra. A fala não explica a causa (cache, escalonador, página de memória) sem fonte
+  registrada; o fecho pergunta o porquê ao público ("Comenta aqui") e o primeiro comentário fixado traz a medida.
 - Cada número da fala e da tela com entrada no `medicao.json`; o gate 4 não abre sem o `vp medicao` limpo.
 - Concorrência vista só como forma (o canal Bytada e afins): nada de roteiro, imagem ou título alheio.
 - Divulgação da voz clonada em toda legenda; do apresentador, na do Instagram.
