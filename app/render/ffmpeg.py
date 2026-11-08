@@ -327,11 +327,12 @@ def _encoded_audio(
         stale.unlink()
     audio_list = out.parent / f".{out.stem}-audio.txt"
     audio_list.write_text(_concat_list(_audio_parts(episode, episode_dir, out.parent)))
-    audio: list[str] = ["-map", "0:a"]
+    # Com ou sem trilha, a voz vai ao alvo de −14 LUFS com o mesmo limitador (ADR 030, emenda de 2026-11-07).
+    voice_lufs = integrated_lufs(audio_list, input_args=Constants.CONCAT)
+    gain = LoudnessConstants.TARGET_LUFS - voice_lufs
+    audio: list[str] = ["-map", "0:a", "-af", f"volume={gain:.2f}dB,{Constants.LIMITER}"]
     music_inputs: list[str] = []
     if episode.music:
-        voice_lufs = integrated_lufs(audio_list, input_args=Constants.CONCAT)
-        gain = LoudnessConstants.TARGET_LUFS - voice_lufs
         music_inputs, graph = music_mix(
             episode.music, episode_dir, spec.audio_sample_rate, gain, voice_input=0
         )

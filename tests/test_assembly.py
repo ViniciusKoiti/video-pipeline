@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -148,13 +147,11 @@ def env(tmp_path: Path) -> Env:
 def test_the_engine_comes_from_the_port_by_the_episode_format_and_can_be_swapped(env: Env) -> None:
     result = env.render(preview=True)
     assert env.asked == [EpisodeFormat.EXPLAINER] and env.engine.calls == [("preview.mp4", True)]
-    assert (
-        result.path == env.path("renders/preview.mp4")
-        and json.loads(result.path.read_text())["engine"] == "fake-render"
-    )
-    env.engine = Spy("outro-motor")  # trocar o motor é só a composição entregar outro
+    assert result.path == env.path("renders/preview.mp4") and result.path.stat().st_size > 0
+    other = Spy("outro-motor")  # trocar o motor é só a composição entregar outro
+    env.engine = other
     env.render(preview=True)
-    assert json.loads(env.path("renders/preview.mp4").read_text())["engine"] == "outro-motor"
+    assert other.calls == [("preview.mp4", True)] and other.info.name == "outro-motor"
 
 
 def test_a_format_without_an_engine_is_a_configuration_error_and_nothing_is_written(env: Env) -> None:

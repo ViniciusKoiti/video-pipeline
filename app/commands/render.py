@@ -12,7 +12,10 @@ a fala muda (`app/pipeline/caption_production.py`); a legenda palavra a palavra,
 - `--voz-final` e `--voz NOME`: a voz, como no `vp voice`.
 - `--legenda-palavra`: legenda palavra a palavra. Manda o WAV de cada cena ainda não reconhecida ao Whisper
   da Groq (remoto, camada gratuita): só com pedido do dono na sessão.
-- Depois do render com trilha, a loudness final é medida (alvo −14 LUFS).
+- Depois do render, os checks automáticos do §4 (`app/pipeline/render_checks.py`) medem o MP4: abre no
+  ffprobe, tem áudio, tem a dimensão do perfil e dura o que a voz dura (problemas: o comando sai com 1 e o
+  gate 4 recusa), volume no alvo de −14 LUFS e sem silêncio longo (alertas). O resultado fica em
+  `renders/checks-<render>.json` e aparece no `vp status`.
 """
 
 from __future__ import annotations
@@ -21,17 +24,19 @@ import argparse
 import os
 import time
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 
 from app.commands.voice import select_tts
-from app.media.loudness import integrated_lufs, loudness_problem
 from app.media.narration import strip_pauses
 from app.media.word_captions import SceneSpeech
 from app.pipeline.assembly import EpisodeRenderer
 from app.pipeline.caption_production import write_captions, write_word_captions
+from app.pipeline.constants.assembly_constants import AssemblyConstants
 from app.pipeline.episode_build import build_episode, build_scenes, music_segments, with_music
 from app.pipeline.ports import Context
 from app.pipeline.protection import ReviewWriteGuard
+from app.pipeline.render_checks import inspect_render, summary_lines, write_render_checks
 from app.pipeline.schemas import EpisodeManifest, EpisodeScene, ScenesManifest, SourcesManifest
 from app.pipeline.shots import pacing_warnings
 from app.pipeline.voice_production import produce_voice
@@ -133,8 +138,15 @@ def _render(
     started = time.monotonic()
     result = renderer.render(args.episode_id, scenes, episode, preview=args.preview)
     print(f"render: {time.monotonic() - started:.0f} s -> {result.path} ({result.duration_ms / 1000:.1f} s)")
-    if episode.music:
-        lufs = integrated_lufs(result.path)
-        problem = loudness_problem(lufs)
-        print(f"volume: {lufs:.1f} LUFS", f"— alerta: {problem}" if problem else "ok")
-    return 0
+    checks = inspect_render(
+        result.path,
+        render=AssemblyConstants.PREVIEW if args.preview else AssemblyConstants.FINAL,
+        expected_width=result.width,
+        expected_height=result.height,
+        expected_ms=episode.duration_ms,
+        now=datetime.now().astimezone(),
+    )
+    write_render_checks(context.store, args.episode_id, checks)
+    for line in summary_lines(checks):
+        print(line)
+    return 0 if checks.ok else 1

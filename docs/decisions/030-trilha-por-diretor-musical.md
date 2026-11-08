@@ -92,8 +92,18 @@ O dono pediu a ADR inteira para o vídeo `historia-vencedores`. A implementaçã
    - o ducking é o `sidechaincompress` do ffmpeg, com a voz como chave, e não um envelope calculado à parte;
    - a voz é levada ao alvo de −14 LUFS (medido antes da mistura) e um limitador segura o pico em ~−1 dBFS.
 
-   Assim, trocar a faixa não refaz nenhum segmento de cena: refaz só a junção (§5). Vídeo sem trilha não muda,
-   nem no volume.
+   Assim, trocar a faixa não refaz nenhum segmento de cena: refaz só a junção (§5). Vídeo sem trilha não refaz
+   segmento nenhum.
+
+   **Emenda de 2026-11-07 (volume sem trilha e checks do render).** O texto original dizia que o vídeo sem
+   trilha não mudava nem no volume. Na prática, os ensaios publicados sem `music.json` saíram a −16 e −17 LUFS
+   (`kira-voto-brasil`, `death-note-fins-meios`, `ayanokoji-provocacao-epicteto`), contra −14 dos com trilha; o
+   YouTube abaixa o que está alto e não sobe o que está baixo. Desde esta emenda a voz vai ao alvo de −14 LUFS
+   com o mesmo limitador também sem trilha (`AUDIO_VERSION` 2 invalida o AAC em cache). No mesmo PR entram os
+   checks automáticos do §4 do CLAUDE.md, até então só prometidos: depois do render, `app/pipeline/render_checks.py`
+   mede o MP4 (abre no ffprobe, tem áudio, dimensão do perfil, duração = voz; volume no alvo e silêncio ≥ 3 s como
+   alertas) e grava `renders/checks-<render>.json` com o `sha256` do arquivo. Problema faz `vp render` sair com 1,
+   aparece no `vp status` e o gate 4 recusa aprovar; render trocado depois da conferência também recusa.
 2. **O catálogo guarda os direitos como ativo.** Cada faixa tem o ativo `data/music/<id>.json` (licença
    `YouTube-Audio-Library`, `sha256`, `usage_notes`) e uma linha no `catalog.json`, com as etiquetas.
    - A faixa entra no catálogo quando o dono a baixa (`scripts/provisorio/catalogo_musica.py adicionar`).
