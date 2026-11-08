@@ -1,0 +1,12 @@
+2026-11-05T09:10:07-03:00 cpu_probe 0.073
+custo_usd_equivalente 0.6947747999999999 | turnos 24 | modelos ['claude-sonnet-5-5'] | duracao_s 180
+A rotina de hoje (circuit breaker em Java) parou no passo 2 porque a sessão não interativa negou todo comando que executa algo. Não há medição, vídeo, voz nem pacote de gate.
+
+- **O que travou:** `mkdir`, `java -version` e `java Demo.java` voltaram "requires approval", e ninguém aprova nesta sessão. O `.claude/settings.json` só libera `git commit`, `gh repo`, `gh issue` e um script do scratchpad. Não libera `java`, `vp`, `npx motion-video`, `curl` nem `ffmpeg`. Só leitura e as ferramentas `Read` e `Write` funcionaram.
+- **Por que não segui:** sem `java` não há medição, e a skill exige que os números saiam dela e que as explicações venham de fontes registradas. Não estimei nem escrevi roteiro de memória.
+- **Verificações feitas:** a sonda de CPU deu 0,073 s, com a máquina livre. A pauta de circuit breaker está aprovada (2026-11-03) e é o item da fila para hoje, com publicação prevista em 11/11.
+- **Escrito:** `renders/short-circuit-breaker-java/demo/Demo.java`, com o breaker à mão, só JDK e pagamento simulado com `Thread.sleep`. Nunca foi compilado nem rodado. Os parâmetros (300 requisições a 50/s, pool de 20 threads, falha de 3 s, abre com 5 falhas, aberto por 2 s) são proposta minha, não decisão sua.
+- **Registro:** `data/rotina/2026-11-05.md`, com a causa, o que foi e o que não foi feito.
+
+Para retomar, rode `/short-diario` numa sessão interativa, ou libere `java`, `mkdir`, `curl`, `uv run`, `npx motion-video` e `ffmpeg` em `.claude/settings.local.json`. A publicação de 11/11 ainda cabe se a produção sair até uns 10/11. Virtual threads já está agendado para 09/11.
+2026-11-05T09:13:15-03:00 fim

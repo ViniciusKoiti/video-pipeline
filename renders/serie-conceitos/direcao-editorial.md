@@ -67,6 +67,10 @@ O `short-concorrencia-fluxo-pt` é a referência atual de forma: duas colunas de
 caixas ligadas ao contador, valores em trânsito e destaque da operação ativa.
 Conteúdo e números desse exemplo são de C e não passam automaticamente a valer para Java.
 
+## Abertura em quadros (decisão do dono, 2026-11-07)
+
+A partir do próximo Short técnico, os primeiros 3 a 5 segundos mostram a situação em 3 ou 4 quadros, e não em um cartão de texto parado. Os quadros usam caixas, ícones e setas. Não há personagem desenhado à mão (regra de `feedback-sem-desenho-a-mao`). A pergunta de abertura aparece no último quadro, escrita na tela. Os Shorts já agendados para 08/11 não mudam: essa abertura entra numa rodada seguinte, para não misturar variáveis com o teste de ângulos.
+
 ## Conferência antes de considerar pronto
 
 Abrir os quadros de antes, durante e depois das transições principais. Conferir se

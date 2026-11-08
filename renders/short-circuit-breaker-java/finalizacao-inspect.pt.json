@@ -1,0 +1,1168 @@
+{
+  "success": true,
+  "command": "inspect",
+  "composition": "ProductionExplainer",
+  "contentFile": "/home/viniciusk/projetos/auto-play/renders/short-circuit-breaker-java/pronto/content.pt.voz.json",
+  "content": {
+    "version": 2,
+    "format": "vertical",
+    "fps": 30,
+    "style": "editorial",
+    "locale": "pt-BR",
+    "safeArea": "shorts",
+    "cover": true,
+    "footer": "Simulação · JDK 25 · 15 rodadas",
+    "assets": {},
+    "scenes": [
+      {
+        "id": "gancho",
+        "durationSec": 4.4,
+        "type": "hook",
+        "text": "Pagamento caiu.\nThreads esperando?",
+        "highlight": "Threads esperando?",
+        "kicker": "Java · circuit breaker"
+      },
+      {
+        "id": "fechado",
+        "durationSec": 5.8,
+        "type": "flow",
+        "title": "5 falhas seguidas: abre",
+        "nodes": [
+          {
+            "id": "closed",
+            "label": "Fechado",
+            "sublabel": "passa chamadas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "falha simulada",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Aberto",
+            "sublabel": "barra novas chamadas",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "closed",
+            "to": "pay",
+            "label": "chama"
+          },
+          {
+            "from": "pay",
+            "to": "closed",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "closed",
+            "to": "open",
+            "label": "5 falhas",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "closed",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.1,
+            "state": "failed"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.1,
+            "state": "waiting"
+          },
+          {
+            "node": "closed",
+            "atSec": 3.6,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 4.4,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "call",
+            "from": "closed",
+            "to": "pay",
+            "atSec": 1.3,
+            "durationSec": 0.8,
+            "label": "chamada"
+          },
+          {
+            "id": "error",
+            "from": "pay",
+            "to": "closed",
+            "atSec": 2.2,
+            "durationSec": 0.8,
+            "label": "erro"
+          },
+          {
+            "id": "trip",
+            "from": "closed",
+            "to": "open",
+            "atSec": 3.6,
+            "durationSec": 0.8,
+            "label": "limiar"
+          }
+        ],
+        "legend": false
+      },
+      {
+        "id": "aberto",
+        "durationSec": 4.7,
+        "type": "flow",
+        "title": "Erro sem chamar",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Pedidos Java",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Aberto",
+            "sublabel": "sem espera nova",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "não é chamado",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "pedido"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 3.3,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "request",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 1.3,
+            "durationSec": 0.889,
+            "label": "pedido"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 2.411,
+            "durationSec": 0.889,
+            "label": "recusado"
+          }
+        ],
+        "legend": false
+      },
+      {
+        "id": "meio-aberto",
+        "durationSec": 4.1,
+        "type": "flow",
+        "title": "Após 2 s: um teste",
+        "nodes": [
+          {
+            "id": "open",
+            "label": "Aberto",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "half",
+            "label": "Meio-aberto",
+            "sublabel": "uma sonda por vez",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "open",
+            "to": "half",
+            "label": "2 s",
+            "kind": "scheduling"
+          },
+          {
+            "from": "half",
+            "to": "pay",
+            "label": "teste"
+          }
+        ],
+        "states": [
+          {
+            "node": "open",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "half",
+            "atSec": 1.787,
+            "state": "running"
+          },
+          {
+            "node": "open",
+            "atSec": 1.787,
+            "state": "idle"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.7,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "window",
+            "from": "open",
+            "to": "half",
+            "atSec": 1.3,
+            "durationSec": 0.487,
+            "label": "janela passou"
+          },
+          {
+            "id": "probe",
+            "from": "half",
+            "to": "pay",
+            "atSec": 2.213,
+            "durationSec": 0.487,
+            "label": "teste"
+          }
+        ],
+        "legend": false
+      },
+      {
+        "id": "teste",
+        "durationSec": 4.4,
+        "type": "flow",
+        "title": "Sucesso fecha; falha abre",
+        "nodes": [
+          {
+            "id": "half",
+            "label": "Meio-aberto",
+            "sublabel": "resultado do teste",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "closed",
+            "label": "Fechado",
+            "sublabel": "retoma chamadas",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Aberto",
+            "sublabel": "reinicia espera",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "half",
+            "to": "closed",
+            "label": "se sucesso",
+            "dashed": true
+          },
+          {
+            "from": "half",
+            "to": "open",
+            "label": "se falha",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "half",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "closed",
+            "atSec": 1.912,
+            "state": "done"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.456,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 3,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "ok",
+            "from": "half",
+            "to": "closed",
+            "atSec": 1.368,
+            "durationSec": 0.544,
+            "label": "sucesso"
+          },
+          {
+            "id": "fail",
+            "from": "half",
+            "to": "open",
+            "atSec": 2.456,
+            "durationSec": 0.544,
+            "label": "falha"
+          }
+        ],
+        "legend": false
+      },
+      {
+        "id": "medido",
+        "durationSec": 5.5,
+        "type": "flow",
+        "title": "Chamadas na falha",
+        "nodes": [
+          {
+            "id": "without",
+            "label": "Sem breaker",
+            "sublabel": "60 chamadas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "with",
+            "label": "Com breaker",
+            "sublabel": "24 chamadas",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "medianas na simulação",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "without",
+            "to": "pay",
+            "label": "na falha"
+          },
+          {
+            "from": "with",
+            "to": "pay",
+            "label": "na falha"
+          }
+        ],
+        "states": [
+          {
+            "node": "without",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "without",
+            "atSec": 2.064,
+            "state": "failed"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.064,
+            "state": "failed"
+          },
+          {
+            "node": "with",
+            "atSec": 3.336,
+            "state": "running"
+          },
+          {
+            "node": "with",
+            "atSec": 4.1,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "baseline",
+            "from": "without",
+            "to": "pay",
+            "atSec": 1.385,
+            "durationSec": 0.679,
+            "label": "60 chamadas"
+          },
+          {
+            "id": "protected",
+            "from": "with",
+            "to": "pay",
+            "atSec": 3.421,
+            "durationSec": 0.679,
+            "label": "24 chamadas"
+          }
+        ],
+        "legend": false
+      },
+      {
+        "id": "limite",
+        "durationSec": 6.2,
+        "type": "flow",
+        "title": "Proteção custa recusas",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Pedidos",
+            "sublabel": "7 após retorno",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Aberto",
+            "sublabel": "133 recusas totais",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "já voltou; medianas",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "novo pedido"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "pay",
+            "atSec": 1.3,
+            "state": "done"
+          },
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "app",
+            "atSec": 2.09,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 4.8,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "after",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 2.09,
+            "durationSec": 0.903,
+            "label": "pedido"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 3.897,
+            "durationSec": 0.903,
+            "label": "recusado"
+          }
+        ],
+        "legend": false
+      }
+    ]
+  },
+  "media": {},
+  "metadata": {
+    "fps": 30,
+    "durationInFrames": 1053,
+    "durationSec": 35.1,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 4.4,
+        "type": "hook",
+        "text": "Pagamento caiu.\nThreads esperando?",
+        "highlight": "Threads esperando?",
+        "kicker": "Java · circuit breaker",
+        "from": 0,
+        "durationInFrames": 132,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "fechado",
+        "durationSec": 5.8,
+        "type": "flow",
+        "title": "5 falhas seguidas: abre",
+        "nodes": [
+          {
+            "id": "closed",
+            "label": "Fechado",
+            "sublabel": "passa chamadas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "falha simulada",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Aberto",
+            "sublabel": "barra novas chamadas",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "closed",
+            "to": "pay",
+            "label": "chama"
+          },
+          {
+            "from": "pay",
+            "to": "closed",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "closed",
+            "to": "open",
+            "label": "5 falhas",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "closed",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.1,
+            "state": "failed"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.1,
+            "state": "waiting"
+          },
+          {
+            "node": "closed",
+            "atSec": 3.6,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 4.4,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "call",
+            "from": "closed",
+            "to": "pay",
+            "atSec": 1.3,
+            "durationSec": 0.8,
+            "label": "chamada"
+          },
+          {
+            "id": "error",
+            "from": "pay",
+            "to": "closed",
+            "atSec": 2.2,
+            "durationSec": 0.8,
+            "label": "erro"
+          },
+          {
+            "id": "trip",
+            "from": "closed",
+            "to": "open",
+            "atSec": 3.6,
+            "durationSec": 0.8,
+            "label": "limiar"
+          }
+        ],
+        "legend": false,
+        "from": 132,
+        "durationInFrames": 174,
+        "readableFrame": 143,
+        "readableFrom": 275
+      },
+      {
+        "id": "aberto",
+        "durationSec": 4.7,
+        "type": "flow",
+        "title": "Erro sem chamar",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Pedidos Java",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Aberto",
+            "sublabel": "sem espera nova",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "não é chamado",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "pedido"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 3.3,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "request",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 1.3,
+            "durationSec": 0.889,
+            "label": "pedido"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 2.411,
+            "durationSec": 0.889,
+            "label": "recusado"
+          }
+        ],
+        "legend": false,
+        "from": 306,
+        "durationInFrames": 141,
+        "readableFrame": 110,
+        "readableFrom": 416
+      },
+      {
+        "id": "meio-aberto",
+        "durationSec": 4.1,
+        "type": "flow",
+        "title": "Após 2 s: um teste",
+        "nodes": [
+          {
+            "id": "open",
+            "label": "Aberto",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "half",
+            "label": "Meio-aberto",
+            "sublabel": "uma sonda por vez",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "open",
+            "to": "half",
+            "label": "2 s",
+            "kind": "scheduling"
+          },
+          {
+            "from": "half",
+            "to": "pay",
+            "label": "teste"
+          }
+        ],
+        "states": [
+          {
+            "node": "open",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "half",
+            "atSec": 1.787,
+            "state": "running"
+          },
+          {
+            "node": "open",
+            "atSec": 1.787,
+            "state": "idle"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.7,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "window",
+            "from": "open",
+            "to": "half",
+            "atSec": 1.3,
+            "durationSec": 0.487,
+            "label": "janela passou"
+          },
+          {
+            "id": "probe",
+            "from": "half",
+            "to": "pay",
+            "atSec": 2.213,
+            "durationSec": 0.487,
+            "label": "teste"
+          }
+        ],
+        "legend": false,
+        "from": 447,
+        "durationInFrames": 123,
+        "readableFrame": 92,
+        "readableFrom": 539
+      },
+      {
+        "id": "teste",
+        "durationSec": 4.4,
+        "type": "flow",
+        "title": "Sucesso fecha; falha abre",
+        "nodes": [
+          {
+            "id": "half",
+            "label": "Meio-aberto",
+            "sublabel": "resultado do teste",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "closed",
+            "label": "Fechado",
+            "sublabel": "retoma chamadas",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "open",
+            "label": "Aberto",
+            "sublabel": "reinicia espera",
+            "column": 1,
+            "lane": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "half",
+            "to": "closed",
+            "label": "se sucesso",
+            "dashed": true
+          },
+          {
+            "from": "half",
+            "to": "open",
+            "label": "se falha",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "half",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "closed",
+            "atSec": 1.912,
+            "state": "done"
+          },
+          {
+            "node": "closed",
+            "atSec": 2.456,
+            "state": "idle"
+          },
+          {
+            "node": "open",
+            "atSec": 3,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "ok",
+            "from": "half",
+            "to": "closed",
+            "atSec": 1.368,
+            "durationSec": 0.544,
+            "label": "sucesso"
+          },
+          {
+            "id": "fail",
+            "from": "half",
+            "to": "open",
+            "atSec": 2.456,
+            "durationSec": 0.544,
+            "label": "falha"
+          }
+        ],
+        "legend": false,
+        "from": 570,
+        "durationInFrames": 132,
+        "readableFrame": 101,
+        "readableFrom": 671
+      },
+      {
+        "id": "medido",
+        "durationSec": 5.5,
+        "type": "flow",
+        "title": "Chamadas na falha",
+        "nodes": [
+          {
+            "id": "without",
+            "label": "Sem breaker",
+            "sublabel": "60 chamadas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "with",
+            "label": "Com breaker",
+            "sublabel": "24 chamadas",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "medianas na simulação",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "without",
+            "to": "pay",
+            "label": "na falha"
+          },
+          {
+            "from": "with",
+            "to": "pay",
+            "label": "na falha"
+          }
+        ],
+        "states": [
+          {
+            "node": "without",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "without",
+            "atSec": 2.064,
+            "state": "failed"
+          },
+          {
+            "node": "pay",
+            "atSec": 2.064,
+            "state": "failed"
+          },
+          {
+            "node": "with",
+            "atSec": 3.336,
+            "state": "running"
+          },
+          {
+            "node": "with",
+            "atSec": 4.1,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "baseline",
+            "from": "without",
+            "to": "pay",
+            "atSec": 1.385,
+            "durationSec": 0.679,
+            "label": "60 chamadas"
+          },
+          {
+            "id": "protected",
+            "from": "with",
+            "to": "pay",
+            "atSec": 3.421,
+            "durationSec": 0.679,
+            "label": "24 chamadas"
+          }
+        ],
+        "legend": false,
+        "from": 702,
+        "durationInFrames": 165,
+        "readableFrame": 134,
+        "readableFrom": 836
+      },
+      {
+        "id": "limite",
+        "durationSec": 6.2,
+        "type": "flow",
+        "title": "Proteção custa recusas",
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Pedidos",
+            "sublabel": "7 após retorno",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "breaker",
+            "label": "Aberto",
+            "sublabel": "133 recusas totais",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "pay",
+            "label": "Pagamento",
+            "sublabel": "já voltou; medianas",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "breaker",
+            "label": "novo pedido"
+          },
+          {
+            "from": "breaker",
+            "to": "app",
+            "label": "erro",
+            "kind": "completion"
+          },
+          {
+            "from": "breaker",
+            "to": "pay",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "pay",
+            "atSec": 1.3,
+            "state": "done"
+          },
+          {
+            "node": "breaker",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "app",
+            "atSec": 2.09,
+            "state": "running"
+          },
+          {
+            "node": "app",
+            "atSec": 4.8,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "after",
+            "from": "app",
+            "to": "breaker",
+            "atSec": 2.09,
+            "durationSec": 0.903,
+            "label": "pedido"
+          },
+          {
+            "id": "reject",
+            "from": "breaker",
+            "to": "app",
+            "atSec": 3.897,
+            "durationSec": 0.903,
+            "label": "recusado"
+          }
+        ],
+        "legend": false,
+        "from": 867,
+        "durationInFrames": 186,
+        "readableFrame": 155,
+        "readableFrom": 1022
+      }
+    ]
+  },
+  "style": {
+    "slug": "editorial",
+    "reviewNeeds": "frames",
+    "humanReview": false,
+    "cost": "light",
+    "referenceStills": [
+      "docs/stills/explainer-opening-read.png",
+      "docs/stills/explainer-context-read.png",
+      "docs/stills/explainer-comparison-read.png"
+    ],
+    "contrast": {
+      "min": 7.5,
+      "pairs": [
+        {
+          "role": "muted on ground",
+          "color": "#9AA4B2",
+          "on": "#0E1116",
+          "ratio": 7.5,
+          "min": 4.5,
+          "ok": true,
+          "kind": "text"
+        },
+        {
+          "role": "text on ground",
+          "color": "#EDEDE8",
+          "on": "#0E1116",
+          "ratio": 16.1,
+          "min": 4.5,
+          "ok": true,
+          "kind": "text"
+        },
+        {
+          "role": "highlight",
+          "color": "#F2B134",
+          "on": "#0E1116",
+          "ratio": 10.01,
+          "min": 3,
+          "ok": true,
+          "kind": "text"
+        }
+      ]
+    }
+  },
+  "reviewRequired": true,
+  "diagnostics": []
+}

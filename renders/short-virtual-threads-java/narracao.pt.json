@@ -1,0 +1,40 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "Dez mil requisições esperando I/O em Java: onde vai parar o gargalo?",
+      "delivery": "hook"
+    },
+    {
+      "scene": "threads",
+      "text": "Uma thread executa uma requisição, e em Java ela segura uma thread do sistema, que é cara, mesmo quando só espera."
+    },
+    {
+      "scene": "plataforma",
+      "text": "Por isso o pool tem um limite de duzentos, e o resto das requisições fica na fila."
+    },
+    {
+      "scene": "codigo",
+      "text": "Trocar o pool por virtual threads é só uma linha."
+    },
+    {
+      "scene": "virtual",
+      "text": "A virtual thread é da JVM e não segura a thread do sistema enquanto espera, então as dez mil esperam juntas."
+    },
+    {
+      "scene": "conexoes",
+      "text": "Mas com só cinquenta conexões no banco a fila reaparece nelas.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "medido",
+      "text": "Com limite de duzentos, o pool levou cinco segundos, as virtuais cento e setenta e nove milissegundos, e com cinquenta conexões voltou a vinte segundos."
+    },
+    {
+      "scene": "fecho",
+      "text": "O gargalo foi das threads para as conexões, e você, qual limite dimensionaria?",
+      "delivery": "invite"
+    }
+  ]
+}

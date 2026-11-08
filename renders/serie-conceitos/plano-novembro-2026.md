@@ -33,12 +33,12 @@ São 5 Shorts técnicos de 01 a 07/11. A dúvida cega já apontou isso como risc
 | --- | --- | --- | --- |
 | Seg 09/11 | Virtual threads em Java | aprovada | 04/11 |
 | Qua 11/11 | Circuit breaker em Java | aprovada | 05/11 |
-| Sáb 14/11 | Rate limiter em Java | aprovada | 06/11 |
+| Sáb 14/11 | Rate limiter em Java | aprovada | 11/11 (movida de 06/11, 2026-11-05) |
 | Seg 16/11 | Consistent hashing em Java | aprovada | 07/11 |
 | Qua 18/11 | Idempotência em Java (o pagamento cobrado duas vezes por um retry) | **a escrever e aprovar** | 08/11 |
 | Sáb 21/11 | HashMap e colisões em Java (`hashCode` ruim × bom) | **a escrever e aprovar** | 09/11 |
 | Seg 23/11 | Cache em Java (taxa de acerto e *cache stampede*) | **a escrever e aprovar** | 10/11 |
-| Qua 25/11 | Garbage collector em Java (G1 × ZGC, pausas e p99) | **a escrever e aprovar** | 11/11 |
+| Qua 25/11 | Garbage collector em Java: como funciona (G1 × ZGC, pausas e p99 como consequência) | aprovada; reenquadrada em 2026-11-05 | 06/11 (antecipada de 11/11) |
 | Sáb 28/11 | A definir depois da revisão de 14/11 (ver abaixo) | — | — |
 | Seg 30/11 | A definir depois da revisão de 14/11 | — | — |
 

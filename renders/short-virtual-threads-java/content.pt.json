@@ -1,0 +1,478 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "04/11/2026 · OpenJDK 25.0.4.1 · Ryzen 7 5700U · espera simulada de 100 ms · 15 rodadas",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "gancho",
+      "type": "hook",
+      "durationSec": 1.0,
+      "kicker": "Java · JDK 25",
+      "text": "10 mil requisições esperando I/O: onde vai parar o gargalo?",
+      "highlight": "o gargalo"
+    },
+    {
+      "id": "threads",
+      "type": "flow",
+      "durationSec": 1.0,
+      "title": "O que é uma thread",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Requisição",
+          "sublabel": "um pedido ao serviço",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "th",
+          "label": "Thread Java",
+          "sublabel": "executa o código dela",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "so",
+          "label": "Thread do SO",
+          "sublabel": "cara: fica presa",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "io",
+          "label": "Chamada bloqueante",
+          "sublabel": "espera 100 ms",
+          "column": 2,
+          "lane": 0
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "th",
+          "kind": "data",
+          "label": "atende"
+        },
+        {
+          "from": "th",
+          "to": "so",
+          "kind": "scheduling"
+        },
+        {
+          "from": "th",
+          "to": "io",
+          "kind": "scheduling",
+          "label": "espera"
+        }
+      ],
+      "states": [
+        {
+          "node": "req",
+          "atSec": 1.31,
+          "state": "running"
+        },
+        {
+          "node": "th",
+          "atSec": 1.94,
+          "state": "running"
+        },
+        {
+          "node": "req",
+          "atSec": 2.27,
+          "state": "done"
+        },
+        {
+          "node": "so",
+          "atSec": 3.54,
+          "state": "running"
+        },
+        {
+          "node": "io",
+          "atSec": 5.4,
+          "state": "running"
+        },
+        {
+          "node": "th",
+          "atSec": 5.6,
+          "state": "waiting"
+        },
+        {
+          "node": "so",
+          "atSec": 5.8,
+          "state": "waiting"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "r1",
+          "from": "req",
+          "to": "th",
+          "atSec": 1.3,
+          "durationSec": 0.6,
+          "label": "requisição"
+        }
+      ]
+    },
+    {
+      "id": "plataforma",
+      "type": "flow",
+      "durationSec": 1.0,
+      "title": "Pool de 200 threads",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Requisições",
+          "sublabel": "10.000"
+        },
+        {
+          "id": "pool",
+          "label": "Pool de threads",
+          "sublabel": "200 threads"
+        },
+        {
+          "id": "io",
+          "label": "Chamada bloqueante",
+          "sublabel": "espera 100 ms"
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "pool",
+          "kind": "data",
+          "label": "fila"
+        },
+        {
+          "from": "pool",
+          "to": "io",
+          "kind": "scheduling",
+          "label": "200 por vez"
+        }
+      ],
+      "states": [
+        {
+          "node": "req",
+          "atSec": 1.3,
+          "state": "waiting"
+        },
+        {
+          "node": "pool",
+          "atSec": 2.0,
+          "state": "running"
+        },
+        {
+          "node": "io",
+          "atSec": 2.59,
+          "state": "running"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "r1",
+          "from": "req",
+          "to": "pool",
+          "atSec": 1.3,
+          "durationSec": 0.6,
+          "label": "requisição"
+        },
+        {
+          "id": "r2",
+          "from": "req",
+          "to": "pool",
+          "atSec": 1.6,
+          "durationSec": 0.6,
+          "label": "requisição"
+        },
+        {
+          "id": "r3",
+          "from": "req",
+          "to": "pool",
+          "atSec": 1.9,
+          "durationSec": 0.6,
+          "label": "requisição"
+        }
+      ]
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 1.0,
+      "title": "Uma linha muda o executor",
+      "lines": [
+        "// antes: pool de 200 threads",
+        "var pool = Executors",
+        "  .newFixedThreadPool(200);",
+        "",
+        "// depois: uma virtual por tarefa",
+        "var pool = Executors",
+        "  .newVirtualThreadPerTaskExecutor();"
+      ],
+      "highlight": [
+        {
+          "token": "newFixedThreadPool"
+        },
+        {
+          "token": "newVirtualThreadPerTaskExecutor"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 0.3,
+          "lines": [
+            2,
+            3
+          ],
+          "note": "Pool de 200 threads"
+        },
+        {
+          "atSec": 1.67,
+          "lines": [
+            6,
+            7
+          ],
+          "note": "Uma virtual thread por tarefa"
+        }
+      ]
+    },
+    {
+      "id": "virtual",
+      "type": "flow",
+      "durationSec": 1.0,
+      "title": "Virtual threads, gerenciadas pela JVM",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "req",
+          "label": "Requisições",
+          "sublabel": "10.000",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "vt",
+          "label": "Virtual threads",
+          "sublabel": "gerenciadas pela JVM",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "io",
+          "label": "Chamada bloqueante",
+          "sublabel": "espera 100 ms",
+          "column": 2,
+          "lane": 0
+        },
+        {
+          "id": "so",
+          "label": "Threads do SO",
+          "sublabel": "livres enquanto espera",
+          "column": 1,
+          "lane": 1
+        }
+      ],
+      "edges": [
+        {
+          "from": "req",
+          "to": "vt",
+          "kind": "data",
+          "label": "uma cada"
+        },
+        {
+          "from": "vt",
+          "to": "io",
+          "kind": "scheduling",
+          "label": "esperam juntas"
+        },
+        {
+          "from": "vt",
+          "to": "so",
+          "kind": "scheduling",
+          "dashed": true
+        }
+      ],
+      "states": [
+        {
+          "node": "req",
+          "atSec": 1.3,
+          "state": "waiting"
+        },
+        {
+          "node": "vt",
+          "atSec": 1.79,
+          "state": "running"
+        },
+        {
+          "node": "so",
+          "atSec": 1.79,
+          "state": "running"
+        },
+        {
+          "node": "so",
+          "atSec": 2.96,
+          "state": "idle"
+        },
+        {
+          "node": "io",
+          "atSec": 4.33,
+          "state": "running"
+        },
+        {
+          "node": "vt",
+          "atSec": 4.33,
+          "state": "waiting"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "r1",
+          "from": "req",
+          "to": "vt",
+          "atSec": 1.3,
+          "durationSec": 0.5,
+          "label": "requisição"
+        },
+        {
+          "id": "r2",
+          "from": "req",
+          "to": "vt",
+          "atSec": 1.3,
+          "durationSec": 0.5,
+          "label": "requisição"
+        },
+        {
+          "id": "r3",
+          "from": "req",
+          "to": "vt",
+          "atSec": 1.3,
+          "durationSec": 0.5,
+          "label": "requisição"
+        }
+      ]
+    },
+    {
+      "id": "conexoes",
+      "type": "flow",
+      "durationSec": 1.0,
+      "title": "Agora o banco tem 50 conexões",
+      "legend": true,
+      "nodes": [
+        {
+          "id": "vt",
+          "label": "Virtual threads",
+          "sublabel": "10.000"
+        },
+        {
+          "id": "pool",
+          "label": "Conexões",
+          "sublabel": "Semaphore de 50"
+        },
+        {
+          "id": "db",
+          "label": "Banco",
+          "sublabel": "espera 100 ms"
+        }
+      ],
+      "edges": [
+        {
+          "from": "vt",
+          "to": "pool",
+          "kind": "data",
+          "label": "fila"
+        },
+        {
+          "from": "pool",
+          "to": "db",
+          "kind": "scheduling",
+          "label": "50 por vez"
+        }
+      ],
+      "states": [
+        {
+          "node": "vt",
+          "atSec": 1.32,
+          "state": "waiting"
+        },
+        {
+          "node": "pool",
+          "atSec": 1.91,
+          "state": "running"
+        },
+        {
+          "node": "db",
+          "atSec": 2.38,
+          "state": "running"
+        },
+        {
+          "node": "vt",
+          "atSec": 3.57,
+          "state": "waiting"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "r1",
+          "from": "vt",
+          "to": "pool",
+          "atSec": 1.3,
+          "durationSec": 0.6,
+          "label": "requisição"
+        },
+        {
+          "id": "r2",
+          "from": "vt",
+          "to": "pool",
+          "atSec": 1.6,
+          "durationSec": 0.6,
+          "label": "requisição"
+        },
+        {
+          "id": "r3",
+          "from": "vt",
+          "to": "pool",
+          "atSec": 1.9,
+          "durationSec": 0.6,
+          "label": "requisição"
+        }
+      ]
+    },
+    {
+      "id": "medido",
+      "type": "categories",
+      "durationSec": 1.0,
+      "title": "10 mil requisições, medidas (ms)",
+      "unit": "ms",
+      "decimals": 0,
+      "highlight": "virtuais, 50 conexões",
+      "items": [
+        {
+          "label": "pool de 200 threads",
+          "value": 5088.6
+        },
+        {
+          "label": "virtuais",
+          "value": 179.4
+        },
+        {
+          "label": "virtuais, 50 conexões",
+          "value": 20139.0
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 1.0,
+      "variant": "follow",
+      "text": "Qual limite você dimensionaria?",
+      "sub": "Comenta onde o seu serviço espera"
+    }
+  ]
+}

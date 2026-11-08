@@ -1,0 +1,188 @@
+{
+  "language": "pt-BR",
+  "provider": "chatterbox_modal",
+  "lines": [
+    {
+      "scene": "gancho",
+      "text": "O pagamento cai na aplicação Java e as threads ficam esperando.",
+      "delivery": "hook",
+      "wav": "voice/leveled/gancho-chatterbox_modal-ptbr-55182eed01-d9c97096dc2f.wav",
+      "seconds": 3.8,
+      "speech": [
+        0.0,
+        3.531
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/hook-01.wav",
+        "sha256": "b2e04b2a6b778881de1c043d71fc9bc9e6c22426fee323c153c1cb39952ab766",
+        "remote_name": "references/pt-BR/hook.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/gancho-chatterbox_modal-ptbr-55182eed01.wav",
+        "source_sha256": "b97e2c7a74763045c814813a1feebf27b797b2eb1aac0c5c2ff135de1221028f",
+        "wav_sha256": "f0efe4311fc47e1798c1ffaf364417c3ccf1004c4f7f20077d5d405bca74752e",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -24.21,
+        "output_lufs": -16.6,
+        "true_peak_dbtp": -1.48
+      }
+    },
+    {
+      "scene": "fechado",
+      "text": "O circuit breaker fechado passa chamadas, mas cinco falhas seguidas abrem o circuito.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/fechado-chatterbox_modal-ptbr-b9c4853d39-8e9d6a5516cd.wav",
+      "seconds": 5.32,
+      "speech": [
+        0.0,
+        4.929
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/neutral-01.wav",
+        "sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+        "remote_name": "references/pt-BR/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/fechado-chatterbox_modal-ptbr-b9c4853d39.wav",
+        "source_sha256": "b5d9e58a2ec787db12714062bd88c4c0c01262a36c461398fb9db1040a7dd583",
+        "wav_sha256": "c5cc394bee6f31f577fbb8f5b657a18efca2a05a386685379762775a5992038d",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -29.25,
+        "output_lufs": -16.32,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "aberto",
+      "text": "Aberto, devolve erro sem chamar o pagamento e evita esperar.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/aberto-chatterbox_modal-ptbr-5dae346d1a-937410f8467b.wav",
+      "seconds": 4.36,
+      "speech": [
+        0.0,
+        3.931
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/neutral-01.wav",
+        "sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+        "remote_name": "references/pt-BR/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/aberto-chatterbox_modal-ptbr-5dae346d1a.wav",
+        "source_sha256": "21f279816e3c97339e613299426fef5e227a11dc6810d30167d58f22fd5ed58b",
+        "wav_sha256": "0c1904e4c51a009d35a7d923ed417379b94fc6fa6043cb3ec9b73edc1db72140",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -28.79,
+        "output_lufs": -16.63,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "meio-aberto",
+      "text": "Após dois segundos, fica meio-aberto e libera um teste.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/meio-aberto-chatterbox_modal-ptbr-4739a96555-1a434d9c412d.wav",
+      "seconds": 3.64,
+      "speech": [
+        0.0,
+        3.219
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/neutral-01.wav",
+        "sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+        "remote_name": "references/pt-BR/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/meio-aberto-chatterbox_modal-ptbr-4739a96555.wav",
+        "source_sha256": "e0b3eadf6a76b62c754bb159e941c59e327a9e27ac0c56e3282e6a453448ddc0",
+        "wav_sha256": "2c81475b5c24f6115e141eefaa166cb9a27424b9f72a82fa197bea43fd03f6c0",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -27.64,
+        "output_lufs": -15.96,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "teste",
+      "text": "Se funcionar, fecha e retoma chamadas; se falhar, reabre.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/teste-chatterbox_modal-ptbr-9fe53c6bcb-34b6f93b870a.wav",
+      "seconds": 4.0,
+      "speech": [
+        0.0,
+        3.586
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/neutral-01.wav",
+        "sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+        "remote_name": "references/pt-BR/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/teste-chatterbox_modal-ptbr-9fe53c6bcb.wav",
+        "source_sha256": "8e5b53be8f13d452ab956e481a12ed221d9a81c03a66109465fbed010d013162",
+        "wav_sha256": "9c82dd3abc93feb4576a95ea8463f79c9fb97ecfbae01bb0cf75303de9f98766",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -28.76,
+        "output_lufs": -15.96,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "medido",
+      "text": "Na simulação, as chamadas durante a falha caíram de sessenta para vinte e quatro.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/medido-chatterbox_modal-ptbr-a219f955fb-3e92c8429931.wav",
+      "seconds": 5.12,
+      "speech": [
+        0.0,
+        4.71
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/neutral-01.wav",
+        "sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+        "remote_name": "references/pt-BR/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/medido-chatterbox_modal-ptbr-a219f955fb.wav",
+        "source_sha256": "f2b4665af7f7e1319f59ec6997928c04c9dfaef03f0c35e402a1917ad626b912",
+        "wav_sha256": "c76f8e66f7323ff5dbad4394c3ce33e87c5fb763ee591d80919b8d95277fcd1c",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -28.64,
+        "output_lufs": -16.41,
+        "true_peak_dbtp": -1.5
+      }
+    },
+    {
+      "scene": "limite",
+      "text": "Mas ainda recusou sete pedidos depois da volta do pagamento: proteger recursos também custa recusas.",
+      "delivery": "neutral",
+      "wav": "voice/leveled/limite-chatterbox_modal-ptbr-de368342bb-285ece127a31.wav",
+      "seconds": 5.8,
+      "speech": [
+        0.0,
+        5.377
+      ],
+      "reference": {
+        "file": "/home/viniciusk/projetos/auto-play/data/voice-references/pt-BR/neutral-01.wav",
+        "sha256": "6e42c33a26577c52fa7dd335c01cc4652b925a496212f52756b34316bf8b90b2",
+        "remote_name": "references/pt-BR/neutral.wav"
+      },
+      "level": {
+        "source": "/home/viniciusk/projetos/auto-play/data/episodes/short-circuit-breaker-java-pt/voice/limite-chatterbox_modal-ptbr-de368342bb.wav",
+        "source_sha256": "0452a0cc8aa945d21e066f5f58208fb387a040db271f9ee3d0440d9785380bc1",
+        "wav_sha256": "f9ecbd0478930c389257d67e18ab3ccea7fd3cb8818615fdaece36959af82ce1",
+        "policy": "loudnorm-v1:-16.0:-1.5:11:48000",
+        "target_lufs": -16.0,
+        "input_lufs": -28.96,
+        "output_lufs": -16.58,
+        "true_peak_dbtp": -1.5
+      }
+    }
+  ]
+}

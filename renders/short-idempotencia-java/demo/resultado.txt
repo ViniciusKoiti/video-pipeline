@@ -1,0 +1,43 @@
+# 2026-11-07T15:25:07-03:00 | openjdk version "25.0.4.1" 2026-08-18 | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | pagamentos: 10000, perda simulada de 30% das respostas (semente 42), ate 10 tentativas por pagamento | tempo por pedido so em memoria (sem rede, sem banco) | sonda abaixo de 0.12 s antes de cada rodada, pausa de 10 s | 15 rodadas
+rodada=1 cpu_probe=0.106 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.7269
+rodada=1 cpu_probe=0.106 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=2.1213
+rodada=2 cpu_probe=0.102 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.5221
+rodada=2 cpu_probe=0.102 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=2.7469
+rodada=3 cpu_probe=0.101 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=1.2362
+rodada=3 cpu_probe=0.101 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=3.6846
+rodada=4 cpu_probe=0.106 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.9270
+rodada=4 cpu_probe=0.106 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.4013
+rodada=5 cpu_probe=0.105 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.4266
+rodada=5 cpu_probe=0.105 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.5021
+rodada=6 cpu_probe=0.112 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.3752
+rodada=6 cpu_probe=0.112 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=2.5343
+rodada=7 cpu_probe=0.113 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.8585
+rodada=7 cpu_probe=0.113 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.4259
+rodada=8 cpu_probe=0.105 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.6490
+rodada=8 cpu_probe=0.105 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.2787
+rodada=9 cpu_probe=0.099 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.3832
+rodada=9 cpu_probe=0.099 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.1740
+rodada=10 cpu_probe=0.101 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.3952
+rodada=10 cpu_probe=0.101 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.9265
+rodada=11 cpu_probe=0.101 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.4885
+rodada=11 cpu_probe=0.101 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.6219
+rodada=12 cpu_probe=0.104 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.4483
+rodada=12 cpu_probe=0.104 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.4610
+rodada=13 cpu_probe=0.102 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.5713
+rodada=13 cpu_probe=0.102 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.6304
+rodada=14 cpu_probe=0.105 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.5679
+rodada=14 cpu_probe=0.105 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.5774
+rodada=15 cpu_probe=0.102 modo=sem-chave pagamentos=10000 pedidos=14194 cobrancas=14194 duplicadas=4194 chaves_guardadas=0 us_por_pedido=0.3998
+rodada=15 cpu_probe=0.102 modo=com-chave pagamentos=10000 pedidos=14194 cobrancas=10000 duplicadas=0 chaves_guardadas=10000 us_por_pedido=1.2229
+## cpu_probe ao fim: 0.104
+## resumo sem-chave duplicadas mediana=4194 minimo=4194 maximo=4194
+## resumo sem-chave cobrancas mediana=14194 minimo=14194 maximo=14194
+## resumo sem-chave pedidos mediana=14194 minimo=14194 maximo=14194
+## resumo sem-chave chaves_guardadas mediana=0 minimo=0 maximo=0
+## resumo sem-chave us_por_pedido mediana=0.5221 minimo=0.3752 maximo=1.2362
+## resumo com-chave duplicadas mediana=0 minimo=0 maximo=0
+## resumo com-chave cobrancas mediana=10000 minimo=10000 maximo=10000
+## resumo com-chave pedidos mediana=14194 minimo=14194 maximo=14194
+## resumo com-chave chaves_guardadas mediana=10000 minimo=10000 maximo=10000
+## resumo com-chave us_por_pedido mediana=1.5774 minimo=1.1740 maximo=3.6846
+## razao tempo por pedido com/sem chave (medianas) = 3.02

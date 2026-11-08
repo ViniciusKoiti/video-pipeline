@@ -1,0 +1,12 @@
+{
+  "language": "en",
+  "lines": [
+    {"scene": "gancho", "text": "Payments fail in a Java application and its threads are left waiting.", "delivery": "hook"},
+    {"scene": "fechado", "text": "A closed circuit breaker lets calls through, but five consecutive failures open it.", "delivery": "neutral"},
+    {"scene": "aberto", "text": "While open, it returns an error without calling payments, avoiding the wait.", "delivery": "neutral"},
+    {"scene": "meio-aberto", "text": "After two seconds, it becomes half-open and allows a test call.", "delivery": "neutral"},
+    {"scene": "teste", "text": "Success closes it and resumes calls; failure opens it again.", "delivery": "neutral"},
+    {"scene": "medido", "text": "In this simulation, the breaker cut calls during the outage from sixty to twenty-four.", "delivery": "neutral"},
+    {"scene": "limite", "text": "But it still rejected seven requests after payments recovered: protecting resources also means rejecting requests.", "delivery": "neutral"}
+  ]
+}

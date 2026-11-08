@@ -1,0 +1,164 @@
+inicio=2026-11-05T09:28:51-03:00
+ambiente=Linux DESKTOP-4QS2VNT 6.18.54.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Tue Oct  6 19:13:07 UTC 2026 x86_64 GNU/Linux
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           48 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  12
+On-line CPU(s) list:                     0-11
+Vendor ID:                               AuthenticAMD
+Model name:                              AMD Ryzen 7 5700U with Radeon Graphics
+CPU family:                              23
+Model:                                   104
+Thread(s) per core:                      2
+Core(s) per socket:                      6
+Socket(s):                               1
+Stepping:                                1
+BogoMIPS:                                3593.13
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid extd_apicid tsc_known_freq pni pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext perfctr_core ssbd ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 clzero xsaveerptr arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload umip rdpid
+Virtualization:                          AMD-V
+Hypervisor vendor:                       Microsoft
+Virtualization type:                     full
+L1d cache:                               192 KiB (6 instances)
+L1i cache:                               192 KiB (6 instances)
+L2 cache:                                3 MiB (6 instances)
+L3 cache:                                4 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-11
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; untrained return thunk; SMT enabled with STIBP protection
+Vulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; STIBP always-on; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+openjdk version "25.0.4.1" 2026-08-18
+OpenJDK Runtime Environment (build 25.0.4.1+1-1-26.04.4-Ubuntu)
+OpenJDK 64-Bit Server VM (build 25.0.4.1+1-1-26.04.4-Ubuntu, mixed mode, sharing)
+Compilador via modulo jdk.compiler: javac ausente no PATH na tentativa inicial (nenhuma rodada executada).
+javac 25.0.4.1
+Python 3.12.13
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2025 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+79cc94380cc8fadb21d7d6d5876cb8a18aa7151e37b8bcfacf5526f90c2a3274  /home/viniciusk/projetos/auto-play/renders/short-circuit-breaker-java/demo/Demo.java
+2781150adc63c873288f625062dd9c376a96015f2623b651db9825f03748d5f5  /home/viniciusk/projetos/auto-play/renders/short-circuit-breaker-java/demo/BreakerTest.java
+6d95b9b258c51d6a96b5a3262367d496c04d0a00f8b559df9756c55204fa4032  /home/viniciusk/projetos/auto-play/renders/short-circuit-breaker-java/demo/medir.sh
+b56c257f2c7277a2ad6c073cdc90041ae1bbbb3588a6feb00266d612137d567e  /home/viniciusk/projetos/auto-play/app/pipeline/bench.py
+cenario=300 requisicoes; 50/s (intervalo 20 ms, ultima chegada 5980 ms); 20 threads
+falha=[0,3000) ms determinada na entrada da dependencia; timeout=1000 ms; normal=50 ms
+breaker=5 falhas consecutivas na ordem de conclusao; aberto=2000 ms; uma sonda meio-aberto
+Cenario existente preservado; pauta menciona 2 s como proposta, demo existente usa 3 s.
+Simulacao local com Thread.sleep e fila ilimitada; nao e benchmark de producao, rede, banco ou biblioteca.
+Latencia em ms desde chegada programada: inclui fila, atraso do produtor, erros e recusas.
+mediana_ms=elemento de indice n/2 (superior); p99_ms=nearest-rank ceil(n*0.99).
+Recusas sao erros rapidos, nao pagamentos bem-sucedidos; erros inclui recusas.
+recusadas_pos_falha: chegada programada >=3000 ms, mesmo com dependencia saudavel.
+volta_ms: chegada da primeira requisicao pos-falha com sucesso e latencia <=200 ms, menos 3000.
+volta_resposta_ms: conclusao dessa mesma requisicao menos 3000; nao prova recuperacao sustentada.
+volta=-1 indica recuperacao nao observada; agregacao a preserva, sem imputacao.
+15 rodadas por modo, JVM nova sem aquecimento; ordem alternada por par, execucao sequencial.
+cpu_probe original antes de CADA rodada; >0.3 s interrompe; sonda nao garante ausencia de ruido.
+Resumo: mediana e extremos dos valores de cada rodada; nao percentis agrupados de 4500 requisicoes.
+PASS limiar, fronteira 1999/2000, sonda unica e fechamento
+PASS falha antiga nao reinicia janela aberta
+PASS sucesso antigo nao fecha circuito aberto
+PASS falha da sonda reabre por 2000 ms
+PASS sucesso antigo nao zera falhas da nova geracao
+PASS sucesso atual zera falhas consecutivas
+testes=6 status=PASS relogio=controlado sleep=0
+rodada=1 modo=sem-breaker data=2026-11-05T09:28:54-03:00 cpu_probe_s=0.083
+rodada=1 modo=sem-breaker mediana_ms=463 p99_ms=2204 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=483 total_ms=6031
+rodada=1 modo=com-breaker data=2026-11-05T09:29:01-03:00 cpu_probe_s=0.066
+rodada=1 modo=com-breaker mediana_ms=50 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=2 modo=com-breaker data=2026-11-05T09:29:08-03:00 cpu_probe_s=0.072
+rodada=2 modo=com-breaker mediana_ms=51 p99_ms=1601 chamadas_na_falha=24 erros=156 recusadas=132 recusadas_pos_falha=6 volta_ms=80 volta_resposta_ms=131 total_ms=6030
+rodada=2 modo=sem-breaker data=2026-11-05T09:29:15-03:00 cpu_probe_s=0.073
+rodada=2 modo=sem-breaker mediana_ms=462 p99_ms=2201 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=3 modo=sem-breaker data=2026-11-05T09:29:22-03:00 cpu_probe_s=0.067
+rodada=3 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=483 total_ms=6031
+rodada=3 modo=com-breaker data=2026-11-05T09:29:29-03:00 cpu_probe_s=0.072
+rodada=3 modo=com-breaker mediana_ms=50 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=4 modo=com-breaker data=2026-11-05T09:29:36-03:00 cpu_probe_s=0.073
+rodada=4 modo=com-breaker mediana_ms=50 p99_ms=1601 chamadas_na_falha=24 erros=156 recusadas=132 recusadas_pos_falha=6 volta_ms=80 volta_resposta_ms=130 total_ms=6030
+rodada=4 modo=sem-breaker data=2026-11-05T09:29:43-03:00 cpu_probe_s=0.066
+rodada=4 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6030
+rodada=5 modo=sem-breaker data=2026-11-05T09:29:49-03:00 cpu_probe_s=0.069
+rodada=5 modo=sem-breaker mediana_ms=462 p99_ms=2201 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=5 modo=com-breaker data=2026-11-05T09:29:56-03:00 cpu_probe_s=0.072
+rodada=5 modo=com-breaker mediana_ms=50 p99_ms=1601 chamadas_na_falha=24 erros=156 recusadas=132 recusadas_pos_falha=6 volta_ms=80 volta_resposta_ms=131 total_ms=6031
+rodada=6 modo=com-breaker data=2026-11-05T09:30:03-03:00 cpu_probe_s=0.083
+rodada=6 modo=com-breaker mediana_ms=51 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=6 modo=sem-breaker data=2026-11-05T09:30:11-03:00 cpu_probe_s=0.1
+rodada=6 modo=sem-breaker mediana_ms=462 p99_ms=2203 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=483 total_ms=6032
+rodada=7 modo=sem-breaker data=2026-11-05T09:30:19-03:00 cpu_probe_s=0.102
+rodada=7 modo=sem-breaker mediana_ms=469 p99_ms=2203 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=485 total_ms=6031
+rodada=7 modo=com-breaker data=2026-11-05T09:30:26-03:00 cpu_probe_s=0.102
+rodada=7 modo=com-breaker mediana_ms=51 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=8 modo=com-breaker data=2026-11-05T09:30:34-03:00 cpu_probe_s=0.086
+rodada=8 modo=com-breaker mediana_ms=51 p99_ms=1606 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=8 modo=sem-breaker data=2026-11-05T09:30:42-03:00 cpu_probe_s=0.1
+rodada=8 modo=sem-breaker mediana_ms=462 p99_ms=2203 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=483 total_ms=6031
+rodada=9 modo=sem-breaker data=2026-11-05T09:30:49-03:00 cpu_probe_s=0.074
+rodada=9 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=9 modo=com-breaker data=2026-11-05T09:30:56-03:00 cpu_probe_s=0.088
+rodada=9 modo=com-breaker mediana_ms=51 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=10 modo=com-breaker data=2026-11-05T09:31:03-03:00 cpu_probe_s=0.078
+rodada=10 modo=com-breaker mediana_ms=50 p99_ms=1601 chamadas_na_falha=24 erros=156 recusadas=132 recusadas_pos_falha=6 volta_ms=80 volta_resposta_ms=131 total_ms=6031
+rodada=10 modo=sem-breaker data=2026-11-05T09:31:10-03:00 cpu_probe_s=0.074
+rodada=10 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=483 total_ms=6031
+rodada=11 modo=sem-breaker data=2026-11-05T09:31:17-03:00 cpu_probe_s=0.083
+rodada=11 modo=sem-breaker mediana_ms=462 p99_ms=2203 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=11 modo=com-breaker data=2026-11-05T09:31:24-03:00 cpu_probe_s=0.083
+rodada=11 modo=com-breaker mediana_ms=51 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=12 modo=com-breaker data=2026-11-05T09:31:31-03:00 cpu_probe_s=0.115
+rodada=12 modo=com-breaker mediana_ms=50 p99_ms=1602 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+rodada=12 modo=sem-breaker data=2026-11-05T09:31:38-03:00 cpu_probe_s=0.08
+rodada=12 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=13 modo=sem-breaker data=2026-11-05T09:31:46-03:00 cpu_probe_s=0.105
+rodada=13 modo=sem-breaker mediana_ms=465 p99_ms=2204 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=13 modo=com-breaker data=2026-11-05T09:31:53-03:00 cpu_probe_s=0.076
+rodada=13 modo=com-breaker mediana_ms=50 p99_ms=1602 chamadas_na_falha=24 erros=156 recusadas=132 recusadas_pos_falha=6 volta_ms=80 volta_resposta_ms=131 total_ms=6031
+rodada=14 modo=com-breaker data=2026-11-05T09:32:00-03:00 cpu_probe_s=0.102
+rodada=14 modo=com-breaker mediana_ms=51 p99_ms=1601 chamadas_na_falha=24 erros=156 recusadas=132 recusadas_pos_falha=6 volta_ms=80 volta_resposta_ms=131 total_ms=6031
+rodada=14 modo=sem-breaker data=2026-11-05T09:32:07-03:00 cpu_probe_s=0.08
+rodada=14 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=15 modo=sem-breaker data=2026-11-05T09:32:14-03:00 cpu_probe_s=0.076
+rodada=15 modo=sem-breaker mediana_ms=462 p99_ms=2202 chamadas_na_falha=60 erros=60 recusadas=0 recusadas_pos_falha=0 volta_ms=300 volta_resposta_ms=482 total_ms=6031
+rodada=15 modo=com-breaker data=2026-11-05T09:32:21-03:00 cpu_probe_s=0.078
+rodada=15 modo=com-breaker mediana_ms=50 p99_ms=1601 chamadas_na_falha=24 erros=157 recusadas=133 recusadas_pos_falha=7 volta_ms=100 volta_resposta_ms=151 total_ms=6031
+RESUMO modo=sem-breaker metrica=mediana_ms n=15 mediana=462 min=462 max=469
+RESUMO modo=sem-breaker metrica=p99_ms n=15 mediana=2202 min=2201 max=2204
+RESUMO modo=sem-breaker metrica=chamadas_na_falha n=15 mediana=60 min=60 max=60
+RESUMO modo=sem-breaker metrica=erros n=15 mediana=60 min=60 max=60
+RESUMO modo=sem-breaker metrica=recusadas n=15 mediana=0 min=0 max=0
+RESUMO modo=sem-breaker metrica=recusadas_pos_falha n=15 mediana=0 min=0 max=0
+RESUMO modo=sem-breaker metrica=volta_ms n=15 mediana=300 min=300 max=300
+RESUMO modo=sem-breaker metrica=volta_resposta_ms n=15 mediana=482 min=482 max=485
+RESUMO modo=sem-breaker metrica=total_ms n=15 mediana=6031 min=6030 max=6032
+RESUMO modo=com-breaker metrica=mediana_ms n=15 mediana=50 min=50 max=51
+RESUMO modo=com-breaker metrica=p99_ms n=15 mediana=1601 min=1601 max=1606
+RESUMO modo=com-breaker metrica=chamadas_na_falha n=15 mediana=24 min=24 max=24
+RESUMO modo=com-breaker metrica=erros n=15 mediana=157 min=156 max=157
+RESUMO modo=com-breaker metrica=recusadas n=15 mediana=133 min=132 max=133
+RESUMO modo=com-breaker metrica=recusadas_pos_falha n=15 mediana=7 min=6 max=7
+RESUMO modo=com-breaker metrica=volta_ms n=15 mediana=100 min=80 max=100
+RESUMO modo=com-breaker metrica=volta_resposta_ms n=15 mediana=151 min=130 max=151
+RESUMO modo=com-breaker metrica=total_ms n=15 mediana=6031 min=6030 max=6031
+medicoes=30 status=COMPLETO
+fim=2026-11-05T09:32:28-03:00 status_execucao=0

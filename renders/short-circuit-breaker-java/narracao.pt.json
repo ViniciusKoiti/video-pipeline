@@ -1,0 +1,12 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {"scene": "gancho", "text": "O pagamento cai na aplicação Java e as threads ficam esperando.", "delivery": "hook"},
+    {"scene": "fechado", "text": "O circuit breaker fechado passa chamadas, mas cinco falhas seguidas abrem o circuito.", "delivery": "neutral"},
+    {"scene": "aberto", "text": "Aberto, devolve erro sem chamar o pagamento e evita esperar.", "delivery": "neutral"},
+    {"scene": "meio-aberto", "text": "Após dois segundos, fica meio-aberto e libera um teste.", "delivery": "neutral"},
+    {"scene": "teste", "text": "Se funcionar, fecha e retoma chamadas; se falhar, reabre.", "delivery": "neutral"},
+    {"scene": "medido", "text": "Na simulação, as chamadas durante a falha caíram de sessenta para vinte e quatro.", "delivery": "neutral"},
+    {"scene": "limite", "text": "Mas ainda recusou sete pedidos depois da volta do pagamento: proteger recursos também custa recusas.", "delivery": "neutral"}
+  ]
+}

@@ -1,0 +1,16 @@
+2026-11-06T09:28:48-03:00 cpu_probe 0.223
+custo_usd_equivalente 0.4383693999999999 | turnos 15 | modelos ['claude-sonnet-5-5'] | duracao_s 75
+A rotina de hoje parou no passo 1: não produzi nada do Short de garbage collector (pastas, medição, voz, vídeo, posts). Comandos que executam algo (`java`, `mkdir`, `vp`) voltaram "This command requires approval", e numa sessão não interativa ninguém aprova. É o mesmo bloqueio de ontem. Só leitura e as ferramentas `Read`/`Write` funcionaram.
+
+- **Tema do dia:** garbage collector em Java, "como funciona", com G1 × ZGC como consequência. É o item "Próxima produção, 06/11" da fila. A pauta está aprovada e já traz o plano de música.
+- **Por que não segui:** sem `java` não há medição, e a skill exige que os números saiam dela. Não estimei nem escrevi roteiro de memória. Também não contornei a negação com `dangerouslyDisableSandbox`, porque é uma decisão de permissão.
+- **Sonda de CPU:** 0,223 s, medida pelo invólucro às 09:28 (abaixo de 0,3). Não consegui repetir, porque `uv` não está no PATH desta sessão.
+- **Custo e envios:** nada foi enviado ao Postiz, nenhum gate foi tocado e não houve chamada de voz ao Modal.
+- **Registro:** `data/rotina/2026-11-06.md`, com a causa, o que ficou pendente e o que destrava.
+
+Para destravar, rode `/short-diario` numa sessão interativa. A alternativa é liberar `mkdir`, `java`, `curl`, `uv run`/`.venv/bin/vp`, `npx motion-video`, `ffmpeg` e `ffprobe` em `.claude/settings.local.json`. Duas execuções seguidas terminaram só em registro, então vale decidir se o timer deve continuar rodando sem essas permissões.
+
+Não falta estoque por enquanto: virtual threads sai em 09/11, e o circuit breaker, produzido ontem, espera a sua revisão para sair por volta de 11/11. O garbage collector só precisa estar pronto por volta de 22–24/11 para a publicação de 25/11, então um atraso de alguns dias ainda cabe.
+
+Você ainda precisa assistir `renders/short-circuit-breaker-java/final.pt.v2.mp4` e `final.en.mp4`. Se aprovar, vêm depois `vp approve --step translation` e `--step preview` ×3, o push, e `vp postiz duvida` e `schedule` ×3.
+2026-11-06T09:30:19-03:00 fim

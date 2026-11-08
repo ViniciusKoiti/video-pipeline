@@ -1,0 +1,821 @@
+{
+  "runId": "1793705669445-de492ff8",
+  "command": "review",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-03T11:34:29.446Z",
+  "contentFile": "content.pt.json",
+  "artifacts": [
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-start-f0.png",
+      "sceneId": "gancho",
+      "frame": 0,
+      "localFrame": 0,
+      "timeSec": 0
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-read-f82.png",
+      "sceneId": "gancho",
+      "frame": 82,
+      "localFrame": 82,
+      "timeSec": 2.7333333333333334
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-gancho-end-f149.png",
+      "sceneId": "gancho",
+      "frame": 149,
+      "localFrame": 149,
+      "timeSec": 4.966666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-gancho-motion.png",
+      "sceneId": "gancho",
+      "frames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "localFrames": [
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-sem-indice-start-f150.png",
+      "sceneId": "sem-indice",
+      "frame": 150,
+      "localFrame": 0,
+      "timeSec": 5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-sem-indice-read-f335.png",
+      "sceneId": "sem-indice",
+      "frame": 335,
+      "localFrame": 185,
+      "timeSec": 11.166666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-sem-indice-end-f365.png",
+      "sceneId": "sem-indice",
+      "frame": 365,
+      "localFrame": 215,
+      "timeSec": 12.166666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-sem-indice-motion.png",
+      "sceneId": "sem-indice",
+      "frames": [
+        181,
+        212,
+        243,
+        273,
+        304,
+        335
+      ],
+      "localFrames": [
+        31,
+        62,
+        93,
+        123,
+        154,
+        185
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-start-f366.png",
+      "sceneId": "codigo",
+      "frame": 366,
+      "localFrame": 0,
+      "timeSec": 12.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-read-f481.png",
+      "sceneId": "codigo",
+      "frame": 481,
+      "localFrame": 115,
+      "timeSec": 16.033333333333335
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-codigo-end-f560.png",
+      "sceneId": "codigo",
+      "frame": 560,
+      "localFrame": 194,
+      "timeSec": 18.666666666666668
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-codigo-motion.png",
+      "sceneId": "codigo",
+      "frames": [
+        385,
+        404,
+        424,
+        443,
+        462,
+        481
+      ],
+      "localFrames": [
+        19,
+        38,
+        58,
+        77,
+        96,
+        115
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-com-indice-start-f561.png",
+      "sceneId": "com-indice",
+      "frame": 561,
+      "localFrame": 0,
+      "timeSec": 18.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-com-indice-read-f710.png",
+      "sceneId": "com-indice",
+      "frame": 710,
+      "localFrame": 149,
+      "timeSec": 23.666666666666668
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-com-indice-end-f770.png",
+      "sceneId": "com-indice",
+      "frame": 770,
+      "localFrame": 209,
+      "timeSec": 25.666666666666668
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-com-indice-motion.png",
+      "sceneId": "com-indice",
+      "frames": [
+        586,
+        611,
+        636,
+        660,
+        685,
+        710
+      ],
+      "localFrames": [
+        25,
+        50,
+        75,
+        99,
+        124,
+        149
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-comparacao-start-f771.png",
+      "sceneId": "comparacao",
+      "frame": 771,
+      "localFrame": 0,
+      "timeSec": 25.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-comparacao-read-f870.png",
+      "sceneId": "comparacao",
+      "frame": 870,
+      "localFrame": 99,
+      "timeSec": 29
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-comparacao-end-f950.png",
+      "sceneId": "comparacao",
+      "frame": 950,
+      "localFrame": 179,
+      "timeSec": 31.666666666666668
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-comparacao-motion.png",
+      "sceneId": "comparacao",
+      "frames": [
+        786,
+        800,
+        815,
+        829,
+        844,
+        858
+      ],
+      "localFrames": [
+        15,
+        29,
+        44,
+        58,
+        73,
+        87
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-escrita-start-f951.png",
+      "sceneId": "escrita",
+      "frame": 951,
+      "localFrame": 0,
+      "timeSec": 31.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-escrita-read-f1106.png",
+      "sceneId": "escrita",
+      "frame": 1106,
+      "localFrame": 155,
+      "timeSec": 36.86666666666667
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-escrita-end-f1160.png",
+      "sceneId": "escrita",
+      "frame": 1160,
+      "localFrame": 209,
+      "timeSec": 38.666666666666664
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-escrita-motion.png",
+      "sceneId": "escrita",
+      "frames": [
+        977,
+        1003,
+        1029,
+        1054,
+        1080,
+        1106
+      ],
+      "localFrames": [
+        26,
+        52,
+        78,
+        103,
+        129,
+        155
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-custo-start-f1161.png",
+      "sceneId": "custo",
+      "frame": 1161,
+      "localFrame": 0,
+      "timeSec": 38.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-custo-read-f1243.png",
+      "sceneId": "custo",
+      "frame": 1243,
+      "localFrame": 82,
+      "timeSec": 41.43333333333333
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-custo-end-f1310.png",
+      "sceneId": "custo",
+      "frame": 1310,
+      "localFrame": 149,
+      "timeSec": 43.666666666666664
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-custo-motion.png",
+      "sceneId": "custo",
+      "frames": [
+        1168,
+        1176,
+        1183,
+        1190,
+        1198,
+        1205
+      ],
+      "localFrames": [
+        7,
+        15,
+        22,
+        29,
+        37,
+        44
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-start-f1311.png",
+      "sceneId": "fecho",
+      "frame": 1311,
+      "localFrame": 0,
+      "timeSec": 43.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-read-f1385.png",
+      "sceneId": "fecho",
+      "frame": 1385,
+      "localFrame": 74,
+      "timeSec": 46.166666666666664
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-end-f1445.png",
+      "sceneId": "fecho",
+      "frame": 1445,
+      "localFrame": 134,
+      "timeSec": 48.166666666666664
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-fecho-motion.png",
+      "sceneId": "fecho",
+      "frames": [
+        1315,
+        1320,
+        1324,
+        1328,
+        1333,
+        1337
+      ],
+      "localFrames": [
+        4,
+        9,
+        13,
+        17,
+        22,
+        26
+      ]
+    },
+    {
+      "kind": "review",
+      "file": "review.mp4",
+      "frameRange": [
+        120,
+        239
+      ],
+      "cutFrame": 150
+    }
+  ],
+  "style": "editorial",
+  "locale": "pt-BR",
+  "media": {},
+  "versions": {
+    "node": "v22.22.3",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciusk/motion-video": "0.3.0",
+    "@viniciusk/motion-kit": "0.7.3",
+    "@viniciusk/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "7923eb609fdc00fb1637a8102cb927b8ed35ce825b4dbf909c8aa1160628105b",
+    "composition/content.schema.ts": "e5f3071fcca16639d4544dfdf90fcd68d24ae94fb667c489cb45cb892063cd6d",
+    "composition/host.ts": "f4cc396d9a9fbbad2d9308516739d14a452eb6f00268e0bc4e793d9ceceef37b",
+    "src/production.mjs": "5e3082bf20073fcae16a878881c66b142ba971bb6bdb788ea2b541ffa1db5f3a",
+    "dist/composition/index.js": "aae5bae563d02dd46319b461598da0bc08f28fb7ed753e771a8ca9fdd8ac21fa"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1446,
+    "timeline": [
+      {
+        "id": "gancho",
+        "durationSec": 5,
+        "type": "hook",
+        "text": "Uma linha de SQL: mais de mil vezes mais rápida?",
+        "highlight": "mais de mil vezes",
+        "kicker": "SQL · SQLite",
+        "from": 0,
+        "durationInFrames": 150,
+        "readableFrame": 10,
+        "readableFrom": 10
+      },
+      {
+        "id": "sem-indice",
+        "durationSec": 7.2,
+        "type": "flow",
+        "title": "Sem índice: SCAN",
+        "nodes": [
+          {
+            "id": "tela",
+            "label": "Meus pedidos",
+            "sublabel": "API da loja"
+          },
+          {
+            "id": "banco",
+            "label": "SQLite",
+            "sublabel": "WHERE cliente_id = ?"
+          },
+          {
+            "id": "tabela",
+            "label": "pedidos",
+            "sublabel": "1 milhão de linhas"
+          }
+        ],
+        "edges": [
+          {
+            "from": "tela",
+            "to": "banco",
+            "label": "consulta",
+            "kind": "scheduling"
+          },
+          {
+            "from": "banco",
+            "to": "tabela",
+            "label": "lê tudo",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "tela",
+            "atSec": 1.9,
+            "state": "waiting"
+          },
+          {
+            "node": "banco",
+            "atSec": 1.9,
+            "state": "running"
+          },
+          {
+            "node": "tabela",
+            "atSec": 2.1,
+            "state": "running"
+          },
+          {
+            "node": "tabela",
+            "atSec": 5.4,
+            "state": "done"
+          },
+          {
+            "node": "banco",
+            "atSec": 5.4,
+            "state": "done"
+          },
+          {
+            "node": "tela",
+            "atSec": 5.8,
+            "state": "done"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "t-consulta",
+            "from": "tela",
+            "to": "banco",
+            "atSec": 1.3,
+            "durationSec": 0.6,
+            "label": "cliente 42.017"
+          }
+        ],
+        "legend": true,
+        "from": 150,
+        "durationInFrames": 216,
+        "readableFrame": 185,
+        "readableFrom": 335
+      },
+      {
+        "id": "codigo",
+        "durationSec": 6.5,
+        "type": "code",
+        "title": "Uma linha muda o plano",
+        "lines": [
+          "SELECT id, descricao FROM pedidos",
+          "  WHERE cliente_id = ?;",
+          "-- SCAN pedidos",
+          "",
+          "CREATE INDEX pedidos_cliente",
+          "  ON pedidos(cliente_id);",
+          "-- SEARCH pedidos USING INDEX",
+          "--   pedidos_cliente (cliente_id=?)"
+        ],
+        "steps": [
+          {
+            "atSec": 1,
+            "lines": [
+              1,
+              3
+            ],
+            "note": "Sem índice: lê a tabela toda"
+          },
+          {
+            "atSec": 3.5,
+            "lines": [
+              5,
+              8
+            ],
+            "note": "Com índice: só parte das linhas"
+          }
+        ],
+        "highlight": [
+          {
+            "token": "SCAN"
+          },
+          {
+            "token": "SEARCH"
+          },
+          {
+            "token": "CREATE INDEX"
+          }
+        ],
+        "from": 366,
+        "durationInFrames": 195,
+        "readableFrame": 115,
+        "readableFrom": 481
+      },
+      {
+        "id": "com-indice",
+        "durationSec": 7,
+        "type": "flow",
+        "title": "Com índice: SEARCH",
+        "nodes": [
+          {
+            "id": "raiz",
+            "label": "50.000"
+          },
+          {
+            "id": "a",
+            "label": "25.000"
+          },
+          {
+            "id": "b",
+            "label": "75.000"
+          },
+          {
+            "id": "a1",
+            "label": "12.500"
+          },
+          {
+            "id": "a2",
+            "label": "42.017",
+            "sublabel": "→ linhas"
+          }
+        ],
+        "edges": [
+          {
+            "from": "raiz",
+            "to": "a",
+            "kind": "scheduling"
+          },
+          {
+            "from": "raiz",
+            "to": "b",
+            "kind": "scheduling"
+          },
+          {
+            "from": "a",
+            "to": "a1",
+            "kind": "scheduling"
+          },
+          {
+            "from": "a",
+            "to": "a2",
+            "kind": "scheduling"
+          }
+        ],
+        "states": [
+          {
+            "node": "raiz",
+            "atSec": 1.4,
+            "state": "running"
+          },
+          {
+            "node": "raiz",
+            "atSec": 2.4,
+            "state": "done"
+          },
+          {
+            "node": "a",
+            "atSec": 2.4,
+            "state": "running"
+          },
+          {
+            "node": "a",
+            "atSec": 3.4,
+            "state": "done"
+          },
+          {
+            "node": "a2",
+            "atSec": 3.4,
+            "state": "running"
+          },
+          {
+            "node": "a2",
+            "atSec": 4.6,
+            "state": "done"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "k1",
+            "from": "raiz",
+            "to": "a",
+            "atSec": 2.4,
+            "durationSec": 0.8,
+            "label": "42.017"
+          },
+          {
+            "id": "k2",
+            "from": "a",
+            "to": "a2",
+            "atSec": 3.4,
+            "durationSec": 0.8,
+            "label": "42.017"
+          }
+        ],
+        "layout": "tree",
+        "from": 561,
+        "durationInFrames": 210,
+        "readableFrame": 149,
+        "readableFrom": 710
+      },
+      {
+        "id": "comparacao",
+        "durationSec": 6,
+        "type": "versus",
+        "title": "Uma consulta, medida",
+        "left": {
+          "title": "Sem índice",
+          "value": "85,7 ms",
+          "lines": [
+            "SCAN: lê a tabela toda"
+          ]
+        },
+        "right": {
+          "title": "Com índice",
+          "value": "0,047 ms",
+          "lines": [
+            "SEARCH: desce a árvore"
+          ]
+        },
+        "winner": "right",
+        "winnerAtSec": 2.5,
+        "from": 771,
+        "durationInFrames": 180,
+        "readableFrame": 87,
+        "readableFrom": 858
+      },
+      {
+        "id": "escrita",
+        "durationSec": 7,
+        "type": "flow",
+        "title": "E a escrita?",
+        "nodes": [
+          {
+            "id": "checkout",
+            "label": "Checkout",
+            "sublabel": "pedido novo"
+          },
+          {
+            "id": "tabela",
+            "label": "tabela",
+            "sublabel": "pedidos"
+          },
+          {
+            "id": "indice",
+            "label": "índice",
+            "sublabel": "cliente_id"
+          }
+        ],
+        "edges": [
+          {
+            "from": "checkout",
+            "to": "tabela",
+            "label": "INSERT",
+            "kind": "data"
+          },
+          {
+            "from": "checkout",
+            "to": "indice",
+            "label": "entrada",
+            "kind": "data"
+          }
+        ],
+        "states": [
+          {
+            "node": "checkout",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "tabela",
+            "atSec": 2,
+            "state": "running"
+          },
+          {
+            "node": "indice",
+            "atSec": 2,
+            "state": "running"
+          },
+          {
+            "node": "tabela",
+            "atSec": 2.8,
+            "state": "done"
+          },
+          {
+            "node": "indice",
+            "atSec": 4.6,
+            "state": "done"
+          },
+          {
+            "node": "checkout",
+            "atSec": 4.8,
+            "state": "done"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "p-tabela",
+            "from": "checkout",
+            "to": "tabela",
+            "atSec": 1.4,
+            "durationSec": 0.6,
+            "label": "pedido"
+          },
+          {
+            "id": "p-indice",
+            "from": "checkout",
+            "to": "indice",
+            "atSec": 1.4,
+            "durationSec": 0.6,
+            "label": "pedido"
+          }
+        ],
+        "legend": true,
+        "from": 951,
+        "durationInFrames": 210,
+        "readableFrame": 155,
+        "readableFrom": 1106
+      },
+      {
+        "id": "custo",
+        "durationSec": 5,
+        "type": "categories",
+        "title": "O preço: gravar 10 mil e criar (ms)",
+        "items": [
+          {
+            "label": "10 mil, sem índice",
+            "value": 24.3
+          },
+          {
+            "label": "10 mil, com índice",
+            "value": 318.9
+          },
+          {
+            "label": "criar o índice",
+            "value": 736.3
+          }
+        ],
+        "unit": "ms",
+        "decimals": 0,
+        "highlight": "10 mil, com índice",
+        "from": 1161,
+        "durationInFrames": 150,
+        "readableFrame": 44,
+        "readableFrom": 1205
+      },
+      {
+        "id": "fecho",
+        "durationSec": 4.5,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "Mais lida ou mais gravada?",
+        "sub": "Comenta qual coluna você indexaria",
+        "from": 1311,
+        "durationInFrames": 135,
+        "readableFrame": 26,
+        "readableFrom": 1337
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [],
+  "finishedAt": "2026-11-03T11:35:34.190Z",
+  "elapsedMs": 64744,
+  "directory": "/home/viniciusk/projetos/auto-play/renders/short-indices-sqlite/out/production/1793705669445-de492ff8"
+}

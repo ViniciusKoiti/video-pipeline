@@ -48,8 +48,11 @@ O primeiro caso é o teaser do motion-kit
 
 ## Método
 
-1. **A promessa em uma frase e a capa.** O cartão de abertura (`hook`, `cover: true`) é a capa do Short e diz
-   a pergunta ou promessa do vídeo, com a linguagem explícita nos conceitos de programação.
+1. **A promessa em uma frase e a capa.** A abertura mostra a situação em 3 ou 4 quadros de formas geométricas e
+   ícones nos primeiros 3 a 5 segundos, com a pergunta ou promessa escrita no último quadro (decisão do dono,
+   2026-11-07; ver "Abertura em quadros" em `renders/serie-conceitos/direcao-editorial.md`). O primeiro quadro é a
+   capa do Short. Sem personagem desenhado à mão. Use `hook` apenas no quadro de pergunta, com `cover: true`.
+   A linguagem explícita nos conceitos de programação continua valendo.
    Quando houver números, cada um tem origem registrada no doc do short; não criar uma medição para a capa.
 2. **Plano de animação e narração por cena.** Antes de gerar a voz, definir no `plano-animacao.md` o fluxo
    entre componentes, o elemento ativo em cada etapa e a mudança de estado que explica o mecanismo.

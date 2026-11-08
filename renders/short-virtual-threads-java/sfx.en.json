@@ -1,0 +1,8 @@
+{
+  "cues": [
+    {"sound": "pop-medium-in", "scene": "gancho", "offset_s": 0.05, "note": "Capa montada no primeiro quadro."},
+    {"sound": "pop-medium-in", "scene": "threads", "offset_s": 0.16, "note": "Entrada da explicação: o que é uma thread."},
+    {"sound": "pop-medium-in", "scene": "conexoes", "offset_s": 0.1, "note": "A virada: a fila reaparece nas conexões."},
+    {"sound": "pop-medium-in", "scene": "medido", "offset_s": 0.1, "note": "Entrada dos tempos medidos."}
+  ]
+}
