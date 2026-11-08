@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -9,12 +10,20 @@ from pathlib import Path
 SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "check_tamanho.py"
 
 
+def clean_env() -> dict[str, str]:
+    """Sem as variáveis `GIT_*` que o `git commit` exporta para o hook de pré-commit (`GIT_INDEX_FILE`, e
+    `GIT_DIR` numa worktree): com elas, o repositório temporário do teste apontaria para o real."""
+    return {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+
+
 def git(repo: Path, *args: str) -> None:
-    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)
+    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, env=clean_env())
 
 
 def run(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run([sys.executable, str(SCRIPT), *args], cwd=repo, capture_output=True, text=True)
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), *args], cwd=repo, capture_output=True, text=True, env=clean_env()
+    )
 
 
 def test_small_files_pass_and_big_staged_file_is_refused(tmp_path: Path) -> None:

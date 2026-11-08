@@ -7,4 +7,6 @@ from app.pipeline.models.claim import Claim
 
 
 class _FactualShot(_Shot):
-    claims: list[Claim] = Field(min_length=1)  # número, data, citação ou cargo na tela é afirmação
+    # Número, data, citação ou cargo na tela é afirmação: fora do regime `entretenimento`, o `ScenesManifest`
+    # exige a claim (ADR 008 e 056); aqui a lista só não pode faltar.
+    claims: list[Claim] = Field(default_factory=list)

@@ -3,7 +3,8 @@
 
 - **Cenas:** a duração real de cada WAV (ffprobe) vira o tempo dos planos (`app/pipeline/shots.py`), em
   sequência, sem sobreposição. A mídia de cada plano de foto ou B-roll é `assets/<asset_id>.<ext>`; com
-  `sources.json`, cada plano com claims ganha a fonte do rodapé (ADR 011).
+  `sources.json` e regime de fontes `documental`, cada plano com claims ganha a fonte do rodapé (ADR 011 e
+  056).
 - **Trilha (ADR 030):** com `music.json` na pasta, cada entrada vira um trecho de `music` no `episode.json`,
   com o tempo tirado dos WAVs; a faixa é `assets/<asset_id>.<ext>`, copiada do catálogo por `vp music usar`.
 - Nada aqui grava arquivo: quem monta o episódio é o `EpisodeRenderer` (ADR 051). Falta de mídia ou de
@@ -33,6 +34,7 @@ from app.pipeline.schemas import (
     VideoSpec,
 )
 from app.pipeline.shots import episode_shots
+from app.pipeline.sources_policy import footer_sources
 
 
 class EpisodeBuildError(PipelineError, ValueError):
@@ -79,7 +81,8 @@ def build_scenes(
         except ValueError as error:
             raise EpisodeBuildError(f"fala {scene.id} fora da pasta do episódio: {wav}") from error
         ms = measure(wav)
-        shots = episode_shots(scene, ms, _media_for(episode_dir), sources, scenes.language)
+        footer = footer_sources(scenes, sources)  # rodapé de fonte só no regime documental (ADR 056)
+        shots = episode_shots(scene, ms, _media_for(episode_dir), footer, scenes.language)
         built.append(
             EpisodeScene(
                 id=scene.id,

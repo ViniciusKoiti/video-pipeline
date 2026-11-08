@@ -22,7 +22,7 @@ from app.pipeline.constants.shots_constants import ShotsConstants
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
 from app.pipeline.metrics import summary_line
 from app.pipeline.models.check_report import CheckReport as CheckReport
-from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
+from app.pipeline.molde import Molde, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
 from app.pipeline.numbers import (
     FormatBrief,
@@ -66,6 +66,7 @@ from app.pipeline.schemas import (
     screen_parts,
     unknown_source_refs,
 )
+from app.pipeline.sources_policy import policy_summary, policy_warnings
 from app.pipeline.text_fit import text_fit_warnings
 
 # Ritmo de fala padrão, medido no exemplo com pm_alex (150 caracteres em 9,95 s); a CLI passa o da voz
@@ -637,13 +638,11 @@ def check_episode(
     if scenes is not None:
         planned = _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
         report.errors += citation_violations(planned, _assets(store, episode_id, planned, report))
-        if (summary := objective_summary(scenes)) is not None:
-            report.checked.append(summary)
+        report.checked += [s for s in (objective_summary(scenes), funnel_summary(scenes)) if s is not None]
+        report.checked.append(policy_summary(scenes))
         report.warnings += objective_warnings(scenes, today)
-        if (summary := funnel_summary(scenes)) is not None:
-            report.checked.append(summary)
         report.warnings += funnel_warnings(scenes)
-        report.warnings += claimless_statements(scenes)
+        report.warnings += policy_warnings(scenes)  # frase sem claim só no documental (ADR 056)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
         _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)

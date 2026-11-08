@@ -96,6 +96,10 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
    gráfico; ADR 008); o `roteirista-ficcao-historica` ("sua vida em cada nível", "como era ser X") **dispensa
    fichas, fontes e claims** (decisão do dono, 2026-11-05) e só se obriga a não afirmar com precisão o que não
    saiba sustentar. O `vp check` e os schemas seguem validando as claims que existirem.
+   **Citar fonte no vídeo é decisão do roteirista, por regime** (decisão do dono, 2026-11-07; ADR 056):
+   `sources_policy` no `scenes.json`, `documental` (claims e rodapé), `ensaio` (fichas; claim só no que vai à
+   tela; fonte só na descrição) ou `entretenimento` (sem claims). Exceção fixa: fato sobre pessoa viva, empresa
+   ativa ou produto exige ficha e fonte em qualquer regime.
    Roteiro ou vídeo de outro canal é pista de forma, nunca fonte nem texto-base.
 3. **Nenhum ativo sem licença registrada entra no render.** Campos obrigatórios em §6. Imagem sem
    licença identificável vai para `needs_review`.
@@ -282,6 +286,10 @@ revela:
 - **Funil (ADR 026):** `funnel.stage` (`topo` | `meio` | `fundo`, decidido pelo dono na pauta), `cta` (a chamada
   final, dita na última cena) e `offer` (só e sempre no fundo: a planilha ou o modelo oferecido). O `vp check`
   avisa quando falta o estágio, quando a chamada não pede o que o estágio pede e quando ela não está na narração.
+- **Regime de fontes (ADR 056):** `sources_policy` no `scenes.json`, decisão do roteirista; sem o campo,
+  `documental`. No `documental` e no `ensaio`, número, data, citação, cargo ou gráfico na tela exige claim (erro
+  de schema); só o `documental` mostra a fonte no rodapé e recebe o alerta de frase afirmativa sem claim; o
+  `entretenimento` dispensa claims. O `vp check` registra o regime e o `vp status` o mostra junto do gate 2.
 - **`sources.json`:** mínimo de 2 fontes independentes para os fatos principais. `Source.interested` marca fonte
   interessada (fato só com ela gera alerta); fontes com autor em comum (`Source.authors`) contam como uma só.
   `kind: declared` é material do próprio dono (receita, nota de compra), sem URL: o `vp check` avisa e o dono

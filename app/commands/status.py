@@ -11,11 +11,13 @@ import argparse
 from datetime import date
 
 from app.commands.constants.cli_constants import CliConstants
+from app.pipeline.constants.sources_policy_constants import SourcesPolicyConstants
 from app.pipeline.gates import GateStatus, gate_report, latest_check
 from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.pending import pending_pieces
 from app.pipeline.ports import Context
 from app.pipeline.schemas import Decision, Step
+from app.pipeline.sources_policy import declared_policy
 
 
 def run(args: argparse.Namespace, context: Context) -> int:
@@ -24,6 +26,8 @@ def run(args: argparse.Namespace, context: Context) -> int:
         print(_status_line(row))
         if row.step is Step.SCRIPT:
             print(_check_line(context, args.episode_id))
+            if (regime := _policy_line(context, args.episode_id)) is not None:
+                print(regime)
     pending = [row.asset_id or row.step.value for row in rows if _pending(row)]
     pending += pending_pieces(context.store, args.episode_id)
     pending += _metrics_status(context, args.episode_id)
@@ -42,6 +46,14 @@ def _metrics_status(context: Context, episode_id: str) -> list[str]:
         return ["metrics.json inválido (ver vp check)"]
     print(f"{'métricas':38} {summary_line(metrics, date.today())}")
     return pending_lines(metrics, date.today())
+
+
+def _policy_line(context: Context, episode_id: str) -> str | None:
+    """O regime de fontes declarado no roteiro (ADR 056), para o gate 2 saber o que está aprovando."""
+    regime = declared_policy(context.store, episode_id)
+    if regime is None:
+        return None
+    return f"{'fontes':6} {'regime ' + regime:31} {SourcesPolicyConstants.DESCRIPTIONS[regime]}"
 
 
 def _status_line(row: GateStatus) -> str:

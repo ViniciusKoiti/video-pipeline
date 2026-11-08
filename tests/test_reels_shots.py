@@ -97,7 +97,6 @@ def test_reels_script_with_hook_count_and_end_card_parses() -> None:
         (lambda c: c["terms"][0].update(op="+"), "primeiro termo da conta não tem operador"),
         (lambda c: c["terms"][1].pop("op"), "termo 2 da conta sem operador"),
         (lambda c: c["terms"][2].pop("anchor"), "termo 3 sem anchor"),
-        (lambda c: c.update(claims=[]), "at least 1 item"),
     ],
 )
 def test_calculation_rules(change: Any, message: str) -> None:
@@ -105,6 +104,16 @@ def test_calculation_rules(change: Any, message: str) -> None:
     change(raw)
     with pytest.raises(ValidationError, match=message):
         SHOT.validate_python(raw)
+
+
+def test_a_calculation_without_claims_only_passes_in_the_entertainment_policy() -> None:
+    raw = calculation()
+    raw["claims"] = []
+    message = r"S01: calculation \(.*\) na tela sem claim .*regime documental"
+    with pytest.raises(ValidationError, match=message):
+        manifest(first=[hook(), raw])
+    parsed = manifest(first=[hook(), raw], sources_policy="entretenimento")
+    assert parsed.sources_policy == "entretenimento" and parsed.scenes[0].shots[1].claims == []
 
 
 def test_calculation_parts_follow_the_narration_and_get_times() -> None:
