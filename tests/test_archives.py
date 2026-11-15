@@ -310,6 +310,29 @@ def test_unsplash_failed_announcement_blocks_the_download(tmp_path: Path) -> Non
     assert not (tmp_path / "a.jpg").exists()
 
 
+def test_unsplash_hourly_limit_is_quota_not_a_refused_key() -> None:
+    archive, _ = unsplash(**{"/search/photos": TransportError(403, "Rate Limit Exceeded")})
+    with pytest.raises(QuotaExhausted) as raised:
+        archive.search_assets(photo_query())
+    assert "chave recusada" not in str(raised.value) and KEY not in str(raised.value)
+
+
+def test_unsplash_hourly_limit_on_the_announcement_is_quota(tmp_path: Path) -> None:
+    archive, http = unsplash()
+    [candidate] = archive.search_assets(photo_query())
+    http.routes["/download"] = TransportError(403, "Rate Limit Exceeded")
+    with pytest.raises(QuotaExhausted):
+        archive.download_asset(candidate.asset, tmp_path / "a.jpg")
+    assert not (tmp_path / "a.jpg").exists()
+
+
+def test_unsplash_403_without_the_limit_text_is_still_a_refused_key() -> None:
+    archive, _ = unsplash(**{"/search/photos": TransportError(403, "OAuth error")})
+    with pytest.raises(ProviderError) as raised:
+        archive.search_assets(photo_query())
+    assert not isinstance(raised.value, QuotaExhausted) and "chave recusada" in str(raised.value)
+
+
 def test_unsplash_cache_never_holds_the_key(tmp_path: Path) -> None:
     archive, _ = unsplash(tmp_path)
     archive.search_assets(photo_query())
