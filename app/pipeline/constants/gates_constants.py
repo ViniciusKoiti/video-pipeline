@@ -25,5 +25,9 @@ class GatesConstants:
     CHECKED_FILES: Final = ("facts.json", "scenes.json", "outline.md")
     # a imagem escolhida para o plano
     ASSET_ID: Final = re.compile(b'("asset_id"\\s*:\\s*)"(?:[^"\\\\]|\\\\.)*"')
+    # a chave inteira, com o valor e uma vírgula vizinha: tirar ou pôr a imagem não muda o hash do gate 2
+    ASSET_ID_AFTER: Final = re.compile(rb',\s*"asset_id"\s*:\s*(?:null|"(?:[^"\\]|\\.)*")')
+    ASSET_ID_BEFORE: Final = re.compile(rb'"asset_id"\s*:\s*(?:null|"(?:[^"\\]|\\.)*")\s*,\s*')
+    ASSET_ID_ALONE: Final = re.compile(rb'"asset_id"\s*:\s*(?:null|"(?:[^"\\]|\\.)*")')
     GATED_STEPS: Final = (*GATE_FILES, Step.ASSETS, Step.TRANSLATION, Step.PREVIEW)
     MEDIA_SUFFIXES: Final = (".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", *AUDIO_SUFFIXES)

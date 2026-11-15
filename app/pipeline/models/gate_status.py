@@ -12,9 +12,10 @@ class GateStatus:
     asset_id: str | None
     entry: ReviewEntry | None  # última decisão; None = nenhuma
     current_hash: str | None  # None = o que foi revisto não existe mais
-    legacy_hash: str | None = None  # carimbo de antes de a imagem sair do gate 2 (decisões já gravadas)
+    # carimbos de regras anteriores (decisões já gravadas): o arquivo inteiro e o asset_id contado como null
+    legacy_hashes: tuple[str, ...] = ()
 
     @property
     def valid(self) -> bool:
-        accepted = {self.current_hash, self.legacy_hash} - {None}
+        accepted = {self.current_hash, *self.legacy_hashes} - {None}
         return self.entry is not None and self.entry.input_hash in accepted
