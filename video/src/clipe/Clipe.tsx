@@ -55,7 +55,8 @@ const TEMA = {
 const ANTON = "Anton, 'DejaVu Sans Condensed', sans-serif";
 const CINZEL = "Cinzel, 'DejaVu Serif', serif";
 const MONO = "'IBM Plex Mono', 'DejaVu Sans Mono', monospace";
-const MONO_SECOES = new Set(["intro", "ponte", "outro"]);
+const MONO_PADRAO = ["intro", "ponte", "outro"];
+const monoEm = (m: Musica, linha: Linha) => (m.mono ?? MONO_PADRAO).includes(linha.secao);
 const POP = 4; // quadros da entrada de cada palavra (escala e opacidade, sem quique)
 const SEGURA = 1.0; // s que um verso fica depois do fim, quando o próximo demora (no outro, até o próximo)
 const EMENDA = 6; // quadros da passagem do som do corte para o final da música
@@ -69,7 +70,7 @@ const quadro = (s: number) => Math.round(s * CLIPE_FPS);
 // Efeito próprio de alguns versos, escolhido pelo texto (a letra é fixa).
 const efeito = (m: Musica, linha: Linha): string | null => {
   const texto = norm(linha.texto);
-  if (MONO_SECOES.has(linha.secao)) return null;
+  if (monoEm(m, linha)) return null;
   return m.efeitos.find(([inicio]) => texto.startsWith(inicio))?.[1] ?? null;
 };
 
@@ -97,10 +98,9 @@ const fileiras = (palavras: Palavra[], indices: number[], maxc: number): number[
 // (os versos do refrão em `refraoSangue`, como "Mataste").
 const paleta = (m: Musica, linha: Linha, indice: number) => {
   const invertida = linha.vez === 2;
-  if (linha.secao === "refrao") {
-    if (m.refraoSangue.some((inicio) => norm(linha.texto).startsWith(inicio))) return TEMA.sangue;
-    return invertida ? TEMA.claro : TEMA.escuro;
-  }
+  if ((m.fundoSangueEm ?? ["refrao"]).includes(linha.secao)
+    && m.refraoSangue.some((inicio) => norm(linha.texto).startsWith(inicio))) return TEMA.sangue;
+  if (linha.secao === "refrao") return invertida ? TEMA.claro : TEMA.escuro;
   if (linha.secao === "pre") return (indice % 2 === 0) !== invertida ? TEMA.claro : TEMA.escuro;
   if (linha.secao === "quebra") return TEMA.claro;
   return TEMA.escuro;
@@ -202,7 +202,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
   if (!linha || !visivel) return <AbsoluteFill style={{background: COR.preto}}>{som}{selo}{tela}</AbsoluteFill>;
 
   const lf = frame - quadro(linha.ini);
-  const mono = MONO_SECOES.has(linha.secao) && !ultima;
+  const mono = monoEm(m, linha) && !ultima;
   const fx = efeito(m, linha);
   const final = linha.secao === "refrao" && linha.vez === 3;
   const cores = paleta(m, linha, indice);
@@ -225,14 +225,15 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
   }
   const corteTacha = fx === "tacha" ? linha.palavras.findIndex((p) => norm(p.t) === "mas") : -1;
 
-  const maxc = mono ? (retrato ? 14 : 22) : retrato ? 13 : 22;
+  const empilhado = (m.empilha ?? []).some((inicio) => norm(linha.texto).startsWith(inicio));
+  const maxc = mono ? (retrato ? 14 : 22) : retrato ? 13 : empilhado ? 10 : 22;
   const rows = fileiras(linha.palavras, indices, maxc);
   const chars = (row: number[]) => row.reduce((sum, i) => sum + linha.palavras[i].t.length, row.length - 1);
   // Largura estimada em "letras de Anton" (≈0,48 em cada, com folga para a entrada em escala): a serifada, mesmo menor, ocupa mais por letra.
   const largura = (row: number[]) => row.reduce((sum, i) => {
     const chave = norm(linha.palavras[i].t);
     const tachada = corteTacha > 0 && i < corteTacha;
-    const peso = chave === "stf" ? 1.9 : tachada ? 1.7 : m.poder.has(chave) ? 1.25 : 1;
+    const peso = chave === "stf" || m.destaque?.has(chave) ? 1.9 : tachada ? 1.7 : m.poder.has(chave) ? 1.25 : 1;
     return sum + linha.palavras[i].t.length * peso;
   }, row.length - 1);
   const teto = boxH * (ultima ? 0.26 : linha.secao === "refrao" ? 0.42 : 0.3);
@@ -264,7 +265,7 @@ export const Clipe: React.FC<ClipeProps> = (props) => {
     const wf = frame - quadro(p.ini);
     const chave = norm(p.t);
     const poder = !mono && !ultima && (m.poder.has(chave) || (corteTacha > 0 && i < corteTacha));
-    const fachada = chave === "stf";
+    const fachada = chave === "stf" || Boolean(m.destaque?.has(chave));
     const tachada = corteTacha > 0 && i < corteTacha ? clamp((frame - quadro(linha.palavras[corteTacha].ini)) / 5) : 0;
     let transform = `scale(${wf < 0 ? 1 : 1.25 - 0.25 * saida(wf / POP)})`;
     if (mono) transform = "none";

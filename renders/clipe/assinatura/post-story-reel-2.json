@@ -1,0 +1,28 @@
+{
+ "type": "schedule",
+ "date": "2026-11-09T12:30:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmv9rspfe000dl2864bagp1hs"
+   },
+   "value": [
+    {
+     "content": "Trecho de \"A Assinatura Fica\" — Nabote Songs.\nFoi legal? Foi justo?\nMúsica gerada com IA (Suno).",
+     "image": [
+      {
+       "id": "2ba29fed-3fb7-4a57-89cc-a30feb6b16f0",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/08/238819510da4fbe9952f1099515f0df3010.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "instagram-standalone",
+    "post_type": "story"
+   }
+  }
+ ]
+}
