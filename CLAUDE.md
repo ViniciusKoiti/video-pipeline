@@ -21,6 +21,10 @@ Canal: **Cena e Conceito** (`@cenaeconceito`; nome e tag de afiliado em `config/
   Money Works, com tom crítico e documentado (nem herói, nem vilão). Modelo em
   `docs/pesquisa/modelo-perfil-de-poder.md`. Primeiro caso: Grupo Votorantim / família Ermírio de Moraes, em
   pt-BR. O piloto documentário continua no roteiro.
+- **Público e duração (decisão do dono, 2026-11-14):** jovens de 20 a 30 anos com desânimo profundo. O próximo longo
+  testa 8 a 9 min no lugar de ~12: as curvas de retenção dos dois melhores longos são iguais no mesmo relógio, e as
+  pessoas ficam uns 3 min (`docs/pesquisa/retencao-idade-media-2026-11-14.md`; seção "Retenção e público" das
+  skills de roteiro e de edição).
 - **Ensaio (épico #164, desde 2026-10):** vídeo longo (~12 min) em pt-BR no molde do nicho de ensaio sobre filosofia
   (ADR 031): título e miniatura falam do pensador ou da ideia; o anime entra só como caso dentro. Canais de referência
   Filosofatos e Inferno de Dante (`docs/pesquisa/roteiro-referencias-2026-10-20.md`); piloto `death-note-fins-meios`.
@@ -213,6 +217,12 @@ primeiro quadro), ligados à promessa e às perguntas às fontes. Esboço textua
 ativos registrados, e o conjunto é revisto pelo dono no gate 4. Registrar uma hipótese principal antes do teste,
 mais sua variável e medida; copiá-la para `metrics.json.hypothesis` quando houver metadados reais de publicação.
 Método, hipótese H01 e limites: `docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md`, §§4–5.
+
+**Shorts cortados de um vídeo longo (decisão do dono, 2026-11-09):** abrem com uma pergunta falada por um personagem do
+motion-kit (cena `cast`) e **fecham com uma última cena do mesmo personagem chamando para o canal** (voz clonada,
+entrega `invite`, ~4–5 s para passar no nivelamento da ADR 054; a frase varia a cada Short, por causa do §12). A
+descrição abre com "Dê uma olhada na história completa na descrição ou entrando no canal" e o link do vídeo longo. O
+primeiro caso (`idade-media-short-comida`) saiu sem o fecho e fica assim; o molde está na `pauta.md` dele.
 
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
@@ -590,6 +600,7 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
 | `roteirista-ficcao-historica` | `roteiro-ficcao-historica`, `humanizer-narracao` | `outline.md`, `scenes.json` | as mesmas do `roteirista` (ADR 055; formato "sua vida em cada nível") |
+| `editor-de-roteiro` | `edicao-de-roteiro` | `edicao.md` (notas por trecho com proposta; não toca no roteiro) | Read, Grep, Glob, Write; par do roteirista, que responde a cada nota e aplica; entra na montagem (sobre o outline) e na edição (sobre as cenas, com uma volta curta); emenda da ADR 009 de 2026-11-11 |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 | `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `vp music`) |
@@ -604,7 +615,9 @@ ao escopo de dados acima, um piloto visual expressamente solicitado pode ter có
 O diretor não substitui a conferência de direitos nem aprova gates. O método fica em
 `.agents/skills/vp-direcao-animacao/SKILL.md`, também acessível em `.claude/skills/`.
 
-Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
+Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista (só o `outline.md`) → editor de roteiro
+(montagem, em `edicao.md`) → roteirista (`scenes.json`) → `vp check` → editor de roteiro (edição) → roteirista aplica →
+`vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →
 voz + render → gate 2 → diretor musical (`music.json`; **todo ensaio longo leva trilha**, e sem ela só por decisão do dono no `outline.md`;
 nada no render nem no gate 4 cobra, então conferir `music` no `episode.json` antes do gate 4; roteiro que muda

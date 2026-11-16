@@ -12,6 +12,48 @@ argument-hint: "<episode-id>"
 Você escreve **só** com o que está em `data/episodes/<id>/facts.json`. Se uma frase precisa de um fato
 que não está nas fichas, não escreva a frase: anote a lacuna no fim do `outline.md`.
 
+**Lacuna nunca vira "não encontrei" na fala** (decisão do dono, 2026-11-14). "Eu não encontrei", "não achei",
+"não sei", "não consegui descobrir" soam como pesquisa incompleta e deixam a resposta no vazio; no piloto
+`academia-dinheiro-pt` foram cinco, duas delas na conclusão e no fecho. Quando as fichas não respondem, há
+duas saídas:
+
+1. **Cortar** a pergunta, se ela não muda a resposta do vídeo. A lacuna fica só no `outline.md`.
+2. **"Eu acho X, porque Y"**, na mesma frase. Y é um fato fichado, com claim como qualquer fato, ou um
+   raciocínio dito por inteiro a partir dele; X é opinião do narrador, dita como opinião, e nunca vira
+   número, gráfico nem `keyword` na tela (ADR 019). Exemplo de forma: "Eu acho que a maior parte disso é
+   mensalidade, porque na pesquisa americana só catorze por cento pagavam a taxa de matrícula." Marque cada
+   uma no `outline.md` como [ACHO], para o dono ver no gate 2. A tese do vídeo continua sendo do dono; esta
+   autorização é só para preencher lacunas.
+
+Na conclusão e no fecho, a lacuna sai pela segunda forma ou é cortada: o vídeo termina num fato ou num "eu
+acho" justificado, nunca num vazio. O `vp check` avisa quando a fala diz que não achou.
+
+## Retenção e público (dados do canal, 2026-11-14)
+
+Você escreve como **especialista em retenção e conteúdo**. Cada cena dá a quem assiste um motivo para chegar à
+próxima. Cada minuto entrega conteúdo de verdade (um fato, uma ideia, uma virada), nunca enchimento para durar mais.
+
+- **Público** (decisão do dono, 2026-11-14): jovens de 20 a 30 anos com um desânimo profundo. Fale como quem está do
+  lado: acolhedor e firme. Nada de energia de coach, promessa de cura ou bronca. Se o tema tocar em depressão, não
+  diagnostique e, quando couber, cite o CVV (188).
+- **O que a curva de retenção mostra** (Idade Média e Montaigne, com cerca de 57 e 86 pessoas): no mesmo relógio, as
+  duas curvas são quase iguais, embora formato, abertura e duração sejam diferentes:
+  - cerca de 40% saem nos primeiros 30 s;
+  - cerca de 60% saem até os 2 min;
+  - cerca de 15% ficam até o fim;
+  - as pessoas ficam uns 3 min, qualquer que seja a duração.
+
+  Detalhe em `docs/pesquisa/retencao-idade-media-2026-11-14.md`.
+- **Duração-alvo: 8 a 9 min** (teste decidido pelo dono em 2026-11-14), no lugar dos ~12 do molde. Corte o que não é
+  essencial e não estique. Se a partitura pedir mais, a duração do dono vale, e o alerta de duração do molde é esperado.
+- **Os primeiros 2 minutos recebem o maior cuidado:** é onde está quase toda a perda. Releia-os em voz alta. No
+  `outline.md`, declare **uma** mudança testável nos 2 min iniciais em relação ao vídeo anterior (onde entra a
+  pergunta, o tamanho da cena de abertura, o ritmo), para a leitura do D7 saber o que comparar.
+- **Ainda não comprovado; não use como regra:** "promessa mais cedo segura mais", "cena de perigo na abertura segura
+  mais" e "explicação derruba". Pode testar um deles, se for a mudança declarada.
+- **A primeira cena entrega o que o título e a capa prometem.** O clique pesa mais que tudo isso: com a mesma
+  retenção, o vídeo de CTR 4,2% teve 2,6 vezes mais cliques por impressão.
+
 ## Saída
 
 1. `data/episodes/<id>/outline.md`, para a revisão humana (gate 2): pergunta central, gancho, as viradas
@@ -135,6 +177,10 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      que…"); fala de personagem entra como fala ("diz ele"). Pensador e autor de obra entram pelo nome, como
      personagem. Exceção por risco: controvérsia atribuída no perfil de poder ("o órgão X acusou…") e fonte
      interessada quando o dono pedir que a fala diga de onde vem.
+     **Emenda de 2026-11-11 (decisão do dono):** a fala fica só com a atribuição e a data que ajudam a entender a
+     história (quem disse é personagem, a discordância entre fontes é o ponto, a data situa, ordena ou mede um
+     intervalo). As fontes continuam embasando tudo nas `claims` e no rodapé, e a referência completa vai para a
+     descrição do vídeo. O teste e os casos estão na skill `edicao-de-roteiro`, "Atribuições e datas na fala".
    - **Variedade:** alterne os tipos e mantenha imagem na tela; os alertas do `vp check` apontam as
      repetições.
    - **Texto que cabe na tela:** a narração explica; a tela mostra o essencial. O `vp check` alerta quando
@@ -189,6 +235,20 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
      cenas com `delivery` e nas opiniões do dono, para ele conferir na leitura.
 10. **Ritmo do formato:** média de 2 a 4 s por plano; nenhum abaixo de 1,5 s; gráfico, comparação, rede,
     cronologia e documento com pelo menos 4 s, o tempo de ler.
+
+## Montagem com o editor (decisão do dono, 2026-11-11)
+
+O `editor-de-roteiro` entra duas vezes: na montagem, antes das cenas, e na edição, depois delas (Fechamento).
+Na montagem:
+
+1. Escreva só o `outline.md`: objetivo, pergunta central, gancho, a espinha com os ids das fichas e **a
+   abertura (primeiros 30 s) já em texto de narração**. Pare aí e entregue; ainda sem `scenes.json`.
+2. A sessão principal chama o editor e retoma este roteirista com a seção "Montagem" do `edicao.md`. Responda
+   a cada nota no arquivo (`aceita`, `adaptada`, `recusada` com motivo) e ajuste o outline.
+3. Escreva o `scenes.json` a partir do outline ajustado.
+
+Pronto quando toda nota da montagem tem resposta e a ordem do `scenes.json` é a do outline. Em Short ou Reel
+e em correção pontual de roteiro já aprovado, a montagem é dispensada e vale só a edição.
 
 ## Ensaio com obra de ficção (anime e filosofia)
 
@@ -375,7 +435,20 @@ fica desconhecida: não a chame de compartilhamento. Sem o arquivo, este bloco n
      dos fundos", trem sob "mudar de lugar", moedas sob "moeda").
   8. **Ponte entre blocos:** cada "Segunda parte", "Terceira parte" tem uma frase antes que nasce do bloco
      anterior; o fecho recolhe, com os mesmos termos, ao menos duas peças apresentadas.
+  9. **Lacuna dita:** "não encontrei", "não achei", "não sei" na fala viram "eu acho X, porque Y" ou saem
+     (seção do começo desta skill). Conte também as ressalvas ("a minha aposta", "é palpite meu", "não é uma
+     prova"): mais de três no vídeo, corte as que não mudam a resposta.
   Registre no `outline.md` o que a autoconferência mudou.
+- **Edição antes da checagem (decisão do dono, 2026-11-11).** Com o `vp check` limpo, a sessão principal chama o
+  agente `editor-de-roteiro` e depois retoma **este mesmo roteirista** com o `edicao.md` dele. O texto final é seu:
+  1. Responda a cada nota no campo "Resposta do roteirista": `aceita`, `adaptada` (com o texto que ficou) ou
+     `recusada` (com o motivo).
+  2. Aplique no `scenes.json` as aceitas e adaptadas, junto com o que o campo "Custo" da nota lista. Nota com
+     custo `pede ficha` vai para as lacunas do `outline.md`.
+  3. Passe o humanizer nas cenas tocadas e rode o `vp check`.
+  Pronto quando toda nota tem resposta e o `vp check` está sem erros. Entregue a lista das cenas tocadas: o editor
+  faz com ela a segunda e última passada.
+  Se a segunda passada trouxer notas novas, responda e aplique do mesmo jeito; não há terceira passada do editor.
 - Entregue para o agente `verificador`: contexto limpo na primeira rodada; as rodadas seguintes retomam o mesmo
   agente com a lista do que mudou (skill `checagem`, "Rodadas e contexto"). Teto de duas rodadas; além disso, o dono
   decide.

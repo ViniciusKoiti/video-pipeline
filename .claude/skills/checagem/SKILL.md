@@ -34,6 +34,8 @@ outline, escrito à mão.
    - superlativos e pioneirismos ("o maior", "o primeiro", "o único"): a fonte diz isso?
    - intenção e sentimento ("queria", "temia", "apostou tudo"): a fonte diz isso?
    - frase que afirma fato sem `claims` → sem suporte.
+   - "eu acho X, porque Y" (lacuna dita como opinião, decisão do dono de 2026-11-14): confira Y como fato,
+     com claim e trecho; X é opinião declarada e não pede claim, mas X na tela ou dito como fato → `EXAGERO`.
    - texto na tela (`number`, `stamp`, `lower_third`, `quote`, `chart`, `timeline`, `family_tree`,
      `compare`, `network`, `map`, `keyword`) igual à ficha, e `quote` literal da fonte. Nos planos da
      ADR 011, também:
