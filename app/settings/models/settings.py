@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.settings.models._settings_model import _Model
+from app.settings.models.azure_speech_settings import AzureSpeechSettings
 from app.settings.models.budget import Budget
 from app.settings.models.chatterbox_modal_settings import ChatterboxModalSettings
 from app.settings.models.chatterbox_settings import ChatterboxSettings
@@ -24,6 +25,7 @@ class Settings(_Model):
     ollama: OllamaSettings
     kokoro: KokoroSettings
     gemini_tts: GeminiTTSSettings = GeminiTTSSettings()
+    azure_speech: AzureSpeechSettings = AzureSpeechSettings()
     chatterbox: ChatterboxSettings = ChatterboxSettings()
     chatterbox_modal: ChatterboxModalSettings = ChatterboxModalSettings()
     earshot: EarshotSettings = EarshotSettings()

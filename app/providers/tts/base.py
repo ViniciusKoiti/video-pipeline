@@ -49,6 +49,13 @@ class ReferencedTTS(Protocol):
 
 
 @runtime_checkable
+class PhonemeTTS(Protocol):
+    """Voz que aceita o glossário de fonemas (`SpeechRequest.lexicon`) no alfabeto declarado."""
+
+    phoneme_alphabet: str  # "ipa" no Azure (SSML `<phoneme>`)
+
+
+@runtime_checkable
 class BatchTTS(Protocol):
     max_batch_chars: int  # soma dos textos de um lote, sem contar a cena única maior que o limite
 

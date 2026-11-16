@@ -34,6 +34,23 @@ styles = { "pt-BR" = "narração de documentário em português do Brasil, com s
 requests_per_minute = 3  # camada gratuita (erro 429 em 2026-09-29)
 chars_per_second = 13.0  # Charon: 12 a 14 caracteres por segundo no teste
 
+[azure_speech]  # voz neural pronta do Azure Speech, só com `--voz azure_speech` (ADR 058); chave e região no .env
+tier = "F0"  # camada do recurso no portal; fora de F0 é cobrado e fica barrado (§2.1)
+voices = { "pt-BR" = "pt-BR-AntonioNeural" }
+output_format = "riff-24khz-16bit-mono-pcm"
+rate = 1.05               # multiplicador da velocidade (0,5 a 2); 1 = a voz como é. 1,05 pedido pelo dono em 2026-11-12 (piloto academia: 12:20 em 1,0)
+pause_ms = 250            # <break> no lugar de cada <short pause> (ADR 015); era 500 até 2026-11-15: soava como corte antes do número (academia S30, S45)
+requests_per_minute = 20  # limite da F0 (20 chamadas por 60 s; 500 mil caracteres por mês)
+chars_per_second = 15.0   # provisório, sem medida
+
+# Velocidade por entrega da cena (ADR 022; emenda de 2026-11-16 da ADR 058): o fator multiplica `rate`; a entrega
+# sem fator (neutral) fala em `rate`. Valores de partida para a escuta do dono no banco-digital-dinheiro-pt.
+[azure_speech.delivery]
+hook = 1.06    # abertura: um pouco mais rápida
+turn = 0.94    # virada: mais devagar, para pesar
+calm = 0.90    # a conta: a mais lenta
+invite = 0.92  # a pergunta final
+
 [groq_whisper]  # camada gratuita; o áudio da cena sai da máquina, só quando o dono pede (ADR 023)
 model = "whisper-large-v3-turbo"
 timeout_s = 120

@@ -26,7 +26,7 @@ from __future__ import annotations
 import glob
 import hashlib
 import math
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
 from pathlib import Path
 
@@ -83,9 +83,11 @@ class Narrator:
         library: VoiceLibrary,
         measure: Callable[[Path], float],
         respell: Callable[[str], str] = lambda text: text,
+        lexicon: Mapping[str, str] | None = None,
     ) -> None:
         self._tts, self._language, self._library = tts, language, library
         self._measure, self._respell = measure, respell  # `measure`: segundos do WAV (ffprobe nos scripts)
+        self._lexicon = dict(lexicon or {})  # grafia -> fonemas, só para a voz que os aceita (`PhonemeTTS`)
 
     def key(self, line: SpeechLine) -> VoiceKey:
         spoken = self._respell(line.text)
@@ -93,6 +95,7 @@ class Narrator:
             text=spoken,
             out_path=self._library.folder / "x.wav",
             language=self._language,
+            lexicon=self._lexicon,
             delivery=line.delivery,
         )
         return VoiceKey(line.id, self._tts.identity, self._language, self._fingerprint(request), spoken)
@@ -129,6 +132,7 @@ class Narrator:
                     text=key.spoken,
                     out_path=self._library.path(key),
                     language=self._language,
+                    lexicon=self._lexicon,
                     delivery=line.delivery,
                 )
                 planned.append(PlannedSpeech(line, key, request))

@@ -79,7 +79,10 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
   (`--voz=chatterbox_modal`, função em `deploy/modal_chatterbox.py`; quem envia a gravação é o dono). Licença em
   `data/benchmarks/termos-chatterbox.md`. A Charon do Gemini (ADR 012) segue registrada (`--voz=gemini`; 3 chamadas
   por minuto e **10 por dia** na camada gratuita, termos em `data/benchmarks/termos-gemini-tts.md`) e é a voz do
-  vídeo-régua, que não troca de voz.
+  vídeo-régua, que não troca de voz. A voz neural pronta do Azure Speech (`pt-BR-AntonioNeural`, ADR 058) também
+  está registrada (`--voz=azure_speech`; só na camada gratuita F0, 20 chamadas por minuto e 500 mil caracteres por
+  mês; `AZURE_SPEECH_KEY` e `AZURE_SPEECH_REGION` no `.env`; termos em `data/benchmarks/termos-azure-speech.md`):
+  proposta, ainda sem teste com a conta, e exige avisar que a voz é sintética.
 
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
 
@@ -329,7 +332,7 @@ revela:
 | Função | Padrão | Candidato a teste | Critério de troca |
 |---|---|---|---|
 | Fichas, roteiro, cenas, checagem | Agentes do Claude Code + skills + `vp check` (ADR 009; a spec previa Ollama) | Ollama local (#27, checagem já medida em `data/benchmarks/checagem-local.md`); Groq e Gemini gratuitos; outro agente que leia as skills | Fidelidade ao texto-fonte e fatos que prendem, sem custo por chamada. |
-| Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
+| Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter); Azure Speech `pt-BR-AntonioNeural` na camada F0 (ADR 058, adapter pronto, sem teste com a conta) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
 | Alinhamento de áudio | Frase: silêncios do WAV (ADR 021). Palavra: Groq Whisper gratuito com `--legenda-palavra` (ADR 023) | Whisper local (`transformers`, modelo no cache) | O áudio da cena sai da máquina só com pedido do dono na sessão; a tela mostra o texto do roteiro, não o reconhecido. |
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
 | Roteador de modelos | Nenhum | OpenRouter com variante `:free` | Só se o candidato direto falhar. |
@@ -376,7 +379,11 @@ lacuna fica registrada.
   trocar uma frase isolada. Glossário de pronúncia por episódio em `voice/glossary.json`
   (`{"termos": [{"escrita": "FBI", "fala": "efe bê i"}]}`, `app/media/pronunciation.py`): troca a grafia só no
   texto enviado à voz, por palavra inteira, e vale para qualquer voz; tela, legenda e âncoras ficam com a do
-  roteiro, e o `scenes.json` não muda.
+  roteiro, e o `scenes.json` não muda. Um termo pode trazer `ipa` (fonemas da tabela do pt-BR): o Azure o lê por
+  `<phoneme>` e as outras vozes seguem com a `fala` (emenda de 2026-11-15 da ADR 058; só no vídeo longo).
+- **Cadência das pausas (ADR 060, proposta):** com `voice/cadencia.json` no episódio (`{}` = valores padrão), a
+  montagem usa cópias em `voice/paced/` com o silêncio de cada fim de frase pelo papel dela (continuação 0,4 s,
+  ponto 0,65, conclusão 0,9, pergunta 1,0, virada 1,15), sem chamar o TTS de novo. Sem o arquivo, nada muda.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Nome do WAV e narrador (ADR 049, `app/pipeline/voice.py`):** `VoiceKey` + `VoiceLibrary` + `Narrator`. Os nomes de
   hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs já gerados fica
@@ -401,10 +408,11 @@ lacuna fica registrada.
 - **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
-  silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
+  silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas); no Azure Speech vira `<break>` do SSML (250 ms desde 2026-11-15).
 - **Entrega da fala por cena (ADR 022):** `delivery` em `hook` (abertura), `turn` (virada), `calm` (a conta), `invite`
-  (pergunta final); sem o campo, neutra. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`);
-  Kokoro e Gemini ignoram.
+  (pergunta final); sem o campo, neutra. A voz clonada obedece por inteiro (`[chatterbox.delivery]` no
+  `providers.toml`); o Azure Speech, só na velocidade (`[azure_speech.delivery]`, fator sobre `rate`; emenda de
+  2026-11-16 da ADR 058); Kokoro e Gemini ignoram.
 - Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
   `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
   quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.
@@ -519,7 +527,7 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 
 - Antes de escrever código de uma etapa, ler o schema correspondente em `app/pipeline/schemas.py` e o manifesto
   de exemplo em `tests/fixtures/episodes/pilot-example/`.
-- Chamar provedores externos (Pexels, Pixabay, Unsplash, Coverr, Cloudflare, Groq, Gemini) só quando o usuário
+- Chamar provedores externos (Pexels, Pixabay, Unsplash, Coverr, Cloudflare, Groq, Gemini, Azure Speech) só quando o usuário
   pedir explicitamente naquela sessão. Ollama e Kokoro locais podem rodar.
 - Arquivos em `data/episodes/*/` com `review_status: approved` ficam como estão; se um ajuste exigir mexer neles,
   parar e perguntar.

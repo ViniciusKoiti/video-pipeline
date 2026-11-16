@@ -13,4 +13,5 @@ class Secrets(_Model):
     cloudflare_api_token: SecretStr | None = None
     groq_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
+    azure_speech_key: SecretStr | None = None
     postiz_api_key: SecretStr | None = None

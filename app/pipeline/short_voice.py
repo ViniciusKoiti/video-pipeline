@@ -22,6 +22,7 @@ from app.media.models.voice_level_report import VoiceLevelReport
 from app.media.models.voice_polish import VoicePolish
 from app.media.probe import duration_ms
 from app.media.pronunciation import load_glossary, respell
+from app.media.voice_tempo import load_tempo
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
@@ -79,7 +80,7 @@ def produce_short_voice(
         outcomes = produce_with_state(
             narrator, store, episode_id, speech, now=datetime.now().astimezone(),
             level=isinstance(tts, ReferencedTTS) and tts.scene_references,
-            polish=polish,
+            polish=polish, tempo=load_tempo(folder),
         )
         wavs = narrator.require(outcomes)
     return [wavs[item.id] for item in speech]

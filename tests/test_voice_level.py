@@ -15,10 +15,12 @@ import pytest
 from pydantic import ValidationError
 
 from app.media.constants.voice_level_constants import VoiceLevelConstants as C
+from app.media.constants.voice_tempo_constants import VoiceTempoConstants
 from app.media.models.voice_level_report import VoiceLevelReport
 from app.media.models.voice_polish import VoicePolish
 from app.media.voice_level import VoiceLevelError, _ffmpeg, _measure, level_policy, level_voice
 from app.media.voice_polish import polish_filters
+from app.media.voice_tempo import load_tempo, tempo_filter
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
@@ -113,7 +115,7 @@ def test_level_failure_keeps_raw_speeches_and_retry_needs_no_new_tts(
     narrator = Narrator(tts, 'pt-BR', VoiceLibrary(voice, Naming.LONG), lambda p: wav_duration_ms(p) / 1000)
     lines = [SpeechLine('S01', 'Primeira.'), SpeechLine('S02', 'Segunda.')]
 
-    def fail_one(path: Path, polish: VoicePolish | None = None) -> Path:
+    def fail_one(path: Path, polish: VoicePolish | None = None, tempo: float = 1.0) -> Path:
         if path.name.startswith('S01'):
             raise VoiceLevelError('nivelamento falhou')
         return path
@@ -124,7 +126,7 @@ def test_level_failure_keeps_raw_speeches_and_retry_needs_no_new_tts(
     assert load_state(store, 'ep').get(Step.VOICE).scenes['S01'].reason == C.REASON
     assert len(list(voice.glob('*.wav'))) == 2
     calls = list(tts.calls)
-    monkeypatch.setattr('app.pipeline.voice_state.level_voice', lambda path, polish=None: path)
+    monkeypatch.setattr('app.pipeline.voice_state.level_voice', lambda path, polish=None, tempo=1.0: path)
     assert all(o.status is Status.COMPLETED for o in produce_with_state(
         narrator, store, 'ep', lines, now=datetime.now(UTC), level=True
     ))
@@ -304,3 +306,50 @@ def test_policy_change_updates_state_without_new_synthesis(tmp_path: Path) -> No
 def test_invalid_polish_parameters_are_rejected(field: str, value: float) -> None:
     with pytest.raises(ValidationError):
         VoicePolish.model_validate({field: value})
+
+
+def test_tempo_slows_the_leveled_copy_and_keeps_the_legacy_policy_at_one(tmp_path: Path) -> None:
+    raw = tmp_path / 'raw.wav'
+    tone(raw, 0.05)
+    before = raw.read_bytes()
+    assert level_policy() == level_policy(None, 1.0)
+    normal = level_voice(raw)
+    slow = level_voice(raw, None, 0.75)
+    assert slow != normal and normal.is_file() and raw.read_bytes() == before
+    slack = C.DURATION_TOLERANCE_MS + VoiceTempoConstants.DURATION_SLACK_MS
+    assert abs(wav_duration_ms(slow) - wav_duration_ms(raw) / 0.75) <= slack
+    measured = report(slow)
+    assert measured.policy == level_policy(None, 0.75) and measured.policy.endswith(':tempo-0.75')
+    assert abs(measured.output_lufs - C.TARGET_LUFS) <= C.TOLERANCE_LU
+    mtime = slow.stat().st_mtime_ns
+    assert level_voice(raw, None, 0.75) == slow and slow.stat().st_mtime_ns == mtime
+
+
+def test_episode_tempo_file_is_optional_and_validated(tmp_path: Path) -> None:
+    assert load_tempo(tmp_path) == 1.0
+    (tmp_path / 'voice').mkdir()
+    (tmp_path / 'voice' / 'ritmo.json').write_text('{"tempo": 0.75, "nota": "pedido do dono"}')
+    assert load_tempo(tmp_path) == 0.75
+    assert tempo_filter(1.0) == '' and tempo_filter(0.75) == 'atempo=0.75,'
+    (tmp_path / 'voice' / 'ritmo.json').write_text('{"tempo": 0.2}')
+    with pytest.raises(ValidationError):
+        load_tempo(tmp_path)
+    with pytest.raises(ValidationError):
+        tempo_filter(3.0)
+
+
+def test_long_episode_voice_uses_the_episode_tempo(tmp_path: Path) -> None:
+    from app.pipeline.voice_production import produce_voice
+    from tests.test_voice_scripts import scenes
+
+    refs = recordings(tmp_path / 'references')
+    tts = make_tts(ToneWorker(), tmp_path, references=refs)
+    store = JsonFileStore(tmp_path / 'episodes')
+    folder = store.path('ep', '')
+    (folder / 'voice').mkdir(parents=True)
+    (folder / 'voice' / 'ritmo.json').write_text('{"tempo": 0.8}')
+    wavs = list(produce_voice(tts, scenes(), store, 'ep').values())
+    assert wavs and all(report(w).policy == level_policy(None, 0.8) for w in wavs)
+    state = load_state(store, 'ep').get(Step.VOICE)
+    assert all(level_policy(None, 0.8) in record.detail for record in state.scenes.values())
+

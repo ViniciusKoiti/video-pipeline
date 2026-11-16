@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from pydantic import SecretStr
 
+from app.bootstrap.azure_speech import build_azure_speech
 from app.bootstrap.registry import ConfigurationError, Registration, Registry, ensure_free, unknown_choices
 from app.pipeline.ports import ManifestStore, ReviewGate
 from app.pipeline.schemas import EpisodeFormat
@@ -166,6 +167,7 @@ DEFAULT_REGISTRY: Registry = {
     "tts": {
         "kokoro": Registration(5, _kokoro),
         "gemini": Registration(15, _gemini_tts),  # ADR 012
+        "azure_speech": Registration(15, build_azure_speech),  # voz neural pronta, só na camada F0 (ADR 058)
         "chatterbox": Registration(15, _chatterbox),  # voz clonada local (ADR 016, proposta)
         "chatterbox_modal": Registration(15, _chatterbox_modal),  # a mesma voz numa GPU do Modal (ADR 024)
     },

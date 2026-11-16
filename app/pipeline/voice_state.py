@@ -20,8 +20,12 @@ from datetime import datetime
 from pathlib import Path
 
 from app.media.constants.voice_level_constants import VoiceLevelConstants
+from app.media.constants.voice_pacing_constants import VoicePacingConstants
+from app.media.models.voice_pacing import VoicePacing
 from app.media.models.voice_polish import VoicePolish
+from app.media.pacing_plan import pacing_plan
 from app.media.voice_level import VoiceLevelError, level_policy, level_voice
+from app.media.voice_pacing import VoicePacingError, pace_voice, pacing_policy
 from app.pipeline.models.scene_outcome import SceneOutcome
 from app.pipeline.models.scene_record import SceneRecord
 from app.pipeline.models.speech_line import SpeechLine
@@ -34,14 +38,14 @@ from app.pipeline.voice import Narrator
 Outcome = SceneOutcome[Path]
 
 
-def _level(outcomes: list[Outcome], polish: VoicePolish | None) -> list[Outcome]:
+def _level(outcomes: list[Outcome], polish: VoicePolish | None, tempo: float) -> list[Outcome]:
     result = []
     for outcome in outcomes:
         if outcome.status is not Status.COMPLETED or outcome.value is None:
             result.append(outcome)
             continue
         try:
-            wav = level_voice(outcome.value, polish)
+            wav = level_voice(outcome.value, polish, tempo)
         except VoiceLevelError as error:
             result.append(SceneOutcome[Path](
                 outcome.scene_id, Status.NEEDS_REVIEW,
@@ -49,8 +53,34 @@ def _level(outcomes: list[Outcome], polish: VoicePolish | None) -> list[Outcome]
             ))
         else:
             result.append(replace(
-                outcome, value=wav, detail=f"{outcome.detail}|{level_policy(polish)}"
+                outcome, value=wav, detail=f"{outcome.detail}|{level_policy(polish, tempo)}"
             ))
+    return result
+
+
+def _pace(
+    outcomes: list[Outcome], lines: Sequence[SpeechLine], pacing: VoicePacing, folder: Path
+) -> list[Outcome]:
+    """A cópia com a cadência de cada fala pronta; o plano de uma cena olha a seguinte, mesmo pendente."""
+    plans = dict(zip(
+        (line.id for line in lines), pacing_plan([(line.text, line.delivery) for line in lines], pacing),
+        strict=True,
+    ))
+    result = []
+    for outcome in outcomes:
+        if outcome.status is not Status.COMPLETED or outcome.value is None:
+            result.append(outcome)
+            continue
+        try:
+            plan = plans[outcome.scene_id]
+            wav, note = pace_voice(outcome.value, plan, folder)
+        except VoicePacingError as error:
+            result.append(SceneOutcome[Path](
+                outcome.scene_id, Status.NEEDS_REVIEW, reason=VoicePacingConstants.REASON, detail=str(error),
+            ))
+        else:
+            detail = f"{outcome.detail}|cadencia-v{VoicePacingConstants.VERSION}:{plan.policy()}|{note}"
+            result.append(replace(outcome, value=wav, detail=detail))
     return result
 
 
@@ -103,18 +133,25 @@ def _save_failure(
 
 def produce_with_state(
     narrator: Narrator, store: ManifestStore, episode_id: str, lines: Sequence[SpeechLine], *, now: datetime,
-    level: bool = False, polish: VoicePolish | None = None,
+    level: bool = False, polish: VoicePolish | None = None, tempo: float = 1.0,
+    pacing: VoicePacing | None = None,
 ) -> list[Outcome]:
     """`Narrator.produce` com o episódio travado e o relatório por cena gravado no fim. Erro que não é de
-    provedor fica registrado como `failed` e sobe; não aninhar `store.lock` dentro da geração."""
+    provedor fica registrado como `failed` e sobe; não aninhar `store.lock` dentro da geração. Com `pacing`
+    (`voice/cadencia.json`), a montagem recebe a cópia com as pausas refeitas, depois do nivelamento."""
     digest = narrator.input_hash(lines)
     if level:
-        digest = "sha256:" + hashlib.sha256(f"{digest}|{level_policy(polish)}".encode()).hexdigest()
+        digest = "sha256:" + hashlib.sha256(f"{digest}|{level_policy(polish, tempo)}".encode()).hexdigest()
+    if pacing is not None:
+        digest = "sha256:" + hashlib.sha256(f"{digest}|{pacing_policy(pacing)}".encode()).hexdigest()
     with store.lock(episode_id):
         try:
             outcomes = narrator.produce(lines)
             if level:
-                outcomes = _level(outcomes, polish)
+                outcomes = _level(outcomes, polish, tempo)
+            if pacing is not None:
+                folder = store.path(episode_id, "voice") / VoicePacingConstants.DIRECTORY
+                outcomes = _pace(outcomes, lines, pacing, folder)
         except Exception as error:
             _save_failure(store, episode_id, digest, error, now)
             raise

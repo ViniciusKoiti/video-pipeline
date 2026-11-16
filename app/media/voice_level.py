@@ -12,10 +12,12 @@ from pathlib import Path
 from app.errors import PipelineError
 from app.media.constants.voice_level_constants import VoiceLevelConstants as C
 from app.media.constants.voice_polish_constants import VoicePolishConstants
+from app.media.constants.voice_tempo_constants import VoiceTempoConstants
 from app.media.models.voice_level_report import VoiceLevelReport
 from app.media.models.voice_polish import VoicePolish
 from app.media.probe import duration_ms
 from app.media.voice_polish import polish_filters
+from app.media.voice_tempo import tempo_filter, tempo_policy
 from app.media.wav import wav_is_valid
 
 
@@ -23,11 +25,11 @@ class VoiceLevelError(PipelineError, RuntimeError):
     pass
 
 
-def level_policy(polish: VoicePolish | None = None) -> str:
+def level_policy(polish: VoicePolish | None = None, tempo: float = 1.0) -> str:
     base = f"loudnorm-v{C.VERSION}:{C.TARGET_LUFS}:{C.TRUE_PEAK_DBTP}:{C.LRA}:{C.SAMPLE_RATE}"
-    if polish is None:
-        return base
-    return f"{base}:polish-v{VoicePolishConstants.VERSION}:{polish_filters(polish)}"
+    if polish is not None:
+        base = f"{base}:polish-v{VoicePolishConstants.VERSION}:{polish_filters(polish)}"
+    return base + tempo_policy(tempo)
 
 
 def _ffmpeg(source: Path, filters: str, output: list[str]) -> str:
@@ -40,9 +42,11 @@ def _ffmpeg(source: Path, filters: str, output: list[str]) -> str:
     return result.stderr
 
 
-def _measure(source: Path, *, mono: bool = False, polish: VoicePolish | None = None) -> dict[str, float]:
+def _measure(
+    source: Path, *, mono: bool = False, polish: VoicePolish | None = None, tempo: float = 1.0,
+) -> dict[str, float]:
     prefix = "aformat=channel_layouts=mono,pan=stereo|c0=c0|c1=c0," if mono else ""
-    prefix += polish_filters(polish)
+    prefix += polish_filters(polish) + tempo_filter(tempo)
     filters = f"{prefix}loudnorm=I={C.TARGET_LUFS}:TP={C.TRUE_PEAK_DBTP}:LRA={C.LRA}:print_format=json"
     log = _ffmpeg(source, filters, ["-f", "null", "-"])
     try:
@@ -70,10 +74,11 @@ def _cached(out: Path, digest: str, policy: str) -> bool:
         return False
 
 
-def _generate(source: Path, out: Path, digest: str, polish: VoicePolish | None) -> None:
-    measured = _measure(source, mono=True, polish=polish)
+def _generate(source: Path, out: Path, digest: str, polish: VoicePolish | None, tempo: float) -> None:
+    measured = _measure(source, mono=True, polish=polish, tempo=tempo)
     filters = (
-        f"aformat=channel_layouts=mono,pan=stereo|c0=c0|c1=c0,{polish_filters(polish)}loudnorm=I={C.TARGET_LUFS}:"
+        f"aformat=channel_layouts=mono,pan=stereo|c0=c0|c1=c0,{polish_filters(polish)}{tempo_filter(tempo)}"
+        f"loudnorm=I={C.TARGET_LUFS}:"
         f"TP={C.TRUE_PEAK_DBTP}:LRA={C.LRA}:measured_I={measured['input_i']}:"
         f"measured_TP={measured['input_tp']}:measured_LRA={measured['input_lra']}:"
         f"measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}:linear=true,"
@@ -87,11 +92,12 @@ def _generate(source: Path, out: Path, digest: str, polish: VoicePolish | None) 
             raise VoiceLevelError(f"{source.name}: volume nivelado fora do alvo")
         if actual["input_tp"] > C.TRUE_PEAK_DBTP + C.PEAK_TOLERANCE_DB:
             raise VoiceLevelError(f"{source.name}: pico do áudio nivelado acima do teto")
-        if abs(duration_ms(source) - duration_ms(partial)) > C.DURATION_TOLERANCE_MS:
+        slack = 0 if tempo == VoiceTempoConstants.NEUTRAL else VoiceTempoConstants.DURATION_SLACK_MS
+        if abs(duration_ms(source) / tempo - duration_ms(partial)) > C.DURATION_TOLERANCE_MS + slack:
             raise VoiceLevelError(f"{source.name}: nivelamento alterou a duração da fala")
         report = VoiceLevelReport(
             source=source, source_sha256=digest, wav_sha256=hashlib.sha256(partial.read_bytes()).hexdigest(),
-            policy=level_policy(polish), target_lufs=C.TARGET_LUFS, input_lufs=measured["input_i"],
+            policy=level_policy(polish, tempo), target_lufs=C.TARGET_LUFS, input_lufs=measured["input_i"],
             output_lufs=actual["input_i"], true_peak_dbtp=actual["input_tp"],
         )
         record = Path(folder) / "voice.json"
@@ -100,14 +106,15 @@ def _generate(source: Path, out: Path, digest: str, polish: VoicePolish | None) 
         record.replace(out.with_suffix(".json"))
 
 
-def level_voice(source: Path, polish: VoicePolish | None = None) -> Path:
+def level_voice(source: Path, polish: VoicePolish | None = None, tempo: float = 1.0) -> Path:
+    """A cópia nivelada da fala; `tempo` diferente de 1 também muda a velocidade (`voice/ritmo.json`)."""
     if not wav_is_valid(source):
         raise VoiceLevelError(f"{source.name}: WAV bruto ausente ou inválido")
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
-    policy = level_policy(polish)
+    policy = level_policy(polish, tempo)
     key = hashlib.sha256(f"{digest}|{policy}".encode()).hexdigest()[:C.DIGEST_CHARS]
     out = source.parent / C.DIRECTORY / f"{source.stem}-{key}.wav"
     out.parent.mkdir(parents=True, exist_ok=True)
     if not _cached(out, digest, policy):
-        _generate(source, out, digest, polish)
+        _generate(source, out, digest, polish, tempo)
     return out
