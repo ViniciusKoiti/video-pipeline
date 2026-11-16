@@ -16,7 +16,7 @@ class HostConstants:
     ORIGIN_FILE: Final[str] = "origem.json"
     MANIFEST_FILE: Final[str] = "sprites.json"
     # dentro de `video/`
-    KIT_CLI: Final = Path("node_modules/@viniciusk/motion-kit/bin/motion-kit.mjs")
+    KIT_CLI: Final = Path("node_modules/@viniciuskoitin/motion-kit/bin/motion-kit.mjs")
     POINT_SHOT_KINDS: Final = frozenset(("number", "compare", "calculation", "receipt", "chart"))
     POINT_MS: Final[int] = 1500
     DELIVERY_EXPRESSIONS: Final = MappingProxyType({"hook": "raised", "turn": "furrow"})

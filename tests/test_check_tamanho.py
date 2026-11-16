@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -9,12 +10,18 @@ from pathlib import Path
 SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "check_tamanho.py"
 
 
+def _env() -> dict[str, str]:
+    """Sem as GIT_* que o git põe nos hooks (GIT_INDEX_FILE etc.): o repositório é o do `tmp_path`."""
+    return {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+
+
 def git(repo: Path, *args: str) -> None:
-    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)
+    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, env=_env())
 
 
 def run(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run([sys.executable, str(SCRIPT), *args], cwd=repo, capture_output=True, text=True)
+    cmd = [sys.executable, str(SCRIPT), *args]
+    return subprocess.run(cmd, cwd=repo, capture_output=True, text=True, env=_env())
 
 
 def test_small_files_pass_and_big_staged_file_is_refused(tmp_path: Path) -> None:
