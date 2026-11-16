@@ -29,9 +29,9 @@ class Asset(Model):
     used_in_scenes: list[SceneId] = []  # plural: um mapa pode voltar em várias cenas (§9)
     generation: Generation | None = None  # obrigatório para imagem gerada
     work: str | None = None  # obra citada: título, estúdio e detentor conhecido (licença Citacao)
-    media: Literal["still", "clip"] = "still"  # clipe só na licença Citacao (emenda de 2026-11-03 da ADR 007)
-    origin: str | None = None  # clipe: de onde veio (o dono escolhe e responde)
-    timecode: str | None = None  # clipe: entrada e saída na obra, ex. "00:12:03-00:12:08"
+    media: Literal["still", "clip"] = "still"  # clipe: Citacao (2026-11-03) ou Original (2026-11-09)
+    origin: str | None = None  # citado: de onde veio (o dono responde); Original: composição e código
+    timecode: str | None = None  # clipe citado: entrada e saída na obra, ex. "00:12:03-00:12:08"
 
     @property
     def is_synthetic(self) -> bool:
@@ -54,10 +54,13 @@ class Asset(Model):
             problems.append("citação só de material oficial público do detentor (provider official)")
         if self.provider is Provider.OWNER_CAPTURE and self.media != "clip":
             problems.append("captura do dono só vale para clipe (quadro parado exige material oficial)")
-        if self.media == "clip" and self.license_id != SchemasConstants.CITATION_LICENSE:
-            problems.append("clipe só na licença Citacao")
-        if self.media == "clip" and not (self.origin and self.origin.strip() and self.timecode):
+        if self.media == "clip" and self.license_id not in SchemasConstants.CLIP_LICENSES:
+            problems.append("clipe só na licença Citacao (ou Original, do projeto)")
+        cited_clip = self.media == "clip" and self.license_id == SchemasConstants.CITATION_LICENSE
+        if cited_clip and not (self.origin and self.origin.strip() and self.timecode):
             problems.append("clipe exige origin (de onde veio) e timecode (entrada e saída na obra)")
+        if self.media == "clip" and self.license_id == SchemasConstants.ORIGINAL_LICENSE:
+            problems += self._original_clip_problems()
         if self.license_id == SchemasConstants.CITATION_LICENSE:
             if not (self.work and self.work.strip()):
                 problems.append("citação exige work (título, estúdio e detentor da obra)")
@@ -65,6 +68,19 @@ class Asset(Model):
                 problems.append("citação exige attribution_text (crédito da obra na descrição)")
             if not self.usage_notes.strip():
                 problems.append("citação exige usage_notes: o trecho que o quadro ilustra e por quê")
+        return problems
+
+    def _original_clip_problems(self) -> list[str]:
+        """Emenda de 2026-11-09 (ADR 001, item 5, e ADR 007): clipe animado do projeto (ativo Original)."""
+        problems: list[str] = []
+        if self.provider is not Provider.ORIGINAL:
+            problems.append("clipe Original só com provider original")
+        if not (self.origin and self.origin.strip()):
+            problems.append("clipe Original exige origin: a composição e o arquivo de código que o geram")
+        if not self.usage_notes.strip():
+            problems.append("clipe Original exige usage_notes: props, duração e conferência do clipe")
+        if self.timecode:
+            problems.append("timecode é só de clipe citado (Citacao)")
         return problems
 
     @model_validator(mode="after")

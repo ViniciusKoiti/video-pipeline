@@ -5,6 +5,9 @@
   de cada pedido registra os pulados. Nenhum banco disponível é erro (sai sem gravar), não uma busca vazia.
   Grava `candidatos/<pedido>.json` (ativo, miniatura no cache, largura, altura, duração, banco, consulta e
   mídia) e não baixa nada. Formato do pedido e regras: `app/pipeline/candidates.py`.
+- `vp assets original <id> <cena> <arquivo.mp4> --asset-id ID --composicao ... --notas ...`: registra um clipe
+  animado renderizado pelo projeto (licença Original, `media: clip`; ADR 007, emenda de 2026-11-09), sem banco
+  nem rede; mesmo caminho do `take` (hash, cena, ativo aprovado intocável).
 - `vp assets take <id> <cena> <asset-id>...`: lê o ativo em `candidatos/*.json` e baixa o arquivo final pelo
   adapter do banco, em `assets/<asset-id>.<ext>`, ainda em `needs_review` (a aprovação é humana, `vp approve
   <id> --step assets --asset <asset-id>`). Ativo já baixado e íntegro não é baixado de novo, a cena entra
@@ -19,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +32,9 @@ from app.errors import PipelineError
 from app.pipeline.assets import AssetError, AssetIntake, require_archives
 from app.pipeline.candidates import count_by_bank, episode_orientation, search_request
 from app.pipeline.constants.candidates_constants import CandidatesConstants
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models.provider import Provider
+from app.pipeline.models.status import Status
 from app.pipeline.ports import Context
 from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import Asset
@@ -48,10 +55,39 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     take.add_argument("episode_id", metavar="id")
     take.add_argument("scene_id", metavar="cena")
     take.add_argument("asset_ids", metavar="asset-id", nargs="+")
+    original = commands.add_parser("original", help="registra um clipe animado do projeto como Original")
+    original.add_argument("episode_id", metavar="id")
+    original.add_argument("scene_id", metavar="cena")
+    original.add_argument("arquivo", type=Path, help="o .mp4 já renderizado")
+    original.add_argument("--asset-id", required=True)
+    original.add_argument("--composicao", required=True, help="composição e arquivo de código do clipe")
+    original.add_argument("--notas", required=True, help="props, duração e conferência do clipe")
 
 
 def run(args: argparse.Namespace, context: Context) -> int:
-    return _search(args, context) if args.assets_command == "search" else _take(args, context)
+    handlers = {"search": _search, "take": _take, "original": _original}
+    return handlers[args.assets_command](args, context)
+
+
+def _original(args: argparse.Namespace, context: Context) -> int:
+    """Registra um clipe renderizado pelo projeto (ADR 001, item 5; emenda de 2026-11-09 da ADR 007)."""
+    if not (args.composicao.strip() and args.notas.strip()):
+        raise AssetError(f"{args.asset_id}: --composicao e --notas não podem ser vazios")
+    asset = Asset(
+        id=args.asset_id,
+        provider=Provider.ORIGINAL,
+        provider_id=args.asset_id,
+        license_id=SchemasConstants.ORIGINAL_LICENSE,
+        origin=args.composicao,
+        usage_notes=args.notas,
+        media="clip",
+        retrieved_at=datetime.now(UTC),
+        review_status=Status.NEEDS_REVIEW,
+    )
+    intake = AssetIntake(context.store, ReviewWriteGuard(context.store, context.review))
+    result = intake.register_local(args.episode_id, asset, args.scene_id, args.arquivo)
+    print(f"{asset.id}: {Constants.LABELS[result.action]}; cenas {result.asset.used_in_scenes}")
+    return 0
 
 
 def _search(args: argparse.Namespace, context: Context) -> int:

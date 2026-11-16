@@ -51,6 +51,8 @@ As duas coisas são calculadas das props (`footage_continuity`, `app/render/remo
 muda. O `vp check` não avisa mais `broll` acima de 6 s. Cena do anime em movimento continua fora: a regra 2.3 e a
 emenda de citação da ADR 007 só admitem quadro parado. Gameplay e filme de terceiros também ficam fora (licença
 fora da lista fechada).
+**Superado em 2026-11-03** pela emenda de clipe da ADR 007: o clipe da obra entra como B-roll (`media: clip`), sem o
+áudio da obra e só enquanto a narração comenta o trecho, por decisão do dono a cada vídeo. Valem as regras de lá.
 
 **B. Perfil copiado no episódio.** A skill `analise-de-formato` grava, além do relatório, um
 `formato-brief.json` do nicho; um script copia a versão datada para `data/episodes/<id>/`. Cada medida traz o

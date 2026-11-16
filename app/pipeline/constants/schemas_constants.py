@@ -33,6 +33,9 @@ class SchemasConstants:
         ("CC-BY-2.0", "CC-BY-2.5", "CC-BY-3.0", "CC-BY-3.0-BR", "CC-BY-4.0")
     )
     CITATION_LICENSE: Final[str] = "Citacao"
+    ORIGINAL_LICENSE: Final[str] = "Original"
+    # media "clip": obra citada ou clipe do projeto
+    CLIP_LICENSES: Final = frozenset((CITATION_LICENSE, ORIGINAL_LICENSE))
     AUDIO_LIBRARY_LICENSE: Final[str] = "YouTube-Audio-Library"
     MAX_MUSIC_GAIN_DB: Final = -10.0
     WINDOW_DAYS: Final[Mapping[Window, int]] = MappingProxyType({"d7": 7, "d28": 28})

@@ -222,8 +222,15 @@ lugar dos itens 2 (gancho) e 5 (fecho) do método. A base é a análise dos cana
 - **Uma chamada só** (ADR 026), e nada de pedido de membro ou de "coquinha".
 - **Sem buraco de som.** No máximo uma `<short pause>` por minuto, nenhuma no fim de cena. Junte frases curtas
   seguidas numa cena só.
-- **Imagem.** Da obra, só quadro oficial parado (`Citacao`: até 10 por vídeo, 8 s cada); o resto é B-roll de
-  textura (ADR 031), `keyword` e citação curta. Cena em movimento da obra não entra.
+- **Imagem.** Da obra, duas formas de citação (`Citacao`):
+  - quadro oficial parado (`media: still`): até 10 por vídeo, 8 s cada;
+  - clipe em movimento (`media: clip`, emenda de 2026-11-03 da ADR 007), sem teto de quantidade: só como B-roll,
+    **sem o áudio da obra**, e só enquanto a narração comenta aquele trecho.
+
+  O clipe entra por decisão do dono, a cada vídeo e franquia (Toei e ShoPro continuam fora). Se um vídeo anterior
+  com clipe recebeu reivindicação ou aviso, o próximo espera a revisão da emenda. Para escrever, a obra continua
+  sendo um caso dentro do argumento, nunca pano de fundo sem comentário. O resto é B-roll de textura (ADR 031),
+  `keyword` e citação curta.
 
 ## Objetivo do vídeo (ADR 019)
 
