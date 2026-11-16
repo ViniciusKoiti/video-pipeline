@@ -1,0 +1,162 @@
+inicio=2026-11-11T06:02:51-03:00
+ambiente=Linux DESKTOP-4QS2VNT 6.18.54.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Tue Oct  6 19:13:07 UTC 2026 x86_64 GNU/Linux
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           48 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  12
+On-line CPU(s) list:                     0-11
+Vendor ID:                               AuthenticAMD
+Model name:                              AMD Ryzen 7 5700U with Radeon Graphics
+CPU family:                              23
+Model:                                   104
+Thread(s) per core:                      2
+Core(s) per socket:                      6
+Socket(s):                               1
+Stepping:                                1
+BogoMIPS:                                3593.13
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid extd_apicid tsc_known_freq pni pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext perfctr_core ssbd ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 clzero xsaveerptr arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload umip rdpid
+Virtualization:                          AMD-V
+Hypervisor vendor:                       Microsoft
+Virtualization type:                     full
+L1d cache:                               192 KiB (6 instances)
+L1i cache:                               192 KiB (6 instances)
+L2 cache:                                3 MiB (6 instances)
+L3 cache:                                4 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-11
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; untrained return thunk; SMT enabled with STIBP protection
+Vulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; STIBP always-on; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+openjdk version "25.0.5.0.3" 2026-10-24
+OpenJDK Runtime Environment (build 25.0.5.0.3+1-1-26.04.1-Ubuntu)
+OpenJDK 64-Bit Server VM (build 25.0.5.0.3+1-1-26.04.1-Ubuntu, mixed mode, sharing)
+javac 25.0.5.0.3
+Python 3.12.13
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2025 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+04fe9d55686761e1b45e02cb075bdf3e63a3c9f2669d255bacbc0d37a7c9ccbf  /home/viniciusk/projetos/auto-play/renders/short-rate-limiter-java/demo/Demo.java
+9f67aa5a15fc040a27f40276c220cff76186c70e6ccd616a3d009f9f5da980ca  /home/viniciusk/projetos/auto-play/renders/short-rate-limiter-java/demo/LimitadorTest.java
+771b3d09dbaf7f7c43b66795b95535077ebde4dca07668fa7d44c3004ce39f58  /home/viniciusk/projetos/auto-play/renders/short-rate-limiter-java/demo/medir.sh
+b56c257f2c7277a2ad6c073cdc90041ae1bbbb3588a6feb00266d612137d567e  /home/viniciusk/projetos/auto-play/app/pipeline/bench.py
+cenario=servico de tras com 10 vagas simultaneas, 50 ms por requisicao, fila FIFO
+normais=5 clientes, cada um 10 por segundo (50/s no total), 300 requisicoes em 6000 ms
+robo=1000 requisicoes de uma vez, em 1000 ms
+limite=token bucket por cliente: capacidade 100 fichas, enche 20 fichas/s, uma ficha por requisicao; sem ficha = 429 sem chamar o servico de tras
+Simulacao local com Thread.sleep e threads virtuais; nao e benchmark de producao, rede, banco ou biblioteca.
+Latencia em ms desde a chegada programada ate a resposta, so dos clientes normais (300 por rodada).
+mediana_ms=elemento de indice n/2 (superior); p99_ms=nearest-rank ceil(n*0.99).
+robo_aceitas e robo_recusadas: requisicoes do robo que passaram ou levaram 429.
+fila_max: maior numero de requisicoes esperando uma vaga no servico de tras.
+15 rodadas por modo, JVM nova sem aquecimento; ordem alternada por par, execucao sequencial.
+cpu_probe original antes de CADA rodada; >0.3 s interrompe; sonda nao garante ausencia de ruido.
+Resumo: mediana e extremos dos valores de cada rodada; nao percentis agrupados de 4500 requisicoes.
+ok: as primeiras 100 requisicoes seguidas passam (balde cheio)
+ok: a 101a requisicao seguida e recusada
+ok: 49 ms depois (0,98 ficha) ainda recusa
+ok: 50 ms depois (1 ficha a 20 por segundo) uma passa
+ok: e a seguinte, sem ficha, recusa
+ok: apos 60 s parado o balde enche so ate a capacidade: 100, nao 1200
+ok: o robo esgota o proprio balde (100, no maximo 101 com o relogio real)
+ok: o balde de outro cliente nao e afetado
+LimitadorTest COMPLETO
+rodada=1 modo=sem-limite data=2026-11-11T06:02:53-03:00 cpu_probe_s=0.044
+rodada=1 modo=sem-limite normais=300 normais_mediana_ms=2868 normais_p99_ms=5034 normais_max_ms=5093 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7354
+rodada=1 modo=com-limite data=2026-11-11T06:03:01-03:00 cpu_probe_s=0.044
+rodada=1 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=479 normais_max_ms=538 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=2 modo=com-limite data=2026-11-11T06:03:07-03:00 cpu_probe_s=0.044
+rodada=2 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=478 normais_max_ms=537 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=2 modo=sem-limite data=2026-11-11T06:03:14-03:00 cpu_probe_s=0.044
+rodada=2 modo=sem-limite normais=300 normais_mediana_ms=2867 normais_p99_ms=5034 normais_max_ms=5094 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7357
+rodada=3 modo=sem-limite data=2026-11-11T06:03:21-03:00 cpu_probe_s=0.044
+rodada=3 modo=sem-limite normais=300 normais_mediana_ms=2865 normais_p99_ms=5034 normais_max_ms=5093 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7356
+rodada=3 modo=com-limite data=2026-11-11T06:03:29-03:00 cpu_probe_s=0.044
+rodada=3 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=479 normais_max_ms=539 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=4 modo=com-limite data=2026-11-11T06:03:36-03:00 cpu_probe_s=0.044
+rodada=4 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=478 normais_max_ms=538 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=4 modo=sem-limite data=2026-11-11T06:03:42-03:00 cpu_probe_s=0.044
+rodada=4 modo=sem-limite normais=300 normais_mediana_ms=2869 normais_p99_ms=5034 normais_max_ms=5094 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7357
+rodada=5 modo=sem-limite data=2026-11-11T06:03:50-03:00 cpu_probe_s=0.044
+rodada=5 modo=sem-limite normais=300 normais_mediana_ms=2867 normais_p99_ms=5038 normais_max_ms=5098 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7358
+rodada=5 modo=com-limite data=2026-11-11T06:03:58-03:00 cpu_probe_s=0.047
+rodada=5 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=479 normais_max_ms=539 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6032
+rodada=6 modo=com-limite data=2026-11-11T06:04:04-03:00 cpu_probe_s=0.044
+rodada=6 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=477 normais_max_ms=537 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=6 modo=sem-limite data=2026-11-11T06:04:11-03:00 cpu_probe_s=0.045
+rodada=6 modo=sem-limite normais=300 normais_mediana_ms=2863 normais_p99_ms=5034 normais_max_ms=5093 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7354
+rodada=7 modo=sem-limite data=2026-11-11T06:04:19-03:00 cpu_probe_s=0.044
+rodada=7 modo=sem-limite normais=300 normais_mediana_ms=2863 normais_p99_ms=5030 normais_max_ms=5073 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7359
+rodada=7 modo=com-limite data=2026-11-11T06:04:26-03:00 cpu_probe_s=0.044
+rodada=7 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=481 normais_max_ms=541 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=8 modo=com-limite data=2026-11-11T06:04:33-03:00 cpu_probe_s=0.061
+rodada=8 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=478 normais_max_ms=538 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=8 modo=sem-limite data=2026-11-11T06:04:39-03:00 cpu_probe_s=0.044
+rodada=8 modo=sem-limite normais=300 normais_mediana_ms=2869 normais_p99_ms=5032 normais_max_ms=5092 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7357
+rodada=9 modo=sem-limite data=2026-11-11T06:04:47-03:00 cpu_probe_s=0.044
+rodada=9 modo=sem-limite normais=300 normais_mediana_ms=2869 normais_p99_ms=5033 normais_max_ms=5093 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7356
+rodada=9 modo=com-limite data=2026-11-11T06:04:55-03:00 cpu_probe_s=0.045
+rodada=9 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=478 normais_max_ms=538 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=10 modo=com-limite data=2026-11-11T06:05:01-03:00 cpu_probe_s=0.044
+rodada=10 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=479 normais_max_ms=539 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=10 modo=sem-limite data=2026-11-11T06:05:08-03:00 cpu_probe_s=0.044
+rodada=10 modo=sem-limite normais=300 normais_mediana_ms=2870 normais_p99_ms=5034 normais_max_ms=5093 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7362
+rodada=11 modo=sem-limite data=2026-11-11T06:05:16-03:00 cpu_probe_s=0.044
+rodada=11 modo=sem-limite normais=300 normais_mediana_ms=2868 normais_p99_ms=5039 normais_max_ms=5099 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7360
+rodada=11 modo=com-limite data=2026-11-11T06:05:24-03:00 cpu_probe_s=0.044
+rodada=11 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=478 normais_max_ms=538 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=12 modo=com-limite data=2026-11-11T06:05:30-03:00 cpu_probe_s=0.045
+rodada=12 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=479 normais_max_ms=539 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6032
+rodada=12 modo=sem-limite data=2026-11-11T06:05:37-03:00 cpu_probe_s=0.045
+rodada=12 modo=sem-limite normais=300 normais_mediana_ms=2865 normais_p99_ms=5035 normais_max_ms=5095 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7355
+rodada=13 modo=sem-limite data=2026-11-11T06:05:44-03:00 cpu_probe_s=0.044
+rodada=13 modo=sem-limite normais=300 normais_mediana_ms=2863 normais_p99_ms=5032 normais_max_ms=5092 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7357
+rodada=13 modo=com-limite data=2026-11-11T06:05:52-03:00 cpu_probe_s=0.045
+rodada=13 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=479 normais_max_ms=539 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+rodada=14 modo=com-limite data=2026-11-11T06:05:59-03:00 cpu_probe_s=0.044
+rodada=14 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=477 normais_max_ms=537 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6032
+rodada=14 modo=sem-limite data=2026-11-11T06:06:05-03:00 cpu_probe_s=0.044
+rodada=14 modo=sem-limite normais=300 normais_mediana_ms=2867 normais_p99_ms=5034 normais_max_ms=5074 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7356
+rodada=15 modo=sem-limite data=2026-11-11T06:06:13-03:00 cpu_probe_s=0.044
+rodada=15 modo=sem-limite normais=300 normais_mediana_ms=2867 normais_p99_ms=5033 normais_max_ms=5073 normais_recusadas=0 robo_aceitas=1000 robo_recusadas=0 servico_atendidas=1300 fila_max=993 total_ms=7357
+rodada=15 modo=com-limite data=2026-11-11T06:06:21-03:00 cpu_probe_s=0.045
+rodada=15 modo=com-limite normais=300 normais_mediana_ms=51 normais_p99_ms=477 normais_max_ms=537 normais_recusadas=0 robo_aceitas=100 robo_recusadas=900 servico_atendidas=400 fila_max=93 total_ms=6031
+RESUMO modo=sem-limite metrica=normais_mediana_ms n=15 mediana=2867 min=2863 max=2870
+RESUMO modo=sem-limite metrica=normais_p99_ms n=15 mediana=5034 min=5030 max=5039
+RESUMO modo=sem-limite metrica=normais_max_ms n=15 mediana=5093 min=5073 max=5099
+RESUMO modo=sem-limite metrica=normais_recusadas n=15 mediana=0 min=0 max=0
+RESUMO modo=sem-limite metrica=robo_aceitas n=15 mediana=1000 min=1000 max=1000
+RESUMO modo=sem-limite metrica=robo_recusadas n=15 mediana=0 min=0 max=0
+RESUMO modo=sem-limite metrica=servico_atendidas n=15 mediana=1300 min=1300 max=1300
+RESUMO modo=sem-limite metrica=fila_max n=15 mediana=993 min=993 max=993
+RESUMO modo=sem-limite metrica=total_ms n=15 mediana=7357 min=7354 max=7362
+RESUMO modo=com-limite metrica=normais_mediana_ms n=15 mediana=51 min=51 max=51
+RESUMO modo=com-limite metrica=normais_p99_ms n=15 mediana=478 min=477 max=481
+RESUMO modo=com-limite metrica=normais_max_ms n=15 mediana=538 min=537 max=541
+RESUMO modo=com-limite metrica=normais_recusadas n=15 mediana=0 min=0 max=0
+RESUMO modo=com-limite metrica=robo_aceitas n=15 mediana=100 min=100 max=100
+RESUMO modo=com-limite metrica=robo_recusadas n=15 mediana=900 min=900 max=900
+RESUMO modo=com-limite metrica=servico_atendidas n=15 mediana=400 min=400 max=400
+RESUMO modo=com-limite metrica=fila_max n=15 mediana=93 min=93 max=93
+RESUMO modo=com-limite metrica=total_ms n=15 mediana=6031 min=6031 max=6032
+medicoes=30 status=COMPLETO
+fim=2026-11-11T06:06:27-03:00 status_execucao=0

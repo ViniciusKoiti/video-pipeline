@@ -1,0 +1,15 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: o_que.data é 2026-11-19T15:00:00+00:00, o que dá quinta-feira 19/11/2026, 12h de Brasília. O JSON traz 2026-11-19T12:00:00-03:00, que é o mesmo instante. Não há agenda*.md na pasta; o README ainda diz 'DATA_A_DEFINIR' (desatualizado), então não tenho agenda escrita para comparar.",
+    "Pacote: a última linha 'pacote' do registro (linha 383) é a do Instagram (koiti.dev, short-rate-limiter-java-ig), não a deste JSON. O pacote deste post é a linha 382: canal baixo.nivel.dev.s, id cmvx0nn9g0003l26yf4npmb66, mesma data, legenda idêntica à do JSON (os \\n do JSON viram espaços no registro). Conferi por canal e legenda; confirme que o `vp postiz duvida` e o `schedule` usam o payload sha256:d8f50d26...",
+    "Canal: __type youtube com o id de canal do YouTube @baixo.nivel.dev.s, coerente com o post em inglês e com o README. Nenhum id de Instagram neste JSON.",
+    "Mídia: o upload registrado (linha 380) liga data/episodes/short-rate-limiter-java-en/renders/final.mp4 (sha256 b9e0d46b...) ao id d5477537-8b0a-4f16-a745-b208dfa3662b, e o JSON usa esse id e esse path (2100f26e...mp4). Pacote com arquivo e sha256. É a versão en, combina com a legenda em inglês e com o título. O README cita ../final.en.mp4, mas o registro aponta para o final.mp4 do episódio; não abri o MP4. A mesma mídia vai também ao Instagram do koiti.dev no mesmo horário, de propósito.",
+    "Legenda e números: os números da legenda batem com demo/resultado.txt (RESUMO): mediana dos clientes normais 2867 ms sem limite e 51 ms com limite; robô 100 aceitas e 900 recusadas; 0 normais recusados; 15 rodadas; OpenJDK 25.0.5. O pico legítimo recusado vem dito como consequência do mecanismo, não medido. A taxa e o balde vêm como escolhas da demo. As duas fontes são RFCs reais (6585 e 2697), sem pessoa viva nem empresa citada. Sem erro de digitação visto. Título em caixa alta, 66 caracteres. A legenda é longa e densa para um Short, mas isso é editorial.",
+    "Divulgação: a legenda diz 'The voice is mine, cloned with AI', mas a API não marca conteúdo alterado ou sintético. É preciso marcar à mão no Studio depois de publicar, e fixar o primeiro comentário. O pacote já avisa isso. O post vai 'public' sem passar por não listado.",
+    "Gate 4: evidencia.gate_4 = 'aprovado', episódio short-rate-limiter-java-en. O README diz que a música planejada (ytal-spirit-of-fire) não foi mixada porque `vp short juntar` não mistura música, então o MP4 sai só com voz e efeitos. Se o dono esperava música, não vai ter.",
+    "Repetição: não há linha 'agendado' com o canal cmvx0nn9g0003l26yf4npmb66 nos dias 16 a 19/11. O único 'agendado' em 19/11 15:00 UTC (linha 378) é de outra integração (cmvwzfp980019l2clo70frcwz). A mesma mídia aparece só no pacote do Instagram, que ainda não foi agendado.",
+    "Tempo para desfazer: o pacote foi gravado em 16/11 às 14:16 UTC, mais de 72 h antes do horário, então sobra bastante tempo para apagar o post no Postiz."
+  ],
+  "revisor": "duvida-cega"
+}

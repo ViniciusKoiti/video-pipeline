@@ -1,0 +1,805 @@
+{
+  "runId": "1794835276590-e30746cf",
+  "command": "review",
+  "composition": "ProductionExplainer",
+  "startedAt": "2026-11-16T13:21:16.591Z",
+  "contentFile": "content.pt.json",
+  "artifacts": [
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-situacao-start-f0.png",
+      "sceneId": "situacao",
+      "frame": 0,
+      "localFrame": 0,
+      "timeSec": 0
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-situacao-read-f137.png",
+      "sceneId": "situacao",
+      "frame": 137,
+      "localFrame": 137,
+      "timeSec": 4.566666666666666
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-situacao-end-f233.png",
+      "sceneId": "situacao",
+      "frame": 233,
+      "localFrame": 233,
+      "timeSec": 7.766666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-situacao-motion.png",
+      "sceneId": "situacao",
+      "frames": [
+        23,
+        46,
+        69,
+        91,
+        114,
+        137
+      ],
+      "localFrames": [
+        23,
+        46,
+        69,
+        91,
+        114,
+        137
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-balde-start-f234.png",
+      "sceneId": "balde",
+      "frame": 234,
+      "localFrame": 0,
+      "timeSec": 7.8
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-balde-read-f383.png",
+      "sceneId": "balde",
+      "frame": 383,
+      "localFrame": 149,
+      "timeSec": 12.766666666666667
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-balde-end-f455.png",
+      "sceneId": "balde",
+      "frame": 455,
+      "localFrame": 221,
+      "timeSec": 15.166666666666666
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-balde-motion.png",
+      "sceneId": "balde",
+      "frames": [
+        259,
+        284,
+        309,
+        333,
+        358,
+        383
+      ],
+      "localFrames": [
+        25,
+        50,
+        75,
+        99,
+        124,
+        149
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-recusa-start-f456.png",
+      "sceneId": "recusa",
+      "frame": 456,
+      "localFrame": 0,
+      "timeSec": 15.2
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-recusa-read-f645.png",
+      "sceneId": "recusa",
+      "frame": 645,
+      "localFrame": 189,
+      "timeSec": 21.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-recusa-end-f800.png",
+      "sceneId": "recusa",
+      "frame": 800,
+      "localFrame": 344,
+      "timeSec": 26.666666666666668
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-recusa-motion.png",
+      "sceneId": "recusa",
+      "frames": [
+        480,
+        504,
+        528,
+        551,
+        575,
+        599
+      ],
+      "localFrames": [
+        24,
+        48,
+        72,
+        95,
+        119,
+        143
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-start-f801.png",
+      "sceneId": "medido",
+      "frame": 801,
+      "localFrame": 0,
+      "timeSec": 26.7
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-read-f950.png",
+      "sceneId": "medido",
+      "frame": 950,
+      "localFrame": 149,
+      "timeSec": 31.666666666666668
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-medido-end-f1034.png",
+      "sceneId": "medido",
+      "frame": 1034,
+      "localFrame": 233,
+      "timeSec": 34.46666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-medido-motion.png",
+      "sceneId": "medido",
+      "frames": [
+        826,
+        851,
+        876,
+        900,
+        925,
+        950
+      ],
+      "localFrames": [
+        25,
+        50,
+        75,
+        99,
+        124,
+        149
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-limite-start-f1035.png",
+      "sceneId": "limite",
+      "frame": 1035,
+      "localFrame": 0,
+      "timeSec": 34.5
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-limite-read-f1262.png",
+      "sceneId": "limite",
+      "frame": 1262,
+      "localFrame": 227,
+      "timeSec": 42.06666666666667
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-limite-end-f1391.png",
+      "sceneId": "limite",
+      "frame": 1391,
+      "localFrame": 356,
+      "timeSec": 46.36666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-limite-motion.png",
+      "sceneId": "limite",
+      "frames": [
+        1073,
+        1111,
+        1149,
+        1186,
+        1224,
+        1262
+      ],
+      "localFrames": [
+        38,
+        76,
+        114,
+        151,
+        189,
+        227
+      ]
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-start-f1392.png",
+      "sceneId": "fecho",
+      "frame": 1392,
+      "localFrame": 0,
+      "timeSec": 46.4
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-read-f1477.png",
+      "sceneId": "fecho",
+      "frame": 1477,
+      "localFrame": 85,
+      "timeSec": 49.233333333333334
+    },
+    {
+      "kind": "frame",
+      "file": "ProductionExplainer-fecho-end-f1547.png",
+      "sceneId": "fecho",
+      "frame": 1547,
+      "localFrame": 155,
+      "timeSec": 51.56666666666667
+    },
+    {
+      "kind": "motion",
+      "file": "ProductionExplainer-fecho-motion.png",
+      "sceneId": "fecho",
+      "frames": [
+        1396,
+        1401,
+        1405,
+        1409,
+        1414,
+        1418
+      ],
+      "localFrames": [
+        4,
+        9,
+        13,
+        17,
+        22,
+        26
+      ]
+    },
+    {
+      "kind": "review",
+      "file": "review.mp4",
+      "frameRange": [
+        204,
+        323
+      ],
+      "cutFrame": 234
+    }
+  ],
+  "style": "editorial",
+  "locale": "pt-BR",
+  "media": {},
+  "versions": {
+    "node": "v22.22.3",
+    "platform": "linux",
+    "arch": "x64",
+    "@viniciuskoitin/motion-video": "0.3.1",
+    "@viniciuskoitin/motion-kit": "0.9.0",
+    "@viniciuskoitin/motion-kit-fonts": "0.1.0",
+    "remotion": "4.0.487",
+    "@remotion/bundler": "4.0.487",
+    "@remotion/renderer": "4.0.487",
+    "zod": "4.3.6"
+  },
+  "sourceHashes": {
+    "composition/ExplainerDemo.tsx": "23e00c7bddc029bc0f421b69b9fcdeafa94d657594e2681d826178fee780b175",
+    "composition/content.schema.ts": "fa4342d25ffd99d26dbb324bbcd8fd74f5674517044fec7b560a87d1e122270f",
+    "composition/host.ts": "4d3149b94785e7eaeb3cb875b621d11f1b5da3febef00e4c8a0ca923b2a0ec41",
+    "src/production.mjs": "47eef48a75b2b11d48e12fdffeeb8ca4b02bf0948a059a3e997ad1989c98d20e",
+    "dist/composition/index.js": "05c4b0f8f63211c7b447663a89ce9476bdb025ea0a2ccd88fca51edacb1f4b83"
+  },
+  "metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "durationInFrames": 1548,
+    "timeline": [
+      {
+        "id": "situacao",
+        "durationSec": 7.8,
+        "type": "flow",
+        "title": "E a requisição 101?",
+        "nodes": [
+          {
+            "id": "bot",
+            "label": "Robô",
+            "sublabel": "1000 de uma vez",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "clients",
+            "label": "5 clientes",
+            "sublabel": "ritmo normal",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "api",
+            "label": "Serviço de trás",
+            "sublabel": "10 vagas",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "bot",
+            "to": "api",
+            "label": "rajada"
+          },
+          {
+            "from": "clients",
+            "to": "api",
+            "label": "normais"
+          }
+        ],
+        "states": [
+          {
+            "node": "bot",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "api",
+            "atSec": 2.1,
+            "state": "running"
+          },
+          {
+            "node": "clients",
+            "atSec": 4.2,
+            "state": "waiting"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "burst",
+            "from": "bot",
+            "to": "api",
+            "atSec": 1.3,
+            "durationSec": 0.8,
+            "label": "1000"
+          },
+          {
+            "id": "normal",
+            "from": "clients",
+            "to": "api",
+            "atSec": 3.4,
+            "durationSec": 0.8,
+            "label": "normal"
+          }
+        ],
+        "legend": false,
+        "from": 0,
+        "durationInFrames": 234,
+        "readableFrame": 137,
+        "readableFrom": 137
+      },
+      {
+        "id": "balde",
+        "durationSec": 7.4,
+        "type": "flow",
+        "title": "Balde de fichas",
+        "nodes": [
+          {
+            "id": "tap",
+            "label": "Torneira",
+            "sublabel": "20 fichas por segundo",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "bucket",
+            "label": "Balde",
+            "sublabel": "até 100 fichas",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "api",
+            "label": "Serviço de trás",
+            "sublabel": "uma ficha por requisição",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "tap",
+            "to": "bucket",
+            "label": "ficha"
+          },
+          {
+            "from": "bucket",
+            "to": "api",
+            "label": "requisição"
+          }
+        ],
+        "states": [
+          {
+            "node": "tap",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "bucket",
+            "atSec": 2.1,
+            "state": "running"
+          },
+          {
+            "node": "api",
+            "atSec": 4.6,
+            "state": "running"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "ficha-1",
+            "from": "tap",
+            "to": "bucket",
+            "atSec": 1.3,
+            "durationSec": 0.8,
+            "label": "ficha"
+          },
+          {
+            "id": "ficha-2",
+            "from": "tap",
+            "to": "bucket",
+            "atSec": 2.4,
+            "durationSec": 0.8,
+            "label": "ficha"
+          },
+          {
+            "id": "req",
+            "from": "bucket",
+            "to": "api",
+            "atSec": 3.8,
+            "durationSec": 0.8,
+            "label": "gasta a ficha"
+          }
+        ],
+        "legend": false,
+        "from": 234,
+        "durationInFrames": 222,
+        "readableFrame": 149,
+        "readableFrom": 383
+      },
+      {
+        "id": "recusa",
+        "durationSec": 11.5,
+        "type": "flow",
+        "title": "Sem ficha: erro 429",
+        "nodes": [
+          {
+            "id": "bot",
+            "label": "Robô",
+            "sublabel": "requisição 101",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "bucket",
+            "label": "Balde",
+            "sublabel": "0 fichas · passaram 100",
+            "column": 1,
+            "lane": 0
+          },
+          {
+            "id": "api",
+            "label": "Serviço de trás",
+            "sublabel": "não é chamado",
+            "column": 2,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "bot",
+            "to": "bucket",
+            "label": "nº 101"
+          },
+          {
+            "from": "bucket",
+            "to": "bot",
+            "label": "429",
+            "kind": "completion"
+          },
+          {
+            "from": "bucket",
+            "to": "api",
+            "label": "bloqueado",
+            "dashed": true
+          }
+        ],
+        "states": [
+          {
+            "node": "bot",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "bucket",
+            "atSec": 2.1,
+            "state": "waiting"
+          },
+          {
+            "node": "bot",
+            "atSec": 4.4,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "req-101",
+            "from": "bot",
+            "to": "bucket",
+            "atSec": 1.4,
+            "durationSec": 0.8,
+            "label": "nº 101"
+          },
+          {
+            "id": "erro",
+            "from": "bucket",
+            "to": "bot",
+            "atSec": 3.4,
+            "durationSec": 0.8,
+            "label": "429"
+          }
+        ],
+        "legend": false,
+        "from": 456,
+        "durationInFrames": 345,
+        "readableFrame": 143,
+        "readableFrom": 599
+      },
+      {
+        "id": "medido",
+        "durationSec": 7.8,
+        "type": "flow",
+        "title": "Clientes normais, mediana",
+        "nodes": [
+          {
+            "id": "without",
+            "label": "Sem limite",
+            "sublabel": "2,9 s",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "with",
+            "label": "Com limite",
+            "sublabel": "51 ms",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "clients",
+            "label": "Clientes normais",
+            "sublabel": "simulação, 15 rodadas",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "without",
+            "to": "clients",
+            "label": "espera"
+          },
+          {
+            "from": "with",
+            "to": "clients",
+            "label": "espera"
+          }
+        ],
+        "states": [
+          {
+            "node": "without",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "without",
+            "atSec": 2.2,
+            "state": "failed"
+          },
+          {
+            "node": "clients",
+            "atSec": 2.2,
+            "state": "failed"
+          },
+          {
+            "node": "with",
+            "atSec": 3.7,
+            "state": "running"
+          },
+          {
+            "node": "with",
+            "atSec": 4.6,
+            "state": "done"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "lento",
+            "from": "without",
+            "to": "clients",
+            "atSec": 1.4,
+            "durationSec": 0.8,
+            "label": "2,9 s"
+          },
+          {
+            "id": "rapido",
+            "from": "with",
+            "to": "clients",
+            "atSec": 3.8,
+            "durationSec": 0.8,
+            "label": "51 ms"
+          }
+        ],
+        "legend": false,
+        "from": 801,
+        "durationInFrames": 234,
+        "readableFrame": 149,
+        "readableFrom": 950
+      },
+      {
+        "id": "limite",
+        "durationSec": 11.9,
+        "type": "flow",
+        "title": "O balde decide o pico",
+        "nodes": [
+          {
+            "id": "bot",
+            "label": "Robô",
+            "sublabel": "900 recusas",
+            "column": 0,
+            "lane": 0
+          },
+          {
+            "id": "spike",
+            "label": "Pico legítimo",
+            "sublabel": "hipótese, não medido",
+            "column": 0,
+            "lane": 1
+          },
+          {
+            "id": "bucket",
+            "label": "Balde",
+            "sublabel": "0 fichas",
+            "column": 1,
+            "lane": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "bot",
+            "to": "bucket",
+            "label": "rajada"
+          },
+          {
+            "from": "bucket",
+            "to": "bot",
+            "label": "429",
+            "kind": "completion"
+          },
+          {
+            "from": "spike",
+            "to": "bucket",
+            "label": "acima do balde",
+            "dashed": true
+          },
+          {
+            "from": "bucket",
+            "to": "spike",
+            "label": "429",
+            "dashed": true,
+            "kind": "completion"
+          }
+        ],
+        "states": [
+          {
+            "node": "bucket",
+            "atSec": 1.3,
+            "state": "waiting"
+          },
+          {
+            "node": "bot",
+            "atSec": 1.3,
+            "state": "running"
+          },
+          {
+            "node": "bot",
+            "atSec": 3.2,
+            "state": "failed"
+          },
+          {
+            "node": "spike",
+            "atSec": 5.4,
+            "state": "running"
+          },
+          {
+            "node": "spike",
+            "atSec": 7.2,
+            "state": "failed"
+          }
+        ],
+        "tokens": [
+          {
+            "id": "rajada",
+            "from": "bot",
+            "to": "bucket",
+            "atSec": 1.3,
+            "durationSec": 0.8,
+            "label": "rajada"
+          },
+          {
+            "id": "recusa-robo",
+            "from": "bucket",
+            "to": "bot",
+            "atSec": 2.4,
+            "durationSec": 0.8,
+            "label": "429"
+          },
+          {
+            "id": "pico",
+            "from": "spike",
+            "to": "bucket",
+            "atSec": 5.4,
+            "durationSec": 0.8,
+            "label": "pico"
+          },
+          {
+            "id": "recusa-pico",
+            "from": "bucket",
+            "to": "spike",
+            "atSec": 6.4,
+            "durationSec": 0.8,
+            "label": "429"
+          }
+        ],
+        "legend": false,
+        "from": 1035,
+        "durationInFrames": 357,
+        "readableFrame": 227,
+        "readableFrom": 1262
+      },
+      {
+        "id": "fecho",
+        "durationSec": 5.2,
+        "type": "end_card",
+        "variant": "follow",
+        "text": "Qual tamanho de balde?",
+        "sub": "Comenta o seu número",
+        "from": 1392,
+        "durationInFrames": 156,
+        "readableFrame": 26,
+        "readableFrom": 1418
+      }
+    ]
+  },
+  "success": true,
+  "diagnostics": [],
+  "finishedAt": "2026-11-16T13:22:00.285Z",
+  "elapsedMs": 43694,
+  "directory": "/home/viniciusk/projetos/auto-play/renders/short-rate-limiter-java/out/production/1794835276590-e30746cf"
+}

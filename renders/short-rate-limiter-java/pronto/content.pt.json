@@ -1,0 +1,476 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "11/11/2026 · Java 25 · simulação · 20 fichas/s · balde 100 · 15 rodadas",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "situacao",
+      "type": "flow",
+      "durationSec": 5.9,
+      "title": "E a requisição 101?",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "bot",
+          "label": "Robô",
+          "sublabel": "1000 de uma vez",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "clients",
+          "label": "5 clientes",
+          "sublabel": "ritmo normal",
+          "column": 0,
+          "lane": 1
+        },
+        {
+          "id": "api",
+          "label": "Serviço de trás",
+          "sublabel": "10 vagas",
+          "column": 1,
+          "lane": 0
+        }
+      ],
+      "edges": [
+        {
+          "from": "bot",
+          "to": "api",
+          "label": "rajada"
+        },
+        {
+          "from": "clients",
+          "to": "api",
+          "label": "normais"
+        }
+      ],
+      "states": [
+        {
+          "node": "bot",
+          "atSec": 1.3,
+          "state": "running"
+        },
+        {
+          "node": "api",
+          "atSec": 2.1,
+          "state": "running"
+        },
+        {
+          "node": "clients",
+          "atSec": 4.2,
+          "state": "waiting"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "burst",
+          "from": "bot",
+          "to": "api",
+          "atSec": 1.3,
+          "durationSec": 0.8,
+          "label": "1000"
+        },
+        {
+          "id": "normal",
+          "from": "clients",
+          "to": "api",
+          "atSec": 3.4,
+          "durationSec": 0.8,
+          "label": "normal"
+        }
+      ]
+    },
+    {
+      "id": "balde",
+      "type": "flow",
+      "durationSec": 6.1,
+      "title": "Balde de fichas",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "tap",
+          "label": "Torneira",
+          "sublabel": "20 fichas por segundo",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "bucket",
+          "label": "Balde",
+          "sublabel": "até 100 fichas",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "api",
+          "label": "Serviço de trás",
+          "sublabel": "uma ficha por requisição",
+          "column": 2,
+          "lane": 0
+        }
+      ],
+      "edges": [
+        {
+          "from": "tap",
+          "to": "bucket",
+          "label": "ficha"
+        },
+        {
+          "from": "bucket",
+          "to": "api",
+          "label": "requisição"
+        }
+      ],
+      "states": [
+        {
+          "node": "tap",
+          "atSec": 1.3,
+          "state": "running"
+        },
+        {
+          "node": "bucket",
+          "atSec": 2.1,
+          "state": "running"
+        },
+        {
+          "node": "api",
+          "atSec": 4.6,
+          "state": "running"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "ficha-1",
+          "from": "tap",
+          "to": "bucket",
+          "atSec": 1.3,
+          "durationSec": 0.8,
+          "label": "ficha"
+        },
+        {
+          "id": "ficha-2",
+          "from": "tap",
+          "to": "bucket",
+          "atSec": 2.4,
+          "durationSec": 0.8,
+          "label": "ficha"
+        },
+        {
+          "id": "req",
+          "from": "bucket",
+          "to": "api",
+          "atSec": 3.8,
+          "durationSec": 0.8,
+          "label": "gasta a ficha"
+        }
+      ]
+    },
+    {
+      "id": "recusa",
+      "type": "flow",
+      "durationSec": 7.3,
+      "title": "Sem ficha: erro 429",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "bot",
+          "label": "Robô",
+          "sublabel": "requisição 101",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "bucket",
+          "label": "Balde",
+          "sublabel": "0 fichas · passaram 100",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "api",
+          "label": "Serviço de trás",
+          "sublabel": "não é chamado",
+          "column": 2,
+          "lane": 0
+        }
+      ],
+      "edges": [
+        {
+          "from": "bot",
+          "to": "bucket",
+          "label": "nº 101"
+        },
+        {
+          "from": "bucket",
+          "to": "bot",
+          "kind": "completion",
+          "label": "429"
+        },
+        {
+          "from": "bucket",
+          "to": "api",
+          "dashed": true,
+          "label": "bloqueado"
+        }
+      ],
+      "states": [
+        {
+          "node": "bot",
+          "atSec": 1.3,
+          "state": "running"
+        },
+        {
+          "node": "bucket",
+          "atSec": 2.1,
+          "state": "waiting"
+        },
+        {
+          "node": "bot",
+          "atSec": 4.4,
+          "state": "failed"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "req-101",
+          "from": "bot",
+          "to": "bucket",
+          "atSec": 1.4,
+          "durationSec": 0.8,
+          "label": "nº 101"
+        },
+        {
+          "id": "erro",
+          "from": "bucket",
+          "to": "bot",
+          "atSec": 3.4,
+          "durationSec": 0.8,
+          "label": "429"
+        }
+      ]
+    },
+    {
+      "id": "medido",
+      "type": "flow",
+      "durationSec": 5.8,
+      "title": "Clientes normais, mediana",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "without",
+          "label": "Sem limite",
+          "sublabel": "2,9 s",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "with",
+          "label": "Com limite",
+          "sublabel": "51 ms",
+          "column": 0,
+          "lane": 1
+        },
+        {
+          "id": "clients",
+          "label": "Clientes normais",
+          "sublabel": "simulação, 15 rodadas",
+          "column": 1,
+          "lane": 0
+        }
+      ],
+      "edges": [
+        {
+          "from": "without",
+          "to": "clients",
+          "label": "espera"
+        },
+        {
+          "from": "with",
+          "to": "clients",
+          "label": "espera"
+        }
+      ],
+      "states": [
+        {
+          "node": "without",
+          "atSec": 1.3,
+          "state": "running"
+        },
+        {
+          "node": "without",
+          "atSec": 2.145,
+          "state": "failed"
+        },
+        {
+          "node": "clients",
+          "atSec": 2.145,
+          "state": "failed"
+        },
+        {
+          "node": "with",
+          "atSec": 3.555,
+          "state": "running"
+        },
+        {
+          "node": "with",
+          "atSec": 4.4,
+          "state": "done"
+        },
+        {
+          "node": "clients",
+          "atSec": 4.4,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "lento",
+          "from": "without",
+          "to": "clients",
+          "atSec": 1.394,
+          "durationSec": 0.752,
+          "label": "2,9 s"
+        },
+        {
+          "id": "rapido",
+          "from": "with",
+          "to": "clients",
+          "atSec": 3.648,
+          "durationSec": 0.752,
+          "label": "51 ms"
+        }
+      ]
+    },
+    {
+      "id": "limite",
+      "type": "flow",
+      "durationSec": 6.3,
+      "title": "O balde decide o pico",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "bot",
+          "label": "Robô",
+          "sublabel": "900 recusas",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "spike",
+          "label": "Pico legítimo",
+          "sublabel": "hipótese, não medido",
+          "column": 0,
+          "lane": 1
+        },
+        {
+          "id": "bucket",
+          "label": "Balde",
+          "sublabel": "0 fichas",
+          "column": 1,
+          "lane": 0
+        }
+      ],
+      "edges": [
+        {
+          "from": "bot",
+          "to": "bucket",
+          "label": "rajada"
+        },
+        {
+          "from": "bucket",
+          "to": "bot",
+          "kind": "completion",
+          "label": "429"
+        },
+        {
+          "from": "spike",
+          "to": "bucket",
+          "dashed": true,
+          "label": "acima do balde"
+        },
+        {
+          "from": "bucket",
+          "to": "spike",
+          "kind": "completion",
+          "dashed": true,
+          "label": "429"
+        }
+      ],
+      "states": [
+        {
+          "node": "bucket",
+          "atSec": 1.3,
+          "state": "waiting"
+        },
+        {
+          "node": "bot",
+          "atSec": 1.3,
+          "state": "running"
+        },
+        {
+          "node": "bot",
+          "atSec": 2.459,
+          "state": "failed"
+        },
+        {
+          "node": "spike",
+          "atSec": 3.802,
+          "state": "running"
+        },
+        {
+          "node": "spike",
+          "atSec": 4.9,
+          "state": "failed"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "rajada",
+          "from": "bot",
+          "to": "bucket",
+          "atSec": 1.3,
+          "durationSec": 0.488,
+          "label": "rajada"
+        },
+        {
+          "id": "recusa-robo",
+          "from": "bucket",
+          "to": "bot",
+          "atSec": 1.971,
+          "durationSec": 0.488,
+          "label": "429"
+        },
+        {
+          "id": "pico",
+          "from": "spike",
+          "to": "bucket",
+          "atSec": 3.802,
+          "durationSec": 0.488,
+          "label": "pico"
+        },
+        {
+          "id": "recusa-pico",
+          "from": "bucket",
+          "to": "spike",
+          "atSec": 4.412,
+          "durationSec": 0.488,
+          "label": "429"
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.7,
+      "variant": "follow",
+      "text": "Qual tamanho de balde?",
+      "sub": "Comenta o seu número"
+    }
+  ]
+}

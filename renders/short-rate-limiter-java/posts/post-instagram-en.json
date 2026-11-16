@@ -1,0 +1,28 @@
+{
+  "type": "schedule",
+  "date": "2026-11-19T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmv8r4jw30001l2863lr8x1lo"
+      },
+      "value": [
+        {
+          "content": "Rate limiter in Java (system design): what happens to request 101?\n\nIn this example, a Java API gets a bot that fires 1,000 requests at once and 5 normal clients, each at 10 per second. At the entrance, one token bucket per client gains 20 tokens per second, up to 100, and each request spends one token. With no token left, the answer is 429 (Too Many Requests) and the backend service is never called.\n\nLocal simulation: a backend with 10 slots and 50 ms per request, Thread.sleep and virtual threads, a hand-written token bucket, no library. OpenJDK 25.0.5; 15 runs per mode, a fresh JVM each run with no warm-up, alternating order. Not a production, network or database benchmark.\n\nMedians of the 15 runs: the median response time of normal clients dropped from 2,867 ms without a limit to 51 ms with one. The bot got 100 requests accepted and 900 rejected; no normal client was rejected. A legitimate spike bigger than the bucket would also be rejected: that follows from the mechanism, it was not measured. The rate (20 per second) and the bucket size (100) are choices of this demo, not recommended values.\n\nMechanism sources:\nhttps://www.rfc-editor.org/rfc/rfc6585.txt (status 429)\nhttps://www.rfc-editor.org/rfc/rfc2697.txt (token bucket)\n\nThe voice is mine, cloned with AI. The animations were made for this video; no on-screen presenter.\n\n#Shorts #Java #RateLimiter #SystemDesign",
+          "image": [
+            {
+              "id": "d5477537-8b0a-4f16-a745-b208dfa3662b",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/16/2100f26e1333172515a465f9cf1603065.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "instagram-standalone",
+        "post_type": "post"
+      }
+    }
+  ]
+}
