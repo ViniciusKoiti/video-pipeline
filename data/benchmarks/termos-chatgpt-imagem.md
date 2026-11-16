@@ -31,3 +31,27 @@ Não serve de registro: a redação atual tem de vir da página oficial.
 
 O dono aprovou a pele e a licença `Generated` para o vídeo do LinkedIn sem o texto oficial lido aqui ("Aprovo ...
 pode postar às 16:30"). O trecho pendente acima continua pendente; copiá-lo antes do próximo uso público.
+
+## Decisão do dono (2026-11-10): segundo uso
+
+O dono aprovou a pele `dono` e a licença `Generated` para o vídeo `nietzsche-solo-leveling-sistema` ("aprovo a pele
+neste vídeo"). A leitura automática de `https://openai.com/policies/row-terms-of-use/` deu HTTP 403 de novo, e o texto
+de "Ownership of content" continua **pendente**; a decisão foi do dono sem ele. Para fechar: colar aqui, da página
+aberta no navegador, a seção e a data de vigência.
+
+## Consulta por busca (2026-11-10): fonte secundária, não substitui a leitura da página
+
+A página oficial segue com HTTP 403 ao acesso automático. Uma busca web devolveu trechos citados de páginas da OpenAI
+(`https://openai.com/api/policies/terms/` e as versões de termos de uso) e de agregadores. O que os trechos dizem, com
+a ressalva de que são versões diferentes dos termos e a redação atual precisa ser conferida na página aberta no
+navegador:
+
+- "As between you and OpenAI, and to the extent permitted by applicable law, you (a) retain your ownership rights in
+  Input and (b) own the Output." (política da API)
+- "We hereby assign to you all our right, title, and interest, if any, in and to Output." Não alcança o resultado de
+  outros usuários nem conteúdo de terceiros; o resultado pode não ser único.
+- A OpenAI mantém licença para usar o Content para operar e melhorar os serviços.
+- Direitos de autor sobre conteúdo gerado por IA é área em evolução.
+
+Fica pendente: o texto da seção "Ownership of content" dos termos para quem mora fora dos EUA e da UE (ROW), com a data
+de vigência, e a confirmação de que não há limite a uso comercial do resultado.
