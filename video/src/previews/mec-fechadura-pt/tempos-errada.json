@@ -1,0 +1,7 @@
+{
+  "fps": 30,
+  "fonte": "voice/leveled/*.wav do mec-fechadura-pt (2026-11-09); S17 = chave errada",
+  "cenas": {
+    "S17": 14.36
+  }
+}

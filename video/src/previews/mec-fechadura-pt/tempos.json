@@ -1,0 +1,14 @@
+{
+  "fps": 30,
+  "fonte": "voice/leveled/*.wav do mec-fechadura-pt (2026-11-09); S04..S11 = corte principal",
+  "cenas": {
+    "S04": 6.76,
+    "S05": 9.44,
+    "S06": 8.92,
+    "S07": 7.28,
+    "S08": 10.28,
+    "S09": 12.32,
+    "S10": 6.04,
+    "S11": 11.2
+  }
+}

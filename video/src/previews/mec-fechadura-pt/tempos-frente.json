@@ -1,0 +1,8 @@
+{
+  "fps": 30,
+  "fonte": "voice/leveled/*.wav do mec-fechadura-pt (2026-11-09); S12 e S13 = vista de frente",
+  "cenas": {
+    "S12": 9.0,
+    "S13": 7.04
+  }
+}
