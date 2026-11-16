@@ -1,0 +1,33 @@
+2026-11-11T06:00:33-03:00 cpu_probe 0.046
+2026-11-11T06:07:14-03:00 claude saiu com código 0 (tentativa 1/3)
+custo_usd_equivalente 0.9518156000000001 | turnos 35 | modelos ['claude-sonnet-5-5'] | duracao_s 398
+A rotina de hoje parou no passo 3 (fontes primárias) e não produziu nada pronto para o Postiz. Não foi gerada voz nem render, não houve chamada ao Modal e não houve custo. Nada foi aprovado nem agendado. O registro do dia está em `data/rotina/2026-11-11.md`.
+
+**O que fiz**
+- **Pauta:** a fila e o plano do mês põem **Rate limiter em Java** em 11/11, com pauta aprovada em 03/11. Não escolhi outra.
+- **Máquina:** a sonda de CPU deu 0,046 s na entrada e ficou entre 0,044 e 0,061 s antes de cada rodada (limite: 0,3 s).
+- **Pastas:** criei `renders/short-rate-limiter-java/{demo,fontes}` e `data/episodes/short-rate-limiter-java-{en,ig}`. A `-pt` já existia.
+- **Programa da medição:** escrevi `demo/Demo.java`, com um token bucket por cliente feito à mão (100 fichas, enche 20 por segundo). Escrevi também `demo/LimitadorTest.java`, que usa relógio falso. No teste, a 101ª requisição seguida é recusada.
+- **Medição oficial:** `demo/resultado.txt` fechou com `medicoes=30 status=COMPLETO`, usando o JDK 25.0.5 e 15 rodadas por modo.
+
+| Mediana das 15 rodadas | sem limite | com limite |
+| --- | --- | --- |
+| Clientes normais, resposta (mediana) | 2.867 ms | 51 ms |
+| Clientes normais, resposta (p99) | 5.034 ms | 478 ms |
+| Robô: aceitas / recusadas (429) | 1.000 / 0 | 100 / 900 |
+| Maior fila no serviço de trás | 993 | 93 |
+
+Nenhum cliente normal foi recusado em nenhum dos modos. Por isso a recusa de um pico legítimo, que é o limite da pauta, não foi medida e não pode virar número na fala.
+
+**Por que parou**
+- **Fontes:** o `curl` para `rfc-editor.org` pede aprovação, e só `allthingsdistributed.com` e `cs.princeton.edu` estão liberados em `.claude/settings.local.json`. A sessão do timer não tem quem aprove, e não usei desvio.
+- **Sem citação de memória:** não escrevi o significado do 429 nem o token bucket de memória, porque fonte inventada é a regra nº 2 do projeto.
+- **Consequência:** sem `fontes.md` não há `roteiro.md`, plano de animação, nem a seção "Música". O quadro obrigatório de System Design e animação continua pendente.
+- **Música:** a pauta diz "Sem música", mas a skill exige o plano de música antes da voz. Isso precisa ser revisto no plano.
+
+**Para destravar**, uma destas, e a rotina retoma do passo 3 sem refazer a medição:
+1. Rodar na raiz do projeto `curl -sSL -o renders/short-rate-limiter-java/fontes/rfc6585.txt https://www.rfc-editor.org/rfc/rfc6585.txt`. Além disso, salvar à mão em `fontes/` uma descrição primária do token bucket, escolhida por você.
+2. Liberar `curl` ou `WebFetch` para `rfc-editor.org`, e para o domínio da fonte do token bucket, em `.claude/settings.local.json`.
+
+Este é o mesmo bloqueio de 08, 09 e 10/11: o allowlist cobre medição e render, mas não o download das fontes de cada tema novo. Sugiro liberar `rfc-editor.org`, `docs.oracle.com` e `openjdk.org` de uma vez. HashMap, cache e consistent hashing seguem parados e a ordem entre `fila.md` e o plano continua com você.
+2026-11-11T06:07:15-03:00 fim

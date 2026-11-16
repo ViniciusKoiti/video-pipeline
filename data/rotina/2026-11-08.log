@@ -1,0 +1,40 @@
+2026-11-08T06:00:31-03:00 cpu_probe 0.043
+2026-11-08T06:05:08-03:00 a rotina saiu com erro 0
+2026-11-08T13:27:03-03:00 cpu_probe 0.048
+2026-11-08T13:34:59-03:00 claude saiu com código 0 (tentativa 1/3)
+custo_usd_equivalente 1.19179714 | turnos 4 | modelos ['claude-sonnet-5-5', 'claude-haiku-5-5'] | duracao_s 38
+A rotina de hoje parou no passo 3 (fontes), porque faltam duas das três fontes que a pauta pede. Não há roteiro, voz, render nem pacote.
+
+**Pauta escolhida:** consistent hashing em Java. O plano marca idempotência para hoje, mas ela já foi produzida e agendada em 07/11. Entre as pautas aprovadas e sem vídeo, escolhi esta pela ordem de publicação (16/11, contra 25/11 do garbage collector). A `fila.md` ainda chama o garbage collector de "próxima produção", então a divergência fica para você decidir.
+
+**O que ficou pronto:**
+- **Pastas:** as quatro pastas do episódio e a de renders foram criadas.
+- **Medição:** `demo/Demo.java` e `medir.sh` rodaram 15 rodadas, com a CPU livre (sonda de 0,057 a 0,093 s) e sem aborto. Os números são determinísticos; só o tempo da busca varia:
+
+| Modo | Chaves que trocam de servidor | Servidor mais cheio / ideal |
+| --- | --- | --- |
+| Módulo | 80,18% | 100,7% |
+| Anel, 1 ponto | 23,31% | 251,5% |
+| Anel, 10 pontos | 18,33% | 140,2% |
+| Anel, 100 pontos | 20,13% | 111,2% |
+
+No anel, nenhuma chave que mudou foi para outro servidor além do novo. No módulo, 60.156 das 80.180 que mudaram foram para servidores antigos.
+- **`fontes.md`:** só o Javadoc do `TreeMap` (JDK 25) foi lido, com citação literal.
+
+**Por que parou:** faltam o artigo do Dynamo (seção 4.2) e o de Karger et al. O WebFetch dos dois domínios e o `curl` pedem aprovação, e a sessão não tem quem aprove. Não escrevi o mecanismo de memória, e não usei desvio de permissão.
+
+**Para destravar, uma destas:**
+- liberar WebFetch para `allthingsdistributed.com` e `cs.princeton.edu` e `curl` em `.claude/settings.local.json`;
+- salvar os dois PDFs em `data/episodes/short-consistent-hashing-java-pt/sources/`.
+
+Depois disso eu continuo do passo 3.
+
+**Permissão de escrita:** `Write(./renders/**)` só funcionou com o diretório de trabalho na raiz do projeto. Depois de um `cd` para dentro de `renders/`, a escrita foi negada. Isso pode afetar a rotina do timer.
+
+**Em aberto:**
+- **Medição:** o tempo da busca no anel (97 a 179 ns, com extremos de 44 a 606 ns) não serve como número de tela sem repetir com aquecimento.
+- **Registro:** está em `data/rotina/2026-11-08.md`, com a lição candidata e os limites da medição para o roteiro.
+- **Gates e git:** nenhum gate foi tocado e nada foi commitado.
+- **Voz e postagem:** não houve chamada ao Modal, e nada foi enviado ao Postiz.
+2026-11-08T13:34:59-03:00 fim
+2026-11-08T13:45:12-03:00 cpu_probe 0.053
