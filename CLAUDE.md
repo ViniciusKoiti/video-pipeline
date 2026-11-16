@@ -60,8 +60,10 @@ Primeiros agendamentos pelo Postiz em outubro de 2026, todos pela cadeia do §2.
 produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #164. Histórico e pendências:
 `docs/ROADMAP.md` ("Etapa atual e pendências", escrita em 2026-09-30).
 
-- **Foco (decisão do dono, 2026-10-22):** a cadência do Cena e Conceito, um ensaio longo por dia mais Reels, com
-  pautas aprovadas em lote e o molde do nicho e a partitura antes de cada roteiro (ADR 031, §4). O visual segue a
+- **Foco (decisão do dono, 2026-10-22; cadência revista em 2026-11-14):** a cadência do Cena e Conceito, três
+  ensaios longos por semana, **segunda, quarta e sexta** (no lugar do longo diário; base em
+  `docs/pesquisa/frequencia-de-publicacao-2026-11-14.md`), mais os Shorts cortados deles, com pautas aprovadas em lote
+  e o molde do nicho e a partitura antes de cada roteiro (ADR 031, §4). O visual segue a
   decisão de 2026-09-29: com calma, uma frente por vez, e toda mudança de template ou de motion-kit sai pelo
   vídeo-régua abaixo. Em pausa: #11 e M2–M7 do piloto documentário.
 - **Vídeo-régua:** o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
