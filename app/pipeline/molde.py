@@ -256,10 +256,11 @@ def _proper_nouns(scenes: ScenesManifest) -> set[str]:
 
 def claimless_statements(scenes: ScenesManifest) -> list[str]:
     """Frase afirmativa com cara de fato (número ou nome próprio) numa cena sem claims (ADR 031, parte D): o
-    verificador reprovou rodadas por isso. Pergunta e frase em primeira pessoa não contam; uma por cena."""
+    verificador reprovou rodadas por isso. Pergunta e frase em primeira pessoa não contam; uma por cena. A
+    ficção histórica declarada (ADR 055) dispensa claims: lá o alerta é ruído."""
     nouns = _proper_nouns(scenes)
     warnings: list[str] = []
-    for scene in scenes.scenes:
+    for scene in [] if scenes.fiction else scenes.scenes:
         if scene.claims or any(shot.claims for shot in scene.shots):
             continue
         for sentence in Constants._SENTENCE_END.split(strip_pauses(scene.narration).strip()):

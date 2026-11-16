@@ -268,6 +268,8 @@ revela:
   narração, e o tempo sai da posição da âncora sobre a duração real do WAV (`app/pipeline/shots.py`). A fonte do
   rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha,
   salvo a conta dita inteira na narração com insumos e regra em fichas (ADR 020, 2026-10-14).
+  Plano com fato na tela sem `claims` é erro, salvo no roteiro de ficção histórica declarada (`"fiction": true`
+  no `scenes.json`, ADR 055), que também tira o alerta de frase afirmativa sem claims.
   Planos dos Reels (ADR 028, só no vertical): `hook` (primeiro plano do vídeo), `calculation` (a conta, cada
   termo na sua âncora; o `vp check` refaz a aritmética), `receipt` (itens na mesma moeda; o total é conferido) e
   `end_card` (último plano; `follow` no topo, `save` no meio, `next` com `series`; ainda não no fundo). O vídeo
