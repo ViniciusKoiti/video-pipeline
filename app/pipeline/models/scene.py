@@ -32,6 +32,7 @@ class Scene(Model):
     shots: list[Shot] = []  # forma v2
     duration_ms: int | None = Field(default=None, gt=0)  # medido da voz real, nunca estimado (§9)
     host_corner: HostCorner | None = None  # ajuste do canto do apresentador nesta cena (ADR 013)
+    host: bool | None = None  # apresentador nesta cena: true mostra, false esconde (ADR 056)
     review_status: Status = Status.PENDING  # reflexo de review.json, escrito pelo código (§5)
 
     @model_validator(mode="after")
@@ -39,6 +40,12 @@ class Scene(Model):
         problems = narration_problems(self.narration)
         if problems:
             raise ValueError(f"{self.id}: " + "; ".join(problems))
+        return self
+
+    @model_validator(mode="after")
+    def _hidden_host_has_no_corner(self) -> Self:
+        if self.host is False and self.host_corner is not None:
+            raise ValueError(f"{self.id}: host_corner numa cena com o apresentador escondido (host: false)")
         return self
 
     @model_validator(mode="after")

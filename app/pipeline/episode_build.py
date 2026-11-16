@@ -89,6 +89,7 @@ def build_scenes(
                 audio=audio,
                 shots=shots,
                 host_corner=scene.host_corner,
+                host=scene.host,
                 delivery=scene.delivery,
             )
         )

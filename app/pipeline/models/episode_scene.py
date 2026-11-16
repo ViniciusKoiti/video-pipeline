@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Any, Self
 
-from pydantic import Field, model_validator
+from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
 from app.pipeline.models._schemas_types import AssetId, Delivery, HostCorner, NonEmpty, RelPath, SceneId
 from app.pipeline.models.episode_shot import EpisodeShot
@@ -21,6 +21,21 @@ class EpisodeScene(Model):
     host_corner: HostCorner | None = None  # ajuste do canto do apresentador (ADR 013)
     # Entrega da fala (ADR 022), copiada do roteiro: dá a expressão do apresentador (ADR 029).
     delivery: Delivery | None = None
+    # Marca do apresentador nesta cena (ADR 056): `true` o mostra, `false` o esconde; sem ela, vale o `show`.
+    host: bool | None = None
+
+    @model_serializer(mode="wrap")
+    def _omit_unset_host(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if data.get("host") is None:  # o `episode.json` de antes (e seu carimbo no gate 4) não muda
+            data.pop("host", None)
+        return data
+
+    @model_validator(mode="after")
+    def _hidden_host_has_no_corner(self) -> Self:
+        if self.host is False and self.host_corner is not None:
+            raise ValueError(f"{self.id}: host_corner numa cena com o apresentador escondido (host: false)")
+        return self
 
     @property
     def end_ms(self) -> int:

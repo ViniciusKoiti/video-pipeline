@@ -314,7 +314,9 @@ revela:
   visual por cena, ADR 001) ou 2 (planos contíguos, ADR 008); `language` `en` | `pt-BR`; `format` decide o motor;
   cenas com `start_ms`/`duration_ms` medidos da voz real e sem sobreposição.
   Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
-  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Pele `dono` (ADR 017,
+  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Por cena (ADR 056,
+  proposta): `host.show: "marked"` + `host: true` só nas cenas em que ele entra (`host: false` o tira no modo
+  `all`, o padrão); o canto gira só entre as cenas com ele. Pele `dono` (ADR 017,
   parte A): `"host": {"skin": "dono"}`, com 12 imagens e um `origem.json` em `host/dono/` da pasta do episódio
   (dado pessoal, fora do Git); sem o registro de origem o render para. Com um `sprites.json` na pasta (ADR 029),
   a pele é de camadas: o manifesto sai de `npx motion-kit sprites init host/dono` (dentro de `video/`, apontando

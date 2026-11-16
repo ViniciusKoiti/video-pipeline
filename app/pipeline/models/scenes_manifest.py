@@ -9,6 +9,7 @@ from app.pipeline.models._schemas_types import (
     Language,
     Orientation,
     _unique,
+    host_problems,
     portrait_problems,
     reels_shot_problems,
 )
@@ -38,6 +39,13 @@ class ScenesManifest(Model):
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        return self
+
+    @model_validator(mode="after")
+    def _host_marks(self) -> Self:
+        show = self.host.show if self.host is not None else None
+        if problems := host_problems(show, [(scene.id, scene.host) for scene in self.scenes]):
+            raise ValueError("; ".join(problems))
         return self
 
     @model_validator(mode="after")

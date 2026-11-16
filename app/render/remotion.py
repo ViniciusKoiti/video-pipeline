@@ -20,12 +20,12 @@ from typing import Any
 
 from app.errors import PipelineError
 from app.media.constants.word_captions_constants import WordCaptionsConstants
-from app.media.envelope import mouth_levels
-from app.media.host import check_sprites, host_corners, host_direction, sprites_hash, sprites_manifest
+from app.media.host import check_sprites, sprites_manifest
+from app.media.host_scenes import host_props, scene_corners
 from app.media.narration import strip_pauses
 from app.media.probe import ProbeError, dimensions, duration_ms
 from app.media.word_captions import scene_word_frames
-from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot, HostSpec
+from app.pipeline.schemas import Asset, EpisodeManifest, EpisodeScene, EpisodeShot
 from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 from app.render.constants.remotion_constants import RemotionConstants as Constants
@@ -107,26 +107,6 @@ def footage_continuity(props: list[dict[str, Any]], clip_frames: Callable[[str],
             if start:
                 shot["startFrom"] = start
             playing = (shot["media"], offset + shown)
-
-
-def _host_identity(host: HostSpec) -> dict[str, Any]:
-    """Identidade do `<Host>` do motion-kit (camelCase, como a pele Notionists a lê); só as peças dadas.
-    A pele `dono` não tem peças: só o nome dela."""
-    identity = host.identity
-    if identity is None:
-        return {"skin": host.skin}
-    parts = {
-        "hair": identity.hair,
-        "outfit": identity.outfit,
-        "eyes": identity.eyes,
-        "brows": identity.brows,
-        "facialHair": identity.facial_hair,
-        "glasses": identity.glasses,
-    }
-    result: dict[str, Any] = {"skin": host.skin, **{k: v for k, v in parts.items() if v is not None}}
-    if identity.nose is not None:
-        result["extras"] = {"nose": identity.nose}
-    return result
 
 
 class RemotionEngine:
@@ -211,9 +191,7 @@ class RemotionEngine:
         if (self._burn[preview] or episode.video.portrait) and episode.captions:
             cues = parse_srt((episode_dir / episode.captions).read_text())
         bounds = frame_bounds(episode, fps)
-        corners = []
-        if episode.host is not None:
-            corners = host_corners(episode.scenes, portrait=episode.video.portrait)
+        corners = scene_corners(episode)
         props: list[dict[str, Any]] = []
         for i, scene in enumerate(episode.scenes):
             frames = bounds[i + 1] - bounds[i]
@@ -244,19 +222,8 @@ class RemotionEngine:
             # pt-BR é o padrão do template: as props (e o cache) dos vídeos em português ficam como estavam
             if episode.language != "pt-BR":
                 props[-1]["language"] = episode.language
-            if episode.host is not None:  # sem apresentador, as props (e o cache) ficam como estavam
-                props[-1]["host"] = {
-                    "identity": _host_identity(episode.host),
-                    "width": episode.host.width_for(portrait=episode.video.portrait),
-                    "corner": corners[i],
-                    "fromCorner": corners[i - 1] if i > 0 else None,
-                    "levels": mouth_levels(episode_dir / scene.audio, fps, frames),
-                    "direction": host_direction(scene, corners[i], fps),  # ADR 029
-                }
-                if episode.host.skin == "dono":  # trocar o desenho refaz as cenas (cache por props)
-                    props[-1]["host"]["sprites"] = sprites_hash(episode_dir)
-                    if (manifest := sprites_manifest(episode_dir)) is not None:  # pele em camadas (ADR 029)
-                        props[-1]["host"]["manifest"] = manifest
+            if (host := host_props(episode, episode_dir, corners, i, fps, frames)) is not None:
+                props[-1]["host"] = host  # sem apresentador na cena, as props (e o cache) ficam como estavam
             if episode.series is not None:  # selo do cartão final (ADR 028)
                 for shot in props[-1]["shots"]:
                     if shot["spec"]["kind"] == "end_card":
