@@ -1,0 +1,31 @@
+{
+  "type": "schedule",
+  "date": "2026-11-19T12:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmvx0omyy0005l26yggavdqpu"
+      },
+      "value": [
+        {
+          "content": "Rate limiter em Java: o que acontece com a 101ª requisição?\n\nNeste exemplo, uma API Java recebe um robô que dispara 1000 requisições de uma vez e 5 clientes normais, cada um a 10 por segundo. Na entrada, um token bucket por cliente ganha 20 fichas por segundo, até 100, e cada requisição gasta uma ficha. Sem ficha, a resposta é 429 (Too Many Requests) e o serviço de trás nem é chamado.\n\nSimulação local: serviço de trás com 10 vagas e 50 ms por requisição, Thread.sleep e threads virtuais, token bucket escrito à mão, sem biblioteca. OpenJDK 25.0.5; 15 rodadas por modo, JVM nova sem aquecimento e ordem alternada. Não é benchmark de produção, rede ou banco.\n\nMedianas das 15 rodadas: a mediana do tempo de resposta dos clientes normais caiu de 2867 ms sem limite para 51 ms com limite. O robô teve 100 requisições aceitas e 900 recusadas; nenhum cliente normal foi recusado. Um pico legítimo maior que o balde também seria recusado: isso é consequência do mecanismo, não foi medido. A taxa (20 por segundo) e o tamanho do balde (100) são escolhas desta demo, não valores recomendados.\n\nFontes do mecanismo:\nhttps://www.rfc-editor.org/rfc/rfc6585.txt (código 429)\nhttps://www.rfc-editor.org/rfc/rfc2697.txt (balde de fichas)\n\nVoz do autor clonada com IA. Animações criadas para este vídeo; sem apresentador em imagem.\n\n#Shorts #Java #RateLimiter #SystemDesign",
+          "image": [
+            {
+              "id": "3af17c37-6a41-419d-8cce-a445b422bcc9",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/16/10975c5af2279a2a2ffeae3bfc449345.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "youtube",
+        "title": "RATE LIMITER EM JAVA: O QUE ACONTECE COM A 101ª REQUISIÇÃO?",
+        "type": "public",
+        "selfDeclaredMadeForKids": "no",
+        "tags": []
+      }
+    }
+  ]
+}

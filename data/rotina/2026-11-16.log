@@ -1,0 +1,27 @@
+2026-11-16T06:00:32-03:00 cpu_probe 0.044
+2026-11-16T06:08:22-03:00 claude saiu com código 0 (tentativa 1/3)
+custo_usd_equivalente 2.0747788000000007 | turnos 109 | modelos ['claude-sonnet-5-5'] | duracao_s 466
+A rotina de hoje parou no passo 5, antes da voz: `validate`, `inspect`, `review` e `render` do kit não rodam nesta sessão. O Short de rate limiter está sem voz, sem render e sem pacote, então não está pronto.
+
+**O que destravou:** você liberou `rfc-editor.org`, `docs.oracle.com` e `openjdk.org` em `.claude/settings.local.json`, e o `curl` voltou a funcionar. Isso desfez o bloqueio de fontes dos dias 11 a 15. Baixei o RFC 6585 (429) e o RFC 2697 (balde de fichas).
+
+**Feito hoje (nenhuma chamada ao Modal, zero custo):**
+- **Fontes e roteiro:** `fontes.md`, os trechos literais em `fontes/excertos.md` e o `roteiro.md` com a lição em uma frase.
+- **Plano de animação:** `plano-animacao.md` com a abertura em quadros, o controle de System Design (completo antes da voz) e a seção "Música".
+- **Narrações e conteúdo:** `narracao.pt.json`, `narracao.en.json` e os `content.*.json` em fluxo do kit, com tempos provisórios, mais as pastas dos episódios, `medicao.json` e glossários.
+- **Conferências:** `vp medicao` pt e en e `vp traducao` saíram sem problemas. Restam três avisos de número em rodapé e sublabel que o detector não lê, como no circuit breaker.
+- **Medição:** a de 11/11 não foi refeita.
+- **Registro do dia:** `data/rotina/2026-11-16.md`.
+
+**Por que parou:**
+- **`src/video.mjs`:** com o Node do sistema (`/usr/bin/node`, v22.22.1), falha com `ERR_UNKNOWN_FILE_EXTENSION .ts`.
+- **`npx`:** está liberado, mas não existe no PATH deste shell.
+- **Contorno:** não usei `uv run` nem `dangerouslyDisableSandbox` para chamar o `node`.
+- **Voz:** não gerei, porque sem render ela não teria uso hoje. O texto está fechado, então a voz sai na próxima rodada sem refazer nada.
+
+**Decisões suas:**
+1. **Kit:** liberar `node .../motion-kit/packages/motion-video/dist/video.mjs *` e pôr o Node do `nvm` no PATH do timer. Como alternativa, rodar à mão `validate` e `inspect` dos dois `content.*.json`.
+2. **Duração:** a fala estimada passa dos 35 a 45 s da pauta: pt 104 palavras (≈ 47 s) e en 105 (≈ 48 s). Se quiser 45 s, corte a cena `balde` ou a segunda metade da fala de `limite`.
+
+Nenhum gate foi preparado. Os comandos pendentes de 05 a 08/11 continuam nos registros daqueles dias.
+2026-11-16T06:08:22-03:00 fim

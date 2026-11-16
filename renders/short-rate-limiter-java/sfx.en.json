@@ -1,0 +1,8 @@
+{
+  "cues": [
+    {"sound": "pop-medium-in", "scene": "situacao", "offset_s": 0.05, "note": "Capa montada no primeiro quadro."},
+    {"sound": "pop-medium-in", "scene": "balde", "offset_s": 0.1, "note": "Entrada do mecanismo: o balde de fichas."},
+    {"sound": "pop-medium-in", "scene": "medido", "offset_s": 0.1, "note": "Entrada dos tempos medidos."},
+    {"sound": "pop-medium-in", "scene": "limite", "offset_s": 0.1, "note": "O custo: o balde decide o pico."}
+  ]
+}

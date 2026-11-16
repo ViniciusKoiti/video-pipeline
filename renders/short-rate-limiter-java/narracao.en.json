@@ -1,0 +1,11 @@
+{
+  "language": "en",
+  "lines": [
+    {"scene": "situacao", "text": "A bot fires a thousand requests at once: what happens to number 101?", "delivery": "hook"},
+    {"scene": "balde", "text": "The token bucket gains twenty tokens per second, up to a hundred, and each request spends one.", "delivery": "neutral"},
+    {"scene": "recusa", "text": "With no token left comes error four hundred and twenty-nine, without calling the service, so the burst passes only up to the bucket size.", "delivery": "neutral"},
+    {"scene": "medido", "text": "In this simulation, normal clients went from almost three seconds to 51 milliseconds.", "delivery": "neutral"},
+    {"scene": "limite", "text": "The bot took nine hundred rejections, and a legitimate spike bigger than the bucket would get the same: rate and bucket size are the decision.", "delivery": "neutral"},
+    {"scene": "fecho", "text": "What bucket size would you pick for your API?", "delivery": "invite"}
+  ]
+}

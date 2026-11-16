@@ -1,0 +1,11 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {"scene": "situacao", "text": "O que acontece com a requisição 101 quando um robô dispara mil de uma vez?", "delivery": "hook"},
+    {"scene": "balde", "text": "O token bucket ganha vinte fichas por segundo, até cem, e cada requisição gasta uma.", "delivery": "neutral"},
+    {"scene": "recusa", "text": "Sem ficha vem o erro quatrocentos e vinte e nove, sem chamar o serviço, então a rajada passa só até o tamanho do balde.", "delivery": "neutral"},
+    {"scene": "medido", "text": "Na simulação, os clientes normais foram de quase três segundos para 51 milissegundos.", "delivery": "neutral"},
+    {"scene": "limite", "text": "O robô levou novecentos erros, e um pico legítimo maior que o balde levaria o mesmo: taxa e tamanho do balde são a decisão.", "delivery": "neutral"},
+    {"scene": "fecho", "text": "Qual tamanho de balde você escolheria para a sua API?", "delivery": "invite"}
+  ]
+}
