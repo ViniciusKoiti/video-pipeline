@@ -18,3 +18,4 @@ class RemotionConstants:
         "package-lock.json",
     )
     MEDIA_KINDS: Final = frozenset(("photo", "broll"))
+    GRADE_FILE: Final = "tratamento.json"  # grade de cor por ativo de B-roll (ADR 057)

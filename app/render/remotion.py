@@ -30,6 +30,7 @@ from app.providers.base import ProviderInfo
 from app.render.base import RenderResult, target_spec
 from app.render.constants.remotion_constants import RemotionConstants as Constants
 from app.render.ffmpeg import RunStats, assemble, cues_between, frame_bounds, parse_srt
+from app.render.grade import mono_assets
 
 
 class RemotionError(PipelineError, RuntimeError):
@@ -168,6 +169,7 @@ class RemotionEngine:
                 )
                 for shot in scene.shots
             ]
+        mono = mono_assets(episode_dir)
         starts = [start for start, *_ in raw]
         ends = [*starts[1:], frames]
         shots = []
@@ -178,6 +180,8 @@ class RemotionEngine:
                 width, height = dimensions(episode_dir / media)
                 shot["aspect"] = width / height
                 shot["credit"] = _credit(episode_dir, asset_id)
+            if spec["kind"] == "broll" and asset_id in mono:  # só acrescenta o campo com grade (ADR 057)
+                shot["grade"] = "mono"
             shots.append(shot)
         return shots
 
