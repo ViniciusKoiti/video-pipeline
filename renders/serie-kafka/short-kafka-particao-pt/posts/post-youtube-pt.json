@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:10:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0omyy0005l26yggavdqpu"
+   },
+   "value": [
+    {
+     "content": "No pico do almoço, quatro consumidores numa fila: uma reentrega pode trocar a ordem, e o \"saiu para entrega\" chega antes do \"pago\". No Kafka, o tópico tem partições; eventos com a mesma chave (o id do pedido) caem sempre na mesma partição e são lidos na ordem em que foram escritos. Num grupo, cada partição tem um consumidor por vez: com três partições, o quarto consumidor fica parado.\n\nQual seria a chave dos eventos no seu sistema? Conta nos comentários.\n\nFontes: documentação do Apache Kafka 4.4 e do RabbitMQ (Queues). Parte 3 de 4 da série Kafka.\n\nVoz clonada com IA. App, serviços e pedidos fictícios.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "dd62b062-4c9a-41f8-80a1-cce3dfae69b9",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/9470fcba1bc61a9f9a5120e6985810b67.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "PEDIDO EMBARALHADO? A CHAVE DO KAFKA RESOLVE",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

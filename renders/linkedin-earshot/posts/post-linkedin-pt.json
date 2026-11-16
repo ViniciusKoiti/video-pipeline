@@ -1,0 +1,27 @@
+{
+  "type": "schedule",
+  "date": "2026-11-10T09:00:00-03:00",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "cmqhdiv470001qy75pqct6dnu"
+      },
+      "value": [
+        {
+          "content": "Meu agente montou um Short três decibéis mais alto do que a minha conta dizia.\n\nNo meu pipeline, o agente escreve o JSON, o código renderiza e junta a voz, e ninguém escutava o vídeo que saía. Então passei a usar o earshot, uma ferramenta aberta do Leon Lin (MIT) que roda na minha máquina, só na CPU, sem rede.\n\nO que ele mostrou no mesmo Short:\n\n• Volume: o ffmpeg media −15,0 LUFS (LUFS é a medida de volume que o YouTube usa). O earshot conta o mono nos dois alto-falantes, como o YouTube, e deu −12,0. Eram 3 dB que a minha conta não via.\n• Decisão: o juntar passou a sair em estéreo. O mesmo Short, refeito, mede −14,2 LUFS, com pico real de −1,5 dBTP.\n• Cortes: nos 4 cortes do Short, o efeito sonoro entra a até 1 quadro do corte (mediana de 26,5 ms).\n• Limite: em música ele erra e avisa. A trilha calma que escolhi deu \"fraca\" (z +2,0), então uso como segunda opinião, não como veredito.\n\nHoje é uma etapa do pipeline antes da minha aprovação: volume entre −15 e −13 LUFS, pico até −1 dBTP e nenhum silêncio no meio da fala. Custa cerca de 1× o tempo real num Short.\n\nEu não construí o earshot; usei e medi. O link está no primeiro comentário.\n\nQue medida você poria antes de aprovar um vídeo?\n\nA janela é um desenho meu, feito a partir de fotos minhas; a voz é a minha, clonada por IA.\n\n#ffmpeg #ClaudeCode #Automação #Vídeo",
+          "image": [
+            {
+              "id": "c77b249b-c58c-4ff8-894b-e331b2fc274d",
+              "path": "https://postizis.duckdns.org/uploads/2026/11/09/ed6f34105269aa4a5742f353a97f686c2.mp4"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "linkedin"
+      }
+    }
+  ]
+}

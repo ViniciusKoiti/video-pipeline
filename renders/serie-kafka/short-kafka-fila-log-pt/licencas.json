@@ -1,0 +1,26 @@
+{
+  "celular-alerta": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "0885d93d171deb4f2ef1c5051e1122d4573c33d91f4f428cac0e9166d9539ccc",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "fila-apaga": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "2e57682c310a92678a6e780efc77ce68f7130dbae43208536152cd2888f8b5b9",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "log-fica": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "174053644c8619ba86246eef345bfbb3548b3e6d0f433a7054513d0b23778b29",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "log-volta": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "0e8c4bf5a08e7dfc0678b4be3863d451944382fed25a794a440f14dcd27e8eb2",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

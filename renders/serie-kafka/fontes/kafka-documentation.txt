@@ -1,0 +1,3 @@
+[P1] Documentation Redirect | Apache Kafka
+
+[P2] Redirecting...

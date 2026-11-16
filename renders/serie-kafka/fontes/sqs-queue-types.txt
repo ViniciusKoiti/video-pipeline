@@ -1,0 +1,63 @@
+[P1] Amazon SQS queue types - Amazon Simple Queue Service
+
+[P2] View a markdown version of this page
+
+[P3] DocumentationAmazon Simple Queue ServiceDeveloper Guide
+
+[P4] ## Amazon SQS queue types
+
+[P5] Amazon SQS supports two types of queues: standard queues and FIFO queues. Use the following table to determine which queue best fits your needs.
+
+[P6] Standard queues
+
+[P7] FIFO queues
+
+[P8] Unlimited throughput – Standard queues support a very high, nearly unlimited number of API calls per second, per action (SendMessage, ReceiveMessage, or DeleteMessage). This high throughput makes them ideal for use cases that require processing large volumes of messages quickly, such as real-time data streaming or large-scale applications. While standard queues scale automatically with demand, it is essential to monitor usage patterns to ensure optimal performance, especially in regions with higher workloads.
+
+[P9] At-least-once delivery – Guaranteed at-least-once delivery, meaning that every message is delivered at least once, but in some cases, a message may be delivered more than once due to retries or network delays. You should design your application to handle potential duplicate messages by using idempotent operations, which ensure that processing the same message multiple times will not affect the system’s state.
+
+[P10] Best-effort ordering – Provides best-effort ordering, meaning that while Amazon SQS attempts to deliver messages in the order they were sent, it does not guarantee this. In some cases, messages may arrive out of order, especially under conditions of high throughput or failure recovery. For applications where the order of message processing is crucial, you should handle reordering logic within the application or use FIFO queues for strict ordering guarantees.
+
+[P11] Durability and redundancy – Standard queues ensure high durability by storing multiple copies of each message across multiple AWS Availability Zones. This ensures that messages are not lost, even in the event of infrastructure failures.
+
+[P12] Visibility timeout – Amazon SQS allows you to configure a visibility timeout to control how long a message stays hidden after being received, ensuring that other consumers do not process the message until it has been fully handled or the timeout expires.
+
+[P13] High throughput – When you use batching, FIFO queues process up to 3,000 messages per second per API method (SendMessageBatch, ReceiveMessage, or DeleteMessageBatch). This throughput relies on 300 API calls per second, with each API call handling a batch of 10 messages.By enabling high throughput mode, you can scale up to 30,000 transactions per second (TPS) with relaxed ordering within message groups. Without batching, FIFO queues support up to 300 API calls per second per API method (SendMessage, ReceiveMessage, or DeleteMessage). If you need more throughput, you can request a quota increase through the AWS Support Center. To enable high-throughput mode, see Enabling high throughput for FIFO queues in Amazon SQS.
+
+[P14] Exactly-once processing – FIFO queues deliver each message once and keep it available until you process and delete it. By using features like MessageDeduplicationId or content-based deduplication, you prevent duplicate messages, even when retrying due to network issues or timeouts.
+
+[P15] First-in-first-out delivery – FIFO queues ensure that you receive messages in the order they are sent within each message group. By distributing messages across multiple groups, you can process them in parallel while still maintaining the order within each group.
+
+[P16] Use standard queues to send data between applications when throughput is crucial, for example:
+
+[P17] Decouple live user requests from intensive background work. Allow users to upload media quickly while you process tasks like resizing or encoding in the background, ensuring fast response times without overloading the system.
+
+[P18] Allocate tasks to multiple worker nodes. Distribute a high number of credit card validation requests across multiple worker nodes, and handle duplicate messages with idempotent operations to avoid processing errors.
+
+[P19] Batch messages for future processing. Queue multiple entries for batch additions to a database. Since message order isn’t guaranteed, design your system to handle out-of-order processing if necessary.
+
+[P20] Use FIFO queues to send data between applications when the order of events is important, for example:
+
+[P21] Make sure that user-entered commands are run in the right order. This is a key use case for FIFO queues, where command order is crucial. For example, if a user performs a sequence of actions in an application, FIFO queues ensure the actions are processed in the same order they were entered.
+
+[P22] Display the correct product price by sending price modifications in the right order. FIFO queues ensure that multiple updates to a product's price arrive and are processed sequentially. Without FIFO, a price reduction might be processed after a price increase, causing incorrect data to be displayed.
+
+[P23] Prevent a student from enrolling in a course before registering for an account. By using FIFO queues, you ensure that the registration process occurs in the correct sequence. The system processes the account registration first and then the course enrollment, preventing the enrollment request from being executed prematurely.
+
+[P24] Document Conventions
+
+[P25] Understanding the Amazon SQS console
+
+[P26] Implementing request-response systems in Amazon SQS
+
+[P27] Did this page help you? - Yes
+
+[P28] Thanks for letting us know we're doing a good job!
+
+[P29] If you've got a moment, please tell us what we did right so we can do more of it.
+
+[P30] Did this page help you? - No
+
+[P31] Thanks for letting us know this page needs work. We're sorry we let you down.
+
+[P32] If you've got a moment, please tell us how we can make the documentation better.

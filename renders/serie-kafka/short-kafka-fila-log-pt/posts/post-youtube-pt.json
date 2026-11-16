@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:05:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0omyy0005l26yggavdqpu"
+   },
+   "value": [
+    {
+     "content": "Às três da tarde, o time acha um bug no antifraude que vale desde as duas. Numa fila (RabbitMQ, SQS), a mensagem sai quando o consumidor termina. No Kafka, o tópico é um log: ler não apaga, e cada consumidor guarda só o offset da próxima mensagem. Corrigido o bug, um seek volta o offset e o consumidor relê dali. O log apaga pela retenção configurada, e reprocessar repete o efeito: o consumidor precisa ser idempotente.\n\nVocê já precisou reprocessar uma fila? Conta nos comentários.\n\nFontes: documentação do Apache Kafka 4.4, do RabbitMQ (Streams) e do Amazon SQS. Parte 2 de 4 da série Kafka.\n\nVoz clonada com IA. App, serviços e pedidos fictícios.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "59a46f00-e977-42af-88e6-1c5ad3495aee",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/29e5ffd17d5b1048734cdf17194dacbb2.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "LER NÃO APAGA: FILA OU LOG NO KAFKA",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

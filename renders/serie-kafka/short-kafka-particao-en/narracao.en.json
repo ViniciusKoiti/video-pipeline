@@ -1,0 +1,45 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "Lunch rush, four consumers on the queue. And on the customer's phone, the order ships before it's paid.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "fila",
+      "text": "In a queue with several consumers, a redelivery can change the order: paid comes back, and shipped jumps ahead."
+    },
+    {
+      "scene": "chave",
+      "text": "In Kafka, the topic has partitions, and the same key always lands in the same partition.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "ordem",
+      "text": "Whoever reads the partition gets the events in the order they were written.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "grupo",
+      "text": "In a group, each partition has one consumer at a time. The fourth one sits idle."
+    },
+    {
+      "scene": "codigo",
+      "text": "In Java, the key is orderId, the second argument of ProducerRecord."
+    },
+    {
+      "scene": "cliente",
+      "text": "And on the customer's phone, the notifications arrive in the right order again."
+    },
+    {
+      "scene": "decisao",
+      "text": "Order holds per key. And partitions cap the consumers in a group."
+    },
+    {
+      "scene": "fecho",
+      "text": "In your system, what would the event key be? Tell me below.",
+      "delivery": "invite"
+    }
+  ]
+}

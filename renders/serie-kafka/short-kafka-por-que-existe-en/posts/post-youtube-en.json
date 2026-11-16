@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:20:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0nn9g0003l26yf4npmb66"
+   },
+   "value": [
+    {
+     "content": "A delivery app that calls each service one at a time stops when one of them goes down. With Kafka, the orders service writes the event once to a topic and moves on; each service reads at its own pace, and whoever was down reads what it missed when it comes back. The cost: one more cluster to run, or a managed service.\n\nWould you connect your services directly or through a topic? Tell me in the comments.\n\nSource: Apache Kafka 4.4 documentation (Introduction and Design). Part 1 of 4 of the Kafka series.\n\nThe author's voice is cloned with AI. Animations made for this video; fictional app, services and orders.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "e3480d63-3075-4a89-b7ad-f9ac13f352f1",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/8a10ef1078f46d584ba8e7ca507695833a.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "ORDER STUCK: WHY KAFKA EXISTS",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

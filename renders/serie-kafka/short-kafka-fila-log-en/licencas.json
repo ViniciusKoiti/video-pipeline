@@ -1,0 +1,26 @@
+{
+  "celular-alerta": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "ddcea10fbf77238b37d681817fb3866271955d1b17e1b3b999fccb761165dedb",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "fila-apaga": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "56b2ebfef3567902d0d1d745cf6297289392f0d4ccdc120784b7f57b15c68a7c",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "log-fica": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "4dda3f56a3e04cf11285f9f42da8694d21e2484d00ba50451d8264fd95216b9e",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "log-volta": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "999180e24cd73fde252b3f927196233892341bb577340417e735ae4c285b539f",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "veredito": "segue",
+  "riscos": [
+    "Horário: o JSON tem 2026-11-10T09:00:00-03:00 e o pacote tem o.data 2026-11-10T12:00:00+00:00: terça 10/11/2026, 09h de Brasília, sem erro de fuso. Cerca de 18 h para apagar o post no Postiz.",
+    "Canal: a integração cmqhdiv470001qy75pqct6dnu é 'Vinicius Koiti Nakahara' e settings.__type é linkedin; combinam. Nenhum agendado anterior para esta mídia ou para o dia 10/11 nos eventos lidos (não foram varridos todos).",
+    "Mídia: upload c77b249b-c58c-4ff8-894b-e331b2fc274d (sha256 96c8c61c...e2) bate com o JSON, com o pacote e com renders/pacote.json (complete). Duração, formato 4:5 e conteúdo do MP4 não foram conferidos por este parecer.",
+    "Gate 4: aprovado por Vinicius Koiti em 2026-11-09T14:18:07-03:00 ('assisti'); upload e pacote são posteriores e o sha256 do vídeo bate. Conferir se a aprovação ainda cobre o arquivo atual é o `vp status`.",
+    "Legenda: igual a legenda-post.txt e ao pacote; números batem com renders/linkedin-earshot/roteiro.md. O −14,2 vale só para o Short refeito em estéreo, e a legenda diz 'o mesmo Short, refeito'. Atribui o earshot a Leon Lin (MIT) e diz 'não construí'.",
+    "Promessa pública: a legenda diz 'O link está no primeiro comentário', que o agendamento não cria. Postar à mão https://github.com/Leonxlnx/earshot com o crédito ao autor; conferir que o repositório está acessível e que o dono é Leonxlnx.",
+    "Divulgação: a legenda avisa voz clonada por IA e janela desenhada a partir de fotos. A API do Postiz não marca conteúdo sintético: marcar à mão no LinkedIn, se houver a opção.",
+    "Direitos da pele: o origem.json segue em needs_review (gerador não informado); vale a decisão do dono de 27/10, e o dono responde por esse ponto.",
+    "Depois de publicar, rodar `vp metricas iniciar`; a hipótese de abertura está no README e vale para as leituras de 7 e 28 dias."
+  ],
+  "revisor": "duvida-cega"
+}

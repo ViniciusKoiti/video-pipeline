@@ -1,0 +1,98 @@
+# 2026-11-08T13:29:41-03:00 | openjdk version "25.0.4.1" 2026-08-18 | AMD Ryzen 7 5700U with Radeon Graphics | 12 processadores visiveis | 100000 ids de sessao (semente 42), hash = 4 primeiros bytes do MD5, servidores 4 -> 5, anel em TreeMap, 20 conjuntos de nomes de servidor por modo do anel | tempo da busca so em memoria | sonda abaixo de 0.12 s antes de cada rodada, pausa de 10 s | 15 rodadas
+rodada=1 cpu_probe=0.052 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.2
+rodada=1 cpu_probe=0.052 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=107.2
+rodada=1 cpu_probe=0.052 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=120.3
+rodada=1 cpu_probe=0.052 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=136.8
+rodada=2 cpu_probe=0.060 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=9.8
+rodada=2 cpu_probe=0.060 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=118.3
+rodada=2 cpu_probe=0.060 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=135.2
+rodada=2 cpu_probe=0.060 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=150.2
+rodada=3 cpu_probe=0.052 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.8
+rodada=3 cpu_probe=0.052 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=97.0
+rodada=3 cpu_probe=0.052 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=107.0
+rodada=3 cpu_probe=0.052 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=134.6
+rodada=4 cpu_probe=0.058 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.7
+rodada=4 cpu_probe=0.058 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=105.2
+rodada=4 cpu_probe=0.058 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=127.8
+rodada=4 cpu_probe=0.058 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=143.7
+rodada=5 cpu_probe=0.057 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=11.6
+rodada=5 cpu_probe=0.057 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=109.4
+rodada=5 cpu_probe=0.057 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=138.2
+rodada=5 cpu_probe=0.057 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=234.2
+rodada=6 cpu_probe=0.093 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=11.1
+rodada=6 cpu_probe=0.093 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=43.6
+rodada=6 cpu_probe=0.093 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=104.0
+rodada=6 cpu_probe=0.093 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=333.3
+rodada=7 cpu_probe=0.063 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.5
+rodada=7 cpu_probe=0.063 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=126.5
+rodada=7 cpu_probe=0.063 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=146.9
+rodada=7 cpu_probe=0.063 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=179.4
+rodada=8 cpu_probe=0.074 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=11.7
+rodada=8 cpu_probe=0.074 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=89.5
+rodada=8 cpu_probe=0.074 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=112.5
+rodada=8 cpu_probe=0.074 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=189.6
+rodada=9 cpu_probe=0.073 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=11.8
+rodada=9 cpu_probe=0.073 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=94.0
+rodada=9 cpu_probe=0.073 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=115.2
+rodada=9 cpu_probe=0.073 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=148.4
+rodada=10 cpu_probe=0.061 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=11.3
+rodada=10 cpu_probe=0.061 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=119.1
+rodada=10 cpu_probe=0.061 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=118.5
+rodada=10 cpu_probe=0.061 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=151.5
+rodada=11 cpu_probe=0.060 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.9
+rodada=11 cpu_probe=0.060 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=78.1
+rodada=11 cpu_probe=0.060 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=90.8
+rodada=11 cpu_probe=0.060 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=183.5
+rodada=12 cpu_probe=0.058 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.4
+rodada=12 cpu_probe=0.058 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=74.1
+rodada=12 cpu_probe=0.058 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=113.2
+rodada=12 cpu_probe=0.058 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=202.8
+rodada=13 cpu_probe=0.063 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=11.1
+rodada=13 cpu_probe=0.063 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=80.0
+rodada=13 cpu_probe=0.063 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=247.0
+rodada=13 cpu_probe=0.063 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=355.2
+rodada=14 cpu_probe=0.065 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=10.0
+rodada=14 cpu_probe=0.065 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=131.5
+rodada=14 cpu_probe=0.065 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=85.1
+rodada=14 cpu_probe=0.065 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=605.8
+rodada=15 cpu_probe=0.068 modo=modulo pontos=0 chaves=100000 clusters=1 movidas_pct=80.18 movidas_pct_min=80.18 movidas_pct_max=80.18 fora_do_novo=60156 desvio_pct=0.51 desvio_pct_max=0.51 carga_max_pct_do_ideal=100.7 carga_min_pct_do_ideal=99.3 ns_por_busca=13.8
+rodada=15 cpu_probe=0.068 modo=anel pontos=1 chaves=100000 clusters=20 movidas_pct=23.31 movidas_pct_min=0.70 movidas_pct_max=71.33 fora_do_novo=0 desvio_pct=87.00 desvio_pct_max=141.34 carga_max_pct_do_ideal=251.5 carga_min_pct_do_ideal=19.6 ns_por_busca=79.1
+rodada=15 cpu_probe=0.068 modo=anel pontos=10 chaves=100000 clusters=20 movidas_pct=18.33 movidas_pct_min=9.95 movidas_pct_max=33.63 fora_do_novo=0 desvio_pct=27.16 desvio_pct_max=45.79 carga_max_pct_do_ideal=140.2 carga_min_pct_do_ideal=67.0 ns_por_busca=236.3
+rodada=15 cpu_probe=0.068 modo=anel pontos=100 chaves=100000 clusters=20 movidas_pct=20.13 movidas_pct_min=17.66 movidas_pct_max=23.77 fora_do_novo=0 desvio_pct=8.19 desvio_pct_max=14.33 carga_max_pct_do_ideal=111.2 carga_min_pct_do_ideal=88.2 ns_por_busca=156.4
+## cpu_probe ao fim: 0.075
+## resumo modulo movidas_pct mediana=80.18 minimo=80.18 maximo=80.18
+## resumo modulo movidas_pct_min mediana=80.18 minimo=80.18 maximo=80.18
+## resumo modulo movidas_pct_max mediana=80.18 minimo=80.18 maximo=80.18
+## resumo modulo fora_do_novo mediana=60156 minimo=60156 maximo=60156
+## resumo modulo desvio_pct mediana=0.51 minimo=0.51 maximo=0.51
+## resumo modulo desvio_pct_max mediana=0.51 minimo=0.51 maximo=0.51
+## resumo modulo carga_max_pct_do_ideal mediana=100.7 minimo=100.7 maximo=100.7
+## resumo modulo carga_min_pct_do_ideal mediana=99.3 minimo=99.3 maximo=99.3
+## resumo modulo ns_por_busca mediana=10.9 minimo=9.8 maximo=13.8
+## resumo anel-1 movidas_pct mediana=23.31 minimo=23.31 maximo=23.31
+## resumo anel-1 movidas_pct_min mediana=0.70 minimo=0.70 maximo=0.70
+## resumo anel-1 movidas_pct_max mediana=71.33 minimo=71.33 maximo=71.33
+## resumo anel-1 fora_do_novo mediana=0 minimo=0 maximo=0
+## resumo anel-1 desvio_pct mediana=87.00 minimo=87.00 maximo=87.00
+## resumo anel-1 desvio_pct_max mediana=141.34 minimo=141.34 maximo=141.34
+## resumo anel-1 carga_max_pct_do_ideal mediana=251.5 minimo=251.5 maximo=251.5
+## resumo anel-1 carga_min_pct_do_ideal mediana=19.6 minimo=19.6 maximo=19.6
+## resumo anel-1 ns_por_busca mediana=97.0 minimo=43.6 maximo=131.5
+## resumo anel-10 movidas_pct mediana=18.33 minimo=18.33 maximo=18.33
+## resumo anel-10 movidas_pct_min mediana=9.95 minimo=9.95 maximo=9.95
+## resumo anel-10 movidas_pct_max mediana=33.63 minimo=33.63 maximo=33.63
+## resumo anel-10 fora_do_novo mediana=0 minimo=0 maximo=0
+## resumo anel-10 desvio_pct mediana=27.16 minimo=27.16 maximo=27.16
+## resumo anel-10 desvio_pct_max mediana=45.79 minimo=45.79 maximo=45.79
+## resumo anel-10 carga_max_pct_do_ideal mediana=140.2 minimo=140.2 maximo=140.2
+## resumo anel-10 carga_min_pct_do_ideal mediana=67.0 minimo=67.0 maximo=67.0
+## resumo anel-10 ns_por_busca mediana=118.5 minimo=85.1 maximo=247.0
+## resumo anel-100 movidas_pct mediana=20.13 minimo=20.13 maximo=20.13
+## resumo anel-100 movidas_pct_min mediana=17.66 minimo=17.66 maximo=17.66
+## resumo anel-100 movidas_pct_max mediana=23.77 minimo=23.77 maximo=23.77
+## resumo anel-100 fora_do_novo mediana=0 minimo=0 maximo=0
+## resumo anel-100 desvio_pct mediana=8.19 minimo=8.19 maximo=8.19
+## resumo anel-100 desvio_pct_max mediana=14.33 minimo=14.33 maximo=14.33
+## resumo anel-100 carga_max_pct_do_ideal mediana=111.2 minimo=111.2 maximo=111.2
+## resumo anel-100 carga_min_pct_do_ideal mediana=88.2 minimo=88.2 maximo=88.2
+## resumo anel-100 ns_por_busca mediana=179.4 minimo=134.6 maximo=605.8

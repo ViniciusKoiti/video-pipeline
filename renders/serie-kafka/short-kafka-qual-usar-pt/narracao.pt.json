@@ -1,0 +1,38 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "No app, a foto do prato precisa ser redimensionada, e o pedido pago avisa quatro serviços. Os candidatos: Kafka, RabbitMQ e SQS.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "tarefa",
+      "text": "A foto é tarefa: um worker faz uma vez, e acabou. Isso é fila.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "filas",
+      "text": "A fila do RabbitMQ é feita para esvaziar. O SQS fica na AWS, escala sozinho e guarda até catorze dias."
+    },
+    {
+      "scene": "historico",
+      "text": "O pedido pago é histórico: quatro serviços leem no seu ritmo e podem reler. É log, o Kafka.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "fronteira",
+      "text": "Mas a fronteira borrou: o RabbitMQ tem streams, que se releem, e o Kafka tem share groups."
+    },
+    {
+      "scene": "decisao",
+      "text": "Então depende: tarefa que some, fila. Histórico que vários releem, log.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "fecho",
+      "text": "E você, qual desses três usa hoje no trabalho?",
+      "delivery": "invite"
+    }
+  ]
+}

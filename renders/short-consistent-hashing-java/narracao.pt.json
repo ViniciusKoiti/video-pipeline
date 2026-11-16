@@ -1,0 +1,40 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "situacao",
+      "text": "Entrou o quinto servidor do cache.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "pergunta",
+      "text": "Por que quase toda sessão mudou de lugar?"
+    },
+    {
+      "scene": "modulo",
+      "text": "O servidor é o resto do hash por N, e mudando o N, quase toda chave muda."
+    },
+    {
+      "scene": "medicao-modulo",
+      "text": "Em cem mil sessões, oitenta por cento trocaram de servidor."
+    },
+    {
+      "scene": "anel",
+      "text": "No Dynamo, da Amazon, o anel acha o servidor no sentido horário, e o novo toma só o seu arco.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "comparacao",
+      "text": "Com cem pontos por servidor, só vinte por cento mudaram, e todas para o novo."
+    },
+    {
+      "scene": "pontos",
+      "text": "Com um ponto por servidor a carga fica torta, e cem pontos virtuais deixam parelha."
+    },
+    {
+      "scene": "fecho",
+      "text": "Quantos pontos virtuais você usaria por servidor?",
+      "delivery": "invite"
+    }
+  ]
+}

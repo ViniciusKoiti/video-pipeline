@@ -1,0 +1,14 @@
+{
+  "celular-ordem-errada": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "b1a2f2f6f96fcc4fbf0ff50a9346b4d23923efba3803f7f56c84eb2ea774622a",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "celular-ordem-certa": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "bbd1a88697b5604345e96a45d09fdf3bef99eb3158c6ea62d5c1914ea9a2f753",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

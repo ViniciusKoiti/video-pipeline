@@ -1,0 +1,18 @@
+{
+ "veredito": "segue",
+ "revisor": "duvida-cega",
+ "riscos": [
+  "Horário: o JSON diz 2026-11-15T16:15:00-03:00. A última linha pacote deste JSON é a l.345 do registro (payload sha256:bd10e759…) e traz o_que.data 2026-11-15T19:15:00+00:00. Em Brasília é domingo 15/11/2026, 16h15, sem erro de fuso. Não existe agenda*.md ao lado dos arquivos para comparar.",
+  "Tempo para desfazer: o pacote foi gravado às 18:24:57 UTC (15h24 em Brasília), uns 50 min antes do horário. Sobra pouco tempo para apagar o post no Postiz se algo estiver errado, e o horário pode passar se o envio demorar. Depois disso só dá para apagar no YouTube.",
+  "Canal: integration.id cmvx0omyy0005l26yggavdqpu é 'Vinicius Koiti Nakahara' no pacote e settings.__type é youtube. Combina com um Short técnico em pt, e é o mesmo canal das partes 1 a 3 pt (l.336 a l.338). A versão en usa outro id (cmvx0nn9g0003l26yf4npmb66), então os idiomas não se misturaram.",
+  "Visibilidade: settings.type é 'private' e selfDeclaredMadeForKids é 'no'. Nada fica público sem o dono. Tornar público é passo manual no Studio.",
+  "Mídia: o upload da l.342 (data/episodes/short-kafka-qual-usar-pt/renders/final.mp4, sha256 94484314…c483c9ec04) tem o mesmo id (8d47d24f…) e o mesmo path do JSON. O hash bate com o do pacote (l.345) e com o video_sha256 de renders/pacote.json, que está 'complete'. O nome do arquivo combina com a legenda (parte 4, qual usar). Não abri o MP4 nem recalculei o hash em disco, então não conferi o conteúdo do vídeo contra a legenda.",
+  "Legenda: o texto bate com o do pacote e traz a mesma narração e as mesmas telas do fontes.md do episódio (foto do prato, fila, SQS 14 dias, histórico, streams, share groups). O título 'KAFKA, RABBITMQ OU SQS: QUAL USAR?' está em caixa alta, como o dono pediu. Não vi erro de digitação, @menção nem link. Não há afirmação sobre pessoa viva ou empresa. Hashtags: #Shorts #Kafka #Java #SystemDesign #Backend.",
+  "Fatos da legenda: 'RabbitMQ é feita para esvaziar' vem de 'Most RabbitMQ queues…' (R-S P27), então generaliza um pouco ('a maioria'). 'Guarda até 14 dias' é o máximo configurável do SQS (o padrão é 4 dias). A conclusão 'tarefa que some, fila; histórico, log' é leitura do canal, assumida no fontes.md. Não conferi as fichas do vídeo, só o fontes.md.",
+  "Série: a legenda diz 'Parte 4 de 4' e as partes 1 a 3 pt já estão agendadas (l.336 a l.338, 16h00, 16h05 e 16h10). A sequência fica coerente. As versões en ainda não têm 'agendado', só upload ou pacote (l.343 a l.347).",
+  "Repetição: não há linha 'agendado' anterior com a mesma mídia (8d47d24f) nem com este payload. Com este, o canal terá quatro Shorts privados da mesma série em 15 minutos (16h00 a 16h15) e a mesma estrutura de abertura, corpo e fecho. Se virarem públicos juntos, pode pesar na política de conteúdo repetitivo (§12). Por ora é privado.",
+  "Gate 4: evidencia.gate_4 é 'aprovado' (short-kafka-qual-usar-pt). O review.json tem 'approved' do reviewer 'dono' às 15:24:25-03, com nota de que vale para postar como PRIVADO, pedida na sessão. Não é um gate 4 completo para publicação: tornar público pede o dono assistir no YouTube e decidir de novo.",
+  "Divulgação: a legenda declara 'Voz clonada com IA. App, serviços e pedidos fictícios.' A API do Postiz não marca conteúdo alterado ou sintético, então é preciso marcar à mão no Studio antes de tornar público. A legenda pt não diz que a animação é feita em código (a en diz); é detalhe menor.",
+  "Pendências manuais depois do envio: conferir no Studio (um ERROR no Postiz não prova falha), marcar o conteúdo sintético, definir categoria e idioma e fixar o primeiro comentário se o dono quiser."
+ ]
+}

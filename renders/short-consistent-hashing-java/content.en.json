@@ -1,0 +1,118 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "2026-11-08 · Java 25 · Ryzen 7 5700U · 100k sessions · 4 → 5 servers · 15 runs · in memory only",
+  "assets": {
+    "abertura": {
+      "kind": "lottie",
+      "path": "lottie/abertura.json"
+    },
+    "modulo": {
+      "kind": "lottie",
+      "path": "lottie/modulo.json"
+    },
+    "anel": {
+      "kind": "lottie",
+      "path": "lottie/anel.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "situacao",
+      "type": "animation",
+      "durationSec": 3.2,
+      "assetId": "abertura",
+      "colors": "original"
+    },
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 2.6,
+      "kicker": "Java · session cache",
+      "text": "Why did almost every session move?",
+      "highlight": "almost every session"
+    },
+    {
+      "id": "modulo",
+      "type": "animation",
+      "durationSec": 8.6,
+      "assetId": "modulo",
+      "colors": "original"
+    },
+    {
+      "id": "medicao-modulo",
+      "type": "number",
+      "durationSec": 4.6,
+      "value": 80.18,
+      "decimals": 2,
+      "suffix": "%",
+      "label": "% of sessions changed servers",
+      "note": "simulated · modulo · 100k sessions · 4 → 5 servers"
+    },
+    {
+      "id": "anel",
+      "type": "animation",
+      "durationSec": 8.4,
+      "assetId": "anel",
+      "colors": "original"
+    },
+    {
+      "id": "comparacao",
+      "type": "versus",
+      "durationSec": 7.4,
+      "title": "Who changed servers? (4 → 5)",
+      "left": {
+        "title": "Modulo (hash % N)",
+        "value": "80.18%",
+        "lines": [
+          "of sessions moved"
+        ]
+      },
+      "right": {
+        "title": "Ring, 100 points",
+        "value": "20.13%",
+        "lines": [
+          "moved, all to the new one"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 3.0
+    },
+    {
+      "id": "pontos",
+      "type": "categories",
+      "durationSec": 7.0,
+      "title": "Load of the fullest server, % of ideal",
+      "unit": "%",
+      "decimals": 1,
+      "highlight": "Ring, 100 points",
+      "items": [
+        {
+          "label": "Ring, 1 point",
+          "value": 251.5
+        },
+        {
+          "label": "Ring, 10 points",
+          "value": 140.2
+        },
+        {
+          "label": "Ring, 100 points",
+          "value": 111.2
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.6,
+      "variant": "follow",
+      "text": "How many virtual points per server?",
+      "sub": "Comment your number"
+    }
+  ]
+}

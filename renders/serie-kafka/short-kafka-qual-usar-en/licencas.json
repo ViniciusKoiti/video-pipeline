@@ -1,0 +1,20 @@
+{
+  "celular-dois-trabalhos": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "7e235943ded751b640a8e59468f30282b0923084f2fedd3cfa4156bc56e3d3c1",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "fila-tarefa": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "af629e64067abc433ae97cb34d70d350fc61c0da0d395b05101bec864e4a9903",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "log-historico": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "955541a3b95e711a18fc920ee315c3327a91552cf4621c68ecf4e51982c16587",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

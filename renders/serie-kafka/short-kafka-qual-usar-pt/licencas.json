@@ -1,0 +1,20 @@
+{
+  "celular-dois-trabalhos": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "45ca9ceb08f1e1eccb0e059d015fa2c823b4449ec9a7bec4cfb0533666e79acd",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "fila-tarefa": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "9ffc4818287d53bd237e5631cd80033ca114a898938f63d84554d54921d96b82",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "log-historico": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "39faffc0bf4fa1e0ddb4da3fc87215d46da9a368c67d387771d2a2c75762f3a0",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

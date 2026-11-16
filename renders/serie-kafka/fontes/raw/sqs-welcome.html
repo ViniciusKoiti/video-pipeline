@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>What is Amazon Simple Queue Service? - Amazon Simple Queue Service</title><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="assets_root" content="/assets" /><meta name="target_state" content="welcome" /><meta name="default_state" content="welcome" /><link rel="icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="shortcut icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="canonical" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" /><link rel="alternate" type="text/markdown" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.md" title="Markdown version" /><meta name="description" content="Learn about the advantages of using Amazon SQS, such as reliability, scalability, and cost-effectiveness for decoupling application components." /><meta name="deployment_region" content="IAD" /><meta name="product" content="Amazon Simple Queue Service" /><meta name="guide" content="Developer Guide" /><meta name="abstract" content="Queue messages that one component in the application generates to be consumed by another component using Amazon SQS." /><meta name="guide-locale" content="en_us" /><meta name="tocs" content="toc-contents.json" /><link rel="canonical" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="id-id" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="id" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="de-de" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="de" /><link rel="alternate" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="en-us" /><link rel="alternate" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="en" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="es-es" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="es" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="fr-fr" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="fr" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="it-it" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="it" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="ja-jp" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="ja" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="ko-kr" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="ko" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="pt-br" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="pt" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_cn/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="zh-cn" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_tw/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="zh-tw" /><link rel="alternate" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" hreflang="x-default" /><meta name="feedback-item" content="SQS" /><meta name="this_doc_product" content="Amazon Simple Queue Service" /><meta name="this_doc_guide" content="Developer Guide" /><head xmlns="http://www.w3.org/1999/xhtml"> <script defer="" src="/assets/r/awsdocs-doc-page.2.0.0.js"></script><link href="/assets/r/awsdocs-doc-page.2.0.0.css" rel="stylesheet"/></head>
+<script defer="" id="awsc-panorama-bundle" type="text/javascript" src="https://prod.pa.cdn.uis.awsstatic.com/panorama-nav-init.js" data-config="{'appEntity':'aws-documentation','region':'us-east-1','service':'sqs'}"></script><meta id="panorama-serviceSubSection" value="Developer Guide" /><meta id="panorama-serviceConsolePage" value="What is Amazon Simple Queue Service?" /></head><body class="awsdocs awsui"><div class="awsdocs-container"><p><a href="welcome.md">View a markdown version of this page</a></p><awsdocs-header></awsdocs-header><awsui-app-layout id="app-layout" class="awsui-util-no-gutters" ng-controller="ContentController as $ctrl" header-selector="awsdocs-header" navigation-hide="false" navigation-width="$ctrl.navWidth" navigation-open="$ctrl.navOpen" navigation-change="$ctrl.onNavChange($event)" tools-hide="$ctrl.hideTools" tools-width="$ctrl.toolsWidth" tools-open="$ctrl.toolsOpen" tools-change="$ctrl.onToolsChange($event)"><div id="guide-toc" dom-region="navigation"><awsdocs-toc></awsdocs-toc></div><div id="main-column" dom-region="content" tabindex="-1"><awsdocs-view class="awsdocs-view"><div id="awsdocs-content"><head><title>What is Amazon Simple Queue Service? - Amazon Simple Queue Service</title><meta name="pdf" content="/pdfs/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dg.pdf#welcome" /><meta name="rss" content="recent-updates.rss" /><meta name="forums" content="https://repost.aws/tags/TAA-iV52DNQ4a7bbpyH3s33Q" /><meta name="feedback" content="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=SQS&amp;topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" /><meta name="feedback-yes" content="feedbackyes.html?topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" /><meta name="feedback-no" content="feedbackno.html?topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" /><meta name="keywords" content="Amazon SQS,Amazon SQS queue management,Amazon SQS architecture,Amazon SQS benefits,Amazon SQS cost,Differences between Amazon SQS Amazon MQ Amazon SNS,Amazon SQS security,Amazon SQS availability,Amazon SQS scalability,Amazon SQS customization,Amazon SQS components,Amazon SQS queue lifecycle,Amazon SQS overview,Amazon SQS producers and consumers,Amazon SQS queue distribution,Amazon SQS lifecycle management,Amazon SQS visibility timeout,Amazon SQS message deletion,Amazon SQS and Amazon MQ,Amazon SQS and Amazon SNS,Amazon SQS Amazon SNS Amazon MQ,Difference between Amazon SQS Amazon SNS Amazon MQ,Amazon SQS delivery integrity" /><script type="application/ld+json">
+{
+    "@context" : "https://schema.org",
+    "@type" : "BreadcrumbList",
+    "itemListElement" : [
+      {
+        "@type" : "ListItem",
+        "position" : 1,
+        "name" : "AWS",
+        "item" : "https://aws.amazon.com"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 2,
+        "name" : "Amazon Simple Queue Service",
+        "item" : "https://docs.aws.amazon.com/sqs/index.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 3,
+        "name" : "Developer Guide",
+        "item" : "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 4,
+        "name" : "What is Amazon Simple Queue Service?",
+        "item" : "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      }
+    ]
+}
+</script></head><body><div id="main"><div style="display: none"><a href="/pdfs/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dg.pdf#welcome" target="_blank" rel="noopener noreferrer" title="Open PDF"></a></div><div id="breadcrumbs" class="breadcrumb"><a href="/index.html">Documentation</a><a href="/sqs/index.html">Amazon Simple Queue Service</a><a href="welcome.html">Developer Guide</a></div><div id="page-toc-src"><a href="#sqs-benefits">Benefits of using Amazon SQS</a><a href="#sqs-basic-architecture">Basic architecture</a><a href="#sqs-difference-from-amazon-mq-sns">Differences between Amazon SQS, Amazon MQ, and Amazon SNS</a></div><awsdocs-doc-page-banner></awsdocs-doc-page-banner><div id="main-content" class="awsui-util-container"><div id="main-col-body"><awsdocs-language-banner data-service="$ctrl.pageService"></awsdocs-language-banner><h1 class="topictitle" id="welcome">What is Amazon Simple Queue Service?</h1><div class="awsdocs-page-header-container"><awsdocs-page-header></awsdocs-page-header><awsdocs-filter-selector id="awsdocs-filter-selector"></awsdocs-filter-selector></div><p>Amazon Simple Queue Service (Amazon SQS) offers a secure, durable, and available hosted queue that lets you
+		integrate and decouple distributed software systems and components. Amazon SQS offers common
+		constructs such as <a href="./sqs-dead-letter-queues.html">dead-letter queues</a> and
+			<a href="./sqs-queue-tags.html">cost allocation tags</a>. It provides a generic web
+		services API that you can access using any programming language that the AWS SDK
+		supports.</p>
+		<h2 id="sqs-benefits">Benefits of using Amazon SQS</h2>
+		<div class="itemizedlist">
+			 
+			 
+			 
+			 
+			 
+			 
+		<ul class="itemizedlist"><li class="listitem">
+				<p><span class="topcom">Security</span> – <a href="./security-iam.html">You control</a> who can
+					send messages to and receive messages from an Amazon SQS queue. You can choose to
+					transmit sensitive data by protecting the contents of messages in queues by
+					using default Amazon SQS managed server-side encryption (SSE), or by using custom
+						<a href="./sqs-server-side-encryption.html">SSE</a> keys managed in
+					AWS Key Management Service (AWS KMS).</p>
+			</li><li class="listitem">
+				<p><span class="topcom">Durability</span> – For the safety of your
+					messages, Amazon SQS stores them on multiple servers. Standard queues support <a href="./standard-queues-at-least-once-delivery.html">at-least-once message
+						delivery</a>, and FIFO queues support <a href="./FIFO-queues-exactly-once-processing.html">exactly-once message
+						processing</a> and <a href="./high-throughput-fifo.html">high-throughput</a> mode.</p>
+			</li><li class="listitem">
+				<p><span class="topcom">Availability</span> – Amazon SQS uses <a href="#sqs-basic-architecture">redundant infrastructure</a> to provide
+					highly-concurrent access to messages and high availability for producing and
+					consuming messages. </p>
+			</li><li class="listitem">
+				<p><span class="topcom">Scalability</span> – Amazon SQS can process each
+						<a href="./sqs-client-side-buffering-request-batching.html">buffered
+						request</a> independently, scaling transparently to handle any load
+					increases or spikes without any provisioning instructions.</p>
+			</li><li class="listitem">
+				<p><span class="topcom">Reliability</span> – Amazon SQS locks your messages
+					during processing, so that multiple producers can send and multiple consumers
+					can receive messages at the same time. </p>
+			</li><li class="listitem">
+				<p><span class="topcom">Customization</span> – Your queues don't
+					have to be exactly alike—for example, you can <a href="./sqs-delay-queues.html">set a default delay on a queue</a>. You can
+					store the contents of messages larger than 1 MiB <a href="./sqs-s3-messages.html">using Amazon Simple Storage Service (Amazon S3)</a> or Amazon DynamoDB, with
+					Amazon SQS holding a pointer to the Amazon S3 object, or you can split a large message
+					into smaller messages.</p>
+			</li></ul></div>
+	 
+    <h2 id="sqs-basic-architecture">Basic Amazon SQS architecture</h2>
+    <p>
+         
+    </p>
+    <p>This section describes the components of a distributed messaging system and explains the
+        lifecycle of an Amazon SQS message.</p>
+     
+        <h3 id="sqs-distributed-queue">Distributed queues</h3>
+        <p>There are three main parts in a distributed messaging system: the <b>components of
+        your distributed system</b>, your <b>queue</b> (distributed on Amazon SQS servers), and the <b>messages
+        in the queue</b>.</p>
+    <p>In the following scenario, your system has several <em>producers</em> (components that send messages
+        to the queue) and <em>consumers</em> (components that receive messages from the queue). The queue (which
+        holds messages A through E) redundantly stores the messages across multiple Amazon SQS servers.</p>
+    <div class="mediaobject">
+         
+            <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/ArchOverview.png" class="aws-docs-img-whiteBg aws-docs-img-padding" alt="Three main parts in a distributed messaging system: the components of your distributed system, your queue (distributed on Amazon SQS servers), and the messages in the queue." style="max-width:100%" />
+         
+             
+    </div>
+     
+     
+        <h3 id="sqs-message-lifecycle">Message lifecycle</h3>
+        <p>The following scenario describes the lifecycle of an Amazon SQS message in a queue, from
+            creation to deletion.</p>
+        <div class="mediaobject">
+             
+                <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/sqs-message-lifecycle-diagram.png" class="aws-docs-img-whiteBg aws-docs-img-padding" alt="The lifecycle of an Amazon SQS message in a queue, from creation to deletion." style="max-width:100%" />
+             
+             
+        </div>
+        <p><span class="inlinemediaobject">
+                 
+                    <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/number-1-red.png" class="aws-docs-img-whiteBg aws-docs-img-xs-padding" alt="Section one description for the previous lifecycle diagram." />
+                 
+                 
+            </span> A producer (Component 1) sends message A to a queue, and the
+            message is distributed across the Amazon SQS servers redundantly.</p>
+        <p><span class="inlinemediaobject">
+                 
+                    <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/number-2-red.png" class="aws-docs-img-whiteBg aws-docs-img-xs-padding" alt="Section two description for the previous lifecycle diagram." />
+                 
+                 
+            </span> When a consumer (Component 2) is ready to process messages, it
+            consumes messages from the queue, and message A is returned. While message A is being
+            processed, it remains in the queue and isn't returned to subsequent receive requests for
+            the duration of the <a href="./sqs-visibility-timeout.html">visibility
+            timeout</a>.</p>
+        <p><span class="inlinemediaobject">
+                 
+                    <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/number-3-red.png" class="aws-docs-img-whiteBg aws-docs-img-xs-padding" alt="Section three description for the previous lifecycle diagram." />
+                 
+                 
+            </span> The consumer (Component 2) deletes message A from the queue to
+            prevent the message from being received and processed again when the visibility timeout
+            expires.</p>
+        <div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p>Amazon SQS automatically deletes messages that have been in a queue for more than the
+                maximum message retention period. The default message retention period is 4 days.
+                However, you can set the message retention period to a value from 60 seconds to
+                1,209,600 seconds (14 days) using the <code class="code"><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html">SetQueueAttributes</a></code> action.</p></div></div>
+     
+ 
+		<h2 id="sqs-difference-from-amazon-mq-sns">Differences between Amazon SQS, Amazon MQ, and Amazon SNS</h2>
+		<p> Amazon SQS, <a href="https://aws.amazon.com/sns/" rel="noopener noreferrer" target="_blank"><span>Amazon SNS</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>, and <a href="https://aws.amazon.com/amazon-mq/" rel="noopener noreferrer" target="_blank"><span>Amazon MQ</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> offer highly scalable and easy-to-use
+			managed messaging services, each designed for specific roles within distributed systems.
+			Here's an enhanced overview of the differences between these services:</p>
+		<p>
+			<b>Amazon SQS</b> decouples and scales distributed software systems
+			and components as a queue service. It processes messages through a single subscriber
+			typically, ideal for workflows where order and loss prevention are critical. For wider
+			distribution, integrating Amazon SQS with Amazon SNS enables a <a href="https://aws.amazon.com/getting-started/hands-on/send-fanout-event-notifications/" rel="noopener noreferrer" target="_blank"><span>fanout messaging pattern</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>, effectively pushing messages to multiple
+			subscribers at once.</p>
+		<p>
+			<b>Amazon SNS</b> allows publishers to send messages to multiple
+			subscribers through topics, which serve as communication channels. Subscribers receive
+			published messages using a supported endpoint type, such as <a href="https://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html">Amazon Data Firehose</a>, <a href="./welcome.html">Amazon SQS</a>,
+				<a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html">Lambda</a>, HTTP,
+			email, mobile push notifications, and mobile text messages (SMS). This service is ideal
+			for scenarios requiring immediate notifications, such as real-time user engagement or
+			alarm systems. To prevent message loss when subscribers are offline, integrating Amazon SNS
+			with Amazon SQS queue messages ensures consistent delivery.</p>
+		<p>
+			<b>Amazon MQ</b> fits best with enterprises looking to migrate
+			from traditional message brokers, supporting standard messaging protocols like AMQP and
+			MQTT, along with <a href="http://activemq.apache.org/" rel="noopener noreferrer" target="_blank"><span>Apache ActiveMQ</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> and
+				<a href="https://www.rabbitmq.com/" rel="noopener noreferrer" target="_blank"><span>RabbitMQ</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>. It offers compatibility
+			with legacy systems needing stable, reliable messaging without significant
+			reconfiguration.</p>
+		<p> The following chart provides an overview of each services' resource type: </p>
+		<div class="table-container"><div class="table-contents"><table id="d0e1"><thead>
+					<tr>
+						<th>Resource type</th>
+						<th>Amazon SNS</th>
+						<th>Amazon SQS</th>
+						<th>Amazon MQ</th>
+					</tr>
+				</thead>
+					<tr>
+						<td tabindex="-1">Synchronous</td>
+						<td tabindex="-1">No</td>
+						<td tabindex="-1">No</td>
+						<td tabindex="-1">Yes</td>
+					</tr>
+					<tr>
+						<td tabindex="-1">Asynchronous</td>
+						<td tabindex="-1">Yes</td>
+						<td tabindex="-1">Yes</td>
+						<td tabindex="-1">Yes</td>
+					</tr>
+					<tr>
+						<td tabindex="-1">Queues</td>
+						<td tabindex="-1">No</td>
+						<td tabindex="-1">Yes</td>
+						<td tabindex="-1">Yes</td>
+					</tr>
+					<tr>
+						<td tabindex="-1">Publisher-subscriber messaging</td>
+						<td tabindex="-1">Yes</td>
+						<td tabindex="-1">No</td>
+						<td tabindex="-1">Yes</td>
+					</tr>
+					<tr>
+						<td tabindex="-1">Message brokers</td>
+						<td tabindex="-1">No</td>
+						<td tabindex="-1">No</td>
+						<td tabindex="-1">Yes</td>
+					</tr>
+				</table></div></div>
+		<p>Both Amazon SQS and Amazon SNS are recommended for new applications that can benefit from nearly
+			unlimited scalability and simple APIs. They generally offer more cost-effective
+			solutions for high-volume applications with their pay-as-you-go pricing. We recommend
+			Amazon MQ for migrating applications from existing message brokers that rely on
+			compatibility with APIs such as JMS or protocols such as Advanced Message Queuing
+			Protocol (AMQP), MQTT, OpenWire, and Simple Text Oriented Message Protocol
+			(STOMP).</p>
+	<awsdocs-copyright class="copyright-print"></awsdocs-copyright><awsdocs-thumb-feedback right-edge="{{$ctrl.thumbFeedbackRightEdge}}"></awsdocs-thumb-feedback></div><noscript><div><div><div><div id="js_error_message"><p><img src="https://d1ge0kk1l5kms0.cloudfront.net/images/G/01/webservices/console/warning.png" alt="Warning" /> <strong>Javascript is disabled or is unavailable in your browser.</strong></p><p>To use the Amazon Web Services Documentation, Javascript must be enabled. Please refer to your browser's Help pages for instructions.</p></div></div></div></div></noscript><div id="main-col-footer" class="awsui-util-font-size-0"><div id="doc-conventions"><a target="_top" href="/general/latest/gr/docconventions.html">Document Conventions</a></div><div class="prev-next"><div id="next" class="next-link" accesskey="n" href="./sqs-getting-started.html">Getting started</div></div></div><awsdocs-page-utilities></awsdocs-page-utilities></div><div id="quick-feedback-yes" style="display: none;"><div class="title">Did this page help you? - Yes</div><div class="content"><p>Thanks for letting us know we're doing a good job!</p><p>If you've got a moment, please tell us what we did right so we can do more of it.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=SQS&amp;topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"></awsui-button></p></div></div><div id="quick-feedback-no" style="display: none;"><div class="title">Did this page help you? - No</div><div class="content"><p>Thanks for letting us know this page needs work. We're sorry we let you down.</p><p>If you've got a moment, please tell us how we can make the documentation better.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=SQS&amp;topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"></awsui-button></p></div></div></div></body></div></awsdocs-view><div class="page-loading-indicator" id="page-loading-indicator"><awsui-spinner size="large"></awsui-spinner></div></div><div id="tools-panel" dom-region="tools"><awsdocs-tools-panel id="awsdocs-tools-panel"></awsdocs-tools-panel></div></awsui-app-layout><awsdocs-cookie-banner class="doc-cookie-banner"></awsdocs-cookie-banner></div></body></html>

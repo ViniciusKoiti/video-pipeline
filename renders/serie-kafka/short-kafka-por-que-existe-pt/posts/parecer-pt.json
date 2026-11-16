@@ -1,0 +1,17 @@
+{
+ "veredito": "segue",
+ "revisor": "duvida-cega",
+ "riscos": [
+  "Horário: o_que.data da última linha pacote deste JSON (linha 325 do registro, payload 6b5c7882...) é 2026-11-15T19:00:00+00:00. O JSON diz 2026-11-15T16:00:00-03:00. As duas datas dão domingo 15/11/2026, 16h00 de Brasília, sem erro de fuso. Não há agenda*.md ao lado dos arquivos para comparar.",
+  "Tempo para desfazer: o pacote foi gravado às 18:18:06 UTC (15h18 em Brasília), 42 min antes do horário. Sobra menos de uma hora para apagar o post no Postiz se algo estiver errado, e o horário pode já ter passado se o envio demorar.",
+  "Canal: integration.id cmvx0omyy0005l26yggavdqpu é 'Vinicius Koiti Nakahara' no pacote, e settings.__type é youtube. É o mesmo id que recebeu os Shorts técnicos anteriores (por exemplo o agendado da linha 198), então combina com um Short técnico em pt. Não conferi o tipo do canal em outra fonte além do registro.",
+  "Privacidade: settings.type é 'private' e selfDeclaredMadeForKids é 'no'. Nada fica público sem o dono; tornar público é passo manual no Studio.",
+  "Mídia: o upload da linha 322 (data/episodes/short-kafka-por-que-existe-pt/renders/final.mp4, sha256 0756d0e4...5782094) tem o mesmo id (517ef4cb...) e o mesmo path do JSON. O hash bate com o do pacote e com video_sha256 de renders/pacote.json (state 'complete'). Nome do arquivo e legenda (Por que o Kafka existe, delivery, Entregador) são do mesmo corte. Não abri o vídeo, então não conferi o conteúdo contra a legenda.",
+  "Legenda: o content do JSON é igual à legenda do pacote, só mudam as quebras de linha. Não vi erro de digitação nem @menção. Não cita pessoa viva nem empresa; a única marca é o Apache Kafka, com atribuição à documentação 4.4. Os pontos da legenda batem com renders/serie-kafka/short-kafka-por-que-existe-pt/fontes.md (K-INT P31/P32/P21/P24, K-DES P68). Dois pontos para o dono aceitar: 'custo' é leitura editorial, assumida no fontes.md; e 'quem caiu lê o que perdeu quando volta' só vale dentro da retenção configurada, que a fala não menciona.",
+  "Série: a legenda diz 'Parte 1 de 4 da série Kafka', e os pacotes e uploads de hoje cobrem só 3 episódios (por-que-existe, fila-log, particao). O 4º (qual-usar) não tem upload nem pacote no registro. Se ele atrasar, a numeração 'de 4' fica solta por um tempo.",
+  "Divulgação: a legenda declara 'Voz clonada com IA. App, serviços e pedidos fictícios.' A API do Postiz não marca conteúdo alterado ou sintético; isso fica à mão no Studio antes de tornar público.",
+  "Gate 4: evidencia.gate_4 é 'aprovado' (episódio short-kafka-por-que-existe-pt). Pelo review.json, a aprovação é do dono em 15/11 15:17:30 -03 e a nota diz 'para postar como privado'. Tornar público pede nova decisão do dono.",
+  "Repetição: não há linha 'agendado' com esta mídia (517ef4cb) nem com este payload. O único agendado de 15/11 no registro é o do longo (linha 313), em outro canal (cmvwzfp980019l2clo70frcwz, 17:50 UTC). Mas os três Shorts Kafka têm pacote para o mesmo canal em 19:00, 19:05 e 19:10 UTC (16h00, 16h05 e 16h10 de Brasília). Se os três forem agendados, saem três privados em 10 minutos. O risco é baixo porque são privados.",
+  "Pendências manuais depois do envio: conferir no Studio (ERROR no Postiz não prova falha), marcar conteúdo sintético, definir categoria e idioma."
+ ]
+}

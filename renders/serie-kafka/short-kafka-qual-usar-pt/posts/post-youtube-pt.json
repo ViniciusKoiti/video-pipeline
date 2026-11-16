@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:15:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0omyy0005l26yggavdqpu"
+   },
+   "value": [
+    {
+     "content": "Redimensionar a foto do prato é tarefa: um worker faz uma vez e acabou, caso de fila. A fila do RabbitMQ é feita para esvaziar; o Amazon SQS fica na AWS, escala sem provisionar e guarda mensagens por até 14 dias. O \"pedido pago\" é histórico: vários serviços leem no próprio ritmo e podem reler, caso de log, o Kafka. E a fronteira borrou: o RabbitMQ tem streams, e o Kafka tem share groups.\n\nQual desses três você usa no trabalho? Conta nos comentários.\n\nFontes: documentação do Apache Kafka 4.4, do RabbitMQ (Queues e Streams) e do Amazon SQS. Parte 4 de 4 da série Kafka.\n\nVoz clonada com IA. App, serviços e pedidos fictícios.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "8d47d24f-e0aa-4e33-9346-af0e712c1504",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/f8ebe716a275ce9133859c925105b11af.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "KAFKA, RABBITMQ OU SQS: QUAL USAR?",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

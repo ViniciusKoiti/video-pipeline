@@ -1,0 +1,37 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "Três da tarde. O time descobre um bug na regra do antifraude, ativo desde as duas, e precisa analisar de novo tudo o que passou.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "fila",
+      "text": "Se ele lê de uma fila, não tem como. No RabbitMQ e no SQS, a mensagem sai quando o consumidor termina."
+    },
+    {
+      "scene": "log",
+      "text": "No Kafka, o tópico é um log, e ler não apaga. Cada consumidor guarda só um número: o offset da próxima mensagem.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "volta",
+      "text": "Corrigiu o bug? Volta o offset para as duas e reprocessa.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "codigo",
+      "text": "Em Java, um seek leva o consumidor de volta às duas, e ele lê de novo dali."
+    },
+    {
+      "scene": "decisao",
+      "text": "O log só apaga quando vence a retenção que você configurou. E reprocessar roda tudo de novo, então o antifraude precisa ser idempotente."
+    },
+    {
+      "scene": "fecho",
+      "text": "E você, já precisou reprocessar uma fila no trabalho?",
+      "delivery": "invite"
+    }
+  ]
+}

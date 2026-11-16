@@ -1,0 +1,156 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Maggs and Sitaraman (ACM CCR, 2015) · measured 2026-11-08 · Java 25 · 100k sessions · 4 → 5 servers",
+  "assets": {
+    "anel": {
+      "kind": "lottie",
+      "path": "lottie/anel-en.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 3.0,
+      "kicker": "Akamai · CDN",
+      "text": "How does Akamai decide which server delivers each file?",
+      "highlight": "which server"
+    },
+    {
+      "id": "circulo",
+      "type": "animation",
+      "durationSec": 9.0,
+      "assetId": "anel",
+      "colors": "original"
+    },
+    {
+      "id": "origem",
+      "type": "flow",
+      "durationSec": 8.5,
+      "title": "Inside an Akamai cluster",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "pedido",
+          "label": "File request",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "cluster",
+          "label": "Picks the cluster",
+          "x": 0.5,
+          "y": 0.27
+        },
+        {
+          "id": "hash",
+          "label": "Consistent hash",
+          "sublabel": "picks the server",
+          "x": 0.5,
+          "y": 0.54
+        },
+        {
+          "id": "servidor",
+          "label": "Edge server",
+          "x": 0.5,
+          "y": 0.8
+        }
+      ],
+      "edges": [
+        {
+          "from": "pedido",
+          "to": "cluster",
+          "kind": "scheduling"
+        },
+        {
+          "from": "cluster",
+          "to": "hash",
+          "kind": "scheduling"
+        },
+        {
+          "from": "hash",
+          "to": "servidor",
+          "kind": "scheduling"
+        }
+      ],
+      "states": [
+        {
+          "node": "pedido",
+          "atSec": 1.2,
+          "state": "running"
+        },
+        {
+          "node": "pedido",
+          "atSec": 2.2,
+          "state": "done"
+        },
+        {
+          "node": "cluster",
+          "atSec": 2.2,
+          "state": "running"
+        },
+        {
+          "node": "cluster",
+          "atSec": 3.4,
+          "state": "done"
+        },
+        {
+          "node": "hash",
+          "atSec": 3.4,
+          "state": "running"
+        },
+        {
+          "node": "hash",
+          "atSec": 5.6,
+          "state": "done"
+        },
+        {
+          "node": "servidor",
+          "atSec": 5.6,
+          "state": "running"
+        },
+        {
+          "node": "servidor",
+          "atSec": 6.6,
+          "state": "done"
+        }
+      ]
+    },
+    {
+      "id": "servidor-novo",
+      "type": "versus",
+      "durationSec": 12.5,
+      "title": "Who changed server? (4 → 5)",
+      "left": {
+        "title": "Modulo (hash % N)",
+        "value": "80,18%",
+        "lines": [
+          "of the sessions moved"
+        ]
+      },
+      "right": {
+        "title": "Ring, 100 points",
+        "value": "20,13%",
+        "lines": [
+          "moved, all to the new one"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 6.0
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.8,
+      "variant": "follow",
+      "text": "Can it move 80% of the cache?",
+      "sub": "Comment what you would do"
+    }
+  ]
+}

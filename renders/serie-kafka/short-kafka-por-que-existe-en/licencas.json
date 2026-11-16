@@ -1,0 +1,14 @@
+{
+  "celular-abertura": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "57422d86fb8a687a2e4573a9aec8cb585eaffebf2314c66725a17dc52a0deffe",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "celular-volta": {
+    "license": "Original",
+    "author": "projeto (renders/serie-kafka/traduzir.py)",
+    "sha256": "4c9093750d311721a27999cfe6c44b89fdd515f1f79109dcc4b47b638e2ce856",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

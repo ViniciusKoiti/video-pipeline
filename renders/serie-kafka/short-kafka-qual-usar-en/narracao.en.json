@@ -1,0 +1,38 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "In the app, the dish photo needs resizing, and the paid order notifies four services. The candidates: Kafka, RabbitMQ and SQS.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "tarefa",
+      "text": "The photo is a task: a worker does it once, and it's done. That's a queue.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "filas",
+      "text": "RabbitMQ's queue is built to empty out. SQS lives on AWS, scales on its own and keeps messages for up to fourteen days."
+    },
+    {
+      "scene": "historico",
+      "text": "The paid order is history: four services read at their own pace and can read again. That's a log, Kafka.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "fronteira",
+      "text": "But the line has blurred: RabbitMQ has streams, which can be re-read, and Kafka has share groups."
+    },
+    {
+      "scene": "decisao",
+      "text": "So it depends: a task that disappears, queue. History that many re-read, log.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "fecho",
+      "text": "And you, which of these three do you use at work today?",
+      "delivery": "invite"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "Pico do almoço, quatro consumidores na fila. E no celular do cliente, o pedido sai antes de ser pago.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "fila",
+      "text": "Numa fila com vários consumidores, uma reentrega pode trocar a ordem: o pago volta, e o saiu passa na frente."
+    },
+    {
+      "scene": "chave",
+      "text": "No Kafka, o tópico tem partições, e a mesma chave cai sempre na mesma partição.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "ordem",
+      "text": "Quem lê a partição recebe na ordem em que foi escrito.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "grupo",
+      "text": "No grupo, cada partição tem um consumidor por vez. O quarto fica parado."
+    },
+    {
+      "scene": "codigo",
+      "text": "Em Java, a chave é o pedidoId, o segundo argumento do ProducerRecord."
+    },
+    {
+      "scene": "cliente",
+      "text": "E no celular do cliente, os avisos voltam a chegar na ordem certa."
+    },
+    {
+      "scene": "decisao",
+      "text": "A ordem vale por chave. E as partições limitam os consumidores do grupo."
+    },
+    {
+      "scene": "fecho",
+      "text": "E no seu sistema, qual seria a chave dos eventos? Conta aqui embaixo.",
+      "delivery": "invite"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:25:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0nn9g0003l26yf4npmb66"
+   },
+   "value": [
+    {
+     "content": "At 3 p.m., the team finds a bug in the fraud check that has been live since 2. In a queue (RabbitMQ, SQS), the message is removed when the consumer finishes. In Kafka, the topic is a log: reading doesn't delete, and each consumer keeps only the offset of the next message. Once the bug is fixed, a seek moves the offset back and the consumer re-reads from there. The log deletes by the configured retention, and reprocessing repeats the effect: the consumer has to be idempotent.\n\nHave you ever had to reprocess a queue? Tell me in the comments.\n\nSources: Apache Kafka 4.4, RabbitMQ (Streams) and Amazon SQS documentation. Part 2 of 4 of the Kafka series.\n\nThe author's voice is cloned with AI. Animations made for this video; fictional app, services and orders.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "29a717dc-d6e2-415b-bf64-c6a9ba63f57d",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/64d8f658132bc92a4736e7829336ef7d.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "READING DOESN'T DELETE: QUEUE OR LOG IN KAFKA",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

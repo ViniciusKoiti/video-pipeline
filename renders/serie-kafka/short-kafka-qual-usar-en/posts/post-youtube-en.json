@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:35:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0nn9g0003l26yf4npmb66"
+   },
+   "value": [
+    {
+     "content": "Resizing the dish photo is a task: a worker does it once and it's done, a queue. RabbitMQ's queue is built to empty out; Amazon SQS runs on AWS, scales without provisioning and keeps messages for up to 14 days. The \"order paid\" event is history: several services read at their own pace and can re-read, a log, Kafka. And the line has blurred: RabbitMQ has streams, and Kafka has share groups.\n\nWhich of the three do you use at work? Tell me in the comments.\n\nSources: Apache Kafka 4.4, RabbitMQ (Queues and Streams) and Amazon SQS documentation. Part 4 of 4 of the Kafka series.\n\nThe author's voice is cloned with AI. Animations made for this video; fictional app, services and orders.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "8d91aff0-6cd5-415a-8631-b223960c18c5",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/109e19461ca169191f53b3f8586c10162d.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "KAFKA, RABBITMQ OR SQS: WHICH ONE?",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}
