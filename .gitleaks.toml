@@ -8,3 +8,11 @@ useDefault = true
 description = "Credenciais falsas dos testes do Postiz"
 paths = ['''tests/test_postiz\.py''']
 regexes = ['''https://user:password@[a-z.]+\.example/''']
+
+# Páginas de terceiros baixadas como fonte de um episódio (cópia do site com o JavaScript dele): a chave
+# pública do analytics do próprio site e os atributos `data-fullfile-key` dos blocos de código não são
+# credenciais do projeto. Achado de 2026-11-17 em renders/serie-kafka/fontes/raw/redis-streams.html;
+# exceção autorizada pelo dono.
+[[allowlists]]
+description = "Cópias de páginas de terceiros usadas como fonte"
+paths = ['''renders/[^/]+/fontes/raw/[^/]+\.html''']
