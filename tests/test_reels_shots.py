@@ -8,7 +8,8 @@ from typing import Any
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from app.pipeline.check import CheckReport, _check_scenes, arithmetic_errors, funnel_warnings
+from app.pipeline.check import CheckReport, _check_scenes, arithmetic_errors
+from app.pipeline.funnel_check import funnel_warnings
 from app.pipeline.schemas import (
     EpisodeFormat,
     EpisodeManifest,

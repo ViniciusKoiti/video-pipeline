@@ -65,3 +65,13 @@ lá (o contrato `reels.v1` só muda com validação do dono):
 
 Limites conhecidos: com 34 Reels num nicho, cada tipo dificilmente chega a 5 de cada lado; a legenda escrita
 nem sempre diz o que o vídeo faz; e regras de palavras erram ironia e mistura de tipos.
+
+## Emenda (2026-11-16): a opinião se diz sem rótulo
+
+Decisão do dono em 2026-11-16, depois do `vazio-de-ter-tudo`: "e eu digo o que acho disso, como opinião" (S05)
+cumpria a regra 2 ao pé da letra e soou burocrático. A marca de opinião é natural e conversacional ("na minha
+leitura", "pelo menos é assim que eu enxergo", "eu acho"), nunca uma frase que anuncia a opinião em vez de
+dizê-la. O `vp check` dá erro nos rótulos de uma lista curta (`app/pipeline/opinion_labels.py`, constantes em
+`app/pipeline/constants/opinion_labels_constants.py`): "como opinião", "isso é (só uma) opinião", "é opinião
+minha / pessoal / do canal", "a título de opinião" e os equivalentes em inglês. "Na minha opinião" passa. Skills
+`roteiro-explicativo` e `edicao-de-roteiro` (nota `TOM`).

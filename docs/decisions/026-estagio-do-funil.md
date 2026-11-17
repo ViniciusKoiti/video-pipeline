@@ -73,3 +73,24 @@ episódios do pipeline (composição `Clipe`, fora do contrato do `episode.json`
 - O plano `end_card` mostra a chamada: `follow` no topo, `save` no meio, `next` quando a série continua. O `vp
   check` avisa quando a variante não é a do estágio e quando a `cta` não é dita durante o cartão. No fundo ainda
   não há cartão final.
+
+## Emenda (2026-11-16): a chamada vira erro, e o vídeo longo une pergunta e chamada
+
+Decisão do dono em 2026-11-16, depois do `vazio-de-ter-tudo` (publicado em 15/11). O vídeo terminou com "Nos
+comentários: em que você começaria a ficar bom?" e nenhuma chamada do topo. O `vp check` avisou, mas o aviso era
+uma linha entre 28 (20 delas de "uma fonte só") e passou pelo gate 2.
+
+- **Erro, não alerta.** Chamada que não usa nenhum pedido do estágio, ou que não é dita na última cena, é erro
+  no `vp check`. Sem estágio continua alerta (roteiros antigos), e o cartão final que não combina também.
+- **Pedidos do YouTube.** No topo valem também `inscrev` e "próximo vídeo" ou "próximo episódio"; no meio,
+  "próximo vídeo" ou "próximo episódio". "Próximo" sozinho não conta ("na próxima encomenda" não é chamada).
+- **Vídeo longo: pergunta e chamada.** O `Funnel` ganha `engagement`, opcional: a pergunta para os comentários,
+  dita na última cena antes da `cta`. Quando existe, falta dela na última cena ou ordem trocada é erro. Vídeo de
+  3 min ou mais (estimado pela fala) sem `engagement`, com chamada que não pede comentário, é ponto de atenção
+  para o gate 2. Short e Reel ficam com um pedido só (ADR 028), e a regra "uma chamada só" passa a valer só
+  para eles.
+- **Saída do `vp check`.** O relatório ganha o bloco `atenção` (o que o dono decide no gate 2), impresso depois
+  dos alertas e antes dos erros, e a linha do resultado conta esses pontos. Os alertas de "uma fonte só" viram
+  uma linha só.
+- O código do funil sai de `app/pipeline/check.py` para `app/pipeline/funnel_check.py`, com as constantes em
+  `app/pipeline/constants/funnel_check_constants.py`; testes em `tests/test_funnel.py`.
