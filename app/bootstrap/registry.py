@@ -34,7 +34,8 @@ def _choices(settings: Settings) -> dict[str, list[str]]:
             continue
         if isinstance(names, dict):  # render: formato -> motor
             names = list(names.values())
-        port = "tts" if port == "tts_final" else port  # a voz final vem da mesma porta
+        # a voz final vem da porta da voz; o reconhecedor da conferência, da porta das palavras (ADR 062)
+        port = {"tts_final": "tts", "speech_check": "word_aligner"}.get(port, port)
         flat.setdefault(port, [])
         flat[port] += names if isinstance(names, list) else [names]
     return flat

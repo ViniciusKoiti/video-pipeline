@@ -300,6 +300,7 @@ class FakeContext:
     archives: tuple[FakeArchive, ...] = (FakeArchive(),)
     aligner: FakeAligner = field(default_factory=FakeAligner)
     word_aligner: FakeWordAligner = field(default_factory=FakeWordAligner)
+    speech_checker: FakeWordAligner = field(default_factory=FakeWordAligner)
     final_tts: FakeTTS | None = None  # sem ele, `tts_final` é o `tts`, como no LazyContext
     voices: dict[str, FakeTTS] = field(default_factory=dict)  # vozes por nome, para `tts_named`
     renderers: dict[str, FakeRender] = field(default_factory=dict)

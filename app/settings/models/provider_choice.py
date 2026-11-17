@@ -14,6 +14,7 @@ class ProviderChoice(_Model):
     archives: list[str] = Field(min_length=1)  # ordem da cascata (§8)
     aligner: str
     word_aligner: str = "groq"  # palavras com tempo para a legenda palavra a palavra (ADR 023)
+    speech_check: str = "whisper_local"  # reconhecimento local da conferência depois da voz (ADR 062)
     render: dict[EpisodeFormat, str]  # motor por formato do episódio (ADR 001)
     store: str
     review: str

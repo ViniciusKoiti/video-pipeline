@@ -12,10 +12,10 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
-from pydantic import SecretStr
-
+from app.bootstrap.alignment import groq_words, whisper_local
 from app.bootstrap.azure_speech import build_azure_speech
 from app.bootstrap.registry import ConfigurationError, Registration, Registry, ensure_free, unknown_choices
+from app.bootstrap.secrets import secret as _secret
 from app.pipeline.ports import ManifestStore, ReviewGate
 from app.pipeline.schemas import EpisodeFormat
 from app.pipeline.usage import UsageLedger
@@ -62,11 +62,6 @@ def _remotion(settings: Settings) -> RenderEngine:
     )
 
 
-def _secret(settings: Settings, env_name: str) -> str:
-    secret = getattr(settings.secrets, env_name.lower())
-    if not isinstance(secret, SecretStr):
-        raise ConfigurationError(f"{env_name} ausente no .env")
-    return secret.get_secret_value()
 
 
 def build_postiz(settings: Settings) -> PostizClient:
@@ -154,14 +149,6 @@ def _chatterbox_modal(settings: Settings) -> TTSProvider:
     )
 
 
-def _groq_words(settings: Settings) -> WordAligner:
-    from app.providers.alignment.groq import GroqWordAligner
-
-    whisper = settings.groq_whisper
-    key = _secret(settings, "GROQ_API_KEY")
-    return GroqWordAligner(key, model=whisper.model, timeout_s=whisper.timeout_s)
-
-
 DEFAULT_REGISTRY: Registry = {
     "text": {"ollama": Registration(5, _ollama), "groq": Registration(29), "gemini": Registration(29)},
     "tts": {
@@ -181,7 +168,10 @@ DEFAULT_REGISTRY: Registry = {
         "unsplash": Registration(21, _unsplash),  # idem; Coverr fica só manual
     },
     "aligner": {"ffprobe": Registration(17)},
-    "word_aligner": {"groq": Registration(17, _groq_words)},
+    "word_aligner": {
+        "groq": Registration(17, groq_words),
+        "whisper_local": Registration(17, whisper_local),  # conferência da fala, local (ADR 062)
+    },
     "render": {
         "ffmpeg": Registration(7, _ffmpeg),
         "moneyprinterturbo": Registration(8),
@@ -252,6 +242,13 @@ class LazyContext:
     def word_aligner(self) -> WordAligner:
         return self._build(
             "word_aligner", self._settings.providers.word_aligner, self._registry["word_aligner"]
+        )
+
+    @cached_property
+    def speech_checker(self) -> WordAligner:
+        """O reconhecedor da conferência depois da voz (ADR 062): local, para o áudio não sair da máquina."""
+        return self._build(
+            "word_aligner", self._settings.providers.speech_check, self._registry["word_aligner"]
         )
 
     def renderer(self, episode_format: EpisodeFormat) -> RenderEngine:

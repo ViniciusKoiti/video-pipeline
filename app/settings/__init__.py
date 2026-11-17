@@ -29,6 +29,7 @@ from app.settings.models.ollama_settings import OllamaSettings as OllamaSettings
 from app.settings.models.provider_choice import ProviderChoice as ProviderChoice
 from app.settings.models.secrets import Secrets as Secrets
 from app.settings.models.settings import Settings as Settings
+from app.settings.models.whisper_local_settings import WhisperLocalSettings as WhisperLocalSettings
 from app.settings.models.workers_ai_settings import WorkersAISettings as WorkersAISettings
 
 # Variável de ambiente -> caminho no dicionário de configuração.

@@ -16,10 +16,9 @@ from app.pipeline.ports import ManifestStore
 from app.pipeline.state import load_state
 
 
-def measured_seconds(
-    store: ManifestStore, episode_id: str, scene_ids: Sequence[str], measure: Callable[[Path], float]
-) -> dict[str, float] | None:
-    """Segundos da fala de cada cena, por id; `None` se alguma cena ainda não tem voz pronta."""
+def voiced_paths(store: ManifestStore, episode_id: str, scene_ids: Sequence[str]) -> dict[str, Path] | None:
+    """O WAV que vai ao vídeo (a cópia nivelada, quando existe) de cada cena, por id; `None` se alguma cena
+    ainda não tem voz pronta ou o arquivo sumiu."""
     records = load_state(store, episode_id).get(Step.VOICE).scenes
     paths: dict[str, Path] = {}
     for scene_id in scene_ids:
@@ -30,4 +29,12 @@ def measured_seconds(
         if not path.is_file():
             return None
         paths[scene_id] = path
-    return {scene_id: measure(path) for scene_id, path in paths.items()}
+    return paths
+
+
+def measured_seconds(
+    store: ManifestStore, episode_id: str, scene_ids: Sequence[str], measure: Callable[[Path], float]
+) -> dict[str, float] | None:
+    """Segundos da fala de cada cena, por id; `None` se alguma cena ainda não tem voz pronta."""
+    paths = voiced_paths(store, episode_id, scene_ids)
+    return None if paths is None else {scene_id: measure(path) for scene_id, path in paths.items()}
