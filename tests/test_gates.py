@@ -19,6 +19,7 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
+from app.pipeline.review_hashes import legacy_content_hash
 from app.pipeline.schemas import (
     Asset,
     CheckVerdict,
@@ -114,6 +115,38 @@ def test_choosing_an_image_keeps_the_script_decision_and_the_check(tmp_path: Pat
     assert script_row(store, review).valid and latest_check(store, EPISODE)[1]
     (folder / "scenes.json").write_text((SCENES % '"pexels-photo-1"').replace("Fala.", "Fala nova."))
     assert not script_row(store, review).valid and not latest_check(store, EPISODE)[1]
+
+
+SEM_IMAGEM = '{"scenes": [{"id": "S01", "narration": "Fala.", "shots": [{"anchor": "Fala"}]}]}'
+COM_IMAGEM = SEM_IMAGEM.replace('"Fala"}', '"Fala", "asset_id": "pexels-photo-1"}')
+
+
+def test_adding_the_image_key_keeps_a_decision_stamped_without_it(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    (folder / "scenes.json").write_text(SEM_IMAGEM)  # roteiro aprovado antes de qualquer imagem
+    checked(store)
+    decide(store, review, Step.SCRIPT, Decision.APPROVED)
+    (folder / "scenes.json").write_text(COM_IMAGEM)  # o gate 3 grava a chave nova
+    assert script_row(store, review).valid and latest_check(store, EPISODE)[1]
+    (folder / "scenes.json").write_text(COM_IMAGEM.replace("Fala.", "Fala nova."))
+    assert not script_row(store, review).valid and not latest_check(store, EPISODE)[1]
+
+
+def test_decisions_stamped_with_the_image_as_null_still_hold(tmp_path: Path) -> None:
+    store, review, folder = episode(tmp_path)
+    (folder / "scenes.json").write_text(SCENES % '"pexels-photo-1"')
+    old = legacy_content_hash([folder / "scenes.json", folder / "outline.md"], base=store.path(EPISODE, ""))
+    assert gate_hash(store, EPISODE, Step.SCRIPT) != old  # carimbo da regra anterior
+    review.record(
+        EPISODE,
+        ReviewEntry(
+            step=Step.SCRIPT, decision=Decision.APPROVED, reviewer="Dono", at=FIXED_TIME, input_hash=old
+        ),
+    )
+    (folder / "scenes.json").write_text(SCENES % '"outra-imagem"')
+    assert script_row(store, review).valid  # trocar a imagem continua sem derrubar a decisão antiga
+    (folder / "scenes.json").write_text((SCENES % '"outra-imagem"').replace("Fala.", "Fala nova."))
+    assert not script_row(store, review).valid
 
 
 def test_decisions_stamped_with_the_whole_file_still_hold(tmp_path: Path) -> None:
