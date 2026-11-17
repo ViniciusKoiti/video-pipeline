@@ -10,18 +10,20 @@ from pathlib import Path
 SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "check_tamanho.py"
 
 
-def _env() -> dict[str, str]:
-    """Sem as GIT_* que o git põe nos hooks (GIT_INDEX_FILE etc.): o repositório é o do `tmp_path`."""
+def isolated_env() -> dict[str, str]:
+    """Sem as variáveis GIT_* do hook: num worktree, GIT_INDEX_FILE é absoluto e o repo temporário
+    usaria o índice dele (e gravaria nele os arquivos de teste)."""
     return {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
 
 
 def git(repo: Path, *args: str) -> None:
-    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, env=_env())
+    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, env=isolated_env())
 
 
 def run(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    cmd = [sys.executable, str(SCRIPT), *args]
-    return subprocess.run(cmd, cwd=repo, capture_output=True, text=True, env=_env())
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), *args], cwd=repo, capture_output=True, text=True, env=isolated_env()
+    )
 
 
 def test_small_files_pass_and_big_staged_file_is_refused(tmp_path: Path) -> None:

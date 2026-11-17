@@ -19,7 +19,7 @@ from app.pipeline.schemas import Asset, Decision, ReviewEntry, SourcesManifest, 
 from app.pipeline.state import compute_input_hash, write_output
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
-from tests.test_gates import EPISODE, SCENES, episode, rendered, stock_asset
+from tests.test_gates import COM_IMAGEM, EPISODE, SCENES, SEM_IMAGEM, episode, rendered, stock_asset
 
 Setup = tuple[JsonFileStore, JsonReviewGate, Path]
 
@@ -82,6 +82,17 @@ def test_script_approval_protects_scenes_and_outline_but_not_the_derived_choices
     block = f"{NumbersConstants.BLOCK_START}\nnúmeros\n{NumbersConstants.BLOCK_END}\n"
     assert not refuses(guard, "outline.md", b"# roteiro\n\n" + block.encode())  # bloco gerado do gate 2
     assert refuses(guard, "outline.md", None)  # sem candidato não há exceção
+
+
+def test_script_approved_without_image_keys_accepts_writing_them_and_refuses_text_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, ep: Setup
+) -> None:
+    store, review, folder = ep
+    (folder / "scenes.json").write_text(SEM_IMAGEM)
+    approve(tmp_path, monkeypatch, "script", "--sem-checagem", "teste do gate")
+    guard = ReviewWriteGuard(store, review)
+    assert not refuses(guard, "scenes.json", COM_IMAGEM.encode())  # gate 3: a chave nova não muda o carimbo
+    assert refuses(guard, "scenes.json", COM_IMAGEM.replace("Fala.", "Outra.").encode())
 
 
 def test_preview_approval_protects_the_stamped_render_and_post_files_only(
