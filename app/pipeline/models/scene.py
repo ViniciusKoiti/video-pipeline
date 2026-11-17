@@ -5,7 +5,7 @@ from typing import Self
 from pydantic import Field, model_validator
 
 from app.media.narration import narration_problems, strip_pauses
-from app.pipeline.models._schemas_types import AssetId, Delivery, HostCorner, NonEmpty, SceneId, _fold
+from app.pipeline.models._schemas_types import AssetId, Beat, Delivery, HostCorner, NonEmpty, SceneId, _fold
 from app.pipeline.models._schemas_value_shot import Shot
 from app.pipeline.models._schemas_value_step_positions import step_positions
 from app.pipeline.models.claim import Claim
@@ -25,6 +25,7 @@ class Scene(Model):
     id: SceneId
     narration: NonEmpty
     delivery: Delivery | None = None  # ADR 022
+    beat: Beat | None = None  # papel no relógio de retenção (ADR 061)
     claims: list[Claim] = []
     visual_need: VisualNeed | None = None  # forma v1
     search_query: NonEmpty | None = None  # forma v1

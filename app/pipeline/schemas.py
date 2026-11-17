@@ -15,6 +15,7 @@ from app.pipeline.models._schemas_from_to import _FromTo as _FromTo
 from app.pipeline.models._schemas_shot import _Shot as _Shot
 from app.pipeline.models._schemas_step import _Step as _Step
 from app.pipeline.models._schemas_types import AssetId as AssetId
+from app.pipeline.models._schemas_types import Beat as Beat
 from app.pipeline.models._schemas_types import Count as Count
 from app.pipeline.models._schemas_types import Delivery as Delivery
 from app.pipeline.models._schemas_types import EpisodeId as EpisodeId

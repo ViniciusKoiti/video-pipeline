@@ -8,7 +8,9 @@ alerta vai para a revisão humana.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import date
+from pathlib import Path
 
 from app.media.narration import timeline_length
 from app.pipeline.constants.check_constants import CheckConstants as Constants
@@ -18,12 +20,10 @@ from app.pipeline.constants.radar_constants import RadarConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.constants.shots_constants import ShotsConstants
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
-from app.pipeline.funnel_check import funnel_attention, funnel_errors, funnel_summary, funnel_warnings
 from app.pipeline.metrics import summary_line
 from app.pipeline.models.check_report import CheckReport as CheckReport
-from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
+from app.pipeline.molde import Molde, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
-from app.pipeline.narration_gaps import gap_warnings
 from app.pipeline.numbers import (
     FormatBrief,
     current_block,
@@ -34,7 +34,6 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
-from app.pipeline.opinion_labels import opinion_label_errors
 from app.pipeline.ports import M, ManifestInvalid, ManifestStore
 from app.pipeline.radar import RadarBrief, brief_summary, form_warnings, unmeasured_patterns
 from app.pipeline.schemas import (
@@ -66,7 +65,9 @@ from app.pipeline.schemas import (
     screen_parts,
     unknown_source_refs,
 )
+from app.pipeline.script_form import check_script_form
 from app.pipeline.text_fit import text_fit_warnings
+from app.pipeline.voice_timeline import measured_seconds
 
 # Ritmo de fala padrão, medido no exemplo com pm_alex (150 caracteres em 9,95 s); a CLI passa o da voz
 # configurada. Só estimativa: o tempo real vem do WAV (§9).
@@ -412,33 +413,6 @@ def variety_warnings(scenes: list[Scene]) -> list[str]:
     return warnings
 
 
-def objective_warnings(scenes: ScenesManifest, today: date | None = None) -> list[str]:
-    """O objetivo do vídeo (ADR 019): alerta quando falta, e quando o fato noticiado já é velho."""
-    objective = scenes.objective
-    if objective is None:
-        return ["roteiro sem objetivo declarado (noticiar, explicar ou opinar; ADR 019)"]
-    if "noticiar" in objective.kinds and objective.event_date is not None and today is not None:
-        age = (today - objective.event_date).days
-        when = f"{objective.event_date:%d/%m/%Y}"
-        if age < 0:
-            return [f"objetivo noticiar com data no futuro ({when})"]
-        if age > Constants.NEWS_MAX_AGE_DAYS:
-            return [
-                (
-        f'objetivo noticiar, mas o fato é de {when} ({age} dias): depois de '
-        f'{Constants.NEWS_MAX_AGE_DAYS} dias não é notícia; o vídeo explica ou opina'
-    )
-            ]
-    return []
-
-
-def objective_summary(scenes: ScenesManifest) -> str | None:
-    objective = scenes.objective
-    if objective is None:
-        return None
-    return f"objetivo: {' + '.join(objective.kinds)}: {objective.promise}"
-
-
 def _check_radar(
     store: ManifestStore,
     episode_id: str,
@@ -570,11 +544,13 @@ def check_episode(
     chars_per_second: float = Constants.CHARS_PER_SECOND,
     today: date | None = None,
     music_catalog: MusicCatalog | None = None,
+    measure: Callable[[Path], float] | None = None,
 ) -> CheckReport:
     """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
     `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos.
     `today`: a data de hoje: diz se o resumo do radar está velho e se o fato noticiado ainda é notícia.
-    `music_catalog`: as faixas que o plano da trilha pode usar (ADR 030)."""
+    `music_catalog`: as faixas que o plano da trilha pode usar (ADR 030).
+    `measure`: segundos de um WAV; com ele, o relógio de retenção usa a voz real, quando existe (ADR 061)."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -588,14 +564,8 @@ def check_episode(
     if scenes is not None:
         planned = _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
         report.errors += citation_violations(planned, _assets(store, episode_id, planned, report))
-        if (summary := objective_summary(scenes)) is not None:
-            report.checked.append(summary)
-        report.warnings += objective_warnings(scenes, today)
-        if (summary := funnel_summary(scenes)) is not None:
-            report.checked.append(summary)
-        report.errors += funnel_errors(scenes) + opinion_label_errors(scenes)
-        report.warnings += funnel_warnings(scenes) + claimless_statements(scenes) + gap_warnings(scenes)
-        report.attention += funnel_attention(scenes, chars_per_second)
+        voiced = measure and measured_seconds(store, episode_id, [s.id for s in scenes.scenes], measure)
+        check_script_form(report, scenes, chars_per_second, today, voiced or None)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
         _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)

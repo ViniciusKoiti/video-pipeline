@@ -107,8 +107,14 @@ sem entregar nada novo.
   trecho; se não declara, peça ao roteirista.
 - **Duração-alvo: 8 a 9 min** (teste decidido pelo dono em 2026-11-14). Proponha cortar cena ou trecho que não entrega
   conteúdo novo e escreva no custo quanto tempo a troca economiza.
-- **Não cobre como regra o que não se confirmou:** "promessa mais cedo segura mais", "cena de perigo na abertura segura
-  mais" e "explicação derruba". Se o roteiro testa um deles como mudança declarada, a nota preserva a variável.
+- **Relógio do vídeo longo** (ADR 061, regra do dono de 2026-11-16): a promessa fecha até 0:30; entre 2:00 e 3:00
+  entra um gancho de retomada ou a virada para a parte prática; logo depois de uma pausa de aviso (CVV, saúde) vem um
+  gancho, antes do próximo bloco. Leia os pontos de `atenção` do `vp check` (linhas "relógio") e confira se as cenas
+  certas têm `beat` (`promise`, `rehook`, `turn`, `pause`). Relógio que falha vira nota `ABERTURA` (promessa) ou
+  `TENSÃO` (gancho), com o texto proposto.
+- **Não cobre como regra o que não se confirmou:** "cena de perigo na abertura segura mais" e "explicação derruba".
+  Se o roteiro testa um deles como mudança declarada, a nota preserva a variável. A promessa até 0:30 não entra
+  nesta lista: é regra do dono, mesmo sem prova nas curvas.
 
 ## Tipos de nota
 

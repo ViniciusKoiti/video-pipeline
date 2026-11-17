@@ -38,6 +38,7 @@ from app.commands.constants.cli_constants import CliConstants
 from app.commands.errors import run
 from app.commands.models.command import Command as Command
 from app.commands.project_root import project_root
+from app.media.probe import duration_ms
 from app.pipeline.bench import run_bench, summary
 from app.pipeline.check import check_episode
 from app.pipeline.excerpts import numbered_view
@@ -86,6 +87,7 @@ def _check(args: argparse.Namespace, context: Context) -> int:
         context.store, args.episode_id, region_codes=region_codes(),
         chars_per_second=speech_chars_per_second(context.settings), today=date.today(),
         music_catalog=load_music_catalog(context.settings.data_dir),
+        measure=lambda wav: duration_ms(wav) / 1000,  # o relógio de retenção pela voz real (ADR 061)
     )
     for line in report.checked:
         print(f"ok      {line}")
