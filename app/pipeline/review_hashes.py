@@ -9,22 +9,40 @@ from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.numbers import strip_block
+from app.pipeline.state import compute_input_hash
 
 
 def content_hash(paths: list[Path], *, base: Path) -> str:
-    """Como `compute_input_hash`, sem o que é derivado ou escolhido depois do roteiro: no `scenes.json`, todo
-    `asset_id` conta como `null`; no `outline.md`, o bloco de números gerado (`vp numeros`) não conta. Um
-    roteiro sem imagens e sem bloco tem o mesmo hash de antes."""
+    """Como `compute_input_hash`, sem o que é derivado ou escolhido depois do roteiro: no `scenes.json`, as
+    chaves `asset_id` não contam (com ou sem a chave, o hash é o mesmo); no `outline.md`, o bloco de números
+    gerado (`vp numeros`) não conta. Um roteiro sem imagens e sem bloco tem o mesmo hash de antes."""
     return hash_contents({path: path.read_bytes() for path in paths}, base=base)
 
 
-def hash_contents(contents: Mapping[Path, bytes], *, base: Path) -> str:
+def legacy_content_hash(paths: list[Path], *, base: Path) -> str:
+    """O carimbo de antes desta regra: todo `asset_id` contava como `null`, mas a chave nova mudava o hash."""
+    return hash_contents({path: path.read_bytes() for path in paths}, base=base, null_asset_ids=True)
+
+
+def legacy_hashes_of(paths: list[Path], *, base: Path) -> tuple[str, str]:
+    """Os carimbos das regras anteriores (decisões antigas continuam valendo): o arquivo inteiro e o hash em
+    que o `asset_id` contava como `null`."""
+    return compute_input_hash(paths, {}, base=base), legacy_content_hash(paths, base=base)
+
+
+def strip_asset_ids(data: bytes) -> bytes:
+    for pattern in (Constants.ASSET_ID_AFTER, Constants.ASSET_ID_BEFORE, Constants.ASSET_ID_ALONE):
+        data = pattern.sub(b"", data)
+    return data
+
+
+def hash_contents(contents: Mapping[Path, bytes], *, base: Path, null_asset_ids: bool = False) -> str:
     """O mesmo hash, sobre o conteúdo informado: confere o que uma escrita mudaria antes de gravar."""
     digest = hashlib.sha256()
     for path in sorted(contents):
         data = contents[path]
         if path.name == "scenes.json":
-            data = Constants.ASSET_ID.sub(rb"\1null", data)
+            data = Constants.ASSET_ID.sub(rb"\1null", data) if null_asset_ids else strip_asset_ids(data)
         elif path.name == "outline.md":
             data = strip_block(data)  # os números gerados saem do scenes.json, já carimbado (#170)
         digest.update(path.relative_to(base).as_posix().encode() + b"\0")

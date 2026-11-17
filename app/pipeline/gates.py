@@ -35,6 +35,7 @@ from app.pipeline.medicao import medicao_problems
 from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
 from app.pipeline.review_hashes import content_hash as content_hash
+from app.pipeline.review_hashes import legacy_hashes_of
 from app.pipeline.schemas import (
     Asset,
     CheckEntry,
@@ -160,11 +161,6 @@ def check_hash(store: ManifestStore, episode_id: str) -> str:
     return content_hash(present, base=store.path(episode_id, ""))
 
 
-def _legacy_check_hash(store: ManifestStore, episode_id: str) -> str:
-    present = [p for p in (store.path(episode_id, name) for name in Constants.CHECKED_FILES) if p.is_file()]
-    return compute_input_hash(present, {}, base=store.path(episode_id, ""))
-
-
 def check_log(store: ManifestStore, episode_id: str) -> CheckLog:
     try:
         return store.read(episode_id, Constants.CHECK_FILE, CheckLog)
@@ -204,7 +200,8 @@ def latest_check(store: ManifestStore, episode_id: str) -> tuple[CheckEntry | No
         current = check_hash(store, episode_id)
     except GateError:
         return entry, False
-    return entry, entry.input_hash in (current, _legacy_check_hash(store, episode_id))
+    present = [p for p in (store.path(episode_id, name) for name in Constants.CHECKED_FILES) if p.is_file()]
+    return entry, entry.input_hash in (current, *legacy_hashes_of(present, base=store.path(episode_id, "")))
 
 
 def check_is_current(store: ManifestStore, episode_id: str) -> bool:
@@ -228,7 +225,7 @@ def gate_report(store: ManifestStore, review: ReviewGate, episode_id: str) -> li
             asset,
             log.latest(step, asset_id=asset),
             current_hash(store, episode_id, step, asset),
-            legacy_hash(store, episode_id, step),
+            legacy_hashes(store, episode_id, step),
         )
         for step, asset in targets
     ]
@@ -286,13 +283,13 @@ def current_hash(store: ManifestStore, episode_id: str, step: Step, asset: str |
         return None
 
 
-def legacy_hash(store: ManifestStore, episode_id: str, step: Step) -> str | None:
-    """O hash dos arquivos inteiros, como era gravado antes (decisões antigas continuam valendo)."""
+def legacy_hashes(store: ManifestStore, episode_id: str, step: Step) -> tuple[str, ...]:
+    """Os carimbos das regras anteriores (arquivo inteiro e asset_id como null): decisões antigas valem."""
     names = Constants.GATE_FILES.get(step)
     paths = [store.path(episode_id, name) for name in names or ()]
     if not paths or not all(p.is_file() for p in paths):
-        return None
-    return compute_input_hash(paths, {}, base=store.path(episode_id, ""))
+        return ()
+    return legacy_hashes_of(paths, base=store.path(episode_id, ""))
 
 
 def _media_path(store: ManifestStore, episode_id: str, asset_id: str) -> Path:

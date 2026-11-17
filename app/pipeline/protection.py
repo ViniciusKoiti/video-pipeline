@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
-from app.pipeline.gates import current_hash, legacy_hash
+from app.pipeline.gates import current_hash, legacy_hashes
 from app.pipeline.ports import ImmutableManifest, ManifestStore, ReviewGate
 from app.pipeline.review_hashes import hash_contents
 from app.pipeline.schemas import Decision, ReviewEntry, Step
@@ -34,7 +34,7 @@ class ReviewWriteGuard:
         if entry is None or entry.decision is not Decision.APPROVED:
             return
         current = current_hash(self._store, episode_id, step, asset_id)
-        if entry.input_hash not in (current, legacy_hash(self._store, episode_id, step)):
+        if entry.input_hash not in (current, *legacy_hashes(self._store, episode_id, step)):
             return  # o conteúdo mudou depois da decisão: ela já não vale
         if candidate is not None and self._unchanged(episode_id, name, step, entry, current, candidate):
             return
@@ -71,9 +71,13 @@ class ReviewWriteGuard:
     ) -> bool:
         """A escrita manteria o hash normalizado que o humano aprovou? (só gates de arquivos de texto)"""
         names = Constants.GATE_FILES.get(step)
-        if names is None or entry.input_hash != current:
+        if names is None:
             return False
         base = self._store.path(episode_id, "")
         contents = {base / n: (base / n).read_bytes() for n in names}
+        null_rule = hash_contents(contents, base=base, null_asset_ids=True)  # carimbo da regra anterior
+        if entry.input_hash not in (current, null_rule):
+            return False
         contents[base / name] = candidate
-        return hash_contents(contents, base=base) == entry.input_hash
+        after = (hash_contents(contents, base=base), hash_contents(contents, base=base, null_asset_ids=True))
+        return entry.input_hash in after
