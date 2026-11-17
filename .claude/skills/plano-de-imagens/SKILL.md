@@ -14,7 +14,7 @@ O roteiro já diz **o que** cada plano pede (`kind`, `visual_need`, `search_quer
 o que a fala e as fontes não afirmam. Este é o erro mais comum desta etapa, e o `vp check` não o pega.
 
 Regras de base, que valem antes de tudo: CLAUDE.md §2.3 e §2.4 (licença registrada; banco e imagem gerada são
-ilustração, nunca registro), §6 (campos do ativo), §8 (cascata, regras dos bancos) e a ADR 007 com a emenda de
+ilustração, nunca registro), §5 (campos do ativo), §6 (cascata, regras dos bancos) e a ADR 007 com a emenda de
 citação (quadros da obra).
 
 ## O que você escreve
@@ -23,11 +23,10 @@ citação (quadros da obra).
 - `decisoes-imagens.md`: cada escolha do dono, com data. Fica fora do `scenes.json`.
 - `assets/<id>.json` (pelos scripts) e o `usage_notes` de cada um, com a conferência real.
 - No `scenes.json`, o `asset_id` de cada plano, e `photo` → `broll` onde o dono escolheu textura.
-  - **Gate 2 hoje:** o carimbo cobre o `scenes.json` inteiro, então gravar ou trocar `asset_id` derruba o gate 2 e o
-    parecer do verificador. É preciso uma rodada do verificador e a reaprovação do dono (aconteceu no
-    `kira-voto-brasil`).
-  - **Depois do PR #169** (o carimbo passa a ignorar o `asset_id`), trocar a imagem não derruba mais.
-  - **Tipo do plano ou âncora:** trocar derruba sempre, e aí o verificador confere e o dono reaprova.
+  - **Imagem:** desde o PR #169, o carimbo do gate 2 conta todo `asset_id` como `null`; gravar ou trocar a imagem
+    não derruba o gate 2 nem o parecer do verificador (invalida só a montagem e a prévia).
+  - **O resto do plano:** qualquer outra mudança no `scenes.json` derruba o gate 2: o tipo (`photo` → `broll`), a
+    âncora e também o `search_query` reescrito no passo 7. Aí o verificador confere e o dono reaprova.
 
 ## Método
 

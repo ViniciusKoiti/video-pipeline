@@ -98,7 +98,7 @@ Os blocos são funções, não capítulos obrigatórios: bloco sem ficha fica de
 | Bloco | Fatia | Pergunta que responde para quem assiste |
 |---|---|---|
 | Gancho de impacto | 0–10% | O que isso tem a ver comigo? (algo que eu uso ou pago, ou um número que assusta) |
-| Ponte com o espectador | dentro do 1º minuto | Por que eu deveria ver até o fim? (a pergunta central, dita em voz alta) |
+| Ponte com o espectador | até 0:30 (ADR 061) | Por que eu deveria ver até o fim? (a pergunta central, dita em voz alta) |
 | Origem e vantagem | 10–20% | De onde veio o primeiro dinheiro, e que acesso os outros não tinham? |
 | Virada | 20–30% | Que decisão ou evento os separou dos concorrentes? |
 | Mecanismo | 30–50% | Como o dinheiro de um negócio virou o próximo? |
@@ -116,10 +116,11 @@ Os blocos são funções, não capítulos obrigatórios: bloco sem ficha fica de
   mesmo peso; não invente um "vamos ser justos" sem fato.
 - **Tom:** crítico e documentado, sem rótulo de herói nem de vilão, sem gíria de canal.
 
-### Abertura de 60–90 s (teste do modelo)
+### Abertura de 60–90 s
 
-Gancho de impacto → ponte (pergunta central em voz alta) → origem comprimida em 2 ou 3 viradas → promessa
-do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenção dos primeiros 30 s (§12).
+Gancho de impacto → ponte (a pergunta central em voz alta, fechada até 0:30, na cena com `beat: promise`) →
+origem comprimida em 2 ou 3 viradas → o que o episódio vai mostrar, sem responder ainda. A retenção dos
+primeiros 30 s é a que o dono mede no Studio (CLAUDE.md §4).
 
 ## Método
 
@@ -142,7 +143,7 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
    uma pergunta, antes de um número que pesa; no máximo uma a cada ~15 palavras e nunca no começo ou no fim da
    cena. Dois-pontos que abrem uma pergunta ou fala interna levam a marca logo depois ("Pode ser que ela pense:
    `<short pause>` sem vontade nenhuma, como é que eu começo?"): sem ela a voz cola as palavras, e o `vp check`
-   avisa. Essa pausa conta no teto. Não use `<long pause>` (é do lote de cenas) nem outra tag. A `anchor` de um plano é escrita **sem** a
+   avisa. Essa pausa conta no teto de ~15 palavras. Não use `<long pause>` (é do lote de cenas) nem outra tag. A `anchor` de um plano é escrita **sem** a
    marca (o texto que a tela vê não a tem) e pode atravessar uma pausa. Cada marca vale 10 caracteres no tempo.
 7. **Planos.** Um plano a cada 2 a 4 s (26 a 52 caracteres de narração com a Charon). `anchor` é um trecho literal da
    narração, em ordem; o primeiro plano cobre o início da cena. Escolha pelo que a frase faz (formato e
@@ -217,7 +218,8 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
    repete a ficha, com o valor exato; razão, variação e soma entram quando uma ficha as traz. **Conta feita na tela (ADR 020):** só em `explicar`, com a narração dizendo a conta
    inteira, cada insumo e a regra em fichas, e a claim do plano escrevendo a expressão com o resultado
    ("18,44 ÷ 395 × 195 = R$ 9,10").
-9. **Narração para ser falada** em pt-BR (voz Kokoro `pm_alex`):
+9. **Narração para ser falada** em pt-BR (Kokoro no rascunho; a voz final é a clonada, ou outra registrada em
+   `config/providers.toml`):
    - frases de até ~20 palavras, uma ideia por frase, alternando curtas e longas;
    - anos em algarismos; outros números escritos como devem ser ditos ("mil e quinhentos operários");
    - sigla por extenso na primeira vez;
@@ -281,8 +283,9 @@ lugar dos itens 2 (gancho) e 5 (fecho) do método. A base é a análise dos cana
   três jeitos: pergunta ("Você se inclui?"), hipótese marcada ("Pensa num nome que você admira…") ou frase do
   dono. Marque cada uma no `outline.md` como [PERGUNTA], [HIPÓTESE] ou [DONO].
 - **Abertura sem dado nem mapa das partes.** Abra com uma cena com lugar e objeto, uma confissão do dono ou
-  uma provocação. A promessa vem depois, como pergunta ou paradoxo. Nos canais de referência, a abertura dura
-  de 1 a 3 min.
+  uma provocação, e feche a promessa, como pergunta ou paradoxo, até 0:30: o relógio da ADR 061 nasceu de um
+  ensaio (`vazio-de-ter-tudo`) e vale aqui. A cena da abertura pode seguir depois da promessa, até ~1 min; nos
+  canais de referência ela dura de 1 a 3 min, mas o relógio do canal manda.
 - **Blocos com título dito.** Cada bloco começa pelo título na fala (um `keyword` na âncora). Dentro dele, o
   caso contado como cena, devagar (de 1 a 2,5 min, quando as fichas dão detalhe para isso), o conceito com o
   pensador como personagem, a volta a quem assiste e uma ponte para o próximo bloco.
@@ -298,8 +301,10 @@ lugar dos itens 2 (gancho) e 5 (fecho) do método. A base é a análise dos cana
   narrador é opção, do dono.
 - **Fecho do longo:** a pergunta dos comentários (`funnel.engagement`) e, depois dela, a chamada do estágio
   (emenda de 2026-11-16 da ADR 026); nada além disso, nem pedido de membro ou de "coquinha".
-- **Sem buraco de som.** No máximo uma `<short pause>` por minuto, nenhuma no fim de cena. Junte frases curtas
-  seguidas numa cena só.
+- **Sem buraco de som.** No máximo uma `<short pause>` de ênfase por minuto, nenhuma no fim de cena. A pausa
+  depois dos dois-pontos que abrem uma fala ou pergunta (item 6) fica fora dessa conta, porque só impede a voz
+  de colar as palavras; o teto de uma a cada ~15 palavras vale para todas. Junte frases curtas seguidas numa
+  cena só.
 - **Imagem.** Da obra, duas formas de citação (`Citacao`):
   - quadro oficial parado (`media: still`): até 10 por vídeo, 8 s cada;
   - clipe em movimento (`media: clip`, emenda de 2026-11-03 da ADR 007), sem teto de quantidade: só como B-roll,

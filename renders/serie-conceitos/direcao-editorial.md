@@ -69,6 +69,11 @@ Conteúdo e números desse exemplo são de C e não passam automaticamente a val
 
 ## Abertura em quadros (decisão do dono, 2026-11-07)
 
+**Substituída em 2026-11-15** (dono, na série Kafka): a capa e os primeiros segundos são uma imagem bem clara do
+assunto, a cena concreta (o celular com as notificações), animada no tempo da fala, sem cartão de pergunta; a
+pergunta, se houver, fica no título. O método está no passo 1 da skill `shorts-tec`. O texto abaixo fica como
+histórico.
+
 A partir do próximo Short técnico, os primeiros 3 a 5 segundos mostram a situação em 3 ou 4 quadros, e não em um cartão de texto parado. Os quadros usam caixas, ícones e setas. Não há personagem desenhado à mão (regra de `feedback-sem-desenho-a-mao`). A pergunta de abertura aparece no último quadro, escrita na tela. Os Shorts já agendados para 08/11 não mudam: essa abertura entra numa rodada seguinte, para não misturar variáveis com o teste de ângulos.
 
 ## Conferência antes de considerar pronto

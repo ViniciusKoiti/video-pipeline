@@ -23,7 +23,7 @@ de 3 a 6 palavras, em pt-BR, sem pontuação, e é diferente dos que já existem
 - Escreva a pergunta numa frase: nicho, formato, idioma ou mercado, e o que o pipeline faria (aquisição, roteiro,
   voz, render).
 - Leia antes de pesquisar:
-  - CLAUDE.md §2 (licença registrada, custo zero, gates) e §12 (política de conteúdo inautêntico do YPP);
+  - CLAUDE.md §2 (licença registrada, custo zero, gates) e §5 (política de conteúdo inautêntico do YPP);
   - a lista de licenças da ADR 007;
   - o que já existe sobre o nicho em `docs/pesquisa/`.
 - Pergunte ao dono só o que muda a pesquisa: o mercado ou idioma, e o canal de referência, se ele tiver um.

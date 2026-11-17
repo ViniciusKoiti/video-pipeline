@@ -46,7 +46,7 @@ prova qual capa rende mais.
 | **Quadro oficial da obra** (ensaio de anime) | quadro registrado como `Citacao`, recortado com `recortar.py` | `Citacao` (emenda de citação da ADR 007) | só material oficial; a capa com quadro da obra é decisão do dono no gate 4; um strike suspende a série |
 | **Mascote ou personagem do motion-kit** (capivara) | renderizado pelo próprio kit em alta resolução, com fundo transparente, na pose e expressão pedidas; não precisa recortar | `Original` | usar o mesmo desenho do vídeo; a pose da capa precisa existir no kit (hoje: frente, perfil, sentada, apontar para a direita, sete expressões) |
 | **Pele do dono** (apresentador) | as imagens de `host/dono/` | conforme o `origem.json` | dado pessoal, fora do Git |
-| **Foto de acervo ou de banco** | a cascata da §8; recorte por cor ou por modelo | a da lista fechada (CC-BY de órgão público é a preferida) | pessoas, marcas e texto conferidos em resolução cheia; Public Domain Mark não está na lista |
+| **Foto de acervo ou de banco** | a cascata da §6; recorte por cor ou por modelo | a da lista fechada (CC-BY de órgão público é a preferida) | pessoas, marcas e texto conferidos em resolução cheia; Public Domain Mark não está na lista |
 | **Imagem gerada** | o mesmo caminho dos fundos do episódio | `Generated`, com o registro da geração | ilustração, nunca "registro" do fato (§2.4); marcar conteúdo sintético |
 | **Objeto ou número do kit** | uma peça do kit renderizada como quadro parado | `Original` | número na capa precisa estar numa ficha, como na tela do vídeo |
 

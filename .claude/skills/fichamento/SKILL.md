@@ -103,9 +103,12 @@ Procure fatos para cada bloco; o bloco sem fato vira pergunta em `open_questions
 | Custo e controvérsia | quem perdeu; processos e decisões documentados, com órgão, decisão e ano | `conflict` |
 | Presente | o que o grupo é e faz hoje, e como mudou | `impact_today`, `number` |
 
+No ensaio e nos outros formatos, troque a tabela pelos blocos ou perguntas da `pauta.md`, com a mesma regra.
+
 ## Meta e fechamento
 
-- Fatia de 60–90 s: 10–15 fatos. Episódio de 5–7 min: 30–45, cobrindo os blocos do perfil. Pelo menos
+- Fatia de 60–90 s: 10–15 fatos. Episódio longo (8 a 9 min, alvo do dono desde 2026-11-14): 30–45, cobrindo
+  os blocos do perfil ou, nos outros formatos, os da pauta. Pelo menos
   metade fora de `context`; fonte da própria empresa só como segunda evidência ou para escala física.
 - Rode `.venv/bin/vp check <id>` até zero erros. Relate: contagem por tipo, alertas (fonte única, só
   interessada) e as `open_questions` mais promissoras para uma nova busca de fontes.

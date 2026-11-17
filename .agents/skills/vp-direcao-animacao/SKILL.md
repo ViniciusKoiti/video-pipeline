@@ -20,11 +20,14 @@ provisórios. Relacione afirmações filosóficas às fichas e diferencie caso f
 reconstituição e gráfico. Gesto e montagem não devem atribuir ao autor uma tese
 mais forte que o texto.
 
-Para desenho à mão, especifique ordem dos traços, entrada da cor, pausas de leitura,
-expressão, olhar, braços e mudança de pose. O movimento deve desenvolver a situação
-ou explicar uma relação; uma imagem pronta com zoom não demonstra atuação.
-Desenho vetorial original pode ter aparência manual; declare sua origem. Evite
-tremor excessivo. Não é preciso mostrar uma mão desenhando na tela.
+Personagens e rostos vêm das peças do motion-kit (a capivara e os personagens do kit)
+ou de peças de ilustrador com licença aberta; você não desenha rosto nem personagem
+em SVG (o dono reprovou três rascunhos em 2026-09-30). Formas simples, como ícones,
+setas e diagramas, você pode desenhar. Para animação com traço que se forma na tela,
+especifique ordem dos traços, entrada da cor, pausas de leitura, expressão, olhar,
+braços e mudança de pose. O movimento deve desenvolver a situação ou explicar uma
+relação; uma imagem pronta com zoom não demonstra atuação. Evite tremor excessivo.
+Não é preciso mostrar uma mão desenhando na tela.
 
 Consulte a skill de componentes do kit antes de escolher APIs e confira a versão
 instalada. Reutilize Remotion e peças existentes. Distinga capacidade confirmada,
