@@ -140,7 +140,9 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
    palavra e um espaço de cada lado: "Se você quer realmente `<short pause>` aprender sobre isso, você
    `<short pause>` deve começar pelo dinheiro." Use onde o ouvinte respiraria: antes da informação nova, depois de
    uma pergunta, antes de um número que pesa; no máximo uma a cada ~15 palavras e nunca no começo ou no fim da
-   cena. Não use `<long pause>` (é do lote de cenas) nem outra tag. A `anchor` de um plano é escrita **sem** a
+   cena. Dois-pontos que abrem uma pergunta ou fala interna levam a marca logo depois ("Pode ser que ela pense:
+   `<short pause>` sem vontade nenhuma, como é que eu começo?"): sem ela a voz cola as palavras, e o `vp check`
+   avisa. Essa pausa conta no teto. Não use `<long pause>` (é do lote de cenas) nem outra tag. A `anchor` de um plano é escrita **sem** a
    marca (o texto que a tela vê não a tem) e pode atravessar uma pausa. Cada marca vale 10 caracteres no tempo.
 7. **Planos.** Um plano a cada 2 a 4 s (26 a 52 caracteres de narração com a Charon). `anchor` é um trecho literal da
    narração, em ordem; o primeiro plano cobre o início da cena. Escolha pelo que a frase faz (formato e
@@ -218,8 +220,14 @@ do que o episódio vai mostrar, sem responder ainda. Serve para testar a retenç
 9. **Narração para ser falada** em pt-BR (voz Kokoro `pm_alex`):
    - frases de até ~20 palavras, uma ideia por frase, alternando curtas e longas;
    - anos em algarismos; outros números escritos como devem ser ditos ("mil e quinhentos operários");
-   - sigla por extenso na primeira vez; nomes próprios vão para `voice/glossary.json` se a pronúncia
-     falhar;
+   - sigla por extenso na primeira vez;
+   - **trava fonética (CLAUDE.md §6):** todo termo de fora, sigla, título de obra e nome próprio não nativo vai
+     para `voice/glossary.json` (`escrita` → `fala`) antes da voz final. O `vp check` aponta os que achar por traço
+     (sigla, `w`/`y`/`k`, `th`, letra dobrada, fim de palavra que o português não tem); nome de fora sem traço
+     ("Einar") entra do mesmo jeito. Com a voz final do Azure, cada termo leva também `ipa`. A grafia da `fala` é
+     testada na conferência depois da voz (`vp voice --conferir`): "ôuf" para "Oath" soou "Wolf";
+   - **título estrangeiro dito uma vez**, ou dito em português na narração com o original na tela (`keyword`):
+     "no episódio seguinte, Juramento". Funciona com qualquer voz e tira o risco do nome mal dito;
    - sem "nesse vídeo", "você não vai acreditar", "fica até o final", "e isso muda tudo".
    - **Entrega (ADR 022):** marque `delivery` pelo que a cena faz, para o tom variar ao longo do vídeo: `hook` na
      abertura (texto curto, em pergunta ou chamado: "Você sabe quanto custa um docinho?"), `turn` na virada ("mas…"),
@@ -288,7 +296,8 @@ lugar dos itens 2 (gancho) e 5 (fecho) do método. A base é a análise dos cana
 - **Gancho plantado e pago.** "Essa frase volta no fim" só quando ela volta, com o pagamento numa cena.
 - **Fecho.** Volte à cena ou à frase da abertura (9 dos 10 mais vistos fazem isso). A tese virada contra o
   narrador é opção, do dono.
-- **Uma chamada só** (ADR 026), e nada de pedido de membro ou de "coquinha".
+- **Fecho do longo:** a pergunta dos comentários (`funnel.engagement`) e, depois dela, a chamada do estágio
+  (emenda de 2026-11-16 da ADR 026); nada além disso, nem pedido de membro ou de "coquinha".
 - **Sem buraco de som.** No máximo uma `<short pause>` por minuto, nenhuma no fim de cena. Junte frases curtas
   seguidas numa cena só.
 - **Imagem.** Da obra, duas formas de citação (`Citacao`):

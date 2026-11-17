@@ -88,6 +88,7 @@ def _check(args: argparse.Namespace, context: Context) -> int:
         chars_per_second=speech_chars_per_second(context.settings), today=date.today(),
         music_catalog=load_music_catalog(context.settings.data_dir),
         measure=lambda wav: duration_ms(wav) / 1000,  # o relógio de retenção pela voz real (ADR 061)
+        final_voice=context.settings.providers.tts_final or context.settings.providers.tts,
     )
     for line in report.checked:
         print(f"ok      {line}")

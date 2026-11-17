@@ -61,3 +61,18 @@ aponta trechos para ouvir, não aprova nem reprova sozinha.
 - `app/pipeline/voice_timeline.py` ganha `voiced_paths`; `app/media/listening_sheet.py` monta a folha com o ffmpeg.
 - O adaptador também serve à porta da legenda palavra a palavra, mas ignora o `prompt`; trocar `word_aligner` para
   ele é outra decisão.
+
+## Emenda (2026-11-16): a trava antes da voz
+
+Mesma decisão do dono. O `vp check` ganha a trava fonética do `CLAUDE.md` §6 (`app/pipeline/glossary_check.py`):
+
+- **Termo de fora sem glossário** (narração em pt-BR): sigla, `w`/`y`/`k`, `th`/`sh`/`ph`/`ck`/`tz`/`gh`, letra
+  dobrada fora de `rr` e `ss`, ou fim de palavra que o português não tem. Entrada de várias palavras cobre cada
+  uma. Sai como ponto de `atenção`. No `vazio-de-ter-tudo` sem glossário, acha Vinland, Empty, Thorfinn, Oath e
+  CVV, sem falso positivo nas 57 cenas; Einar, sem traço, escapa (a conferência depois da voz pega).
+- **Voz final do Azure:** termo com letra e sem `ipa` é ponto de `atenção` (o `vp check` recebe a voz final da
+  configuração).
+- **Dois-pontos que abrem pergunta** sem `<short pause>` logo depois: alerta (S31, S35 e S57 do episódio; S35 é
+  o "pensea como é que é" da crítica).
+- **Título estrangeiro dito uma vez**, ou em português na narração com o original na tela: regra da skill
+  `roteiro-explicativo`, sem conferência em código (nome de personagem se repete com razão; título, não).

@@ -163,14 +163,16 @@ Os detalhes de campos vivem em `app/pipeline/schemas.py`. Regras que o schema so
 - **Trava fonética e `voice/glossary.json` (obrigatório antes do render final):**
   - Todo termo em língua estrangeira, sigla, título de episódio/obra ou nome próprio não nativo presente em
     `scenes.json` **deve** ter entrada em `voice/glossary.json` (`escrita` → `fala`) antes de rodar
-    `vp voice --voz-final`. `ipa` só serve ao Azure Speech, no vídeo longo.
+    `vp voice --voz-final`; o `vp check` aponta como `atenção` os que achar por traço (nome sem traço, como
+    "Einar", escapa). Com a voz final do Azure, cada termo leva também `ipa` (fonema exato; só no vídeo longo).
+  - Título estrangeiro é dito uma vez, ou em português na narração com o original na tela (vale para qualquer voz).
   - A voz clonada não segue a grafia do glossário de forma estável: depois do `vp voice`, rodar
     `vp voice <id> --conferir` (Whisper local, ADR 062; modelo no cache com `uv run hf download
     openai/whisper-small`), ouvir a folha `voice/conferencia-escuta.wav` e pedir outra tomada do que soar errado
     com `--refazer <cenas>` antes da montagem final.
   - Usar `<short pause>` (espaço + marca + espaço) onde a síntese costuma colar palavras: antes de diálogo interno e
-    de dois-pontos que abrem uma fala ou pergunta. Respeitar o teto das skills (uma por ~15 palavras, nunca no
-    início nem no fim da cena). `<long pause>` e outras tags são erro.
+    logo depois de dois-pontos que abrem uma fala ou pergunta (o `vp check` avisa). Respeitar o teto das skills
+    (uma por ~15 palavras, nunca no início nem no fim da cena). `<long pause>` e outras tags são erro.
 - **Nivelamento e ritmo:** cópias em `voice/leveled/` com alvo −16 LUFS e pico −1,5 dBTP (ADR 054). Pausas por tipo
   de fim de frase via `voice/cadencia.json` (ADR 060, proposta e opcional por episódio; cópias em `voice/paced/`).
   Timing das cenas vem sempre do `ffprobe` real dos WAVs. Os nomes dos WAVs já gerados não mudam (ADR 049).

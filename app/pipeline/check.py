@@ -67,7 +67,6 @@ from app.pipeline.schemas import (
 )
 from app.pipeline.script_form import check_script_form
 from app.pipeline.text_fit import text_fit_warnings
-from app.pipeline.voice_timeline import measured_seconds
 
 # Ritmo de fala padrão, medido no exemplo com pm_alex (150 caracteres em 9,95 s); a CLI passa o da voz
 # configurada. Só estimativa: o tempo real vem do WAV (§9).
@@ -545,12 +544,14 @@ def check_episode(
     today: date | None = None,
     music_catalog: MusicCatalog | None = None,
     measure: Callable[[Path], float] | None = None,
+    final_voice: str | None = None,
 ) -> CheckReport:
     """`region_codes`: códigos de país e estado que o template sabe desenhar (sem eles, não confere).
     `chars_per_second`: ritmo da voz configurada, para estimar a duração das cenas e dos planos.
     `today`: a data de hoje: diz se o resumo do radar está velho e se o fato noticiado ainda é notícia.
     `music_catalog`: as faixas que o plano da trilha pode usar (ADR 030).
-    `measure`: segundos de um WAV; com ele, o relógio de retenção usa a voz real, quando existe (ADR 061)."""
+    `measure`: segundos de um WAV; com ele, o relógio de retenção usa a voz real, quando existe (ADR 061).
+    `final_voice`: a voz do vídeo final; no Azure, o glossário precisa de `ipa` (CLAUDE.md §6)."""
     report = CheckReport()
     sources = _read(store, episode_id, "sources.json", SourcesManifest, report)
     facts = _read(store, episode_id, "facts.json", FactsManifest, report)
@@ -564,8 +565,7 @@ def check_episode(
     if scenes is not None:
         planned = _check_scenes(scenes, sources, facts, excerpts, report, region_codes, chars_per_second)
         report.errors += citation_violations(planned, _assets(store, episode_id, planned, report))
-        voiced = measure and measured_seconds(store, episode_id, [s.id for s in scenes.scenes], measure)
-        check_script_form(report, scenes, chars_per_second, today, voiced or None)
+        check_script_form(report, scenes, store, episode_id, chars_per_second, today, measure, final_voice)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
         _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)
