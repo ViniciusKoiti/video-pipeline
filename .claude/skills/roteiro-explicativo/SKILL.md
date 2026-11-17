@@ -49,8 +49,17 @@ próxima. Cada minuto entrega conteúdo de verdade (um fato, uma ideia, uma vira
 - **Os primeiros 2 minutos recebem o maior cuidado:** é onde está quase toda a perda. Releia-os em voz alta. No
   `outline.md`, declare **uma** mudança testável nos 2 min iniciais em relação ao vídeo anterior (onde entra a
   pergunta, o tamanho da cena de abertura, o ritmo), para a leitura do D7 saber o que comparar.
-- **Ainda não comprovado; não use como regra:** "promessa mais cedo segura mais", "cena de perigo na abertura segura
-  mais" e "explicação derruba". Pode testar um deles, se for a mudança declarada.
+- **Relógio do vídeo longo** (ADR 061, regra do dono de 2026-11-16):
+  - a promessa fecha até 0:30, sem preâmbulo sobre o próprio vídeo;
+  - entre 2:00 e 3:00 entra um gancho de retomada (uma antecipação forte do que vem, ou uma pergunta nova) ou a virada
+    para a parte prática;
+  - logo depois de uma pausa de aviso (CVV, saúde), a cena seguinte é um gancho de retomada, antes do próximo bloco.
+
+  Marque o papel dessas cenas no `scenes.json`, no campo `beat`: `promise` (a cena que fecha a promessa), `rehook`,
+  `turn` e `pause`. O `vp check` confere o relógio pela estimativa do texto e, depois do `vp voice`, pela voz real; o
+  que falhar sai como ponto de `atenção` para o gate 2.
+- **Ainda não comprovado; não use como regra:** "cena de perigo na abertura segura mais" e "explicação derruba". Pode
+  testar um deles, se for a mudança declarada. A promessa até 0:30 é regra do dono, mesmo sem prova nas curvas.
 - **A primeira cena entrega o que o título e a capa prometem.** O clique pesa mais que tudo isso: com a mesma
   retenção, o vídeo de CTR 4,2% teve 2,6 vezes mais cliques por impressão.
 

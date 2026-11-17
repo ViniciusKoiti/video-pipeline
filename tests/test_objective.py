@@ -8,8 +8,8 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from app.pipeline.check import objective_summary, objective_warnings
 from app.pipeline.constants.check_constants import CheckConstants
+from app.pipeline.objective_check import objective_summary, objective_warnings
 from app.pipeline.schemas import Objective, ScenesManifest
 
 PROMISE = "A pessoa entende o que o contrato compra."

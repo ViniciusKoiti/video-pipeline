@@ -134,6 +134,9 @@ HostVariant = Annotated[str, Field(pattern=r"^(variant\d{2}|hat)$")]  # nome de 
 
 
 Delivery = Literal["hook", "turn", "invite", "neutral", "calm"]
+# O papel da cena no relógio de retenção do vídeo longo (ADR 061): fecha a promessa, retoma a atenção, vira
+# para a parte prática ou pausa para um aviso (CVV, saúde). Sem o campo, a cena não tem papel no relógio.
+Beat = Literal["promise", "rehook", "turn", "pause"]
 
 
 ObjectiveKind = Literal["noticiar", "explicar", "opinar"]
