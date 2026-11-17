@@ -27,7 +27,7 @@ def _load_pipeline(model: str, num_threads: int) -> Recognizer:
 
     torch.set_num_threads(num_threads)
     try:
-        return pipeline(Constants.TASK, model=model, device="cpu")  # type: ignore[call-overload,no-any-return]
+        return pipeline(Constants.TASK, model=model, device="cpu")
     except OSError as error:  # modelo fora do cache com HF_HUB_OFFLINE=1
         hint = Constants.DOWNLOAD_HINT.format(model=model)
         raise ModelUnavailable("whisper_local", f"{model} não está no cache; {hint}") from error
