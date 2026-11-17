@@ -115,6 +115,18 @@ def portrait_problems(scene_id: str, kinds: list[str]) -> list[str]:
     ]
 
 
+def host_problems(show: str | None, marks: list[tuple[str, bool | None]]) -> list[str]:
+    """O apresentador por cena (ADR 056). `show` é o modo do `host` do episódio (`None` = sem `host`);
+    `marks`, o par (id, `host`) de cada cena. Marca sem apresentador e apresentador sem cena alguma."""
+    if show is None:
+        return [f"{sid}: host: true, mas o episódio não tem host" for sid, mark in marks if mark]
+    if show == "marked" and not any(mark for _, mark in marks):
+        return ["host.show=marked sem nenhuma cena com host: true: o apresentador não aparece"]
+    if show == "all" and all(mark is False for _, mark in marks):
+        return ["todas as cenas com host: false: o apresentador não aparece (tire o host do episódio)"]
+    return []
+
+
 HostCorner = Literal["top-left", "top-right", "bottom-left", "bottom-right"]
 
 

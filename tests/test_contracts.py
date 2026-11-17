@@ -95,6 +95,17 @@ def make_gemini_tts() -> TTSProvider:
     )
 
 
+def make_azure_speech() -> TTSProvider:
+    from app.providers.tts.azure_speech import AzureSpeechTTS
+    from tests.test_azure_speech_tts import FakePost
+    from tests.test_gemini_tts import wav_bytes
+
+    return AzureSpeechTTS(
+        "chave", "brazilsouth", voices={"en": "voz-de-teste"},
+        output_format="riff-24khz-16bit-mono-pcm", post=FakePost(wav_bytes()),
+    )
+
+
 def make_kokoro() -> TTSProvider:
     os.environ.setdefault("HF_HUB_OFFLINE", "1")  # pesos já em cache: o teste não acessa a rede (§2.10)
     from app.providers.tts.kokoro import KokoroTTS
@@ -118,6 +129,7 @@ TEXT: list[Callable[[list[str]], TextProvider]] = [
 TTS: list[Callable[[], TTSProvider]] = [
     pytest.param(FakeTTS, id="fake"),
     pytest.param(make_gemini_tts, id="gemini"),  # POST falso: sem rede (§2.10)
+    pytest.param(make_azure_speech, id="azure_speech"),  # POST falso: sem rede (§2.10)
     pytest.param(make_kokoro, id="kokoro", marks=[pytest.mark.slow, NEEDS_TTS_EXTRA]),
     pytest.param(make_chatterbox, id="chatterbox"),
 ]

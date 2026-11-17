@@ -102,6 +102,31 @@ não ficou registrado. Entrou no Git como estava; confirmar ou reverter é decis
 (`roteirista-ficcao-historica`, `sonnet`/`xhigh`, ADR 055; `diretor-animacao`, sem `model`, herda o da sessão) também
 não constam da tabela.
 
+## Emenda (2026-11-11): editor de roteiro, par do roteirista
+
+Pedido do dono: um editor com foco em narrativa e retenção no YouTube que trabalhe junto do roteirista, em vez de
+substituí-lo, e que aponte trechos específicos com a mudança sugerida, não um juízo geral ("está muito técnico").
+
+- Agente `editor-de-roteiro` (`opus`, modelo diferente do de quem escreveu), skill `edicao-de-roteiro`. Ferramentas:
+  Read, Grep, Glob, Write. Escreve só `data/episodes/<id>/edicao.md`; `scenes.json` e `outline.md` continuam do
+  roteirista.
+- Cada nota: trecho literal, o que acontece com quem ouve, proposta de texto e o que ela arrasta (âncoras, claims).
+  O roteirista responde no arquivo (`aceita`, `adaptada`, `recusada` com motivo) e aplica.
+- Dois momentos. **Montagem:** o roteirista entrega só o `outline.md` com a abertura escrita; o editor confere os
+  primeiros 30 s, a espinha e as fichas fora, antes de existirem cenas (mudar a ordem ali custa uma linha).
+  **Edição:** roteirista → `vp check` → editor → roteirista → `vp check` → verificador. Antes da checagem, porque
+  roteiro que muda depois do parecer pede parecer novo. Uma passada e uma volta curta no mesmo contexto; sem terceira.
+  Short, Reel e correção pontual dispensam a montagem.
+- **Primeiros 30 s** têm seção própria e quatro testes (assunto, promessa, concreto, aberto) nos dois momentos: é a
+  retenção que o dono mede no Studio (§12).
+- **Atribuições e datas na fala:** as fontes continuam embasando o conteúdo (claims e rodapé); a fala fica só com a
+  atribuição e a data que ajudam a entender a história; a referência completa vai para a descrição. Refina a
+  decisão de 2026-10-18 ("a fonte fica no rodapé, não na fala"). Controvérsia e acusação seguem atribuídas.
+- Nenhum fato novo: proposta só com fichas aprovadas; o que falta vira pedido de ficha (gate 1).
+- Sem código nesta emenda: `edicao.md` fica fora do carimbo do gate 2 e o `vp check` não o lê. **Pendente:** a
+  descrição ainda não é montada a partir de `sources.json` (`vp export` só trata os livros); até lá, a seção
+  "Referências para a descrição" do `edicao.md` é copiada à mão no gate 4.
+
 ## Emenda (2026-10-24): rodadas de checagem no mesmo contexto
 
 Decisão do dono. No `montaigne-desapego` a checagem levou quatro rodadas, cada uma em contexto limpo relendo as

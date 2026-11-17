@@ -18,7 +18,8 @@ de custo zero (§2.1) e interrompe a busca; erro de programação também sobe.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+import shutil
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -70,7 +71,7 @@ def media_suffix(asset: Asset) -> str:
     suffix = Path(urlparse(asset.original_url or "").path).suffix.lower()
     if suffix in Constants.MEDIA_SUFFIXES:
         return suffix
-    is_video = Constants.VIDEO_MARK in asset.id
+    is_video = Constants.VIDEO_MARK in asset.id or asset.media == "clip"
     return Constants.DEFAULT_VIDEO_SUFFIX if is_video else Constants.DEFAULT_PHOTO_SUFFIX
 
 
@@ -79,12 +80,37 @@ class AssetIntake:
         self._store, self._guard = store, guard
 
     def take(self, episode_id: str, asset: Asset, scene_id: str, archive: ArchiveProvider) -> IntakeResult:
+        return self._enter(episode_id, asset, scene_id, archive.download_asset)
+
+    def register_local(self, episode_id: str, asset: Asset, scene_id: str, source: Path) -> IntakeResult:
+        """Ativo `Original` (emenda de 2026-11-09 da ADR 007): a mídia é um clipe `.mp4` já renderizado pelo
+        projeto, não vem de um banco. Entra como o baixado: hash, cena, JSON por último, aprovado intacto."""
+        if source.suffix.lower() != ".mp4" or not source.is_file() or source.stat().st_size == 0:
+            raise AssetError(f"{asset.id}: {source} precisa ser um .mp4 existente e não vazio")
+
+        def copy(_asset: Asset, destination: Path) -> None:
+            destination.parent.mkdir(
+                parents=True, exist_ok=True
+            )  # o banco cria a pasta; aqui ela pode não existir
+            shutil.copyfile(source, destination)
+
+        return self._enter(episode_id, asset, scene_id, copy, sha256_file(source))
+
+    def _enter(
+        self,
+        episode_id: str,
+        asset: Asset,
+        scene_id: str,
+        fetch: Callable[[Asset, Path], object],
+        digest: str | None = None,
+    ) -> IntakeResult:
+        """`digest`: hash da mídia que chega (só a local); o do banco só se conhece depois de baixar."""
         with self._store.lock(episode_id):
             name = f"assets/{asset.id}.json"
             if not self._store.exists(episode_id, name):
-                return self._fetch(episode_id, asset, scene_id, archive, IntakeAction.DOWNLOADED)
+                return self._fetch(episode_id, asset, scene_id, fetch, IntakeAction.DOWNLOADED)
             existing = self._store.read(episode_id, name, Asset)
-            intact = self._intact(episode_id, existing)
+            intact = self._intact(episode_id, existing) and digest in (None, existing.sha256)
             if self._approved(episode_id, name, existing):
                 if not intact:
                     raise AssetError(
@@ -93,7 +119,9 @@ class AssetIntake:
                     )
                 return IntakeResult(existing, IntakeAction.APPROVED_UNTOUCHED)
             if not intact:
-                return self._fetch(episode_id, existing, scene_id, archive, IntakeAction.REPAIRED)
+                scenes = {"used_in_scenes": existing.used_in_scenes}
+                renewed = existing if digest is None else asset.model_copy(update=scenes)
+                return self._fetch(episode_id, renewed, scene_id, fetch, IntakeAction.REPAIRED)
             if scene_id in existing.used_in_scenes:
                 return IntakeResult(existing, IntakeAction.UNCHANGED)
             updated = existing.model_copy(update={"used_in_scenes": [*existing.used_in_scenes, scene_id]})
@@ -122,14 +150,19 @@ class AssetIntake:
         return media is not None and asset.sha256 is not None and sha256_file(media) == asset.sha256
 
     def _fetch(
-        self, episode_id: str, asset: Asset, scene_id: str, archive: ArchiveProvider, action: IntakeAction
+        self,
+        episode_id: str,
+        asset: Asset,
+        scene_id: str,
+        fetch: Callable[[Asset, Path], object],
+        action: IntakeAction,
     ) -> IntakeResult:
         name = f"assets/{asset.id}.json"
         final = self._store.path(episode_id, f"assets/{asset.id}{media_suffix(asset)}")
         incoming = final.with_name(f".{asset.id}.incoming{final.suffix}")
         incoming.unlink(missing_ok=True)
         try:
-            archive.download_asset(asset, incoming)
+            fetch(asset, incoming)
             if not incoming.is_file() or incoming.stat().st_size == 0:
                 raise AssetError(f"{asset.id}: o banco devolveu um arquivo vazio")
             scenes = list(asset.used_in_scenes)

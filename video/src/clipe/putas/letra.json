@@ -1,0 +1,2453 @@
+{
+ "duracao": 169.08,
+ "linhas": [
+  {
+   "secao": "intro",
+   "vez": 1,
+   "texto": "A ordem veio de cima.",
+   "ini": 0.0,
+   "fim": 3.16,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 0.0,
+     "ok": true
+    },
+    {
+     "t": "ordem",
+     "ini": 1.82,
+     "ok": true
+    },
+    {
+     "t": "veio",
+     "ini": 2.08,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 2.22,
+     "ok": true
+    },
+    {
+     "t": "cima.",
+     "ini": 2.66,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "intro",
+   "vez": 1,
+   "texto": "E a culpa vai pra onde?",
+   "ini": 4.16,
+   "fim": 8.6,
+   "palavras": [
+    {
+     "t": "E",
+     "ini": 4.16,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 6.52,
+     "ok": true
+    },
+    {
+     "t": "culpa",
+     "ini": 6.74,
+     "ok": true
+    },
+    {
+     "t": "vai",
+     "ini": 6.98,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 7.18,
+     "ok": true
+    },
+    {
+     "t": "onde?",
+     "ini": 7.62,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Você sabe que tá errado,",
+   "ini": 10.08,
+   "fim": 11.58,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 10.08,
+     "ok": true
+    },
+    {
+     "t": "sabe",
+     "ini": 10.48,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 10.72,
+     "ok": true
+    },
+    {
+     "t": "tá",
+     "ini": 10.92,
+     "ok": true
+    },
+    {
+     "t": "errado,",
+     "ini": 11.3,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Dá pra ver no teu olhar.",
+   "ini": 11.58,
+   "fim": 13.28,
+   "palavras": [
+    {
+     "t": "Dá",
+     "ini": 11.58,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 11.74,
+     "ok": true
+    },
+    {
+     "t": "ver",
+     "ini": 11.98,
+     "ok": true
+    },
+    {
+     "t": "no",
+     "ini": 12.2,
+     "ok": true
+    },
+    {
+     "t": "teu",
+     "ini": 12.42,
+     "ok": true
+    },
+    {
+     "t": "olhar.",
+     "ini": 12.86,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Mas ajeita essa gravata",
+   "ini": 13.28,
+   "fim": 14.7,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 13.28,
+     "ok": true
+    },
+    {
+     "t": "ajeita",
+     "ini": 13.48,
+     "ok": true
+    },
+    {
+     "t": "essa",
+     "ini": 14.02,
+     "ok": true
+    },
+    {
+     "t": "gravata",
+     "ini": 14.3,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "E começa a justificar.",
+   "ini": 14.7,
+   "fim": 16.54,
+   "palavras": [
+    {
+     "t": "E",
+     "ini": 14.7,
+     "ok": true
+    },
+    {
+     "t": "começa",
+     "ini": 15.16,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 15.34,
+     "ok": true
+    },
+    {
+     "t": "justificar.",
+     "ini": 15.58,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Tem artigo, tem inciso,",
+   "ini": 16.54,
+   "fim": 18.12,
+   "palavras": [
+    {
+     "t": "Tem",
+     "ini": 16.54,
+     "ok": true
+    },
+    {
+     "t": "artigo,",
+     "ini": 16.86,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 17.36,
+     "ok": true
+    },
+    {
+     "t": "inciso,",
+     "ini": 17.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Tem palavra pra esconder.",
+   "ini": 18.12,
+   "fim": 19.52,
+   "palavras": [
+    {
+     "t": "Tem",
+     "ini": 18.12,
+     "ok": true
+    },
+    {
+     "t": "palavra",
+     "ini": 18.68,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 18.9,
+     "ok": true
+    },
+    {
+     "t": "esconder.",
+     "ini": 19.08,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Quanto mais eu falo do estrago,",
+   "ini": 19.52,
+   "fim": 21.44,
+   "palavras": [
+    {
+     "t": "Quanto",
+     "ini": 19.52,
+     "ok": true
+    },
+    {
+     "t": "mais",
+     "ini": 19.84,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 20.0,
+     "ok": true
+    },
+    {
+     "t": "falo",
+     "ini": 20.3,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 20.66,
+     "ok": true
+    },
+    {
+     "t": "estrago,",
+     "ini": 20.96,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Mais você fala em dever.",
+   "ini": 21.44,
+   "fim": 23.08,
+   "palavras": [
+    {
+     "t": "Mais",
+     "ini": 21.44,
+     "ok": true
+    },
+    {
+     "t": "você",
+     "ini": 21.8,
+     "ok": true
+    },
+    {
+     "t": "fala",
+     "ini": 22.18,
+     "ok": true
+    },
+    {
+     "t": "em",
+     "ini": 22.34,
+     "ok": true
+    },
+    {
+     "t": "dever.",
+     "ini": 22.64,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Pra manter a tua cadeira,",
+   "ini": 23.08,
+   "fim": 24.72,
+   "palavras": [
+    {
+     "t": "Pra",
+     "ini": 23.08,
+     "ok": true
+    },
+    {
+     "t": "manter",
+     "ini": 23.5,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 23.74,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 23.88,
+     "ok": true
+    },
+    {
+     "t": "cadeira,",
+     "ini": 24.24,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Pra não perder posição,",
+   "ini": 24.72,
+   "fim": 26.34,
+   "palavras": [
+    {
+     "t": "Pra",
+     "ini": 24.72,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 24.94,
+     "ok": true
+    },
+    {
+     "t": "perder",
+     "ini": 25.26,
+     "ok": true
+    },
+    {
+     "t": "posição,",
+     "ini": 25.84,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Você deixa a consciência",
+   "ini": 26.52,
+   "fim": 28.02,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 26.52,
+     "ok": true
+    },
+    {
+     "t": "deixa",
+     "ini": 26.92,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 27.12,
+     "ok": true
+    },
+    {
+     "t": "consciência",
+     "ini": 27.38,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 1,
+   "texto": "Na gaveta do balcão.",
+   "ini": 28.0,
+   "fim": 29.62,
+   "palavras": [
+    {
+     "t": "Na",
+     "ini": 28.0,
+     "ok": true
+    },
+    {
+     "t": "gaveta",
+     "ini": 28.2,
+     "ok": true
+    },
+    {
+     "t": "do",
+     "ini": 28.82,
+     "ok": true
+    },
+    {
+     "t": "balcão.",
+     "ini": 29.1,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Diz que a mão tava amarrada,",
+   "ini": 29.62,
+   "fim": 31.3,
+   "palavras": [
+    {
+     "t": "Diz",
+     "ini": 29.62,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 29.82,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 29.92,
+     "ok": true
+    },
+    {
+     "t": "mão",
+     "ini": 30.1,
+     "ok": true
+    },
+    {
+     "t": "tava",
+     "ini": 30.4,
+     "ok": true
+    },
+    {
+     "t": "amarrada,",
+     "ini": 30.66,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Mas foi ela que assinou.",
+   "ini": 31.3,
+   "fim": 32.9,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 31.3,
+     "ok": true
+    },
+    {
+     "t": "foi",
+     "ini": 31.56,
+     "ok": true
+    },
+    {
+     "t": "ela",
+     "ini": 31.86,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 32.06,
+     "ok": true
+    },
+    {
+     "t": "assinou.",
+     "ini": 32.3,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Diz que só cumpria ordens.",
+   "ini": 32.9,
+   "fim": 34.6,
+   "palavras": [
+    {
+     "t": "Diz",
+     "ini": 32.9,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 33.1,
+     "ok": true
+    },
+    {
+     "t": "só",
+     "ini": 33.36,
+     "ok": true
+    },
+    {
+     "t": "cumpria",
+     "ini": 33.56,
+     "ok": true
+    },
+    {
+     "t": "ordens.",
+     "ini": 34.26,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 1,
+   "texto": "Foi você que executou!",
+   "ini": 34.6,
+   "fim": 37.2,
+   "palavras": [
+    {
+     "t": "Foi",
+     "ini": 34.6,
+     "ok": true
+    },
+    {
+     "t": "você",
+     "ini": 34.96,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 35.14,
+     "ok": true
+    },
+    {
+     "t": "executou!",
+     "ini": 36.8,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "PUTAS DO LEGALISMO!",
+   "ini": 38.14,
+   "fim": 39.52,
+   "palavras": [
+    {
+     "t": "PUTAS",
+     "ini": 38.14,
+     "ok": true
+    },
+    {
+     "t": "DO",
+     "ini": 38.5,
+     "ok": true
+    },
+    {
+     "t": "LEGALISMO!",
+     "ini": 38.84,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "De joelhos pro poder!",
+   "ini": 39.52,
+   "fim": 41.16,
+   "palavras": [
+    {
+     "t": "De",
+     "ini": 39.52,
+     "ok": true
+    },
+    {
+     "t": "joelhos",
+     "ini": 39.82,
+     "ok": true
+    },
+    {
+     "t": "pro",
+     "ini": 40.34,
+     "ok": true
+    },
+    {
+     "t": "poder!",
+     "ini": 40.78,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Vendem a própria consciência",
+   "ini": 41.16,
+   "fim": 42.8,
+   "palavras": [
+    {
+     "t": "Vendem",
+     "ini": 41.16,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 41.46,
+     "ok": true
+    },
+    {
+     "t": "própria",
+     "ini": 41.76,
+     "ok": true
+    },
+    {
+     "t": "consciência",
+     "ini": 42.16,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Pra não ter que responder!",
+   "ini": 42.8,
+   "fim": 44.5,
+   "palavras": [
+    {
+     "t": "Pra",
+     "ini": 42.8,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 43.04,
+     "ok": true
+    },
+    {
+     "t": "ter",
+     "ini": 43.24,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 43.42,
+     "ok": true
+    },
+    {
+     "t": "responder!",
+     "ini": 44.0,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "PUTAS DO LEGALISMO!",
+   "ini": 44.68,
+   "fim": 46.18,
+   "palavras": [
+    {
+     "t": "PUTAS",
+     "ini": 44.68,
+     "ok": true
+    },
+    {
+     "t": "DO",
+     "ini": 45.1,
+     "ok": true
+    },
+    {
+     "t": "LEGALISMO!",
+     "ini": 45.44,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "“Tá na lei!” Eu já ouvi!",
+   "ini": 46.18,
+   "fim": 47.82,
+   "palavras": [
+    {
+     "t": "“Tá",
+     "ini": 46.18,
+     "ok": false
+    },
+    {
+     "t": "na",
+     "ini": 46.18,
+     "ok": false
+    },
+    {
+     "t": "lei!”",
+     "ini": 46.18,
+     "ok": false
+    },
+    {
+     "t": "Eu",
+     "ini": 46.76,
+     "ok": true
+    },
+    {
+     "t": "já",
+     "ini": 46.96,
+     "ok": true
+    },
+    {
+     "t": "ouvi!",
+     "ini": 47.2,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Quando eu peço um responsável,",
+   "ini": 47.82,
+   "fim": 49.38,
+   "palavras": [
+    {
+     "t": "Quando",
+     "ini": 47.82,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 47.98,
+     "ok": true
+    },
+    {
+     "t": "peço",
+     "ini": 48.16,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 48.48,
+     "ok": false
+    },
+    {
+     "t": "responsável,",
+     "ini": 48.8,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 1,
+   "texto": "Não tem um sequer aqui!",
+   "ini": 49.38,
+   "fim": 51.22,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 49.38,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 49.68,
+     "ok": false
+    },
+    {
+     "t": "um",
+     "ini": 49.68,
+     "ok": false
+    },
+    {
+     "t": "sequer",
+     "ini": 50.04,
+     "ok": true
+    },
+    {
+     "t": "aqui!",
+     "ini": 50.72,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 1,
+   "texto": "“FOI LEGAL!”",
+   "ini": 53.5,
+   "fim": 54.72,
+   "palavras": [
+    {
+     "t": "“FOI",
+     "ini": 53.5,
+     "ok": true
+    },
+    {
+     "t": "LEGAL!”",
+     "ini": 53.96,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 1,
+   "texto": "FOI JUSTO?",
+   "ini": 55.24,
+   "fim": 56.4,
+   "palavras": [
+    {
+     "t": "FOI",
+     "ini": 55.24,
+     "ok": true
+    },
+    {
+     "t": "JUSTO?",
+     "ini": 55.9,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 1,
+   "texto": "“FOI LEGAL!”",
+   "ini": 56.74,
+   "fim": 58.0,
+   "palavras": [
+    {
+     "t": "“FOI",
+     "ini": 56.74,
+     "ok": true
+    },
+    {
+     "t": "LEGAL!”",
+     "ini": 57.22,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 1,
+   "texto": "FOI JUSTO?",
+   "ini": 58.56,
+   "fim": 59.68,
+   "palavras": [
+    {
+     "t": "FOI",
+     "ini": 58.56,
+     "ok": true
+    },
+    {
+     "t": "JUSTO?",
+     "ini": 59.18,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 2,
+   "texto": "“FOI LEGAL!”",
+   "ini": 60.08,
+   "fim": 61.34,
+   "palavras": [
+    {
+     "t": "“FOI",
+     "ini": 60.08,
+     "ok": true
+    },
+    {
+     "t": "LEGAL!”",
+     "ini": 60.52,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 2,
+   "texto": "FOI JUSTO?",
+   "ini": 61.84,
+   "fim": 62.98,
+   "palavras": [
+    {
+     "t": "FOI",
+     "ini": 61.84,
+     "ok": true
+    },
+    {
+     "t": "JUSTO?",
+     "ini": 62.48,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 2,
+   "texto": "“FOI LEGAL!”",
+   "ini": 63.34,
+   "fim": 64.6,
+   "palavras": [
+    {
+     "t": "“FOI",
+     "ini": 63.34,
+     "ok": true
+    },
+    {
+     "t": "LEGAL!”",
+     "ini": 63.8,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pos",
+   "vez": 2,
+   "texto": "FOI JUSTO?",
+   "ini": 65.14,
+   "fim": 66.26,
+   "palavras": [
+    {
+     "t": "FOI",
+     "ini": 65.14,
+     "ok": true
+    },
+    {
+     "t": "JUSTO?",
+     "ini": 65.76,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quando o alvo é teu amigo,",
+   "ini": 66.82,
+   "fim": 68.3,
+   "palavras": [
+    {
+     "t": "Quando",
+     "ini": 66.82,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 67.06,
+     "ok": true
+    },
+    {
+     "t": "alvo",
+     "ini": 67.14,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 67.34,
+     "ok": true
+    },
+    {
+     "t": "teu",
+     "ini": 67.54,
+     "ok": true
+    },
+    {
+     "t": "amigo,",
+     "ini": 68.0,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Tem contexto, tem versão.",
+   "ini": 68.3,
+   "fim": 70.02,
+   "palavras": [
+    {
+     "t": "Tem",
+     "ini": 68.3,
+     "ok": true
+    },
+    {
+     "t": "contexto,",
+     "ini": 68.82,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 69.14,
+     "ok": true
+    },
+    {
+     "t": "versão.",
+     "ini": 69.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quando é um desconhecido:",
+   "ini": 70.02,
+   "fim": 71.42,
+   "palavras": [
+    {
+     "t": "Quando",
+     "ini": 70.02,
+     "ok": true
+    },
+    {
+     "t": "é",
+     "ini": 70.2,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 70.4,
+     "ok": true
+    },
+    {
+     "t": "desconhecido:",
+     "ini": 70.68,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "“Não se discute decisão.”",
+   "ini": 71.42,
+   "fim": 73.26,
+   "palavras": [
+    {
+     "t": "“Não",
+     "ini": 71.42,
+     "ok": true
+    },
+    {
+     "t": "se",
+     "ini": 71.6,
+     "ok": true
+    },
+    {
+     "t": "discute",
+     "ini": 71.88,
+     "ok": true
+    },
+    {
+     "t": "decisão.”",
+     "ini": 72.56,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Mas teu nome entrou na lista",
+   "ini": 73.26,
+   "fim": 74.74,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 73.26,
+     "ok": true
+    },
+    {
+     "t": "teu",
+     "ini": 73.44,
+     "ok": true
+    },
+    {
+     "t": "nome",
+     "ini": 73.76,
+     "ok": true
+    },
+    {
+     "t": "entrou",
+     "ini": 73.98,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 74.26,
+     "ok": true
+    },
+    {
+     "t": "lista",
+     "ini": 74.58,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "E a conversa já mudou.",
+   "ini": 74.74,
+   "fim": 76.66,
+   "palavras": [
+    {
+     "t": "E",
+     "ini": 74.74,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 74.92,
+     "ok": true
+    },
+    {
+     "t": "conversa",
+     "ini": 75.26,
+     "ok": true
+    },
+    {
+     "t": "já",
+     "ini": 75.7,
+     "ok": true
+    },
+    {
+     "t": "mudou.",
+     "ini": 76.02,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Você quer falar com alguém,",
+   "ini": 76.68,
+   "fim": 77.94,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 76.68,
+     "ok": true
+    },
+    {
+     "t": "quer",
+     "ini": 76.96,
+     "ok": true
+    },
+    {
+     "t": "falar",
+     "ini": 77.32,
+     "ok": true
+    },
+    {
+     "t": "com",
+     "ini": 77.48,
+     "ok": true
+    },
+    {
+     "t": "alguém,",
+     "ini": 77.76,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quer saber quem autorizou.",
+   "ini": 77.94,
+   "fim": 79.8,
+   "palavras": [
+    {
+     "t": "Quer",
+     "ini": 77.94,
+     "ok": true
+    },
+    {
+     "t": "saber",
+     "ini": 78.3,
+     "ok": true
+    },
+    {
+     "t": "quem",
+     "ini": 78.6,
+     "ok": true
+    },
+    {
+     "t": "autorizou.",
+     "ini": 78.98,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quer que leiam tua defesa,",
+   "ini": 79.8,
+   "fim": 81.44,
+   "palavras": [
+    {
+     "t": "Quer",
+     "ini": 79.8,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 79.98,
+     "ok": true
+    },
+    {
+     "t": "leiam",
+     "ini": 80.24,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 80.6,
+     "ok": true
+    },
+    {
+     "t": "defesa,",
+     "ini": 80.9,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Quer a chance de explicar.",
+   "ini": 81.44,
+   "fim": 83.12,
+   "palavras": [
+    {
+     "t": "Quer",
+     "ini": 81.44,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 81.64,
+     "ok": true
+    },
+    {
+     "t": "chance",
+     "ini": 81.98,
+     "ok": true
+    },
+    {
+     "t": "de",
+     "ini": 82.22,
+     "ok": true
+    },
+    {
+     "t": "explicar.",
+     "ini": 82.7,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Reconheço esse pedido.",
+   "ini": 83.12,
+   "fim": 84.56,
+   "palavras": [
+    {
+     "t": "Reconheço",
+     "ini": 83.12,
+     "ok": true
+    },
+    {
+     "t": "esse",
+     "ini": 83.86,
+     "ok": true
+    },
+    {
+     "t": "pedido.",
+     "ini": 84.22,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "verso",
+   "vez": 2,
+   "texto": "Eu fiz antes. Você tava lá.",
+   "ini": 84.56,
+   "fim": 86.52,
+   "palavras": [
+    {
+     "t": "Eu",
+     "ini": 84.56,
+     "ok": true
+    },
+    {
+     "t": "fiz",
+     "ini": 84.84,
+     "ok": true
+    },
+    {
+     "t": "antes.",
+     "ini": 85.1,
+     "ok": true
+    },
+    {
+     "t": "Você",
+     "ini": 85.52,
+     "ok": true
+    },
+    {
+     "t": "tava",
+     "ini": 85.9,
+     "ok": true
+    },
+    {
+     "t": "lá.",
+     "ini": 86.16,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Hoje a regra tem defeito,",
+   "ini": 86.52,
+   "fim": 87.92,
+   "palavras": [
+    {
+     "t": "Hoje",
+     "ini": 86.52,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 86.66,
+     "ok": true
+    },
+    {
+     "t": "regra",
+     "ini": 86.88,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 87.22,
+     "ok": true
+    },
+    {
+     "t": "defeito,",
+     "ini": 87.56,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Hoje o cargo não dá razão.",
+   "ini": 87.92,
+   "fim": 89.58,
+   "palavras": [
+    {
+     "t": "Hoje",
+     "ini": 87.92,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 88.08,
+     "ok": true
+    },
+    {
+     "t": "cargo",
+     "ini": 88.38,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 88.64,
+     "ok": true
+    },
+    {
+     "t": "dá",
+     "ini": 88.86,
+     "ok": true
+    },
+    {
+     "t": "razão.",
+     "ini": 89.2,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Ontem eu pedi que me ouvisse.",
+   "ini": 89.58,
+   "fim": 91.18,
+   "palavras": [
+    {
+     "t": "Ontem",
+     "ini": 89.58,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 89.74,
+     "ok": true
+    },
+    {
+     "t": "pedi",
+     "ini": 90.0,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 90.28,
+     "ok": true
+    },
+    {
+     "t": "me",
+     "ini": 90.5,
+     "ok": true
+    },
+    {
+     "t": "ouvisse.",
+     "ini": 90.78,
+     "ok": false
+    }
+   ]
+  },
+  {
+   "secao": "pre",
+   "vez": 2,
+   "texto": "Você chamou o segurança, então.",
+   "ini": 91.22,
+   "fim": 93.56,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 91.22,
+     "ok": true
+    },
+    {
+     "t": "chamou",
+     "ini": 91.64,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 91.98,
+     "ok": true
+    },
+    {
+     "t": "segurança,",
+     "ini": 92.56,
+     "ok": true
+    },
+    {
+     "t": "então.",
+     "ini": 93.06,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "PUTAS DO LEGALISMO!",
+   "ini": 93.96,
+   "fim": 95.42,
+   "palavras": [
+    {
+     "t": "PUTAS",
+     "ini": 93.96,
+     "ok": true
+    },
+    {
+     "t": "DO",
+     "ini": 94.4,
+     "ok": true
+    },
+    {
+     "t": "LEGALISMO!",
+     "ini": 94.72,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "De joelhos pro poder!",
+   "ini": 95.42,
+   "fim": 97.06,
+   "palavras": [
+    {
+     "t": "De",
+     "ini": 95.42,
+     "ok": true
+    },
+    {
+     "t": "joelhos",
+     "ini": 95.72,
+     "ok": true
+    },
+    {
+     "t": "pro",
+     "ini": 96.24,
+     "ok": true
+    },
+    {
+     "t": "poder!",
+     "ini": 96.68,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Vendem a própria consciência",
+   "ini": 97.06,
+   "fim": 98.7,
+   "palavras": [
+    {
+     "t": "Vendem",
+     "ini": 97.06,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 97.3,
+     "ok": false
+    },
+    {
+     "t": "própria",
+     "ini": 97.62,
+     "ok": true
+    },
+    {
+     "t": "consciência",
+     "ini": 98.08,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Pra não ter que responder!",
+   "ini": 98.7,
+   "fim": 100.4,
+   "palavras": [
+    {
+     "t": "Pra",
+     "ini": 98.7,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 98.94,
+     "ok": true
+    },
+    {
+     "t": "ter",
+     "ini": 99.14,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 99.32,
+     "ok": true
+    },
+    {
+     "t": "responder!",
+     "ini": 99.9,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "PUTAS DO LEGALISMO!",
+   "ini": 100.6,
+   "fim": 102.0,
+   "palavras": [
+    {
+     "t": "PUTAS",
+     "ini": 100.6,
+     "ok": true
+    },
+    {
+     "t": "DO",
+     "ini": 100.98,
+     "ok": true
+    },
+    {
+     "t": "LEGALISMO!",
+     "ini": 101.3,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "“Tá na lei!” Eu já ouvi!",
+   "ini": 102.0,
+   "fim": 103.72,
+   "palavras": [
+    {
+     "t": "“Tá",
+     "ini": 102.0,
+     "ok": true
+    },
+    {
+     "t": "na",
+     "ini": 102.16,
+     "ok": true
+    },
+    {
+     "t": "lei!”",
+     "ini": 102.48,
+     "ok": true
+    },
+    {
+     "t": "Eu",
+     "ini": 102.64,
+     "ok": true
+    },
+    {
+     "t": "já",
+     "ini": 102.82,
+     "ok": true
+    },
+    {
+     "t": "ouvi!",
+     "ini": 103.14,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Quando eu peço um responsável,",
+   "ini": 103.72,
+   "fim": 105.28,
+   "palavras": [
+    {
+     "t": "Quando",
+     "ini": 103.72,
+     "ok": true
+    },
+    {
+     "t": "eu",
+     "ini": 103.88,
+     "ok": true
+    },
+    {
+     "t": "peço",
+     "ini": 104.06,
+     "ok": true
+    },
+    {
+     "t": "um",
+     "ini": 104.36,
+     "ok": false
+    },
+    {
+     "t": "responsável,",
+     "ini": 104.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 2,
+   "texto": "Não tem um sequer aqui!",
+   "ini": 105.28,
+   "fim": 107.08,
+   "palavras": [
+    {
+     "t": "Não",
+     "ini": 105.28,
+     "ok": true
+    },
+    {
+     "t": "tem",
+     "ini": 105.56,
+     "ok": false
+    },
+    {
+     "t": "um",
+     "ini": 105.56,
+     "ok": false
+    },
+    {
+     "t": "sequer",
+     "ini": 105.96,
+     "ok": true
+    },
+    {
+     "t": "aqui!",
+     "ini": 106.58,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem mandou aponta o cargo.",
+   "ini": 109.38,
+   "fim": 111.06,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 109.38,
+     "ok": true
+    },
+    {
+     "t": "mandou",
+     "ini": 109.72,
+     "ok": true
+    },
+    {
+     "t": "aponta",
+     "ini": 110.16,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 110.52,
+     "ok": true
+    },
+    {
+     "t": "cargo.",
+     "ini": 110.74,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Quem cumpriu aponta a lei.",
+   "ini": 111.06,
+   "fim": 112.78,
+   "palavras": [
+    {
+     "t": "Quem",
+     "ini": 111.06,
+     "ok": true
+    },
+    {
+     "t": "cumpriu",
+     "ini": 111.22,
+     "ok": true
+    },
+    {
+     "t": "aponta",
+     "ini": 111.78,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 112.26,
+     "ok": true
+    },
+    {
+     "t": "lei.",
+     "ini": 112.42,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Eu aponto o que fizeram.",
+   "ini": 112.78,
+   "fim": 114.44,
+   "palavras": [
+    {
+     "t": "Eu",
+     "ini": 112.78,
+     "ok": true
+    },
+    {
+     "t": "aponto",
+     "ini": 113.06,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 113.4,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 113.5,
+     "ok": true
+    },
+    {
+     "t": "fizeram.",
+     "ini": 113.9,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Tava aqui. Eu vi. Eu sei.",
+   "ini": 114.44,
+   "fim": 115.8,
+   "palavras": [
+    {
+     "t": "Tava",
+     "ini": 114.44,
+     "ok": true
+    },
+    {
+     "t": "aqui.",
+     "ini": 114.74,
+     "ok": true
+    },
+    {
+     "t": "Eu",
+     "ini": 115.02,
+     "ok": true
+    },
+    {
+     "t": "vi.",
+     "ini": 115.2,
+     "ok": true
+    },
+    {
+     "t": "Eu",
+     "ini": 115.36,
+     "ok": true
+    },
+    {
+     "t": "sei.",
+     "ini": 115.58,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Na tua cópia, tudo certo.",
+   "ini": 115.8,
+   "fim": 117.6,
+   "palavras": [
+    {
+     "t": "Na",
+     "ini": 115.8,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 116.1,
+     "ok": true
+    },
+    {
+     "t": "cópia,",
+     "ini": 116.42,
+     "ok": true
+    },
+    {
+     "t": "tudo",
+     "ini": 116.88,
+     "ok": true
+    },
+    {
+     "t": "certo.",
+     "ini": 117.32,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Na minha porta, interdição.",
+   "ini": 117.6,
+   "fim": 119.42,
+   "palavras": [
+    {
+     "t": "Na",
+     "ini": 117.6,
+     "ok": true
+    },
+    {
+     "t": "minha",
+     "ini": 117.78,
+     "ok": true
+    },
+    {
+     "t": "porta,",
+     "ini": 118.14,
+     "ok": true
+    },
+    {
+     "t": "interdição.",
+     "ini": 118.38,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Você terminou seu turno.",
+   "ini": 119.44,
+   "fim": 120.94,
+   "palavras": [
+    {
+     "t": "Você",
+     "ini": 119.44,
+     "ok": true
+    },
+    {
+     "t": "terminou",
+     "ini": 119.84,
+     "ok": true
+    },
+    {
+     "t": "seu",
+     "ini": 120.3,
+     "ok": true
+    },
+    {
+     "t": "turno.",
+     "ini": 120.6,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "ponte",
+   "vez": 1,
+   "texto": "Eu fiquei juntando o chão.",
+   "ini": 120.94,
+   "fim": 124.2,
+   "palavras": [
+    {
+     "t": "Eu",
+     "ini": 120.94,
+     "ok": true
+    },
+    {
+     "t": "fiquei",
+     "ini": 121.44,
+     "ok": true
+    },
+    {
+     "t": "juntando",
+     "ini": 122.0,
+     "ok": true
+    },
+    {
+     "t": "o",
+     "ini": 122.8,
+     "ok": true
+    },
+    {
+     "t": "chão.",
+     "ini": 123.12,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "fala",
+   "vez": 1,
+   "texto": "Repete olhando pra mim.",
+   "ini": 124.98,
+   "fim": 126.38,
+   "palavras": [
+    {
+     "t": "Repete",
+     "ini": 124.98,
+     "ok": true
+    },
+    {
+     "t": "olhando",
+     "ini": 125.32,
+     "ok": true
+    },
+    {
+     "t": "pra",
+     "ini": 125.64,
+     "ok": true
+    },
+    {
+     "t": "mim.",
+     "ini": 125.88,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "fala",
+   "vez": 1,
+   "texto": "Foi justo?",
+   "ini": 126.74,
+   "fim": 128.06,
+   "palavras": [
+    {
+     "t": "Foi",
+     "ini": 126.74,
+     "ok": true
+    },
+    {
+     "t": "justo?",
+     "ini": 127.2,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "PUTAS DO LEGALISMO!",
+   "ini": 128.49,
+   "fim": 129.96,
+   "palavras": [
+    {
+     "t": "PUTAS",
+     "ini": 128.49,
+     "ok": false
+    },
+    {
+     "t": "DO",
+     "ini": 128.92,
+     "ok": true
+    },
+    {
+     "t": "LEGALISMO!",
+     "ini": 129.26,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "De joelhos pro poder!",
+   "ini": 129.96,
+   "fim": 131.58,
+   "palavras": [
+    {
+     "t": "De",
+     "ini": 129.96,
+     "ok": true
+    },
+    {
+     "t": "joelhos",
+     "ini": 130.24,
+     "ok": true
+    },
+    {
+     "t": "pro",
+     "ini": 130.74,
+     "ok": true
+    },
+    {
+     "t": "poder!",
+     "ini": 131.2,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Vendem a própria consciência",
+   "ini": 131.58,
+   "fim": 133.22,
+   "palavras": [
+    {
+     "t": "Vendem",
+     "ini": 131.58,
+     "ok": false
+    },
+    {
+     "t": "a",
+     "ini": 131.88,
+     "ok": true
+    },
+    {
+     "t": "própria",
+     "ini": 132.18,
+     "ok": true
+    },
+    {
+     "t": "consciência",
+     "ini": 132.58,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Pra não ter que responder!",
+   "ini": 133.22,
+   "fim": 134.98,
+   "palavras": [
+    {
+     "t": "Pra",
+     "ini": 133.22,
+     "ok": true
+    },
+    {
+     "t": "não",
+     "ini": 133.46,
+     "ok": true
+    },
+    {
+     "t": "ter",
+     "ini": 133.66,
+     "ok": true
+    },
+    {
+     "t": "que",
+     "ini": 133.84,
+     "ok": true
+    },
+    {
+     "t": "responder!",
+     "ini": 134.48,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "PUTAS DO LEGALISMO!",
+   "ini": 135.1,
+   "fim": 136.66,
+   "palavras": [
+    {
+     "t": "PUTAS",
+     "ini": 135.1,
+     "ok": true
+    },
+    {
+     "t": "DO",
+     "ini": 135.5,
+     "ok": true
+    },
+    {
+     "t": "LEGALISMO!",
+     "ini": 135.84,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Pode a ordem até mudar.",
+   "ini": 136.66,
+   "fim": 138.24,
+   "palavras": [
+    {
+     "t": "Pode",
+     "ini": 136.66,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 136.82,
+     "ok": true
+    },
+    {
+     "t": "ordem",
+     "ini": 137.02,
+     "ok": false
+    },
+    {
+     "t": "até",
+     "ini": 137.32,
+     "ok": true
+    },
+    {
+     "t": "mudar.",
+     "ini": 137.76,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Mas a tua assinatura",
+   "ini": 138.24,
+   "fim": 139.82,
+   "palavras": [
+    {
+     "t": "Mas",
+     "ini": 138.24,
+     "ok": true
+    },
+    {
+     "t": "a",
+     "ini": 138.44,
+     "ok": true
+    },
+    {
+     "t": "tua",
+     "ini": 138.64,
+     "ok": true
+    },
+    {
+     "t": "assinatura",
+     "ini": 138.96,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "refrao",
+   "vez": 3,
+   "texto": "Vai continuar no lugar!",
+   "ini": 139.82,
+   "fim": 143.28,
+   "palavras": [
+    {
+     "t": "Vai",
+     "ini": 139.82,
+     "ok": true
+    },
+    {
+     "t": "continuar",
+     "ini": 140.56,
+     "ok": true
+    },
+    {
+     "t": "no",
+     "ini": 142.14,
+     "ok": true
+    },
+    {
+     "t": "lugar!",
+     "ini": 142.78,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "“FOI LEGAL!”",
+   "ini": 145.56,
+   "fim": 146.46,
+   "palavras": [
+    {
+     "t": "“FOI",
+     "ini": 145.56,
+     "ok": true
+    },
+    {
+     "t": "LEGAL!”",
+     "ini": 145.96,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "FOI JUSTO?",
+   "ini": 147.24,
+   "fim": 148.42,
+   "palavras": [
+    {
+     "t": "FOI",
+     "ini": 147.24,
+     "ok": true
+    },
+    {
+     "t": "JUSTO?",
+     "ini": 147.92,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "“FOI LEGAL!”",
+   "ini": 148.88,
+   "fim": 149.84,
+   "palavras": [
+    {
+     "t": "“FOI",
+     "ini": 148.88,
+     "ok": true
+    },
+    {
+     "t": "LEGAL!”",
+     "ini": 149.34,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "outro",
+   "vez": 1,
+   "texto": "FOI JUSTO?",
+   "ini": 150.58,
+   "fim": 151.72,
+   "palavras": [
+    {
+     "t": "FOI",
+     "ini": 150.58,
+     "ok": true
+    },
+    {
+     "t": "JUSTO?",
+     "ini": 151.22,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "fala",
+   "vez": 2,
+   "texto": "A ordem passa.",
+   "ini": 156.06,
+   "fim": 157.52,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 156.06,
+     "ok": true
+    },
+    {
+     "t": "ordem",
+     "ini": 156.32,
+     "ok": true
+    },
+    {
+     "t": "passa.",
+     "ini": 157.02,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "secao": "fala",
+   "vez": 2,
+   "texto": "A assinatura fica.",
+   "ini": 159.36,
+   "fim": 161.04,
+   "palavras": [
+    {
+     "t": "A",
+     "ini": 159.36,
+     "ok": true
+    },
+    {
+     "t": "assinatura",
+     "ini": 159.52,
+     "ok": true
+    },
+    {
+     "t": "fica.",
+     "ini": 160.54,
+     "ok": true
+    }
+   ]
+  }
+ ]
+}

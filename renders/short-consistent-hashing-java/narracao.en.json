@@ -1,0 +1,40 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "situacao",
+      "text": "A fifth server joined the cache.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "pergunta",
+      "text": "Why did almost every session move?"
+    },
+    {
+      "scene": "modulo",
+      "text": "The server is the hash remainder by N, and when N changes, almost every key moves."
+    },
+    {
+      "scene": "medicao-modulo",
+      "text": "Out of a hundred thousand sessions, eighty percent changed servers."
+    },
+    {
+      "scene": "anel",
+      "text": "In Amazon's Dynamo, the ring finds the server clockwise, and the new one takes only its arc.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "comparacao",
+      "text": "With a hundred points per server, only about twenty percent moved, all to the new one."
+    },
+    {
+      "scene": "pontos",
+      "text": "With one point per server the load is lopsided, and a hundred virtual points even it out."
+    },
+    {
+      "scene": "fecho",
+      "text": "How many virtual points per server would you use?",
+      "delivery": "invite"
+    }
+  ]
+}

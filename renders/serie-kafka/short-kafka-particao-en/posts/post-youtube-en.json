@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:30:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0nn9g0003l26yf4npmb66"
+   },
+   "value": [
+    {
+     "content": "Lunch rush, four consumers on a queue: a redelivery can change the order, and \"out for delivery\" arrives before \"paid\". In Kafka, the topic has partitions; events with the same key (the order id) always land in the same partition and are read in the order they were written. In a group, each partition has one consumer at a time: with three partitions, the fourth consumer sits idle.\n\nWhat would the event key be in your system? Tell me in the comments.\n\nSources: Apache Kafka 4.4 and RabbitMQ (Queues) documentation. Part 3 of 4 of the Kafka series.\n\nThe author's voice is cloned with AI. Animations made for this video; fictional app, services and orders.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "64d185ec-21db-40c3-bc7b-01e6593a43cb",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/41c3489b8910b5ab60a6bc9e71532d725.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "SCRAMBLED ORDERS? KAFKA'S KEY FIXES IT",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

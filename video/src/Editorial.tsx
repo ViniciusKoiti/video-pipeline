@@ -84,12 +84,14 @@ export const StockShot: React.FC<{spec: PhotoSpec; src: string}> = ({spec, src})
 
 // B-roll como textura (ADR 031): continua do quadro `startFrom` do clipe (a mídia anterior era o mesmo vídeo) e
 // recomeça a cada `loopFrames` quando o plano é mais longo que o clipe. Sem os dois, toca do início.
-export const BrollShot: React.FC<{src: string; startFrom?: number; loopFrames?: number}> = ({
-  src, startFrom = 0, loopFrames,
+export const BrollShot: React.FC<{src: string; startFrom?: number; loopFrames?: number; grade?: "mono"}> = ({
+  src, startFrom = 0, loopFrames, grade,
 }) => {
   const footage = <FootageBackground src={src} scrim={0.12} />;
   const looped = loopFrames ? <Loop durationInFrames={loopFrames}>{footage}</Loop> : footage;
-  return startFrom > 0 ? <Sequence from={-startFrom}>{looped}</Sequence> : looped;
+  const timed = startFrom > 0 ? <Sequence from={-startFrom}>{looped}</Sequence> : looped;
+  // Grade de cor do ativo (ADR 057): preto e branco só no vídeo, nunca no texto nem nas peças sobre ele.
+  return grade === "mono" ? <AbsoluteFill style={{filter: "grayscale(1)"}}>{timed}</AbsoluteFill> : timed;
 };
 
 // --- Números ------------------------------------------------------------------------------------

@@ -1,0 +1,36 @@
+2026-11-09T08:40:44-03:00 cpu_probe 0.145
+2026-11-09T08:41-03:00 sessao /short-diario: cpu_probe 0.049; pauta = short-hashmap-colisoes-java (producao 09/11)
+2026-11-09 passo 3 parcial: fontes.md com Javadoc HashMap e Object.hashCode (JDK 25); JEP 180 nao lido (permissao WebFetch)
+2026-11-09 passo 2 PARADO: medir.sh e medir.py pedem aprovacao para executar; resultado.txt nao existe; nenhum roteiro/voz/render
+2026-11-09 detalhes e pedido ao dono em data/rotina/2026-11-09.md
+2026-11-09T08:45:35-03:00 claude saiu com código 0 (tentativa 1/3)
+custo_usd_equivalente 1.1307964549999998 | turnos 51 | modelos ['claude-sonnet-5-5', 'claude-haiku-5-5'] | duracao_s 275
+O Short de HashMap e colisões não foi produzido hoje. Parei no passo 2 da rotina (medição), porque a sessão não consegue executar scripts.
+
+**O que está pronto:**
+- **Pauta:** HashMap e colisões em Java, aprovada em 03/11. A fila e o plano de novembro marcam a produção para 09/11. A máquina estava livre (`cpu_probe` = 0,049).
+- **Pastas e programa de medição:** criei `renders/short-hashmap-colisoes-java/demo/` e as pastas de episódio `-en` e `-ig`. O `Demo.java` tem quatro modos de chave: `hashCode` bom, fraco, constante e constante com `Comparable`.
+- **Fontes:** `fontes.md` registra, com citações literais, o Javadoc de `HashMap` do Java 25 e o contrato de `hashCode` do `Object`. O JEP 180 não foi lido (o `WebFetch` pediu permissão), então o roteiro não pode afirmar o limite de entradas por balde nem "vira árvore".
+
+**Por que parei:** `medir.sh` e o `medir.py` equivalente pedem aprovação para executar, e não há quem aprove nesta sessão. Só `java Demo.java` avulso e o `cpu_probe` avulso rodam. Sem as 15 rodadas oficiais não escrevi roteiro, plano de animação, narração, voz, render, posts nem pacote. Não chamei o Modal e o custo foi zero.
+
+**Desvios:**
+- **20 mil chaves, não 100 mil:** com chave constante e sem `Comparable`, 20 mil já levam cerca de 1,6 s para inserir e 1,8 s para buscar. Com 100 mil seria uns 25 vezes mais por rodada.
+- **Buscas com instâncias novas:** a primeira calibração buscou com as mesmas instâncias, e o `HashMap` pulou o `equals` (0 chamadas). Corrigi.
+
+**Calibração (um processo por modo, não é o resultado oficial):**
+
+| Modo | `equals` por busca | ns por busca |
+| --- | --- | --- |
+| bom | 1,00 | 259 |
+| fraco (até 100 valores) | 101,5 | 1.046 |
+| constante | 10.001,5 | 89.923 |
+| constante com `Comparable` | 14,9 | 557 |
+
+**Para destravar:**
+- **Medição:** rode `bash renders/short-hashmap-colisoes-java/demo/medir.sh` ou `.venv/bin/python renders/short-hashmap-colisoes-java/demo/medir.py`. Gravam `resultado.txt`, levam cerca de 10 minutos e precisam da máquina livre.
+- **Permissão:** ou libere a execução desses scripts em `.claude/settings.local.json`. Adicione `WebFetch` para `openjdk.org` se quiser o JEP 180.
+- **Retomada:** depois disso eu continuo do passo 3.
+
+O registro completo está em `data/rotina/2026-11-09.md` e `.log`. Nenhum gate foi preparado e não houve commit.
+2026-11-09T08:45:35-03:00 fim

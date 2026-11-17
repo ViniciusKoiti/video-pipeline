@@ -1,0 +1,67 @@
+[P1] Pulsar Overview | Apache Pulsar
+
+[P2] Skip to main content
+
+[P3] Spring Pulsar has a new home! 🏡
+
+[P4] Version: Next
+
+[P5] Pulsar is a multi-tenant, high-performance solution for server-to-server messaging. Originally developed by Yahoo, Pulsar is under the stewardship of the Apache Software Foundation.
+
+[P6] ## Key features​
+
+[P7] Key features of Pulsar are listed below:
+
+[P8] Native support for multiple clusters in a Pulsar instance, with seamless geo-replication of messages across clusters.
+
+[P9] Very low publish and end-to-end latency.
+
+[P10] Seamless scalability to over a million topics.
+
+[P11] A simple client API with bindings for Java, Go, Python, C++, C#/.NET, Node.js, and WebSocket.
+
+[P12] Multiple subscription types (exclusive, shared, failover, and key_shared) for topics.
+
+[P13] Guaranteed message delivery with persistent message storage provided by Apache BookKeeper.
+
+[P14] A serverless lightweight computing framework Pulsar Functions offers the capability for stream-native data processing.
+
+[P15] A serverless connector framework Pulsar IO, which is built on Pulsar Functions, makes it easier to move data in and out of Apache Pulsar.
+
+[P16] Tiered Storage offloads data from hot/warm storage to cold/long-term storage (such as S3 and GCS) when the data is aging out.
+
+[P17] Native support for transactions enabling atomic operations across topics and partitions.
+
+[P18] Flexible authentication and authorization with support for multiple providers including OAuth/OIDC.
+
+[P19] ## Contents​
+
+[P20] Messaging Concepts
+
+[P21] Architecture Overview
+
+[P22] Pulsar Clients
+
+[P23] Geo Replication
+
+[P24] Cluster-level failover
+
+[P25] Multi Tenancy
+
+[P26] Authentication and Authorization
+
+[P27] Topic Compaction
+
+[P28] Message throttling
+
+[P29] Proxy support with SNI routing
+
+[P30] Multiple advertised listeners
+
+[P31] Was this helpful?
+
+[P32] ✏️ Edit this page💡 Suggest changes🛟 Get support
+
+[P33] Key features
+
+[P34] Contents

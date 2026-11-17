@@ -1,0 +1,281 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Discord Engineering (2017-07-06) · numbers are Discord's, not measured here",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 3.0,
+      "kicker": "Discord · 2017",
+      "text": "How does Discord find which node holds each community?",
+      "highlight": "which node"
+    },
+    {
+      "id": "anel",
+      "type": "flow",
+      "durationSec": 8.0,
+      "title": "Finding the community's node",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "sessao",
+          "label": "Session",
+          "sublabel": "wants the community",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "anel",
+          "label": "Hash ring",
+          "sublabel": "consistent hashing",
+          "x": 0.5,
+          "y": 0.4
+        },
+        {
+          "id": "no",
+          "label": "Community node",
+          "x": 0.5,
+          "y": 0.8
+        }
+      ],
+      "edges": [
+        {
+          "from": "sessao",
+          "to": "anel",
+          "kind": "data",
+          "label": "lookup"
+        },
+        {
+          "from": "anel",
+          "to": "no",
+          "kind": "data",
+          "label": "returns the node"
+        }
+      ],
+      "states": [
+        {
+          "node": "sessao",
+          "atSec": 1.2,
+          "state": "running"
+        },
+        {
+          "node": "sessao",
+          "atSec": 2.4,
+          "state": "done"
+        },
+        {
+          "node": "anel",
+          "atSec": 2.4,
+          "state": "running"
+        },
+        {
+          "node": "anel",
+          "atSec": 4.2,
+          "state": "done"
+        },
+        {
+          "node": "no",
+          "atSec": 4.2,
+          "state": "running"
+        },
+        {
+          "node": "no",
+          "atSec": 5.6,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "q",
+          "from": "sessao",
+          "to": "anel",
+          "atSec": 1.4,
+          "durationSec": 0.9
+        },
+        {
+          "id": "r",
+          "from": "anel",
+          "to": "no",
+          "atSec": 4.3,
+          "durationSec": 0.9
+        }
+      ]
+    },
+    {
+      "id": "gargalo",
+      "type": "flow",
+      "durationSec": 8.5,
+      "title": "Many reconnecting at once",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "usuarios",
+          "label": "Users",
+          "sublabel": "reconnecting together",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "processo",
+          "label": "Ring process",
+          "sublabel": "just one",
+          "x": 0.5,
+          "y": 0.4
+        },
+        {
+          "id": "sistema",
+          "label": "System",
+          "x": 0.5,
+          "y": 0.8
+        }
+      ],
+      "edges": [
+        {
+          "from": "usuarios",
+          "to": "processo",
+          "kind": "data",
+          "label": "lookups"
+        },
+        {
+          "from": "processo",
+          "to": "sistema",
+          "kind": "data",
+          "label": "waiting"
+        }
+      ],
+      "states": [
+        {
+          "node": "usuarios",
+          "atSec": 1.2,
+          "state": "running"
+        },
+        {
+          "node": "processo",
+          "atSec": 2.6,
+          "state": "running"
+        },
+        {
+          "node": "processo",
+          "atSec": 5.0,
+          "state": "failed"
+        },
+        {
+          "node": "sistema",
+          "atSec": 6.0,
+          "state": "failed"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "c1",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 1.4,
+          "durationSec": 0.8
+        },
+        {
+          "id": "c2",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 1.8,
+          "durationSec": 0.8
+        },
+        {
+          "id": "c3",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 2.2,
+          "durationSec": 0.8
+        },
+        {
+          "id": "c4",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 2.6,
+          "durationSec": 0.8
+        }
+      ]
+    },
+    {
+      "id": "solucao",
+      "type": "flow",
+      "durationSec": 10.0,
+      "title": "Ring in shared memory: 12 µs → 0.3 µs",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "sessoes",
+          "label": "Sessions",
+          "sublabel": "read directly",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "anelmem",
+          "label": "Ring",
+          "sublabel": "read-only memory",
+          "x": 0.5,
+          "y": 0.74
+        }
+      ],
+      "edges": [
+        {
+          "from": "sessoes",
+          "to": "anelmem",
+          "kind": "data",
+          "label": "0.3 µs"
+        }
+      ],
+      "states": [
+        {
+          "node": "anelmem",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "sessoes",
+          "atSec": 4.6,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "l1",
+          "from": "sessoes",
+          "to": "anelmem",
+          "atSec": 2.2,
+          "durationSec": 0.7
+        },
+        {
+          "id": "l2",
+          "from": "sessoes",
+          "to": "anelmem",
+          "atSec": 3.2,
+          "durationSec": 0.7
+        },
+        {
+          "id": "l3",
+          "from": "sessoes",
+          "to": "anelmem",
+          "atSec": 4.0,
+          "durationSec": 0.7
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.8,
+      "variant": "follow",
+      "text": "Is your ring in the memory of whoever queries it?",
+      "sub": "Comment how you do it"
+    }
+  ]
+}

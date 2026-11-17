@@ -14,6 +14,7 @@ from typing import Any
 from app.settings.constants.settings_constants import SettingsConstants
 from app.settings.models._settings_model import _Model as _Model
 from app.settings.models._settings_value_default_delivery import _default_delivery as _default_delivery
+from app.settings.models.azure_speech_settings import AzureSpeechSettings as AzureSpeechSettings
 from app.settings.models.budget import Budget as Budget
 from app.settings.models.chatterbox_modal_settings import ChatterboxModalSettings as ChatterboxModalSettings
 from app.settings.models.chatterbox_settings import ChatterboxSettings as ChatterboxSettings
@@ -81,6 +82,7 @@ def speech_chars_per_second(settings: Settings) -> float:
     rates = {
         "kokoro": settings.kokoro.chars_per_second,
         "gemini": settings.gemini_tts.chars_per_second,
+        "azure_speech": settings.azure_speech.chars_per_second,
         "chatterbox": settings.chatterbox.chars_per_second,
         "chatterbox_modal": settings.chatterbox.chars_per_second,  # a mesma voz (ADR 024)
     }

@@ -1,0 +1,501 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Sources: Apache Kafka 4.4 and RabbitMQ docs · fictional app and services",
+  "scenes": [
+    {
+      "id": "abertura",
+      "type": "animation",
+      "durationSec": 7.8,
+      "assetId": "celular-ordem-errada",
+      "colors": "original"
+    },
+    {
+      "id": "fila",
+      "type": "flow",
+      "durationSec": 6.2,
+      "title": "Queue: redelivery changes the order",
+      "legend": false,
+      "direction": "right",
+      "nodes": [
+        {
+          "id": "fila",
+          "label": "Queue",
+          "column": 0,
+          "lane": 1,
+          "sublabel": "plain queue"
+        },
+        {
+          "id": "c1",
+          "label": "Consumer 1",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "c2",
+          "label": "Consumer 2",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "c3",
+          "label": "Consumer 3",
+          "column": 1,
+          "lane": 2
+        },
+        {
+          "id": "c4",
+          "label": "Consumer 4",
+          "column": 1,
+          "lane": 3
+        }
+      ],
+      "edges": [
+        {
+          "from": "fila",
+          "to": "c1"
+        },
+        {
+          "from": "fila",
+          "to": "c2"
+        },
+        {
+          "from": "fila",
+          "to": "c3"
+        },
+        {
+          "from": "fila",
+          "to": "c4"
+        },
+        {
+          "from": "c1",
+          "to": "fila",
+          "kind": "completion",
+          "dashed": true
+        }
+      ],
+      "states": [
+        {
+          "node": "c1",
+          "atSec": 2.0,
+          "state": "running"
+        },
+        {
+          "node": "c1",
+          "atSec": 2.4,
+          "state": "failed"
+        },
+        {
+          "node": "c2",
+          "atSec": 3.5,
+          "state": "running"
+        },
+        {
+          "node": "c1",
+          "atSec": 4.6,
+          "state": "running"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t1",
+          "from": "fila",
+          "to": "c1",
+          "atSec": 1.4,
+          "durationSec": 0.6,
+          "label": "#7 paid"
+        },
+        {
+          "id": "t2",
+          "from": "c1",
+          "to": "fila",
+          "atSec": 2.5,
+          "durationSec": 0.6,
+          "label": "back"
+        },
+        {
+          "id": "t3",
+          "from": "fila",
+          "to": "c2",
+          "atSec": 2.9,
+          "durationSec": 0.6,
+          "label": "#7 shipped"
+        },
+        {
+          "id": "t4",
+          "from": "fila",
+          "to": "c1",
+          "atSec": 4.0,
+          "durationSec": 0.6,
+          "label": "#7 paid"
+        }
+      ]
+    },
+    {
+      "id": "chave",
+      "type": "flow",
+      "durationSec": 6.0,
+      "title": "Same key, same partition",
+      "legend": false,
+      "direction": "right",
+      "nodes": [
+        {
+          "id": "produtor",
+          "label": "Producer",
+          "column": 0,
+          "lane": 1,
+          "sublabel": "key orderId"
+        },
+        {
+          "id": "p0",
+          "label": "Partition 0",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "p1",
+          "label": "Partition 1",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "p2",
+          "label": "Partition 2",
+          "column": 1,
+          "lane": 2
+        }
+      ],
+      "edges": [
+        {
+          "from": "produtor",
+          "to": "p0"
+        },
+        {
+          "from": "produtor",
+          "to": "p1"
+        },
+        {
+          "from": "produtor",
+          "to": "p2"
+        }
+      ],
+      "states": [
+        {
+          "node": "p1",
+          "atSec": 2.4,
+          "state": "running"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "k1",
+          "from": "produtor",
+          "to": "p0",
+          "atSec": 1.4,
+          "durationSec": 0.6,
+          "label": "#3 created"
+        },
+        {
+          "id": "k2",
+          "from": "produtor",
+          "to": "p1",
+          "atSec": 1.7999999999999998,
+          "durationSec": 0.6,
+          "label": "#7 created"
+        },
+        {
+          "id": "k3",
+          "from": "produtor",
+          "to": "p2",
+          "atSec": 2.2,
+          "durationSec": 0.6,
+          "label": "#9 created"
+        },
+        {
+          "id": "k4",
+          "from": "produtor",
+          "to": "p1",
+          "atSec": 2.6,
+          "durationSec": 0.6,
+          "label": "#7 paid"
+        },
+        {
+          "id": "k5",
+          "from": "produtor",
+          "to": "p0",
+          "atSec": 3.0,
+          "durationSec": 0.6,
+          "label": "#3 paid"
+        },
+        {
+          "id": "k6",
+          "from": "produtor",
+          "to": "p1",
+          "atSec": 3.4,
+          "durationSec": 0.6,
+          "label": "#7 shipped"
+        }
+      ]
+    },
+    {
+      "id": "ordem",
+      "type": "lanes",
+      "durationSec": 5.0,
+      "title": "In a partition, write order holds",
+      "lanes": [
+        {
+          "name": "Part. 0",
+          "ops": [
+            {
+              "t": 0.3,
+              "atSec": 1.0,
+              "label": "#3 created"
+            },
+            {
+              "t": 0.7,
+              "atSec": 2.0,
+              "label": "#3 paid"
+            }
+          ]
+        },
+        {
+          "name": "Part. 1",
+          "ops": [
+            {
+              "t": 0.2,
+              "atSec": 0.6,
+              "label": "#7 created",
+              "kind": "commit"
+            },
+            {
+              "t": 0.5,
+              "atSec": 1.4,
+              "label": "#7 paid",
+              "kind": "commit"
+            },
+            {
+              "t": 0.8,
+              "atSec": 2.2,
+              "label": "#7 shipped",
+              "kind": "commit"
+            }
+          ]
+        },
+        {
+          "name": "Part. 2",
+          "ops": [
+            {
+              "t": 0.4,
+              "atSec": 1.2,
+              "label": "#9 created"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grupo",
+      "type": "flow",
+      "durationSec": 5.6,
+      "title": "One consumer per partition",
+      "legend": false,
+      "direction": "right",
+      "nodes": [
+        {
+          "id": "p0",
+          "label": "Partition 0",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "p1",
+          "label": "Partition 1",
+          "column": 0,
+          "lane": 1
+        },
+        {
+          "id": "p2",
+          "label": "Partition 2",
+          "column": 0,
+          "lane": 2
+        },
+        {
+          "id": "c1",
+          "label": "Consumer 1",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "c2",
+          "label": "Consumer 2",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "c3",
+          "label": "Consumer 3",
+          "column": 1,
+          "lane": 2
+        },
+        {
+          "id": "c4",
+          "label": "Consumer 4",
+          "column": 1,
+          "lane": 3,
+          "sublabel": "no partition"
+        }
+      ],
+      "edges": [
+        {
+          "from": "p0",
+          "to": "c1"
+        },
+        {
+          "from": "p1",
+          "to": "c2"
+        },
+        {
+          "from": "p2",
+          "to": "c3"
+        }
+      ],
+      "states": [
+        {
+          "node": "c1",
+          "atSec": 2.0,
+          "state": "running"
+        },
+        {
+          "node": "c2",
+          "atSec": 2.3,
+          "state": "running"
+        },
+        {
+          "node": "c3",
+          "atSec": 2.6,
+          "state": "running"
+        },
+        {
+          "node": "c4",
+          "atSec": 3.0,
+          "state": "idle"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "g1",
+          "from": "p0",
+          "to": "c1",
+          "atSec": 1.4,
+          "durationSec": 0.6,
+          "label": "#3 paid"
+        },
+        {
+          "id": "g2",
+          "from": "p1",
+          "to": "c2",
+          "atSec": 1.7,
+          "durationSec": 0.6,
+          "label": "#7 paid"
+        },
+        {
+          "id": "g3",
+          "from": "p2",
+          "to": "c3",
+          "atSec": 2.0,
+          "durationSec": 0.6,
+          "label": "#9 created"
+        }
+      ]
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 4.0,
+      "title": "In Java, the event key",
+      "lines": [
+        "var event = new ProducerRecord<>(",
+        "    \"orders\", orderId, json);",
+        "producer.send(event);"
+      ],
+      "highlight": [
+        {
+          "token": "orderId"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 0.4,
+          "lines": [
+            1,
+            2
+          ],
+          "note": "The key is orderId"
+        },
+        {
+          "atSec": 1.6,
+          "lines": [
+            3,
+            3
+          ],
+          "note": "Same key, same partition"
+        }
+      ]
+    },
+    {
+      "id": "cliente",
+      "type": "animation",
+      "durationSec": 3.6,
+      "assetId": "celular-ordem-certa",
+      "colors": "original"
+    },
+    {
+      "id": "decisao",
+      "type": "versus",
+      "durationSec": 5.0,
+      "title": "What you decide",
+      "left": {
+        "title": "Order",
+        "lines": [
+          "holds per key",
+          "not across the topic"
+        ]
+      },
+      "right": {
+        "title": "Parallelism",
+        "lines": [
+          "up to the partition count",
+          "extra consumers sit idle"
+        ]
+      }
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.2,
+      "variant": "next",
+      "text": "Which key would you use?",
+      "sub": "Part 4: Kafka, RabbitMQ or SQS?",
+      "series": {
+        "text": "Kafka",
+        "part": 3,
+        "total": 4
+      }
+    }
+  ],
+  "assets": {
+    "celular-ordem-errada": {
+      "kind": "lottie",
+      "path": "lottie/celular-ordem-errada.json"
+    },
+    "celular-ordem-certa": {
+      "kind": "lottie",
+      "path": "lottie/celular-ordem-certa.json"
+    }
+  }
+}

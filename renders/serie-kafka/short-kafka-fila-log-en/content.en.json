@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Sources: Apache Kafka 4.4, RabbitMQ and Amazon SQS docs · fictional app",
+  "scenes": [
+    {
+      "id": "abertura",
+      "type": "animation",
+      "durationSec": 9.0,
+      "assetId": "celular-alerta",
+      "colors": "original"
+    },
+    {
+      "id": "fila",
+      "type": "animation",
+      "durationSec": 7.0,
+      "assetId": "fila-apaga",
+      "colors": "original"
+    },
+    {
+      "id": "log",
+      "type": "animation",
+      "durationSec": 10.6,
+      "assetId": "log-fica",
+      "colors": "original"
+    },
+    {
+      "id": "volta",
+      "type": "animation",
+      "durationSec": 6.4,
+      "assetId": "log-volta",
+      "colors": "original"
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 4.4,
+      "title": "In Java, the consumer",
+      "lines": [
+        "// rule fixed",
+        "consumer.seek(partition,",
+        "    offsetAt2pm);",
+        "var batch = consumer.poll(timeout);"
+      ],
+      "highlight": [
+        {
+          "token": "seek"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 0.4,
+          "lines": [
+            2,
+            3
+          ],
+          "note": "The offset goes back to 2 PM"
+        },
+        {
+          "atSec": 1.8,
+          "lines": [
+            4,
+            4
+          ],
+          "note": "And it reads again from there"
+        }
+      ]
+    },
+    {
+      "id": "decisao",
+      "type": "versus",
+      "durationSec": 7.4,
+      "title": "What changes in the design",
+      "left": {
+        "title": "Queue",
+        "lines": [
+          "reading deletes the message",
+          "no way to re-read"
+        ]
+      },
+      "right": {
+        "title": "Log in Kafka",
+        "lines": [
+          "deleted when retention runs out",
+          "re-reading runs it all again"
+        ]
+      }
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.4,
+      "variant": "next",
+      "text": "Ever had to reprocess?",
+      "sub": "Part 3: partition and key",
+      "series": {
+        "text": "Kafka",
+        "part": 2,
+        "total": 4
+      }
+    }
+  ],
+  "assets": {
+    "celular-alerta": {
+      "kind": "lottie",
+      "path": "lottie/celular-alerta.json"
+    },
+    "fila-apaga": {
+      "kind": "lottie",
+      "path": "lottie/fila-apaga.json"
+    },
+    "log-fica": {
+      "kind": "lottie",
+      "path": "lottie/log-fica.json"
+    },
+    "log-volta": {
+      "kind": "lottie",
+      "path": "lottie/log-volta.json"
+    }
+  }
+}

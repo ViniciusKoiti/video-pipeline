@@ -22,6 +22,7 @@ from pathlib import Path
 SECOES = {
     "Intro": "intro", "Verse 1": "verso", "Verse 2": "verso", "Pre-Chorus": "pre", "Chorus": "refrao",
     "Final Chorus": "refrao", "Bridge": "ponte", "Breakdown": "quebra", "Outro": "outro",
+    "Post-Chorus": "pos", "Break": "fala", "Spoken": "fala",
 }
 LONGA = 1.5  # s; nenhuma palavra cantada dura isso
 # Início (s) de versos ajustado de ouvido, por índice do verso na letra. Vazio até a escuta do dono.
@@ -46,8 +47,9 @@ def read_lyrics(mp3: Path) -> tuple[list[dict], float]:
         if not raw:
             continue
         if raw.startswith("["):
-            # A indicação de estilo vem depois de ":" ("[Chorus: Explosive]") ou de " - " ("[Chorus - Calm]").
-            section = SECOES[re.split(r":| - ", raw.strip("[]"))[0].strip()]
+            # A indicação de estilo vem depois de ":" ("[Chorus: Explosive]"), de " - " ("[Chorus - Calm]")
+            # ou de um travessão ("[Chorus — Explosive Punk]").
+            section = SECOES[re.split(r":| - | — | – ", raw.strip("[]"))[0].strip()]
             counts[section] = counts.get(section, 0) + 1
             continue
         lines.append({"secao": section, "vez": counts[section], "texto": raw})

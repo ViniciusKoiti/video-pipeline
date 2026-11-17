@@ -1,0 +1,9 @@
+{
+  "fps": 30,
+  "fonte": "voice/leveled/*.wav do mec-fechadura-pt (2026-11-09); S14 = came e bloco da trava, S15 e S16 = cadeado",
+  "cenas": {
+    "S14": 7.4,
+    "S15": 10.72,
+    "S16": 10.24
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "celular-abertura": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "6f0c3dfdfd4dc33272fd30e8fc4b6cd87ef1076ce0718eba3d1c32df14acc02e",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "celular-volta": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "cdcbc856c55dddfbd690f2389f5b6eb4add600b7a8687cd3cdc8f071a85dd511",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

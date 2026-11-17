@@ -14,6 +14,13 @@ mudou o conteúdo) e §15 (nova linha); `.claude/agents/roteirista.md` (recebe a
 de ficção por cena no `scenes.json`, o ajuste do `vp check` e do `vp numeros` para não alertar nas cenas marcadas, e a skill `checagem` conferir a fronteira entre as duas camadas.
 Enquanto o marcador não existe, o roteirista lista as cenas de ficção na tabela do `outline.md`.
 
+**Implementado em 2026-11-14 (marcador da opção C):** como o formato inteiro dispensa claims, a marca é do roteiro, não da cena: `"fiction": true` no
+`scenes.json` (`ScenesManifest.fiction`). A exigência de `claims` nos planos com fato na tela (`number`, `stamp`, `timeline`, `calculation`, `receipt`, `chart` etc.)
+saiu do plano (`_FactualShot`) para o manifesto, que a dispensa com a marca; sem ela, nada muda. Com a marca, o `vp check` também não dá o alerta "frase afirmativa
+em cena sem claims" (`molde.claimless_statements`). As claims aninhadas, como as das arestas do plano `network`, continuam obrigatórias. Skill e agente
+`roteiro-ficcao-historica` atualizados (declarar a marca; `chart` continua fora). Testes em `tests/test_ficcao_declarada.py`. A conferência da fronteira pela skill
+`checagem` continua pendente, porque é da opção B. O `idade-media-ser-rico`, aprovado antes da marca, não foi alterado.
+
 ## Problema
 
 O formato "sua vida em cada nível da Idade Média" é narrado em segunda pessoa e tem cenas vividas ("você acorda…", "o servo está ao pé da cama…"). Essas frases não têm uma fonte

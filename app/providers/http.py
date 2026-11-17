@@ -63,6 +63,24 @@ def post_json_with_headers(
         raise TransportError(None, str(getattr(error, "reason", error))) from None
 
 
+BytesPost = Callable[[str, bytes, Mapping[str, str], float], bytes]  # url, corpo, cabeçalhos, timeout
+
+
+def post_bytes(url: str, body: bytes, headers: Mapping[str, str], timeout: float) -> bytes:
+    """POST de um corpo pronto (ex.: SSML) com resposta binária (ex.: um WAV); a chave vai nos cabeçalhos."""
+    request = urllib.request.Request(
+        url, data=body, headers={"User-Agent": HttpConstants.USER_AGENT, **headers}, method="POST"
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            content: bytes = response.read()
+            return content
+    except urllib.error.HTTPError as error:
+        raise TransportError(error.code, error.read().decode(errors="replace")[:500]) from None
+    except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+        raise TransportError(None, str(getattr(error, "reason", error))) from None
+
+
 MultipartPost = Callable[  # url, campos, arquivos, cabeçalhos, timeout → JSON
     [str, Mapping[str, str], Mapping[str, Path], Mapping[str, str], float], JsonPayload
 ]

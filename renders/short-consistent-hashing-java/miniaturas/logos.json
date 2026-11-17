@@ -1,0 +1,52 @@
+[
+  {
+    "id": "amazon-logo",
+    "file": "miniaturas/logos/amazon-logo-squid-ink-smile-orange.png",
+    "sha256": "5d26b516f9cf43e65c114ea65369c6fb209e4528678ad7c1d7d67623cbd3efab",
+    "license": "logo-oficial-sem-permissao",
+    "provider": "official",
+    "work": "Logo Amazon",
+    "origin": "https://press.aboutamazon.com/logos (Amazon Media Center, baixado em 2026-11-08)",
+    "review_status": "needs_review",
+    "used_in": "SÓ NAS CAPAS (miniaturas/)",
+    "usage_notes": "Marca registrada de Amazon. Termos lidos em 2026-11-08 (data/benchmarks/termos-logos-empresas.md): NÃO há permissão por escrito nem exceção editorial no texto. Uso decidido pelo dono em 2026-11-08 ('pode usar sem permissão, não é problemático'), risco assumido por ele: reclamação da empresa pode derrubar a capa ou gerar strike. Para identificar a empresa citada no vídeo, sem sugerir patrocínio nem parceria. usado sem alteração, sozinho numa placa branca com respiro; a declaração de marca vai na descrição e no comentário fixado."
+  },
+  {
+    "id": "discord-logo-blurple",
+    "file": "miniaturas/logos/Discord-Logo-Blurple.png",
+    "sha256": "5402ce4d7f01153a205ccb09689fb1a94b7880fd1fcffb9f1189d8d513d6474b",
+    "license": "logo-oficial-sem-permissao",
+    "provider": "official",
+    "work": "Logo Discord",
+    "origin": "https://discord.com/branding (kit oficial, DIscord_Logo_Color/Discord-Logo-Blurple.png, baixado em 2026-11-08)",
+    "review_status": "needs_review",
+    "used_in": "SÓ NAS CAPAS (miniaturas/)",
+    "usage_notes": "Marca registrada de Discord. Termos lidos em 2026-11-08 (data/benchmarks/termos-logos-empresas.md): NÃO há permissão por escrito nem exceção editorial no texto. Uso decidido pelo dono em 2026-11-08 ('pode usar sem permissão, não é problemático'), risco assumido por ele: reclamação da empresa pode derrubar a capa ou gerar strike. Para identificar a empresa citada no vídeo, sem sugerir patrocínio nem parceria. usado sem alteração, em cores originais, só em mídia digital."
+  },
+  {
+    "id": "discord-logo-white",
+    "file": "miniaturas/logos/Discord-Logo-White.png",
+    "sha256": "0012799ad61ac13c3ba1a594bf0b6499f8bac5aadee974749e43d74b6406b39f",
+    "license": "logo-oficial-sem-permissao",
+    "provider": "official",
+    "work": "Logo Discord",
+    "origin": "https://discord.com/branding (kit oficial, DIscord_Logo_White/Discord-Logo-White.png, baixado em 2026-11-08)",
+    "review_status": "needs_review",
+    "used_in": "SÓ NAS CAPAS (miniaturas/)",
+    "usage_notes": "Marca registrada de Discord. Termos lidos em 2026-11-08 (data/benchmarks/termos-logos-empresas.md): NÃO há permissão por escrito nem exceção editorial no texto. Uso decidido pelo dono em 2026-11-08 ('pode usar sem permissão, não é problemático'), risco assumido por ele: reclamação da empresa pode derrubar a capa ou gerar strike. Para identificar a empresa citada no vídeo, sem sugerir patrocínio nem parceria. versão branca oficial, reserva para fundo escuro; não usada nas capas atuais."
+  },
+  {
+    "id": "akamai-logo",
+    "file": "miniaturas/logos/akamai.png",
+    "sha256": "acbd362e359997d53c73dc0d7d6834f96141010ca7137ae3db8b087ed69e35cd",
+    "source_svg": "miniaturas/logos/akamai-logo-blue.svg",
+    "source_svg_sha256": "fe17d50b1636ec0dcaab4faa94eb1eeea84e5021954eb9f04077e99ed721bfa5",
+    "license": "logo-oficial-sem-permissao",
+    "provider": "official",
+    "work": "Logo Akamai (azul sobre branco)",
+    "origin": "https://www.akamai.com/site/en/documents/corporate/2025/akamai-logos.zip (link 'Download logo' de https://www.akamai.com/newsroom/media-resources, baixado em 2026-11-08 pelo leitor de páginas; o curl levou 403)",
+    "review_status": "needs_review",
+    "used_in": "SÓ NAS CAPAS (miniaturas/)",
+    "usage_notes": "Marca registrada da Akamai Technologies, Inc. O PNG é o SVG oficial 'akamai-logo-blue.svg' do pacote, rasterizado em 1920x1080 pelo ffmpeg (com width/height declarados numa cópia) e cortado ao redor do logo com 12 px de margem; sem alterar proporção nem cor, símbolo e palavra juntos. A página de mídia pede o processo 'Brand Permission Request' a terceiros não-imprensa: NÃO há permissão; uso decidido pelo dono em 2026-11-08 ('pode usar sem permissão'), risco dele. Identifica a empresa citada, sem sugerir patrocínio."
+  }
+]

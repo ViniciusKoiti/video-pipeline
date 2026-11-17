@@ -102,9 +102,18 @@ citação (quadros da obra).
   `analise-de-formato`) e depois baixe em 1080p só o trecho do quadro (`--download-sections`).
 - **Crédito:** escolha quadro sem a marca do canal. Não recorte a marca para tirá-la. O crédito da obra vai no
   rodapé e em `credits.txt`.
-- **Movimento:** quadro parado (`motion: still`).
-- **Limites:** até 10 quadros por vídeo e até 8 s cada (o `vp check` conta). A miniatura com quadro é decisão do dono
-  no gate 4.
+- **Quadro parado** (`media: still`): só de material oficial; até 10 por vídeo e até 8 s cada (o `vp check` conta).
+- **Clipe em movimento** (`media: clip`, emenda de 2026-11-03 da ADR 007):
+  - só em plano `broll`, **sem o áudio da obra**, e só enquanto a narração comenta aquele trecho;
+  - sem teto de quantidade (o `vp numeros` lista cada clipe e o tempo de tela);
+  - origem `official` ou `owner_capture` (arquivo do dono), com `origin`, `timecode` de entrada e saída, `sha256`;
+  - `usage_notes` com a justificativa (que trecho da fala o clipe ilustra e por que o comentário o exige) e
+    `attribution_text`;
+  - entra por decisão do dono, a cada vídeo e franquia, registrada no `review.json` do ativo (Toei e ShoPro
+    continuam fora). Se um vídeo anterior com clipe recebeu reivindicação ou aviso, o próximo espera a revisão da
+    emenda;
+  - vídeo com clipe sai só no YouTube.
+- A miniatura com quadro da obra é decisão do dono no gate 4.
 - **Registro:** `provider: official`, `license_id: Citacao`, `work`, `provider_id: "youtube:<id>@<segundos>s"`.
 
 ## Ferramentas desta pasta

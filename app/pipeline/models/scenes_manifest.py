@@ -4,11 +4,13 @@ from typing import Self
 
 from pydantic import Field, model_validator
 
+from app.pipeline.models._schemas_factual_shot import _FactualShot
 from app.pipeline.models._schemas_types import (
     EpisodeId,
     Language,
     Orientation,
     _unique,
+    host_problems,
     portrait_problems,
     reels_shot_problems,
 )
@@ -34,10 +36,35 @@ class ScenesManifest(Model):
     scenes: list[Scene] = Field(min_length=1)
     host: HostSpec | None = None  # apresentador em janela flutuante, só no formato explicativo (ADR 013)
     orientation: Orientation = "landscape"  # `portrait`: 9:16, só com PORTRAIT_SHOT_KINDS (ADR 014)
+    # ficção histórica declarada (ADR 055, opção C): o formato dispensa fichas, fontes e claims, também nos
+    # planos com fato na tela; escrito pelo `roteirista-ficcao-historica`
+    fiction: bool = False
 
     @model_validator(mode="after")
     def _unique_ids(self) -> Self:
         _unique([s.id for s in self.scenes], "ids de cena")
+        return self
+
+    @model_validator(mode="after")
+    def _factual_claims(self) -> Self:
+        if self.fiction:
+            return self
+        problems = [
+            f"{scene.id}: plano {shot.kind} sem claims ({shot.anchor!r}): número, data, citação ou cargo "
+            "na tela é afirmação (ADR 008); no roteiro de ficção histórica, declare fiction: true (ADR 055)"
+            for scene in self.scenes
+            for shot in scene.shots
+            if isinstance(shot, _FactualShot) and not shot.claims
+        ]
+        if problems:
+            raise ValueError("; ".join(problems))
+        return self
+
+    @model_validator(mode="after")
+    def _host_marks(self) -> Self:
+        show = self.host.show if self.host is not None else None
+        if problems := host_problems(show, [(scene.id, scene.host) for scene in self.scenes]):
+            raise ValueError("; ".join(problems))
         return self
 
     @model_validator(mode="after")

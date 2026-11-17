@@ -1,0 +1,501 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Fonte: docs do Apache Kafka 4.4 e do RabbitMQ · app e serviços fictícios",
+  "assets": {
+    "celular-ordem-errada": {
+      "kind": "lottie",
+      "path": "lottie/celular-ordem-errada.json"
+    },
+    "celular-ordem-certa": {
+      "kind": "lottie",
+      "path": "lottie/celular-ordem-certa.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "abertura",
+      "type": "animation",
+      "durationSec": 7.8,
+      "assetId": "celular-ordem-errada",
+      "colors": "original"
+    },
+    {
+      "id": "fila",
+      "type": "flow",
+      "durationSec": 6.2,
+      "title": "Fila: a reentrega troca a ordem",
+      "legend": false,
+      "direction": "right",
+      "nodes": [
+        {
+          "id": "fila",
+          "label": "Fila",
+          "column": 0,
+          "lane": 1,
+          "sublabel": "fila comum"
+        },
+        {
+          "id": "c1",
+          "label": "Consumidor 1",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "c2",
+          "label": "Consumidor 2",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "c3",
+          "label": "Consumidor 3",
+          "column": 1,
+          "lane": 2
+        },
+        {
+          "id": "c4",
+          "label": "Consumidor 4",
+          "column": 1,
+          "lane": 3
+        }
+      ],
+      "edges": [
+        {
+          "from": "fila",
+          "to": "c1"
+        },
+        {
+          "from": "fila",
+          "to": "c2"
+        },
+        {
+          "from": "fila",
+          "to": "c3"
+        },
+        {
+          "from": "fila",
+          "to": "c4"
+        },
+        {
+          "from": "c1",
+          "to": "fila",
+          "kind": "completion",
+          "dashed": true
+        }
+      ],
+      "states": [
+        {
+          "node": "c1",
+          "atSec": 2.0,
+          "state": "running"
+        },
+        {
+          "node": "c1",
+          "atSec": 2.4,
+          "state": "failed"
+        },
+        {
+          "node": "c2",
+          "atSec": 3.5,
+          "state": "running"
+        },
+        {
+          "node": "c1",
+          "atSec": 4.6,
+          "state": "running"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t1",
+          "from": "fila",
+          "to": "c1",
+          "atSec": 1.4,
+          "durationSec": 0.6,
+          "label": "#7 pago"
+        },
+        {
+          "id": "t2",
+          "from": "c1",
+          "to": "fila",
+          "atSec": 2.5,
+          "durationSec": 0.6,
+          "label": "volta"
+        },
+        {
+          "id": "t3",
+          "from": "fila",
+          "to": "c2",
+          "atSec": 2.9,
+          "durationSec": 0.6,
+          "label": "#7 saiu"
+        },
+        {
+          "id": "t4",
+          "from": "fila",
+          "to": "c1",
+          "atSec": 4.0,
+          "durationSec": 0.6,
+          "label": "#7 pago"
+        }
+      ]
+    },
+    {
+      "id": "chave",
+      "type": "flow",
+      "durationSec": 6.0,
+      "title": "Mesma chave, mesma partição",
+      "legend": false,
+      "direction": "right",
+      "nodes": [
+        {
+          "id": "produtor",
+          "label": "Produtor",
+          "column": 0,
+          "lane": 1,
+          "sublabel": "chave pedidoId"
+        },
+        {
+          "id": "p0",
+          "label": "Partição 0",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "p1",
+          "label": "Partição 1",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "p2",
+          "label": "Partição 2",
+          "column": 1,
+          "lane": 2
+        }
+      ],
+      "edges": [
+        {
+          "from": "produtor",
+          "to": "p0"
+        },
+        {
+          "from": "produtor",
+          "to": "p1"
+        },
+        {
+          "from": "produtor",
+          "to": "p2"
+        }
+      ],
+      "states": [
+        {
+          "node": "p1",
+          "atSec": 2.4,
+          "state": "running"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "k1",
+          "from": "produtor",
+          "to": "p0",
+          "atSec": 1.4,
+          "durationSec": 0.6,
+          "label": "#3 criado"
+        },
+        {
+          "id": "k2",
+          "from": "produtor",
+          "to": "p1",
+          "atSec": 1.7999999999999998,
+          "durationSec": 0.6,
+          "label": "#7 criado"
+        },
+        {
+          "id": "k3",
+          "from": "produtor",
+          "to": "p2",
+          "atSec": 2.2,
+          "durationSec": 0.6,
+          "label": "#9 criado"
+        },
+        {
+          "id": "k4",
+          "from": "produtor",
+          "to": "p1",
+          "atSec": 2.6,
+          "durationSec": 0.6,
+          "label": "#7 pago"
+        },
+        {
+          "id": "k5",
+          "from": "produtor",
+          "to": "p0",
+          "atSec": 3.0,
+          "durationSec": 0.6,
+          "label": "#3 pago"
+        },
+        {
+          "id": "k6",
+          "from": "produtor",
+          "to": "p1",
+          "atSec": 3.4,
+          "durationSec": 0.6,
+          "label": "#7 saiu"
+        }
+      ]
+    },
+    {
+      "id": "ordem",
+      "type": "lanes",
+      "durationSec": 5.0,
+      "title": "Na partição, a ordem é a de escrita",
+      "lanes": [
+        {
+          "name": "Part. 0",
+          "ops": [
+            {
+              "t": 0.3,
+              "atSec": 1.0,
+              "label": "#3 criado"
+            },
+            {
+              "t": 0.7,
+              "atSec": 2.0,
+              "label": "#3 pago"
+            }
+          ]
+        },
+        {
+          "name": "Part. 1",
+          "ops": [
+            {
+              "t": 0.2,
+              "atSec": 0.6,
+              "label": "#7 criado",
+              "kind": "commit"
+            },
+            {
+              "t": 0.5,
+              "atSec": 1.4,
+              "label": "#7 pago",
+              "kind": "commit"
+            },
+            {
+              "t": 0.8,
+              "atSec": 2.2,
+              "label": "#7 saiu",
+              "kind": "commit"
+            }
+          ]
+        },
+        {
+          "name": "Part. 2",
+          "ops": [
+            {
+              "t": 0.4,
+              "atSec": 1.2,
+              "label": "#9 criado"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grupo",
+      "type": "flow",
+      "durationSec": 5.6,
+      "title": "Um consumidor por partição",
+      "legend": false,
+      "direction": "right",
+      "nodes": [
+        {
+          "id": "p0",
+          "label": "Partição 0",
+          "column": 0,
+          "lane": 0
+        },
+        {
+          "id": "p1",
+          "label": "Partição 1",
+          "column": 0,
+          "lane": 1
+        },
+        {
+          "id": "p2",
+          "label": "Partição 2",
+          "column": 0,
+          "lane": 2
+        },
+        {
+          "id": "c1",
+          "label": "Consumidor 1",
+          "column": 1,
+          "lane": 0
+        },
+        {
+          "id": "c2",
+          "label": "Consumidor 2",
+          "column": 1,
+          "lane": 1
+        },
+        {
+          "id": "c3",
+          "label": "Consumidor 3",
+          "column": 1,
+          "lane": 2
+        },
+        {
+          "id": "c4",
+          "label": "Consumidor 4",
+          "column": 1,
+          "lane": 3,
+          "sublabel": "sem partição"
+        }
+      ],
+      "edges": [
+        {
+          "from": "p0",
+          "to": "c1"
+        },
+        {
+          "from": "p1",
+          "to": "c2"
+        },
+        {
+          "from": "p2",
+          "to": "c3"
+        }
+      ],
+      "states": [
+        {
+          "node": "c1",
+          "atSec": 2.0,
+          "state": "running"
+        },
+        {
+          "node": "c2",
+          "atSec": 2.3,
+          "state": "running"
+        },
+        {
+          "node": "c3",
+          "atSec": 2.6,
+          "state": "running"
+        },
+        {
+          "node": "c4",
+          "atSec": 3.0,
+          "state": "idle"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "g1",
+          "from": "p0",
+          "to": "c1",
+          "atSec": 1.4,
+          "durationSec": 0.6,
+          "label": "#3 pago"
+        },
+        {
+          "id": "g2",
+          "from": "p1",
+          "to": "c2",
+          "atSec": 1.7,
+          "durationSec": 0.6,
+          "label": "#7 pago"
+        },
+        {
+          "id": "g3",
+          "from": "p2",
+          "to": "c3",
+          "atSec": 2.0,
+          "durationSec": 0.6,
+          "label": "#9 criado"
+        }
+      ]
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 4.0,
+      "title": "Em Java, a chave do evento",
+      "lines": [
+        "var evento = new ProducerRecord<>(",
+        "    \"pedidos\", pedidoId, json);",
+        "producer.send(evento);"
+      ],
+      "highlight": [
+        {
+          "token": "pedidoId"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 0.4,
+          "lines": [
+            1,
+            2
+          ],
+          "note": "A chave é o pedidoId"
+        },
+        {
+          "atSec": 1.6,
+          "lines": [
+            3,
+            3
+          ],
+          "note": "Mesma chave, mesma partição"
+        }
+      ]
+    },
+    {
+      "id": "cliente",
+      "type": "animation",
+      "durationSec": 3.6,
+      "assetId": "celular-ordem-certa",
+      "colors": "original"
+    },
+    {
+      "id": "decisao",
+      "type": "versus",
+      "durationSec": 5.0,
+      "title": "O que você decide",
+      "left": {
+        "title": "Ordem",
+        "lines": [
+          "vale por chave",
+          "não no tópico inteiro"
+        ]
+      },
+      "right": {
+        "title": "Paralelismo",
+        "lines": [
+          "até o número de partições",
+          "consumidor a mais fica parado"
+        ]
+      }
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.2,
+      "variant": "next",
+      "text": "Que chave você usaria?",
+      "sub": "Parte 4: Kafka, RabbitMQ ou SQS?",
+      "series": {
+        "text": "Kafka",
+        "part": 3,
+        "total": 4
+      }
+    }
+  ]
+}

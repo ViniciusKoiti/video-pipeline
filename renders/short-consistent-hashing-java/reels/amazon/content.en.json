@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "locale": "en",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Amazon Dynamo (SOSP 2007) · measured 2026-11-08 · Java 25 · 100k sessions · 4 → 5 servers · 15 runs",
+  "assets": {
+    "anel": {
+      "kind": "lottie",
+      "path": "lottie/anel-en.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 3.0,
+      "kicker": "Amazon · Dynamo",
+      "text": "How does Amazon add a server without emptying the cache?",
+      "highlight": "without emptying the cache"
+    },
+    {
+      "id": "anel",
+      "type": "animation",
+      "durationSec": 13.0,
+      "assetId": "anel",
+      "colors": "original"
+    },
+    {
+      "id": "medicao",
+      "type": "versus",
+      "durationSec": 10.0,
+      "title": "Who changed server? (4 → 5)",
+      "left": {
+        "title": "Modulo (hash % N)",
+        "value": "80,18%",
+        "lines": [
+          "of the sessions moved"
+        ]
+      },
+      "right": {
+        "title": "Ring, 100 points",
+        "value": "20,13%",
+        "lines": [
+          "moved, all to the new one"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 4.0
+    },
+    {
+      "id": "pontos",
+      "type": "categories",
+      "durationSec": 8.0,
+      "title": "Load on the fullest server, as % of ideal",
+      "unit": "%",
+      "decimals": 1,
+      "highlight": "Ring, 100 points",
+      "items": [
+        {
+          "label": "Ring, 1 point",
+          "value": 251.5
+        },
+        {
+          "label": "Ring, 10 points",
+          "value": 140.2
+        },
+        {
+          "label": "Ring, 100 points",
+          "value": 111.2
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.8,
+      "variant": "follow",
+      "text": "How many virtual points per server?",
+      "sub": "Comment your number"
+    }
+  ]
+}

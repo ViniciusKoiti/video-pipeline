@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Amazon Dynamo (SOSP 2007) · medição de 08/11/2026 · Java 25 · 100 mil sessões · 4 → 5 servidores · 15 rodadas",
+  "assets": {
+    "anel": {
+      "kind": "lottie",
+      "path": "lottie/anel.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 3.0,
+      "kicker": "Amazon · Dynamo",
+      "text": "Como a Amazon adiciona um servidor sem esvaziar o cache?",
+      "highlight": "sem esvaziar o cache"
+    },
+    {
+      "id": "anel",
+      "type": "animation",
+      "durationSec": 13.0,
+      "assetId": "anel",
+      "colors": "original"
+    },
+    {
+      "id": "medicao",
+      "type": "versus",
+      "durationSec": 10.0,
+      "title": "Quem trocou de servidor? (4 → 5)",
+      "left": {
+        "title": "Módulo (hash % N)",
+        "value": "80,18%",
+        "lines": [
+          "das sessões trocaram"
+        ]
+      },
+      "right": {
+        "title": "Anel, 100 pontos",
+        "value": "20,13%",
+        "lines": [
+          "trocaram, todas para o novo"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 4.0
+    },
+    {
+      "id": "pontos",
+      "type": "categories",
+      "durationSec": 8.0,
+      "title": "Carga do servidor mais cheio, em % da ideal",
+      "unit": "%",
+      "decimals": 1,
+      "highlight": "Anel, 100 pontos",
+      "items": [
+        {
+          "label": "Anel, 1 ponto",
+          "value": 251.5
+        },
+        {
+          "label": "Anel, 10 pontos",
+          "value": 140.2
+        },
+        {
+          "label": "Anel, 100 pontos",
+          "value": 111.2
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.8,
+      "variant": "follow",
+      "text": "Quantos pontos virtuais por servidor?",
+      "sub": "Comenta o seu número"
+    }
+  ]
+}

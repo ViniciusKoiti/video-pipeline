@@ -1,0 +1,16 @@
+{
+ "veredito": "segue",
+ "revisor": "duvida-cega",
+ "riscos": [
+  "Horário: o JSON diz 2026-11-10T12:00:00-03:00 e o pacote diz 2026-11-10T15:00:00+00:00. Os dois dão terça 10/11/2026, 12h de Brasília, e não há erro de fuso. Faltam cerca de 43 h, então sobra tempo para apagar o post no Postiz (registro.jsonl, linha 246).",
+  "Data diverge do plano: renders/serie-conceitos/plano-novembro-2026.md põe o consistent hashing na segunda 16/11. Agendar para 10/11 é decisão do dono, e vale confirmar que é intencional. Não existe agenda escrita ao lado da mídia para comparar.",
+  "Frequência no mesmo canal (cmvx0omyy0005l26yggavdqpu, Vinicius Koiti Nakahara, YouTube): o registro tem agendado em 08/11 (17h), 09/11 (12h, cmw28utit...) e 11/11 (cmw3n4rm4...). Com este post são quatro dias seguidos, bem acima do ritmo do plano.",
+  "Canal e tipo combinam: settings.__type é youtube e o id é o mesmo dos outros Shorts pt desse canal. Não há agendado anterior em 10/11 nesse canal. A mídia 84466124... só aparece no upload da linha 244 e não tem agendado anterior. O pacote anterior (linha 245, 09/11 15h UTC) não foi agendado e foi trocado por este, que evita o choque com o Short das 12h de 09/11.",
+  "Mídia: o upload da linha 244 (final.pt.musica.mp4, sha256 6be0d84b...) tem o mesmo sha256 do pacote e do video_sha256 de renders/pacote.json (estado complete). O id e o path da mídia no post.json são iguais aos do upload. O arquivo combina com a legenda: Short pt, Spirit of Fire, Dynamo. Não conferi duração nem 9:16 do MP4.",
+  "Gate 4 aprovado em review.json (preview e o ativo da trilha, Vinicius Koiti, 08/11 16h32, nota 'assisti'). O upload (16h04 BRT) é anterior à aprovação, mas o sha256 do pacote continua igual ao carimbado.",
+  "Legenda: números conferem com medicao.json e com narracao.json (80,18% e 20,13% de chaves movidas, todas para o servidor novo; 251,5% com 1 ponto e 111,2% com 100; 100 mil chaves, 4 para 5 servidores, mediana de 15 rodadas). A legenda do JSON e a de legenda-post.txt são o mesmo texto, com o título na primeira linha. Não achei erro de digitação, link ou @menção.",
+  "Afirmação de fato sobre empresa: a legenda atribui o anel e os nós virtuais ao Dynamo e cita DeCandia et al., SOSP 2007, seção 4.2 (Partitioning Algorithm). Isso é compatível com o artigo. O título 'Como a Amazon adiciona um servidor sem esvaziar o cache?' fala no presente e fala de cache, mas o Dynamo (2007) é um key-value store e não um cache, e o artigo não mostra como a Amazon opera hoje. É uma simplificação de título que o dono pode aceitar. O aviso de marca da Amazon e de ausência de vínculo está na legenda.",
+  "Voz clonada com IA e música da YouTube Audio Library estão declaradas no texto da legenda. A API não marca conteúdo alterado ou sintético: marcar à mão no Studio depois de publicar. Também fixar o primeiro comentário e conferir no Studio, porque ERROR no Postiz não prova falha.",
+  "Hipótese do teste de ângulos ainda não registrada em metrics.json antes da publicação (não encontrada na pasta do episódio)."
+ ]
+}

@@ -1,0 +1,37 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "Three in the afternoon. The team finds a bug in the fraud check rule, live since two, and has to re-check everything that went through.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "fila",
+      "text": "If it reads from a queue, there's no way. In RabbitMQ and SQS, the message is removed when the consumer finishes."
+    },
+    {
+      "scene": "log",
+      "text": "In Kafka, the topic is a log, and reading doesn't delete. Each consumer keeps just a single number: the offset of the next message.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "volta",
+      "text": "Bug fixed? Move the offset back to two and reprocess.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "codigo",
+      "text": "In Java, a seek takes the consumer back to two, and it reads again from there."
+    },
+    {
+      "scene": "decisao",
+      "text": "The log only deletes when the retention you configured runs out. And reprocessing runs everything again, so the fraud check has to be idempotent."
+    },
+    {
+      "scene": "fecho",
+      "text": "And you, have you ever had to reprocess a queue at work?",
+      "delivery": "invite"
+    }
+  ]
+}

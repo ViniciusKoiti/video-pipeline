@@ -1,4 +1,4 @@
-# Clipes do Nabote ("A Planilha é Tua", "A Vinha Não é Sua"): origem e licença de cada peça
+# Clipes do Nabote ("A Planilha é Tua", "A Vinha Não é Sua", "A Assinatura Fica"): origem e licença de cada peça
 
 | Peça | Origem | Licença |
 |---|---|---|
@@ -9,6 +9,8 @@
 | `letra.json` | Letra do dono, lida da tag `lyrics` do MP3; tempos do Whisper local (`scripts/ferramentas/clipe_tempos.py`) | Do dono |
 | `vinha/letra.json` | Letra do dono, lida da tag `lyrics` do MP3; tempos do Whisper large-v3-turbo local (janelas de 30 s, codificador à parte) casados por `scripts/ferramentas/clipe_tempos.py` em 2026-10-15 | Do dono |
 | Áudio de "A Vinha Não é Sua" (fora do Git) | `data/clipe/audio/A Vinha Não é Sua (1).mp3`, gerado no Suno pelo dono (id cbb4e493-71bd-408f-b262-ced4e3d2522e, 2026-10-15T13:27:57Z); no render, `video/public/a-vinha-nao-e-sua.mp3` | Termos do plano do Suno; plano não registrado |
+| `putas/letra.json` | Letra do dono, lida da tag `lyrics-eng` do MP3; tempos do Whisper large-v3-turbo local (`scripts/ferramentas/clipe_reconhecer.py`) casados por `scripts/ferramentas/clipe_tempos.py` em 2026-11-08 | Do dono |
+| Áudio de "A Assinatura Fica" (título de trabalho: "Putas do Legalismo"; fora do Git) | `data/clipe/audio/Putas do Legalismo.mp3` (cópia de `docs/`), gerado no Suno pelo dono (id b61b6931-c23b-4fc5-954e-0c4204ede2dc, 2026-11-08T03:42:14Z); no render, `video/public/putas-do-legalismo.mp3` | Termos do plano do Suno; plano não registrado |
 | Áudio (fora do Git) | `data/clipe/audio/A Planilha é Tua.mp3`, gerado no Suno pelo dono em plano pago (id a20e472e-e6a7-4483-aed0-6f32281c7d6a, 2026-10-08T19:27Z) | Termos do plano pago do Suno; nome do plano ainda não registrado |
 
 Cores do site nabote.com.br. A faixa anterior ("Onde Eu Vou Descansar?", plano gratuito) não entra no clipe.

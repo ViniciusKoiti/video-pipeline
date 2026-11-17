@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 
 class SettingsConstants:
     CONFIG_FILE: Final = Path("config/providers.toml")
+    # fator da velocidade por entrega no Azure Speech (emenda de 2026-11-16 da ADR 058): de 30% mais lento
+    # a 30% mais rápido que o `rate`
+    AZURE_DELIVERY_FACTOR_RANGE: Final[tuple[float, float]] = (0.7, 1.3)
     ENV_OVERRIDES: Final[Mapping[str, tuple[str, ...]]] = MappingProxyType(
         {
             "POSTIZ_API_URL": ("postiz_api_url",),
@@ -22,6 +25,7 @@ class SettingsConstants:
             "CHATTERBOX_PYTHON": ("chatterbox", "python"),
             "CHATTERBOX_REFERENCE": ("chatterbox", "reference"),
             "EARSHOT_PYTHON": ("earshot", "python"),
+            "AZURE_SPEECH_REGION": ("azure_speech", "region"),
             "DATA_DIR": ("data_dir",),
             "MAX_API_SPEND_USD": ("budget", "max_api_spend_usd"),
             "ALLOW_PAID_API": ("budget", "allow_paid_api"),
@@ -40,5 +44,6 @@ class SettingsConstants:
             "CLOUDFLARE_API_TOKEN": "cloudflare_api_token",
             "GROQ_API_KEY": "groq_api_key",
             "GEMINI_API_KEY": "gemini_api_key",
+            "AZURE_SPEECH_KEY": "azure_speech_key",
         }
     )

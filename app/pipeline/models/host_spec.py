@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Literal, Self
+from typing import Any, Literal, Self
 
-from pydantic import Field, model_validator
+from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
 from app.pipeline.models.host_identity import HostIdentity
 from app.pipeline.models.model import Model
@@ -13,10 +13,25 @@ class HostSpec(Model):
     A boca segue o áudio de cada cena; o canto sai de uma regra sobre os planos (`app/media/host.py`).
 
     Pele `notionists`: personagem montado de peças (`identity`). Pele `dono` (ADR 017, parte A): o desenho
-    do dono, em imagens na pasta do episódio (`app/media/host.py`), sem peças."""
+    do dono, em imagens na pasta do episódio (`app/media/host.py`), sem peças.
+
+    `show` (ADR 056): `all` (padrão) põe o apresentador em toda cena, menos nas marcadas `host: false`;
+    `marked` só o põe nas cenas marcadas `host: true`, para ele entrar "às vezes"."""
 
     skin: Literal["notionists", "dono"] = "notionists"
     identity: HostIdentity | None = None
+    show: Literal["all", "marked"] = "all"
+
+    def shows(self, scene_host: bool | None) -> bool:
+        """O apresentador aparece na cena? A marca da cena vale; sem ela, vale o `show` do episódio."""
+        return scene_host if scene_host is not None else self.show == "all"
+
+    @model_serializer(mode="wrap")
+    def _omit_default_show(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if data.get("show") == "all":  # o `episode.json` de antes (e seu carimbo no gate 4) não muda
+            del data["show"]
+        return data
 
     @model_validator(mode="after")
     def _identity_matches_skin(self) -> Self:

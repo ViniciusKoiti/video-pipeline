@@ -10,6 +10,7 @@ from app.pipeline.models._schemas_types import (
     NonEmpty,
     RelPath,
     _unique,
+    host_problems,
     portrait_problems,
     reels_shot_problems,
 )
@@ -52,6 +53,9 @@ class EpisodeManifest(Model):
             raise ValueError("schema_version 2 exige planos em todas as cenas")
         if self.host is not None and self.format != EpisodeFormat.EXPLAINER:
             raise ValueError("host (apresentador) só existe no formato explainer (ADR 013)")
+        show = self.host.show if self.host is not None else None
+        if problems := host_problems(show, [(scene.id, scene.host) for scene in self.scenes]):
+            raise ValueError("; ".join(problems))
         if self.series is not None and self.format != EpisodeFormat.EXPLAINER:
             raise ValueError("series (selo do cartão final) só existe no formato explainer (ADR 028)")
         if self.music:

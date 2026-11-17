@@ -1,0 +1,14 @@
+{
+  "celular-ordem-errada": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "63d412d835c8e83143f1dca4a2705b8979cfe21c576548f228ce1eb570c2f93a",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  },
+  "celular-ordem-certa": {
+    "license": "Original",
+    "author": "projeto (gerado por renders/serie-kafka/gerar.py)",
+    "sha256": "ff0fbd99ed9c7677335c71af662f63c880ce5024574300d1082fc397249e36ac",
+    "usage_notes": "Formas geométricas e texto; sem pessoas, marcas ou imagem externa."
+  }
+}

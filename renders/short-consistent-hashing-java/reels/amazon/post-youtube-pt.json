@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-10T12:00:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0omyy0005l26yggavdqpu"
+   },
+   "value": [
+    {
+     "content": "Você passou de 4 para 5 servidores de cache e escolhe o servidor pelo resto do hash: quase toda chave troca de dono. O Dynamo, da Amazon, usa um anel: a chave vai para o primeiro servidor no sentido horário, e só os vizinhos de quem entra sentem a mudança. Cada servidor ocupa vários pontos do anel (nós virtuais) para a carga não ficar torta.\n\nSimulei em Java 100 mil sessões, de 4 para 5 servidores (só em memória, sem rede, mediana de 15 rodadas): o resto do hash mexeu em 80,18% das chaves; o anel com 100 pontos por servidor, em 20,13%, todas para o servidor novo. Com 1 ponto, o servidor mais cheio ficou com 251,5% da carga ideal; com 100 pontos, 111,2%.\n\nQuantos pontos virtuais você daria para cada servidor? Conta nos comentários.\n\nFonte: DeCandia et al., \"Dynamo: Amazon's Highly Available Key-value Store\", SOSP 2007, seção 4.2.\nVoz clonada com IA. Música: \"Spirit of Fire\", de Jesse Gallagher, YouTube Audio Library.\nAmazon e o logotipo Amazon são marcas registradas da Amazon.com, Inc. ou de suas afiliadas. Este vídeo não tem patrocínio nem vínculo com a Amazon.\n\n#Shorts #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "84466124-30be-4945-a893-71cbc551385f",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/08/cc05bf10c9683af8b185299f149c11e90.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "Como a Amazon adiciona um servidor sem esvaziar o cache?",
+    "type": "public",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

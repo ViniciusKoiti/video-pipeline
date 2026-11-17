@@ -17,6 +17,11 @@ tts = [
     "soundfile>=0.14,<1",     # BSD-3
     "en_core_web_sm==3.8.0",  # MIT — fixado para o misaki não baixar em tempo de execução
 ]
+# Automação do navegador do dono para gerar imagens (scripts/provisorio/imagens_navegador.py); fora do
+# pipeline e dos testes. Conecta a um Chrome já aberto, sem baixar navegador.
+navegador = [
+    "playwright>=1.50,<2",  # Apache-2.0
+]
 
 [project.scripts]
 vp = "app.cli:main"

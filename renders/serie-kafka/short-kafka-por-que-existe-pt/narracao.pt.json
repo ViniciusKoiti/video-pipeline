@@ -1,0 +1,41 @@
+{
+  "language": "pt-BR",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "Meio-dia no app de delivery. Cada passo do pedido vira um aviso no celular. Até que um serviço cai, e tudo para.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "direto",
+      "text": "O serviço de pedidos chama um por vez e espera. Se o Entregador cai, ele fica preso."
+    },
+    {
+      "scene": "topico",
+      "text": "Com Kafka, ele escreve o evento uma vez num tópico e segue. Cada serviço lê no seu ritmo.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "codigo",
+      "text": "Em Java, é um send no tópico pedidos, e o serviço segue sem esperar ninguém."
+    },
+    {
+      "scene": "falha",
+      "text": "Se o Entregador cai, o evento fica guardado no tópico, e ele lê quando voltar.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "cliente",
+      "text": "E o cliente continua recebendo os avisos."
+    },
+    {
+      "scene": "decisao",
+      "text": "O ganho é desacoplar. O custo é um cluster para operar, ou um serviço gerenciado."
+    },
+    {
+      "scene": "fecho",
+      "text": "Você ligaria seus serviços direto, ou por um tópico?",
+      "delivery": "invite"
+    }
+  ]
+}

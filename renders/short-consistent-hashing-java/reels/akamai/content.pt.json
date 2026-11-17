@@ -1,0 +1,156 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Maggs e Sitaraman (ACM CCR, 2015) · medição de 08/11/2026 · Java 25 · 100 mil sessões · 4 → 5 servidores",
+  "assets": {
+    "anel": {
+      "kind": "lottie",
+      "path": "lottie/anel.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 3.0,
+      "kicker": "Akamai · CDN",
+      "text": "Como a Akamai decide qual servidor entrega cada arquivo?",
+      "highlight": "qual servidor"
+    },
+    {
+      "id": "circulo",
+      "type": "animation",
+      "durationSec": 9.0,
+      "assetId": "anel",
+      "colors": "original"
+    },
+    {
+      "id": "origem",
+      "type": "flow",
+      "durationSec": 8.5,
+      "title": "Dentro de um cluster da Akamai",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "pedido",
+          "label": "Pedido do arquivo",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "cluster",
+          "label": "Escolhe o cluster",
+          "x": 0.5,
+          "y": 0.27
+        },
+        {
+          "id": "hash",
+          "label": "Hash consistente",
+          "sublabel": "escolhe o servidor",
+          "x": 0.5,
+          "y": 0.54
+        },
+        {
+          "id": "servidor",
+          "label": "Servidor de borda",
+          "x": 0.5,
+          "y": 0.8
+        }
+      ],
+      "edges": [
+        {
+          "from": "pedido",
+          "to": "cluster",
+          "kind": "scheduling"
+        },
+        {
+          "from": "cluster",
+          "to": "hash",
+          "kind": "scheduling"
+        },
+        {
+          "from": "hash",
+          "to": "servidor",
+          "kind": "scheduling"
+        }
+      ],
+      "states": [
+        {
+          "node": "pedido",
+          "atSec": 1.2,
+          "state": "running"
+        },
+        {
+          "node": "pedido",
+          "atSec": 2.2,
+          "state": "done"
+        },
+        {
+          "node": "cluster",
+          "atSec": 2.2,
+          "state": "running"
+        },
+        {
+          "node": "cluster",
+          "atSec": 3.4,
+          "state": "done"
+        },
+        {
+          "node": "hash",
+          "atSec": 3.4,
+          "state": "running"
+        },
+        {
+          "node": "hash",
+          "atSec": 5.6,
+          "state": "done"
+        },
+        {
+          "node": "servidor",
+          "atSec": 5.6,
+          "state": "running"
+        },
+        {
+          "node": "servidor",
+          "atSec": 6.6,
+          "state": "done"
+        }
+      ]
+    },
+    {
+      "id": "servidor-novo",
+      "type": "versus",
+      "durationSec": 12.5,
+      "title": "Quem trocou de servidor? (4 → 5)",
+      "left": {
+        "title": "Módulo (hash % N)",
+        "value": "80,18%",
+        "lines": [
+          "das sessões trocaram"
+        ]
+      },
+      "right": {
+        "title": "Anel, 100 pontos",
+        "value": "20,13%",
+        "lines": [
+          "trocaram, todas para o novo"
+        ]
+      },
+      "winner": "right",
+      "winnerAtSec": 6.0
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.8,
+      "variant": "follow",
+      "text": "Aguenta mover 80% do cache?",
+      "sub": "Comenta o que você faria"
+    }
+  ]
+}

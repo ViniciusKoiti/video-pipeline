@@ -1,0 +1,26 @@
+2026-11-10T06:00:31-03:00 cpu_probe 0.059
+2026-11-10T06:02:28-03:00 claude saiu com código 0 (tentativa 1/3)
+custo_usd_equivalente 0.6376562 | turnos 20 | modelos ['claude-sonnet-5-5'] | duracao_s 112
+A rotina de hoje parou no passo 2 (medição) e não produziu nada pronto para o Postiz. Não consegui gravar o registro em `data/rotina/2026-11-10.md`, porque até essa escrita foi negada. Nada foi aprovado nem agendado, e não houve chamada ao Modal nem custo.
+
+**O que fiz**
+- **Pauta:** a fila e o plano do mês põem **Cache e cache stampede em Java** em 10/11. A pauta foi aprovada em 03/11 e não escolhi outra.
+- **Máquina:** `cpu_probe` deu 0,074 (o limite é 0,3) e o JDK é o OpenJDK 25.0.5.
+- **Pastas:** criei `renders/short-cache-java/{demo,fontes}` e `data/episodes/short-cache-java-{en,ig}`. A `-pt` já existia, e a `-en` ainda não tem `traducao.json`.
+- **`demo/Demo.java`:** escrevi os 4 modos (`sem-cache`, `com-cache`, `expira-sem-protecao`, `expira-com-protecao`). Cada um dispara 1.000 requisições simultâneas contra um banco simulado de 50 conexões e 50 ms por consulta. A recarga única usa `ConcurrentHashMap.compute` com `CompletableFuture`.
+- **Calibração:** uma execução avulsa de `expira-com-protecao` fez 1 consulta ao banco, com mediana de 44,5 ms e p99 de 55,8 ms. Não é resultado oficial.
+
+**Por que parou**
+- **Escrita negada:** a primeira escrita do `Demo.java` passou, mas depois o `medir.sh`, as duas edições do `Demo.java` e o registro do dia foram negados. Não contornei por `bash` com redirecionamento.
+- **Downloads:** o `curl` também pede aprovação, então não baixei as fontes. Faltam o Javadoc de `ConcurrentHashMap` (JDK 25) e um texto primário sobre cache stampede.
+- **Sem medição, sem o resto:** sem `resultado.txt` e sem `fontes.md` não há roteiro, plano, voz nem render.
+- **Pendência no `Demo.java`:** o arquivo no disco ainda cria um executor novo a cada recarga em `obterComProtecao`. Falta trocá-lo por um `static final carregador`, e essa edição foi a negada.
+
+O quadro obrigatório de System Design está pendente. A pauta já traz aplicação, decisão e benefício/limite, mas faltam os números e a sequência animada.
+
+**Para destravar:** é o mesmo bloqueio de ontem no HashMap, que também continua sem `resultado.txt`. Preciso que você faça uma destas coisas:
+1. Libere em `.claude/settings.local.json` a escrita em `renders/short-cache-java/`, a execução de `bash medir.sh` e o `curl` para as fontes.
+2. Ou crie o `medir.sh` copiando o de `renders/short-hashmap-colisoes-java/demo/` (trocando `MODOS` e `CHAVES`) e rode `bash renders/short-cache-java/demo/medir.sh`. As fontes baixadas à mão em `renders/short-cache-java/fontes/` também servem.
+
+Com qualquer uma das duas, retomo do passo 2. Se preferir, também posso gravar o registro do dia assim que a escrita for liberada.
+2026-11-10T06:02:28-03:00 fim

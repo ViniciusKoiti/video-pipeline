@@ -1,0 +1,19 @@
+2026-11-12T06:00:33-03:00 cpu_probe 0.061
+2026-11-12T06:01:43-03:00 claude saiu com código 0 (tentativa 1/3)
+custo_usd_equivalente 0.5028995999999999 | turnos 13 | modelos ['claude-sonnet-5-5'] | duracao_s 64
+A rotina de hoje parou no passo 3 e não produziu nada. Faltam as fontes primárias do rate limiter, e é o quinto dia seguido (08 a 12/11) parado por permissão.
+
+- **Pauta:** é o Rate limiter em Java, aprovado em 03/11, com publicação prevista para sábado 14/11. A medição oficial já existe desde ontem (30 medições, JDK 25.0.5) e não foi refeita.
+- **O que bloqueia:** `renders/short-rate-limiter-java/fontes/` continua vazia. O `curl` para `rfc-editor.org` pede aprovação e esta sessão não tem quem aprove. Não contornei pelo agente `web-fetch` nem por `dangerouslyDisableSandbox`, e não escrevi o 429 nem o token bucket de memória.
+- **O que não existe:** roteiro, plano de animação (nem a seção "Música"), narração, voz, `content.*.json`, render, SFX, `medicao.json`, posts, gate e Postiz.
+- **Custo:** zero chamadas ao Modal. A sonda de CPU deu 0,054 a 0,068, com a máquina livre.
+- **Registro:** `data/rotina/2026-11-12.md`.
+
+**O que preciso de você, uma das duas:**
+1. Rodar à mão, na raiz: `curl -sSL -o renders/short-rate-limiter-java/fontes/rfc6585.txt https://www.rfc-editor.org/rfc/rfc6585.txt`. Falta também salvar em `fontes/` uma descrição primária do token bucket, da sua escolha.
+2. Liberar `curl` e `WebFetch` para `rfc-editor.org` em `.claude/settings.local.json`. Liberar também `docs.oracle.com` e `openjdk.org` já cobriria os próximos temas (HashMap, cache, GC).
+
+Sem isso hoje, o sábado 14/11 fica sem Short novo do rate limiter. O HashMap segue com um bloqueio à parte: o `medir.sh` pede aprovação na sessão do timer e precisa rodar à mão (~10 min).
+
+Nenhum gate foi preparado hoje. Os de 05 a 08/11 continuam pendentes.
+2026-11-12T06:01:43-03:00 fim

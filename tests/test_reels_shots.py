@@ -97,7 +97,7 @@ def test_reels_script_with_hook_count_and_end_card_parses() -> None:
         (lambda c: c["terms"][0].update(op="+"), "primeiro termo da conta não tem operador"),
         (lambda c: c["terms"][1].pop("op"), "termo 2 da conta sem operador"),
         (lambda c: c["terms"][2].pop("anchor"), "termo 3 sem anchor"),
-        (lambda c: c.update(claims=[]), "at least 1 item"),
+        # conta sem claims: a regra é do manifesto, que conhece o formato (tests/test_ficcao_declarada.py)
     ],
 )
 def test_calculation_rules(change: Any, message: str) -> None:

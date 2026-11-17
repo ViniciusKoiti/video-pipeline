@@ -1,0 +1,30 @@
+[
+  {
+    "id": "abertura",
+    "file": "public/lottie/abertura.json",
+    "license": "Original",
+    "sha256": "c10c13c1f9447f23b61eebe7dff120ffc825a2d4d82c8fc885aea82e820a6133",
+    "usage_notes": "Gráfico vetorial original gerado por renders/short-consistent-hashing-java/gerar_animacoes.py; exemplo didático, sem mídia externa."
+  },
+  {
+    "id": "modulo",
+    "file": "public/lottie/modulo.json",
+    "license": "Original",
+    "sha256": "71ceef2a71120d05c1ee15bb5763af942bd2f643332e8c4c1c5fc92875bc6982",
+    "usage_notes": "Gráfico vetorial original gerado por renders/short-consistent-hashing-java/gerar_animacoes.py; exemplo didático, sem mídia externa."
+  },
+  {
+    "id": "anel",
+    "file": "public/lottie/anel.json",
+    "license": "Original",
+    "sha256": "3b6ec77021fb4e3dd7c96066481f187d4de34369e048d3ef3f422653484d1f88",
+    "usage_notes": "Gráfico vetorial original gerado por renders/short-consistent-hashing-java/gerar_animacoes.py; exemplo didático, sem mídia externa."
+  },
+  {
+    "id": "anel-en",
+    "file": "public/lottie/anel-en.json",
+    "license": "Original",
+    "sha256": "f28731e9fd2915e6b986b7859f74fc18efc310159a55e667d743fd5ba970e407",
+    "usage_notes": "Gráfico vetorial original gerado por gerar_reels_en.py (gerar_animacoes.anel com os textos em inglês); exemplo didático, sem mídia externa."
+  }
+]

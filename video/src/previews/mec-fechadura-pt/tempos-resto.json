@@ -1,0 +1,24 @@
+{
+  "fps": 30,
+  "fonte": "voice/leveled/*.wav do mec-fechadura-pt (2026-11-09); S01, S02 (V2.0 e V2.0b), S03 (1.ª parte), S18 (1.ª parte), S19, S20, S21 (V2.16), S22, S23, S24 (reprise da porta e V2.17) e S25",
+  "cenas": {
+    "S01": 11.2,
+    "S03": 11.92,
+    "S18": 11.6,
+    "S19": 6.64,
+    "S20": 7.08,
+    "S24": 11.16,
+    "S22": 9.24,
+    "S23": 16.24,
+    "S25": 7.8,
+    "S21": 14.4,
+    "S02": 6.84
+  },
+  "ancoras_ms": {
+    "S03": 5381,
+    "S18": 3356,
+    "S21": 2945,
+    "S24": 7295
+  },
+  "ancoras_fonte": "início do 2.º plano de cada cena por `shot_bounds` (app/pipeline/shots.py) sobre a duração dos WAV de voice/leveled, 2026-11-09"
+}

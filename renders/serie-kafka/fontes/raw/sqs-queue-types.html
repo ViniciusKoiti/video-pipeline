@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Amazon SQS queue types - Amazon Simple Queue Service</title><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="assets_root" content="/assets" /><meta name="target_state" content="sqs-queue-types" /><meta name="default_state" content="sqs-queue-types" /><link rel="icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="shortcut icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="canonical" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" /><link rel="alternate" type="text/markdown" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.md" title="Markdown version" /><meta name="description" content="Offers comprehensive information about different types of Amazon SQS queues, including FIFO queues, standard queues, dead-letter queues, and delay queues." /><meta name="deployment_region" content="IAD" /><meta name="product" content="Amazon Simple Queue Service" /><meta name="guide" content="Developer Guide" /><meta name="abstract" content="Queue messages that one component in the application generates to be consumed by another component using Amazon SQS." /><meta name="guide-locale" content="en_us" /><meta name="tocs" content="toc-contents.json" /><link rel="canonical" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="id-id" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="id" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="de-de" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="de" /><link rel="alternate" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="en-us" /><link rel="alternate" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="en" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="es-es" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="es" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="fr-fr" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="fr" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="it-it" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="it" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="ja-jp" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="ja" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="ko-kr" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="ko" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="pt-br" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="pt" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_cn/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="zh-cn" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_tw/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="zh-tw" /><link rel="alternate" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" hreflang="x-default" /><meta name="feedback-item" content="SQS" /><meta name="this_doc_product" content="Amazon Simple Queue Service" /><meta name="this_doc_guide" content="Developer Guide" /><head xmlns="http://www.w3.org/1999/xhtml"> <script defer="" src="/assets/r/awsdocs-doc-page.2.0.0.js"></script><link href="/assets/r/awsdocs-doc-page.2.0.0.css" rel="stylesheet"/></head>
+<script defer="" id="awsc-panorama-bundle" type="text/javascript" src="https://prod.pa.cdn.uis.awsstatic.com/panorama-nav-init.js" data-config="{'appEntity':'aws-documentation','region':'us-east-1','service':'sqs'}"></script><meta id="panorama-serviceSubSection" value="Developer Guide" /><meta id="panorama-serviceConsolePage" value="Amazon SQS queue types" /></head><body class="awsdocs awsui"><div class="awsdocs-container"><p><a href="sqs-queue-types.md">View a markdown version of this page</a></p><awsdocs-header></awsdocs-header><awsui-app-layout id="app-layout" class="awsui-util-no-gutters" ng-controller="ContentController as $ctrl" header-selector="awsdocs-header" navigation-hide="false" navigation-width="$ctrl.navWidth" navigation-open="$ctrl.navOpen" navigation-change="$ctrl.onNavChange($event)" tools-hide="$ctrl.hideTools" tools-width="$ctrl.toolsWidth" tools-open="$ctrl.toolsOpen" tools-change="$ctrl.onToolsChange($event)"><div id="guide-toc" dom-region="navigation"><awsdocs-toc></awsdocs-toc></div><div id="main-column" dom-region="content" tabindex="-1"><awsdocs-view class="awsdocs-view"><div id="awsdocs-content"><head><title>Amazon SQS queue types - Amazon Simple Queue Service</title><meta name="pdf" content="/pdfs/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dg.pdf#sqs-queue-types" /><meta name="rss" content="recent-updates.rss" /><meta name="forums" content="https://repost.aws/tags/TAA-iV52DNQ4a7bbpyH3s33Q" /><meta name="feedback" content="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=SQS&amp;topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" /><meta name="feedback-yes" content="feedbackyes.html?topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" /><meta name="feedback-no" content="feedbackno.html?topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html" /><meta name="keywords" content="Basic concepts,Amazon SQS FIFO queues,Amazon SQS standard queues,Queue creation,Message sending and receiving,Amazon SQS queue types,FIFO queue,standard queue,Dead-letter queues,Delay queues" /><script type="application/ld+json">
+{
+    "@context" : "https://schema.org",
+    "@type" : "BreadcrumbList",
+    "itemListElement" : [
+      {
+        "@type" : "ListItem",
+        "position" : 1,
+        "name" : "AWS",
+        "item" : "https://aws.amazon.com"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 2,
+        "name" : "Amazon Simple Queue Service",
+        "item" : "https://docs.aws.amazon.com/sqs/index.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 3,
+        "name" : "Developer Guide",
+        "item" : "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 4,
+        "name" : "Getting started with Amazon SQS",
+        "item" : "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-getting-started.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 5,
+        "name" : "Amazon SQS queue types",
+        "item" : "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-getting-started.html"
+      }
+    ]
+}
+</script></head><body><div id="main"><div style="display: none"><a href="/pdfs/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dg.pdf#sqs-queue-types" target="_blank" rel="noopener noreferrer" title="Open PDF"></a></div><div id="breadcrumbs" class="breadcrumb"><a href="/index.html">Documentation</a><a href="/sqs/index.html">Amazon Simple Queue Service</a><a href="welcome.html">Developer Guide</a></div><div id="main-content" class="awsui-util-container"><div id="main-col-body"><awsdocs-language-banner data-service="$ctrl.pageService"></awsdocs-language-banner><h1 class="topictitle" id="sqs-queue-types">Amazon SQS queue types</h1><div class="awsdocs-page-header-container"><awsdocs-page-header></awsdocs-page-header><awsdocs-filter-selector id="awsdocs-filter-selector"></awsdocs-filter-selector></div><p>Amazon SQS supports two types of queues: <a href="./standard-queues.html">standard queues</a> and <a href="./sqs-fifo-queues.html">FIFO</a> queues. Use the following table to determine
+        which queue best fits your needs.</p><div class="table-container"><div class="table-contents disable-scroll"><table id="d0e1"><thead>
+                <tr>
+                    <th align="center" style="text-align: center;">Standard queues</th>
+                    <th align="center" style="text-align: center;">FIFO queues</th>
+                </tr>
+            </thead>
+                <tr>
+                    <td tabindex="-1">
+                        <p><b>Unlimited throughput</b> –
+                            Standard queues support a very high, nearly unlimited number of API calls per second, per action 
+    (<a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html"><code class="code">SendMessage</code></a>, <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html"><code class="code">ReceiveMessage</code></a>, or <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_DeleteMessage.html"><code class="code">DeleteMessage</code></a>). This high throughput makes them ideal for use cases that require processing large volumes of messages quickly, such as real-time data streaming or large-scale applications. While standard queues scale automatically with demand, it is essential to monitor usage patterns to ensure optimal performance, especially in regions with higher workloads.</p>
+                        <p><b>At-least-once delivery</b> –
+                            Guaranteed at-least-once delivery, meaning that every message is
+                            delivered at least once, but in some cases, a message may be delivered
+                            more than once due to retries or network delays. You should design your
+                            application to handle potential duplicate messages by using idempotent
+                            operations, which ensure that processing the same message multiple times
+                            will not affect the system’s state.</p>
+                        <p><b>Best-effort ordering</b> –
+                            Provides best-effort ordering, meaning that while Amazon SQS attempts to
+                            deliver messages in the order they were sent, it does not guarantee
+                            this. In some cases, messages may arrive out of order, especially under
+                            conditions of high throughput or failure recovery. For applications
+                            where the order of message processing is crucial, you should handle
+                            reordering logic within the application or use FIFO queues for strict
+                            ordering guarantees.</p>
+                        <p><b>Durability and redundancy</b> –
+                            Standard queues ensure high durability by storing multiple copies of
+                            each message across multiple AWS Availability Zones. This ensures that
+                            messages are not lost, even in the event of infrastructure
+                            failures.</p>
+                        <p><b>Visibility timeout</b> – Amazon SQS
+                            allows you to configure a visibility timeout to control how long a
+                            message stays hidden after being received, ensuring that other consumers
+                            do not process the message until it has been fully handled or the
+                            timeout expires.</p>
+                    </td>
+                    <td tabindex="-1"><p><b>High throughput</b> –
+                            When you use <a href="./sqs-batch-api-actions.html">batching</a>, FIFO queues process up to
+    3,000 messages per second per API method (<a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessageBatch.html"><code class="code">SendMessageBatch</code></a>, <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html"><code class="code">ReceiveMessage</code></a>, or <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_DeleteMessageBatch.html"><code class="code">DeleteMessageBatch</code></a>).
+    This throughput relies on 300 API calls per second, with each API call handling a batch of 10 messages.By enabling high throughput mode, you can scale up to 30,000 transactions per second (TPS) with relaxed ordering within message groups. Without batching, FIFO queues support up to 300 API calls per second per API method (<code class="code">SendMessage</code>, <code class="code">ReceiveMessage</code>, or <code class="code">DeleteMessage</code>). If you need more throughput, you can request a quota increase through the 
+    <a href="https://console.aws.amazon.com/support/home#/case/create?issueType=service-limit-increase&amp;limitType=service-code-sqs" rel="noopener noreferrer" target="_blank"><span>AWS Support Center</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>. To
+                  enable high-throughput mode, see <a href="./enable-high-throughput-fifo.html">Enabling high throughput for FIFO queues in Amazon SQS</a>.</p>
+                        <p><b>Exactly-once processing</b> – FIFO
+                            queues deliver each message once and keep it available until you process
+                            and delete it. By using features like <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html"><code class="code">MessageDeduplicationId</code></a> or content-based
+                            deduplication, you prevent duplicate messages, even when retrying due to
+                            network issues or timeouts.</p>
+                        <p><b>First-in-first-out delivery</b> –
+                            FIFO queues ensure that you receive messages in the order they are sent
+                            within each message group. By distributing messages across multiple
+                            groups, you can process them in parallel while still maintaining the
+                            order within each group.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle;" tabindex="-1">
+                        <div class="mediaobject">
+                             
+                                <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/sqs-what-is-sqs-standard-queue-diagram.png" class="aws-docs-img-whiteBg aws-docs-img-padding" alt="Standard queue message delivery." style="max-width:100%" />
+                             
+                             
+                        </div>
+                    </td>
+                    <td style="vertical-align: middle;" tabindex="-1">
+                        <div class="mediaobject">
+                             
+                                <img src="/images/AWSSimpleQueueService/latest/SQSDeveloperGuide/images/sqs-what-is-sqs-fifo-queue-diagram.png" class="aws-docs-img-whiteBg aws-docs-img-padding" alt="FIFO queue message delivery." style="max-width:100%" />
+                             
+                             
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td tabindex="-1">Use standard queues to send data between applications when throughput is
+                        crucial, for example:<div class="itemizedlist">
+                             
+                             
+                             
+                        <ul class="itemizedlist"><li class="listitem">
+                                <p><b>Decouple live user requests from
+                                        intensive background work.</b> Allow users to upload
+                                    media quickly while you process tasks like resizing or encoding
+                                    in the background, ensuring fast response times without
+                                    overloading the system.</p>
+                            </li><li class="listitem">
+                                <p><b>Allocate tasks to multiple worker
+                                        nodes.</b> Distribute a high number of credit card
+                                    validation requests across multiple worker nodes, and handle
+                                    duplicate messages with idempotent operations to avoid
+                                    processing errors.</p>
+                            </li><li class="listitem">
+                                <p><b>Batch messages for future
+                                        processing.</b> Queue multiple entries for batch
+                                    additions to a database. Since message order isn’t guaranteed,
+                                    design your system to handle out-of-order processing if
+                                    necessary.</p>
+                            </li></ul></div></td>
+                    <td tabindex="-1">
+                        <p>Use FIFO queues to send data between applications when the order of
+                            events is important, for example:</p>
+                        <div class="itemizedlist">
+                             
+                             
+                             
+                        <ul class="itemizedlist"><li class="listitem">
+                                <p><b>Make sure that user-entered commands are
+                                        run in the right order.</b> This is a key use case
+                                    for FIFO queues, where command order is crucial. For example, if
+                                    a user performs a sequence of actions in an application, FIFO
+                                    queues ensure the actions are processed in the same order they
+                                    were entered.</p>
+                            </li><li class="listitem">
+                                <p><b>Display the correct product price by
+                                        sending price modifications in the right order.</b>
+                                    FIFO queues ensure that multiple updates to a product's price
+                                    arrive and are processed sequentially. Without FIFO, a price
+                                    reduction might be processed after a price increase, causing
+                                    incorrect data to be displayed.</p>
+                            </li><li class="listitem">
+                                <p><b>Prevent a student from enrolling in a
+                                        course before registering for an account.</b> By
+                                    using FIFO queues, you ensure that the registration process
+                                    occurs in the correct sequence. The system processes the account
+                                    registration first and then the course enrollment, preventing
+                                    the enrollment request from being executed prematurely.</p>
+                            </li></ul></div>
+                    </td>
+                </tr>
+            </table></div></div><awsdocs-copyright class="copyright-print"></awsdocs-copyright><awsdocs-thumb-feedback right-edge="{{$ctrl.thumbFeedbackRightEdge}}"></awsdocs-thumb-feedback></div><noscript><div><div><div><div id="js_error_message"><p><img src="https://d1ge0kk1l5kms0.cloudfront.net/images/G/01/webservices/console/warning.png" alt="Warning" /> <strong>Javascript is disabled or is unavailable in your browser.</strong></p><p>To use the Amazon Web Services Documentation, Javascript must be enabled. Please refer to your browser's Help pages for instructions.</p></div></div></div></div></noscript><div id="main-col-footer" class="awsui-util-font-size-0"><div id="doc-conventions"><a target="_top" href="/general/latest/gr/docconventions.html">Document Conventions</a></div><div class="prev-next"><div id="previous" class="prev-link" accesskey="p" href="./sqs-configure-overview.html">Understanding the Amazon SQS console </div><div id="next" class="next-link" accesskey="n" href="./implementing-request-response-systems.html">Implementing request-response systems in Amazon SQS</div></div></div><awsdocs-page-utilities></awsdocs-page-utilities></div><div id="quick-feedback-yes" style="display: none;"><div class="title">Did this page help you? - Yes</div><div class="content"><p>Thanks for letting us know we're doing a good job!</p><p>If you've got a moment, please tell us what we did right so we can do more of it.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=SQS&amp;topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"></awsui-button></p></div></div><div id="quick-feedback-no" style="display: none;"><div class="title">Did this page help you? - No</div><div class="content"><p>Thanks for letting us know this page needs work. We're sorry we let you down.</p><p>If you've got a moment, please tell us how we can make the documentation better.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=SQS&amp;topic_url=https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"></awsui-button></p></div></div></div></body></div></awsdocs-view><div class="page-loading-indicator" id="page-loading-indicator"><awsui-spinner size="large"></awsui-spinner></div></div><div id="tools-panel" dom-region="tools"><awsdocs-tools-panel id="awsdocs-tools-panel"></awsdocs-tools-panel></div></awsui-app-layout><awsdocs-cookie-banner class="doc-cookie-banner"></awsdocs-cookie-banner></div></body></html>

@@ -3,7 +3,8 @@
 - A voz dos rascunhos é a `tts` do `providers.toml` (Kokoro); com `--voz-final`, a do vídeo final
   (`tts_final`: a voz clonada do dono, ADR 016); com `--voz NOME`, uma voz registrada pelo nome, fora da
   escolha do `providers.toml`: `gemini` (Charon, ADR 012; é a do vídeo-régua), `chatterbox`,
-  `chatterbox_modal` (a mesma voz numa GPU do Modal, ADR 024) ou `kokoro`.
+  `chatterbox_modal` (a mesma voz numa GPU do Modal, ADR 024), `azure_speech` (voz neural pronta do Azure,
+  ADR 058) ou `kokoro`.
 - O hash do nome cobre o texto falado, o modelo, a voz e a direção de fala: a fala só é gerada de novo
   quando um deles muda, e uma voz não apaga as falas da outra. Cota esgotada: o comando para, as falas já
   geradas ficam e a próxima execução continua (`vp status` lista o que ficou para trás).

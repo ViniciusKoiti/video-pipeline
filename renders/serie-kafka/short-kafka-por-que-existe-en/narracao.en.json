@@ -1,0 +1,41 @@
+{
+  "language": "en",
+  "lines": [
+    {
+      "scene": "abertura",
+      "text": "Noon on a delivery app. Every step of the order becomes a notification on your phone. Until one service goes down, and everything stops.",
+      "delivery": "hook"
+    },
+    {
+      "scene": "direto",
+      "text": "The orders service calls one service at a time and waits. If the courier service goes down, it's stuck."
+    },
+    {
+      "scene": "topico",
+      "text": "With Kafka, it writes the event once to a topic and moves on. Each service reads at its own pace.",
+      "delivery": "turn"
+    },
+    {
+      "scene": "codigo",
+      "text": "In Java, it's a send to the orders topic, and the service moves on without waiting for anyone."
+    },
+    {
+      "scene": "falha",
+      "text": "If the courier service goes down, the event stays stored in the topic, and it reads it when it comes back.",
+      "delivery": "calm"
+    },
+    {
+      "scene": "cliente",
+      "text": "And on the customer's phone, the notifications keep coming in."
+    },
+    {
+      "scene": "decisao",
+      "text": "The gain is decoupling. The cost is a cluster to run, or a managed service."
+    },
+    {
+      "scene": "fecho",
+      "text": "Would you connect your services directly, or through a topic?",
+      "delivery": "invite"
+    }
+  ]
+}

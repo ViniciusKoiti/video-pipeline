@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Fontes: docs do Apache Kafka 4.4, RabbitMQ e Amazon SQS · app fictício",
+  "assets": {
+    "celular-alerta": {
+      "kind": "lottie",
+      "path": "lottie/celular-alerta.json"
+    },
+    "fila-apaga": {
+      "kind": "lottie",
+      "path": "lottie/fila-apaga.json"
+    },
+    "log-fica": {
+      "kind": "lottie",
+      "path": "lottie/log-fica.json"
+    },
+    "log-volta": {
+      "kind": "lottie",
+      "path": "lottie/log-volta.json"
+    }
+  },
+  "scenes": [
+    {
+      "id": "abertura",
+      "type": "animation",
+      "durationSec": 9.0,
+      "assetId": "celular-alerta",
+      "colors": "original"
+    },
+    {
+      "id": "fila",
+      "type": "animation",
+      "durationSec": 7.0,
+      "assetId": "fila-apaga",
+      "colors": "original"
+    },
+    {
+      "id": "log",
+      "type": "animation",
+      "durationSec": 10.6,
+      "assetId": "log-fica",
+      "colors": "original"
+    },
+    {
+      "id": "volta",
+      "type": "animation",
+      "durationSec": 6.4,
+      "assetId": "log-volta",
+      "colors": "original"
+    },
+    {
+      "id": "codigo",
+      "type": "code",
+      "durationSec": 4.4,
+      "title": "Em Java, o consumidor",
+      "lines": [
+        "// regra corrigida",
+        "consumer.seek(particao,",
+        "    offsetDas14h);",
+        "var lote = consumer.poll(tempo);"
+      ],
+      "highlight": [
+        {
+          "token": "seek"
+        }
+      ],
+      "steps": [
+        {
+          "atSec": 0.4,
+          "lines": [
+            2,
+            3
+          ],
+          "note": "O ponteiro volta para as 14h"
+        },
+        {
+          "atSec": 1.8,
+          "lines": [
+            4,
+            4
+          ],
+          "note": "E lê de novo dali em diante"
+        }
+      ]
+    },
+    {
+      "id": "decisao",
+      "type": "versus",
+      "durationSec": 7.4,
+      "title": "O que muda no desenho",
+      "left": {
+        "title": "Fila",
+        "lines": [
+          "ler apaga a mensagem",
+          "não dá para reler"
+        ]
+      },
+      "right": {
+        "title": "Log no Kafka",
+        "lines": [
+          "apaga quando vence a retenção",
+          "reler roda tudo de novo"
+        ]
+      }
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.4,
+      "variant": "next",
+      "text": "Já precisou reprocessar?",
+      "sub": "Parte 3: partição e chave",
+      "series": {
+        "text": "Kafka",
+        "part": 2,
+        "total": 4
+      }
+    }
+  ]
+}

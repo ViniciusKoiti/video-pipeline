@@ -1,0 +1,281 @@
+{
+  "version": 2,
+  "locale": "pt-BR",
+  "format": "vertical",
+  "fps": 30,
+  "style": "editorial",
+  "safeArea": "shorts",
+  "cover": true,
+  "footer": "Discord Engineering (06/07/2017) · números do Discord, não medidos aqui",
+  "assets": {},
+  "scenes": [
+    {
+      "id": "pergunta",
+      "type": "hook",
+      "durationSec": 3.0,
+      "kicker": "Discord · 2017",
+      "text": "Como o Discord descobre em qual nó está cada comunidade?",
+      "highlight": "qual nó"
+    },
+    {
+      "id": "anel",
+      "type": "flow",
+      "durationSec": 8.0,
+      "title": "Achar o nó da comunidade",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "sessao",
+          "label": "Sessão",
+          "sublabel": "quer a comunidade",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "anel",
+          "label": "Anel de hash",
+          "sublabel": "consistent hashing",
+          "x": 0.5,
+          "y": 0.4
+        },
+        {
+          "id": "no",
+          "label": "Nó da comunidade",
+          "x": 0.5,
+          "y": 0.8
+        }
+      ],
+      "edges": [
+        {
+          "from": "sessao",
+          "to": "anel",
+          "kind": "data",
+          "label": "consulta"
+        },
+        {
+          "from": "anel",
+          "to": "no",
+          "kind": "data",
+          "label": "devolve o nó"
+        }
+      ],
+      "states": [
+        {
+          "node": "sessao",
+          "atSec": 1.2,
+          "state": "running"
+        },
+        {
+          "node": "sessao",
+          "atSec": 2.4,
+          "state": "done"
+        },
+        {
+          "node": "anel",
+          "atSec": 2.4,
+          "state": "running"
+        },
+        {
+          "node": "anel",
+          "atSec": 4.2,
+          "state": "done"
+        },
+        {
+          "node": "no",
+          "atSec": 4.2,
+          "state": "running"
+        },
+        {
+          "node": "no",
+          "atSec": 5.6,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "q",
+          "from": "sessao",
+          "to": "anel",
+          "atSec": 1.4,
+          "durationSec": 0.9
+        },
+        {
+          "id": "r",
+          "from": "anel",
+          "to": "no",
+          "atSec": 4.3,
+          "durationSec": 0.9
+        }
+      ]
+    },
+    {
+      "id": "gargalo",
+      "type": "flow",
+      "durationSec": 8.5,
+      "title": "Muitos reconectando de uma vez",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "usuarios",
+          "label": "Usuários",
+          "sublabel": "reconectando juntos",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "processo",
+          "label": "Processo do anel",
+          "sublabel": "um só",
+          "x": 0.5,
+          "y": 0.4
+        },
+        {
+          "id": "sistema",
+          "label": "Sistema",
+          "x": 0.5,
+          "y": 0.8
+        }
+      ],
+      "edges": [
+        {
+          "from": "usuarios",
+          "to": "processo",
+          "kind": "data",
+          "label": "consultas"
+        },
+        {
+          "from": "processo",
+          "to": "sistema",
+          "kind": "data",
+          "label": "espera"
+        }
+      ],
+      "states": [
+        {
+          "node": "usuarios",
+          "atSec": 1.2,
+          "state": "running"
+        },
+        {
+          "node": "processo",
+          "atSec": 2.6,
+          "state": "running"
+        },
+        {
+          "node": "processo",
+          "atSec": 5.0,
+          "state": "failed"
+        },
+        {
+          "node": "sistema",
+          "atSec": 6.0,
+          "state": "failed"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "c1",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 1.4,
+          "durationSec": 0.8
+        },
+        {
+          "id": "c2",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 1.8,
+          "durationSec": 0.8
+        },
+        {
+          "id": "c3",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 2.2,
+          "durationSec": 0.8
+        },
+        {
+          "id": "c4",
+          "from": "usuarios",
+          "to": "processo",
+          "atSec": 2.6,
+          "durationSec": 0.8
+        }
+      ]
+    },
+    {
+      "id": "solucao",
+      "type": "flow",
+      "durationSec": 10.0,
+      "title": "Anel em memória compartilhada: 12 µs → 0,3 µs",
+      "legend": false,
+      "nodes": [
+        {
+          "id": "sessoes",
+          "label": "Sessões",
+          "sublabel": "leem direto",
+          "x": 0.5,
+          "y": 0.0
+        },
+        {
+          "id": "anelmem",
+          "label": "Anel",
+          "sublabel": "memória só de leitura",
+          "x": 0.5,
+          "y": 0.74
+        }
+      ],
+      "edges": [
+        {
+          "from": "sessoes",
+          "to": "anelmem",
+          "kind": "data",
+          "label": "0,3 µs"
+        }
+      ],
+      "states": [
+        {
+          "node": "anelmem",
+          "atSec": 1.4,
+          "state": "running"
+        },
+        {
+          "node": "sessoes",
+          "atSec": 4.6,
+          "state": "done"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "l1",
+          "from": "sessoes",
+          "to": "anelmem",
+          "atSec": 2.2,
+          "durationSec": 0.7
+        },
+        {
+          "id": "l2",
+          "from": "sessoes",
+          "to": "anelmem",
+          "atSec": 3.2,
+          "durationSec": 0.7
+        },
+        {
+          "id": "l3",
+          "from": "sessoes",
+          "to": "anelmem",
+          "atSec": 4.0,
+          "durationSec": 0.7
+        }
+      ]
+    },
+    {
+      "id": "fecho",
+      "type": "end_card",
+      "durationSec": 3.8,
+      "variant": "follow",
+      "text": "Seu anel está na memória de quem consulta?",
+      "sub": "Comenta como você faz"
+    }
+  ]
+}

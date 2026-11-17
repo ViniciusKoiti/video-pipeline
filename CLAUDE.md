@@ -21,6 +21,10 @@ Canal: **Cena e Conceito** (`@cenaeconceito`; nome e tag de afiliado em `config/
   Money Works, com tom crítico e documentado (nem herói, nem vilão). Modelo em
   `docs/pesquisa/modelo-perfil-de-poder.md`. Primeiro caso: Grupo Votorantim / família Ermírio de Moraes, em
   pt-BR. O piloto documentário continua no roteiro.
+- **Público e duração (decisão do dono, 2026-11-14):** jovens de 20 a 30 anos com desânimo profundo. O próximo longo
+  testa 8 a 9 min no lugar de ~12: as curvas de retenção dos dois melhores longos são iguais no mesmo relógio, e as
+  pessoas ficam uns 3 min (`docs/pesquisa/retencao-idade-media-2026-11-14.md`; seção "Retenção e público" das
+  skills de roteiro e de edição).
 - **Ensaio (épico #164, desde 2026-10):** vídeo longo (~12 min) em pt-BR no molde do nicho de ensaio sobre filosofia
   (ADR 031): título e miniatura falam do pensador ou da ideia; o anime entra só como caso dentro. Canais de referência
   Filosofatos e Inferno de Dante (`docs/pesquisa/roteiro-referencias-2026-10-20.md`); piloto `death-note-fins-meios`.
@@ -60,8 +64,10 @@ Primeiros agendamentos pelo Postiz em outubro de 2026, todos pela cadeia do §2.
 produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #164. Histórico e pendências:
 `docs/ROADMAP.md` ("Etapa atual e pendências", escrita em 2026-09-30).
 
-- **Foco (decisão do dono, 2026-10-22):** a cadência do Cena e Conceito, um ensaio longo por dia mais Reels, com
-  pautas aprovadas em lote e o molde do nicho e a partitura antes de cada roteiro (ADR 031, §4). O visual segue a
+- **Foco (decisão do dono, 2026-10-22; cadência revista em 2026-11-14):** a cadência do Cena e Conceito, três
+  ensaios longos por semana, **segunda, quarta e sexta** (no lugar do longo diário; base em
+  `docs/pesquisa/frequencia-de-publicacao-2026-11-14.md`), mais os Shorts cortados deles, com pautas aprovadas em lote
+  e o molde do nicho e a partitura antes de cada roteiro (ADR 031, §4). O visual segue a
   decisão de 2026-09-29: com calma, uma frente por vez, e toda mudança de template ou de motion-kit sai pelo
   vídeo-régua abaixo. Em pausa: #11 e M2–M7 do piloto documentário.
 - **Vídeo-régua:** o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
@@ -79,7 +85,10 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
   (`--voz=chatterbox_modal`, função em `deploy/modal_chatterbox.py`; quem envia a gravação é o dono). Licença em
   `data/benchmarks/termos-chatterbox.md`. A Charon do Gemini (ADR 012) segue registrada (`--voz=gemini`; 3 chamadas
   por minuto e **10 por dia** na camada gratuita, termos em `data/benchmarks/termos-gemini-tts.md`) e é a voz do
-  vídeo-régua, que não troca de voz.
+  vídeo-régua, que não troca de voz. A voz neural pronta do Azure Speech (`pt-BR-AntonioNeural`, ADR 058) também
+  está registrada (`--voz=azure_speech`; só na camada gratuita F0, 20 chamadas por minuto e 500 mil caracteres por
+  mês; `AZURE_SPEECH_KEY` e `AZURE_SPEECH_REGION` no `.env`; termos em `data/benchmarks/termos-azure-speech.md`):
+  proposta, ainda sem teste com a conta, e exige avisar que a voz é sintética.
 
 ## 2. Regras inegociáveis (ler antes de qualquer alteração)
 
@@ -209,6 +218,12 @@ ativos registrados, e o conjunto é revisto pelo dono no gate 4. Registrar uma h
 mais sua variável e medida; copiá-la para `metrics.json.hypothesis` quando houver metadados reais de publicação.
 Método, hipótese H01 e limites: `docs/pesquisa/crescimento-youtube-embalagem-hipoteses-2026-10-23.md`, §§4–5.
 
+**Shorts cortados de um vídeo longo (decisão do dono, 2026-11-09):** abrem com uma pergunta falada por um personagem do
+motion-kit (cena `cast`) e **fecham com uma última cena do mesmo personagem chamando para o canal** (voz clonada,
+entrega `invite`, ~4–5 s para passar no nivelamento da ADR 054; a frase varia a cada Short, por causa do §12). A
+descrição abre com "Dê uma olhada na história completa na descrição ou entrando no canal" e o link do vídeo longo. O
+primeiro caso (`idade-media-short-comida`) saiu sem o fecho e fica assim; o molde está na `pauta.md` dele.
+
 Fontes (`sources.json`, ≥ 2 independentes; `vp excerpts` numera os trechos) → fichas `facts.json` (**gate 1**) →
 roteiro e planos por cena, com `vp check` e agente verificador (**gate 2**) → busca visual em cascata e galeria
 (**gate 3**) → voz por bloco → legendas → montagem e prévia → checks automáticos (abre no ffprobe, duração = voz,
@@ -265,6 +280,8 @@ revela:
   narração, e o tempo sai da posição da âncora sobre a duração real do WAV (`app/pipeline/shots.py`). A fonte do
   rodapé sai das `claims` e do `sources.json`; a tela não calcula razão nem soma que não esteja numa ficha,
   salvo a conta dita inteira na narração com insumos e regra em fichas (ADR 020, 2026-10-14).
+  Plano com fato na tela sem `claims` é erro, salvo no roteiro de ficção histórica declarada (`"fiction": true`
+  no `scenes.json`, ADR 055), que também tira o alerta de frase afirmativa sem claims.
   Planos dos Reels (ADR 028, só no vertical): `hook` (primeiro plano do vídeo), `calculation` (a conta, cada
   termo na sua âncora; o `vp check` refaz a aritmética), `receipt` (itens na mesma moeda; o total é conferido) e
   `end_card` (último plano; `follow` no topo, `save` no meio, `next` com `series`; ainda não no fundo). O vídeo
@@ -302,8 +319,12 @@ revela:
   - no vídeo, quadro parado até 10 por vídeo e 8 s cada (`vp check`); clipe em movimento (`media: clip` + `origin` e `timecode`, provider `official` (material oficial público) ou `owner_capture` (arquivo do dono), só em B-roll, sem o áudio
     da obra, sem teto numérico, só YouTube) por decisão do dono em 2026-11-03 (emenda de 2026-11-03 da ADR 007; o
     `vp numeros` já lista os clipes; falta bloquear o `vp postiz` fora do YouTube e conferir o render mudo);
+  - exceção de 2026-11-14 (só `vazio-de-ter-tudo` e seus Shorts): clipe de anime como textura, sem a narração comentar
+    a obra, por decisão de risco do dono (trailers oficiais, sem áudio, só YouTube; emenda da ADR 007 com a mesma data);
   - a miniatura com quadro da obra é decisão do dono no gate 4;
   - um strike suspende a série.
+  - **Clipe animado do projeto** (emenda de 2026-11-09): `media: clip` com a licença `Original`, `provider: original`, `origin` (composição e arquivo de código) e
+    `usage_notes` (props, duração e conferência de pessoas, marcas e texto); sem `timecode`. Registro por `vp assets original` (§10), sem banco nem rede.
 - **`review.json`:** fonte única das decisões humanas; entradas só acrescentadas, com `input_hash` do conteúdo
   revisado (mudou o conteúdo, a aprovação cai) e `choice` quando o humano troca a recomendação.
 - **`episode.json`:** contrato do render; **mudar exige nova ADR**. É a única entrada do motor de montagem; se o
@@ -311,7 +332,9 @@ revela:
   visual por cena, ADR 001) ou 2 (planos contíguos, ADR 008); `language` `en` | `pt-BR`; `format` decide o motor;
   cenas com `start_ms`/`duration_ms` medidos da voz real e sem sobreposição.
   Apresentador opcional (`host`, só `explainer`; ADR 013): personagem Notionists (CC0) numa janela flutuante que
-  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Pele `dono` (ADR 017,
+  muda de canto a cada cena; o canto sai de `app/media/host.py` e a boca, do áudio da cena. Por cena (ADR 056,
+  proposta): `host.show: "marked"` + `host: true` só nas cenas em que ele entra (`host: false` o tira no modo
+  `all`, o padrão); o canto gira só entre as cenas com ele. Pele `dono` (ADR 017,
   parte A): `"host": {"skin": "dono"}`, com 12 imagens e um `origem.json` em `host/dono/` da pasta do episódio
   (dado pessoal, fora do Git); sem o registro de origem o render para. Com um `sprites.json` na pasta (ADR 029),
   a pele é de camadas: o manifesto sai de `npx motion-kit sprites init host/dono` (dentro de `video/`, apontando
@@ -329,7 +352,7 @@ revela:
 | Função | Padrão | Candidato a teste | Critério de troca |
 |---|---|---|---|
 | Fichas, roteiro, cenas, checagem | Agentes do Claude Code + skills + `vp check` (ADR 009; a spec previa Ollama) | Ollama local (#27, checagem já medida em `data/benchmarks/checagem-local.md`); Groq e Gemini gratuitos; outro agente que leia as skills | Fidelidade ao texto-fonte e fatos que prendem, sem custo por chamada. |
-| Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
+| Narração | Kokoro local nos rascunhos; voz clonada do dono (Chatterbox local) no vídeo final (ADR 016) | Gemini TTS Charon (ADR 012, já com adapter); Azure Speech `pt-BR-AntonioNeural` na camada F0 (ADR 058, adapter pronto, sem teste com a conta) | Voz claramente melhor em escuta cega, nomes corretos, condições de dados aceitas, limite diário compatível. |
 | Alinhamento de áudio | Frase: silêncios do WAV (ADR 021). Palavra: Groq Whisper gratuito com `--legenda-palavra` (ADR 023) | Whisper local (`transformers`, modelo no cache) | O áudio da cena sai da máquina só com pedido do dono na sessão; a tela mostra o texto do roteiro, não o reconhecido. |
 | Imagem para lacunas | Cloudflare Workers AI, FLUX.1 Schnell | Outro só após checar plano, direitos e cota | Qualidade útil dentro de custo zero. Acervo sempre antes de gerar. |
 | Roteador de modelos | Nenhum | OpenRouter com variante `:free` | Só se o candidato direto falhar. |
@@ -376,7 +399,11 @@ lacuna fica registrada.
   trocar uma frase isolada. Glossário de pronúncia por episódio em `voice/glossary.json`
   (`{"termos": [{"escrita": "FBI", "fala": "efe bê i"}]}`, `app/media/pronunciation.py`): troca a grafia só no
   texto enviado à voz, por palavra inteira, e vale para qualquer voz; tela, legenda e âncoras ficam com a do
-  roteiro, e o `scenes.json` não muda.
+  roteiro, e o `scenes.json` não muda. Um termo pode trazer `ipa` (fonemas da tabela do pt-BR): o Azure o lê por
+  `<phoneme>` e as outras vozes seguem com a `fala` (emenda de 2026-11-15 da ADR 058; só no vídeo longo).
+- **Cadência das pausas (ADR 060, proposta):** com `voice/cadencia.json` no episódio (`{}` = valores padrão), a
+  montagem usa cópias em `voice/paced/` com o silêncio de cada fim de frase pelo papel dela (continuação 0,4 s,
+  ponto 0,65, conclusão 0,9, pergunta 1,0, virada 1,15), sem chamar o TTS de novo. Sem o arquivo, nada muda.
 - Timing das cenas vem da duração real dos WAVs (ffprobe), nunca de estimativa do LLM.
 - **Nome do WAV e narrador (ADR 049, `app/pipeline/voice.py`):** `VoiceKey` + `VoiceLibrary` + `Narrator`. Os nomes de
   hoje não mudam, no longo (`<cena>-<provedor>-<hash>.wav`) nem no Short (com o idioma): **o nome dos WAVs já gerados fica
@@ -401,10 +428,11 @@ lacuna fica registrada.
 - **Pausas dentro da narração (ADR 015):** `<short pause>` na `narration` (palavra, espaço, marca, espaço, palavra);
   `<long pause>` e outras tags são erro. A tela, a legenda e as âncoras dos planos usam o texto sem a marca
   (`app/media/narration.py`); cada marca vale 10 caracteres no tempo dos planos e no `vp check`. O Kokoro e o Chatterbox fazem
-  silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas).
+  silêncio (`pause_ms`); no Gemini, cena com pausa vai numa chamada só (o corte de lote recusa pausas internas longas); no Azure Speech vira `<break>` do SSML (250 ms desde 2026-11-15).
 - **Entrega da fala por cena (ADR 022):** `delivery` em `hook` (abertura), `turn` (virada), `calm` (a conta), `invite`
-  (pergunta final); sem o campo, neutra. Só a voz clonada obedece (`[chatterbox.delivery]` no `providers.toml`);
-  Kokoro e Gemini ignoram.
+  (pergunta final); sem o campo, neutra. A voz clonada obedece por inteiro (`[chatterbox.delivery]` no
+  `providers.toml`); o Azure Speech, só na velocidade (`[azure_speech.delivery]`, fator sobre `rate`; emenda de
+  2026-11-16 da ADR 058); Kokoro e Gemini ignoram.
 - Legendas geradas após aprovação da voz, por frase, com o tempo tirado do WAV de cada cena (ADR 021,
   `app/media/captions.py`); números e nomes próprios sempre revisados. `captions.srt` é editável e só é refeito
   quando a fala muda (a anterior fica em `captions.old.srt`). No vertical a legenda não some com o `keyword`.
@@ -447,7 +475,7 @@ lacuna fica registrada.
 ## 10. CLI (`vp`, console script em `pyproject.toml`)
 
 `vp --help` lista os comandos, mas só respondem de fato `bench`, `excerpts`, `check`, `checagem`, `approve`,
-`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `render`, `traducao`, `medicao`, `short`, `audio`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]` faz voz, tempo dos planos, legendas, `episode.json` e render (RF7). `vp short voz <pasta> <narracao.json> [--voz NOME]` gera a fala de cada linha da narração de um Short e `vp short gate <mp4> <post.json> --episodio ID` monta o pacote do gate 4 dele (skill `shorts-tec`, ADR 048 e 050; RF7). `vp audio <mp4> (--episodio ID | --content content.voz.json) [--sfx sfx.json]` confere o áudio de um vídeo pronto com o earshot (só com pedido do dono e a sonda de CPU; ADR 035; RF7). `vp short tempos|sfx|juntar|boca` fecham o resto da montagem (`tempos` estica as cenas até a fala caber, `sfx` confere o plano de efeitos, `juntar` põe voz e efeitos sobre o MP4 do kit, `boca` gera os dados de uma montagem em TSX). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
+`reject`, `reopen`, `status`, `numeros`, `sources`, `assets`, `briefs`, `music`, `export`, `metricas`, `voice`, `render`, `traducao`, `medicao`, `short`, `audio`, `postiz` e `usage`. `vp sources add <id> <url> --title ... --kind ...` baixa e registra uma fonte (`--file` para PDF salvo à mão) e `vp sources declared <id> <arquivo>` registra material do dono (ADR 043, RF7). `vp assets search <id> <pedidos.json>` busca candidatos nos bancos de imagem (não baixa) e `vp assets take <id> <cena> <asset-id>...` baixa os escolhidos para `assets/` em `needs_review` (ADR 044, RF7). `vp assets original <id> <cena> <arquivo.mp4> --asset-id ID --composicao ... --notas ...` registra um clipe animado do projeto como ativo `Original` (ADR 007, emenda de 2026-11-09; sem banco nem rede). `vp briefs radar <id> <nicho>` e `vp briefs formato <id> <perfil>` copiam o resumo do radar e o perfil de formato para o episódio, sem sobrescrever (`--atualizar` guarda o anterior; ADR 047, RF7). `vp music adicionar|usar|listar` cuida do catálogo de música (ADR 030 e 047, RF7). `vp export livros <id>` grava o bloco de livros com link de afiliado no `description.txt` (o resto do `export`, vídeo, legenda e créditos, ainda não existe; RF7). `vp voice <id> [--voz-final | --voz NOME]` gera a narração por cena (RF7). `vp render <id> [--preview] [--no-render] [--voz-final | --voz NOME] [--legenda-palavra]` faz voz, tempo dos planos, legendas, `episode.json` e render (RF7). `vp short voz <pasta> <narracao.json> [--voz NOME]` gera a fala de cada linha da narração de um Short e `vp short gate <mp4> <post.json> --episodio ID` monta o pacote do gate 4 dele (skill `shorts-tec`, ADR 048 e 050; RF7). `vp audio <mp4> (--episodio ID | --content content.voz.json) [--sfx sfx.json]` confere o áudio de um vídeo pronto com o earshot (só com pedido do dono e a sonda de CPU; ADR 035; RF7). `vp short tempos|sfx|juntar|boca` fecham o resto da montagem (`tempos` estica as cenas até a fala caber, `sfx` confere o plano de efeitos, `juntar` põe voz e efeitos sobre o MP4 do kit, `boca` gera os dados de uma montagem em TSX). `vp metricas iniciar|ler|pendentes|tabela` registra à mão as leituras de 7 e 28 dias do §12, em `metrics.json` por publicação (`pendentes` lista as janelas vencidas; RF7). `vp traducao <id>` confere uma pasta de tradução
 contra o original (ADR 034); `vp medicao <id>` confere os números de um Short contra o arquivo de resultado da
 medição do dono (`medicao.json`, ADR 034), e o gate 4 só abre com ela limpa. `vp usage` registra consumo e reservas em SQLite local
 (`docs/usage.md`); a importação é offline e não inicia agentes. `vp numeros <id> --escrever` gera a parte numérica
@@ -519,7 +547,7 @@ Registrar cada item como ADR quando decidido. Até lá, o código segue a spec.
 
 - Antes de escrever código de uma etapa, ler o schema correspondente em `app/pipeline/schemas.py` e o manifesto
   de exemplo em `tests/fixtures/episodes/pilot-example/`.
-- Chamar provedores externos (Pexels, Pixabay, Unsplash, Coverr, Cloudflare, Groq, Gemini) só quando o usuário
+- Chamar provedores externos (Pexels, Pixabay, Unsplash, Coverr, Cloudflare, Groq, Gemini, Azure Speech) só quando o usuário
   pedir explicitamente naquela sessão. Ollama e Kokoro locais podem rodar.
 - Arquivos em `data/episodes/*/` com `review_status: approved` ficam como estão; se um ajuste exigir mexer neles,
   parar e perguntar.
@@ -572,6 +600,7 @@ ferramentas. Agentes e skills novos aparecem numa sessão nova do Claude Code; a
 | `pesquisador` | `fichamento` | `facts.json` | Read, Grep, Glob, Write, Bash (`vp excerpts`, `vp check`) |
 | `roteirista` | `roteiro-explicativo`, `humanizer-narracao` | `outline.md`, `scenes.json` | Read, Grep, Glob, Write, Edit, Bash (`vp check`) |
 | `roteirista-ficcao-historica` | `roteiro-ficcao-historica`, `humanizer-narracao` | `outline.md`, `scenes.json` | as mesmas do `roteirista` (ADR 055; formato "sua vida em cada nível") |
+| `editor-de-roteiro` | `edicao-de-roteiro` | `edicao.md` (notas por trecho com proposta; não toca no roteiro) | Read, Grep, Glob, Write; par do roteirista, que responde a cada nota e aplica; entra na montagem (sobre o outline) e na edição (sobre as cenas, com uma volta curta); emenda da ADR 009 de 2026-11-11 |
 | `verificador` | `checagem` | nada (relatório) | Read, Grep, Glob; só leitura; contexto limpo na 1ª rodada, as seguintes retomam o mesmo agente (teto de 2 rodadas; emenda da ADR 009 de 2026-10-24) |
 | `duvida-cega` | `duvida-cega` | nada (parecer em JSON, gravado por `vp postiz duvida`) | Read, Grep, Glob; recebe só caminhos, sem a conversa |
 | `diretor-musical` | `trilha` | `music.json` (ADR 030) | Read, Grep, Glob, Write, Bash (`vp check`, `vp music`) |
@@ -586,7 +615,9 @@ ao escopo de dados acima, um piloto visual expressamente solicitado pode ter có
 O diretor não substitui a conferência de direitos nem aprova gates. O método fica em
 `.agents/skills/vp-direcao-animacao/SKILL.md`, também acessível em `.claude/skills/`.
 
-Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista → `vp check` → verificador
+Ordem: pesquisador → `vp check` → gate 1 (o dono escolhe os fatos) → roteirista (só o `outline.md`) → editor de roteiro
+(montagem, em `edicao.md`) → roteirista (`scenes.json`) → `vp check` → editor de roteiro (edição) → roteirista aplica →
+`vp check` → verificador
 (parecer gravado por `vp checagem`, exigido pelo gate 2) →
 voz + render → gate 2 → diretor musical (`music.json`; **todo ensaio longo leva trilha**, e sem ela só por decisão do dono no `outline.md`;
 nada no render nem no gate 4 cobra, então conferir `music` no `episode.json` antes do gate 4; roteiro que muda

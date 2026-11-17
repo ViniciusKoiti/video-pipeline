@@ -250,3 +250,103 @@ Ao ser implementada, a emenda pede no mesmo commit: o campo `kind` e os campos d
 `app/pipeline/schemas.py` (modelos em arquivos próprios, ADR 037; constantes em classe, ADR 038), a contagem no
 `vp check` (`citation_violations`), o bloqueio no `vp postiz`, testes em `tests/test_citation.py` e a atualização do
 §6 do CLAUDE.md.
+
+## Emenda (2026-11-09): clipe animado do projeto como ativo `Original`
+
+**Contexto.** A ADR 001 (item 5) previu o "gráfico como ativo": uma cena gráfica animada vira um clipe gerado pelo projeto, registrado como ativo
+`Original` com `sha256`, componente e props, e revisado no gate 3 como uma foto. O modelo `Asset` não permitia isso: a emenda de 2026-11-03 limitou
+`media: clip` à licença `Citacao`, e não havia comando que registrasse um ativo sem banco de imagem. O episódio `mec-fechadura-pt` (37 planos `broll`
+em 19 composições Remotion, nenhum com foto ou banco) expôs a lacuna. Escolha do dono em 2026-11-09: emendar a ADR e criar o comando, em vez de registrar
+o MP4 à mão como foto.
+
+**Decisões.**
+1. `media: clip` vale também para a licença `Original`. A emenda de 2026-11-03 continua valendo para o clipe citado (`Citacao`), sem mudança.
+2. Para um clipe `Original` chegar a `approved`: `provider: original`; `origin` com a **composição e o arquivo de código** que o geram (por exemplo
+   `video/src/previews/<id>/index.tsx#<Composição> (variant=...)`); `usage_notes` com props, duração e a conferência de pessoas, marcas e texto de
+   terceiros no clipe; `sha256` do `.mp4`. `timecode` não se aplica (é só do clipe citado) e é recusado.
+3. `vp assets original <id> <cena> <arquivo.mp4> --asset-id ID --composicao ... --notas ...` copia o `.mp4` para `assets/<asset-id>.mp4` e grava
+   `assets/<asset-id>.json` em `needs_review`, pelo mesmo caminho do `take` (`AssetIntake`): o JSON vai por último, repetir a mesma mídia é idempotente,
+   a cena entra em `used_in_scenes` sem apagar as anteriores, uma nova renderização de ativo **não aprovado** substitui a mídia, e ativo **aprovado nunca é
+   alterado** (mídia diferente de um aprovado é erro com a instrução de `vp reopen --step assets --asset <id>`). Só aceita `.mp4` existente e não vazio.
+   Não chama banco, rede nem provedor pago.
+4. A aprovação continua humana (`vp approve <id> --step assets --asset <asset-id>`, gate 3). Nada nesta emenda aprova direitos: a conferência de que o
+   clipe não tem pessoa, marca nem texto de terceiros é de quem registra e de quem aprova.
+
+**Fora desta emenda.** Cortar cada clipe nas âncoras reais da narração (o `vp render` ainda não gera clipes por plano a partir de composições) e o
+render dos clipes em vídeo, que só acontece com autorização do dono.
+
+**Implementação (mesmo commit).** `Asset._original_clip_problems` e as constantes `ORIGINAL_LICENSE` e `CLIP_LICENSES` (`app/pipeline/models/asset.py`,
+`app/pipeline/constants/schemas_constants.py`); `AssetIntake.register_local` (`app/pipeline/assets.py`); subcomando `original` (`app/commands/assets.py`);
+testes em `tests/test_assets_original.py`; §6 e §10 do CLAUDE.md.
+
+## Emenda proposta (2026-11-14): imagem gerada pelo dono no Gemini como ativo `Generated`
+
+**Status:** proposta, escrita a pedido do dono em 2026-11-14. Vale quando o dono aprovar. Ela registra o que já se faz na
+prática desde a decisão do dono de 2026-10-27 (a pele dele, gerada no ChatGPT) e das imagens de `idade-media-ser-rico`
+(2026-11-06). Decisão de risco do dono, não parecer jurídico.
+
+**Contexto.** O item 4 desta ADR só aceita `Generated` do Workers AI (Cloudflare), e o código liga a `generation`
+(prompt, modelo, semente e passos) a esse provedor (`Asset._generation_consistency`). O formato "como era ser X"
+(ADR 055) passou a usar ilustrações geradas pelo dono no **app Gemini da conta pessoal dele**, registradas como `Generated`
+com `provider: original` e o gerador "a confirmar" no texto. O dono confirmou o gerador em 2026-11-14 ("foi gerado via
+Gemini"), e os termos do Google foram lidos no mesmo dia (`data/benchmarks/termos-gemini-imagem.md`). O vídeo com
+essas imagens teve o melhor CTR do canal (4,2%).
+
+**Decisões.**
+1. **Imagem gerada pelo dono** num gerador dele entra como `license_id: Generated`, `provider: original`, sem o campo
+   `generation`. Esse campo continua exclusivo do Workers AI, porque semente e passos só existem lá.
+2. **Só entra gerador com termos registrados** em `data/benchmarks/`: páginas oficiais, data da consulta, quem é dono do
+   resultado, uso comercial e aviso de IA. Hoje:
+   - **Gemini** (app, conta pessoal): registrado em `termos-gemini-imagem.md`. O Google não reivindica a imagem
+     gerada, nenhuma cláusula proíbe uso comercial, e é proibido apresentar a imagem como feita só por humano.
+   - **ChatGPT**: `termos-chatgpt-imagem.md` segue pendente (as páginas recusam leitura automática). Vale a decisão do
+     dono de 2026-10-27 para a pele dele. Imagem nova de cena no ChatGPT espera esse registro.
+3. **Para chegar a `approved`** (gate 3):
+   - `sha256` do arquivo;
+   - `usage_notes` com o **gerador** ("Gemini, app, conta pessoal do dono"), a **data**, o **prompt** usado (ou o id do
+     prompt no `prompts-cenas.md` do episódio), o estilo e a conferência de pessoas, marcas e texto;
+   - `author` e `attribution_text` como nos outros ativos próprios.
+
+   O mesmo vale para a linha do `registro.csv` do episódio.
+4. **Limites do conteúdo**, além do §2.4 do CLAUDE.md (ilustração, nunca registro de época):
+   - nada de rosto de pessoa real, franquia de terceiros nem estilo copiado de outro canal;
+   - sem texto dentro da imagem;
+   - valem os itens gerais da política de uso proibido do Google (direitos de terceiros, filtros, ódio, assédio,
+     violência, conteúdo sexual).
+5. **Aviso.** Os créditos e a descrição dizem "ilustrações geradas por IA". O rótulo de conteúdo alterado ou sintético
+   do YouTube continua pela regra do §2.4: obrigatório para imagem **realista** de fato histórico; para desenho, é
+   decisão do dono no gate 4.
+6. **Ponto em aberto, decisão de risco do dono:** os termos do Google tratam como "consumidor" quem usa os serviços de
+   forma pessoal e não comercial. As páginas não dizem se um canal monetizado muda a conta para "usuário empresarial",
+   que tem outras regras de responsabilidade. Isso não tira o direito de usar a imagem.
+7. **`idade-media-ser-rico`:** os ativos aprovados ficam como estão (§2.6), com o gerador "a confirmar" no texto. Esta
+   emenda e `termos-gemini-imagem.md` são o registro do gerador. Corrigir os `usage_notes` exige reabrir o gate 3
+   (`vp reopen --step assets --asset <id>`), se o dono quiser.
+
+**Implementação.** Nenhuma mudança de código: o modelo já aceita `Generated` com `provider: original` e sem `generation`.
+Pendentes:
+- o registro em lote hoje é um script preso ao episódio anterior (`scripts/provisorio/registrar_imagens_ia.py`, com o
+  episódio e o gerador fixos no código). Falta torná-lo parametrizado (episódio, gerador) ou criar um subcomando do
+  `vp assets`;
+- um aviso do `vp check` quando um `Generated` com `provider: original` não cita o gerador no `usage_notes`;
+- ao aprovar: item 4 desta ADR e §6 e §8 do CLAUDE.md.
+
+## Emenda (2026-11-14): clipe de anime como textura, sem comentário, num episódio
+
+**Status:** aceita pelo dono em 2026-11-14 para o episódio `vazio-de-ter-tudo`, depois de saber que a emenda de
+2026-11-03 só aceita clipe enquanto a narração comenta a obra e deixa fora "a obra como pano de fundo sem comentário".
+Pergunta feita: "manter como fundo" pede emendar esta ADR, como decisão de risco do dono, com mais chance de
+reivindicação do Content ID por obra; resposta: "Manter como fundo". Decisão de risco do dono, não parecer jurídico:
+sem comentário, a citação para crítica deixa de sustentar o uso.
+
+1. **Escopo:** só o episódio `vazio-de-ter-tudo` e os Shorts cortados dele. Outro episódio precisa de nova decisão.
+2. **O que muda:** nesse episódio, clipes de anime podem entrar como B-roll de textura, sem a narração comentar a
+   obra. O resto da emenda de 2026-11-03 continua: sem o áudio da obra; só no YouTube (Short com anime não vai para o
+   Instagram); `work`, `timecode`, `origin` e `sha256` por ativo; `attribution_text` na descrição e no `credits.txt`;
+   a decisão de risco registrada no `review.json` de cada ativo no gate 3.
+3. **Origem:** só trailers e vídeos de divulgação publicados em canais oficiais ou de distribuidora licenciada
+   (`data/episodes/vazio-de-ter-tudo/candidatos/anime/LEIAME.md`). Toei e ShoPro continuam fora.
+4. **Sem truque de detecção:** recorte, zoom e cor valem como estilo; espelhar ou mudar velocidade ou altura para
+   escapar da detecção continua proibido (emenda de 2026-10-17).
+5. **Teste:** a primeira publicação é o teste. Reivindicação ou aviso vão para o `review.json` do episódio, e nenhum
+   outro episódio usa textura de anime antes de o dono rever esta emenda.

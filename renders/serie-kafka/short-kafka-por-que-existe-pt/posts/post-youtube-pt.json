@@ -1,0 +1,30 @@
+{
+ "type": "schedule",
+ "date": "2026-11-15T16:00:00-03:00",
+ "shortLink": false,
+ "tags": [],
+ "posts": [
+  {
+   "integration": {
+    "id": "cmvx0omyy0005l26yggavdqpu"
+   },
+   "value": [
+    {
+     "content": "Um app de delivery que chama cada serviço, um por vez, trava quando um deles cai. Com Kafka, o serviço de pedidos escreve o evento uma vez num tópico e segue; cada serviço lê no próprio ritmo, e quem caiu lê o que perdeu quando volta. O custo: um cluster a mais para operar, ou um serviço gerenciado.\n\nVocê ligaria seus serviços direto ou por um tópico? Responda nos comentários.\n\nFonte: documentação do Apache Kafka 4.4 (Introduction e Design). Parte 1 de 4 da série Kafka.\n\nVoz clonada com IA. App, serviços e pedidos fictícios.\n\n#Shorts #Kafka #Java #SystemDesign #Backend",
+     "image": [
+      {
+       "id": "517ef4cb-0737-4605-bad3-3765d8c65e36",
+       "path": "https://postizis.duckdns.org/uploads/2026/11/15/f656cc9433f6921cb7bddb0a16dcbf26.mp4"
+      }
+     ]
+    }
+   ],
+   "settings": {
+    "__type": "youtube",
+    "title": "PEDIDO TRAVADO: POR QUE O KAFKA EXISTE",
+    "type": "private",
+    "selfDeclaredMadeForKids": "no"
+   }
+  }
+ ]
+}

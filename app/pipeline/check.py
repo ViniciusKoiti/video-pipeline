@@ -24,6 +24,7 @@ from app.pipeline.metrics import summary_line
 from app.pipeline.models.check_report import CheckReport as CheckReport
 from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.music import plan_problems
+from app.pipeline.narration_gaps import gap_warnings
 from app.pipeline.numbers import (
     FormatBrief,
     current_block,
@@ -642,8 +643,7 @@ def check_episode(
         report.warnings += objective_warnings(scenes, today)
         if (summary := funnel_summary(scenes)) is not None:
             report.checked.append(summary)
-        report.warnings += funnel_warnings(scenes)
-        report.warnings += claimless_statements(scenes)
+        report.warnings += funnel_warnings(scenes) + claimless_statements(scenes) + gap_warnings(scenes)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
         _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)

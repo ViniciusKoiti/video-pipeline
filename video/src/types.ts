@@ -105,6 +105,7 @@ export type ShotProps = {
   // tamanho do clipe, quando o plano é mais longo que ele e o vídeo recomeça
   startFrom?: number;
   loopFrames?: number;
+  grade?: "mono"; // só broll: grade de cor do ativo, de `tratamento.json` (ADR 057)
 };
 export type Cue = {from: number; to: number; text: string};
 // Palavra com tempo (quadros relativos à cena), da legenda palavra a palavra (ADR 023).
