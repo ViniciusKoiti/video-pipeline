@@ -27,6 +27,10 @@ os pontos que mais pesam aqui:
 - **Os primeiros 2 minutos recebem o maior cuidado** (cerca de 60% saem até ali, igual no ensaio e neste formato).
   Declare no `outline.md` a única mudança testável nos 2 min iniciais em relação ao vídeo anterior do formato. Para
   `idade-media-ser-rico`, a abertura era uma cena de 16 s e a pergunta do título vinha aos 19 s.
+- **Relógio do vídeo longo** (ADR 061, regra do dono de 2026-11-16), o mesmo de `roteiro-explicativo`: a promessa
+  fecha até 0:30; entre 2:00 e 3:00 entra um gancho de retomada ou uma virada; depois de uma pausa de aviso, um
+  gancho antes do próximo bloco. Marque essas cenas no campo `beat` (`promise`, `rehook`, `turn`, `pause`); o
+  `vp check` mostra o que falhar como `atenção` para o gate 2.
 
 ## O que continua valendo (cuidado de qualidade, não de fonte)
 
@@ -47,7 +51,10 @@ os pontos que mais pesam aqui:
 2. **Corpo:** responde, em ordem escolhida por você (diferente da do modelo), a perguntas concretas do degrau: o que se ganhava ou possuía, quem trabalhava para você ou para quem você trabalhava,
    a casa, a comida, a roupa, o que se temia, o que não se podia fazer. Uma ideia por bloco, uma virada a cada ~1,5 a 2 min, e a cena concreta antes da explicação.
 3. **Virada de fim:** o que a vida naquele degrau custava (o lado de baixo), dita com cuidado e sem carregar na tinta.
-4. **Fecho:** a pergunta do funil. A recapitulação não repete a abertura nem o fecho do modelo.
+4. **Fecho:** na última cena, a pergunta dos comentários (`funnel.engagement`) e, depois dela, a chamada do estágio
+   (`funnel.cta`; no topo, seguir o canal ou ver o próximo vídeo), com as mesmas palavras da fala (emenda de
+   2026-11-16 da ADR 026; sem a chamada, o `vp check` dá erro). A recapitulação não repete a abertura nem o fecho do
+   modelo.
 
 ## Planos e tela
 

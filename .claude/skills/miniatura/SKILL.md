@@ -15,7 +15,7 @@ pelas fichas. Se faltarem esses itens ou a promessa tiver mudado, registre a lac
 de compor; não registre uma escolha do dono que ele ainda não fez. Reutilize a análise existente do canal quando
 ela ainda servir ao recorte, declarando sua data. A coerência do conjunto é revista no gate 4.
 
-Regras de base: CLAUDE.md §2.3 e §6 (licença registrada; quadro da obra só oficial, `Citacao`), a emenda de
+Regras de base: CLAUDE.md §2.3 e §5 (licença registrada; quadro da obra só oficial, `Citacao`), a emenda de
 citação da ADR 007 (a miniatura com quadro da obra é decisão do dono no gate 4) e a skill `plano-de-imagens` (registro
 de ativos, conferência em resolução cheia).
 
@@ -51,7 +51,7 @@ de ativos, conferência em resolução cheia).
 4. **Escolher o fundo** pelo tema, como o canal de referência faz.
    - **Vermelho chapado com vinheta:** política, poder, temas pesados (o Filosofatos usa em voto, fascismo e
      Maquiavel).
-   - **Foto real do tema** (a urna, no `kira-voto-brasil`): a cascata de acervo da §8. Prefira **CC-BY de órgão
+   - **Foto real do tema** (a urna, no `kira-voto-brasil`): a cascata de acervo da §6. Prefira **CC-BY de órgão
      público**, como Agência Brasil (CC-BY 3.0 BR) e Agência Senado (CC-BY 2.0). Public Domain Mark não está na lista
      fechada: pare e pergunte.
    - **Conferência:** confira a foto em resolução cheia e registre tudo o que aparece (pessoas, brasão, texto da

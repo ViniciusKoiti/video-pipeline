@@ -27,7 +27,7 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
    - humanizer **antes** da primeira `vp short voz`, nunca depois; frases ligadas por "e/ou/mas", sem série de frases curtas (cada ponto vira pausa na voz clonada);
    - `voice/glossary.json` para toda sigla dita (API → "á pi", JSON → "jêison"); sigla nova sem entrada no glossário não vai à voz;
    - conferir a lição do passo 3 presente na fala de cada cena de explicação;
-   - estimar a duração: a voz clonada fala ~2,2 palavras/s (a referência `turn` é mais lenta); fala estimada maior que a cena planejada = encurtar o texto agora, não depois da escuta.
+   - estimar a duração pelo ritmo da voz clonada do passo 2 da skill `shorts-tec`; fala estimada maior que a cena planejada = encurtar o texto agora, não depois da escuta.
 5. `content.pt.json` e `content.en.json` seguindo o plano (`safeArea: shorts`, `footer` com o ambiente, `showRatio: false`); linguagem explícita na abertura. Usar animação de fluxo para o mecanismo, com passos e mudanças de estado, não só cartões de texto. `validate` e `inspect` do kit com cwd na pasta do JSON; `review` e abrir os quadros de antes/durante/depois das transições, conferindo valores e margens. Números internos de Lottie exigem rastreio e conferência próprios.
 6. `medicao.json` com todos os números; `vp medicao <id>-pt` e `-en` limpos; `vp traducao <id>-en` limpo. Corrija a narração ou o `medicao.json`, nunca o resultado.
 7. Definir `delivery` de cada cena pela intenção: `hook`, `turn`, `neutral`, `calm` ou `invite`.

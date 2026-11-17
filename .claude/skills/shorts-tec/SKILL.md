@@ -48,11 +48,12 @@ O primeiro caso é o teaser do motion-kit
 
 ## Método
 
-1. **A promessa em uma frase e a capa.** A abertura mostra a situação em 3 ou 4 quadros de formas geométricas e
-   ícones nos primeiros 3 a 5 segundos, com a pergunta ou promessa escrita no último quadro (decisão do dono,
-   2026-11-07; ver "Abertura em quadros" em `renders/serie-conceitos/direcao-editorial.md`). O primeiro quadro é a
-   capa do Short. Sem personagem desenhado à mão. Use `hook` apenas no quadro de pergunta, com `cover: true`.
-   A linguagem explícita nos conceitos de programação continua valendo.
+1. **A promessa em uma frase e a capa.** A capa e os primeiros segundos são uma imagem bem clara do assunto: a
+   cena concreta (na série Kafka, o celular com as notificações chegando), animada no tempo da fala, que descreve
+   o que se vê (decisão do dono de 2026-11-15, que substitui a abertura em quadros com a pergunta escrita, de
+   2026-11-07). Sem cartão de pergunta: a pergunta, se houver, fica no título. A primeira cena é essa animação
+   (Lottie original, como o de `renders/serie-kafka/lottie_celular.py`) e o JSON leva `cover: true`, que faz dela
+   a capa. Sem personagem desenhado à mão. A linguagem explícita nos conceitos de programação continua valendo.
    Quando houver números, cada um tem origem registrada no doc do short; não criar uma medição para a capa.
 2. **Plano de animação e narração por cena.** Antes de gerar a voz, definir no `plano-animacao.md` o fluxo
    entre componentes, o elemento ativo em cada etapa e a mudança de estado que explica o mecanismo.
@@ -85,8 +86,10 @@ O primeiro caso é o teaser do motion-kit
    do longo). Enquanto não houver mistura de música no Short, o plano é entregue e a mistura fica registrada como
    pendência (`música planejada, mistura pendente`); não declarar um vídeo "com música" sem ela, e não inventar
    um `ffmpeg` avulso que o dono não pediu.
-   A voz clonada fala a ~2,5 palavras por segundo: uma linha de 8 palavras ocupa
-   3 s, e a cena precisa ter esse tempo depois de pronta para ler. Passe a `humanizer-narracao` antes de gravar.
+   A voz clonada fala de ~2,6 a 3,3 palavras por segundo (medido no `speech` dos `narracao.voz.json` em pt de
+   novembro: Kafka 2,6, rate limiter 3,3), e a entrega `hook` pode cair para ~2,2. Para estimar, conte 2,6: uma
+   linha de 8 palavras ocupa uns 3 s, e a cena precisa ter esse tempo depois de pronta para ler. Passe a
+   `humanizer-narracao` antes de gravar.
    Pronto quando as afirmações se apoiam no código, nas fontes registradas ou na medição. Com medição própria (ADR 034), escreva o
    `medicao.json` (cada número dito ou mostrado, o trecho literal do `resultado.txt`, os medidos e a tolerância
    do arredondamento; nome e contagem levam só a `nota`) e rode `vp medicao <id>` até sair limpo: o gate 4 exige.

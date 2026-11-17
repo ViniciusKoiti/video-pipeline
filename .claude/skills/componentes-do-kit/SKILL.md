@@ -41,7 +41,7 @@ A lista é curada à mão no kit; um objetivo fora dela vira erro. Trate a recom
    `~/projetos/motion-kit/packages/motion-kit/package.json`. Pronto quando as versões são iguais, ou quando a
    diferença está dita no PR e você conferiu nos tipos de `video/node_modules/@viniciusk/motion-kit/dist/` que
    a prop usada existe na versão instalada.
-4. **Escrever.** Altere o template; render e comparação seguem a regra do vídeo-régua (CLAUDE.md §1): um PR de
+4. **Escrever.** Altere o template; render e comparação seguem a regra do vídeo-régua (CLAUDE.md §8): um PR de
    visual gera uma versão nova e muda só os planos que pretendia.
 
 ## Quando o MCP não responde

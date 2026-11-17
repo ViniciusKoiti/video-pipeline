@@ -51,7 +51,7 @@ O resumo é observação de amostra pequena (`analysed` diz quantos Reels), nunc
 ## Regras
 
 - Nenhum fato sobre a pessoa, a empresa ou o assunto: só perguntas. Um fato escrito na pauta vira roteiro, e o
-  `vp check` não pega (§14).
+  `vp check` não pega (CLAUDE.md §8).
 - Não copie frase, título nem imagem dos Reels citados em `evidence` e `top.watch`; cite só o id, para o dono
   assistir.
 - Fale em "associado a", nunca em "causa".

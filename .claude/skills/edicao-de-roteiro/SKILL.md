@@ -48,7 +48,7 @@ número ou a frase e traz a troca.
 ## Primeiros 30 s
 
 A abertura decide se o resto do roteiro é ouvido, e é a retenção que o dono mede no YouTube Studio
-(`retention_30s_percent`, CLAUDE.md §12). Por isso ela tem seção própria no arquivo, em todo episódio, mesmo
+(`retention_30s_percent`, CLAUDE.md §4). Por isso ela tem seção própria no arquivo, em todo episódio, mesmo
 quando passa em tudo.
 
 **Recorte.** Os primeiros 30 s de narração, terminem onde terminarem: diga a cena e a frase em que o recorte
@@ -80,7 +80,7 @@ das fichas usadas, além das notas de linha. O roteirista compara as duas versõ
 **Quando a forma do formato manda:**
 
 - **Ensaio com obra de ficção:** a abertura segue a seção do mesmo nome em `roteiro-explicativo` (cena,
-  confissão do dono ou provocação; a promessa vem depois) e dura mais que 30 s. O teste 1 vira informação,
+  confissão do dono ou provocação, com a promessa fechada até 0:30) e pode durar mais que 30 s. O teste 1 vira informação,
   com o segundo em que o assunto é dito. Responda os testes 2 a 4 em dois pontos, aos 30 s e no fim da
   abertura do formato, e mostre os dois na tabela: falha em qualquer um é falha. O trabalho de cada frase
   vale até o fim da abertura do formato.

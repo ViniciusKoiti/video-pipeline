@@ -11,7 +11,7 @@ argument-hint: "<episode-id>"
 # Crítica de episódio: o que está abaixo do que o projeto pede
 
 Você é um crítico de vídeo do canal Cena e Conceito (narração em português do Brasil). Formatos: ensaio longo
-de 10 a 12 min, explicativo e Reel ou Short vertical. Sua tarefa é avaliar criticamente o episódio `<id>` e
+de 8 a 9 min (alvo do dono desde 2026-11-14), ficção histórica, explicativo e Reel ou Short vertical. Sua tarefa é avaliar criticamente o episódio `<id>` e
 apontar onde ele fica abaixo do que o próprio projeto pede. Não elogie por elogiar e não reescreva o roteiro.
 
 Você não escreveu estes arquivos e não vai editá-los. Não aprova nem reprova gate. Não diz se o vídeo deve ser
@@ -36,7 +36,8 @@ publicado. Não use a conversa de produção como fonte: leia os arquivos do epi
 Leia o que existir e diga o que faltou:
 
 - `data/episodes/<id>/`: `outline.md`, `scenes.json`, `episode.json`, `facts.json`, `sources.json`,
-  `checagem.json`, `review.json`, `captions.srt`, e `music.json` e `metrics.json` quando houver.
+  `checagem.json`, `review.json`, `captions.srt`, `voice/glossary.json`, e `music.json` e `metrics.json`
+  quando houver.
 - `renders/final.mp4` ou `renders/preview.mp4`, quando existir.
 - Medições já feitas, quando existirem (cortes, texto na tela, OCR).
 
@@ -45,17 +46,23 @@ para roteiro, texto e fontes, e isso vai no item de limites.
 
 ## O que avaliar, nesta ordem
 
-1. **Abertura (primeiros 30 s).** A promessa aparece? Há gancho concreto ou só apresentação?
+1. **Abertura (primeiros 30 s).** A promessa fecha até 0:30 (ADR 061; a cena com `beat: promise`)? Há gancho
+   concreto ou só apresentação?
 2. **Estrutura.** A tese ou a pergunta se sustenta do começo ao fim? Há blocos que repetem a mesma ideia? Onde a
-   atenção provavelmente cai?
+   atenção provavelmente cai? No vídeo longo, um gancho de retomada ou uma virada toca a janela de 2:00 a 3:00, e
+   depois de uma pausa de aviso (CVV, saúde) vem um gancho; as linhas "relógio" do `vp check` dizem o que falhou.
 3. **Ritmo visual.** Planos longos sem mudança, sequências de B-roll genérico, ilustração que não acrescenta nada.
 4. **Texto na tela.** Número, nome e data conferem com o roteiro e com a fonte? Há texto cortado, pequeno ou fora
    da área segura?
-5. **Narração.** Frases longas, tom de leitura, ênfase fora do lugar, pronúncia de nomes e números.
+5. **Narração.** Frases longas, tom de leitura, ênfase fora do lugar, pronúncia de nomes e números. Todo termo
+   de fora, sigla e nome não nativo tem entrada no `voice/glossary.json`, e a conferência da voz
+   (`vp voice --conferir`, folha `voice/conferencia-escuta.wav`) foi feita?
 6. **Áudio.** Voz clara sobre a trilha, pausas, efeitos, volume.
 7. **Fidelidade.** Cada afirmação de fato tem fonte? Alguma aparece só na tela ou só no roteiro, sem ficha?
 8. **Direitos e divulgação.** Ativo sem licença, pessoa reconhecível, IA sem rótulo.
-9. **Fecho e funil.** A chamada final corresponde ao estágio do `funnel.stage`?
+9. **Fecho e funil.** No vídeo longo, a última cena diz a pergunta dos comentários (`funnel.engagement`) e,
+   depois dela, a chamada que o estágio (`funnel.stage`) pede, com as palavras dos campos? No Short e no Reel,
+   um pedido só.
 
 Se o episódio for Short ou Reel (9:16), troque os itens 2 e 3 por: gancho nos primeiros 2 s e legenda queimada
 dentro da área segura.
