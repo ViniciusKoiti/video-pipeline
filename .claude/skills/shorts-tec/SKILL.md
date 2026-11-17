@@ -106,9 +106,15 @@ O primeiro caso é o teaser do motion-kit
    Nos fluxos, abrir também antes/durante/depois das transições: conferir valor transportado, elemento ativo,
    espera, conclusão e impacto no desenho da aplicação. Registrar o resultado do controle obrigatório.
    Conferir números e textos internos de Lottie visualmente: eles não entram na leitura do `vp medicao`.
-5. **A voz.** `vp short voz <pasta> narracao.<idioma>.json` (`--voz NOME` troca a voz) gera as falas com a voz do vídeo final (a
+5. **A voz.** Antes da primeira voz, `vp short checar <pasta> narracao.<idioma>.json` sem erro, e cada termo que ele
+   apontar com entrada no `voice/glossary.json` (sigla, nome e palavra de fora; `CLAUDE.md` §6).
+   `vp short voz <pasta> narracao.<idioma>.json` (`--voz NOME` troca a voz) gera as falas com a voz do vídeo final (a
    clonada do dono no Modal, ADR 024). É serviço externo: só com o pedido do dono na sessão, e a sonda
-   `cpu_probe()` antes. Pronto quando o `narracao.<idioma>.voz.json` lista um WAV por linha e o dono ouviu.
+   `cpu_probe()` antes. Depois, `vp short conferir <pasta> narracao.<idioma>.json` (Whisper local, ADR 062,
+   emenda de 2026-11-17): ouvir a folha `voice/conferencia-<narração>-escuta.wav` e pedir nova tomada do que
+   soar errado com `vp short voz <pasta> narracao.<idioma>.json --refazer <fala>` (a fala sem cena é
+   `fora-N`). Pronto quando o `narracao.<idioma>.voz.json` lista um WAV por linha, a conferência não aponta
+   nada ou o dono ouviu os trechos dela, e o dono ouviu a fala.
    Conferir também `reference.file`, `reference.sha256` e `reference.remote_name` por fala; o manifest
    registra a identidade de referência/entrega inclusive no reuso do cache. Gravação ausente ou divergente
    no Modal deixa a cena pendente; não trocar por outro tom. O cadastro e a sincronização das referências

@@ -25,7 +25,10 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
    ainda não existe: registrar "música planejada, mistura pendente" no log do dia.
    **Porta do texto, antes da primeira voz** (cada fala refeita custa uma chamada ao Modal; fechar o texto primeiro):
    - humanizer **antes** da primeira `vp short voz`, nunca depois; frases ligadas por "e/ou/mas", sem série de frases curtas (cada ponto vira pausa na voz clonada);
-   - `voice/glossary.json` para toda sigla dita (API → "á pi", JSON → "jêison"); sigla nova sem entrada no glossário não vai à voz;
+   - `vp short checar <pasta> narracao.json` em cada idioma, sem erro (rótulo de opinião é erro). Todo termo que ele
+     apontar ganha entrada no `voice/glossary.json`: sigla, nome e palavra de fora (API → "á pi", JSON → "jêison",
+     thread → "tréd"; regra do `CLAUDE.md` §6). Termo apontado sem entrada não vai à voz; dois-pontos antes de
+     pergunta levam `<short pause>` (ADR 062, emenda de 2026-11-17);
    - conferir a lição do passo 3 presente na fala de cada cena de explicação;
    - estimar a duração pelo ritmo da voz clonada do passo 2 da skill `shorts-tec`; fala estimada maior que a cena planejada = encurtar o texto agora, não depois da escuta.
 5. `content.pt.json` e `content.en.json` seguindo o plano (`safeArea: shorts`, `footer` com o ambiente, `showRatio: false`); linguagem explícita na abertura. Usar animação de fluxo para o mecanismo, com passos e mudanças de estado, não só cartões de texto. `validate` e `inspect` do kit com cwd na pasta do JSON; `review` e abrir os quadros de antes/durante/depois das transições, conferindo valores e margens. Números internos de Lottie exigem rastreio e conferência próprios.
@@ -39,6 +42,13 @@ O pedido em pé do dono está na ADR 036: tudo abaixo roda sem perguntar; nada f
    `speech` no registro) que não esteja planejado no `plano-animacao.md` = reescrever a frase (ligar as orações com
    "e/ou/mas", como no passo 4) e refazer só aquela fala. Corrigir aqui custa uma chamada ao Modal; depois do render
    custa reabrir o gate 4, renderizar e reenviar ao Postiz. Registrar cada pausa encontrada no log do dia.
+   **Conferência da fala, antes do `tempos`** (ADR 062, emenda de 2026-11-17): `vp short conferir <pasta>
+   narracao.json` em cada idioma. O Whisper local ouve as falas sem o texto e lista o que foge dele e do
+   glossário. Para cada fala apontada, uma nova tomada só dela (`vp short voz <pasta> narracao.json --refazer
+   <fala>`; a fala sem cena é `fora-N`) e nova conferência. Se continuar apontada, não refazer de novo: registrar
+   no log do dia com a folha `voice/conferencia-<narração>-escuta.wav` para a escuta do dono (o reconhecedor
+   também erra). Sem o modelo no cache, o comando para e mostra o download: registrar "conferência pendente" e
+   seguir, porque o download é decisão do dono.
    Depois `tempos` e `render` do kit nas duas pastas; o Reel usa o `content.en.json` com `host` só se a pele estiver `approved`.
    **Sem vazios:** depois do `tempos`, encolher o `durationSec` das cenas com sobra (alvo: fala + a leitura mínima
    que o `validate` pedir; `SCENE_TOO_SHORT_TO_READ` diz o piso). Depois do `juntar`, medir com
