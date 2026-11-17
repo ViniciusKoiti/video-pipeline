@@ -7,16 +7,22 @@ fora sem nenhum desses traços ("Einar") escapa: a conferência depois da voz (`
 Ficam de fora letra solta, ordinal, aspas simples, palavra em CAIXA ALTA que o roteiro também escreve em
 minúscula (ênfase) e as poucas palavras do português com um desses traços ("sob", "pizza").
 Com a voz final do Azure, cada termo precisa também de `ipa`, porque só o fonema é garantido nela.
+
+As regras olham falas soltas (`Spoken`): as cenas do `scenes.json` no `vp check` e as linhas da narração do
+Short no `vp short checar` (emenda de 2026-11-17 da ADR 062).
 """
 
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 
 from app.media.narration import strip_pauses
 from app.media.pronunciation import Glossary
 from app.pipeline.constants.glossary_check_constants import GlossaryCheckConstants as Constants
 from app.pipeline.schemas import ScenesManifest
+
+Spoken = tuple[str, str]  # o id da cena ou da fala e o texto falado
 
 
 def _looks_foreign(word: str) -> bool:
@@ -32,18 +38,26 @@ def _covered(glossary: Glossary) -> set[str]:
     return {word.lower() for term in glossary.termos for word in re.findall(r"\w+", term.escrita)}
 
 
-def _words(scenes: ScenesManifest) -> list[str]:
+def _words(texts: Sequence[str]) -> list[str]:
     """As palavras da narração, sem aspas simples coladas ("'bom'"), ordinal ("1º") nem letra solta
     ("opção C")."""
-    words = [w for scene in scenes.scenes for w in re.findall(Constants.WORD, strip_pauses(scene.narration))]
+    words = [w for text in texts for w in re.findall(Constants.WORD, strip_pauses(text))]
     return [word for word in words if len(word) > 1]
 
 
+def _texts(scenes: ScenesManifest) -> list[str]:
+    return [scene.narration for scene in scenes.scenes]
+
+
 def missing_terms(scenes: ScenesManifest, glossary: Glossary) -> list[str]:
+    return missing_terms_in(_texts(scenes), scenes.language, glossary)
+
+
+def missing_terms_in(texts: Sequence[str], language: str, glossary: Glossary) -> list[str]:
     """Os candidatos a termo de fora que nenhuma entrada do glossário cobre, na ordem em que aparecem."""
-    if scenes.language != Constants.LANGUAGE:
+    if language != Constants.LANGUAGE:
         return []
-    words = _words(scenes)
+    words = _words(texts)
     lowercase = {word for word in words if word.islower()}
     covered, found = _covered(glossary), dict[str, None]()
     for word in words:
@@ -57,8 +71,14 @@ def missing_terms(scenes: ScenesManifest, glossary: Glossary) -> list[str]:
 
 
 def glossary_attention(scenes: ScenesManifest, glossary: Glossary, final_voice: str | None) -> list[str]:
+    return glossary_lines(_texts(scenes), scenes.language, glossary, final_voice)
+
+
+def glossary_lines(
+    texts: Sequence[str], language: str, glossary: Glossary, final_voice: str | None
+) -> list[str]:
     lines = []
-    missing = missing_terms(scenes, glossary)
+    missing = missing_terms_in(texts, language, glossary)
     if missing:
         lines.append(
             f"glossário: {len(missing)} termo(s) de fora sem entrada em voice/glossary.json: "
@@ -74,10 +94,14 @@ def glossary_attention(scenes: ScenesManifest, glossary: Glossary, final_voice: 
 
 
 def colon_pause_warnings(scenes: ScenesManifest) -> list[str]:
+    return colon_pause_lines([(scene.id, scene.narration) for scene in scenes.scenes])
+
+
+def colon_pause_lines(spoken: Sequence[Spoken]) -> list[str]:
     """Dois-pontos que abrem pergunta ou fala interna sem `<short pause>` logo depois."""
     return [
-        f"{scene.id}: dois-pontos antes de pergunta sem `<short pause>` depois deles; a voz tende a colar "
+        f"{spoken_id}: dois-pontos antes de pergunta sem `<short pause>` depois deles; a voz tende a colar "
         "as palavras (CLAUDE.md §6)"
-        for scene in scenes.scenes
-        if re.search(Constants.COLON_QUESTION, scene.narration)
+        for spoken_id, text in spoken
+        if re.search(Constants.COLON_QUESTION, text)
     ]

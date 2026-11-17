@@ -3,7 +3,9 @@
 O dono aparece numa janela e fala com a voz clonada; a pasta de produção (`data/episodes/<id>/`) guarda a
 narração, o JSON do kit e o que cada verbo escreve. Um verbo por etapa, cada um num módulo `short_<verbo>`:
 
-- `vp short voz <pasta> <narracao.json> [--voz NOME]`: uma fala por linha da narração.
+- `vp short checar <pasta> <narracao.json>`: a porta do texto antes da primeira voz (ADR 062, emenda).
+- `vp short voz <pasta> <narracao.json> [--voz NOME] [--refazer FALA ...]`: uma fala por linha da narração.
+- `vp short conferir <pasta> <narracao.json>`: o reconhecedor local ouve a fala pronta (ADR 062, emenda).
 - `vp short tempos <pasta> <content.json> <narracao.json>`: o tempo de cada cena pela fala dela.
 - `vp short sfx <pasta> <content.voz.json> <narracao.json> <sfx.json>`: confere o plano de efeitos.
 - `vp short juntar <pasta> <video.mp4> <content.voz.json> <narracao.json> --saida MP4 [--sfx sfx.json]`:
@@ -24,7 +26,16 @@ import argparse
 from pathlib import Path
 from typing import Any
 
-from app.commands import short_boca, short_gate, short_juntar, short_sfx, short_tempos, short_voz
+from app.commands import (
+    short_boca,
+    short_checar,
+    short_conferir,
+    short_gate,
+    short_juntar,
+    short_sfx,
+    short_tempos,
+    short_voz,
+)
 from app.pipeline.ports import Context
 
 
@@ -34,6 +45,12 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     voz.add_argument("folder", type=Path, metavar="pasta", help="pasta de produção do Short")
     voz.add_argument("narration", type=Path, metavar="narracao.json")
     voz.add_argument("--voz", metavar="NOME", help="voz registrada pelo nome (kokoro para um rascunho local)")
+    voz.add_argument("--refazer", nargs="+", metavar="FALA", help="nova tomada destas falas (cena ou fora-N)")
+    for verb, text in (("checar", "a porta do texto antes da primeira voz: glossário, pausas e opinião"),
+                       ("conferir", "o reconhecedor local ouve a fala pronta e aponta o que foge do texto")):
+        checks = verbs.add_parser(verb, help=text)
+        checks.add_argument("folder", type=Path, metavar="pasta", help="pasta de produção do Short")
+        checks.add_argument("narration", type=Path, metavar="narracao.json")
     _montage_arguments(verbs)
     gate = verbs.add_parser("gate", help="o pacote do gate 4: vídeo e texto do post na pasta do episódio")
     gate.add_argument("video", type=Path, metavar="video.mp4")
@@ -72,6 +89,10 @@ def run(args: argparse.Namespace, context: Context) -> int:
     match args.short_command:
         case "voz":
             return short_voz.run(args, context)
+        case "checar":
+            return short_checar.run(args, context)
+        case "conferir":
+            return short_conferir.run(args, context)
         case "tempos":
             return short_tempos.run(args, context)
         case "sfx":

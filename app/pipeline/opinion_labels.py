@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Sequence
 
 from app.media.narration import strip_pauses
 from app.pipeline.constants.opinion_labels_constants import OpinionLabelsConstants as Constants
@@ -22,15 +23,20 @@ def _plain(text: str) -> str:
 
 
 def opinion_label_errors(scenes: ScenesManifest) -> list[str]:
+    return opinion_label_lines([(scene.id, scene.narration) for scene in scenes.scenes])
+
+
+def opinion_label_lines(spoken: Sequence[tuple[str, str]]) -> list[str]:
+    """Um erro por fala (cena do longo ou linha do Short) que anuncia a opinião com um rótulo."""
     errors: list[str] = []
-    for scene in scenes.scenes:
-        text = strip_pauses(scene.narration)
+    for spoken_id, raw in spoken:
+        text = strip_pauses(raw)
         plain = _plain(text)
         found = next((m for p in Constants.PHRASES if (m := re.search(p, plain))), None)
         if found:
             said = text[found.start() : found.end()]
             errors.append(
-                f"{scene.id}: rótulo de opinião ({said!r}); diga a opinião de forma natural, como "
+                f"{spoken_id}: rótulo de opinião ({said!r}); diga a opinião de forma natural, como "
                 f"{Constants.INSTEAD} (ADR 019)"
             )
     return errors
