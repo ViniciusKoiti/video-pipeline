@@ -69,7 +69,11 @@ Mesma decisão do dono. O `vp check` ganha a trava fonética do `CLAUDE.md` §6 
 - **Termo de fora sem glossário** (narração em pt-BR): sigla, `w`/`y`/`k`, `th`/`sh`/`ph`/`ck`/`tz`/`gh`, letra
   dobrada fora de `rr` e `ss`, ou fim de palavra que o português não tem. Entrada de várias palavras cobre cada
   uma. Sai como ponto de `atenção`. No `vazio-de-ter-tudo` sem glossário, acha Vinland, Empty, Thorfinn, Oath e
-  CVV, sem falso positivo nas 57 cenas; Einar, sem traço, escapa (a conferência depois da voz pega).
+  CVV, sem falso positivo nas 57 cenas; Einar, sem traço, escapa (a conferência depois da voz pega). Na
+  varredura dos 48 roteiros de `data/episodes` (2026-11-17), os falsos positivos foram letra solta ("opção C"),
+  ordinal ("1º"), palavra entre aspas simples ("'bom'"), CAIXA ALTA de ênfase ("SIM", com "sim" no mesmo
+  roteiro) e "sob"/"pizzaria"; saíram. O que sobra é nome e palavra de fora (Kira, Marcovitch, software,
+  holding) ou sigla brasileira (PIB, IBGE), que a regra do §6 também manda pôr no glossário.
 - **Voz final do Azure:** termo com letra e sem `ipa` é ponto de `atenção` (o `vp check` recebe a voz final da
   configuração).
 - **Dois-pontos que abrem pergunta** sem `<short pause>` logo depois: alerta (S31, S35 e S57 do episódio; S35 é

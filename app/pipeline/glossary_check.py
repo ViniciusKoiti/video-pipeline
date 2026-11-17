@@ -4,6 +4,8 @@ Todo termo de fora presente na narração em português precisa de entrada em `v
 final. Aqui se acham candidatos por traço: sigla ("CVV"), letra ou encontro que o português quase não usa
 ("Thorfinn", "Empty", "Oath"), letra dobrada, ou fim de palavra que o português não tem ("Vinland"). Nome de
 fora sem nenhum desses traços ("Einar") escapa: a conferência depois da voz (`vp voice --conferir`) pega.
+Ficam de fora letra solta, ordinal, aspas simples, palavra em CAIXA ALTA que o roteiro também escreve em
+minúscula (ênfase) e as poucas palavras do português com um desses traços ("sob", "pizza").
 Com a voz final do Azure, cada termo precisa também de `ipa`, porque só o fonema é garantido nela.
 """
 
@@ -30,15 +32,27 @@ def _covered(glossary: Glossary) -> set[str]:
     return {word.lower() for term in glossary.termos for word in re.findall(r"\w+", term.escrita)}
 
 
+def _words(scenes: ScenesManifest) -> list[str]:
+    """As palavras da narração, sem aspas simples coladas ("'bom'"), ordinal ("1º") nem letra solta
+    ("opção C")."""
+    words = [w for scene in scenes.scenes for w in re.findall(Constants.WORD, strip_pauses(scene.narration))]
+    return [word for word in words if len(word) > 1]
+
+
 def missing_terms(scenes: ScenesManifest, glossary: Glossary) -> list[str]:
     """Os candidatos a termo de fora que nenhuma entrada do glossário cobre, na ordem em que aparecem."""
     if scenes.language != Constants.LANGUAGE:
         return []
+    words = _words(scenes)
+    lowercase = {word for word in words if word.islower()}
     covered, found = _covered(glossary), dict[str, None]()
-    for scene in scenes.scenes:
-        for word in re.findall(r"[^\W\d_][\w']*", strip_pauses(scene.narration)):
-            if word.lower() not in covered and _looks_foreign(word):
-                found.setdefault(word)
+    for word in words:
+        lower = word.lower()
+        emphasis = word.isupper() and lower in lowercase  # "SIM" com "sim" no roteiro é ênfase, não sigla
+        if lower in covered or lower in Constants.NATIVE_WORDS:
+            continue
+        if _looks_foreign(lower if emphasis else word):
+            found.setdefault(word)
     return list(found)
 
 

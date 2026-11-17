@@ -44,6 +44,18 @@ def test_portuguese_words_and_names_pass() -> None:
     assert missing_terms(manifest(text), Glossary()) == []
 
 
+def test_quotes_ordinals_single_letters_emphasis_and_native_exceptions_pass() -> None:
+    """Falsos positivos da varredura de 2026-11-17 nos roteiros antigos ("incerteza'", "º", "C", "SIM",
+    "sob")."""
+    text = ("Ele disse 'incerteza' e 'bom' sob a chuva, no 1º dia; a opção C. "
+            "A resposta é SIM, e o sim dele vale. A Pizzaria fechou.")
+    assert missing_terms(manifest(text), Glossary()) == []
+
+
+def test_an_uppercase_word_never_written_in_lowercase_is_still_an_acronym() -> None:
+    assert missing_terms(manifest("O IBGE mede. A resposta é SIM."), Glossary()) == ["IBGE", "SIM"]
+
+
 def test_the_english_narration_is_left_alone() -> None:
     assert missing_terms(manifest("The worker was thinking about the WiFi.", language="en"), Glossary()) == []
 
