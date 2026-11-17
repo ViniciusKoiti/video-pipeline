@@ -33,6 +33,18 @@ def _voice_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--voz", metavar="NOME", help=f"voz registrada pelo nome: {names}")
 
 
+def _voice_command_arguments(parser: argparse.ArgumentParser) -> None:
+    _voice_arguments(parser)
+    parser.add_argument(
+        "--conferir", action="store_true",
+        help="ouve a fala pronta com o reconhecedor local e aponta o que foge do roteiro (ADR 062)",
+    )
+    parser.add_argument(
+        "--refazer", nargs="+", metavar="CENA", default=[],
+        help="guarda a fala atual destas cenas em voice/tomadas-recusadas/ e gera outra tomada",
+    )
+
+
 def _render_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--preview", action="store_true", help="prévia em 720p")
     parser.add_argument("--no-render", action="store_true", help="confere a montagem e grava o episode.json")

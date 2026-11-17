@@ -113,4 +113,6 @@ class Context(Protocol):
     def aligner(self) -> SubtitleAligner: ...
     @property
     def word_aligner(self) -> WordAligner: ...  # reconhecimento remoto: só com pedido do dono (ADR 023)
+    @property
+    def speech_checker(self) -> WordAligner: ...  # reconhecimento local da conferência da fala (ADR 062)
     def renderer(self, episode_format: EpisodeFormat) -> RenderEngine: ...  # motor do formato (ADR 001)

@@ -164,8 +164,10 @@ Os detalhes de campos vivem em `app/pipeline/schemas.py`. Regras que o schema so
   - Todo termo em língua estrangeira, sigla, título de episódio/obra ou nome próprio não nativo presente em
     `scenes.json` **deve** ter entrada em `voice/glossary.json` (`escrita` → `fala`) antes de rodar
     `vp voice --voz-final`. `ipa` só serve ao Azure Speech, no vídeo longo.
-  - A voz clonada não segue a grafia do glossário de forma estável: depois do `vp voice`, conferir a pronúncia das
-    cenas com nomes próprios (escuta rápida ou checagem de transcrição) antes da montagem final.
+  - A voz clonada não segue a grafia do glossário de forma estável: depois do `vp voice`, rodar
+    `vp voice <id> --conferir` (Whisper local, ADR 062; modelo no cache com `uv run hf download
+    openai/whisper-small`), ouvir a folha `voice/conferencia-escuta.wav` e pedir outra tomada do que soar errado
+    com `--refazer <cenas>` antes da montagem final.
   - Usar `<short pause>` (espaço + marca + espaço) onde a síntese costuma colar palavras: antes de diálogo interno e
     de dois-pontos que abrem uma fala ou pergunta. Respeitar o teto das skills (uma por ~15 palavras, nunca no
     início nem no fim da cena). `<long pause>` e outras tags são erro.

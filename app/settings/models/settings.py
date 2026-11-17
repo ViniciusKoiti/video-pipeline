@@ -17,6 +17,7 @@ from app.settings.models.ollama_settings import OllamaSettings
 from app.settings.models.provider_choice import ProviderChoice
 from app.settings.models.secrets import Secrets
 from app.settings.models.voice_polish_settings import VoicePolishSettings
+from app.settings.models.whisper_local_settings import WhisperLocalSettings
 from app.settings.models.workers_ai_settings import WorkersAISettings
 
 
@@ -31,6 +32,7 @@ class Settings(_Model):
     earshot: EarshotSettings = EarshotSettings()
     voice_polish: VoicePolishSettings = VoicePolishSettings()
     groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
+    whisper_local: WhisperLocalSettings = WhisperLocalSettings()
     workers_ai: WorkersAISettings
     ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()
