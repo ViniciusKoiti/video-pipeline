@@ -179,7 +179,14 @@ def test_single_and_interested_sources_are_warnings(tmp_path: Path) -> None:
                     sources=[source(1), source(2, interested=True)])
     report = check_episode(store, EP)
     assert report.ok
-    assert report.warnings == ["F01: uma fonte só (source-01)", "F02: só fontes interessadas (source-02)"]
+    assert report.warnings == ["F02: só fontes interessadas (source-02)", "uma fonte só: F01 (source-01)"]
+
+
+def test_single_source_facts_share_one_warning_line(tmp_path: Path) -> None:
+    first = fact("F01", evidence=[fact()["evidence"][0]])
+    second = fact("F02", evidence=[fact()["evidence"][0]])
+    report = check_episode(episode(tmp_path, facts=facts_file(first, second)), EP)
+    assert report.warnings == ["uma fonte só: F01 (source-01), F02 (source-01)"]
 
 
 def test_declared_source_may_omit_url_but_others_may_not() -> None:

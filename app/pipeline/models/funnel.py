@@ -16,10 +16,12 @@ class Funnel(Model):
       dúvida.
     - `fundo`: ação. Oferece a planilha ou o modelo (`offer`); a chamada diz como pedir.
 
-    O estágio vem do dono, pela pauta, como o objetivo."""
+    No vídeo longo, `engagement` é a pergunta para os comentários, dita na última cena antes da chamada
+    (emenda de 2026-11-16). O estágio vem do dono, pela pauta, como o objetivo."""
 
     stage: FunnelStage
     cta: NonEmpty  # a chamada final, como a narração a diz
+    engagement: NonEmpty | None = None  # a pergunta para os comentários, antes da chamada, na última cena
     offer: NonEmpty | None = None  # o que o vídeo oferece: obrigatório no fundo, e só existe nele
 
     @model_validator(mode="after")

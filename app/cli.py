@@ -91,9 +91,12 @@ def _check(args: argparse.Namespace, context: Context) -> int:
         print(f"ok      {line}")
     for line in report.warnings:
         print(f"alerta  {line}")
+    for line in report.attention:
+        print(f"atenção {line}")
     for line in report.errors:
         print(f"erro    {line}")
-    print("resultado: " + ("sem erros" if report.ok else f"{len(report.errors)} erro(s)"))
+    attention = f"; {len(report.attention)} ponto(s) de atenção para o gate 2" if report.attention else ""
+    print("resultado: " + ("sem erros" if report.ok else f"{len(report.errors)} erro(s)") + attention)
     return 0 if report.ok else 1
 
 

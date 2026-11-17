@@ -8,11 +8,9 @@ alerta vai para a revisão humana.
 
 from __future__ import annotations
 
-import re
-import unicodedata
 from datetime import date
 
-from app.media.narration import strip_pauses, timeline_length
+from app.media.narration import timeline_length
 from app.pipeline.constants.check_constants import CheckConstants as Constants
 from app.pipeline.constants.molde_constants import MoldeConstants
 from app.pipeline.constants.numbers_constants import NumbersConstants
@@ -20,6 +18,7 @@ from app.pipeline.constants.radar_constants import RadarConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.constants.shots_constants import ShotsConstants
 from app.pipeline.excerpts import excerpts_of, quote_in_excerpt
+from app.pipeline.funnel_check import funnel_attention, funnel_errors, funnel_summary, funnel_warnings
 from app.pipeline.metrics import summary_line
 from app.pipeline.models.check_report import CheckReport as CheckReport
 from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
@@ -35,6 +34,7 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
+from app.pipeline.opinion_labels import opinion_label_errors
 from app.pipeline.ports import M, ManifestInvalid, ManifestStore
 from app.pipeline.radar import RadarBrief, brief_summary, form_warnings, unmeasured_patterns
 from app.pipeline.schemas import (
@@ -43,7 +43,6 @@ from app.pipeline.schemas import (
     CalculationShot,
     ChartShot,
     CompareShot,
-    EndCardShot,
     FactKind,
     FactsManifest,
     Language,
@@ -145,6 +144,7 @@ def _check_facts(
 ) -> None:
     interested = {s.id for s in sources.sources if s.interested}
     groups = independence_groups(sources)
+    single: list[str] = []  # uma linha só para todas: eram dezenas de alertas iguais (vazio-de-ter-tudo)
     for fact in facts.facts:
         for evidence in fact.evidence:
             excerpt = excerpts.get(evidence.excerpt_id)
@@ -158,9 +158,11 @@ def _check_facts(
         if not independent:
             report.warnings.append(f"{fact.id}: só fontes interessadas ({', '.join(fact.source_ids)})")
         elif len(fact.source_ids) < 2:
-            report.warnings.append(f"{fact.id}: uma fonte só ({fact.source_ids[0]})")
+            single.append(f"{fact.id} ({fact.source_ids[0]})")
         elif len({groups[s] for s in independent}) < 2 and len(independent) > 1:
             report.warnings.append(f"{fact.id}: fontes com os mesmos autores ({', '.join(independent)})")
+    if single:
+        report.warnings.append(f"uma fonte só: {', '.join(single)}")
     kinds = {kind: sum(f.kind is kind for f in facts.facts) for kind in FactKind}
     summary = ", ".join(f"{kind.value} {count}" for kind, count in kinds.items() if count)
     report.checked.append(f"facts.json: {len(facts.facts)} fato(s) ({summary})")
@@ -437,58 +439,6 @@ def objective_summary(scenes: ScenesManifest) -> str | None:
     return f"objetivo: {' + '.join(objective.kinds)}: {objective.promise}"
 
 
-# O que a chamada de cada estágio pede (ADR 026), como começo de palavra sem acento: "salva", "salvar" e
-# "salve" valem para "salv". Chamada sem nenhum deles pede outra coisa que o estágio, e gera alerta.
-
-# A variante do cartão final por estágio (ADR 028); `next` vale em qualquer um, quando a série continua. O
-# fundo ainda não tem variante (decisão 4): o contrato recusa o cartão final nele.
-
-
-def _words(text: str) -> list[str]:
-    decomposed = unicodedata.normalize("NFD", strip_pauses(text).lower())
-    plain = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
-    return re.findall(r"[a-z0-9]+", plain)
-
-
-def _contains(words: list[str], part: list[str]) -> bool:
-    return any(words[i : i + len(part)] == part for i in range(len(words) - len(part) + 1))
-
-
-def funnel_warnings(scenes: ScenesManifest) -> list[str]:
-    """O estágio do funil (ADR 026): alerta quando falta, quando a chamada não pede o que o estágio pede e
-    quando ela não está na narração da última cena."""
-    funnel = scenes.funnel
-    if funnel is None:
-        return ["roteiro sem estágio do funil (topo, meio ou fundo; ADR 026)"]
-    warnings = []
-    asks, starts = Constants.FUNNEL_ASKS[funnel.stage]
-    cta = _words(funnel.cta)
-    if not any(word.startswith(starts) for word in cta):
-        warnings.append(f"funil {funnel.stage}: a chamada \"{funnel.cta}\" não pede para {asks}")
-    last = scenes.scenes[-1]
-    if not _contains(_words(last.narration), cta):
-        warnings.append(f"funil: a chamada \"{funnel.cta}\" não está na narração da última cena ({last.id})")
-    card = last.shots[-1] if last.shots and isinstance(last.shots[-1], EndCardShot) else None
-    if card is not None:
-        expected = Constants.END_CARD_VARIANTS.get(funnel.stage)
-        if card.variant != "next" and card.variant != expected:
-            warnings.append(f"funil {funnel.stage}: cartão final {card.variant}; o estágio pede {expected}")
-        spoken = strip_pauses(last.narration)
-        if not _contains(_words(spoken[spoken.find(card.anchor):]), cta):
-            warnings.append(
-                f"funil: a chamada \"{funnel.cta}\" não é dita durante o cartão final ({last.id})"
-            )
-    return warnings
-
-
-def funnel_summary(scenes: ScenesManifest) -> str | None:
-    funnel = scenes.funnel
-    if funnel is None:
-        return None
-    line = f"funil: {funnel.stage}; chamada: {funnel.cta}"
-    return f"{line}; oferta: {funnel.offer}" if funnel.offer else line
-
-
 def _check_radar(
     store: ManifestStore,
     episode_id: str,
@@ -643,7 +593,9 @@ def check_episode(
         report.warnings += objective_warnings(scenes, today)
         if (summary := funnel_summary(scenes)) is not None:
             report.checked.append(summary)
+        report.errors += funnel_errors(scenes) + opinion_label_errors(scenes)
         report.warnings += funnel_warnings(scenes) + claimless_statements(scenes) + gap_warnings(scenes)
+        report.attention += funnel_attention(scenes, chars_per_second)
         _check_radar(store, episode_id, scenes, report, chars_per_second, today)
         _check_numbers(store, episode_id, scenes, report, chars_per_second)
         _check_molde(store, episode_id, scenes, report, chars_per_second)

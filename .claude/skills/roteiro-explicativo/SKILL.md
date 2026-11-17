@@ -318,6 +318,9 @@ depois de assistir. Toda cena serve à promessa; cena que não serve sai.
 - **A opinião é do dono.** `thesis` chega pronta, nas palavras dele. A narração a diz como opinião, na
   primeira pessoa ou atribuída ("eu acho", "para mim"), e nunca vira número, data ou citação na tela. Os fatos
   em volta dela seguem as fichas, como sempre.
+- **A marca é natural, nunca rótulo** (emenda de 2026-11-16 da ADR 019): "na minha leitura", "pelo menos é assim
+  que eu enxergo", "eu acho". Frase que anuncia a opinião em vez de dizê-la ("e eu digo o que acho disso, como
+  opinião", "isso é opinião minha") quebra o clima do ensaio, e o `vp check` dá erro.
 - **Tipos combinados.** Num vídeo que noticia e depois opina, a parte de notícia termina antes de a opinião
   começar, e o `outline.md` diz em que cena a opinião entra. Não misture as duas na mesma frase.
 - **No `outline.md`**, logo no começo: os tipos, a promessa e, para cada cena, a que parte ela pertence.
@@ -336,12 +339,25 @@ O estágio vem da pauta ou do dono, como o objetivo; se não veio, pergunte. Ele
 
 | Estágio | Forma | A chamada final pede | Campo a mais |
 |---|---|---|---|
-| `topo` | tema amplo e gancho forte; pouco método, uma ideia só | seguir ou compartilhar | — |
-| `meio` | a conta ou o método inteiro, com fonte, como nos reels da série 1 | salvar ou comentar a dúvida | — |
+| `topo` | tema amplo e gancho forte; pouco método, uma ideia só | seguir, se inscrever, ver o próximo vídeo ou compartilhar | — |
+| `meio` | a conta ou o método inteiro, com fonte, como nos reels da série 1 | salvar, comentar a dúvida ou ver o próximo vídeo | — |
 | `fundo` | o problema e a planilha ou o modelo que resolve, mostrado funcionando | pedir: comentar a palavra, link na bio | `offer`: o que é oferecido |
 
-- A `cta` é dita na **última cena**, com as mesmas palavras do campo; o `vp check` confere.
-- Uma chamada só. Pedir para seguir, salvar e comentar no mesmo fim dilui as três.
+- A `cta` é dita na **última cena**, com as mesmas palavras do campo. Chamada que não pede o que o estágio pede
+  (a pergunta dos comentários sozinha não é chamada do topo) ou que não é dita ali é **erro** no `vp check`.
+- **Vídeo longo** (emenda de 2026-11-16 da ADR 026): a última cena une a pergunta para os comentários e a chamada
+  do estágio, nessa ordem. A pergunta vai em `engagement`, também com as mesmas palavras da fala:
+
+  ```text
+  "funnel": {
+    "stage": "topo",
+    "engagement": "Nos comentários: em que você começaria a ficar bom?",
+    "cta": "Se inscreve no canal pra ver o próximo."
+  }
+  ```
+
+  Sem `engagement`, o `vp check` marca o ponto como atenção para o gate 2.
+- **Short e Reel:** um pedido só (ADR 028). Pedir para seguir, salvar e comentar no mesmo fim curto dilui os três.
 - No fundo, nesta fase, a oferta é grátis: preço e venda não entram no roteiro sem decisão do dono.
 - No `outline.md`, logo depois do objetivo: o estágio e a chamada.
 

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from types import MappingProxyType
 from typing import Final
 
 
@@ -21,11 +19,3 @@ class CheckConstants:
     BAR_PLAIN_BELOW: Final[int] = 1000
     # depois disso o fato não é mais notícia: o vídeo explica ou opina (ADR 019)
     NEWS_MAX_AGE_DAYS: Final[int] = 30
-    FUNNEL_ASKS: Final[Mapping[str, tuple[str, tuple[str, ...]]]] = MappingProxyType(
-        {
-            "topo": ("seguir ou compartilhar", ("segu", "compartilh", "manda", "envia")),
-            "meio": ("salvar ou comentar", ("salv", "coment")),
-            "fundo": ("pedir o que é oferecido", ("coment", "link", "bio", "direct", "ped", "baix", "chama")),
-        }
-    )
-    END_CARD_VARIANTS: Final = MappingProxyType({"topo": "follow", "meio": "save"})

@@ -122,9 +122,9 @@ sem entregar nada novo.
 | `ORDEM` | O fato mais forte no meio, a consequência antes da causa, o caso depois da tese. | Para onde a cena vai e a frase que muda nas duas pontas. |
 | `REPETE` | Duas cenas dizem o mesmo, ou um resumo recapitula o que acabou de ser dito. | Qual das duas fica e a frase que cobre o corte. |
 | `PONTE` | A passagem entre blocos é "e depois", "outro ponto", ou falta. | A frase de ligação, nascida do bloco anterior. |
-| `FECHO` | O fim se anuncia ("para concluir") antes de entregar, ou termina sem responder à pergunta. | O fecho que responde com fato e só então chama. |
+| `FECHO` | O fim se anuncia ("para concluir") antes de entregar, ou termina sem responder à pergunta. No vídeo longo, a última cena não une a pergunta dos comentários e a chamada do estágio (emenda de 2026-11-16 da ADR 026). | O fecho que responde com fato e só então chama: a pergunta, depois a chamada (`engagement` e `cta`). |
 | `CORTE` | Cena correta que não serve à `objective.promise`, ou trecho que não entrega nada novo (duração-alvo de 8 a 9 min). | Sai a cena; a frase que emenda as vizinhas; no custo, o tempo economizado. |
-| `TOM` | A fala soa como coach, sermão, bronca ou promessa de cura, ou diminui o que a pessoa sente comparando com uma vida pior. Público: jovens de 20 a 30 anos com desânimo profundo (decisão do dono, 2026-11-14). | A frase dita de igual para igual, sem receita. |
+| `TOM` | A fala soa como coach, sermão, bronca ou promessa de cura, ou diminui o que a pessoa sente comparando com uma vida pior. Público: jovens de 20 a 30 anos com desânimo profundo (decisão do dono, 2026-11-14). Também a opinião anunciada com rótulo ("digo isso como opinião"; emenda de 2026-11-16 da ADR 019). | A frase dita de igual para igual, sem receita; a opinião com marca natural ("na minha leitura", "pelo menos é assim que eu enxergo"). |
 | `LACUNA` | A fala diz que o narrador não achou ("eu não encontrei", "não achei", "não sei"), ou empilha ressalvas ("a minha aposta", "é palpite meu") que não mudam a resposta. Decisão do dono, 2026-11-14. | "Eu acho X, porque Y", com Y fichado, ou o corte da frase (skill `roteiro-explicativo`, começo). Na conclusão e no fecho, nunca termina no vazio. |
 
 `CORTE` e `REPETE` valem também para uma frase dentro da cena.
