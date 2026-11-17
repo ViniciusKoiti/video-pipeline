@@ -46,6 +46,8 @@ def provider_error(provider: str, error: TransportError) -> ProviderError:
     """Erro de transporte → falha do provedor, que para só a cena (§2.1). Nunca com URL nem headers."""
     if error.status == 429:
         return QuotaExhausted(provider, "limite de requisições atingido")
+    if error.status == 403 and StockConstants.RATE_LIMIT_BODY in str(error).casefold():
+        return QuotaExhausted(provider, "limite por hora atingido (HTTP 403); espere a cota renovar")
     if error.status in (401, 403):
         return ProviderError(provider, f"chave recusada (HTTP {error.status}); confira o .env")
     return ProviderError(provider, str(error))
