@@ -26,8 +26,9 @@ O banco só cresce, em `docs/pesquisa/banco-de-ideias.md`, numa tabela:
   triagem.
 - **Origem:** vídeo de concorrente direto ou de nicho vizinho, comentário, busca do YouTube, pedido do dono.
   Cada linha leva o link de onde veio.
-- **Nichos vizinhos:** canais grandes de nichos com público parecido. Lista atual, **a confirmar pelo dono**:
-  psicologia, autoconhecimento, história, cultura pop comentada. Na aba Vídeos de cada canal, ordene por "Mais
+- **Nichos vizinhos:** canais grandes de nichos com público parecido. Lista atual, **a confirmar**: psicologia,
+  autoconhecimento, história, cultura pop comentada (palpite inicial; no primeiro uso o agente propõe a lista,
+  passo 3, e o dono fecha). Na aba Vídeos de cada canal, ordene por "Mais
   populares" e anote o formato e a estrutura dos vídeos que mais renderam (promessa, abertura, duração), com o
   link. São formatos já validados por um público semelhante, com menos concorrência direta.
 - **Ideia é pergunta:** o fato vem das fontes, depois da pauta. De vídeo de terceiros, anote a forma (o que
@@ -76,8 +77,11 @@ consulta), **estimativa** (número de terceiros) ou **inferência** (seu racioc�
 7. **Originalidade (YPP):** existe um ângulo próprio, com pesquisa e estrutura do canal (CLAUDE.md §5, política
    de conteúdo não original)?
 
-Nicho vizinho que não está na lista do passo 1 pode ser proposto, com o canal, o tamanho e a evidência de público
-parecido. O dono decide se entra.
+**Nichos vizinhos propostos.** Enquanto a lista do passo 1 estiver "a confirmar" (decisão do dono, 2026-11-19),
+o parecer abre com esta seção, antes dos temas: de 3 a 6 nichos, cada um com um canal grande de exemplo (link e
+tamanho), a evidência de público parecido com o do canal e o formato que ele valida. Cada nicho do palpite
+inicial aparece confirmado ou descartado, com o motivo. Com a lista fechada, um nicho novo pode ser proposto do
+mesmo jeito. O dono decide quais entram.
 
 ## Parecer
 
@@ -110,4 +114,5 @@ marcado como estimativa.
 - No banco, a situação de cada ideia vira "validada: <veredito> (<data>)".
 - Leve os pareceres ao dono numa pergunta só, com a sua recomendação. Depois da escolha, a ideia escolhida vira
   "virou pauta: `<id>`", e o bloco do parecer entra no `pauta.md` do episódio, na seção "Validação do tema".
-- Nicho vizinho proposto pelo agente e aceito pelo dono entra na lista do passo 1.
+- Os nichos vizinhos que o dono aceitar substituem a lista do passo 1, já sem o "a confirmar", com a data da
+  decisão.
