@@ -22,9 +22,11 @@ no fundo, nomeie a oferta. Ver [ADR 026](../../../docs/decisions/026-estagio-do-
 Com `radar-brief.json`, leia `how_to_read`, `caveats`, data, nicho e amostra antes das
 recomendações. Separe padrões de indícios; temas viram perguntas neutras às fontes.
 Não copie títulos, frases ou imagens de terceiros. Para pauta com radar, siga o método
-da [pauta existente](../../../.claude/skills/pauta/SKILL.md). Sem radar, entregue somente
-rascunho baseado no pedido do dono, marcando a ausência de validação pelo radar.
-Não invente amostra, tendência ou fato para completar o rascunho.
+da [pauta existente](../../../.claude/skills/pauta/SKILL.md). No ensaio longo, sem radar,
+parta do parecer do `validador-de-tema` sobre o tema escolhido
+([vp-validacao-de-tema](../vp-validacao-de-tema/SKILL.md)) e copie-o na seção "Validação do
+tema"; sem parecer, entregue só rascunho baseado no pedido do dono, com "tema não validado"
+na primeira linha. Não invente amostra, tendência ou fato para completar o rascunho.
 
 Organize a pauta com público, objetivo/pendências, promessa e título, recorte, perguntas
 neutras, forma, evidência mínima, lacunas e critério de parada. A promessa só se mantém

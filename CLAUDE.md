@@ -95,7 +95,8 @@ ainda sem comando.
 
 ## 4. Fluxo de trabalho, estados e retenção
 
-- **Ordem das etapas:** Pauta (título provisório, conceito de capa e hipótese; a hipótese vai para
+- **Ordem das etapas:** Banco de ideias → Validação de tema (`validador-de-tema`, parecer por tema; o dono escolhe,
+  skill `vp-validacao-de-tema`) → Pauta (título provisório, conceito de capa e hipótese; a hipótese vai para
   `metrics.json.hypothesis` quando houver dados reais de publicação) → Fontes (`sources.json`, ≥ 2 independentes)
   → Fichas (`facts.json`, **gate 1**) → `outline.md` + editor (montagem) → `scenes.json` + editor (edição) →
   `vp check` + `verificador`, no máximo 2 rodadas (**gate 2**) → Trilha (`music.json`) → `plano-de-imagens`
@@ -214,7 +215,8 @@ O `vp check` separa erro, alerta e `atenção` (o que o dono decide no gate 2). 
   vídeos em `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`).
 - **Agentes criativos (`.claude/agents/` e `.claude/skills/`):** escrevem apenas arquivos de dados em
   `data/episodes/<id>/` (`pesquisador`, `roteirista`, `roteirista-ficcao-historica`, `editor-de-roteiro`,
-  `diretor-musical`, `diretor-animacao`); `verificador` e `duvida-cega` só leem. Um piloto visual pedido ao
+  `diretor-musical`, `diretor-animacao`); `verificador`, `duvida-cega` e `validador-de-tema` só leem (este, também
+  páginas públicas). Um piloto visual pedido ao
   `diretor-animacao` pode ter código em `video/src/previews/<id>/` e saídas em `renders/<id>/`.
   - Nunca passar fatos ou enquadramentos não fichados no prompt de um agente; citar por ID (`F08`, `source-02#E46`).
 - **Template Remotion (`video/`):** consultar o MCP `motion-kit` (`componentes-do-kit`) e cruzar com `video/vendor/`
