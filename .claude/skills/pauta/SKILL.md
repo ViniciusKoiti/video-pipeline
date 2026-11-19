@@ -15,8 +15,11 @@ uma lista de perguntas e escolhas, que o dono aprova antes de qualquer download 
 ## Entrada
 
 - `data/episodes/<id>/radar-brief.json`: cópia do resumo do nicho (`script_brief.v1`), trazida por
-  `vp briefs radar <id> <nicho>`. Sem o arquivo, pare e diga que falta: não escreva a pauta
+  `vp briefs radar <id> <nicho>`. No Reel, sem o arquivo, pare e diga que falta: não escreva a pauta
   de memória.
+- No ensaio longo, que não tem radar: o parecer do `validador-de-tema` sobre o tema escolhido (skill
+  `vp-validacao-de-tema`), copiado no `pauta.md` na seção "Validação do tema". Sem parecer, a primeira linha da
+  pauta diz "tema não validado".
 - O que o dono disse sobre o tema e o ângulo.
 
 O resumo é observação de amostra pequena (`analysed` diz quantos Reels), nunca fonte de fato. Leia

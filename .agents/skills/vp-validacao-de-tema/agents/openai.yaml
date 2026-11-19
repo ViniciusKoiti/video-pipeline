@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Validação de tema"
+  short_description: "Colete ideias e valide temas antes da pauta"
+  default_prompt: "Use $vp-validacao-de-tema para validar os temas candidatos do banco de ideias e devolver um parecer por tema."

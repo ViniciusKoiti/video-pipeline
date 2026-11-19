@@ -36,11 +36,8 @@ Um subagente por ângulo, todos lançados na mesma mensagem, cada um salvando `<
 partes: conclusão, fatos (URL e data de consulta), inferências e lacunas. Os ângulos padrão:
 
 1. **Panorama de canais** por idioma: tamanho, frequência, duração, formato e sinais de produção em série com IA.
-   - **Nichos vizinhos:** além dos concorrentes diretos, os canais grandes de nichos com público parecido (para o
-     Cena e Conceito: psicologia, autoconhecimento, história, cultura pop comentada). Na aba Vídeos de cada um,
-     ordene por "Mais populares" e anote o formato e a estrutura dos vídeos que mais renderam (promessa, abertura,
-     duração), com o link. São formatos já validados por um público semelhante, com menos concorrência direta.
-     Anote a forma; título, frase e imagem de terceiros ficam com eles.
+   - **Nichos vizinhos:** além dos concorrentes diretos, os canais grandes de nichos com público parecido, olhados
+     em "Mais populares" pelo método do passo 1 da skill `vp-validacao-de-tema`.
 2. **Direitos e monetização:**
    - a política oficial da plataforma, citada literalmente;
    - o que os detentores de direitos fazem na prática;
@@ -103,27 +100,10 @@ aviso.
   - as decisões do dono, agrupadas e com a sua recomendação.
 - **Na memória:** atualize o arquivo de projeto do nicho com o veredito e as decisões pendentes.
 
-## 7. Banco de ideias (rotina contínua)
+## 7. Depois do veredito
 
-Depois do veredito, a demanda do nicho vira um banco que alimenta a pauta. Ele só cresce, em
-`docs/pesquisa/banco-de-ideias.md`, numa tabela:
-
-| Data | Ideia (pergunta) | Origem (URL) | Público | Formato | Situação |
-|---|---|---|---|---|---|
-
-- **Ritmo:** sessões curtas de coleta, com meta de cerca de 20 ideias por hora. Primeiro o volume, depois a
-  triagem.
-- **Origem:** vídeo de concorrente ou de nicho vizinho ("Mais populares"), comentário, busca do YouTube, pedido do
-  dono. Cada linha leva o link de onde veio.
-- **Ideia é pergunta:** o fato vem das fontes, depois da pauta. Anote do vídeo de terceiros a forma (o que promete
-  e como), com o link.
-- **Triagem:** a pauta escolhe do banco pelos critérios da `vp-pauta` (relevância para o público, evidência
-  independente, diferença editorial, viabilidade visual). A situação muda para "virou pauta: `<id>`" ou
-  "descartada: motivo". Os temas a evitar de CLAUDE.md §1 já entram descartados.
-- **Coleta:** por páginas públicas. Ferramenta com cota ou crédito (vidIQ, APIs) só com pedido do dono na sessão
-  (CLAUDE.md §8).
-
-Pronto quando cada ideia nova tem origem com link, público e formato.
+A demanda do nicho aprovado vira ideias no banco de ideias, e cada tema passa pela validação antes da pauta:
+os dois estão na skill `vp-validacao-de-tema`.
 
 ## Limites
 
