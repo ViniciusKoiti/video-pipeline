@@ -26,9 +26,12 @@ da [pauta existente](../../../.claude/skills/pauta/SKILL.md). Sem radar, entregu
 rascunho baseado no pedido do dono, marcando a ausência de validação pelo radar.
 Não invente amostra, tendência ou fato para completar o rascunho.
 
-Organize a pauta com público, objetivo/pendências, promessa proposta, recorte, perguntas
+Organize a pauta com público, objetivo/pendências, promessa e título, recorte, perguntas
 neutras, forma, evidência mínima, lacunas e critério de parada. A promessa só se mantém
 se as fontes a sustentarem. Ligação com a vida do espectador exige evidência própria.
+Escreva a seção "Promessa e título" (quatro perguntas, opções de título, palavra-chave,
+links internos e teste A/B) por [promessa-e-titulo.md](../../../.claude/skills/pauta/promessa-e-titulo.md),
+com ou sem radar.
 
 Compare temas por relevância para esse público, pergunta específica, evidência independente,
 diferença editorial e viabilidade visual. Lacuna essencial de evidência impede a escolha,

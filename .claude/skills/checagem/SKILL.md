@@ -15,7 +15,8 @@ garante que as citações existem; você confere se elas **sustentam** o que foi
 
 ## Entrada
 
-`data/episodes/<id>/facts.json`, `scenes.json`, `outline.md` e `excerpts/*.md` (trechos numerados).
+`data/episodes/<id>/facts.json`, `scenes.json`, `outline.md`, `excerpts/*.md` (trechos numerados) e a seção
+"Promessa e título" do `pauta.md`.
 
 O bloco do `outline.md` que começa em `<!-- números: gerado por …` e termina em `<!-- números: fim -->` é gerado
 do `scenes.json` pelo código, com as contas do `vp check`: não reconte nem cobre esses números. Se o `vp check`
@@ -73,6 +74,18 @@ outline, escrito à mão.
 
    Correção só de forma (ponte, ordem, corte), nunca fato novo. No relatório, junte uma tabela curta dos
    blocos: cenas, parte da resposta que cada um acrescenta, ponte de entrada e ponte de saída.
+7. **Promessa do título** (método em [promessa-e-titulo.md](../pauta/promessa-e-titulo.md)). Para cada uma das
+   quatro respostas da pauta (resultado, confiança, tempo, esforço) e para cada opção de título, aponte a cena
+   que entrega e a ficha que sustenta:
+   - a narração entrega menos do que a pauta ou o título prometem → `EXAGERO`;
+   - o prometido não tem cena que o entregue, ou não tem ficha quando é fato → `SEM SUPORTE`;
+   - "não se aplica" e opinião declarada do dono não pedem ficha;
+   - na ficção histórica (ADR 055), compare só com a narração: o título promete a experiência, e fato histórico
+     afirmado no título → `SEM SUPORTE`.
+
+   Pauta sem a seção "Promessa e título" (episódio anterior a ela): diga isso numa linha do relatório, fora do
+   parecer, e confira o título contra `objective.promise`. No relatório, junte uma tabela das quatro respostas
+   e dos títulos: cena que entrega, ficha que sustenta, resultado.
 
 ## Rodadas e contexto (decisão do dono, 2026-10-24)
 

@@ -18,5 +18,10 @@ registrada; quadro de obra só oficial (`Citacao`, emenda da
 [ADR 007](../../../docs/decisions/007-contratos-de-dados.md)), e miniatura com quadro da
 obra é decisão do dono no gate 4. Confira pessoas, marcas e texto em resolução cheia.
 
-Entregue as versões e a prévia pequena. `miniatura-final.jpg` só depois de o dono escolher.
-A coerência título + capa é revista no gate 4.
+Confira cada versão em 320 px: num olhar de um segundo, a capa levanta a pergunta do título
+e promete só o que o vídeo entrega. Com teste A/B previsto na pauta, leve de duas a três
+finalistas que mudem a ideia da capa, no padrão do canal e com ativos registrados.
+
+Entregue as versões e a prévia pequena. `miniatura-final.jpg` só depois de o dono escolher;
+com teste A/B, as outras escolhidas viram `miniatura-final-ab-B.jpg` e `-ab-C.jpg` e entram
+à mão no Studio. A coerência título + capa é revista no gate 4.

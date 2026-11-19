@@ -19,6 +19,8 @@ recebe só caminhos de arquivo; o que vier além disso (opinião, resumo, "já e
   (o mesmo `o_que.data` e as mesmas legendas). As linhas `upload` dizem de que arquivo veio cada mídia.
 - Os arquivos que o pacote cita (`midia[].arquivo`) e, se existir, a agenda escrita ao lado deles
   (`agenda*.md` na mesma pasta).
+- Se o pacote traz `evidencia.episodio`, o `data/episodes/<episodio>/publicacao.md`: formato, links e plano do
+  teste A/B, escritos pela `vp-metadados-youtube`.
 
 Não rode comandos e não acesse a rede.
 
@@ -39,10 +41,21 @@ Não rode comandos e não acesse a rede.
    mídia? A defesa do código só olha a mesma legenda num intervalo de um dia.
 7. **Tempo para desfazer.** Falta menos de uma hora para o horário? Diga que sobra pouco tempo para apagar
    o post no Postiz se algo estiver errado.
+8. **Embalagem do YouTube** (só com `settings.__type` igual a `youtube`; o formato está no `publicacao.md`):
+   - **Visibilidade:** `settings.type` igual a `public` sai público na hora, sem a janela para conferir o
+     processamento e as verificações do Studio; `private` e `unlisted` dão essa janela.
+   - **Hashtags:** no longo, de 3 a 5 na legenda.
+   - **Tags:** pelo menos 3 em `settings.tags`.
+   - **Links:** no longo, a legenda traz cada link que o `publicacao.md` lista como citado na narração e ao menos
+     um link interno do canal (vídeo ou playlist). No Short cortado de um longo, a abertura e o link do longo
+     (CLAUDE.md §4).
+   - **Teste A/B:** se o `publicacao.md` prevê teste de miniatura, os arquivos `miniatura-final-ab-*.jpg` existem
+     na pasta `miniatura/` do episódio.
+   - Sem `publicacao.md`, diga que a embalagem não foi conferida.
 
 "Não segue" quando o post sairia errado (canal, dia, corte, legenda com erro de fato) ou quando falta algo
 que só se corrige depois de publicado. "Segue" quando o que sobra são riscos que o dono pode aceitar; liste-os
-assim mesmo.
+assim mesmo. As faltas do passo 8 são desse tipo: entram em `riscos`, e o veredito vem dos passos 1 a 7.
 
 ## Saída
 

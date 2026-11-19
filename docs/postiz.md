@@ -86,7 +86,9 @@ Contratos oficiais: [API pública](https://docs.postiz.com/public-api/introducti
 
 ## Depois de publicar
 
-O Postiz não faz estes passos; o `pacote` os lembra entre os riscos:
+O Postiz não faz estes passos; o `pacote` os lembra entre os riscos. A lista completa do Studio de cada vídeo
+(playlist, conteúdo sintético, tela final, legendas traduzidas, teste A/B, visibilidade) está no `publicacao.md`
+do episódio, escrita pela skill `vp-metadados-youtube` antes do gate 4.
 
 1. Conferir no YouTube Studio se o vídeo saiu (`ERROR` no Postiz não prova que falhou; não reenvie antes).
 2. Fixar o primeiro comentário, à mão.

@@ -34,6 +34,9 @@ O resumo é observação de amostra pequena (`analysed` diz quantos Reels), nunc
    inscrever, ver o próximo vídeo ou compartilhar; salvar, comentar ou ver o próximo vídeo; pedir a planilha ou
    o modelo, que no fundo é obrigatório nomear). No vídeo longo, também a pergunta para os comentários, que vem
    antes da chamada (emenda de 2026-11-16). Também é do dono: sem a resposta dele, fica como pergunta.
+   **Promessa e título:** as quatro perguntas, as opções de título, a palavra-chave, os links internos e o
+   teste A/B, pelo método de [promessa-e-titulo.md](promessa-e-titulo.md). Ele vale também para a pauta do
+   vídeo longo, escrita sem radar.
 4. **Tema concreto.** Dos `themes` com `strength: "pattern"`, quais têm a ver com o ângulo do dono. Para cada
    um, a pergunta que as fontes precisam responder para o tema poder entrar. Tema `avoid` ou `hint` vai numa
    linha à parte, como hipótese.
@@ -43,8 +46,8 @@ O resumo é observação de amostra pequena (`analysed` diz quantos Reels), nunc
 6. **O que as fontes precisam responder.** De três a seis perguntas neutras, sem resposta embutida. Marque a
    que sustenta falar com quem assiste: se nenhuma fonte responder a ela, o vídeo não pode afirmar nada sobre
    o espectador.
-7. **Critério de parada.** O que precisa aparecer nas fichas para a promessa do item 3 se sustentar. Sem isso depois do
-   fichamento, a pauta volta ao dono antes do roteiro.
+7. **Critério de parada.** O que precisa aparecer nas fichas para a promessa e o título do item 3 se sustentarem.
+   Sem isso depois do fichamento, a pauta volta ao dono antes do roteiro.
 8. **O que o resumo não diz.** O que está em `no_basis`, e o que só uma coleta nova responderia. Coleta que
    gasta crédito é decisão do dono: não a proponha como passo automático.
 

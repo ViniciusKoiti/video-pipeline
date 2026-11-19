@@ -1,0 +1,4 @@
+interface:
+  display_name: "VP · Metadados do YouTube"
+  short_description: "Monte título, descrição, tags e a lista do Studio antes do gate 4"
+  default_prompt: "Use $vp-metadados-youtube para montar a embalagem do episódio indicado a partir da pauta e da narração."
