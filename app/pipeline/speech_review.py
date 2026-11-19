@@ -11,6 +11,8 @@ o resultado é comparado com o roteiro:
   reconhecedor) e não é só número escrito de outro jeito.
 
 Não aprova nada: o reconhecedor também erra. A diferença aponta o trecho que o dono ouve (folha de escuta).
+A mesma comparação vale para as cenas do longo (`vp voice --conferir`) e para as linhas da narração do Short
+(`vp short conferir`, emenda de 2026-11-17 da ADR 062).
 """
 
 from __future__ import annotations
@@ -31,6 +33,7 @@ from app.pipeline.schemas import Scene, ScenesManifest
 from app.providers.alignment.base import TimedWord, WordAligner
 
 Span = tuple[int, int]
+Heard = tuple[str, str, Path]  # o id da cena ou da fala, o texto do roteiro e o WAV que vai ao vídeo
 
 
 def norm(word: str) -> str:
@@ -97,7 +100,14 @@ def _is_noise(expected: Sequence[str], heard: Sequence[str]) -> bool:
 
 
 def hear_scene(scene: Scene, wav: str, words: Sequence[TimedWord], glossary: Glossary) -> SceneHearing:
-    raw = [token for token in strip_pauses(scene.narration).split() if norm(token)]
+    return hear_line(scene.id, scene.narration, wav, words, glossary)
+
+
+def hear_line(
+    line_id: str, text: str, wav: str, words: Sequence[TimedWord], glossary: Glossary
+) -> SceneHearing:
+    """O que se ouviu numa fala comparado com o texto dela; `line_id` é a cena do longo ou a fala do Short."""
+    raw = [token for token in strip_pauses(text).split() if norm(token)]
     words = [word for word in words if norm(word.text)]
     ours, theirs = [norm(token) for token in raw], [norm(word.text) for word in words]
     opcodes = SequenceMatcher(None, ours, theirs, autojunk=False).get_opcodes()
@@ -112,7 +122,7 @@ def hear_scene(scene: Scene, wav: str, words: Sequence[TimedWord], glossary: Glo
             continue
         start, end = _times(words, span)
         differences.append(HeardDifference(
-            scene_id=scene.id, kind="termo", expected=" ".join(raw[first:last]), heard=heard,
+            scene_id=line_id, kind="termo", expected=" ".join(raw[first:last]), heard=heard,
             spoken_as=term.fala, start_ms=start, end_ms=end,
         ))
     errors = 0
@@ -125,13 +135,13 @@ def hear_scene(scene: Scene, wav: str, words: Sequence[TimedWord], glossary: Glo
             continue
         start, end = _times(words, (j1, j2))
         differences.append(HeardDifference(
-            scene_id=scene.id, kind="palavra", expected=" ".join(raw[i1:i2]),
+            scene_id=line_id, kind="palavra", expected=" ".join(raw[i1:i2]),
             heard=" ".join(word.text for word in words[j1:j2]), start_ms=start, end_ms=end,
         ))
     rate = round(errors / len(ours), 3) if ours else 0.0
     heard_text = " ".join(word.text for word in words)
     return SceneHearing(
-        scene_id=scene.id, wav=wav, heard=heard_text, word_error_rate=rate, differences=differences
+        scene_id=line_id, wav=wav, heard=heard_text, word_error_rate=rate, differences=differences
     )
 
 
@@ -140,9 +150,17 @@ def review_speech(
     episode_dir: Path,
 ) -> SpeechReview:
     """Ouve a fala de cada cena (sem o texto esperado como `prompt`) e compara com o roteiro."""
+    lines = [(scene.id, scene.narration, wavs[scene.id]) for scene in scenes.scenes]
+    return review_lines(recognizer, scenes.episode_id, scenes.language, lines, glossary, episode_dir)
+
+
+def review_lines(
+    recognizer: WordAligner, episode_id: str, language: str, lines: Sequence[Heard], glossary: Glossary,
+    folder: Path,
+) -> SpeechReview:
+    """Ouve cada fala, sem o texto esperado como `prompt` (ele "corrigiria" o nome mal dito), e compara."""
     hearings = []
-    for scene in scenes.scenes:
-        wav = wavs[scene.id]
-        words = recognizer.recognize_words(wav, scenes.language)
-        hearings.append(hear_scene(scene, str(wav.relative_to(episode_dir)), words, glossary))
-    return SpeechReview(episode_id=scenes.episode_id, recognizer=recognizer.info.name, scenes=hearings)
+    for line_id, text, wav in lines:
+        words = recognizer.recognize_words(wav, language)
+        hearings.append(hear_line(line_id, text, str(wav.relative_to(folder)), words, glossary))
+    return SpeechReview(episode_id=episode_id, recognizer=recognizer.info.name, scenes=hearings)

@@ -80,3 +80,28 @@ Mesma decisão do dono. O `vp check` ganha a trava fonética do `CLAUDE.md` §6 
   o "pensea como é que é" da crítica).
 - **Título estrangeiro dito uma vez**, ou em português na narração com o original na tela: regra da skill
   `roteiro-explicativo`, sem conferência em código (nome de personagem se repete com razão; título, não).
+
+## Emenda (2026-11-17): os Shorts do `vp short`
+
+Pedido do dono ("pode fazer a etapa 5 dos Shorts"). Os Shorts montados pelo `vp short` (cortes do longo, série
+técnica, Reels de consistent hashing, LinkedIn) não têm `scenes.json` e não passavam por nenhuma das
+conferências acima, embora usem a mesma voz clonada. Agora passam, linha a linha da narração
+(`app/pipeline/short_speech.py`), com a cena da linha (ou `fora-N`) como id:
+
+- **`vp short checar <pasta> <narracao.json>`**, a porta do texto antes da primeira voz: as mesmas regras de
+  texto do `vp check`. Rótulo de opinião é erro (saída 1). Termo de fora sem glossário, ou sem `ipa` com a voz
+  do Azure, é ponto de atenção. Dois-pontos sem pausa antes de pergunta é alerta. A voz considerada é a
+  `tts_final`.
+- **`vp short voz`** imprime o mesmo antes de gerar, sem parar, porque a rotina diária (ADR 036) não tem gate. Ganha
+  `--refazer FALA...`, que guarda a tomada atual em `voice/tomadas-recusadas/<data>/` e gera outra, como no
+  longo.
+- **`vp short conferir <pasta> <narracao.json>`**: o mesmo reconhecedor, sem `prompt`, ouve o WAV de cada fala
+  registrado em `<narração>.voz.json` (a cópia nivelada, quando existe). Grava `voice/conferencia-<narração>.json`
+  e a folha `voice/conferencia-<narração>-escuta.wav`, uma por narração, porque a versão pt e a en dividem a pasta.
+  Para se o texto mudou depois da voz.
+- **Varredura das 107 narrações de Short existentes:** nenhum rótulo de opinião, 9 dois-pontos sem pausa, e
+  32 narrações com termo sem glossário. Os mais frequentes são `threads`, `link`, `mod`, `atomic`, `Kafka` e
+  `JSON`, palavras de fora de verdade que a regra do §6 manda pôr no glossário. A narração em inglês fica de fora
+  do aviso de termo, como no longo.
+- **Na rotina diária:** uma nova tomada por fala apontada, no máximo. O que continuar apontado vai ao log, com a
+  folha, para a escuta do dono.

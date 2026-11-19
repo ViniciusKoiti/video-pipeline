@@ -169,7 +169,8 @@ Os detalhes de campos vivem em `app/pipeline/schemas.py`. Regras que o schema so
   - A voz clonada não segue a grafia do glossário de forma estável: depois do `vp voice`, rodar
     `vp voice <id> --conferir` (Whisper local, ADR 062; modelo no cache com `uv run hf download
     openai/whisper-small`), ouvir a folha `voice/conferencia-escuta.wav` e pedir outra tomada do que soar errado
-    com `--refazer <cenas>` antes da montagem final.
+    com `--refazer <cenas>` antes da montagem final. No Short do `vp short`: `vp short checar` antes da primeira
+    voz, `vp short conferir` depois e `vp short voz --refazer <falas>` (emenda de 2026-11-17 da ADR 062).
   - Usar `<short pause>` (espaço + marca + espaço) onde a síntese costuma colar palavras: antes de diálogo interno e
     logo depois de dois-pontos que abrem uma fala ou pergunta (o `vp check` avisa). Respeitar o teto das skills
     (uma por ~15 palavras, nunca no início nem no fim da cena). `<long pause>` e outras tags são erro.
