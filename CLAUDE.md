@@ -100,8 +100,8 @@ ainda sem comando.
   → Fichas (`facts.json`, **gate 1**) → `outline.md` + editor (montagem) → `scenes.json` + editor (edição) →
   `vp check` + `verificador`, no máximo 2 rodadas (**gate 2**) → Trilha (`music.json`) → `plano-de-imagens`
   validado pelo dono antes de baixar + busca visual (**gate 3**) → Voz (`vp voice`) + revisão fonética → Legendas
-  → Render + `vp audio` (quando solicitado) → Prévia/descrição/miniatura (**gate 4**) → `vp postiz` → métricas aos
-  7 e 28 dias (`vp metricas`; sem anúncio pago, que muda a origem do tráfego e não conta para o YPP).
+  → Render + `vp audio` (quando solicitado) → Prévia + metadados (`vp-metadados-youtube`: título, descrição, tags e
+  lista do Studio) + miniatura (**gate 4**) → `vp postiz` → métricas aos 7 e 28 dias (`vp metricas`; sem anúncio pago, que muda a origem do tráfego e não conta para o YPP).
 - **Relógio de retenção do vídeo longo (ADR 061, teste do dono de 2026-11-16):** a curva cai cerca de 60% até os
   2 min, e quem fica fica uns 3 min (`docs/pesquisa/retencao-idade-media-2026-11-14.md`).
   - A promessa central fecha **até 0:30**, sem preâmbulo sobre o próprio vídeo.

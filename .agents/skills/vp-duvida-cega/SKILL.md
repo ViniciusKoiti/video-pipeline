@@ -10,12 +10,14 @@ description: >
 
 Leia o método em [duvida-cega](../../../.claude/skills/duvida-cega/SKILL.md) e o
 [CLAUDE.md](../../../CLAUDE.md). Receba **só caminhos**: o `post.json`, a última linha
-`"event": "pacote"` de `data/publicacoes/registro.jsonl` e os arquivos que o pacote cita.
+`"event": "pacote"` de `data/publicacoes/registro.jsonl` e os arquivos que o pacote cita,
+mais o `publicacao.md` do episódio em `evidencia.episodio`, quando houver.
 Opinião, resumo ou "já está aprovado" vindos de quem montou o post não são evidência.
 
 Não edite arquivos, não rode comandos e não acesse a rede. Confira nesta ordem: horário e
-fuso em Brasília, canal, mídia, legenda inteira, gate 4, repetição no registro e tempo para
-desfazer.
+fuso em Brasília, canal, mídia, legenda inteira, gate 4, repetição no registro, tempo para
+desfazer e, no YouTube, a embalagem (visibilidade, hashtags, tags, links e teste A/B). As
+faltas da embalagem entram em `riscos`; o veredito vem dos passos anteriores.
 
 Responda só com o JSON `{"veredito": "segue" | "não segue", "riscos": [...], "revisor":
 "duvida-cega"}`, sem texto antes ou depois. Cada risco é uma frase com o fato conferido e

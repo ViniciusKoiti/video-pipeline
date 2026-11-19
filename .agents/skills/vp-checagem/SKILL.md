@@ -28,6 +28,10 @@ Impacto em quem assiste exige evidência própria; radar não é fonte do conte�
 Na passagem editorial, diga em uma frase qual pergunta o vídeo responde e o que a pessoa
 leva dele. Compare com `objective.promise`, tese e pauta; cite cenas que entregam ou
 deixam de entregar a promessa. Desalinhamento volta ao dono, sem escolher nova tese.
+Confronte também as quatro respostas da seção "Promessa e título" da pauta (resultado,
+confiança, tempo, esforço) e cada opção de título com a narração e as fichas: entrega menor
+que a prometida é `EXAGERO`, promessa sem cena ou sem ficha é `SEM_SUPORTE`, e "não se
+aplica" não é cobrado (item 7 da [checagem](../../../.claude/skills/checagem/SKILL.md)).
 
 Relate do mais grave ao menos grave: categoria, cena/ficha/plano, formulação, trecho,
 problema e menor correção possível. Separe impedimento factual, questão editorial e

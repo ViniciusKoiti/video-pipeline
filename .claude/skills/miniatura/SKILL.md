@@ -22,11 +22,12 @@ de ativos, conferência em resolução cheia).
 ## O que você escreve
 
 - Na pasta `miniatura/` do episódio: as versões (`miniatura-<letra>-<descrição>.jpg` e a prévia `-320.jpg`) e, depois
-  da escolha do dono, `miniatura-final.jpg`.
+  da escolha do dono, `miniatura-final.jpg` (com teste A/B, também `miniatura-final-ab-B.jpg` e `-ab-C.jpg`).
 - `assets/<id>.json` de cada foto nova, com `used_in_scenes: []` e "SÓ NA MINIATURA" no `usage_notes`.
 - O crédito de cada foto CC-BY em `credits.txt` e `comentario-fixado.txt` (os dois iguais), e a fonte da miniatura na
   linha de tipografia.
-- `decisoes-imagens.md` (as escolhas do dono) e, em `publicacao.md`, os pontos do gate 4.
+- `decisoes-imagens.md` (as escolhas do dono) e, em `publicacao.md`, a seção "Pontos para o dono no gate 4" (as
+  seções "Pacote" e "No YouTube Studio" são da `vp-metadados-youtube`).
 
 ## Método
 
@@ -63,12 +64,21 @@ de ativos, conferência em resolução cheia).
      palavras, como "TERIA VOTOS?".
    - **Fonte:** Inter Display Black (OFL, já instalada), esticada na horizontal.
    - **O personagem fica na frente da palavra**, e o contorno da palavra volta por cima dele.
+   - **Teste A/B** (quando a pauta, na seção "Promessa e título", ou o dono o preveem): além das variações acima,
+     leve de duas a três finalistas que mudem a **ideia** da capa (outro personagem, outro objeto do tema, outra
+     palavra), todas no padrão do canal de referência e cada uma com os ativos registrados. O YouTube compara até
+     três miniaturas.
 6. **Conferir em 320 px**, o tamanho da lista do YouTube.
    - **Leitura:** a palavra precisa ser lida e o objeto do tema reconhecido. Na urna, o teclado com "CONFIRMA".
+   - **Curiosidade:** num olhar de um segundo, a capa levanta a pergunta do título e deixa a resposta para o vídeo.
+     A palavra completa o título em vez de repeti-lo, e a capa promete só o que o vídeo entrega
+     ([promessa-e-titulo.md](../pauta/promessa-e-titulo.md)).
    - **Recorte:** nenhum resto de recorte.
 7. **Levar ao dono** numa pergunta só: as versões com caminho, a recomendação, e o comando do gate 3 para a foto nova
    (`vp approve <id> --step assets --asset <asset-id>`). Os gates são do dono.
-8. Depois da escolha, copie para `miniatura-final.jpg` e registre a decisão.
+8. Depois da escolha, copie para `miniatura-final.jpg` e registre a decisão. Com teste A/B, as outras escolhidas viram
+   `miniatura-final-ab-B.jpg` e `miniatura-final-ab-C.jpg`: o Postiz envia só a `miniatura-final.jpg`, e as outras
+   entram à mão no Studio ("Testar e comparar", na lista da `vp-metadados-youtube`).
 9. **Antes de levar o gate 4 ao dono, confira o que fecha o pacote:** `music.json` existe e as faixas estão
    aprovadas (skill `trilha`; `episode.json` com `music` não vazio), a descrição e o `credits.txt` citam a música,
    e o `final.mp4` foi renderizado depois disso. Faltando, avise antes de pedir a aprovação.
