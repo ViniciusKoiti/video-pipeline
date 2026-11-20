@@ -9,9 +9,9 @@ from pathlib import Path
 import pytest
 
 from app.bootstrap.registry import ConfigurationError
-from app.pipeline.assembly import AssemblyError, EpisodeRenderer, assembly_problems, asset_ids
 from app.pipeline.gates import record_decision
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
+from app.pipeline.production.assembly import AssemblyError, EpisodeRenderer, assembly_problems, asset_ids
 from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.reopen import reopen_gate
 from app.pipeline.schemas import (
@@ -288,7 +288,7 @@ def test_an_approved_episode_json_is_not_changed_and_the_same_one_is_not_a_probl
 def test_episode_json_is_written_whole_and_a_failure_keeps_the_old_one_and_skips_the_engine(
     env: Env, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from app.pipeline import assembly
+    from app.pipeline.production import assembly
 
     env.render(preview=True)
     old = env.path("episode.json").read_bytes()

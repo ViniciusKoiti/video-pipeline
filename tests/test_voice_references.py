@@ -15,7 +15,7 @@ from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.status import Status
 from app.pipeline.models.step import Step
-from app.pipeline.short_voice import voice_entries
+from app.pipeline.short.voice import voice_entries
 from app.pipeline.state import load_state
 from app.pipeline.voice import Narrator, VoiceLibrary
 from app.pipeline.voice_state import produce_with_state

@@ -27,8 +27,8 @@ from app.media.speech_bounds import speech_bounds
 from app.pipeline.constants.voice_retake_constants import VoiceRetakeConstants as RetakeConstants
 from app.pipeline.motion_inputs import load_narration
 from app.pipeline.ports import Context
-from app.pipeline.short_speech import check_short_text
-from app.pipeline.short_voice import (
+from app.pipeline.short.speech import check_short_text
+from app.pipeline.short.voice import (
     produce_short_voice,
     production_id,
     speech_lines,

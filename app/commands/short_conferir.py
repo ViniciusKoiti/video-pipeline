@@ -18,8 +18,8 @@ from app.media.pronunciation import load_glossary
 from app.pipeline.constants.short_speech_constants import ShortSpeechConstants as Constants
 from app.pipeline.motion_inputs import load_narration
 from app.pipeline.ports import Context
-from app.pipeline.short_speech import record_path, voiced_lines
-from app.pipeline.short_voice import production_id
+from app.pipeline.short.speech import record_path, voiced_lines
+from app.pipeline.short.voice import production_id
 from app.pipeline.speech_review import review_lines
 
 

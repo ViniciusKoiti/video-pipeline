@@ -26,7 +26,7 @@ from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.status import Status
 from app.pipeline.models.step import Step
-from app.pipeline.short_voice import produce_short_voice, voice_entries
+from app.pipeline.short.voice import produce_short_voice, voice_entries
 from app.pipeline.state import load_state
 from app.pipeline.voice import Narrator, VoiceLibrary
 from app.pipeline.voice_state import produce_with_state
@@ -156,7 +156,7 @@ def test_production_paths_use_leveled_speech_and_keep_reference_and_level_record
     if naming is Naming.SHORT:
         wavs = produce_short_voice(tts, narration, store, 'ep', polish=polish)
     else:
-        from app.pipeline.voice_production import produce_voice
+        from app.pipeline.production.voice import produce_voice
         from tests.test_voice_scripts import scenes
 
         manifest = scenes()
@@ -339,7 +339,7 @@ def test_episode_tempo_file_is_optional_and_validated(tmp_path: Path) -> None:
 
 
 def test_long_episode_voice_uses_the_episode_tempo(tmp_path: Path) -> None:
-    from app.pipeline.voice_production import produce_voice
+    from app.pipeline.production.voice import produce_voice
     from tests.test_voice_scripts import scenes
 
     refs = recordings(tmp_path / 'references')

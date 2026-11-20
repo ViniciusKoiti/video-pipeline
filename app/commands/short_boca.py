@@ -13,8 +13,8 @@ import json
 
 from app.pipeline.motion_inputs import load_content
 from app.pipeline.ports import Context
-from app.pipeline.short_mouth import mouth_data
-from app.pipeline.short_timing import voiced
+from app.pipeline.short.mouth import mouth_data
+from app.pipeline.short.timing import voiced
 
 
 def run(args: argparse.Namespace, context: Context) -> int:

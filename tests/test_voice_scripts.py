@@ -11,10 +11,10 @@ from app.pipeline.models.naming import Naming
 from app.pipeline.models.narration import Narration
 from app.pipeline.models.narration_line import NarrationLine
 from app.pipeline.models.speech_line import SpeechLine
+from app.pipeline.production.voice import produce_voice
 from app.pipeline.schemas import ScenesManifest
-from app.pipeline.short_voice import produce_short_voice
+from app.pipeline.short.voice import produce_short_voice
 from app.pipeline.voice import Narrator, VoiceIncomplete, VoiceLibrary
-from app.pipeline.voice_production import produce_voice
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore
 from tests.fakes import FakeBatchTTS, wav_duration_ms

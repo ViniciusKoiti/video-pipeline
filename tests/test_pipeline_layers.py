@@ -57,11 +57,6 @@ ROOT_MODULES: Mapping[str, str] = {
     **dict.fromkeys(("voice", "voice_state", "voice_timeline", "voice_retake", "speech_review"), "voice"),
     **dict.fromkeys(("package", "metrics", "translation", "medicao", "affiliate", "usage"), "publishing"),
     **dict.fromkeys(("bench", "bench_data"), "bench"),
-    **dict.fromkeys(
-        ("voice_production", "caption_production", "episode_build", "assembly", "audio_review"),
-        "production",
-    ),
-    **dict.fromkeys(("short_voice", "short_timing", "short_join", "short_mouth", "short_speech"), "short"),
     "gates": "gates",
     "pending": "status",
 }

@@ -10,7 +10,7 @@ import argparse
 
 from app.pipeline.motion_inputs import load_content
 from app.pipeline.ports import Context
-from app.pipeline.short_timing import resolve_effects, voiced
+from app.pipeline.short.timing import resolve_effects, voiced
 
 
 def run(args: argparse.Namespace, context: Context) -> int:
