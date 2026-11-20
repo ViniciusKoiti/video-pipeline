@@ -17,11 +17,11 @@ from collections.abc import Callable, Iterable
 from pathlib import Path
 
 from app.pipeline.constants.checagem_local_constants import ChecagemLocalConstants
-from app.pipeline.excerpts import excerpts_of
 from app.pipeline.models._checagem_local_types import Rotulo as Rotulo
 from app.pipeline.models.case import Case as Case
 from app.pipeline.models.result import Result as Result
 from app.pipeline.models.veredito import Veredito as Veredito
+from app.pipeline.research.excerpts import excerpts_of
 from app.pipeline.schemas import ScenesManifest, SourcesManifest
 from app.providers.errors import ProviderError
 from app.providers.text.base import TextProvider, TextRequest

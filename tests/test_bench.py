@@ -10,8 +10,8 @@ from pydantic import ValidationError
 
 import app.cli
 from app.cli import main
-from app.pipeline.bench import BenchReport, run_bench, summary
-from app.pipeline.bench_data import BenchClaim, BenchScript, prompt
+from app.pipeline.bench.data import BenchClaim, BenchScript, prompt
+from app.pipeline.bench.runner import BenchReport, run_bench, summary
 from app.pipeline.constants.bench_data_constants import BenchDataConstants
 from app.providers.base import ProviderInfo
 from app.providers.tts.base import SpeechRequest, SpeechResult

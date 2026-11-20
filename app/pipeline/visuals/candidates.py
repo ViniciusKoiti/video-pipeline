@@ -17,10 +17,10 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from app.pipeline.assets import AssetError, search_archives
 from app.pipeline.constants.candidates_constants import CandidatesConstants as Constants
 from app.pipeline.models.skipped_archive import SkippedArchive
 from app.pipeline.schemas import Orientation, VisualNeed
+from app.pipeline.visuals.assets import AssetError, search_archives
 from app.providers.archives.base import ArchiveProvider, AssetCandidate, AssetQuery
 
 

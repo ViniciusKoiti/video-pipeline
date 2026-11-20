@@ -21,7 +21,7 @@ from app.pipeline.constants.translation_constants import TranslationConstants
 from app.pipeline.models.medicao import Medicao as Medicao
 from app.pipeline.models.numero import Numero as Numero
 from app.pipeline.ports import ManifestNotFound, ManifestStore
-from app.pipeline.translation import Narration, spoken_numbers
+from app.pipeline.publishing.translation import Narration, spoken_numbers
 
 
 def _numbers_in(text: str) -> list[float]:

@@ -12,7 +12,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.cli import main
-from app.pipeline.metrics import (
+from app.pipeline.publishing.metrics import (
     all_metrics,
     invalid_metrics,
     load_metrics,

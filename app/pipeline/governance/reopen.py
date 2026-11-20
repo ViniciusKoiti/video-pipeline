@@ -10,10 +10,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
-from app.pipeline.gate_stamps import GateError
+from app.pipeline.governance.gate_stamps import GateError
+from app.pipeline.governance.state import Clock
 from app.pipeline.ports import ManifestStore, ReviewGate
 from app.pipeline.schemas import Asset, Decision, ReviewEntry, Status, Step
-from app.pipeline.state import Clock
 
 
 def reopen_gate(

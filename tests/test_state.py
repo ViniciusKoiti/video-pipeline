@@ -8,10 +8,8 @@ from pathlib import Path
 import pytest
 
 from app.pipeline.constants.state_constants import StateConstants
-from app.pipeline.ports import EpisodeLocked, ImmutableManifest
-from app.pipeline.protection import ReviewWriteGuard
-from app.pipeline.schemas import SourcesManifest, Status, Step
-from app.pipeline.state import (
+from app.pipeline.governance.protection import ReviewWriteGuard
+from app.pipeline.governance.state import (
     Action,
     InputChanged,
     InvalidTransition,
@@ -27,6 +25,8 @@ from app.pipeline.state import (
     transition,
     write_output,
 )
+from app.pipeline.ports import EpisodeLocked, ImmutableManifest
+from app.pipeline.schemas import SourcesManifest, Status, Step
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore
 from tests.fakes import InMemoryReviewGate

@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 
 from app.errors import PipelineError
-from app.pipeline.sfx import load_kit, load_plan
-from app.pipeline.sfx_inputs import SfxInputError, parse_kit
+from app.pipeline.sound.sfx import load_kit, load_plan
+from app.pipeline.sound.sfx_inputs import SfxInputError, parse_kit
 from tests.test_sfx import sound
 
 ROOT = Path("kit")

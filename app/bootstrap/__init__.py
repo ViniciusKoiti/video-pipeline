@@ -17,8 +17,8 @@ from app.bootstrap.azure_speech import build_azure_speech
 from app.bootstrap.registry import ConfigurationError, Registration, Registry, ensure_free, unknown_choices
 from app.bootstrap.secrets import secret as _secret
 from app.pipeline.ports import ManifestStore, ReviewGate
+from app.pipeline.publishing.usage import UsageLedger
 from app.pipeline.schemas import EpisodeFormat
-from app.pipeline.usage import UsageLedger
 from app.providers.alignment.base import SubtitleAligner, WordAligner
 from app.providers.archives.base import ArchiveProvider
 from app.providers.base import ProviderInfo

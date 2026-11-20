@@ -21,8 +21,8 @@ from app.commands.constants.postiz_cadeia_constants import PostizCadeiaConstants
 from app.commands.postiz_links import LinkFetch, caption_links, link_findings, link_status
 from app.errors import PipelineError
 from app.pipeline.gates import gate_report
-from app.pipeline.package import package_problems
 from app.pipeline.ports import Context
+from app.pipeline.publishing.package import package_problems
 from app.pipeline.schemas import Decision, Step
 from app.providers.errors import ProviderError
 from app.providers.postiz_validation import ScheduleClient, visible_text

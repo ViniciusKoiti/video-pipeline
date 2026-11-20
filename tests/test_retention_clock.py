@@ -15,7 +15,7 @@ from app.pipeline.script.checks.retention_clock import (
     retention_summary,
     scene_clock,
 )
-from app.pipeline.voice_timeline import measured_seconds
+from app.pipeline.voice.timeline import measured_seconds
 from app.storage.json_files import JsonFileStore
 
 EP = "ep"

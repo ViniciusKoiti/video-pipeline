@@ -10,7 +10,7 @@ import pytest
 
 from app.cli import HANDLERS, build_parser
 from app.commands.errors import run as handled
-from app.pipeline.metrics import load_metrics
+from app.pipeline.publishing.metrics import load_metrics
 from tests.test_metrics import EPISODE, PUBLISHED, registry
 
 

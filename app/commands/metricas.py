@@ -26,7 +26,8 @@ from pydantic import ValidationError
 
 from app.commands.metricas_arguments import add_arguments as add_arguments
 from app.pipeline.constants.metrics_constants import MetricsConstants
-from app.pipeline.metrics import (
+from app.pipeline.ports import Context
+from app.pipeline.publishing.metrics import (
     MetricsError,
     all_metrics,
     invalid_metrics,
@@ -41,7 +42,6 @@ from app.pipeline.metrics import (
     table_rows,
     write_table,
 )
-from app.pipeline.ports import Context
 from app.pipeline.schemas import AudienceRequest, MetricsReading, PublicationMetrics, TrafficSource
 
 

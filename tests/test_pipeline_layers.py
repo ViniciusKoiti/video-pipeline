@@ -39,18 +39,6 @@ ROOT_MODULES: Mapping[str, str] = {
     **dict.fromkeys(
         ("schemas", "ports", "atomic_files", "file_hash", "shots", "attribution", "motion_inputs"), "base"
     ),
-    **dict.fromkeys(
-        ("state", "protection", "review_hashes", "reopen", "failures", "scene_step", "gate_stamps"),
-        "governance",
-    ),
-    **dict.fromkeys(("sources", "extract", "excerpts", "format_decision"), "research"),
-    **dict.fromkeys(("assets", "candidates"), "visuals"),
-    **dict.fromkeys(("music", "music_library", "sfx", "sfx_inputs"), "sound"),
-    **dict.fromkeys(("voice", "voice_state", "voice_timeline", "voice_retake", "speech_review"), "voice"),
-    **dict.fromkeys(("package", "metrics", "translation", "medicao", "affiliate", "usage"), "publishing"),
-    **dict.fromkeys(("bench", "bench_data"), "bench"),
-    "gates": "gates",
-    "pending": "status",
 }
 
 # Violações conhecidas: só encolhe. O PR 1 da ADR 064 (2026-11-19) esvaziou a lista.
@@ -68,7 +56,7 @@ def stage_of(module: str) -> str | None:
 
 
 def _existing_module(name: str) -> str:
-    """`app.pipeline.excerpts.excerpts_of` -> `app.pipeline.excerpts` (o import de função parece módulo)."""
+    """Do import de função ao módulo que existe: `...excerpts.excerpts_of` -> `...excerpts`."""
     parts = name.split(".")
     while len(parts) > 2:
         path = APP.parent.joinpath(*parts)
@@ -144,9 +132,11 @@ def test_pipeline_layers_only_shrink() -> None:
 
 
 def test_checker_catches_a_lower_layer_importing_a_higher_one() -> None:
-    graph = {"app.pipeline.state": {"app.pipeline.script.check"}}
+    graph = {"app.pipeline.governance.state": {"app.pipeline.script.check"}}
     assert layer_violations(graph) == {
-        "app.pipeline.state -> app.pipeline.script.check": "governance (camada 1) importa script (camada 2)"
+        "app.pipeline.governance.state -> app.pipeline.script.check": (
+            "governance (camada 1) importa script (camada 2)"
+        )
     }
 
 
@@ -163,16 +153,17 @@ def test_checker_catches_a_cycle_between_stages_of_the_same_layer() -> None:
 
 def test_checker_blames_the_upward_import_not_the_ones_closing_the_loop() -> None:
     graph = {
-        "app.pipeline.state": {"app.pipeline.script.numbers"},  # governance sobe para script
-        "app.pipeline.script.check": {"app.pipeline.state"},  # script desce para governance: legítimo
+        "app.pipeline.governance.state": {"app.pipeline.script.numbers"},  # governance sobe para script
+        # script desce para governance: legítimo
+        "app.pipeline.script.check": {"app.pipeline.governance.state"},
     }
-    assert set(layer_violations(graph)) == {"app.pipeline.state -> app.pipeline.script.numbers"}
+    assert set(layer_violations(graph)) == {"app.pipeline.governance.state -> app.pipeline.script.numbers"}
 
 
 def test_checker_allows_going_down_and_crossing_without_a_cycle() -> None:
     graph = {
         "app.pipeline.short.timing": {
-            "app.pipeline.sound.sfx", "app.pipeline.voice", "app.pipeline.schemas",
+            "app.pipeline.sound.sfx", "app.pipeline.voice.narrator", "app.pipeline.schemas",
         },
         "app.pipeline.script.check": {"app.pipeline.research.excerpts", "app.pipeline.models.scene"},
         "app.pipeline.voice.state": {"app.pipeline.governance.state", "app.pipeline.constants.x"},
@@ -184,10 +175,10 @@ def test_stage_comes_from_the_subpackage_once_the_module_moves() -> None:
     assert stage_of("app.pipeline.voice.models.voice_key") == "voice"
     assert stage_of("app.pipeline.models.scene") == "base"
     assert stage_of("app.pipeline") == "base"
-    assert stage_of("app.pipeline.pending") == "status"
+    assert stage_of("app.pipeline.status") == "status"
     assert stage_of("app.pipeline.nao_declarado") is None
 
 
 def test_existing_module_drops_the_imported_function() -> None:
-    assert _existing_module("app.pipeline.excerpts.excerpts_of") == "app.pipeline.excerpts"
+    assert _existing_module("app.pipeline.research.excerpts.excerpts_of") == "app.pipeline.research.excerpts"
     assert _existing_module("app.pipeline.models.scene") == "app.pipeline.models.scene"

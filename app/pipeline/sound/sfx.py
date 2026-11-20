@@ -21,8 +21,8 @@ from app.pipeline.models.sfx_kit import SfxKit as SfxKit
 from app.pipeline.models.sfx_plan import SfxPlan as SfxPlan
 from app.pipeline.models.sfx_sound import SfxSound as SfxSound
 from app.pipeline.models.speech import Speech as Speech
-from app.pipeline.sfx_inputs import load_plan as load_plan
-from app.pipeline.sfx_inputs import parse_kit
+from app.pipeline.sound.sfx_inputs import load_plan as load_plan
+from app.pipeline.sound.sfx_inputs import parse_kit
 
 
 def load_kit(data_dir: Path) -> SfxKit | None:

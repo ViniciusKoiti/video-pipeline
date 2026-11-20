@@ -13,6 +13,7 @@ import pytest
 from app.cli import main
 from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.gates import gate_report, record_check, record_decision
+from app.pipeline.governance.review_hashes import strip_block
 from app.pipeline.schemas import Asset, CheckVerdict, Decision, ScenesManifest, Status, Step
 from app.pipeline.script.check import check_episode
 from app.pipeline.script.numbers import (
@@ -23,7 +24,6 @@ from app.pipeline.script.numbers import (
     replace_block,
     script_numbers,
     shot_timings,
-    strip_block,
 )
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root

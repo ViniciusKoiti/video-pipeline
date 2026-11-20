@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from app.pipeline import sfx
-from app.pipeline.sfx import SfxCue, SfxPlan, Speech, load_kit, plan_problems, resolve_sfx
+from app.pipeline.sound import sfx
+from app.pipeline.sound.sfx import SfxCue, SfxPlan, Speech, load_kit, plan_problems, resolve_sfx
 
 WAV = b"RIFF....WAVEfake"
 

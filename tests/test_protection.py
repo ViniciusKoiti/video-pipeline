@@ -12,11 +12,11 @@ import pytest
 from app.cli import main
 from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.gates import GateError, gate_report
+from app.pipeline.governance.protection import ReviewWriteGuard
+from app.pipeline.governance.reopen import reopen_gate
+from app.pipeline.governance.state import compute_input_hash, write_output
 from app.pipeline.ports import ImmutableManifest
-from app.pipeline.protection import ReviewWriteGuard
-from app.pipeline.reopen import reopen_gate
 from app.pipeline.schemas import Asset, Decision, ReviewEntry, SourcesManifest, Status, Step
-from app.pipeline.state import compute_input_hash, write_output
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
 from tests.test_gates import COM_IMAGEM, EPISODE, SCENES, SEM_IMAGEM, episode, rendered, stock_asset

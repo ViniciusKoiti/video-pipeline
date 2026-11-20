@@ -12,10 +12,10 @@ from __future__ import annotations
 import argparse
 
 from app.media.probe import duration_ms
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.models.package_action import PackageAction
-from app.pipeline.package import PackagePublisher
 from app.pipeline.ports import Context
-from app.pipeline.protection import ReviewWriteGuard
+from app.pipeline.publishing.package import PackagePublisher
 
 
 def run(args: argparse.Namespace, context: Context) -> int:

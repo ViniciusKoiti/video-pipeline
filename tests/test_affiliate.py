@@ -7,8 +7,15 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 
-from app.pipeline.affiliate import Book, BookList, amazon_link, books_block, channel_tag, with_block
 from app.pipeline.constants.affiliate_constants import AffiliateConstants
+from app.pipeline.publishing.affiliate import (
+    Book,
+    BookList,
+    amazon_link,
+    books_block,
+    channel_tag,
+    with_block,
+)
 
 TAG = "canal-20"
 

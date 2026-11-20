@@ -150,8 +150,8 @@ def test_a_broken_narration_stops_before_any_voice(
 
 
 def test_the_state_of_the_voice_run_goes_to_the_folder_manifest(tmp_path: Path) -> None:
+    from app.pipeline.governance.state import load_state
     from app.pipeline.schemas import Status, Step
-    from app.pipeline.state import load_state
 
     folder, narration, context = make(tmp_path)
     assert voz(context, folder, narration) == 0

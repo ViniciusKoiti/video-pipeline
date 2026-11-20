@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from app.pipeline.format_decision import decide_from_scenes
+from app.pipeline.research.format_decision import decide_from_scenes
 from app.pipeline.schemas import (
     Asset,
     EpisodeFormat,

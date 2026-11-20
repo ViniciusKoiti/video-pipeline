@@ -27,8 +27,8 @@ from app.pipeline.models.naming import Naming
 from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.ports import ManifestStore
-from app.pipeline.voice import Narrator, VoiceLibrary
-from app.pipeline.voice_state import produce_with_state
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
+from app.pipeline.voice.state import produce_with_state
 from app.providers.tts.base import ReferencedTTS, SpeechRequest, TTSProvider, closing_tts
 
 Bounds = Callable[[Path], tuple[float, float]]

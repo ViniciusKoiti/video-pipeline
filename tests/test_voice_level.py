@@ -21,15 +21,15 @@ from app.media.models.voice_polish import VoicePolish
 from app.media.voice_level import VoiceLevelError, _ffmpeg, _measure, level_policy, level_voice
 from app.media.voice_polish import polish_filters
 from app.media.voice_tempo import load_tempo, tempo_filter
+from app.pipeline.governance.state import load_state
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.status import Status
 from app.pipeline.models.step import Step
 from app.pipeline.short.voice import produce_short_voice, voice_entries
-from app.pipeline.state import load_state
-from app.pipeline.voice import Narrator, VoiceLibrary
-from app.pipeline.voice_state import produce_with_state
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
+from app.pipeline.voice.state import produce_with_state
 from app.settings import load_settings
 from app.settings.models.voice_polish_settings import VoicePolishSettings
 from app.storage.json_files import JsonFileStore
@@ -120,13 +120,15 @@ def test_level_failure_keeps_raw_speeches_and_retry_needs_no_new_tts(
             raise VoiceLevelError('nivelamento falhou')
         return path
 
-    monkeypatch.setattr('app.pipeline.voice_state.level_voice', fail_one)
+    monkeypatch.setattr('app.pipeline.voice.state.level_voice', fail_one)
     outputs = produce_with_state(narrator, store, 'ep', lines, now=datetime.now(UTC), level=True)
     assert [o.status for o in outputs] == [Status.NEEDS_REVIEW, Status.COMPLETED]
     assert load_state(store, 'ep').get(Step.VOICE).scenes['S01'].reason == C.REASON
     assert len(list(voice.glob('*.wav'))) == 2
     calls = list(tts.calls)
-    monkeypatch.setattr('app.pipeline.voice_state.level_voice', lambda path, polish=None, tempo=1.0: path)
+    monkeypatch.setattr(
+        'app.pipeline.voice.state.level_voice', lambda path, polish=None, tempo=1.0: path
+    )
     assert all(o.status is Status.COMPLETED for o in produce_with_state(
         narrator, store, 'ep', lines, now=datetime.now(UTC), level=True
     ))

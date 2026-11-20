@@ -13,7 +13,7 @@ from pydantic import ValidationError
 
 from app.bootstrap import build_usage
 from app.pipeline.ports import Context
-from app.pipeline.usage import AgentRun, UsageBudget, UsageError, UsageRequest
+from app.pipeline.publishing.usage import AgentRun, UsageBudget, UsageError, UsageRequest
 
 
 def _scope(parser: argparse.ArgumentParser) -> None:

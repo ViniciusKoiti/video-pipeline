@@ -35,7 +35,7 @@ from app.pipeline.short.voice import (
     voice_entries,
     write_voice_record,
 )
-from app.pipeline.voice_retake import set_aside
+from app.pipeline.voice.retake import set_aside
 
 
 def run(args: argparse.Namespace, context: Context) -> int:

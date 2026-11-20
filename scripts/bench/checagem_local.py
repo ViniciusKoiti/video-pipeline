@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.bootstrap import build_context  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench.runner import cpu_probe  # noqa: E402
 from app.pipeline.constants.bench_constants import BenchConstants  # noqa: E402
 from app.pipeline.script.checagem_local import build_cases, load_prompt, run, score  # noqa: E402
 

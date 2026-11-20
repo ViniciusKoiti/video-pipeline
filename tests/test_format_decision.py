@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from app.pipeline.format_decision import (
+from app.pipeline.research.format_decision import (
     FormatDecision,
     FormatNotConfirmed,
     TopicAssessment,

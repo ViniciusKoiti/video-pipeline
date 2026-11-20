@@ -8,13 +8,13 @@ from pathlib import Path
 import pytest
 
 from app.cli import main
+from app.pipeline.governance.state import load_state
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.ports import EpisodeLocked
 from app.pipeline.schemas import Status, Step
-from app.pipeline.state import load_state
-from app.pipeline.voice import Narrator, VoiceLibrary
-from app.pipeline.voice_state import produce_with_state, voice_pending
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
+from app.pipeline.voice.state import produce_with_state, voice_pending
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore
 from tests.fakes import FakeBatchTTS, make_root, wav_duration_ms

@@ -19,7 +19,7 @@ from app.pipeline.constants.retention_clock_constants import RetentionClockConst
 from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import Scene, ScenesManifest
 from app.pipeline.script.models.checked_episode import CheckedEpisode
-from app.pipeline.voice_timeline import measured_seconds
+from app.pipeline.voice.timeline import measured_seconds
 
 Timed = tuple[Scene, float, float]  # a cena, onde começa e onde termina, em segundos
 

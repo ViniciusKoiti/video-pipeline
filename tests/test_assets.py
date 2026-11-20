@@ -9,7 +9,14 @@ import pytest
 
 from app.bootstrap.archives import available_archives
 from app.bootstrap.registry import ConfigurationError, Registration
-from app.pipeline.assets import (
+from app.pipeline.file_hash import sha256_file
+from app.pipeline.governance.protection import ReviewWriteGuard
+from app.pipeline.models.archive_availability import ArchiveAvailability
+from app.pipeline.models.intake_action import IntakeAction
+from app.pipeline.models.skipped_archive import SkippedArchive
+from app.pipeline.ports import EpisodeLocked
+from app.pipeline.schemas import Asset, Decision, Provider, ReviewEntry, Status, Step, VisualNeed
+from app.pipeline.visuals.assets import (
     AssetError,
     AssetIntake,
     NoArchiveAvailable,
@@ -17,13 +24,6 @@ from app.pipeline.assets import (
     require_archives,
     search_archives,
 )
-from app.pipeline.file_hash import sha256_file
-from app.pipeline.models.archive_availability import ArchiveAvailability
-from app.pipeline.models.intake_action import IntakeAction
-from app.pipeline.models.skipped_archive import SkippedArchive
-from app.pipeline.ports import EpisodeLocked
-from app.pipeline.protection import ReviewWriteGuard
-from app.pipeline.schemas import Asset, Decision, Provider, ReviewEntry, Status, Step, VisualNeed
 from app.providers.archives.base import AssetCandidate, AssetQuery
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, PaidApiBlocked, QuotaExhausted

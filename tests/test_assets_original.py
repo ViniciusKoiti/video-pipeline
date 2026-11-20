@@ -16,13 +16,13 @@ from pydantic import ValidationError
 
 from app.cli import HANDLERS, build_parser
 from app.commands.errors import run as handled
-from app.pipeline.assets import AssetError, AssetIntake
 from app.pipeline.file_hash import sha256_file
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.models.intake_action import IntakeAction
 from app.pipeline.models.provider import Provider
 from app.pipeline.models.status import Status
-from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import Asset
+from app.pipeline.visuals.assets import AssetError, AssetIntake
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 
 EP = "ep-original"

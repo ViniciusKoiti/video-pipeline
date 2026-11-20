@@ -16,12 +16,12 @@ from app.media.models.voice_pacing import VoicePacing
 from app.media.pacing_plan import gap, load_pacing, pacing_plan, sentences
 from app.media.probe import duration_ms
 from app.media.voice_pacing import edits, pace_voice, silences
+from app.pipeline.governance.state import load_state
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.schemas import Status, Step
-from app.pipeline.state import load_state
-from app.pipeline.voice import Narrator, VoiceLibrary
-from app.pipeline.voice_state import produce_with_state
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
+from app.pipeline.voice.state import produce_with_state
 from app.storage.json_files import JsonFileStore
 from tests.fakes import FakeBatchTTS, wav_duration_ms
 

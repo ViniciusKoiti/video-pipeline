@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import argparse
 
-from app.pipeline.affiliate import apply_books, channel_tag
 from app.pipeline.ports import Context
+from app.pipeline.publishing.affiliate import apply_books, channel_tag
 
 
 def add_arguments(parser: argparse.ArgumentParser) -> None:

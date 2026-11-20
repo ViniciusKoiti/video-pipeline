@@ -4,7 +4,7 @@
   que têm adapter e chave no `.env`; os outros são pulados com o motivo (o Coverr é só manual) e o arquivo
   de cada pedido registra os pulados. Nenhum banco disponível é erro (sai sem gravar), não uma busca vazia.
   Grava `candidatos/<pedido>.json` (ativo, miniatura no cache, largura, altura, duração, banco, consulta e
-  mídia) e não baixa nada. Formato do pedido e regras: `app/pipeline/candidates.py`.
+  mídia) e não baixa nada. Formato do pedido e regras: `app/pipeline/visuals/candidates.py`.
 - `vp assets original <id> <cena> <arquivo.mp4> --asset-id ID --composicao ... --notas ...`: registra um clipe
   animado renderizado pelo projeto (licença Original, `media: clip`; ADR 007, emenda de 2026-11-09), sem banco
   nem rede; mesmo caminho do `take` (hash, cena, ativo aprovado intocável).
@@ -29,15 +29,15 @@ from typing import Any
 from app.bootstrap.archives import available_archives
 from app.commands.constants.assets_command_constants import AssetsCommandConstants as Constants
 from app.errors import PipelineError
-from app.pipeline.assets import AssetError, AssetIntake, require_archives
-from app.pipeline.candidates import count_by_bank, episode_orientation, search_request
 from app.pipeline.constants.candidates_constants import CandidatesConstants
 from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.models.provider import Provider
 from app.pipeline.models.status import Status
 from app.pipeline.ports import Context
-from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import Asset
+from app.pipeline.visuals.assets import AssetError, AssetIntake, require_archives
+from app.pipeline.visuals.candidates import count_by_bank, episode_orientation, search_request
 
 
 def add_arguments(parser: argparse.ArgumentParser) -> None:

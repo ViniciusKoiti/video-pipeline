@@ -9,14 +9,14 @@ from pathlib import Path
 import pytest
 
 from app.pipeline.file_hash import sha256_file
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.models.audio_probe import AudioProbe
 from app.pipeline.models.track_draft import TrackDraft
 from app.pipeline.models.track_install_action import TrackInstallAction
-from app.pipeline.music import MusicCatalogError, load_music_catalog
-from app.pipeline.music_library import add_track, install_track, slug
 from app.pipeline.ports import EpisodeLocked
-from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import Asset, Decision, ReviewEntry, Status, Step
+from app.pipeline.sound.music import MusicCatalogError, load_music_catalog
+from app.pipeline.sound.music_library import add_track, install_track, slug
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 
 EP = "ep-musica"
@@ -132,7 +132,7 @@ def test_unsupported_format_and_missing_file_are_refused(env: Env, tmp_path: Pat
 def test_the_catalog_is_written_last_and_an_orphan_from_a_failed_attempt_is_replaced(
     env: Env, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from app.pipeline import music_library
+    from app.pipeline.sound import music_library
 
     real, written = music_library.write_atomic, []
 

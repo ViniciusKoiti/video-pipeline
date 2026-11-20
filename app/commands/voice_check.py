@@ -21,8 +21,8 @@ from app.pipeline.models.speech_review import SpeechReview
 from app.pipeline.ports import Context
 from app.pipeline.schemas import ScenesManifest
 from app.pipeline.script.checks.retention_clock import mmss
-from app.pipeline.speech_review import review_speech
-from app.pipeline.voice_timeline import voiced_paths
+from app.pipeline.voice.speech_review import review_speech
+from app.pipeline.voice.timeline import voiced_paths
 
 
 class VoiceCheckError(PipelineError, RuntimeError):

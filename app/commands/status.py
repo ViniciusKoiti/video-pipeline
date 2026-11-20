@@ -13,11 +13,11 @@ from datetime import date
 
 from app.commands.constants.cli_constants import CliConstants
 from app.pipeline.gates import GateStatus, gate_report, latest_check
-from app.pipeline.metrics import load_metrics, metrics_path, pending_lines, summary_line
-from app.pipeline.pending import pending_pieces
 from app.pipeline.ports import Context
+from app.pipeline.publishing.metrics import load_metrics, metrics_path, pending_lines, summary_line
 from app.pipeline.publishing.render_checks import status_line as render_status_line
 from app.pipeline.schemas import Decision, Step
+from app.pipeline.status import pending_pieces
 
 
 def run(args: argparse.Namespace, context: Context) -> int:

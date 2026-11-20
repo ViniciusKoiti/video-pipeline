@@ -8,7 +8,7 @@ from threading import Barrier
 import pytest
 from pydantic import ValidationError
 
-from app.pipeline.usage import AgentRun, UsageBudget, UsageError, UsageRequest
+from app.pipeline.publishing.usage import AgentRun, UsageBudget, UsageError, UsageRequest
 from app.storage.usage_sqlite import SQLiteUsageLedger
 
 

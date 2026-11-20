@@ -10,11 +10,11 @@ import pytest
 
 from app.cli import HANDLERS, build_parser
 from app.commands.errors import run as handled
+from app.pipeline.governance.state import load_state
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.schemas import Status, Step
-from app.pipeline.state import load_state
-from app.pipeline.voice import Narrator, VoiceLibrary
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
 from app.providers.errors import QuotaExhausted
 from app.providers.tts.base import SpeechRequest
 from app.settings.models.voice_polish_settings import VoicePolishSettings

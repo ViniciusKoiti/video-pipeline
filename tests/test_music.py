@@ -15,7 +15,6 @@ from app.media.constants.loudness_constants import LoudnessConstants
 from app.media.loudness import integrated_lufs, intensity, loudness_problem
 from app.media.probe import duration_ms, probe_streams
 from app.pipeline.constants.schemas_constants import SchemasConstants
-from app.pipeline.music import load_music_catalog, plan_problems, resolve_music
 from app.pipeline.schemas import (
     Asset,
     EpisodeFormat,
@@ -32,6 +31,7 @@ from app.pipeline.schemas import (
     VideoSpec,
 )
 from app.pipeline.script.check import check_episode
+from app.pipeline.sound.music import load_music_catalog, plan_problems, resolve_music
 from app.render.constants.ffmpeg_constants import FfmpegConstants
 from app.render.ffmpeg import assemble, audio_key
 from app.storage.json_files import JsonFileStore

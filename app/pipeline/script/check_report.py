@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from app.pipeline.gate_stamps import GateError
+from app.pipeline.governance.gate_stamps import GateError
 from app.pipeline.schemas import CheckVerdict
 
 

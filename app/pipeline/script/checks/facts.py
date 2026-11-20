@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from app.pipeline.excerpts import quote_in_excerpt
 from app.pipeline.models.check_report import CheckReport
+from app.pipeline.research.excerpts import quote_in_excerpt
 from app.pipeline.schemas import FactKind, FactsManifest, SourcesManifest
 from app.pipeline.script.models.checked_episode import CheckedEpisode
 

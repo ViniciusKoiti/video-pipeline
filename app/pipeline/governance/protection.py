@@ -2,8 +2,8 @@
 
 O que cada gate carimba fica protegido enquanto a última decisão dele é "aprovado" e ainda vale (o hash
 revisto bate com o conteúdo de agora). Mudou o conteúdo por fora, a aprovação já caiu e nada se protege;
-reaberto com `vp reopen` (`app.pipeline.reopen`), o alvo é liberado e só ele. Não existe projeção no
-`manifest.json`: a regra é recalculada a cada consulta.
+reaberto com `vp reopen` (`app.pipeline.governance.reopen`), o alvo é liberado e só ele. Não existe
+projeção no `manifest.json`: a regra é recalculada a cada consulta.
 
 Uma escrita que deixa intacto o hash normalizado do gate passa: trocar o `asset_id` de um plano (gate 3) ou
 regenerar o bloco de números do `outline.md` não mexe no que o gate 2 aprovou.
@@ -14,9 +14,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
-from app.pipeline.gate_stamps import current_hash, legacy_hashes
+from app.pipeline.governance.gate_stamps import current_hash, legacy_hashes
+from app.pipeline.governance.review_hashes import hash_contents
 from app.pipeline.ports import ImmutableManifest, ManifestStore, ReviewGate
-from app.pipeline.review_hashes import hash_contents
 from app.pipeline.schemas import Decision, ReviewEntry, Step
 
 

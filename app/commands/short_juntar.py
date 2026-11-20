@@ -3,7 +3,8 @@
 Põe cada fala no começo da cena dela, sobre o MP4 silencioso do `motion-video render`, em estéreo e com o
 volume no alvo do projeto (−14 LUFS, medido como o YouTube mede). Um render com som dentro (um vídeo tocando
 na montagem) entra na mistura. Com `--sfx`, mistura também os efeitos do plano (ADR 035,
-`app/pipeline/sfx.py`): cada um no momento da cena menos o `sync.at` do kit, abaixado onde cai sobre a fala.
+`app/pipeline/sound/sfx.py`): cada um no momento da cena menos o `sync.at` do kit, abaixado onde cai sobre
+a fala.
 A saída é um arquivo novo; o MP4 de entrada não muda.
 """
 
