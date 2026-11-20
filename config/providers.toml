@@ -37,12 +37,30 @@ chars_per_second = 13.0  # Charon: 12 a 14 caracteres por segundo no teste
 
 [azure_speech]  # voz neural pronta do Azure Speech, só com `--voz azure_speech` (ADR 058); chave e região no .env
 tier = "F0"  # camada do recurso no portal; fora de F0 é cobrado e fica barrado (§2.1)
-voices = { "pt-BR" = "pt-BR-AntonioNeural" }
+# Voz dos ensaios do Cena e Conceito e dos Shorts cortados deles desde 2026-11-18 (dono, ADR 063): Caio, da família
+# MAI-Voice-2.1 (prévia), com estilo por trecho. Antes: pt-BR-AntonioNeural (sem estilos).
+voices = { "pt-BR" = "pt-BR-Caio:MAI-Voice-2.1" }
 output_format = "riff-24khz-16bit-mono-pcm"
-rate = 1.05               # multiplicador da velocidade (0,5 a 2); 1 = a voz como é. 1,05 pedido pelo dono em 2026-11-12 (piloto academia: 12:20 em 1,0)
+rate = 1.0                # multiplicador da velocidade (0,5 a 2); 1 = a voz como é. 1,0 no Caio (teste de 2026-11-18); era 1,05 no Antonio (2026-11-12)
 pause_ms = 250            # <break> no lugar de cada <short pause> (ADR 015); era 500 até 2026-11-15: soava como corte antes do número (academia S30, S45)
 requests_per_minute = 20  # limite da F0 (20 chamadas por 60 s; 500 mil caracteres por mês)
 chars_per_second = 15.0   # provisório, sem medida
+
+pronunciation = "fala"    # glossário pela grafia da fala: o <phoneme> estica a palavra nas vozes MAI (teste de 2026-11-18, ADR 063)
+
+# Marca de emoção do roteiro -> estilo do mstts:express-as (ADR 063). Estilos do Caio na página das vozes MAI;
+# marca sem linha aqui fala como o resto da cena.
+[azure_speech.styles]
+raiva = "angry"
+sussurro = "whispering"
+suspense = "fearful"
+surpresa = "surprised"
+tristeza = "sad"
+esperanca = "hopeful"
+firme = "determined"
+acolhedor = "softvoice"
+arrependimento = "regretful"
+empolgacao = "excited"
 
 # Velocidade por entrega da cena (ADR 022; emenda de 2026-11-16 da ADR 058): o fator multiplica `rate`; a entrega
 # sem fator (neutral) fala em `rate`. Valores de partida para a escuta do dono no banco-digital-dinheiro-pt.

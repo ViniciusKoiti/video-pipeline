@@ -17,6 +17,8 @@ class AzureSpeechConstants:
     FORMAT_HEADER: Final[str] = "X-Microsoft-OutputFormat"
     CONTENT_TYPE: Final[str] = "application/ssml+xml"
     SSML_NAMESPACE: Final[str] = "http://www.w3.org/2001/10/synthesis"
+    # `mstts:express-as`: o estilo por trecho das marcas de emoção (ADR 063)
+    MSTTS_NAMESPACE: Final[str] = "https://www.w3.org/2001/mstts"
     FREE_TIER: Final[str] = "F0"
     # fora da F0 a síntese é cobrada por caractere: US$ 15 por milhão no exemplo da página de cotas, ~1.000
     # caracteres por cena. Só serve para o `ensure_free` recusar a camada paga (§2.1).

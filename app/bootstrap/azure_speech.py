@@ -25,4 +25,5 @@ def build_azure_speech(settings: Settings) -> TTSProvider:
         key.get_secret_value(), azure.region, voices=azure.voices, output_format=azure.output_format,
         rate=azure.rate, delivery_rates=delivery_rates, pause_ms=azure.pause_ms,
         requests_per_minute=azure.requests_per_minute, tier=azure.tier,
+        styles=azure.styles, ipa=azure.pronunciation == "ipa",
     )
