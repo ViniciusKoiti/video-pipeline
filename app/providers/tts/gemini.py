@@ -23,6 +23,7 @@ from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from app.media.narration import strip_emotions
 from app.media.pauses import SplitError, split_at_pauses
 from app.media.wav import wav_is_valid
 from app.providers.base import ProviderInfo
@@ -74,7 +75,10 @@ class GeminiTTS:
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         voice = self._check(request)
         audio = self._audio(
-            self._call(self._body(request.text, request.language, voice), GeminiConstants.TIMEOUT_S)
+            # as marcas de emoção (ADR 063) ainda não têm tradução no Gemini: fala o texto sem elas
+            self._call(
+                self._body(strip_emotions(request.text), request.language, voice), GeminiConstants.TIMEOUT_S
+            )
         )
         with atomic_wav(request.out_path, self.info.name) as partial:
             partial.write_bytes(audio)
@@ -90,7 +94,7 @@ class GeminiTTS:
         if len(voices) != 1 or len(languages) != 1:
             raise ProviderError(self.info.name, "um lote precisa de uma voz e um idioma só")
         voice, language = voices.pop(), languages.pop()
-        text = GeminiConstants.SCENE_BREAK.join(r.text for r in requests)
+        text = GeminiConstants.SCENE_BREAK.join(strip_emotions(r.text) for r in requests)
         timeout = GeminiConstants.TIMEOUT_S + GeminiConstants.SECONDS_PER_CHAR * len(text)
         audio = self._audio(self._call(self._body(text, language, voice), timeout))
         folder = requests[0].out_path.parent

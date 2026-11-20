@@ -10,6 +10,7 @@ from datetime import date
 from pathlib import Path
 
 from app.media.pronunciation import load_glossary
+from app.pipeline.emotion_marks import emotion_attention
 from app.pipeline.funnel_check import funnel_attention, funnel_errors, funnel_summary, funnel_warnings
 from app.pipeline.glossary_check import colon_pause_warnings, glossary_attention
 from app.pipeline.models.check_report import CheckReport
@@ -47,4 +48,4 @@ def check_script_form(
     report.warnings += claimless_statements(scenes) + gap_warnings(scenes) + pause_hints(timed)
     report.warnings += colon_pause_warnings(scenes)
     report.attention += funnel_attention(scenes, chars_per_second) + retention_attention(timed, source)
-    report.attention += glossary_attention(scenes, glossary, final_voice)
+    report.attention += glossary_attention(scenes, glossary, final_voice) + emotion_attention(scenes)

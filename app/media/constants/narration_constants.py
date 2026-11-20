@@ -15,3 +15,13 @@ class NarrationConstants:
     _PAUSE: Final = re.compile("[ \\t]*<short pause>[ \\t]*")
     _WELL_PLACED: Final = re.compile("(?<=\\S) <short pause> (?=\\S)")
     _ANY_TAG: Final = re.compile("<[^<>]*>")
+    # Marcas de emoção por trecho (ADR 063): abrem e fecham em volta de uma frase ou oração, sem ocupar espaço
+    # no texto falado. Lista fechada; cada voz traduz do seu jeito (o Azure, por `[azure_speech.styles]`).
+    EMOTION_TAGS: Final[tuple[str, ...]] = (
+        "raiva", "sussurro", "suspense", "surpresa", "tristeza",
+        "esperanca", "firme", "acolhedor", "arrependimento", "empolgacao",
+    )
+    _EMOTION: Final = re.compile("</?(?:" + "|".join(EMOTION_TAGS) + ")>")
+    _EMOTION_PARTS: Final = re.compile("<(/?)(" + "|".join(EMOTION_TAGS) + ")>")
+    EMOTION_MIN_WORDS: Final[int] = 3  # menos que isso numa marca: cada corte reinicia a entonação
+    EMOTION_MAX_PER_SCENE: Final[int] = 2

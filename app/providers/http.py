@@ -5,6 +5,7 @@ As mensagens de erro nunca incluem URL nem headers: podem carregar tokens (§2.7
 
 from __future__ import annotations
 
+import http.client
 import json
 import mimetypes
 import shutil
@@ -77,8 +78,9 @@ def post_bytes(url: str, body: bytes, headers: Mapping[str, str], timeout: float
             return content
     except urllib.error.HTTPError as error:
         raise TransportError(error.code, error.read().decode(errors="replace")[:500]) from None
-    except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
-        raise TransportError(None, str(getattr(error, "reason", error))) from None
+    # resposta cortada no meio (`IncompleteRead`, visto no Azure em 2026-11-18) é rede, como a conexão caída
+    except (urllib.error.URLError, TimeoutError, ConnectionError, http.client.HTTPException) as error:
+        raise TransportError(None, str(getattr(error, "reason", error))[:200]) from None
 
 
 MultipartPost = Callable[  # url, campos, arquivos, cabeçalhos, timeout → JSON

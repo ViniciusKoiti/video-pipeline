@@ -237,6 +237,16 @@ primeiros 30 s é a que o dono mede no Studio (CLAUDE.md §4).
      voz clonada. Explicação longa não cabe numa cena `hook`.
      Referências por idioma/entrega (ADR 053) são escolhidas pelo gerador em `config/providers.toml`;
      não inserir caminhos de gravações no roteiro. A prévia confirma se a intenção saiu natural.
+   - **Marcas de emoção (ADR 063, dono, 2026-11-18).** Para dirigir o tom de um trecho, envolva a frase ou a
+     oração inteira numa marca da lista fechada: `<raiva>`, `<sussurro>`, `<suspense>`, `<surpresa>`,
+     `<tristeza>`, `<esperanca>`, `<firme>`, `<acolhedor>`, `<arrependimento>`, `<empolgacao>`. Exemplo:
+     "Light é Kira. `<raiva>`Com raiva, escreve o nome dessa pessoa no caderno que mata.`</raiva>`". Regras:
+     - no máximo duas marcas por cena, e nunca em palavra solta (cada corte reinicia a entonação);
+     - a marca não muda o que a fala afirma: o editor, o verificador, a tela e as legendas a ignoram;
+     - use onde a emoção é a da cena: o sussurro no segredo, a surpresa na virada, o acolhimento no CVV e
+       no fecho; a cena de explicação fica sem marca;
+     - `<short pause>` pode ficar dentro da marca; uma marca nunca fica dentro da outra.
+     Na voz dos ensaios (o Caio do Azure) a marca vira estilo; nas outras vozes, o trecho sai na entrega da cena.
    - **A palavra que pesa (pedido do dono, 2026-10-19).** O `delivery` muda o tom da cena inteira. Ele não
      aperta uma palavra, e a voz clonada não aceita marca de ênfase. Sem cuidado, a fala soa como alguém lendo.
      Toda cena que vira, opina, pergunta ou traz um número tem **uma** palavra que pesa: a da virada, do

@@ -238,15 +238,18 @@ def test_missing_voice_empty_and_huge_text_are_refused(tmp_path: Path) -> None:
 def test_the_voice_is_registered_by_name_and_the_defaults_stay(tmp_path: Path) -> None:
     settings = load_settings(REPO_ROOT, environ=ENV)
     assert (settings.providers.tts, settings.providers.tts_final) == ("kokoro", "chatterbox_modal")
-    assert settings.azure_speech.voices["pt-BR"] == "pt-BR-AntonioNeural"
+    voice = "pt-BR-Caio:MAI-Voice-2.1"  # a voz dos ensaios desde 2026-11-18 (ADR 063)
+    assert settings.azure_speech.voices["pt-BR"] == voice
     assert settings.azure_speech.tier == "F0" and settings.azure_speech.output_format == FORMAT
+    assert settings.azure_speech.pronunciation == "fala" and settings.azure_speech.styles["raiva"] == "angry"
     assert KEY not in repr(settings)
     assert speech_chars_per_second(settings) == settings.chatterbox.chars_per_second  # a voz final não mudou
     tts = build_context(REPO_ROOT, environ=ENV).tts_named("azure_speech")
     assert tts.info == ProviderInfo("azure_speech", remote=True)  # custo zero: §2.1
+    assert tts.phoneme_alphabet == ""  # voz MAI: o glossário chega como `fala` no texto
     rate = settings.azure_speech.rate  # a velocidade é do providers.toml; o rótulo só aparece fora de 1
     suffix = f"|rate{rate:g}" if rate != 1.0 else ""
-    assert tts.fingerprint(request(tmp_path)) == f"azure_speech|pt-BR-AntonioNeural|{FORMAT}{suffix}"
+    assert tts.fingerprint(request(tmp_path)) == f"azure_speech|{voice}|{FORMAT}{suffix}"
 
 
 @pytest.mark.parametrize(
@@ -331,3 +334,70 @@ def test_fingerprint_counts_only_the_phoneme_terms_in_the_text(tmp_path: Path) -
     assert tts.fingerprint(unused) == tts.fingerprint(plain) == f"azure_speech|pt-BR-AntonioNeural|{FORMAT}"
     assert "|ipa" in tts.fingerprint(with_term)
     assert tts.fingerprint(with_term) != tts.fingerprint(other_ipa)
+
+
+# Marcas de emoção por trecho (ADR 063)
+MSTTS = "{https://www.w3.org/2001/mstts}"
+STYLES = {"raiva": "angry", "sussurro": "whispering"}
+
+
+def test_text_without_marks_keeps_the_same_ssml_as_before() -> None:
+    text = "Era uma armadilha. <short pause> E Kira mora lá."
+    before = ssml(text, language="pt-BR", voice="pt-BR-AntonioNeural", rate=1.05, pause_ms=250)
+    after = ssml(text, language="pt-BR", voice="pt-BR-AntonioNeural", rate=1.05, pause_ms=250, styles=STYLES)
+    assert before == after and "mstts" not in after
+
+
+def test_each_marked_passage_gets_its_style_and_the_rest_speaks_plain() -> None:
+    text = (
+        "Light é Kira. <raiva>Com raiva, escreve o nome no caderno.</raiva> "
+        "E <sussurro>Kira mora lá, quieto.</sussurro>"
+    )
+    document = ssml(
+        text, language="pt-BR", voice="pt-BR-Caio:MAI-Voice-2.1", rate=1.0, pause_ms=250, styles=STYLES
+    )
+    voice = ElementTree.fromstring(document).find(f"{NS}voice")
+    assert voice is not None
+    styles = [(e.attrib["style"], "".join(e.itertext())) for e in voice.iter(f"{MSTTS}express-as")]
+    expected = [("angry", "Com raiva, escreve o nome no caderno."), ("whispering", "Kira mora lá, quieto.")]
+    assert styles == expected
+    assert "".join(voice.itertext()).startswith("Light é Kira.")  # fora da marca, sem estilo
+    assert "<raiva>" not in document and "&lt;raiva" not in document  # a marca não vira texto falado
+
+
+def test_a_mark_without_style_in_the_table_speaks_like_the_rest() -> None:
+    document = ssml("<tristeza>Por que gente esperta cava?</tristeza>", language="pt-BR", voice="v", rate=1.0,
+                    pause_ms=250, styles=STYLES)
+    assert "express-as" not in document and "Por que gente esperta cava?" in document
+
+
+def test_pause_inside_a_mark_and_rate_stay_inside_the_style() -> None:
+    text = "<raiva>Com raiva, <short pause> escreve o nome.</raiva>"
+    document = ssml(text, language="pt-BR", voice="v", rate=0.94, pause_ms=250, styles=STYLES)
+    start = '<mstts:express-as style="angry"><prosody rate="0.94">'
+    assert start + 'Com raiva,<break time="250ms"/>escreve' in document
+
+
+def test_fingerprint_counts_only_the_styles_used_in_the_text(tmp_path: Path) -> None:
+    tts = make(FakePost(), styles=STYLES)
+    plain = tts.fingerprint(request(tmp_path, text="Light é Kira."))
+    angry = tts.fingerprint(request(tmp_path, text="Light é Kira. <raiva>Com raiva, escreve o nome.</raiva>"))
+    assert plain == f"azure_speech|pt-BR-AntonioNeural|{FORMAT}" and angry.startswith(plain + "|estilos")
+    assert make(FakePost()).fingerprint(request(tmp_path, text="<raiva>Com raiva, escreve.</raiva>")) == plain
+
+
+def test_without_ipa_the_voice_takes_the_glossary_as_spelled_speech(tmp_path: Path) -> None:
+    assert make(FakePost()).phoneme_alphabet == "ipa" and make(FakePost(), ipa=False).phoneme_alphabet == ""
+
+
+def test_a_response_cut_in_the_middle_is_a_passing_network_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    import http.client
+
+    class Cut(io.BytesIO):
+        def read(self, *args: Any) -> bytes:
+            raise http.client.IncompleteRead(b"RIFF" + b"\0" * 10)
+
+    monkeypatch.setattr("urllib.request.urlopen", lambda sent, timeout: Cut())
+    with pytest.raises(TransportError) as raised:
+        post_bytes("https://example.invalid/v1", b"x", {"X-Chave": KEY}, 5)
+    assert raised.value.status is None and KEY not in str(raised.value)

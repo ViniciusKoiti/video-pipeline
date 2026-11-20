@@ -15,6 +15,11 @@
 - Fonemas (emenda de 2026-11-15 da ADR 058): o `lexicon` do pedido (grafia -> IPA da tabela do pt-BR) vira
   `<phoneme alphabet="ipa" ph="…">grafia</phoneme>` em cada ocorrência da palavra inteira; fonema fora da
   tabela volta como HTTP 400 e a cena fica pendente. Só os termos presentes no texto entram na identidade.
+  Com `ipa=False` (voz MAI, ADR 063) o adapter não se declara de fonemas e recebe o texto já com a `fala` do
+  glossário, porque o `<phoneme>` estica a palavra nessas vozes.
+- Marcas de emoção (ADR 063): cada trecho marcado vira `<mstts:express-as style="…">` pela tabela `styles`
+  (marca -> estilo); marca sem estilo na tabela fala como o resto. Texto sem marca gera o SSML de antes, e só
+  os estilos usados no texto entram na identidade.
 """
 
 from __future__ import annotations
@@ -25,7 +30,7 @@ import time
 from collections.abc import Callable, Mapping
 from xml.sax.saxutils import escape, quoteattr
 
-from app.media.narration import has_pauses, split_pauses
+from app.media.narration import emotion_segments, has_pauses, split_pauses
 from app.providers.base import ProviderInfo
 from app.providers.errors import InvalidOutput, ModelUnavailable, ProviderError, QuotaExhausted
 from app.providers.http import BytesPost, TransportError, post_bytes
@@ -53,19 +58,34 @@ def _phonemes(part: str, lexicon: Mapping[str, str]) -> str:
     )
 
 
+def _used_styles(text: str, styles: Mapping[str, str]) -> list[tuple[str, str]]:
+    """As marcas de emoção do texto que têm estilo na tabela, em ordem estável."""
+    return sorted({(name, styles[name]) for name, _ in emotion_segments(text) if name and name in styles})
+
+
 def ssml(
     text: str, *, language: str, voice: str, rate: float, pause_ms: int,
-    lexicon: Mapping[str, str] | None = None,
+    lexicon: Mapping[str, str] | None = None, styles: Mapping[str, str] | None = None,
 ) -> str:
     """O documento SSML de uma fala: texto escapado, termos do glossário de fonemas em `<phoneme>`, pausas
-    como `<break>`, velocidade só se não for 1."""
+    como `<break>`, velocidade só se não for 1 e, por trecho marcado, o estilo da emoção (ADR 063)."""
     entities = AzureSpeechConstants.XML_ENTITIES
-    parts = [_phonemes(escape(part, entities), lexicon or {}) for part in split_pauses(text)]
-    body = f'<break time="{pause_ms}ms"/>'.join(parts)
-    if rate != 1.0:
-        body = f'<prosody rate="{rate:g}">{body}</prosody>'
+    pieces = []
+    for emotion, segment in emotion_segments(text):
+        parts = [_phonemes(escape(part, entities), lexicon or {}) for part in split_pauses(segment)]
+        body = f'<break time="{pause_ms}ms"/>'.join(parts)
+        if not body:
+            continue
+        if rate != 1.0:
+            body = f'<prosody rate="{rate:g}">{body}</prosody>'
+        style = (styles or {}).get(emotion) if emotion else None
+        styled = f"<mstts:express-as style={quoteattr(style)}>{body}</mstts:express-as>" if style else body
+        pieces.append(styled)
+    body = " ".join(pieces)
+    mstts = f' xmlns:mstts="{AzureSpeechConstants.MSTTS_NAMESPACE}"' if "<mstts:" in body else ""
     return (
-        f'<speak version="1.0" xmlns="{AzureSpeechConstants.SSML_NAMESPACE}" xml:lang={quoteattr(language)}>'
+        f'<speak version="1.0" xmlns="{AzureSpeechConstants.SSML_NAMESPACE}"{mstts} '
+        f"xml:lang={quoteattr(language)}>"
         f"<voice name={quoteattr(voice)}>{body}</voice></speak>"
     )
 
@@ -86,6 +106,8 @@ class AzureSpeechTTS:
         pause_ms: int = 500,
         requests_per_minute: int = 20,
         tier: str = AzureSpeechConstants.FREE_TIER,
+        styles: Mapping[str, str] | None = None,
+        ipa: bool = True,
         post: BytesPost = post_bytes,
         clock: Callable[[], float] = time.monotonic,
         sleep: Callable[[float], None] = time.sleep,
@@ -100,6 +122,9 @@ class AzureSpeechTTS:
         self._rate = rate
         self._delivery_rates = dict(delivery_rates or {})  # entrega -> fator sobre `rate` (ADR 022)
         self._pause_ms = pause_ms
+        self._styles = dict(styles or {})  # marca de emoção -> estilo do express-as (ADR 063)
+        if not ipa:  # voz MAI: o glossário chega como `fala` no texto, sem `<phoneme>` (ADR 063)
+            self.phoneme_alphabet = ""
         self._interval = 60 / requests_per_minute + AzureSpeechConstants.MARGIN_S
         self._post = post
         self._clock = clock
@@ -123,14 +148,17 @@ class AzureSpeechTTS:
 
     def fingerprint(self, request: SpeechRequest) -> str:
         """`azure_speech|<voz>|<formato>`, mais `|rate<v>` quando a velocidade não é 1, `|pausa<ms>` quando
-        o texto tem pausa e `|ipa<hash>` quando um termo do glossário de fonemas aparece no texto."""
+        o texto tem pausa, `|ipa<hash>` quando um termo do glossário de fonemas aparece no texto e
+        `|estilos<hash>` quando uma marca de emoção do texto tem estilo na tabela."""
         voice = self._check(request)
         effective = self.rate_for(request)
         rate = f"|rate{effective:g}" if effective != 1.0 else ""
         pause = f"|pausa{self._pause_ms}" if has_pauses(request.text) else ""
         used = _used(request.text, request.lexicon)
         ipa = f"|ipa{hashlib.sha256(repr(used).encode()).hexdigest()[:8]}" if used else ""
-        return f"{self.identity}|{voice}|{self._format}{rate}{pause}{ipa}"
+        styled = _used_styles(request.text, self._styles)
+        styles = f"|estilos{hashlib.sha256(repr(styled).encode()).hexdigest()[:8]}" if styled else ""
+        return f"{self.identity}|{voice}|{self._format}{rate}{pause}{ipa}{styles}"
 
     def synthesize_speech(self, request: SpeechRequest) -> SpeechResult:
         voice = self._check(request)
@@ -142,7 +170,7 @@ class AzureSpeechTTS:
         document = ssml(
             request.text, language=request.language, voice=voice, rate=self.rate_for(request),
             pause_ms=self._pause_ms,
-            lexicon=dict(_used(request.text, request.lexicon)),
+            lexicon=dict(_used(request.text, request.lexicon)), styles=self._styles,
         )
         audio = self._call(document.encode("utf-8"))
         if audio[:4] != b"RIFF":

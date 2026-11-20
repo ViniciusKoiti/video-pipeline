@@ -27,6 +27,11 @@ class AzureSpeechSettings(_Model):
     # fator da velocidade por entrega da cena (ADR 022; emenda de 2026-11-16 da ADR 058): multiplica `rate`;
     # entrega sem fator fala em `rate`
     delivery: dict[Delivery, float] = Field(default_factory=dict)
+    # marca de emoção do roteiro -> estilo do `mstts:express-as` (ADR 063); voz sem estilo ignora
+    styles: dict[str, str] = Field(default_factory=dict)
+    # glossário: "ipa" põe `<phoneme>` (vozes neurais); "fala" manda o texto com a grafia da fala
+    # (voz MAI, ADR 063)
+    pronunciation: Literal["ipa", "fala"] = "ipa"
 
     @field_validator("delivery")
     @classmethod

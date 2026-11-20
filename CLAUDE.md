@@ -156,8 +156,14 @@ Os detalhes de campos vivem em `app/pipeline/schemas.py`. Regras que o schema so
 ## 6. Voz, pronúncia, legendas e montagem
 
 - **Provedores de voz (`config/providers.toml`):** `kokoro` nos rascunhos; `chatterbox_modal` (ou `chatterbox` local)
-  como voz final clonada (ADR 016, 024); `gemini` (Charon; 10 chamadas por dia, voz do vídeo-régua) e `azure_speech`
-  (`pt-BR-AntonioNeural`, camada F0; exige avisar que a voz é sintética) como alternativas registradas.
+  como voz final clonada (ADR 016, 024); `gemini` (Charon; 10 chamadas por dia, voz do vídeo-régua) como alternativa.
+  **Ensaios do Cena e Conceito e Shorts cortados deles (dono, 2026-11-18):** `--voz azure_speech` com o Caio
+  (`pt-BR-Caio:MAI-Voice-2.1`, prévia; exige avisar que a voz é sintética, na descrição e no Studio), estilo por
+  trecho pelas marcas de emoção e glossário pela grafia da `fala` (ADR 063).
+- **Marcas de emoção (ADR 063):** `<raiva>…</raiva>` em volta de uma frase ou oração, lista fechada em
+  `NarrationConstants.EMOTION_TAGS`; somem das legendas, da tela e das âncoras; o Azure traduz em estilo
+  (`[azure_speech.styles]`), as outras vozes falam o trecho na entrega da cena. Erro no `vp check` para marca
+  desconhecida, sem fechar, aninhada ou vazia; atenção para menos de três palavras ou mais de duas por cena.
 - **Gravação de referência da voz clonada:** dado pessoal, em `data/voice-references/`, fora do Git e nunca enviada
   a provedor, exceto o volume privado do dono no Modal (ADR 024), onde os WAVs já precisam estar: o cliente não envia.
   O `delivery` e o idioma escolhem a referência (ADR 053).
