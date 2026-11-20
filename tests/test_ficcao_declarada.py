@@ -8,7 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.pipeline.models.scenes_manifest import ScenesManifest
-from app.pipeline.molde import claimless_statements
+from app.pipeline.script.molde import claimless_statements
 
 NARRATION = "Em 1350 você herda o castelo do seu pai. A lã da Inglaterra vende bem em Flandres."
 

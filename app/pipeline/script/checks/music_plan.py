@@ -1,0 +1,35 @@
+"""Plano da trilha (ADR 030), quando o episódio tem `music.json`."""
+
+from __future__ import annotations
+
+from app.media.narration import timeline_length
+from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.models.check_report import CheckReport
+from app.pipeline.music import plan_problems
+from app.pipeline.schemas import MusicPlan
+from app.pipeline.script.models.checked_episode import CheckedEpisode
+from app.pipeline.script.reading import read_optional
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    if episode.scenes is None:
+        return
+    store, episode_id = episode.store, episode.episode_id
+    plan = read_optional(store, episode_id, SchemasConstants.MUSIC_PLAN_FILE, MusicPlan, report)
+    if plan is None:
+        return
+    if episode.music_catalog is None:
+        report.errors.append("music.json sem catálogo de faixas (data/music/catalog.json)")
+        return
+    minutes = sum(timeline_length(s.narration) for s in episode.scenes.scenes) / episode.chars_per_second / 60
+    errors, warnings = plan_problems(plan, episode.scenes.scenes, episode.music_catalog, minutes)
+    report.errors += errors
+    report.warnings += warnings
+    tracks = sorted({cue.track for cue in plan.cues if cue.track})
+    report.warnings += [
+        f"music.json: faixa {t} ainda sem cópia no episódio (assets/{t}.json, gate 3)"
+        for t in tracks
+        if not store.exists(episode_id, f"assets/{t}.json")
+    ]
+    if not errors:
+        report.checked.append(f"trilha: {len(plan.cues)} entrada(s), {len(tracks)} faixa(s)")

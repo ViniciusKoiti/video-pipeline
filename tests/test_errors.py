@@ -11,10 +11,10 @@ from app import cli
 from app.cli import main
 from app.commands.errors import run
 from app.errors import PipelineError
-from app.pipeline.check_report import load_check_report
 from app.pipeline.gates import GateError
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
 from app.pipeline.schemas import CheckVerdict
+from app.pipeline.script.check_report import load_check_report
 from tests.fakes import make_root
 
 # Cada classe de erro do projeto e a base que ela já tinha: `except ValueError` e afins seguem pegando-as.

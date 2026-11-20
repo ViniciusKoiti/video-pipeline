@@ -84,7 +84,7 @@ export interface ShareChartProps {
 
 O espelho em `video/src/types.ts` (`ChartSpec`) ganha `variant?` e `rest_value?`.
 
-### 5.2 `vp check` (`app/pipeline/check.py`, `text_fit.py`)
+### 5.2 `vp check` (`app/pipeline/script/check.py`, `text_fit.py`)
 
 | Regra | Valor proposto | Base |
 |---|---|---|

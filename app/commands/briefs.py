@@ -20,12 +20,12 @@ import argparse
 import os
 from pathlib import Path
 
-from app.pipeline.briefs import BriefError, format_spec, install_brief, radar_spec
 from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.models.brief_action import BriefAction
-from app.pipeline.numbers import FormatBrief
 from app.pipeline.ports import Context
-from app.pipeline.radar import RadarBrief, brief_summary
+from app.pipeline.script.briefs import BriefError, format_spec, install_brief, radar_spec
+from app.pipeline.script.numbers import FormatBrief
+from app.pipeline.script.radar import RadarBrief, brief_summary
 from app.settings import read_dotenv
 
 

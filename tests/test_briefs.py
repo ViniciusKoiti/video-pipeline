@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from app.pipeline.briefs import BriefError, format_spec, install_brief, radar_spec
 from app.pipeline.models.brief_action import BriefAction
-from app.pipeline.numbers import FormatBrief
 from app.pipeline.ports import EpisodeLocked
+from app.pipeline.script.briefs import BriefError, format_spec, install_brief, radar_spec
+from app.pipeline.script.numbers import FormatBrief
 from app.storage.json_files import JsonFileStore
 from tests.test_numbers import brief as format_brief
 from tests.test_radar import brief as radar_brief
@@ -134,7 +134,7 @@ def test_a_missing_episode_is_an_error_and_its_folder_is_not_created(tmp_path: P
 def test_a_failure_during_the_swap_keeps_the_current_brief_and_the_retry_recovers(
     store: JsonFileStore, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from app.pipeline import briefs
+    from app.pipeline.script import briefs
 
     install_brief(store, EP, format_spec(), format_text("a", "2026-10-18"))
     current = store.path(EP, "formato-brief.json").read_bytes()

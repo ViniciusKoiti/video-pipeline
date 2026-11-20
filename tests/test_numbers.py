@@ -11,10 +11,11 @@ from pathlib import Path
 import pytest
 
 from app.cli import main
-from app.pipeline.check import check_episode
 from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.gates import gate_report, record_check, record_decision
-from app.pipeline.numbers import (
+from app.pipeline.schemas import Asset, CheckVerdict, Decision, ScenesManifest, Status, Step
+from app.pipeline.script.check import check_episode
+from app.pipeline.script.numbers import (
     FormatBrief,
     format_warnings,
     image_changes,
@@ -24,7 +25,6 @@ from app.pipeline.numbers import (
     shot_timings,
     strip_block,
 )
-from app.pipeline.schemas import Asset, CheckVerdict, Decision, ScenesManifest, Status, Step
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
 

@@ -14,7 +14,9 @@ import unicodedata
 
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.constants.funnel_check_constants import FunnelCheckConstants as Constants
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import EndCardShot, ScenesManifest
+from app.pipeline.script.models.checked_episode import CheckedEpisode
 
 
 def words(text: str) -> list[str]:
@@ -111,3 +113,13 @@ def funnel_summary(scenes: ScenesManifest) -> str | None:
         line += f"; pergunta: {funnel.engagement}"
     line += f"; chamada: {funnel.cta}"
     return f"{line}; oferta: {funnel.offer}" if funnel.offer else line
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    if episode.scenes is None:
+        return
+    if (summary := funnel_summary(episode.scenes)) is not None:
+        report.checked.append(summary)
+    report.errors += funnel_errors(episode.scenes)
+    report.warnings += funnel_warnings(episode.scenes)
+    report.attention += funnel_attention(episode.scenes, episode.chars_per_second)

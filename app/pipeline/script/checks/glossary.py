@@ -18,9 +18,11 @@ import re
 from collections.abc import Sequence
 
 from app.media.narration import strip_pauses
-from app.media.pronunciation import Glossary
+from app.media.pronunciation import Glossary, load_glossary
 from app.pipeline.constants.glossary_check_constants import GlossaryCheckConstants as Constants
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.models.checked_episode import CheckedEpisode
 
 Spoken = tuple[str, str]  # o id da cena ou da fala e o texto falado
 
@@ -105,3 +107,12 @@ def colon_pause_lines(spoken: Sequence[Spoken]) -> list[str]:
         for spoken_id, text in spoken
         if re.search(Constants.COLON_QUESTION, text)
     ]
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    """Pausa depois de dois-pontos e glossário, este pelas regras da voz final (`episode.final_voice`)."""
+    if episode.scenes is None:
+        return
+    glossary = load_glossary(episode.store.path(episode.episode_id, ""))
+    report.warnings += colon_pause_warnings(episode.scenes)
+    report.attention += glossary_attention(episode.scenes, glossary, episode.final_voice)

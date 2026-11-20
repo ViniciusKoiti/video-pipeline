@@ -6,7 +6,9 @@ from __future__ import annotations
 from datetime import date
 
 from app.pipeline.constants.check_constants import CheckConstants as Constants
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.models.checked_episode import CheckedEpisode
 
 
 def objective_warnings(scenes: ScenesManifest, today: date | None = None) -> list[str]:
@@ -34,3 +36,11 @@ def objective_summary(scenes: ScenesManifest) -> str | None:
     if objective is None:
         return None
     return f"objetivo: {' + '.join(objective.kinds)}: {objective.promise}"
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    if episode.scenes is None:
+        return
+    if (summary := objective_summary(episode.scenes)) is not None:
+        report.checked.append(summary)
+    report.warnings += objective_warnings(episode.scenes, episode.today)

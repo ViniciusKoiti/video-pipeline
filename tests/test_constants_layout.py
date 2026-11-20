@@ -16,7 +16,14 @@ import pytest
 
 APP = Path(__file__).resolve().parents[1] / "app"
 # Registros mutáveis de composição; não são valores constantes nem exceções de migração.
-RUNTIME_REGISTRIES = {("cli.py", "HANDLERS"), ("bootstrap/__init__.py", "DEFAULT_REGISTRY")}
+# Registros explícitos de composição: os comandos do CLI, os adapters e as regras do vp check (ADR 042 e 064).
+RUNTIME_REGISTRIES = {
+    ("cli.py", "HANDLERS"),
+    ("bootstrap/__init__.py", "DEFAULT_REGISTRY"),
+    ("pipeline/script/checks/registry.py", "EPISODE_RULES"),
+    ("pipeline/script/checks/scenes.py", "SCENE_RULES"),
+    ("pipeline/script/checks/scenes.py", "PLAN_RULES"),
+}
 
 
 def symbol(node: ast.expr) -> str:

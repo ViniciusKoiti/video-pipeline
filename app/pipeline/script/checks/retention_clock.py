@@ -16,7 +16,10 @@ from collections.abc import Mapping
 
 from app.media.narration import strip_pauses, timeline_length
 from app.pipeline.constants.retention_clock_constants import RetentionClockConstants as Constants
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import Scene, ScenesManifest
+from app.pipeline.script.models.checked_episode import CheckedEpisode
+from app.pipeline.voice_timeline import measured_seconds
 
 Timed = tuple[Scene, float, float]  # a cena, onde começa e onde termina, em segundos
 
@@ -112,3 +115,17 @@ def retention_summary(timed: list[Timed], source: str) -> str | None:
         return None
     marks = [f"{scene.id} {scene.beat} {mmss(start)}" for scene, start, _ in timed if scene.beat]
     return f"relógio ({source}): {mmss(timed[-1][2])}; " + (", ".join(marks) if marks else "sem marcas")
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    """Com `episode.measure` e a voz de todas as cenas pronta, o relógio usa a voz real (ADR 061)."""
+    if episode.scenes is None:
+        return
+    ids = [scene.id for scene in episode.scenes.scenes]
+    measure = episode.measure
+    measured = measured_seconds(episode.store, episode.episode_id, ids, measure) if measure else None
+    timed, source = scene_clock(episode.scenes, episode.chars_per_second, measured)
+    if (summary := retention_summary(timed, source)) is not None:
+        report.checked.append(summary)
+    report.warnings += pause_hints(timed)
+    report.attention += retention_attention(timed, source)

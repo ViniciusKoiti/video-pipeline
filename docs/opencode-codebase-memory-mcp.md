@@ -76,14 +76,14 @@ codebase-memory-mcp cli search_graph --project home-viniciusk-projetos-auto-play
 Rastrear chamadas e ler a implementação descoberta:
 
 ```bash
-codebase-memory-mcp cli trace_path --project home-viniciusk-projetos-auto-play --function-name home-viniciusk-projetos-auto-play.app.pipeline.check.check_episode --direction both --depth 1 --limit 50
-codebase-memory-mcp cli get_code_snippet --project home-viniciusk-projetos-auto-play --qualified-name home-viniciusk-projetos-auto-play.app.pipeline.check.check_episode --source-mode full
+codebase-memory-mcp cli trace_path --project home-viniciusk-projetos-auto-play --function-name home-viniciusk-projetos-auto-play.app.pipeline.script.check.check_episode --direction both --depth 1 --limit 50
+codebase-memory-mcp cli get_code_snippet --project home-viniciusk-projetos-auto-play --qualified-name home-viniciusk-projetos-auto-play.app.pipeline.script.check.check_episode --source-mode full
 ```
 
 Conferir cobertura antes de usar resultados como evidência:
 
 ```bash
-codebase-memory-mcp cli check_index_coverage --project home-viniciusk-projetos-auto-play --paths '["app/pipeline/check.py","app/render/remotion.py","video/src/Editorial.tsx"]' --diagnostics full
+codebase-memory-mcp cli check_index_coverage --project home-viniciusk-projetos-auto-play --paths '["app/pipeline/script/check.py","app/render/remotion.py","video/src/Editorial.tsx"]' --diagnostics full
 ```
 
 Use a ajuda da versão instalada para outras flags:

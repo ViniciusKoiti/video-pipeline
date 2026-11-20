@@ -7,10 +7,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.pipeline.check import check_episode
 from app.pipeline.constants.molde_constants import MoldeConstants
-from app.pipeline.molde import Molde, claimless_statements, molde_summary, molde_warnings
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.check import check_episode
+from app.pipeline.script.molde import Molde, claimless_statements, molde_summary, molde_warnings
 from app.storage.json_files import JsonFileStore
 
 CPS = 14.0

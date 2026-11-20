@@ -40,13 +40,13 @@ from app.commands.models.command import Command as Command
 from app.commands.project_root import project_root
 from app.media.probe import duration_ms
 from app.pipeline.bench import run_bench, summary
-from app.pipeline.check import check_episode
 from app.pipeline.excerpts import numbered_view
 from app.pipeline.music import load_music_catalog
 from app.pipeline.ports import Context
 from app.pipeline.schemas import (
     SourcesManifest,
 )
+from app.pipeline.script.check import check_episode
 from app.render.remotion import region_codes
 from app.settings import speech_chars_per_second
 

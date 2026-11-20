@@ -245,7 +245,7 @@ export const ChartShot: React.FC<{spec: ChartSpec}> = ({spec}) => {
     );
   } else {
     // O BarChart do kit fixado formata em pt-BR (sem `locale`): em inglês o `vp check` só deixa passar o que as
-    // duas convenções escrevem igual (inteiro abaixo de mil; app/pipeline/check.py).
+    // duas convenções escrevem igual (inteiro abaixo de mil; app/pipeline/script/checks/number_format.py).
     chart = (
       <BarChart width={chartWidth} height={portrait ? 600 : 620} orientation={type === "bar_horizontal" ? "horizontal" : "vertical"}
         unit={inline} decimals={decimals} labelSize={34} maxBarThickness={type === "bar_horizontal" ? 110 : 240}

@@ -10,9 +10,9 @@ import pytest
 from pydantic import ValidationError
 
 from app.cli import main
-from app.pipeline.check import check_episode
 from app.pipeline.excerpts import excerpts_of, numbered_view, quote_in_excerpt, split_excerpts
 from app.pipeline.schemas import FactsManifest, Source
+from app.pipeline.script.check import check_episode
 from app.storage.json_files import JsonFileStore
 from tests.fakes import make_root
 

@@ -7,14 +7,14 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.pipeline.retention_clock import (
+from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.checks.retention_clock import (
     mmss,
     pause_hints,
     retention_attention,
     retention_summary,
     scene_clock,
 )
-from app.pipeline.schemas import ScenesManifest
 from app.pipeline.voice_timeline import measured_seconds
 from app.storage.json_files import JsonFileStore
 

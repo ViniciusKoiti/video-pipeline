@@ -9,7 +9,9 @@ from __future__ import annotations
 
 from app.media.constants.narration_constants import NarrationConstants
 from app.media.narration import emotion_segments, strip_pauses
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.models.checked_episode import CheckedEpisode
 
 
 def emotion_attention(scenes: ScenesManifest) -> list[str]:
@@ -30,3 +32,8 @@ def emotion_attention(scenes: ScenesManifest) -> list[str]:
                 f"{NarrationConstants.EMOTION_MAX_PER_SCENE} soa natural)"
             )
     return lines
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    if episode.scenes is not None:
+        report.attention += emotion_attention(episode.scenes)

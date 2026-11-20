@@ -8,8 +8,8 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from app.pipeline.funnel_check import funnel_attention, funnel_errors, funnel_summary, funnel_warnings
 from app.pipeline.schemas import Funnel, ScenesManifest
+from app.pipeline.script.checks.funnel import funnel_attention, funnel_errors, funnel_summary, funnel_warnings
 
 LAST = "A conta é preço dividido pelo peso. Salva pra conferir na próxima encomenda."
 MIDDLE = {"stage": "meio", "cta": "Salva pra conferir na próxima encomenda."}

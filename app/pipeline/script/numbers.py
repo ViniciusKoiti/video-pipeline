@@ -22,7 +22,6 @@ from app.pipeline.models.format_brief import FormatBrief as FormatBrief
 from app.pipeline.models.format_measure import FormatMeasure as FormatMeasure
 from app.pipeline.models.script_numbers import ScriptNumbers as ScriptNumbers
 from app.pipeline.models.shot_timing import ShotTiming as ShotTiming
-from app.pipeline.numbers_citations import citation_lines, citation_of
 from app.pipeline.review_hashes import strip_block as strip_block  # mudou para o carimbo do gate 2 (ADR 064)
 from app.pipeline.schemas import (
     Asset,
@@ -33,6 +32,7 @@ from app.pipeline.schemas import (
     Shot,
     effective_shots,
 )
+from app.pipeline.script.numbers_citations import citation_lines, citation_of
 from app.pipeline.shots import shot_bounds
 
 # Sem teto de duração: a câmera percorre o plano (rede, cronologia) ou o vídeo se move sozinho e segurar a

@@ -19,8 +19,8 @@ from app.pipeline.constants.speech_review_constants import SpeechReviewConstants
 from app.pipeline.models.heard_difference import HeardDifference
 from app.pipeline.models.speech_review import SpeechReview
 from app.pipeline.ports import Context
-from app.pipeline.retention_clock import mmss
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.checks.retention_clock import mmss
 from app.pipeline.speech_review import review_speech
 from app.pipeline.voice_timeline import voiced_paths
 

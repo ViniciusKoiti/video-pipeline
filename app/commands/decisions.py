@@ -9,10 +9,10 @@ from pathlib import Path
 from app.commands.constants.cli_constants import CliConstants
 from app.commands.project_root import project_root
 from app.commands.reviewer import default_reviewer
-from app.pipeline.check_report import load_check_report
 from app.pipeline.gates import record_check, record_decision
 from app.pipeline.ports import Context
 from app.pipeline.schemas import Decision, Step
+from app.pipeline.script.check_report import load_check_report
 
 
 def approve(args: argparse.Namespace, context: Context) -> int:

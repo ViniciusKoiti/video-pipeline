@@ -6,8 +6,8 @@ from typing import Any
 
 import pytest
 
-from app.pipeline.opinion_labels import opinion_label_errors
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.checks.opinion_labels import opinion_label_errors
 
 
 def manifest(*narrations: str) -> ScenesManifest:

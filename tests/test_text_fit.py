@@ -16,7 +16,7 @@ from app.pipeline.schemas import (
     TimelineEvent,
     TimelineShot,
 )
-from app.pipeline.text_fit import lines, text_fit_warnings
+from app.pipeline.script.checks.text_fit import lines, text_fit_warnings
 
 CLAIMS = [Claim(text="x", source_ids=["source-01"])]
 

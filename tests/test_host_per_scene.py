@@ -12,9 +12,9 @@ from pydantic import ValidationError
 
 from app.media.host import host_corners
 from app.media.host_scenes import scene_corners
-from app.pipeline.check import check_episode
 from app.pipeline.production.episode_build import build_scenes
 from app.pipeline.schemas import EpisodeManifest, EpisodeScene, HostSpec, ScenesManifest
+from app.pipeline.script.check import check_episode
 from app.render.remotion import RemotionEngine
 from tests.test_episode_build import DURATIONS, folder, roteiro, wavs
 from tests.test_host import HOST, scene, write_wav

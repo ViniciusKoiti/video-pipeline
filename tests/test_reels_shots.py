@@ -8,8 +8,6 @@ from typing import Any
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from app.pipeline.check import CheckReport, _check_scenes, arithmetic_errors
-from app.pipeline.funnel_check import funnel_warnings
 from app.pipeline.schemas import (
     EpisodeFormat,
     EpisodeManifest,
@@ -19,6 +17,11 @@ from app.pipeline.schemas import (
     Shot,
     VideoSpec,
 )
+from app.pipeline.script.check import CheckReport
+from app.pipeline.script.checks import scenes as scene_rules
+from app.pipeline.script.checks.arithmetic import arithmetic_errors
+from app.pipeline.script.checks.funnel import funnel_warnings
+from app.pipeline.script.models.checked_episode import CheckedEpisode
 from app.pipeline.shots import episode_shots
 from app.render.remotion import RemotionEngine
 from tests.test_shots import CLAIM
@@ -225,7 +228,12 @@ def test_count_on_screen_only_when_the_video_explains() -> None:
         if "opinar" in kinds:
             objective |= {"thesis": "t", "thesis_by": "dono"}
         report = CheckReport()
-        _check_scenes(manifest(objective=objective), None, None, {}, report)
+        episode = CheckedEpisode(
+            store=None, episode_id="x", sources=None, facts=None,  # type: ignore[arg-type]
+            scenes=manifest(objective=objective), excerpts={}, region_codes=None,
+            chars_per_second=15.0, today=None, music_catalog=None, measure=None, final_voice=None,
+        )
+        scene_rules.check(episode, report)
         return [e for e in report.errors if "só em vídeo que explica" in e]
 
     assert errors(["explicar"]) == []
