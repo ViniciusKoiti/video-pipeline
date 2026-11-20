@@ -23,6 +23,7 @@ from app.pipeline.models.format_measure import FormatMeasure as FormatMeasure
 from app.pipeline.models.script_numbers import ScriptNumbers as ScriptNumbers
 from app.pipeline.models.shot_timing import ShotTiming as ShotTiming
 from app.pipeline.numbers_citations import citation_lines, citation_of
+from app.pipeline.review_hashes import strip_block as strip_block  # mudou para o carimbo do gate 2 (ADR 064)
 from app.pipeline.schemas import (
     Asset,
     BrollShot,
@@ -274,20 +275,6 @@ def replace_block(text: str, block: str) -> str:
     if old is not None:
         return text.replace(old, block, 1)
     return text.rstrip("\n") + "\n\n" + block + "\n"
-
-
-def strip_block(data: bytes) -> bytes:
-    """Os bytes sem o bloco gerado: o carimbo do gate 2 e o do parecer não dependem dele (decisão D1).
-
-    Sem bloco, os bytes voltam iguais. Com bloco, sai também a linha em branco que o `replace_block` põe antes
-    dele: o outline aprovado antes do bloco tem o mesmo carimbo depois de ganhá-lo."""
-    start, end = data.find(Constants.BLOCK_START.encode()), data.find(Constants.BLOCK_END.encode())
-    if start < 0 or end < start:
-        return data
-    before, after = data[:start].rstrip(b"\n"), data[end + len(Constants.BLOCK_END.encode()) :]
-    if not after.strip():
-        return before + b"\n"
-    return before + b"\n\n" + after.lstrip(b"\n")
 
 
 def render_image_plan(

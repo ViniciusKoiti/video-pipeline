@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
-from app.pipeline.numbers import strip_block
+from app.pipeline.constants.numbers_constants import NumbersConstants
 from app.pipeline.state import compute_input_hash
 
 
@@ -49,3 +49,18 @@ def hash_contents(contents: Mapping[Path, bytes], *, base: Path, null_asset_ids:
         digest.update(hashlib.sha256(data).digest())
     digest.update(json.dumps({}).encode())
     return "sha256:" + digest.hexdigest()
+
+
+def strip_block(data: bytes) -> bytes:
+    """Os bytes sem o bloco gerado: o carimbo do gate 2 e o do parecer não dependem dele (decisão D1).
+
+    Sem bloco, os bytes voltam iguais. Com bloco, sai também a linha em branco que o `replace_block` põe antes
+    dele: o outline aprovado antes do bloco tem o mesmo carimbo depois de ganhá-lo."""
+    start_mark, end_mark = NumbersConstants.BLOCK_START.encode(), NumbersConstants.BLOCK_END.encode()
+    start, end = data.find(start_mark), data.find(end_mark)
+    if start < 0 or end < start:
+        return data
+    before, after = data[:start].rstrip(b"\n"), data[end + len(end_mark) :]
+    if not after.strip():
+        return before + b"\n"
+    return before + b"\n\n" + after.lstrip(b"\n")

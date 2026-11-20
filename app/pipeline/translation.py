@@ -12,7 +12,6 @@ dígitos seguidos de escala formam um número só ("100 mil" é 100000; "1 milh�
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 from typing import Any
@@ -152,19 +151,3 @@ def translation_problems(store: ManifestStore, episode_id: str) -> list[str]:
     elif src_content.is_file() != dst_content.is_file():
         problems.append("só um dos dois episódios tem content.json")
     return problems
-
-
-def translation_hash(store: ManifestStore, episode_id: str) -> str:
-    """O que o gate de tradução carimba: a tradução, o vínculo e o original de que ela vem.
-
-    Mudar a narração (ou a tela) do original derruba a aprovação da tradução (§5)."""
-    link = store.read(episode_id, Constants.LINK_FILE, TranslationLink)
-    own = (Constants.NARRATION_FILE, Constants.LINK_FILE, Constants.CONTENT_FILE)
-    origin = (Constants.NARRATION_FILE, Constants.CONTENT_FILE)
-    labelled = [(f"{episode_id}/{n}", store.path(episode_id, n)) for n in own]
-    labelled += [(f"{link.derived_from}/{n}", store.path(link.derived_from, n)) for n in origin]
-    digest = hashlib.sha256()
-    for label, path in labelled:
-        if path.is_file():
-            digest.update(label.encode() + b"\0" + hashlib.sha256(path.read_bytes()).digest())
-    return "sha256:" + digest.hexdigest()
