@@ -83,6 +83,11 @@ e Segunda Guerra (saturados).
     `app.commands.errors.run` (`tests/test_errors_layout.py`).
   - **Tamanho (catraca):** até 200 linhas de código por módulo e 50 por função em `app/`; o que já passa está em
     `tests/baseline_tamanho_app.json` e só pode encolher. Código novo vai em módulo novo.
+  - **Pacotes do pipeline (ADR 064):** `app/pipeline` se divide por etapa, em camadas: base (`schemas`, `models/`,
+    `constants/`, `ports`) → `governance` → etapas (`research`, `script`, `visuals`, `sound`, `voice`,
+    `publishing`, `bench`) → fluxos (`production`, `short`, `gates`, `status`). Nenhum módulo importa uma camada
+    acima da sua, e não há ciclo entre etapas (`tests/test_pipeline_layers.py`). Módulo novo nasce no subpacote da
+    etapa; enquanto houver módulo solto na raiz, ele declara a etapa em `ROOT_MODULES`.
 
 ### Mapa resumido do repositório
 
