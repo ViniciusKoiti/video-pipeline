@@ -126,6 +126,10 @@ ainda sem comando.
 - **O que cada gate carimba:** `sources.json` + `facts.json` (1); `scenes.json` + `outline.md` (2); o arquivo do
   ativo (3); o render mais acabado com `episode.json`, legenda e texto do post (4, `--step preview`). Renderizar o
   final depois de aprovar a prévia pede nova decisão. `vp status` mostra se a decisão ainda vale.
+- **Conferência do render (dono, 2026-11-19):** o `vp render` mede o MP4 (abre no ffprobe, tem áudio, dimensão do
+  perfil, duração igual à da voz) e grava `renders/checks-<render>.json` com o `sha256`. Quebra objetiva faz o
+  comando sair com 1 e o gate 4 recusar, como o MP4 trocado depois da conferência; volume fora de −14 LUFS e
+  silêncio longo viram `atenção`. Render sem o relatório (anterior a esta regra, ou Short) não é bloqueado.
 
 ## 5. Contratos de dados e direitos (resumo normativo)
 

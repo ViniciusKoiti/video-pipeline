@@ -21,8 +21,14 @@ class SplitError(PipelineError, RuntimeError):
     pass
 
 
-def silences(path: Path) -> list[tuple[float, float]]:
-    """Silêncios internos (início, fim) em segundos; os das pontas do arquivo ficam de fora."""
+def silences(
+    path: Path,
+    *,
+    noise_db: float = PausesConstants.NOISE_DB,
+    min_s: float = PausesConstants.MIN_SILENCE_S,
+) -> list[tuple[float, float]]:
+    """Silêncios internos (início, fim) em segundos; os das pontas do arquivo ficam de fora. Os padrões são
+    os das pausas entre cenas; a conferência do render passa os dela. Só o áudio é lido (`-vn`)."""
     result = subprocess.run(
         [
             "ffmpeg",
@@ -30,8 +36,9 @@ def silences(path: Path) -> list[tuple[float, float]]:
             "-nostats",
             "-i",
             str(path),
+            "-vn",
             "-af",
-            f"silencedetect=noise={PausesConstants.NOISE_DB}dB:d={PausesConstants.MIN_SILENCE_S}",
+            f"silencedetect=noise={noise_db:g}dB:d={min_s:g}",
             "-f",
             "null",
             "-",

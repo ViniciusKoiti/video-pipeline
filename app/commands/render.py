@@ -13,7 +13,10 @@ com cache por cena.
 - `--voz-final` e `--voz NOME`: a voz, como no `vp voice`.
 - `--legenda-palavra`: legenda palavra a palavra. Manda o WAV de cada cena ainda não reconhecida ao Whisper
   da Groq (remoto, camada gratuita): só com pedido do dono na sessão.
-- Depois do render com trilha, a loudness final é medida (alvo −14 LUFS).
+- Depois do render, a conferência do MP4 (`app/pipeline/publishing/render_checks.py`) mede o arquivo: abre
+  no ffprobe, tem áudio, tem a dimensão do perfil e dura o que a voz dura (quebra objetiva: o comando sai
+  com 1 e o gate 4 recusa); volume fora do alvo de −14 LUFS e silêncio longo viram `atenção` no gate 4. O
+  resultado fica em `renders/checks-<render>.json` e aparece no `vp status`.
 """
 
 from __future__ import annotations
@@ -22,18 +25,20 @@ import argparse
 import os
 import time
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 
 from app.commands.voice import select_tts
-from app.media.loudness import integrated_lufs, loudness_problem
 from app.media.narration import strip_pauses
 from app.media.word_captions import SceneSpeech
+from app.pipeline.constants.assembly_constants import AssemblyConstants
 from app.pipeline.ports import Context
 from app.pipeline.production.assembly import EpisodeRenderer
 from app.pipeline.production.captions import write_captions, write_word_captions
 from app.pipeline.production.episode_build import build_episode, build_scenes, music_segments, with_music
 from app.pipeline.production.voice import produce_voice
 from app.pipeline.protection import ReviewWriteGuard
+from app.pipeline.publishing.render_checks import inspect_render, summary_lines, write_render_checks
 from app.pipeline.schemas import EpisodeManifest, EpisodeScene, ScenesManifest, SourcesManifest
 from app.pipeline.shots import pacing_warnings
 from app.providers.alignment.base import TimedWord
@@ -137,8 +142,15 @@ def _render(
     started = time.monotonic()
     result = renderer.render(args.episode_id, scenes, episode, preview=args.preview)
     print(f"render: {time.monotonic() - started:.0f} s -> {result.path} ({result.duration_ms / 1000:.1f} s)")
-    if episode.music:
-        lufs = integrated_lufs(result.path)
-        problem = loudness_problem(lufs)
-        print(f"volume: {lufs:.1f} LUFS", f"— alerta: {problem}" if problem else "ok")
-    return 0
+    checks = inspect_render(
+        result.path,
+        render=AssemblyConstants.PREVIEW if args.preview else AssemblyConstants.FINAL,
+        expected_width=result.width,
+        expected_height=result.height,
+        expected_ms=episode.duration_ms,
+        now=datetime.now().astimezone(),
+    )
+    write_render_checks(context.store, args.episode_id, checks)
+    for line in summary_lines(checks):
+        print(line)
+    return 0 if checks.ok else 1

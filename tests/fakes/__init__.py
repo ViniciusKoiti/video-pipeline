@@ -6,8 +6,8 @@ Servem para testar etapas do pipeline e como referência nos testes de contrato.
 from __future__ import annotations
 
 import hashlib
-import json
 import shutil
+import subprocess
 import wave
 from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
@@ -228,7 +228,23 @@ class FakeAligner:
         return cues
 
 
+def write_fake_mp4(out: Path, width: int, height: int, duration_ms: int) -> None:
+    """Um MP4 real e mínimo (cor chapada e um tom a ~−14 LUFS: o `sine` do ffmpeg sai a 1/8 da escala, ~−21
+    LUFS, e ganha 7 dB), para os checks pós-render lerem."""
+    seconds = max(duration_ms, 200) / 1000
+    subprocess.run(
+        ["ffmpeg", "-v", "error", "-y",
+         "-f", "lavfi", "-i", f"color=c=black:s={width}x{height}:r=5:d={seconds:.3f}",
+         "-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={seconds:.3f}",
+         "-af", "volume=7dB", "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+         "-c:a", "aac", "-shortest", str(out)],
+        check=True, capture_output=True,
+    )
+
+
 class FakeRender:
+    """Motor falso: grava um MP4 real do tamanho e da duração do episódio, sem renderizar cena nenhuma."""
+
     def __init__(self, name: str = "fake-render") -> None:
         self.info = ProviderInfo(name, remote=False)
 
@@ -237,7 +253,7 @@ class FakeRender:
     ) -> RenderResult:
         spec = target_spec(episode, preview=preview)
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps({"episode": episode.episode_id, "engine": self.info.name}))
+        write_fake_mp4(out, spec.width, spec.height, episode.duration_ms)
         return RenderResult(path=out, width=spec.width, height=spec.height, duration_ms=episode.duration_ms)
 
 
