@@ -16,8 +16,8 @@ from app.media.probe import duration_ms
 from app.media.short_mix import has_audio, mix_audio
 from app.pipeline.motion_inputs import load_content
 from app.pipeline.ports import Context
-from app.pipeline.short_join import join_command, ordered_speech
-from app.pipeline.short_timing import resolve_effects, voiced
+from app.pipeline.short.join import join_command, ordered_speech
+from app.pipeline.short.timing import resolve_effects, voiced
 
 
 def run(args: argparse.Namespace, context: Context) -> int:

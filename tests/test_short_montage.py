@@ -452,8 +452,8 @@ def test_juntar_copies_the_video_stream_untouched(prod: Production) -> None:
 def test_the_join_command_lists_the_voices_in_scene_order_each_at_its_scene_start(prod: Production) -> None:
     from app.media.probe import duration_ms as measure
     from app.pipeline.motion_inputs import load_content
-    from app.pipeline.short_join import join_command, ordered_speech
-    from app.pipeline.short_timing import voiced
+    from app.pipeline.short.join import join_command, ordered_speech
+    from app.pipeline.short.timing import voiced
 
     content = load_content(fit(prod))
     wavs = voiced(prod.folder, prod.narration)
@@ -503,8 +503,8 @@ def test_juntar_says_when_the_render_already_had_sound_and_when_the_volume_is_of
 def test_the_join_command_adds_each_effect_as_an_input_and_in_the_mix(prod: Production) -> None:
     from app.media.probe import duration_ms as measure
     from app.pipeline.motion_inputs import load_content
-    from app.pipeline.short_join import join_command, ordered_speech
-    from app.pipeline.short_timing import resolve_effects, voiced
+    from app.pipeline.short.join import join_command, ordered_speech
+    from app.pipeline.short.timing import resolve_effects, voiced
 
     make_kit(prod)
     content = load_content(fit(prod))

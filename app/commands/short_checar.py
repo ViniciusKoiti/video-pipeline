@@ -1,7 +1,7 @@
 """`vp short checar <pasta> <narracao.json>`: a porta do texto do Short antes da primeira voz (ADR 062,
 emenda de 2026-11-17).
 
-As regras de texto do `vp check` nas linhas da narração (`app/pipeline/short_speech.py`): rótulo de opinião é
+As regras de texto do `vp check` nas linhas da narração (`app/pipeline/short/speech.py`): rótulo de opinião é
 erro (saída 1); termo de fora sem entrada em `<pasta>/voice/glossary.json`, ou sem `ipa` com a voz do Azure,
 é ponto de atenção; dois-pontos sem `<short pause>` antes de pergunta é alerta. A voz considerada é a do vídeo
 final (`tts_final`), a mesma que `vp short voz` usa sem `--voz`. Cada fala refeita custa uma chamada à voz:
@@ -16,7 +16,7 @@ from app.media.pronunciation import load_glossary
 from app.pipeline.models.check_report import CheckReport
 from app.pipeline.motion_inputs import load_narration
 from app.pipeline.ports import Context
-from app.pipeline.short_speech import check_short_text
+from app.pipeline.short.speech import check_short_text
 
 
 def print_report(report: CheckReport) -> None:

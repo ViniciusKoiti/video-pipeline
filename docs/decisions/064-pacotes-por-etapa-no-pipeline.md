@@ -37,8 +37,9 @@
    ├── voice/       voice · voice_state · voice_timeline · voice_retake · speech_review
    ├── publishing/  package · metrics · translation · medicao · affiliate · usage
    ├── bench/       bench · bench_data
-   ├── production/  voice_production · caption_production · episode_build · assembly · audio_review
-   ├── short/       short_voice · short_timing · short_join · short_mouth · short_speech
+   ├── production/  voice (era voice_production) · captions (era caption_production) · episode_build
+│                assembly · audio_review
+   ├── short/       voice · timing · join · mouth · speech (eram short_voice, short_timing…)
    ├── gates.py     junta as conferências das etapas para o `vp approve`
    └── status.py    o antigo pending.py: o que falta para o `vp status`
    ```
@@ -87,4 +88,7 @@
 - PR 1: o carimbo de cada gate (`gate_hash`, `current_hash`, `legacy_hashes`, o hash da tradução) e o
   `GateError` foram para `gate_stamps.py`, em `governance`; o `strip_block` foi para o `review_hashes`.
   O `gates.py` e o `numbers.py` reexportam os nomes usados pelos testes até o PR 5. A catraca ficou vazia.
+- PR 2: `short/` e `production/` sem reexportação no caminho antigo. O guarda da ADR 042 recusaria o módulo
+  antigo importando a orquestração, e nenhum script usava esses módulos; comandos e testes passaram ao caminho
+  novo no mesmo PR.
 - Os 12 scripts de `scripts/provisorio/` que importam do `app/` seguem pelos caminhos antigos até o PR 5.

@@ -20,7 +20,7 @@ from app.pipeline.glossary_check import colon_pause_lines, glossary_lines
 from app.pipeline.models.check_report import CheckReport
 from app.pipeline.models.narration import Narration
 from app.pipeline.opinion_labels import opinion_label_lines
-from app.pipeline.short_voice import speech_lines
+from app.pipeline.short.voice import speech_lines
 from app.pipeline.speech_review import Heard
 
 

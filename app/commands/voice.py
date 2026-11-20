@@ -27,8 +27,8 @@ from app.commands.voice_check import check_speech
 from app.media.probe import duration_ms
 from app.pipeline.constants.voice_retake_constants import VoiceRetakeConstants as RetakeConstants
 from app.pipeline.ports import Context
+from app.pipeline.production.voice import produce_voice
 from app.pipeline.schemas import ScenesManifest
-from app.pipeline.voice_production import produce_voice
 from app.pipeline.voice_retake import set_aside
 from app.providers.tts.base import TTSProvider
 

@@ -1,9 +1,10 @@
 """`vp render`: voz, tempo dos planos, legendas, `episode.json` e render de um episódio explicativo.
 
 O que faz, na ordem: a narração por cena (`vp voice`; só gera o que falta); a duração real de cada WAV vira
-o tempo dos planos (`app/pipeline/episode_build.py`); `captions.srt` por frase, editável e refeito só quando
-a fala muda (`app/pipeline/caption_production.py`); a legenda palavra a palavra, se pedida; a trilha de
-`music.json`, se houver; o `episode.json`; e o render pelo motor do formato (Remotion), com cache por cena.
+o tempo dos planos (`app/pipeline/production/episode_build.py`); `captions.srt` por frase, editável e
+refeito só quando a fala muda (`app/pipeline/production/captions.py`); a legenda palavra a palavra, se
+pedida; a trilha de `music.json`, se houver; o `episode.json`; e o render pelo motor do formato (Remotion),
+com cache por cena.
 
 - `--preview`: prévia em 720p (`renders/preview.mp4`); sem ela, o final (`renders/final.mp4`), que pede
   todos os ativos aprovados no gate 3. O gate 4 aprovado recusa render por cima do MP4, do `episode.json` e
@@ -27,14 +28,14 @@ from app.commands.voice import select_tts
 from app.media.loudness import integrated_lufs, loudness_problem
 from app.media.narration import strip_pauses
 from app.media.word_captions import SceneSpeech
-from app.pipeline.assembly import EpisodeRenderer
-from app.pipeline.caption_production import write_captions, write_word_captions
-from app.pipeline.episode_build import build_episode, build_scenes, music_segments, with_music
 from app.pipeline.ports import Context
+from app.pipeline.production.assembly import EpisodeRenderer
+from app.pipeline.production.captions import write_captions, write_word_captions
+from app.pipeline.production.episode_build import build_episode, build_scenes, music_segments, with_music
+from app.pipeline.production.voice import produce_voice
 from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.schemas import EpisodeManifest, EpisodeScene, ScenesManifest, SourcesManifest
 from app.pipeline.shots import pacing_warnings
-from app.pipeline.voice_production import produce_voice
 from app.providers.alignment.base import TimedWord
 
 

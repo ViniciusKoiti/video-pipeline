@@ -10,7 +10,7 @@ from app.pipeline.constants.short_constants import ShortConstants
 from app.pipeline.models.motion_content import MotionContent
 from app.pipeline.models.placed_sfx import PlacedSfx
 from app.pipeline.models.voiced_speech import VoicedSpeech
-from app.pipeline.short_timing import ShortAssemblyError
+from app.pipeline.short.timing import ShortAssemblyError
 
 
 def ordered_speech(content: MotionContent, wavs: dict[str, VoicedSpeech]) -> list[str]:

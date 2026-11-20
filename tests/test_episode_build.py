@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from app.pipeline.episode_build import (
+from app.pipeline.production.episode_build import (
     EpisodeBuildError,
     build_episode,
     build_scenes,
