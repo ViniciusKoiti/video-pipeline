@@ -13,8 +13,8 @@ A etapa de um módulo vem do subpacote (`app/pipeline/voice/...` é `voice`; `mo
 são `base`). Enquanto um módulo continua solto em `app/pipeline/`, a etapa dele vem de `ROOT_MODULES`:
 módulo novo solto ali entra nessa tabela, e módulo que mudou de pasta sai dela.
 
-Catraca: `KNOWN` lista as violações de hoje e só encolhe. Import novo que viola falha; entrada que já
-não viola tem de sair. O PR 1 da ADR 064 esvazia a lista.
+Catraca: `KNOWN` lista as violações conhecidas e só encolhe. Import novo que viola falha; entrada
+que já não viola tem de sair. Está vazia desde o PR 1 da ADR 064.
 """
 
 from __future__ import annotations
@@ -40,7 +40,8 @@ ROOT_MODULES: Mapping[str, str] = {
         ("schemas", "ports", "atomic_files", "file_hash", "shots", "attribution", "motion_inputs"), "base"
     ),
     **dict.fromkeys(
-        ("state", "protection", "review_hashes", "reopen", "failures", "scene_step"), "governance"
+        ("state", "protection", "review_hashes", "reopen", "failures", "scene_step", "gate_stamps"),
+        "governance",
     ),
     **dict.fromkeys(("sources", "extract", "excerpts", "format_decision"), "research"),
     **dict.fromkeys(
@@ -65,14 +66,8 @@ ROOT_MODULES: Mapping[str, str] = {
     "pending": "status",
 }
 
-# Violações de hoje (2026-11-19), três causas: `GateError` mora no gates.py; os hashes que a proteção
-# usa também; e o hash do gate 2 usa `strip_block` do vp numeros. Só encolhe; o PR 1 esvazia.
-KNOWN = frozenset({
-    "app.pipeline.check_report -> app.pipeline.gates",
-    "app.pipeline.protection -> app.pipeline.gates",
-    "app.pipeline.reopen -> app.pipeline.gates",
-    "app.pipeline.review_hashes -> app.pipeline.numbers",
-})
+# Violações conhecidas: só encolhe. O PR 1 da ADR 064 (2026-11-19) esvaziou a lista.
+KNOWN: frozenset[str] = frozenset()
 
 
 def stage_of(module: str) -> str | None:

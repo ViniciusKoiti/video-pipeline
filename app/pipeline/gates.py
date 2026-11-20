@@ -18,19 +18,20 @@ conteúdo muda depois, a decisão deixa de valer e `vp status` mostra isso.
   e o original de que ela vem. Aprovar exige que a conferência em código (`vp traducao`) não ache problema.
 
 `missing_pieces` lista o que falta para o vídeo estar pronto e não é gate: hoje, a legenda do vertical.
+
+O cálculo do carimbo de cada gate e o `GateError` moram em `gate_stamps.py`, em `governance` (ADR 064): a
+proteção de escrita e a reabertura usam os dois sem depender deste módulo.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from pydantic import ValidationError
 
-from app.errors import PipelineError
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.constants.medicao_constants import MedicaoConstants
 from app.pipeline.constants.translation_constants import TranslationConstants
-from app.pipeline.file_hash import sha256_file
+from app.pipeline.gate_stamps import GateError as GateError
+from app.pipeline.gate_stamps import current_hash, gate_hash, legacy_hashes
 from app.pipeline.medicao import medicao_problems
 from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
@@ -47,44 +48,8 @@ from app.pipeline.schemas import (
     Status,
     Step,
 )
-from app.pipeline.state import Clock, compute_input_hash
-from app.pipeline.translation import translation_hash, translation_problems
-
-
-class GateError(PipelineError, ValueError):
-    """Gate que não pode ser decidido, conferido ou reaberto (arquivo faltando, parecer ausente)."""
-
-
-def gate_hash(store: ManifestStore, episode_id: str, step: Step, asset_id: str | None = None) -> str:
-    """Hash do que o humano revê nesse gate; mesmo conteúdo, mesmo hash."""
-    if step is Step.ASSETS:
-        if asset_id is None:
-            raise GateError("a etapa assets decide ativo por ativo: informe --asset")
-        return "sha256:" + sha256_file(_media_path(store, episode_id, asset_id))
-    if asset_id is not None:
-        raise GateError("--asset só vale para a etapa assets")
-    if step is Step.PREVIEW:
-        return compute_input_hash(_preview_paths(store, episode_id), {}, base=store.path(episode_id, ""))
-    if step is Step.TRANSLATION:
-        if not store.path(episode_id, TranslationConstants.LINK_FILE).is_file():
-            raise GateError(
-                f"{episode_id}: sem {TranslationConstants.LINK_FILE}, não é uma tradução (ADR 034)"
-            )
-        try:
-            return translation_hash(store, episode_id)
-        except (ManifestNotFound, ValueError) as error:
-            raise GateError(
-        f'{episode_id}: {TranslationConstants.LINK_FILE} inválido ou sem o original ({error}'
-        f')'
-    ) from None
-    names = Constants.GATE_FILES.get(step)
-    if names is None:
-        raise GateError(f"a etapa {step.value} ainda não tem gate por comando")
-    paths = [store.path(episode_id, name) for name in names]
-    missing = [p.name for p in paths if not p.is_file()]
-    if missing:
-        raise GateError(f"{episode_id}: faltam {', '.join(missing)} para o gate de {step.value}")
-    return content_hash(paths, base=store.path(episode_id, ""))
+from app.pipeline.state import Clock
+from app.pipeline.translation import translation_problems
 
 
 def _validate_reports(store: ManifestStore, episode_id: str, step: Step, decision: Decision) -> None:
@@ -243,16 +208,6 @@ def missing_pieces(store: ManifestStore, episode_id: str) -> list[str]:
     return []
 
 
-def _preview_paths(store: ManifestStore, episode_id: str) -> list[Path]:
-    render = next(
-        (store.path(episode_id, r) for r in Constants.RENDERS if store.path(episode_id, r).is_file()), None
-    )
-    if render is None:
-        raise GateError(f"{episode_id}: nenhum render em renders/ para o gate da prévia")
-    extras = [store.path(episode_id, name) for name in Constants.PREVIEW_FILES]
-    return [render, *(p for p in extras if p.is_file())]
-
-
 def _approved(
     store: ManifestStore, review: ReviewGate, episode_id: str, asset_id: str, input_hash: str
 ) -> Asset | None:
@@ -274,27 +229,3 @@ def _approved(
     except ValidationError as error:
         problems = "; ".join(e["msg"].removeprefix("Value error, ") for e in error.errors())
         raise GateError(f"{asset_id}: {problems}") from None
-
-
-def current_hash(store: ManifestStore, episode_id: str, step: Step, asset: str | None = None) -> str | None:
-    try:
-        return gate_hash(store, episode_id, step, asset)
-    except GateError:
-        return None
-
-
-def legacy_hashes(store: ManifestStore, episode_id: str, step: Step) -> tuple[str, ...]:
-    """Os carimbos das regras anteriores (arquivo inteiro e asset_id como null): decisões antigas valem."""
-    names = Constants.GATE_FILES.get(step)
-    paths = [store.path(episode_id, name) for name in names or ()]
-    if not paths or not all(p.is_file() for p in paths):
-        return ()
-    return legacy_hashes_of(paths, base=store.path(episode_id, ""))
-
-
-def _media_path(store: ManifestStore, episode_id: str, asset_id: str) -> Path:
-    for suffix in Constants.MEDIA_SUFFIXES:
-        path = store.path(episode_id, f"assets/{asset_id}{suffix}")
-        if path.is_file():
-            return path
-    raise GateError(f"{asset_id}: nenhum arquivo de mídia em assets/")

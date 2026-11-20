@@ -26,7 +26,7 @@
    app/pipeline/
    ├── schemas.py · models/ · constants/   contratos do disco (ficam onde estão)
    ├── ports · atomic_files · file_hash · shots · attribution · motion_inputs   base sem etapa
-   ├── governance/  state · protection · review_hashes · reopen · failures · scene_step
+   ├── governance/  state · protection · review_hashes · reopen · failures · scene_step · gate_stamps
    ├── research/    sources · extract · excerpts · format_decision
    ├── script/      check (dividido em checks/, um módulo por regra) · check_report · script_form
    │                funnel_check · objective_check · opinion_labels · narration_gaps · emotion_marks
@@ -84,4 +84,7 @@
 - Medido no PR 0: quatro imports sobem de camada, por três causas. `GateError` mora no `gates.py`
   (`check_report`, `reopen`); `current_hash` e `legacy_hashes` também (`protection`); e o hash do gate 2 usa
   `strip_block` do `vp numeros` (`review_hashes`). Nenhum ciclo entre etapas da mesma camada.
+- PR 1: o carimbo de cada gate (`gate_hash`, `current_hash`, `legacy_hashes`, o hash da tradução) e o
+  `GateError` foram para `gate_stamps.py`, em `governance`; o `strip_block` foi para o `review_hashes`.
+  O `gates.py` e o `numbers.py` reexportam os nomes usados pelos testes até o PR 5. A catraca ficou vazia.
 - Os 12 scripts de `scripts/provisorio/` que importam do `app/` seguem pelos caminhos antigos até o PR 5.

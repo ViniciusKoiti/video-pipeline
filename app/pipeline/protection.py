@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
-from app.pipeline.gates import current_hash, legacy_hashes
+from app.pipeline.gate_stamps import current_hash, legacy_hashes
 from app.pipeline.ports import ImmutableManifest, ManifestStore, ReviewGate
 from app.pipeline.review_hashes import hash_contents
 from app.pipeline.schemas import Decision, ReviewEntry, Step
