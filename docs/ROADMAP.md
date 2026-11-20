@@ -93,8 +93,8 @@ produção em escala. Roteiro nas issues #1–#31, #41–#43, #48, #69–#82 e #
   decisão de 2026-09-29: com calma, uma frente por vez, e toda mudança de template ou de motion-kit sai pelo
   vídeo-régua abaixo. Em pausa: #11 e M2–M7 do piloto documentário.
 - **Vídeo-régua:** o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
-  visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Script
-  `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar`, `lado-a-lado`), vídeos em
+  visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Comando
+  `vp evolucao` (`gerar`, `guardar`, `comparar`, `lado-a-lado`), vídeos em
   `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`. A folha de quadros marca os planos que
   mudaram: um PR de visual deve mudar só os que pretendia.
 - **Voz (ADR 016, aceita em 2026-10-12):** Kokoro nos rascunhos (`tts`), voz clonada do dono no vídeo final
@@ -231,8 +231,8 @@ vertical do formato explicativo antes do piloto documentário. Nenhum vídeo pub
   vez.
   - **Evolução do template (vídeo-régua), escolhida em 2026-09-29:** em vez de conferir cada correção num render
     avulso, o `votorantim-dinheiro` (conteúdo congelado) ganha uma versão `vN` ao fim de cada PR que muda o
-    visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Script
-    `scripts/provisorio/evolucao.py` (`gerar`, `guardar`, `comparar` com a folha de quadros, `lado-a-lado`),
+    visual (template ou motion-kit), com a sonda de CPU antes; autorização do dono só para este vídeo. Comando
+    `vp evolucao` (`gerar`, `guardar`, `comparar` com a folha de quadros, `lado-a-lado`),
     vídeos em `renders/evolucao/` e registro em `data/benchmarks/evolucao-template.md`. A folha e o registro
     marcam os planos que mudaram em relação à versão anterior: um PR de visual deve mudar só os que pretendia.
 
