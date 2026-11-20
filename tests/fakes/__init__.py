@@ -162,7 +162,10 @@ class FakeImageGen:
         generation = Generation(
             prompt=request.prompt, model="fake-image", seed=request.seed or 0, steps=request.steps
         )
-        return GeneratedImage(path=request.out_path, generation=generation)
+        return GeneratedImage(path=request.out_path, generator="fake-image", generation=generation)
+
+    def close(self) -> None:
+        return None
 
 
 class FakeArchive:

@@ -7,7 +7,7 @@ text = "ollama"
 tts = "kokoro"        # rascunhos e prévias de revisão: local, sem limite
 tts_final = "chatterbox_modal"  # vídeo final: voz clonada do dono numa GPU do Modal (ADR 024); "chatterbox" = a
                                 # mesma voz na CPU (ADR 016); "gemini" = Charon (ADR 012)
-image_gen = "workers_ai"
+image_gen = "browser_image"  # imagem para lacuna (§6) pela tela do Gemini, no Chrome do dono (ADR 065); "workers_ai" = API, ainda sem adapter
 archives = ["wikimedia_commons", "library_of_congress", "flickr_commons", "pexels", "pixabay", "unsplash"]  # ordem da cascata (§8)
 aligner = "ffprobe"
 word_aligner = "groq"  # tempo por palavra da legenda (ADR 023); remoto, só com --legenda-palavra
@@ -131,6 +131,61 @@ deesser_frequency = 1.0  # parametro normalizado do FFmpeg, nao Hz
 
 [workers_ai]
 model = "@cf/black-forest-labs/flux-1-schnell"
+
+# Imagem gerada pela tela de um site de conversa, no Chrome que o dono abre e loga (ADR 065; `vp imagens`):
+#   chromium --remote-debugging-port=9222 --user-data-dir=$HOME/.cache/chrome-imagens
+# Uma imagem por vez, com pausa entre pedidos; login, captcha ou aviso de limite param a rodada. Os termos de
+# automação dos sites não foram conferidos: o risco é da conta do dono (decisão de 2026-11-11).
+[browser_image]
+cdp_url = "http://127.0.0.1:9222"
+site = "gemini"     # trocar de site = mudar esta linha; o site precisa de enabled = true
+interval_s = 45     # segundos entre pedidos
+wait_s = 180        # segundos à espera de cada imagem
+
+# Um bloco por site. As telas mudam sem aviso: quando uma rodada falhar por "não achei", rodar
+# `vp imagens mapear`, que lista o que cada seletor encontra e os botões e campos da página, e corrigir aqui.
+#   url             página de conversa nova
+#   prompt_box      campo onde o prompt é digitado
+#   send            botão de enviar (vazio = tecla Enter)
+#   setup           cliques feitos antes de tudo, em ordem (ex.: ligar a ferramenta de imagem)
+#   attach_input    <input type="file"> que recebe as referências (quando attach_clicks está vazio)
+#   attach_clicks   cliques que abrem o seletor de arquivos do sistema (menu, depois item)
+#   image           imagens geradas dentro das respostas (a última é a baixada)
+#   busy            elemento visível enquanto o site ainda está gerando
+#   download        "image" (lê a imagem mostrada) ou "button" (clica no download do site)
+#   download_button botão de download, quando download = "button"
+#   block_urls      trechos de URL que significam login ou verificação: a rodada para
+#   block_texts     textos visíveis que significam limite, captcha ou recusa de conta: a rodada para
+[browser_image.sites.gemini]
+enabled = true
+# Conferido na tela logada em 2026-11-11 (pt-BR): prompt_box, send, setup e attach_clicks.
+url = "https://gemini.google.com/app"
+prompt_box = "rich-textarea div[contenteditable='true']"
+send = "button[aria-label='Enviar mensagem'], button[aria-label='Send message']"
+setup = ["button[aria-label='Envio e ferramentas']", "button[role='menuitemcheckbox']:has-text('Criar imagem')"]
+attach_input = "input[type='file']"
+attach_clicks = ["button[aria-label='Envio e ferramentas']", "[data-test-id='local-images-files-uploader-button']"]
+image = "model-response img"
+busy = "button[aria-label*='Interromper'], button[aria-label*='Parar'], button[aria-label*='Stop']"
+download = "image"
+download_button = ""
+block_urls = ["accounts.google.com", "/sorry/"]
+# "limite será redefinido": aviso no menu de ferramentas quando a cota de geração acaba (visto em 2026-11-15)
+block_texts = ["atingiu o limite", "reached your limit", "limite será redefinido", "não sou um robô", "unusual traffic"]
+
+[browser_image.sites.chatgpt]
+enabled = false  # desligado até o dono conferir os termos de automação (dono, 2026-11-20); seletores não conferidos
+url = "https://chatgpt.com/"
+prompt_box = "#prompt-textarea"
+send = "button[data-testid='send-button']"
+attach_input = "input[type='file']"
+attach_clicks = []
+image = "article img"
+busy = "button[data-testid='stop-button']"
+download = "image"
+download_button = ""
+block_urls = ["auth.openai.com", "/auth/login"]
+block_texts = ["atingiu o limite", "reached the limit", "Verify you are human", "Verifique se você é humano"]
 
 [ffmpeg]
 crf = 20

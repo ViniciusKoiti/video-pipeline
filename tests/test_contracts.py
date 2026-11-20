@@ -266,8 +266,12 @@ def test_image_gen_estimates_then_generates(make: Callable[[], ImageGenProvider]
     estimate = provider.estimate_cost(request)
     assert estimate.units > 0 and estimate.usd >= 0 and estimate.unit
     image = provider.generate_image(request)
-    assert image.path == request.out_path and image.path.stat().st_size > 0
-    assert (image.generation.prompt, image.generation.steps) == (request.prompt, request.steps)
+    # o adaptador pode trocar a extensão pela do arquivo recebido (ADR 065), nunca a pasta nem o nome
+    assert image.path.with_suffix("") == request.out_path.with_suffix("") and image.path.stat().st_size > 0
+    assert image.generator
+    if image.generation is not None:  # gerador sem seed (tela de um site) não tem generation
+        assert (image.generation.prompt, image.generation.steps) == (request.prompt, request.steps)
+    provider.close()
 
 
 # --- Acervos ------------------------------------------------------------------------------------

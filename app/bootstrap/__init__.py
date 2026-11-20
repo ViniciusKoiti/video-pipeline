@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from app.bootstrap.alignment import groq_words, whisper_local
 from app.bootstrap.azure_speech import build_azure_speech
+from app.bootstrap.browser_image import build_browser_image
 from app.bootstrap.registry import ConfigurationError, Registration, Registry, ensure_free, unknown_choices
 from app.bootstrap.secrets import secret as _secret
 from app.pipeline.ports import ManifestStore, ReviewGate
@@ -158,7 +159,7 @@ DEFAULT_REGISTRY: Registry = {
         "chatterbox": Registration(15, _chatterbox),  # voz clonada local (ADR 016, proposta)
         "chatterbox_modal": Registration(15, _chatterbox_modal),  # a mesma voz numa GPU do Modal (ADR 024)
     },
-    "image_gen": {"workers_ai": Registration(24)},
+    "image_gen": {"workers_ai": Registration(24), "browser_image": Registration(24, build_browser_image)},
     "archives": {
         "wikimedia_commons": Registration(20),
         "library_of_congress": Registration(20),

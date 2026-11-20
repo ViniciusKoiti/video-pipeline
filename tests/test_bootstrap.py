@@ -136,7 +136,8 @@ def test_unknown_choice_fails_early_with_options(tmp_path: Path) -> None:
 
 
 def test_unimplemented_adapter_points_to_roadmap_step(tmp_path: Path) -> None:
-    context = build_context(make_root(tmp_path), environ={})
+    root = make_root(tmp_path, config_with('image_gen = "browser_image"', 'image_gen = "workers_ai"'))
+    context = build_context(root, environ={})
     with pytest.raises(ConfigurationError, match=r"etapa #24"):
         _ = context.image_gen
 
