@@ -11,7 +11,9 @@ humana decide.
 from __future__ import annotations
 
 from app.pipeline.constants.text_fit_constants import TextFitConstants
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import CompareShot, LowerThirdShot, NetworkShot, NumberShot, Shot, TimelineShot
+from app.pipeline.script.models.plan_check import PlanCheck
 
 # (caracteres por linha, linhas que cabem)
 # Rede, na tela de 1280×720 em que ela é desenhada: caixa de 260 px (ExpandingNetwork).
@@ -84,3 +86,7 @@ def text_fit_warnings(scene_id: str, shot: Shot, ms: float, over_media: bool) ->
                 found.append(f"{scene_id}: valor da seta {arrow} com {len(edge.value)} caracteres, "
                              f"cabem ~{TextFitConstants.EDGE_VALUE_CHARS}: {edge.value!r}")
     return found
+
+
+def check(plan: PlanCheck, report: CheckReport) -> None:
+    report.warnings += text_fit_warnings(plan.scene_id, plan.shot, plan.ms, plan.over_media)

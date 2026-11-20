@@ -12,7 +12,6 @@ import pytest
 from pydantic import ValidationError
 
 from app.cli import main
-from app.pipeline.check import check_episode
 from app.pipeline.metrics import (
     all_metrics,
     invalid_metrics,
@@ -28,6 +27,7 @@ from app.pipeline.metrics import (
     write_table,
 )
 from app.pipeline.schemas import MetricsReading, PublicationMetrics
+from app.pipeline.script.check import check_episode
 from app.storage.json_files import JsonFileStore
 from tests.fakes import make_root
 

@@ -9,7 +9,6 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 
 from app.pipeline.attribution import shot_attribution, source_label
-from app.pipeline.check import check_episode, variety_warnings
 from app.pipeline.schemas import (
     Claim,
     EpisodeFormat,
@@ -23,6 +22,8 @@ from app.pipeline.schemas import (
     SourcesManifest,
     screen_number,
 )
+from app.pipeline.script.check import check_episode
+from app.pipeline.script.checks.variety import variety_warnings
 from app.pipeline.shots import episode_shots
 from app.render.constants.remotion_constants import RemotionConstants
 from app.render.remotion import RemotionEngine

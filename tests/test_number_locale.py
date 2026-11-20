@@ -12,8 +12,8 @@ from typing import Any
 import pytest
 from pydantic import TypeAdapter
 
-from app.pipeline.check import CheckReport, check_episode
 from app.pipeline.schemas import EpisodeManifest, Language, Shot, number_format_problem, screen_number
+from app.pipeline.script.check import CheckReport, check_episode
 from app.render.constants.remotion_constants import RemotionConstants
 from app.render.remotion import RemotionEngine
 from tests.test_remotion_props import FIXTURE

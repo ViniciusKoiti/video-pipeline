@@ -196,7 +196,7 @@ primeiros 30 s é a que o dono mede no Studio (CLAUDE.md §4).
    - **Variedade:** alterne os tipos e mantenha imagem na tela; os alertas do `vp check` apontam as
      repetições.
    - **Texto que cabe na tela:** a narração explica; a tela mostra o essencial. O `vp check` alerta quando
-     um texto passa do que a peça mostra (`app/pipeline/text_fit.py`):
+     um texto passa do que a peça mostra (`app/pipeline/script/checks/text_fit.py`):
 
      | Texto | Cabe |
      |---|---|

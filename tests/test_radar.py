@@ -10,16 +10,16 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from app.pipeline.check import check_episode
 from app.pipeline.constants.radar_constants import RadarConstants
-from app.pipeline.radar import (
+from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.check import check_episode
+from app.pipeline.script.radar import (
     RadarBrief,
     brief_summary,
     form_warnings,
     opening_sentence,
     unmeasured_patterns,
 )
-from app.pipeline.schemas import ScenesManifest
 from app.storage.json_files import JsonFileStore
 
 SP = "<short pause>"

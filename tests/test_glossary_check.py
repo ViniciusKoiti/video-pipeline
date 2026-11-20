@@ -6,8 +6,8 @@ from __future__ import annotations
 from typing import Any
 
 from app.media.pronunciation import Glossary
-from app.pipeline.glossary_check import colon_pause_warnings, glossary_attention, missing_terms
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.checks.glossary import colon_pause_warnings, glossary_attention, missing_terms
 
 VINLAND = (
     "Vazio é a palavra de um episódio de Vinland Saga, um anime. O oitavo episódio se chama An Empty Man.",

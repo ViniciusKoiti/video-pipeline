@@ -26,9 +26,9 @@ from app.pipeline.constants.radar_constants import RadarConstants
 from app.pipeline.models.brief_action import BriefAction
 from app.pipeline.models.brief_install import BriefInstall
 from app.pipeline.models.brief_spec import BriefSpec
-from app.pipeline.numbers import FormatBrief
 from app.pipeline.ports import ManifestStore
-from app.pipeline.radar import RadarBrief
+from app.pipeline.script.numbers import FormatBrief
+from app.pipeline.script.radar import RadarBrief
 
 
 class BriefError(PipelineError, ValueError):

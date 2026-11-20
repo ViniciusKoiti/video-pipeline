@@ -148,7 +148,7 @@ class TableShot(_FactualShot):
 
 `Shot` ganha `| TableShot`; `PORTRAIT_SHOT_KINDS` e `GRAPHIC_SHOT_KINDS` ganham `"table"` (não entra em `OVERLAY_SHOT_KINDS`: é tela cheia, como o `chart`). `EpisodeShot._steps_match` espera `len(rows)` tempos quando o plano é `table` com âncoras, `len(steps)` para a rede e zero nos outros. `step_positions` passa a aceitar os dois planos. O espelho em `video/src/types.ts` ganha `TableSpec`.
 
-### 5.2 `vp check` (`app/pipeline/check.py`, `text_fit.py`)
+### 5.2 `vp check` (`app/pipeline/script/check.py`, `text_fit.py`)
 
 | Regra | Valor proposto | Base |
 |---|---|---|

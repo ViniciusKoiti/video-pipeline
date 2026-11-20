@@ -6,9 +6,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from app.pipeline.check import check_episode
-from app.pipeline.narration_gaps import gap_warnings
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.check import check_episode
+from app.pipeline.script.checks.narration_gaps import gap_warnings
 from app.storage.json_files import JsonFileStore
 
 

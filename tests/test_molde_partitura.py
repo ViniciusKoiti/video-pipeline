@@ -229,7 +229,7 @@ def test_titulo_video_dito_em(titulo: str, linhas: list[tuple[int, str]], espera
 
 def test_regra_do_assunto_do_titulo_e_a_mesma_no_vp_check() -> None:
     """O molde mede o nicho e o `vp check` mede o roteiro com a mesma lista e a mesma regra (ADR 031)."""
-    from app.pipeline import molde as pipeline_molde
+    from app.pipeline.script import molde as pipeline_molde
 
     assert MoldeConstants.TITLE_STOP == molde_mod.STOP_TITULO
     assert MoldeConstants.TITLE_MIN_LETTERS == molde_mod.MIN_LETRAS_TITULO

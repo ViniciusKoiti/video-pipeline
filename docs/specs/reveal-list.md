@@ -117,7 +117,7 @@ class ListShot(_Shot):
 
 `Scene._visual_plan` ganha o ramo de `ListShot` ao lado do de `KeywordShot` (`text` e `title` literais na narração) e do de `NetworkShot` (`step_positions`, generalizado para os itens). `Shot` ganha `| ListShot`; `PORTRAIT_SHOT_KINDS` e `GRAPHIC_SHOT_KINDS` ganham `"list"` (tela cheia, como o `chart`; fora de `OVERLAY_SHOT_KINDS`). `EpisodeShot._steps_match` espera `len(items)` tempos para `list`. O espelho em `video/src/types.ts` ganha `ListSpec`.
 
-### 5.2 `vp check` (`app/pipeline/check.py`, `text_fit.py`)
+### 5.2 `vp check` (`app/pipeline/script/check.py`, `text_fit.py`)
 
 | Regra | Valor proposto | Base |
 |---|---|---|

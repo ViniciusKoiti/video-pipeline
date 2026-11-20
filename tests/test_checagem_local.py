@@ -8,7 +8,8 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from app.pipeline.checagem_local import (
+from app.pipeline.constants.checagem_local_constants import ChecagemLocalConstants
+from app.pipeline.script.checagem_local import (
     Case,
     Result,
     Veredito,
@@ -19,7 +20,6 @@ from app.pipeline.checagem_local import (
     run,
     score,
 )
-from app.pipeline.constants.checagem_local_constants import ChecagemLocalConstants
 from app.providers.text.ollama import OllamaText
 from tests.fakes import FakeText, fake_ollama_post
 

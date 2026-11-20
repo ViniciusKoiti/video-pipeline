@@ -100,7 +100,7 @@ def test_a_command_stops_with_a_short_message_on_an_invalid_scenes_file(
 def test_the_check_still_lists_the_problems_of_each_file(tmp_path: Path) -> None:
     from datetime import date
 
-    from app.pipeline.check import check_episode
+    from app.pipeline.script.check import check_episode
 
     where = store(tmp_path)
     put(where, "scenes.json", json.dumps({"episode_id": EP, "language": "pt-BR", "scenes": "nenhuma"}))
@@ -111,8 +111,8 @@ def test_the_check_still_lists_the_problems_of_each_file(tmp_path: Path) -> None
 def test_an_unreadable_asset_is_not_approved_for_the_final_and_is_left_out_of_the_listing(
     tmp_path: Path,
 ) -> None:
-    from app.pipeline.check import episode_assets
     from app.pipeline.production.assembly import assembly_problems
+    from app.pipeline.script.check_assets import episode_assets
     from tests.test_assembly import EP as ASSEMBLY_EP
     from tests.test_assembly import Env
 

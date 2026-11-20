@@ -160,7 +160,7 @@ class LimitShot(_FactualShot):
 
 `Shot` ganha `| LimitShot`; `PORTRAIT_SHOT_KINDS` e `GRAPHIC_SHOT_KINDS` ganham `"limit"` (tela cheia, como o `chart`; fora de `OVERLAY_SHOT_KINDS`). `EpisodeShot._steps_match` e `step_positions` aceitam o plano (§4, item 5). O espelho em `video/src/types.ts` ganha `LimitSpec`.
 
-### 5.2 `vp check` (`app/pipeline/check.py`, `text_fit.py`)
+### 5.2 `vp check` (`app/pipeline/script/check.py`, `text_fit.py`)
 
 | Regra | Valor proposto | Base |
 |---|---|---|

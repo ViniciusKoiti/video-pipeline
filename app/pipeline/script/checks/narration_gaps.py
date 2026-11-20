@@ -10,7 +10,9 @@ import unicodedata
 
 from app.media.narration import strip_pauses
 from app.pipeline.constants.narration_gaps_constants import NarrationGapsConstants as Constants
+from app.pipeline.models.check_report import CheckReport
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.models.checked_episode import CheckedEpisode
 
 
 def _plain(text: str) -> str:
@@ -31,3 +33,8 @@ def gap_warnings(scenes: ScenesManifest) -> list[str]:
                 "ou corte (skill roteiro-explicativo)"
             )
     return warnings
+
+
+def check(episode: CheckedEpisode, report: CheckReport) -> None:
+    if episode.scenes is not None:
+        report.warnings += gap_warnings(episode.scenes)

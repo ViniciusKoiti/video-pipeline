@@ -28,10 +28,13 @@
    ├── ports · atomic_files · file_hash · shots · attribution · motion_inputs   base sem etapa
    ├── governance/  state · protection · review_hashes · reopen · failures · scene_step · gate_stamps
    ├── research/    sources · extract · excerpts · format_decision
-   ├── script/      check (dividido em checks/, um módulo por regra) · check_report · script_form
-   │                funnel_check · objective_check · opinion_labels · narration_gaps · emotion_marks
-   │                glossary_check · retention_clock · text_fit · checagem_local · numbers
-   │                numbers_citations · molde · radar · briefs
+   ├── script/      check (lê e roda as regras) · check_assets · reading · check_report · checagem_local
+   │                numbers · numbers_citations · molde · radar · briefs
+   │   └── checks/  registry (regras de episódio) · scenes (regras por cena e por plano) e um módulo por
+   │                regra: facts · variety · citations · objective · funnel · opinion_labels · claimless
+   │                narration_gaps · retention_clock · glossary · emotion_marks · radar_form · numbers_block
+   │                molde_form · music_plan · metrics_windows · claims · text_fit · number_format
+   │                arithmetic · calculation · plan_timing · map_codes · quote_text
    ├── visuals/     assets · candidates
    ├── sound/       music · music_library · sfx · sfx_inputs
    ├── voice/       voice · voice_state · voice_timeline · voice_retake · speech_review
@@ -91,4 +94,11 @@
 - PR 2: `short/` e `production/` sem reexportação no caminho antigo. O guarda da ADR 042 recusaria o módulo
   antigo importando a orquestração, e nenhum script usava esses módulos; comandos e testes passaram ao caminho
   novo no mesmo PR.
+- PR 3: `script/` e o `check.py` dividido. O `vp check` lê os arquivos e roda `EPISODE_RULES`
+  (`checks/registry.py`); `checks/scenes.py` roda `SCENE_RULES` e `PLAN_RULES` em cada cena e plano. A ordem das
+  tuplas preserva a ordem das linhas do relatório: a saída do `vp check` nos 185 episódios ficou idêntica. O
+  `script_form.py` saiu (o registro faz o papel dele). As três tuplas entram nos registros explícitos
+  reconhecidos pelo guarda de constantes, ao lado do `HANDLERS` (ADR 038 e 042). Também sem reexportação:
+  todos os importadores estavam no repositório (comandos, testes e `scripts/bench/checagem_local.py`) e mudaram
+  no mesmo PR.
 - Os 12 scripts de `scripts/provisorio/` que importam do `app/` seguem pelos caminhos antigos até o PR 5.

@@ -9,9 +9,9 @@ from typing import Any
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from app.pipeline.check import check_episode
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.schemas import Asset, Shot, citation_violations
+from app.pipeline.script.check import check_episode
 from tests.test_research import EP, episode, facts_file, scenes
 from tests.test_schemas import commons_asset
 

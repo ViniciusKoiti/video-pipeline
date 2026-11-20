@@ -53,7 +53,7 @@ Todos vêm de funções que já existem:
 - `effective_shots`;
 - `shot_bounds` (`app/pipeline/shots.py`);
 - `timeline_length`, `strip_pauses` e `pause_positions` (`app/media/narration.py`);
-- as constantes do `app/pipeline/check.py`;
+- as constantes do `app/pipeline/script/check.py`;
 - o ritmo da voz final em `speech_chars_per_second(settings)`, hoje 14 caracteres por segundo.
 
 | Número | Regra |
@@ -93,7 +93,7 @@ mesma conta. São estas as colunas de `tercos.csv` e as regras equivalentes no r
 | texto na tela (`texto-na-tela.tsv`) | planos com texto ÷ planos |
 | voz (`voz.csv`: pausas por minuto, silêncio) | só depois da voz gerada, medida no WAV; antes disso, marcas de pausa por minuto como estimativa |
 
-Os padrões de palavra ficam num lugar só. `app/pipeline/numbers.py` tem a versão do código, e um teste confere que ela é
+Os padrões de palavra ficam num lugar só. `app/pipeline/script/numbers.py` tem a versão do código, e um teste confere que ela é
 igual à do `analisar.py`, que é script de skill e roda sem o pacote `app`.
 
 ### 3.2 Perfil do nicho no episódio (`formato-brief.json`, ADR 031 parte B)
@@ -144,7 +144,7 @@ Com ρ ≤ 0,3 e 20 vídeos, tudo isso ainda é `hint`: vira informação no blo
 
 ## 4. Desenho
 
-### 4.1 Módulo `app/pipeline/numbers.py`
+### 4.1 Módulo `app/pipeline/script/numbers.py`
 
 Funções puras, sem leitura de disco, testáveis sem rede:
 

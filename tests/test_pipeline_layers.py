@@ -44,14 +44,6 @@ ROOT_MODULES: Mapping[str, str] = {
         "governance",
     ),
     **dict.fromkeys(("sources", "extract", "excerpts", "format_decision"), "research"),
-    **dict.fromkeys(
-        (
-            "check", "check_report", "script_form", "funnel_check", "objective_check",
-            "opinion_labels", "narration_gaps", "emotion_marks", "glossary_check", "retention_clock",
-            "text_fit", "checagem_local", "numbers", "numbers_citations", "molde", "radar", "briefs",
-        ),
-        "script",
-    ),
     **dict.fromkeys(("assets", "candidates"), "visuals"),
     **dict.fromkeys(("music", "music_library", "sfx", "sfx_inputs"), "sound"),
     **dict.fromkeys(("voice", "voice_state", "voice_timeline", "voice_retake", "speech_review"), "voice"),
@@ -152,9 +144,9 @@ def test_pipeline_layers_only_shrink() -> None:
 
 
 def test_checker_catches_a_lower_layer_importing_a_higher_one() -> None:
-    graph = {"app.pipeline.state": {"app.pipeline.check"}}
+    graph = {"app.pipeline.state": {"app.pipeline.script.check"}}
     assert layer_violations(graph) == {
-        "app.pipeline.state -> app.pipeline.check": "governance (camada 1) importa script (camada 2)"
+        "app.pipeline.state -> app.pipeline.script.check": "governance (camada 1) importa script (camada 2)"
     }
 
 
@@ -171,10 +163,10 @@ def test_checker_catches_a_cycle_between_stages_of_the_same_layer() -> None:
 
 def test_checker_blames_the_upward_import_not_the_ones_closing_the_loop() -> None:
     graph = {
-        "app.pipeline.state": {"app.pipeline.numbers"},  # governance sobe para script
-        "app.pipeline.check": {"app.pipeline.state"},  # script desce para governance: legítimo
+        "app.pipeline.state": {"app.pipeline.script.numbers"},  # governance sobe para script
+        "app.pipeline.script.check": {"app.pipeline.state"},  # script desce para governance: legítimo
     }
-    assert set(layer_violations(graph)) == {"app.pipeline.state -> app.pipeline.numbers"}
+    assert set(layer_violations(graph)) == {"app.pipeline.state -> app.pipeline.script.numbers"}
 
 
 def test_checker_allows_going_down_and_crossing_without_a_cycle() -> None:

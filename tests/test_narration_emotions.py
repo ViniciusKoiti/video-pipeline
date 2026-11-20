@@ -12,8 +12,8 @@ from app.media.narration import (
     strip_pauses,
     timeline_length,
 )
-from app.pipeline.emotion_marks import emotion_attention
 from app.pipeline.schemas import ScenesManifest
+from app.pipeline.script.checks.emotion_marks import emotion_attention
 
 TEXT = "Light é Kira. <raiva>Com raiva, escreve o nome dessa pessoa.</raiva>"
 

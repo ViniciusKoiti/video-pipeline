@@ -6,9 +6,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from app.pipeline.check import episode_assets
 from app.pipeline.constants.numbers_constants import NumbersConstants
-from app.pipeline.numbers import (
+from app.pipeline.ports import Context
+from app.pipeline.schemas import ScenesManifest, Status
+from app.pipeline.script.check_assets import episode_assets
+from app.pipeline.script.numbers import (
     FormatBrief,
     current_block,
     render_block,
@@ -17,8 +19,6 @@ from app.pipeline.numbers import (
     script_numbers,
     used_in_scenes_mismatches,
 )
-from app.pipeline.ports import Context
-from app.pipeline.schemas import ScenesManifest, Status
 from app.settings import speech_chars_per_second
 
 
