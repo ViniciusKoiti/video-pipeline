@@ -101,7 +101,7 @@ def test_checker_allows_models_helpers_ports_services_and_errors() -> None:
 @pytest.mark.parametrize(("module", "name", "canonical"), [
     ("app.bootstrap_registry", "Registry", "app.bootstrap.models.registry"),
     ("app.settings", "Settings", "app.settings.models.settings"),
-    ("app.pipeline.bench_data", "BenchScript", "app.pipeline.models.bench_script"),
+    ("app.pipeline.bench.data", "BenchScript", "app.pipeline.models.bench_script"),
 ])
 def test_compatibility_imports_work_in_a_fresh_process(module: str, name: str, canonical: str) -> None:
     # O cache de imports da suíte esconderia ciclos introduzidos pela conversão para pacotes.

@@ -26,14 +26,14 @@ from app.media.models.voice_polish import VoicePolish
 from app.media.pacing_plan import pacing_plan
 from app.media.voice_level import VoiceLevelError, level_policy, level_voice
 from app.media.voice_pacing import VoicePacingError, pace_voice, pacing_policy
+from app.pipeline.governance.state import load_state, output_is_intact, save_step
 from app.pipeline.models.scene_outcome import SceneOutcome
 from app.pipeline.models.scene_record import SceneRecord
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.step_state import StepState
 from app.pipeline.ports import ManifestStore
 from app.pipeline.schemas import Status, Step
-from app.pipeline.state import load_state, output_is_intact, save_step
-from app.pipeline.voice import Narrator
+from app.pipeline.voice.narrator import Narrator
 
 Outcome = SceneOutcome[Path]
 

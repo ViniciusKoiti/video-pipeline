@@ -28,7 +28,7 @@ from app.media.models.voice_level_report import VoiceLevelReport  # noqa: E402
 from app.media.models.voice_polish import VoicePolish  # noqa: E402
 from app.media.probe import duration_ms  # noqa: E402
 from app.media.voice_level import VoiceLevelError, _ffmpeg, _measure, level_policy, level_voice  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench.runner import cpu_probe  # noqa: E402
 
 
 def sha256(path: Path) -> str:

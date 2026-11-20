@@ -8,8 +8,8 @@ from pathlib import Path
 
 from app.commands.project_root import project_root
 from app.commands.reviewer import default_reviewer
+from app.pipeline.governance.reopen import reopen_gate
 from app.pipeline.ports import Context
-from app.pipeline.reopen import reopen_gate
 from app.pipeline.schemas import Step
 
 

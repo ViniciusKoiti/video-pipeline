@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT))
 
 from app.commands.errors import run  # noqa: E402
 from app.errors import PipelineError  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench.runner import cpu_probe  # noqa: E402
 from app.settings import load_settings  # noqa: E402
 
 MAX_ATTEMPTS = 6

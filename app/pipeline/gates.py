@@ -32,14 +32,16 @@ from pydantic import ValidationError
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.constants.medicao_constants import MedicaoConstants
 from app.pipeline.constants.translation_constants import TranslationConstants
-from app.pipeline.gate_stamps import GateError as GateError
-from app.pipeline.gate_stamps import current_hash, gate_hash, legacy_hashes
-from app.pipeline.medicao import medicao_problems
+from app.pipeline.governance.gate_stamps import GateError as GateError
+from app.pipeline.governance.gate_stamps import current_hash, gate_hash, legacy_hashes
+from app.pipeline.governance.review_hashes import content_hash as content_hash
+from app.pipeline.governance.review_hashes import legacy_hashes_of
+from app.pipeline.governance.state import Clock
 from app.pipeline.models.gate_status import GateStatus as GateStatus
 from app.pipeline.ports import ManifestNotFound, ManifestStore, ReviewGate
+from app.pipeline.publishing.medicao import medicao_problems
 from app.pipeline.publishing.render_checks import render_problems
-from app.pipeline.review_hashes import content_hash as content_hash
-from app.pipeline.review_hashes import legacy_hashes_of
+from app.pipeline.publishing.translation import translation_problems
 from app.pipeline.schemas import (
     Asset,
     CheckEntry,
@@ -51,8 +53,6 @@ from app.pipeline.schemas import (
     Status,
     Step,
 )
-from app.pipeline.state import Clock
-from app.pipeline.translation import translation_problems
 
 
 def _validate_reports(store: ManifestStore, episode_id: str, step: Step, decision: Decision) -> None:

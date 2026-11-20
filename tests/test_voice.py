@@ -11,7 +11,7 @@ from app.pipeline.models.naming import Naming
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.status import Status
 from app.pipeline.models.voice_key import VoiceKey
-from app.pipeline.voice import Narrator, VoiceLibrary
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
 from app.providers.errors import QuotaExhausted
 from app.providers.tts.kokoro import KokoroTTS
 from tests.fakes import FakeBatchTTS, FakeTTS, make_settings, wav_duration_ms

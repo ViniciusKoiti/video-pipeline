@@ -14,12 +14,12 @@ from pathlib import Path
 from app.errors import PipelineError
 from app.media.loudness import integrated_lufs
 from app.media.probe import duration_ms
-from app.pipeline import sfx as sfx_module
 from app.pipeline.models.fit_row import FitRow
 from app.pipeline.models.motion_content import MotionContent
 from app.pipeline.models.placed_sfx import PlacedSfx
 from app.pipeline.models.voiced_speech import VoicedSpeech
 from app.pipeline.motion_inputs import fit_content, load_narration, load_voiced
+from app.pipeline.sound import sfx as sfx_module
 
 
 class ShortAssemblyError(PipelineError, ValueError):

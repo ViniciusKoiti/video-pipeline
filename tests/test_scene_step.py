@@ -9,11 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from app.pipeline.models.scene_run import SceneRun
-from app.pipeline.ports import EpisodeLocked
-from app.pipeline.scene_step import run_scenes
-from app.pipeline.schemas import Status, Step
-from app.pipeline.state import (
+from app.pipeline.governance.scene_step import run_scenes
+from app.pipeline.governance.state import (
     Action,
     InputChanged,
     InputHash,
@@ -24,6 +21,9 @@ from app.pipeline.state import (
     load_state,
     plan,
 )
+from app.pipeline.models.scene_run import SceneRun
+from app.pipeline.ports import EpisodeLocked
+from app.pipeline.schemas import Status, Step
 from app.providers.errors import ModelUnavailable, QuotaExhausted
 from app.storage.json_files import JsonFileStore
 from tests.fakes import InMemoryReviewGate

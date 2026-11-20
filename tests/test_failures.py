@@ -1,6 +1,6 @@
 import pytest
 
-from app.pipeline.failures import for_each_scene
+from app.pipeline.governance.failures import for_each_scene
 from app.pipeline.schemas import Status
 from app.providers.errors import ModelUnavailable, QuotaExhausted
 

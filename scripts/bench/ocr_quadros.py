@@ -39,7 +39,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from app.commands.errors import run  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench.runner import cpu_probe  # noqa: E402
 
 TEXT_KINDS = ("keyword", "number", "lower_third", "quote", "compare")
 CPU_LIMIT_S = 0.3

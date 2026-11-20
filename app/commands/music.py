@@ -22,12 +22,12 @@ from app.commands.constants.music_command_constants import MusicCommandConstants
 from app.media.loudness import integrated_lufs, intensity
 from app.media.probe import duration_ms
 from app.pipeline.constants.schemas_constants import SchemasConstants
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.models.audio_probe import AudioProbe
 from app.pipeline.models.track_draft import TrackDraft
-from app.pipeline.music import load_music_catalog
-from app.pipeline.music_library import add_track, install_track
 from app.pipeline.ports import Context
-from app.pipeline.protection import ReviewWriteGuard
+from app.pipeline.sound.music import load_music_catalog
+from app.pipeline.sound.music_library import add_track, install_track
 
 
 def add_arguments(parser: argparse.ArgumentParser) -> None:

@@ -22,14 +22,14 @@ from pathlib import Path
 from app.errors import PipelineError
 from app.pipeline.atomic_files import write_atomic
 from app.pipeline.constants.sources_constants import SourcesConstants as Constants
-from app.pipeline.excerpts import numbered_view
-from app.pipeline.extract import as_source_text, decode_html, html_paragraphs, pdf_paragraphs
+from app.pipeline.governance.state import Clock
 from app.pipeline.models.extracted_source import ExtractedSource
 from app.pipeline.models.source_draft import SourceDraft
 from app.pipeline.models.source_registration import SourceRegistration
 from app.pipeline.ports import ManifestStore, WriteGuard
+from app.pipeline.research.excerpts import numbered_view
+from app.pipeline.research.extract import as_source_text, decode_html, html_paragraphs, pdf_paragraphs
 from app.pipeline.schemas import Source, SourceKind, SourcesManifest
-from app.pipeline.state import Clock
 
 PdfText = Callable[[Path], str]  # o texto que o `pdftotext` tira do PDF
 Downloader = Callable[[str, Path], Path]  # (url, destino) -> arquivo baixado; sem rede nos testes

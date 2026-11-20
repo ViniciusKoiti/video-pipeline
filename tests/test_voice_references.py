@@ -10,15 +10,15 @@ import pytest
 from pydantic import ValidationError
 
 from app.bootstrap import LazyContext
+from app.pipeline.governance.state import load_state
 from app.pipeline.models.naming import Naming
 from app.pipeline.models.narration import Narration
 from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.models.status import Status
 from app.pipeline.models.step import Step
 from app.pipeline.short.voice import voice_entries
-from app.pipeline.state import load_state
-from app.pipeline.voice import Narrator, VoiceLibrary
-from app.pipeline.voice_state import produce_with_state
+from app.pipeline.voice.narrator import Narrator, VoiceLibrary
+from app.pipeline.voice.state import produce_with_state
 from app.providers.errors import ModelUnavailable
 from app.providers.tts.base import SpeechRequest
 from app.providers.tts.chatterbox import reference_hash

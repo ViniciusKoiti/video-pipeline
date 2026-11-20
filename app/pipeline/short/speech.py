@@ -21,7 +21,7 @@ from app.pipeline.models.narration import Narration
 from app.pipeline.script.checks.glossary import colon_pause_lines, glossary_lines
 from app.pipeline.script.checks.opinion_labels import opinion_label_lines
 from app.pipeline.short.voice import speech_lines
-from app.pipeline.speech_review import Heard
+from app.pipeline.voice.speech_review import Heard
 
 
 class ShortSpeechError(PipelineError, ValueError):

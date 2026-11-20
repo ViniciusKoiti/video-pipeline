@@ -32,12 +32,12 @@ from app.commands.voice import select_tts
 from app.media.narration import strip_pauses
 from app.media.word_captions import SceneSpeech
 from app.pipeline.constants.assembly_constants import AssemblyConstants
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.ports import Context
 from app.pipeline.production.assembly import EpisodeRenderer
 from app.pipeline.production.captions import write_captions, write_word_captions
 from app.pipeline.production.episode_build import build_episode, build_scenes, music_segments, with_music
 from app.pipeline.production.voice import produce_voice
-from app.pipeline.protection import ReviewWriteGuard
 from app.pipeline.publishing.render_checks import inspect_render, summary_lines, write_render_checks
 from app.pipeline.schemas import EpisodeManifest, EpisodeScene, ScenesManifest, SourcesManifest
 from app.pipeline.shots import pacing_warnings

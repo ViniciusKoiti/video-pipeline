@@ -14,7 +14,7 @@ from app.pipeline.models.speech_line import SpeechLine
 from app.pipeline.production.voice import produce_voice
 from app.pipeline.schemas import ScenesManifest
 from app.pipeline.short.voice import produce_short_voice
-from app.pipeline.voice import Narrator, VoiceIncomplete, VoiceLibrary
+from app.pipeline.voice.narrator import Narrator, VoiceIncomplete, VoiceLibrary
 from app.providers.errors import QuotaExhausted
 from app.storage.json_files import JsonFileStore
 from tests.fakes import FakeBatchTTS, wav_duration_ms

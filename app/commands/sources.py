@@ -22,12 +22,12 @@ from datetime import datetime
 from pathlib import Path
 
 from app.commands.constants.sources_command_constants import SourcesCommandConstants as Constants
+from app.pipeline.governance.protection import ReviewWriteGuard
 from app.pipeline.models.extracted_source import ExtractedSource
 from app.pipeline.models.source_draft import SourceDraft
 from app.pipeline.ports import Context
-from app.pipeline.protection import ReviewWriteGuard
+from app.pipeline.research.sources import SourceRegistry, declared, fetch_url, from_file
 from app.pipeline.schemas import SourceKind
-from app.pipeline.sources import SourceRegistry, declared, fetch_url, from_file
 from app.providers.http import download
 
 

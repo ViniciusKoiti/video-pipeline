@@ -9,7 +9,7 @@ from pathlib import Path
 
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.constants.numbers_constants import NumbersConstants
-from app.pipeline.state import compute_input_hash
+from app.pipeline.governance.state import compute_input_hash
 
 
 def content_hash(paths: list[Path], *, base: Path) -> str:

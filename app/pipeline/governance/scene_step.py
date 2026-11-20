@@ -17,15 +17,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime
 
-from app.pipeline.models.action import Action
-from app.pipeline.models.episode_state import EpisodeState
-from app.pipeline.models.scene_outcome import SceneOutcome
-from app.pipeline.models.scene_record import SceneRecord
-from app.pipeline.models.scene_run import SceneRun
-from app.pipeline.models.step_state import StepState
-from app.pipeline.ports import ManifestStore
-from app.pipeline.schemas import Status, Step
-from app.pipeline.state import (
+from app.pipeline.governance.state import (
     Clock,
     InputChanged,
     InputHash,
@@ -36,6 +28,14 @@ from app.pipeline.state import (
     save_step,
     transition,
 )
+from app.pipeline.models.action import Action
+from app.pipeline.models.episode_state import EpisodeState
+from app.pipeline.models.scene_outcome import SceneOutcome
+from app.pipeline.models.scene_record import SceneRecord
+from app.pipeline.models.scene_run import SceneRun
+from app.pipeline.models.step_state import StepState
+from app.pipeline.ports import ManifestStore
+from app.pipeline.schemas import Status, Step
 from app.providers.errors import ProviderError
 
 SceneAction = Callable[[str], list[str]]  # produz a cena e devolve as saídas, relativas ao episódio

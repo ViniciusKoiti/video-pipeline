@@ -4,7 +4,7 @@ from enum import StrEnum
 
 
 class Step(StrEnum):
-    FORMAT = "format"  # modalidade do vídeo, recomendada por app.pipeline.format_decision (ADR 001)
+    FORMAT = "format"  # modalidade do vídeo, recomendada por app.pipeline.research.format_decision (ADR 001)
     SOURCES = "sources"
     SCRIPT = "script"
     SCENES = "scenes"

@@ -13,7 +13,7 @@ from typing import Any
 from pydantic import TypeAdapter
 
 from app.pipeline.constants.usage_constants import UsageConstants
-from app.pipeline.usage import AgentRun, Count, UsageBudget, UsageError, UsageRequest
+from app.pipeline.publishing.usage import AgentRun, Count, UsageBudget, UsageError, UsageRequest
 from app.storage.constants.usage_sqlite_constants import UsageSqliteConstants
 
 

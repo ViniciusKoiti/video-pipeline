@@ -39,7 +39,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "bench"))
 import ocr_quadros as ocr  # noqa: E402
 
 from app.commands.errors import run  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench.runner import cpu_probe  # noqa: E402
 
 FONT = Path("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf")
 CPU_LIMIT_S = 0.3

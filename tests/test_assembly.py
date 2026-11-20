@@ -9,10 +9,10 @@ import pytest
 
 from app.bootstrap.registry import ConfigurationError
 from app.pipeline.gates import record_decision
+from app.pipeline.governance.protection import ReviewWriteGuard
+from app.pipeline.governance.reopen import reopen_gate
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
 from app.pipeline.production.assembly import AssemblyError, EpisodeRenderer, assembly_problems, asset_ids
-from app.pipeline.protection import ReviewWriteGuard
-from app.pipeline.reopen import reopen_gate
 from app.pipeline.schemas import (
     Asset,
     Decision,

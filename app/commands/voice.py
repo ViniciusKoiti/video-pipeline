@@ -29,7 +29,7 @@ from app.pipeline.constants.voice_retake_constants import VoiceRetakeConstants a
 from app.pipeline.ports import Context
 from app.pipeline.production.voice import produce_voice
 from app.pipeline.schemas import ScenesManifest
-from app.pipeline.voice_retake import set_aside
+from app.pipeline.voice.retake import set_aside
 from app.providers.tts.base import TTSProvider
 
 

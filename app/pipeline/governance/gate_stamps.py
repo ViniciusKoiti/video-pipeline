@@ -14,11 +14,11 @@ from app.errors import PipelineError
 from app.pipeline.constants.gates_constants import GatesConstants as Constants
 from app.pipeline.constants.translation_constants import TranslationConstants
 from app.pipeline.file_hash import sha256_file
+from app.pipeline.governance.review_hashes import content_hash, legacy_hashes_of
+from app.pipeline.governance.state import compute_input_hash
 from app.pipeline.models.translation_link import TranslationLink
 from app.pipeline.ports import ManifestNotFound, ManifestStore
-from app.pipeline.review_hashes import content_hash, legacy_hashes_of
 from app.pipeline.schemas import Step
-from app.pipeline.state import compute_input_hash
 
 
 class GateError(PipelineError, ValueError):

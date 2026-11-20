@@ -5,10 +5,10 @@ from __future__ import annotations
 from app.media.narration import timeline_length
 from app.pipeline.constants.schemas_constants import SchemasConstants
 from app.pipeline.models.check_report import CheckReport
-from app.pipeline.music import plan_problems
 from app.pipeline.schemas import MusicPlan
 from app.pipeline.script.models.checked_episode import CheckedEpisode
 from app.pipeline.script.reading import read_optional
+from app.pipeline.sound.music import plan_problems
 
 
 def check(episode: CheckedEpisode, report: CheckReport) -> None:

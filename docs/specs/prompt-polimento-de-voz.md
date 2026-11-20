@@ -21,7 +21,7 @@ ADR 030) e **não entra neste pedido**.
 ## Fase 1 (menos complexa): de-esser + EQ como política v2 do nivelamento, desligável
 
 Contexto a ler antes: `app/media/voice_level.py` (105 linhas), `app/media/constants/voice_level_constants.py`,
-`app/pipeline/voice_state.py` (chama `level_voice` e grava `level_policy()` nas linhas 43, 51 e 111),
+`app/pipeline/voice/state.py` (chama `level_voice` e grava `level_policy()` nas linhas 43, 51 e 111),
 `tests/test_voice_level.py`, ADR 054, ADR 042 (o núcleo `app/media` não lê `Settings`).
 
 O que fazer:

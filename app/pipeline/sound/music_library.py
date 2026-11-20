@@ -30,9 +30,9 @@ from app.pipeline.file_hash import sha256_file
 from app.pipeline.models.audio_probe import AudioProbe
 from app.pipeline.models.track_draft import TrackDraft
 from app.pipeline.models.track_install_action import TrackInstallAction
-from app.pipeline.music import MusicCatalogError, load_music_catalog
 from app.pipeline.ports import ImmutableManifest, ManifestStore, WriteGuard
 from app.pipeline.schemas import Asset, MusicCatalog, MusicTrack, Provider, Status
+from app.pipeline.sound.music import MusicCatalogError, load_music_catalog
 
 
 def slug(text: str) -> str:

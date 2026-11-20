@@ -10,11 +10,11 @@ import pytest
 
 from app.media.probe import ProbeError
 from app.pipeline.gates import record_decision
+from app.pipeline.governance.protection import ReviewWriteGuard
+from app.pipeline.governance.reopen import reopen_gate
 from app.pipeline.models.package_action import PackageAction
-from app.pipeline.package import PackageError, PackagePublisher, package_problems, read_post
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
-from app.pipeline.protection import ReviewWriteGuard
-from app.pipeline.reopen import reopen_gate
+from app.pipeline.publishing.package import PackageError, PackagePublisher, package_problems, read_post
 from app.pipeline.schemas import Decision, Step
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 
@@ -214,7 +214,7 @@ def test_repeating_the_same_package_after_the_approval_is_not_an_error(env: Env)
 def test_a_failure_in_the_middle_never_counts_as_a_complete_package_and_the_retry_finishes(
     env: Env, monkeypatch: pytest.MonkeyPatch, fail_at: str
 ) -> None:
-    from app.pipeline import package
+    from app.pipeline.publishing import package
 
     real = package.write_atomic
     state = {"markers": 0}

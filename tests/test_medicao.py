@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from app.pipeline.gates import GateError, record_decision
-from app.pipeline.medicao import (
+from app.pipeline.publishing.medicao import (
     Numero,
     coverage_problems,
     entry_problems,
@@ -16,8 +16,8 @@ from app.pipeline.medicao import (
     narration_numbers,
     screen_numbers,
 )
+from app.pipeline.publishing.translation import Narration
 from app.pipeline.schemas import Decision, Step
-from app.pipeline.translation import Narration
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME
 

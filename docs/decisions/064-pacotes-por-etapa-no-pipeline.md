@@ -37,9 +37,9 @@
    │                arithmetic · calculation · plan_timing · map_codes · quote_text
    ├── visuals/     assets · candidates
    ├── sound/       music · music_library · sfx · sfx_inputs
-   ├── voice/       voice · voice_state · voice_timeline · voice_retake · speech_review
+   ├── voice/       narrator (era voice) · state · timeline · retake · speech_review
    ├── publishing/  package · metrics · translation · medicao · affiliate · usage
-   ├── bench/       bench · bench_data
+   ├── bench/       runner (era bench) · data (era bench_data)
    ├── production/  voice (era voice_production) · captions (era caption_production) · episode_build
 │                assembly · audio_review
    ├── short/       voice · timing · join · mouth · speech (eram short_voice, short_timing…)
@@ -101,4 +101,8 @@
   reconhecidos pelo guarda de constantes, ao lado do `HANDLERS` (ADR 038 e 042). Também sem reexportação:
   todos os importadores estavam no repositório (comandos, testes e `scripts/bench/checagem_local.py`) e mudaram
   no mesmo PR.
+- PR 4: `governance/`, `research/`, `visuals/`, `sound/`, `voice/`, o resto de `publishing/` e `bench/`; o
+  `pending.py` virou `status.py`. Sem reexportação, como nos PRs 2 e 3, então `voice.py` e `bench.py` ganharam
+  nome próprio (`voice/narrator.py`, `bench/runner.py`) em vez de virar `__init__.py`. Na raiz ficam a base e os
+  fluxos `gates` e `status`. Os modelos e as constantes de uma etapa só vão para dentro dela no PR 4b.
 - Os 12 scripts de `scripts/provisorio/` que importam do `app/` seguem pelos caminhos antigos até o PR 5.

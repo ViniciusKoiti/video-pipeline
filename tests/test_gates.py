@@ -19,7 +19,8 @@ from app.pipeline.gates import (
     record_check,
     record_decision,
 )
-from app.pipeline.review_hashes import legacy_content_hash
+from app.pipeline.governance.review_hashes import legacy_content_hash
+from app.pipeline.governance.state import compute_input_hash
 from app.pipeline.schemas import (
     Asset,
     CheckVerdict,
@@ -32,7 +33,6 @@ from app.pipeline.schemas import (
     Step,
     VideoSpec,
 )
-from app.pipeline.state import compute_input_hash
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME, make_root
 

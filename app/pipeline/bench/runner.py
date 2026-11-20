@@ -18,7 +18,7 @@ from datetime import datetime
 from pathlib import Path
 
 from app.media.probe import duration_ms
-from app.pipeline import bench_data
+from app.pipeline.bench import data as bench_data
 from app.pipeline.constants.bench_constants import BenchConstants
 from app.pipeline.constants.bench_data_constants import BenchDataConstants
 from app.pipeline.models.bench_report import BenchReport as BenchReport

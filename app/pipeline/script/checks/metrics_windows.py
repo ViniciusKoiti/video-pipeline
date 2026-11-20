@@ -5,8 +5,8 @@ from __future__ import annotations
 from datetime import date
 
 from app.pipeline.constants.schemas_constants import SchemasConstants
-from app.pipeline.metrics import summary_line
 from app.pipeline.models.check_report import CheckReport
+from app.pipeline.publishing.metrics import summary_line
 from app.pipeline.schemas import PublicationMetrics
 from app.pipeline.script.models.checked_episode import CheckedEpisode
 from app.pipeline.script.reading import read_optional

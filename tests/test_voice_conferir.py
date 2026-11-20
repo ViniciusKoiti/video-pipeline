@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from app.pipeline.voice_retake import RetakeError, set_aside
+from app.pipeline.voice.retake import RetakeError, set_aside
 from tests.fakes import FakeBatchTTS
 from tests.test_speech_review import Recognizer
 from tests.test_voice_command import run, setup, wavs

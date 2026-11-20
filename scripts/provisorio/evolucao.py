@@ -33,7 +33,7 @@ sys.path.insert(0, str(ROOT))
 
 from app.commands.errors import run  # noqa: E402
 from app.media import evolution  # noqa: E402
-from app.pipeline.bench import cpu_probe  # noqa: E402
+from app.pipeline.bench.runner import cpu_probe  # noqa: E402
 from app.pipeline.constants.bench_constants import BenchConstants  # noqa: E402
 from app.pipeline.schemas import EpisodeManifest  # noqa: E402
 from app.render.constants.remotion_constants import RemotionConstants  # noqa: E402

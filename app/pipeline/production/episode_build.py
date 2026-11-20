@@ -20,7 +20,6 @@ from app.media.constants.captions_constants import CaptionsConstants
 from app.media.probe import duration_ms
 from app.pipeline.constants.episode_build_constants import EpisodeBuildConstants as Constants
 from app.pipeline.constants.schemas_constants import SchemasConstants
-from app.pipeline.music import load_music_catalog, resolve_music
 from app.pipeline.schemas import (
     EpisodeFormat,
     EpisodeManifest,
@@ -33,6 +32,7 @@ from app.pipeline.schemas import (
     VideoSpec,
 )
 from app.pipeline.shots import episode_shots
+from app.pipeline.sound.music import load_music_catalog, resolve_music
 
 
 class EpisodeBuildError(PipelineError, ValueError):

@@ -10,10 +10,10 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from app.pipeline.governance.state import load_state
 from app.pipeline.models.status import Status
 from app.pipeline.models.step import Step
 from app.pipeline.ports import ManifestStore
-from app.pipeline.state import load_state
 
 
 def voiced_paths(store: ManifestStore, episode_id: str, scene_ids: Sequence[str]) -> dict[str, Path] | None:

@@ -9,13 +9,12 @@ from pathlib import Path
 import pytest
 
 from app.pipeline.gates import record_decision
+from app.pipeline.governance.protection import ReviewWriteGuard
+from app.pipeline.governance.reopen import reopen_gate
 from app.pipeline.models.extracted_source import ExtractedSource
 from app.pipeline.models.source_draft import SourceDraft
 from app.pipeline.ports import EpisodeLocked, ImmutableManifest
-from app.pipeline.protection import ReviewWriteGuard
-from app.pipeline.reopen import reopen_gate
-from app.pipeline.schemas import Decision, SourceKind, SourcesManifest, Step
-from app.pipeline.sources import (
+from app.pipeline.research.sources import (
     SourceError,
     SourceRegistry,
     declared,
@@ -23,6 +22,7 @@ from app.pipeline.sources import (
     from_bytes,
     from_file,
 )
+from app.pipeline.schemas import Decision, SourceKind, SourcesManifest, Step
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 
 EP = "ep-fontes"
@@ -197,7 +197,7 @@ def test_an_approved_gate_one_refuses_before_writing_anything_and_reopening_allo
 def test_a_failure_before_the_manifest_leaves_no_source_and_the_retry_recovers(
     env: Env, monkeypatch: pytest.MonkeyPatch, fail_at: str
 ) -> None:
-    from app.pipeline import sources
+    from app.pipeline.research import sources
 
     manifest_before = env.store.path(EP, "sources.json").read_bytes()
     real_write, real_store_write = sources.write_atomic, env.store.write

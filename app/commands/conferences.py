@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import argparse
 
-from app.pipeline.medicao import medicao_problems
 from app.pipeline.ports import Context
-from app.pipeline.translation import translation_problems
+from app.pipeline.publishing.medicao import medicao_problems
+from app.pipeline.publishing.translation import translation_problems
 
 
 def _report(problems: list[str], warnings: list[str] | None = None) -> int:

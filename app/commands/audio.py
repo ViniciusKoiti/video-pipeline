@@ -20,7 +20,7 @@ import argparse
 from pathlib import Path
 
 from app.media.earshot import AudioReview, parse_review, review_problems, run_timeline
-from app.pipeline.bench import cpu_probe
+from app.pipeline.bench.runner import cpu_probe
 from app.pipeline.constants.audio_review_constants import AudioReviewConstants
 from app.pipeline.motion_inputs import load_content
 from app.pipeline.ports import Context
@@ -30,7 +30,7 @@ from app.pipeline.production.audio_review import (
     cuts_from_episode,
     expected_onsets,
 )
-from app.pipeline.sfx import load_kit, load_plan
+from app.pipeline.sound.sfx import load_kit, load_plan
 
 
 def add_arguments(parser: argparse.ArgumentParser) -> None:

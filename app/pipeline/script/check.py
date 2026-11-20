@@ -16,9 +16,9 @@ from datetime import date
 from pathlib import Path
 
 from app.pipeline.constants.check_constants import CheckConstants as Constants
-from app.pipeline.excerpts import excerpts_of
 from app.pipeline.models.check_report import CheckReport as CheckReport
 from app.pipeline.ports import ManifestStore
+from app.pipeline.research.excerpts import excerpts_of
 from app.pipeline.schemas import FactsManifest, MusicCatalog, ScenesManifest, SourceKind, SourcesManifest
 from app.pipeline.script.checks.registry import EPISODE_RULES
 from app.pipeline.script.models.checked_episode import CheckedEpisode

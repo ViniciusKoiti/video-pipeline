@@ -1,7 +1,7 @@
 """Extração do texto de fontes baixadas (um parágrafo = um trecho, ADR 009), sem rede."""
 
-from app.pipeline.excerpts import split_excerpts
-from app.pipeline.extract import as_source_text, decode_html, html_paragraphs, pdf_paragraphs
+from app.pipeline.research.excerpts import split_excerpts
+from app.pipeline.research.extract import as_source_text, decode_html, html_paragraphs, pdf_paragraphs
 
 PAGE = """<html><head><title>t</title><style>p{}</style><script>var x = "<p>não</p>";</script></head>
 <body><nav><p>Menu</p></nav><header><h1>Cabeçalho do site</h1></header>

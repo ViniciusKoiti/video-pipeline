@@ -8,14 +8,14 @@ from pathlib import Path
 import pytest
 
 from app.pipeline.gates import GateError, gate_report, record_decision
-from app.pipeline.schemas import Decision, Step
-from app.pipeline.translation import (
+from app.pipeline.publishing.translation import (
     Narration,
     content_problems,
     narration_problems,
     spoken_numbers,
     translation_problems,
 )
+from app.pipeline.schemas import Decision, Step
 from app.storage.json_files import JsonFileStore, JsonReviewGate
 from tests.fakes import FIXED_TIME
 

@@ -67,8 +67,8 @@ e Segunda Guerra (saturados).
 - **Ambiente:** Windows + WSL2/Ubuntu (`~/projetos/auto-play`, nunca `/mnt/c` ou `/mnt/e`). Python 3.12 (`.venv`,
   `uv sync --extra tts`; sem o extra, só CLI e testes), `ffmpeg`/`ffprobe`, `espeak-ng`, Node.js LTS em `video/`
   (`npm ci`). Validar ambiente com `scripts/check_env.sh`.
-- **Máquina limitada:** antes de benchmark, render longo ou modelo local, rodar `cpu_probe()` (`app/pipeline/bench.py`;
-  `> 0,3 s` = inválida). Um render por vez; temporários do Remotion ficam em `data/cache/remotion-tmp/`. Nunca
+- **Máquina limitada:** antes de benchmark, render longo ou modelo local, rodar `cpu_probe()`
+  (`app/pipeline/bench/runner.py`; `> 0,3 s` = inválida). Um render por vez; temporários do Remotion ficam em `data/cache/remotion-tmp/`. Nunca
   encerrar processos do dono; interfaces de teste só em `127.0.0.1`.
 - **Arquitetura (ADR 006, 037, 038, 042, 045):**
   - **Portas e adaptadores:** `Protocol` em `app/providers/<função>/base.py` (ou `app/render/base.py`); composição em

@@ -22,7 +22,6 @@ from app.pipeline.models.format_brief import FormatBrief as FormatBrief
 from app.pipeline.models.format_measure import FormatMeasure as FormatMeasure
 from app.pipeline.models.script_numbers import ScriptNumbers as ScriptNumbers
 from app.pipeline.models.shot_timing import ShotTiming as ShotTiming
-from app.pipeline.review_hashes import strip_block as strip_block  # mudou para o carimbo do gate 2 (ADR 064)
 from app.pipeline.schemas import (
     Asset,
     BrollShot,

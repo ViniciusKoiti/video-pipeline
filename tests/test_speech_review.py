@@ -13,7 +13,7 @@ import pytest
 from app.media.listening_sheet import build_sheet, sheet_filter
 from app.media.pronunciation import Glossary
 from app.pipeline.schemas import Scene, ScenesManifest
-from app.pipeline.speech_review import hear_scene, review_speech, sound
+from app.pipeline.voice.speech_review import hear_scene, review_speech, sound
 from app.providers.alignment.base import TimedWord
 from app.providers.alignment.whisper_local import WhisperLocalWordAligner
 from app.providers.base import ProviderInfo

@@ -1,5 +1,5 @@
 """Falhas de provedor. O pipeline converte qualquer `ProviderError` em `needs_review` só na cena
-afetada (§2.1, `app.pipeline.failures`); outras exceções são bugs e interrompem a execução."""
+afetada (§2.1, `app.pipeline.governance.failures`); outras exceções são bugs e interrompem a execução."""
 
 from __future__ import annotations
 
