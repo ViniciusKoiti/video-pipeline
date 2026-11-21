@@ -10,3 +10,4 @@ class ErrorsConstants:
     LICENSE_UNKNOWN_REASON: Final[str] = 'license_unknown'
     INVALID_OUTPUT_REASON: Final[str] = 'invalid_output'
     PAID_API_BLOCKED_REASON: Final[str] = 'paid_api_blocked'
+    ACCESS_BLOCKED_REASON: Final[str] = 'access_blocked'

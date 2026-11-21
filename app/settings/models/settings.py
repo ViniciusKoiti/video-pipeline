@@ -4,6 +4,7 @@ from pathlib import Path
 
 from app.settings.models._settings_model import _Model
 from app.settings.models.azure_speech_settings import AzureSpeechSettings
+from app.settings.models.browser_image_settings import BrowserImageSettings
 from app.settings.models.budget import Budget
 from app.settings.models.chatterbox_modal_settings import ChatterboxModalSettings
 from app.settings.models.chatterbox_settings import ChatterboxSettings
@@ -34,6 +35,7 @@ class Settings(_Model):
     groq_whisper: GroqWhisperSettings = GroqWhisperSettings()
     whisper_local: WhisperLocalSettings = WhisperLocalSettings()
     workers_ai: WorkersAISettings
+    browser_image: BrowserImageSettings = BrowserImageSettings()
     ffmpeg: FfmpegSettings = FfmpegSettings()
     limits: Limits = Limits()
     budget: Budget = Budget()

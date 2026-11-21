@@ -15,6 +15,8 @@ from app.settings.constants.settings_constants import SettingsConstants
 from app.settings.models._settings_model import _Model as _Model
 from app.settings.models._settings_value_default_delivery import _default_delivery as _default_delivery
 from app.settings.models.azure_speech_settings import AzureSpeechSettings as AzureSpeechSettings
+from app.settings.models.browser_image_settings import BrowserImageSettings as BrowserImageSettings
+from app.settings.models.browser_site_settings import BrowserSiteSettings as BrowserSiteSettings
 from app.settings.models.budget import Budget as Budget
 from app.settings.models.chatterbox_modal_settings import ChatterboxModalSettings as ChatterboxModalSettings
 from app.settings.models.chatterbox_settings import ChatterboxSettings as ChatterboxSettings

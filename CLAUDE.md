@@ -200,9 +200,9 @@ Os detalhes de campos vivem em `app/pipeline/schemas.py`. Regras que o schema so
   ataque (40 ms) via `earshot` quando solicitado.
 - **Busca visual em cascata:** (1) acervo interno → (2) Commons / LoC / Flickr Commons (busca à mão; adapters ainda
   não implementados) → (3) Pexels / Pixabay / Unsplash por API (`vp assets search`), Coverr à mão → (4) imagem gerada
-  só para lacuna, no máximo 2 opções por cena e 12 por episódio (teto editorial; hoje pelos scripts
-  `scripts/provisorio/gerar_imagens_klein.py` e `imagens_navegador.py`, porque o adapter do Workers AI ainda não
-  existe) → (5) mapa/gráfico original.
+  só para lacuna, no máximo 2 opções por cena e 12 por episódio (teto editorial, cobrado pelo `vp imagens gerar`
+  pela tela do Gemini no Chrome do dono, ADR 065; o Workers AI segue em `scripts/provisorio/gerar_imagens_klein.py`
+  até ter adapter) → (5) mapa/gráfico original.
 
 ## 7. CLI (`vp`)
 
@@ -210,7 +210,7 @@ Use `vp --help` e `vp <comando> --help` para flags completas. Fluxo principal:
 
 - **Preparação e checagem:** `vp sources`, `vp excerpts`, `vp briefs`, `vp check`, `vp checagem`, `vp numeros`,
   `vp status`, `vp bench`.
-- **Ativos e mídia:** `vp assets`, `vp music`, `vp voice`, `vp render`, `vp audio`, `vp short`.
+- **Ativos e mídia:** `vp assets`, `vp imagens`, `vp music`, `vp voice`, `vp render`, `vp audio`, `vp short`.
 - **Governança e publicação:** `vp approve`, `vp reject`, `vp reopen`, `vp export` (hoje só `livros`), `vp metricas`,
   `vp traducao`, `vp medicao`, `vp postiz`, `vp usage`.
 - `new`, `script`, `scenes`, `gallery` e `subs` ainda respondem "não implementado".

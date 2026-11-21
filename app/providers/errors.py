@@ -39,3 +39,9 @@ class InvalidOutput(ProviderError):
 
 class PaidApiBlocked(ProviderError):
     reason = ErrorsConstants.PAID_API_BLOCKED_REASON
+
+
+class AccessBlocked(ProviderError):
+    """Login, verificação ou aviso de limite na tela de um site: a rodada inteira para (ADR 065)."""
+
+    reason = ErrorsConstants.ACCESS_BLOCKED_REASON

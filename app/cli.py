@@ -22,6 +22,7 @@ from app.commands import (
     conferences,
     decisions,
     export,
+    imagens,
     metricas,
     music,
     numeros,
@@ -121,6 +122,7 @@ HANDLERS: dict[str, Handler] = {
     "voice": voice.run,
     "render": render.run,
     "assets": assets.run,
+    "imagens": imagens.run,
     "audio": audio.run,
     "briefs": briefs.run,
     "export": export.run,
@@ -153,6 +155,7 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_arguments(sub)
     postiz.add_arguments(subparsers.add_parser("postiz", help="canais, mídia e agendamentos em JSON"))
     assets.add_arguments(subparsers.add_parser("assets", help="busca e baixa ativos visuais (ADR 044)"))
+    imagens.add_arguments(subparsers.add_parser("imagens", help="imagem gerada pela tela do site (ADR 065)"))
     audio.add_arguments(subparsers.add_parser("audio", help="conferência de áudio com o earshot (ADR 035)"))
     briefs.add_arguments(subparsers.add_parser("briefs", help="resumo do radar e perfil do nicho (ADR 047)"))
     export.add_arguments(subparsers.add_parser("export", help="o que sai do episódio para publicar (#18)"))

@@ -18,8 +18,8 @@ tts = [
     "en_core_web_sm==3.8.0",  # MIT — fixado para o misaki não baixar em tempo de execução
     "transformers>=5.17,<6",  # Apache-2.0 — Whisper local da conferência da fala (ADR 062); já vinha com o kokoro
 ]
-# Automação do navegador do dono para gerar imagens (scripts/provisorio/imagens_navegador.py); fora do
-# pipeline e dos testes. Conecta a um Chrome já aberto, sem baixar navegador.
+# Automação do navegador do dono para gerar imagens (`vp imagens`, adapter browser_image, ADR 065); fora
+# dos testes, que usam uma página falsa. Conecta a um Chrome já aberto, sem baixar navegador.
 navegador = [
     "playwright>=1.50,<2",  # Apache-2.0
 ]
