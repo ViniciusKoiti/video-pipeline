@@ -3,7 +3,7 @@
 Uma versão por mudança no visual do formato explicativo, sempre do mesmo vídeo com o conteúdo congelado
 (roteiro, imagens e voz aprovados): só o template muda entre as versões. Os vídeos ficam fora do Git, em
 `data/episodes/<id>/renders/evolucao/` (`vN.mp4` e `vN.json`); a folha de quadros e o vídeo lado a lado saem
-de `scripts/provisorio/evolucao.py`. "Tempo" é o do `montar_episodio.py --preview` (voz em cache + render);
+do `vp evolucao`. "Tempo" é o do `montar_episodio.py --preview` (voz em cache + render);
 a sonda de CPU acima de 0,3 s indica máquina limitada (CLAUDE.md §3). "Planos que mudaram" compara um quadro
 por plano com a versão anterior; um PR de visual deve mudar só os planos que pretendia.
 

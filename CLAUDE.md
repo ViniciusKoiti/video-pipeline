@@ -226,8 +226,8 @@ O `vp check` separa erro, alerta e `atenção` (o que o dono decide no gate 2). 
   Azure) só com pedido explícito do dono na sessão. Kokoro e Ollama locais podem rodar. Em dúvida sobre licença de
   um ativo ou termos de um provedor, pare e pergunte.
 - **Render só com pedido do dono.** Exceção: o vídeo-régua `votorantim-dinheiro` ganha uma versão `vN` ao fim de
-  cada PR que muda o visual (template ou motion-kit), com a sonda de CPU antes (`scripts/provisorio/evolucao.py`,
-  vídeos em `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`).
+  cada PR que muda o visual (template ou motion-kit), com a sonda de CPU antes (`vp evolucao gerar`, vídeos em
+  `renders/evolucao/`, registro em `data/benchmarks/evolucao-template.md`).
 - **Agentes criativos (`.claude/agents/` e `.claude/skills/`):** escrevem apenas arquivos de dados em
   `data/episodes/<id>/` (`pesquisador`, `roteirista`, `roteirista-ficcao-historica`, `editor-de-roteiro`,
   `diretor-musical`, `diretor-animacao`); `verificador`, `duvida-cega` e `validador-de-tema` só leem (este, também

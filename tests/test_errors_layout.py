@@ -121,7 +121,7 @@ def test_checker_catches_a_class_outside_the_tree_and_a_listed_except() -> None:
 def test_the_guard_reads_every_script_folder() -> None:
     paths = set(guarded_sources())
     assert {
-        "scripts/provisorio/evolucao.py",
+        "scripts/provisorio/sprites_apresentador.py",
         "scripts/bench/checagem_local.py",
         "scripts/ferramentas/clipe_tempos.py",
     } <= paths

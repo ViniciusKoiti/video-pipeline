@@ -21,6 +21,7 @@ from app.commands import (
     briefs,
     conferences,
     decisions,
+    evolucao,
     export,
     metricas,
     music,
@@ -47,7 +48,7 @@ from app.pipeline.schemas import (
 )
 from app.pipeline.script.check import check_episode
 from app.pipeline.sound.music import load_music_catalog
-from app.render.remotion import region_codes
+from app.render.remotion import region_codes, template_hash
 from app.settings import speech_chars_per_second
 
 Handler = Callable[[argparse.Namespace, Context], int]
@@ -103,6 +104,10 @@ def _check(args: argparse.Namespace, context: Context) -> int:
     return 0 if report.ok else 1
 
 
+def _evolucao(args: argparse.Namespace, context: Context) -> int:
+    return evolucao.run(args, context, template_hash=template_hash)  # o hash do template é do Remotion
+
+
 # Preenchido conforme as etapas forem implementadas: nome do comando -> handler.
 HANDLERS: dict[str, Handler] = {
     "bench": _bench,
@@ -123,6 +128,7 @@ HANDLERS: dict[str, Handler] = {
     "assets": assets.run,
     "audio": audio.run,
     "briefs": briefs.run,
+    "evolucao": _evolucao,
     "export": export.run,
     "metricas": metricas.run,
     "music": music.run,
@@ -155,6 +161,7 @@ def build_parser() -> argparse.ArgumentParser:
     assets.add_arguments(subparsers.add_parser("assets", help="busca e baixa ativos visuais (ADR 044)"))
     audio.add_arguments(subparsers.add_parser("audio", help="conferência de áudio com o earshot (ADR 035)"))
     briefs.add_arguments(subparsers.add_parser("briefs", help="resumo do radar e perfil do nicho (ADR 047)"))
+    evolucao.add_arguments(subparsers.add_parser("evolucao", help="versões do vídeo-régua (§8, #69)"))
     export.add_arguments(subparsers.add_parser("export", help="o que sai do episódio para publicar (#18)"))
     metricas.add_arguments(subparsers.add_parser("metricas", help="métricas aos 7 e 28 dias (§12)"))
     music.add_arguments(subparsers.add_parser("music", help="catálogo de música de fundo (ADR 030)"))

@@ -14,6 +14,7 @@ APP = Path(__file__).resolve().parents[1] / "app"
 # Registrados à parte, com subcomandos próprios (módulos de app/commands).
 OWN_PARSERS = {
     "postiz", "usage", "sources", "assets", "briefs", "music", "export", "metricas", "short", "audio",
+    "evolucao",
 }
 COMMAND_NAMES = [c.name for c in CliConstants.COMMANDS]
 

@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Final
 
 
 class EvolutionConstants:
+    # registro das versões do vídeo-régua, a partir da raiz do projeto (no Git)
+    REGISTRY_FILE: Final[Path] = Path("data/benchmarks/evolucao-template.md")
     # fração do plano: depois da entrada, antes da transição
     SAMPLE_AT: Final[float] = 0.7
     CELL_W: Final[int] = 480
@@ -46,7 +49,7 @@ class EvolutionConstants:
         "congelado\n(roteiro, imagens e voz aprovados): só o template muda entre as "
         "versões. Os vídeos ficam fora do Git, em\n`data/episodes/<id>/renders/evoluc"
         "ao/` (`vN.mp4` e `vN.json`); a folha de quadros e o vídeo lado a lado "
-        'saem\nde `scripts/provisorio/evolucao.py`. "Tempo" é o do '
+        'saem\ndo `vp evolucao`. "Tempo" é o do '
         "`vp render --preview` (voz em cache + render);\na sonda de CPU "
         'acima de 0,3 s indica máquina limitada (CLAUDE.md §3). "Planos que '
         'mudaram" compara um quadro\npor plano com a versão anterior; um PR de '
