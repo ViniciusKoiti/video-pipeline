@@ -26,6 +26,7 @@ from app.pipeline.schemas import (
     RelPath,
     Scene,
 )
+from app.pipeline.sound.music_tail import with_end_tail
 
 
 class MusicCatalogError(PipelineError, ValueError):
@@ -177,4 +178,4 @@ def resolve_music(
                 loop=cue.track_offset_ms + length > track.duration_ms,
             )
         )
-    return result
+    return with_end_tail(result, plan.end_tail_ms, episode, catalog)
