@@ -204,6 +204,37 @@ def test_cues_get_their_time_from_the_real_wavs() -> None:
     assert resolved.media == "assets/ytal-noite.mp3"
 
 
+# --- cauda da tela final (emenda de 2026-11-23 da ADR 030) --------------------------------------
+
+
+def test_the_end_tail_extends_the_bed_that_reaches_the_last_line() -> None:
+    plan = MusicPlan(episode_id="ep", end_tail_ms=9000, cues=[cue(("S01", None), ("S03", None))])
+    (resolved,) = resolve_music(plan, episode(), MusicCatalog(tracks=[track()]), lambda a: f"assets/{a}.mp3")
+    assert (resolved.start_ms, resolved.end_ms, resolved.loop) == (0, 12_000 + 9000, False)
+
+
+def test_the_end_tail_loops_a_short_track_and_has_a_ceiling() -> None:
+    plan = MusicPlan(episode_id="ep", end_tail_ms=5000, cues=[cue(("S01", None), ("S03", None))])
+    catalog = MusicCatalog(tracks=[track(duration_ms=15_000)])
+    (resolved,) = resolve_music(plan, episode(), catalog, lambda a: f"assets/{a}.mp3")
+    assert resolved.end_ms == 17_000 and resolved.loop  # 17 s de trecho numa faixa de 15 s
+    with pytest.raises(ValidationError):
+        MusicPlan(episode_id="ep", end_tail_ms=20_001)
+
+
+def test_an_end_tail_without_a_bed_at_the_end_is_refused_by_the_render_and_the_check(tmp_path: Path) -> None:
+    plan = MusicPlan(episode_id="ep", end_tail_ms=9000, cues=[cue(("S01", None), ("S02", None))])
+    with pytest.raises(ValueError, match="cauda de 9000 ms sem fundo"):
+        resolve_music(plan, episode(), MusicCatalog(tracks=[track()]), lambda a: f"assets/{a}.mp3")
+    folder = tmp_path / "ep"
+    folder.mkdir()
+    (folder / "scenes.json").write_text(scenes().model_dump_json())
+    (folder / "music.json").write_text(plan.model_dump_json())
+    report = check_episode(JsonFileStore(tmp_path), "ep", music_catalog=MusicCatalog(tracks=[track()]))
+    assert any("cauda (end_tail_ms) sem fundo que vá até o fim da S03" in e for e in report.errors)
+    assert any("cauda de 9 s só de trilha" in w for w in report.warnings)
+
+
 def test_short_track_loops_and_short_cue_scales_the_fades() -> None:
     plan = MusicPlan(episode_id="ep", cues=[cue(("S01", None), ("S01", None), fade_in_ms=3000,
                                                 fade_out_ms=3000, level="mid")])

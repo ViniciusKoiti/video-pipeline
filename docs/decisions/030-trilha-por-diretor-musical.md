@@ -114,3 +114,16 @@ geração (etapa 4) continua fora.
 - `montar_episodio.py`: resolve a trilha e mede o volume depois do render;
 - agente `diretor-musical` com a skill `trilha`;
 - testes em `tests/test_music.py`, incluindo uma mistura real com ffmpeg.
+
+## Emenda de 2026-11-23: cauda da tela final
+
+A pedido do dono, o `music.json` ganha `end_tail_ms` (0 a 20 000, padrão 0): os milissegundos só de trilha depois
+da última fala, para os elementos da tela final do YouTube (5 a 20 s) aparecerem sem cortar a voz nem acabar em
+silêncio. O `resolve_music` estende por esse tempo o fundo que chega ao fim da última cena, com o fade no fim novo e
+o `loop` recalculado (`app/pipeline/sound/music_tail.py`); sem fundo que chegue ao fim, é erro, no `resolve_music` e
+no `vp check`. O `episode.json` não muda: a cauda entra nas entradas de `music`, que já podiam ir além da voz.
+
+Por enquanto a cauda vale na montagem pelo kit (os episódios em pixel art, cujo último lote ganha os mesmos segundos
+na tela final e cuja emenda completa a voz com silêncio). O `vp render` (motores ffmpeg e Remotion) ainda corta o
+vídeo no fim da voz, e a conferência do render segue exigindo duração igual à da voz; o `vp check` avisa isso quando
+o campo vem preenchido. Estender a imagem nesses motores é uma decisão à parte.

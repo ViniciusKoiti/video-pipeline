@@ -31,5 +31,19 @@ def check(episode: CheckedEpisode, report: CheckReport) -> None:
         for t in tracks
         if not store.exists(episode_id, f"assets/{t}.json")
     ]
+    if plan.end_tail_ms:
+        _end_tail(plan, episode.scenes.scenes[-1].id, report)
     if not errors:
         report.checked.append(f"trilha: {len(plan.cues)} entrada(s), {len(tracks)} faixa(s)")
+
+
+def _end_tail(plan: MusicPlan, last_scene: str, report: CheckReport) -> None:
+    """A cauda da tela final (emenda de 2026-11-23 da ADR 030) pede um fundo até o fim da última cena."""
+    if not any(
+        c.track and c.role != "sting" and c.end.scene == last_scene and c.end.text is None for c in plan.cues
+    ):
+        report.errors.append(f"music.json: cauda (end_tail_ms) sem fundo que vá até o fim da {last_scene}")
+    report.warnings.append(
+        f"music.json: cauda de {plan.end_tail_ms / 1000:.0f} s só de trilha depois da última fala "
+        "(tela final); vale na montagem pelo kit, e o vp render ainda corta no fim da voz"
+    )
