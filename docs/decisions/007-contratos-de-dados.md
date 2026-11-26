@@ -365,7 +365,9 @@ jurídico.
 2. Para chegar a `approved`: `origin` com o **gerador, o modelo e o projeto** de onde o clipe saiu; `usage_notes` com o
    prompt e a conferência de pessoas reais, marcas e texto no clipe; `sha256` do `.mp4`. `timecode` é recusado.
 3. Só entra gerador com termos registrados em `data/benchmarks/` (hoje: `termos-google-flow.md`).
-4. Clipe gerado é ilustração (§2.4), nunca registro do fato. O áudio do gerador não entra (a narração é do projeto).
+4. Clipe gerado é ilustração (§2.4), nunca registro do fato. A narração é sempre do projeto; do áudio do gerador,
+   só o **som ambiente** (fogo, vento, animais) pode entrar, bem abaixo da voz e sem fala nem música geradas
+   (decisão do dono de 2026-11-26, no piloto: a trilha do catálogo não combinava com a cena).
    Cena com aparência realista leva o rótulo de conteúdo sintético no Studio; a descrição diz que as cenas foram
    geradas por IA.
 5. Aprovação humana no gate 3, como qualquer ativo.
