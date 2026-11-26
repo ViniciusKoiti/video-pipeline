@@ -350,3 +350,28 @@ sem comentário, a citação para crítica deixa de sustentar o uso.
    escapar da detecção continua proibido (emenda de 2026-10-17).
 5. **Teste:** a primeira publicação é o teste. Reivindicação ou aviso vão para o `review.json` do episódio, e nenhum
    outro episódio usa textura de anime antes de o dono rever esta emenda.
+
+## Emenda (2026-11-26): clipe de vídeo gerado pelo dono como ativo `Generated`
+
+**Contexto.** O dono pediu, em 2026-11-26, um piloto de Short feito com clipes gerados no Google Flow
+(`data/episodes/flow-piloto-colheita/`). O modelo só aceitava `media: clip` com `Citacao` ou `Original`. Os termos do
+Flow foram lidos no mesmo dia (`data/benchmarks/termos-google-flow.md`): o Google não reivindica o resultado, mas não
+libera o uso comercial por escrito. O dono decidiu seguir ("pode fazer as três"). Decisão de risco do dono, não parecer
+jurídico.
+
+**Decisões.**
+1. `media: clip` vale também para `license_id: Generated`, com `provider: original` e sem o campo `generation`
+   (que segue exclusivo do Workers AI), como a imagem gerada da emenda proposta de 2026-11-14.
+2. Para chegar a `approved`: `origin` com o **gerador, o modelo e o projeto** de onde o clipe saiu; `usage_notes` com o
+   prompt e a conferência de pessoas reais, marcas e texto no clipe; `sha256` do `.mp4`. `timecode` é recusado.
+3. Só entra gerador com termos registrados em `data/benchmarks/` (hoje: `termos-google-flow.md`).
+4. Clipe gerado é ilustração (§2.4), nunca registro do fato. A narração é sempre do projeto; do áudio do gerador,
+   só o **som ambiente** (fogo, vento, animais) pode entrar, bem abaixo da voz e sem fala nem música geradas
+   (decisão do dono de 2026-11-26, no piloto: a trilha do catálogo não combinava com a cena).
+   Cena com aparência realista leva o rótulo de conteúdo sintético no Studio; a descrição diz que as cenas foram
+   geradas por IA.
+5. Aprovação humana no gate 3, como qualquer ativo.
+
+**Implementação (mesmo commit).** `Asset._generated_clip_problems` e a constante `GENERATED_LICENSE` em
+`CLIP_LICENSES` (`app/pipeline/models/asset.py`, `app/pipeline/constants/schemas_constants.py`); testes em
+`tests/test_assets_generated_clip.py`.
