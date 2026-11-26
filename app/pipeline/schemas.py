@@ -41,6 +41,7 @@ from app.pipeline.models._schemas_types import RegionCode as RegionCode
 from app.pipeline.models._schemas_types import RelPath as RelPath
 from app.pipeline.models._schemas_types import RequestKind as RequestKind
 from app.pipeline.models._schemas_types import SceneId as SceneId
+from app.pipeline.models._schemas_types import SceneMode as SceneMode
 from app.pipeline.models._schemas_types import Sha256 as Sha256
 from app.pipeline.models._schemas_types import Slug as Slug
 from app.pipeline.models._schemas_types import SourceId as SourceId

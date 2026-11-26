@@ -4,7 +4,15 @@ from typing import Any, Self
 
 from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
-from app.pipeline.models._schemas_types import AssetId, Delivery, HostCorner, NonEmpty, RelPath, SceneId
+from app.pipeline.models._schemas_types import (
+    AssetId,
+    Delivery,
+    HostCorner,
+    NonEmpty,
+    RelPath,
+    SceneId,
+    SceneMode,
+)
 from app.pipeline.models.episode_shot import EpisodeShot
 from app.pipeline.models.model import Model
 
@@ -23,12 +31,16 @@ class EpisodeScene(Model):
     delivery: Delivery | None = None
     # Marca do apresentador nesta cena (ADR 056): `true` o mostra, `false` o esconde; sem ela, vale o `show`.
     host: bool | None = None
+    # Camada da cena na série "E se…?" (ADR 065), copiada do roteiro: o selo "E SE?" na tela depende do kit.
+    mode: SceneMode = "real"
 
     @model_serializer(mode="wrap")
     def _omit_unset_host(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
         data: dict[str, Any] = handler(self)
         if data.get("host") is None:  # o `episode.json` de antes (e seu carimbo no gate 4) não muda
             data.pop("host", None)
+        if data.get("mode") == "real":  # idem para a camada da cena (ADR 065)
+            data.pop("mode", None)
         return data
 
     @model_validator(mode="after")

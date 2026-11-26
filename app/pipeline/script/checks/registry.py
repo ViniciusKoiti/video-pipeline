@@ -2,8 +2,8 @@
 `check(episode, report)` e uma linha nesta tupla; regra que olha uma cena ou um plano vai em `scenes.py`.
 
 A ordem decide a ordem das linhas em cada nível do relatório (verificado, alerta, atenção, erro): as regras de
-forma seguem objetivo → funil → opinião → frase sem claim → lacuna → relógio → glossário → emoção, como no
-`script_form.py` que esta tupla substituiu.
+forma seguem objetivo → funil → opinião → frase sem claim → especulação → lacuna → relógio → glossário →
+emoção, como no `script_form.py` que esta tupla substituiu.
 """
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ from app.pipeline.script.checks import (
     radar_form,
     retention_clock,
     scenes,
+    speculation,
     variety,
 )
 from app.pipeline.script.models.checked_episode import CheckedEpisode
@@ -43,6 +44,7 @@ EPISODE_RULES: tuple[EpisodeRule, ...] = (
     funnel.check,
     opinion_labels.check,
     claimless.check,
+    speculation.check,
     narration_gaps.check,
     retention_clock.check,
     glossary.check,

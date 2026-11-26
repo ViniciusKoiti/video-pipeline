@@ -137,6 +137,9 @@ Delivery = Literal["hook", "turn", "invite", "neutral", "calm"]
 # O papel da cena no relógio de retenção do vídeo longo (ADR 061): fecha a promessa, retoma a atenção, vira
 # para a parte prática ou pausa para um aviso (CVV, saúde). Sem o campo, a cena não tem papel no relógio.
 Beat = Literal["promise", "rehook", "turn", "pause"]
+# A camada da cena na série "E se…?" (ADR 065): `real` é o que aconteceu (fato com claims), `especulacao` o
+# que teria acontecido na linha alternativa (leitura do narrador, sem fonte possível).
+SceneMode = Literal["real", "especulacao"]
 
 
 ObjectiveKind = Literal["noticiar", "explicar", "opinar"]

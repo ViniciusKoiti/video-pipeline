@@ -39,7 +39,8 @@ e Segunda Guerra (saturados).
 2. **Nenhuma fonte inventada.** O `pesquisador` só ficha trechos extraídos de fontes reais em `sources.json`, com
    citação literal conferida pelo `vp check`. No `roteirista`, toda afirmação de fato e dado na tela exige `claims`
    com `source_ids` (ADR 008). Exceção exclusiva: `roteirista-ficcao-historica` (`"fiction": true`, ADR 055).
-   Vídeo de outro canal é pista de forma, nunca fonte.
+   Na série "E se…?", a cena `"mode": "especulacao"` dispensa `claims` na fala, mas o dado na tela pede `claims`
+   ou `estimate: true`, e a parte real segue fichada (ADR 065). Vídeo de outro canal é pista de forma, nunca fonte.
 3. **Nenhum ativo sem licença registrada entra no render.** Lista fechada da ADR 007 (PD, CC0, CC-BY incl. 3.0 BR,
    Flickr-NKCR, Pexels, Pixabay, Unsplash, Coverr, Generated, Original, Citacao e YouTube-Audio-Library, esta só no
    YouTube — **proibido** CC-BY-SA e NC). Campos obrigatórios em §5. Sem licença identificável → `needs_review`.
@@ -135,6 +136,9 @@ ainda sem comando.
 
 Os detalhes de campos vivem em `app/pipeline/schemas.py`. Regras que o schema sozinho não impõe:
 
+- **Especulação declarada (ADR 065):** na cena `especulacao`, a fala diz que é chute ("o mais provável",
+  "seria", "eu acho"…) e não narra a linha inventada como crônica com datas; a abertura avisa a mudança ("e se",
+  "a partir daqui") antes da primeira; `mode` e `estimate` chegam ao `episode.json` (o selo "E SE?" depende do kit).
 - **Objetivo e Opinião (ADR 019):** `objective.kinds` (`noticiar | explicar | opinar`) e `promise` obrigatórios; a
   tese (`thesis`, `thesis_by`) vem do dono. Opinião nunca vira dado na tela, mas deve ser expressa de forma
   **orgânica e conversacional** (*"na minha leitura"*, *"pelo menos é assim que enxergo"*), **nunca** com rótulos

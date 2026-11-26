@@ -52,9 +52,12 @@ class ScenesManifest(Model):
         problems = [
             f"{scene.id}: plano {shot.kind} sem claims ({shot.anchor!r}): número, data, citação ou cargo "
             "na tela é afirmação (ADR 008); no roteiro de ficção histórica, declare fiction: true (ADR 055)"
+            + ("; na cena especulacao, ou claims ou estimate: true (ADR 065)" if scene.mode != "real" else "")
             for scene in self.scenes
             for shot in scene.shots
-            if isinstance(shot, _FactualShot) and not shot.claims
+            if isinstance(shot, _FactualShot)
+            and not shot.claims
+            and not (scene.mode == "especulacao" and shot.estimate)
         ]
         if problems:
             raise ValueError("; ".join(problems))
