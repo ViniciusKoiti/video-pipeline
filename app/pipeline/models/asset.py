@@ -29,8 +29,10 @@ class Asset(Model):
     used_in_scenes: list[SceneId] = []  # plural: um mapa pode voltar em várias cenas (§9)
     generation: Generation | None = None  # obrigatório para imagem gerada
     work: str | None = None  # obra citada: título, estúdio e detentor conhecido (licença Citacao)
-    media: Literal["still", "clip"] = "still"  # clipe: Citacao (2026-11-03) ou Original (2026-11-09)
-    origin: str | None = None  # citado: de onde veio (o dono responde); Original: composição e código
+    # clipe: Citacao (2026-11-03), Original (2026-11-09) ou Generated (2026-11-26)
+    media: Literal["still", "clip"] = "still"
+    # citado: de onde veio; Original: composição e código; Generated: gerador, modelo e projeto
+    origin: str | None = None
     timecode: str | None = None  # clipe citado: entrada e saída na obra, ex. "00:12:03-00:12:08"
 
     @property
@@ -55,12 +57,14 @@ class Asset(Model):
         if self.provider is Provider.OWNER_CAPTURE and self.media != "clip":
             problems.append("captura do dono só vale para clipe (quadro parado exige material oficial)")
         if self.media == "clip" and self.license_id not in SchemasConstants.CLIP_LICENSES:
-            problems.append("clipe só na licença Citacao (ou Original, do projeto)")
+            problems.append("clipe só na licença Citacao, Original (do projeto) ou Generated (do dono)")
         cited_clip = self.media == "clip" and self.license_id == SchemasConstants.CITATION_LICENSE
         if cited_clip and not (self.origin and self.origin.strip() and self.timecode):
             problems.append("clipe exige origin (de onde veio) e timecode (entrada e saída na obra)")
         if self.media == "clip" and self.license_id == SchemasConstants.ORIGINAL_LICENSE:
             problems += self._original_clip_problems()
+        if self.media == "clip" and self.license_id == SchemasConstants.GENERATED_LICENSE:
+            problems += self._generated_clip_problems()
         if self.license_id == SchemasConstants.CITATION_LICENSE:
             if not (self.work and self.work.strip()):
                 problems.append("citação exige work (título, estúdio e detentor da obra)")
@@ -79,6 +83,19 @@ class Asset(Model):
             problems.append("clipe Original exige origin: a composição e o arquivo de código que o geram")
         if not self.usage_notes.strip():
             problems.append("clipe Original exige usage_notes: props, duração e conferência do clipe")
+        if self.timecode:
+            problems.append("timecode é só de clipe citado (Citacao)")
+        return problems
+
+    def _generated_clip_problems(self) -> list[str]:
+        """Emenda de 2026-11-26 (ADR 007): clipe gerado pelo dono num gerador com termos registrados."""
+        problems: list[str] = []
+        if self.provider is not Provider.ORIGINAL:
+            problems.append("clipe Generated só com provider original")
+        if not (self.origin and self.origin.strip()):
+            problems.append("clipe Generated exige origin: o gerador, o modelo e o projeto de onde saiu")
+        if not self.usage_notes.strip():
+            problems.append("clipe Generated exige usage_notes: o prompt e a conferência do clipe")
         if self.timecode:
             problems.append("timecode é só de clipe citado (Citacao)")
         return problems
