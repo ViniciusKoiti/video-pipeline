@@ -49,7 +49,7 @@ def test_host_spec_shows_by_scene_mark_or_by_mode() -> None:
 def test_episode_json_without_the_new_fields_is_written_as_before() -> None:
     manifest = EpisodeManifest.model_validate(OLD_EPISODE)
     dumped = json.loads(manifest.model_dump_json())
-    assert all(set(s) == set(EpisodeScene.model_fields) - {"host"} for s in dumped["scenes"])
+    assert all(set(s) == set(EpisodeScene.model_fields) - {"host", "mode"} for s in dumped["scenes"])
     with_host = EpisodeManifest.model_validate({**v2_episode(), "host": HOST})
     assert "show" not in json.loads(with_host.model_dump_json())["host"]
 

@@ -91,6 +91,7 @@ def build_scenes(
                 host_corner=scene.host_corner,
                 host=scene.host,
                 delivery=scene.delivery,
+                mode=scene.mode,
             )
         )
         cursor += ms

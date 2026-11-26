@@ -1,11 +1,20 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Any, Self
 
-from pydantic import Field, model_validator
+from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
 from app.media.narration import narration_problems, strip_pauses
-from app.pipeline.models._schemas_types import AssetId, Beat, Delivery, HostCorner, NonEmpty, SceneId, _fold
+from app.pipeline.models._schemas_types import (
+    AssetId,
+    Beat,
+    Delivery,
+    HostCorner,
+    NonEmpty,
+    SceneId,
+    SceneMode,
+    _fold,
+)
 from app.pipeline.models._schemas_value_shot import Shot
 from app.pipeline.models._schemas_value_step_positions import step_positions
 from app.pipeline.models.claim import Claim
@@ -26,6 +35,7 @@ class Scene(Model):
     narration: NonEmpty
     delivery: Delivery | None = None  # ADR 022
     beat: Beat | None = None  # papel no relógio de retenção (ADR 061)
+    mode: SceneMode = "real"  # camada da série "E se…?" (ADR 065): `especulacao` dispensa claims na fala
     claims: list[Claim] = []
     visual_need: VisualNeed | None = None  # forma v1
     search_query: NonEmpty | None = None  # forma v1
@@ -35,6 +45,13 @@ class Scene(Model):
     host_corner: HostCorner | None = None  # ajuste do canto do apresentador nesta cena (ADR 013)
     host: bool | None = None  # apresentador nesta cena: true mostra, false esconde (ADR 056)
     review_status: Status = Status.PENDING  # reflexo de review.json, escrito pelo código (§5)
+
+    @model_serializer(mode="wrap")
+    def _omit_default_mode(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if data.get("mode") == "real":  # o roteiro de antes, regravado pelo código, não muda (ADR 065)
+            del data["mode"]
+        return data
 
     @model_validator(mode="after")
     def _narration_marks(self) -> Self:
